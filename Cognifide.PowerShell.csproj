@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <Import Project="deploy.targets" Condition="Exists('deploy.targets')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{FAC57610-989C-4D7E-8D58-CCC914688096}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Cognifide.PowerShell</RootNamespace>
+    <AssemblyName>Cognifide.PowerShell</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Nonshipping>true</Nonshipping>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Sitecore.Analytics">
+      <HintPath>$(SitecorePath)\bin\Sitecore.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Client">
+      <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Forms.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Shell\Commands\Interactive\Messages\ShellCommandInItemContextMessage.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellResults.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\ScriptRunner.cs" />
+    <Compile Include="Console\Layouts\PowerShellTerminal.aspx.cs">
+      <DependentUpon>PowerShellTerminal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Console\Layouts\PowerShellTerminal.aspx.designer.cs">
+      <DependentUpon>PowerShellTerminal.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Console\Services\PowerShellWebService.asmx.cs">
+      <DependentUpon>PowerShellWebService.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Console\Services\RemoteAutomation.asmx.cs">
+      <DependentUpon>RemoteAutomation.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Shell\Commands\Interactive\BaseShellCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\BaseFormCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\ShowModalDialogCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\Messages\PromptMessage.cs" />
+    <Compile Include="Shell\Commands\Interactive\ShowConfirmCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\ShowAlertCommand.cs" />
+    <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
+    <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
+    <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
+    <Compile Include="SitecoreIntegrations\Processors\ScriptedDataSource.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Shell\Commands\Analytics\AnalyticsBaseCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorClassificationsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsUserAgentsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsTrafficTypesCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsTestDefinitionsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsScreensCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsReferringSiteCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageEventCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageEventDefinitionsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsOsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsItemUrlCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsNotificationSubscriptionCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsKeywordCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsGeoIpCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsBrowserCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsAutomationStateCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsAutomationCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorTagCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsStatusCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsLocationCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\SetAnalyticsProfileCardCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileCardsCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsViewCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsCampaignCommand.cs" />
+    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileItemCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\ShowYesNoCancelCommand.cs" />
+    <Compile Include="Shell\Commands\WrapItemCommand.cs" />
+    <Compile Include="Shell\Commands\GetItemByUriCommand.cs" />
+    <Compile Include="Shell\Commands\Workflows\ExecuteWorkflowCommand.cs" />
+    <Compile Include="Shell\Commands\Workflows\NewItemWorkflowEventCommand.cs" />
+    <Compile Include="Shell\Commands\Workflows\GetItemWorkflowEventCommand.cs" />
+    <Compile Include="Shell\Commands\GetItemTemplateCommand.cs" />
+    <Compile Include="Shell\Commands\LogoutUserCommand.cs" />
+    <Compile Include="Shell\Commands\LoginUserCommand.cs" />
+    <Compile Include="Shell\Commands\GetUserAgent.cs" />
+    <Compile Include="Shell\Commands\Serialization\DeserializeItemCommand.cs" />
+    <Compile Include="Shell\Commands\Serialization\SerializeItemCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\BasePackageCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\NewExplicitFileSourceCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\NewFileSourceCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\NewItemSourceCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\NewExplicitItemSourceCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\NewPackageCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\ImportPackageCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\ExportPackageCommand.cs" />
+    <Compile Include="Shell\Commands\Packages\GetPackageCommand.cs" />
+    <Compile Include="Shell\Commands\GetUserCommand.cs" />
+    <Compile Include="Shell\Commands\WriteLogCommand.cs" />
+    <Compile Include="Shell\Commands\SetHostPropertyCommand.cs" />
+    <Compile Include="Shell\Host\CommandCompletion.cs" />
+    <Compile Include="Shell\Host\OutputBuffer.cs" />
+    <Compile Include="Shell\Host\ScriptSessionManager.cs" />
+    <Compile Include="Shell\PathUtilities.cs" />
+    <Compile Include="Shell\Settings\ApplicationNames.cs" />
+    <Compile Include="Shell\Settings\ScriptItemFieldNames.cs" />
+    <Compile Include="Shell\ItemExtensions.cs" />
+    <Compile Include="Shell\Commands\BaseCommand.cs" />
+    <Compile Include="Shell\Commands\Interactive\ShowInputCommand.cs" />
+    <Compile Include="Shell\Commands\DatabaseContextBaseCommand.cs" />
+    <Compile Include="Shell\Commands\GetSearchIndexCommand.cs" />
+    <Compile Include="Shell\Commands\GetIndexCommand.cs" />
+    <Compile Include="Shell\Commands\GetCacheCommand.cs" />
+    <Compile Include="Shell\Commands\GetArchiveCommand.cs" />
+    <Compile Include="Shell\Commands\RestartApplicationCommand.cs" />
+    <Compile Include="Shell\Host\BufferSplitterCollection.cs" />
+    <Compile Include="Shell\Commands\Interactive\ExecuteShellCommandCommand.cs" />
+    <Compile Include="Shell\Commands\GetDatabaseCommand.cs" />
+    <Compile Include="Shell\Commands\PublishItemCommand.cs" />
+    <Compile Include="Shell\ItemShellExtensions.cs" />
+    <Compile Include="Shell\Settings\ApplicationSettings.cs" />
+    <Compile Include="Shell\Host\OutputLine.cs" />
+    <Compile Include="Shell\Host\OutputLineType.cs" />
+    <Compile Include="Shell\Host\ScriptingHost.cs" />
+    <Compile Include="Shell\Host\ScriptingHostRawUserInterface.cs" />
+    <Compile Include="Shell\Host\ScriptingHostUserInterface.cs" />
+    <Compile Include="Shell\Host\ScriptSession.cs" />
+    <Compile Include="Shell\Provider\PsSitecoreItemProvider.cs" />
+    <Compile Include="Shell\Provider\PsSitecoreItemProvider.DynamicParameters.cs">
+      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shell\Provider\PsSitecoreItemProvider.PathHandling.cs">
+      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shell\Provider\PsSitecoreItemProvider.Maintenance.cs">
+      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shell\Provider\PsSitecoreItemProvider.PropertyProvider.cs">
+      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SitecoreAnalytics.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SitecoreAnalytics.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="SitecoreIntegrations\Commands\RuntimeQueryState.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ItemDefinedQueryState.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\EditPowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ExecuteFieldEditor.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ScriptLibraryMenuItem.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
+    <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Console\Assets\stewie.png" />
+    <EmbeddedResource Include="Console\Assets\toplogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Console\Assets\working.gif" />
+    <Content Include="Console\Layouts\PowerShellTerminal.aspx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Console\Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Console\Scripts\jquery.hotkeys.js" />
+    <Content Include="Console\Scripts\jquery.mousewheel-min.js" />
+    <Content Include="Console\Scripts\jquery.terminal.js" />
+    <Content Include="Console\Scripts\json2.js" />
+    <Content Include="Console\Scripts\split.js" />
+    <Content Include="Console\Services\PowerShellWebService.asmx" />
+    <Content Include="Console\Services\RemoteAutomation.asmx" />
+    <Content Include="Console\Styles\Console.css" />
+    <Content Include="Console\Styles\jquery.terminal.css" />
+    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResults.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellNewScript.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <Content Include="App_Config\Include\Cognifide.PowerShell.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Console\Assets\Sitecore.Views.ps1xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Console\Assets\Sitecore.Types.ps1xml">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="SitecoreAnalytics.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SitecoreAnalytics.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="AfterBuild">
+    <CallTarget Targets="DeployToWeb" Condition="$(SitecorePath) != ''" />
+  </Target>
+  <Target Name="DeployToWeb">
+    <MSBuild Projects="Cognifide.PowerShell.csproj" Targets="ResolveReferences;_CopyWebApplication" Properties="WebProjectOutputDir=$(SitecorePath);OutDir=$(SitecorePath)\bin\" />
+  </Target>
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

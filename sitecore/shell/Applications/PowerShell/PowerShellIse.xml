@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellIse>
+    <FormPage Application="PowerShell/PowerShellIse">
+      <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
+      <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
+      <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Script Src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server" />
+      <Script Src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" />
+
+      <Script Key="XPathBuilder">
+        scSitecore.prototype.setModified = function(value) {
+        this.modified = false;
+        }
+      </Script>
+      <script type="text/javascript" language="javascript">
+        function onExecute() {
+        document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../Console/Assets/working.gif' alt='Working'/&gt;";
+        /* scForm.postRequest("", "", "", "ise:updateresults"); */
+        }
+      </script>
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
+
+      <Action ID="HasFile" Disabled="true" />
+      <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
+
+      <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+
+      <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
+        <Border ID="RibbonPanel" />
+        <GridPanel Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
+          <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="200px" Width="100%" GridPanel.ID="ScriptPane">
+              <GridPanel Width="100%" Columns="2" GridPanel.Width="100%" >
+                <Literal Text="Context Item" />
+                <Literal Text="Database" />
+                <TreePicker ID="DataSource" DataContext="DataContext" SelectOnly="true" GridPanel.Width="100%"
+                            Padding="1" />
+                <Combobox ID="Databases" Change="ChangeDatabase" GridPanel.Style="padding:0px 0px 0px 4px" />
+              </GridPanel>
+              <Space GridPanel.Style="padding:0px 4px 4px 4px" />
+              <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
+                <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+                <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="100%"
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" />
+              </GridPanel>
+            </GridPanel>
+            <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane">
+              <Literal Text="Result:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+              <Scrollbox ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results"
+                         GridPanel.Style="padding:0px">
+                <Border Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
+                  <Literal Text="Enter a a script in the Script field and Execute." />
+                </Border>
+              </Scrollbox>
+            </GridPanel>
+          </GridPanel>
+        </GridPanel>
+
+        <!-- GridPanel ID="StatusBar" Width="100%" GridPanel.Row.Height="20px" Background="white" Columns="2" CellPadding="1">
+          <Border Border="solid 1px silver" >
+           <Literal ID="StatusText" Text="" Style="padding:1px"/>
+          </Border>
+        </GridPanel-->
+      </GridPanel>
+
+    </FormPage>
+  </PowerShellIse>
+</control>

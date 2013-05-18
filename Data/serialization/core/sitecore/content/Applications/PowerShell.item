@@ -1,0 +1,79 @@
+----item----
+version: 1
+id: {6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}
+database: core
+path: /sitecore/content/Applications/PowerShell
+parent: {C74AC643-53C8-4F1E-9508-840CDC72AACA}
+name: PowerShell
+master: {73C2385C-9A34-4125-9419-F64376B34A62}
+template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
+templatekey: Folder
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 31
+
+PowerShell/32x32/PowerShell.png
+----field----
+field: {F6D8A61C-2F84-4401-BD24-52D2068172BC}
+name: __Originator
+key: __originator
+content-length: 0
+
+
+----field----
+field: {1172F251-DAD4-4EFB-A329-0C63500E4F1E}
+name: __Masters
+key: __masters
+content-length: 78
+
+{1F0770EA-8B77-4110-91AA-CC00DEE102DD}|{73C2385C-9A34-4125-9419-F64376B34A62}|
+----version----
+language: en
+version: 1
+revision: 48f45797-6430-4f09-b0fb-4e63813c6174
+
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20120907T141127
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+48f45797-6430-4f09-b0fb-4e63813c6174
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130510T150925:635037953659172813
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -1,0 +1,166 @@
+﻿body {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.middleArea pre, .resultsArea pre { margin: 4px; }
+
+#ResultsSplitter
+{
+    border-top: black 1px dashed;
+    border-bottom: black 1px dashed;
+    background: url(/Console/Assets/Splitter.png) no-repeat center;
+    /* background: url(/sitecore/shell/themes/Standard/ComponentArt/Grid/pager/slider_bg.gif) no-repeat center; */
+    /* background: url(/sitecore/shell/themes/Standard/Images/startmenurightdivider.png) no-repeat center ; */
+
+    padding: 0 4px 0 4px;
+}
+.console {
+    background-color: #012456;
+    border: none;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    margin: 0;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 3px 0 2px 3px;
+    white-space: pre-wrap;
+    width: 99%;
+}
+
+.pre {
+    font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+    white-space: pre-wrap;
+}
+
+#Result {
+    /* padding: 0px !important; */
+    margin: 0 !important;
+    padding-bottom: 2px !important;
+    padding-left: 3px !important;
+    padding-right: 0 !important;
+    padding-top: 3px !important;
+}
+
+#Result pre { margin: 4px 2px !important; }
+
+.console a { color: #ffa; }
+
+.console a:visited { color: #ffa; }
+
+.console a:hover { text-decoration: underline; }
+
+.indented-wide {
+    background-color: #012456;
+    border: thin solid #aaa;
+    color: #fff;
+    font-weight: 900;
+    margin: 4px 0 4px 0;
+    overflow: auto;
+    padding: 4px;
+    width: 540px;
+}
+
+.sample { font-size: 90%; }
+
+.consoleWrapper {
+    background-color: #012456;
+    border: none;
+    bottom: 0;
+    height: 100%;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+.middleArea {
+    background-color: #012456;
+    border: none;
+    bottom: 70px;
+    left: 0;
+    overflow: auto;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+.resultsArea {
+    background-color: #012456;
+    border: none;
+    bottom: 17px;
+    left: 0;
+    overflow: auto;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+.topArea {
+    height: 14px;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+.noscrolls { overflow: hidden; }
+
+.bottomArea {
+    background-color: #012456;
+    bottom: 0;
+    height: 70px;
+    left: 0;
+    overflow: hidden;
+    padding-right: 4px;
+    position: absolute;
+    right: 0;
+}
+
+.promoArea {
+    background-color: #012456;
+    bottom: 0;
+    font-family: Arial, Helvetica, Garuda, sans-serif;
+    font-size: 10px;
+    height: 14px;
+    left: 0;
+    margin-right: 8px;
+    overflow: hidden;
+    padding: 0 2px !important;
+    padding-right: 4px;
+    position: absolute;
+    right: 0;
+}
+
+.consoleEntry {
+    background-color: #012456;
+    border: none;
+    bottom: 0;
+    float: right;
+    height: 66px;
+    left: 0;
+    padding: 0;
+    position: absolute;
+    right: 4px;
+    width: 100%;
+}
+
+.executeButton {
+    bottom: 2px;
+    display: none;
+    float: left;
+    position: absolute;
+    right: 3px;
+    width: 80px;
+}

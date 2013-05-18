@@ -1,0 +1,653 @@
+<project>
+  <Metadata>
+    <metadata>
+      <PackageName>Sitecore PowerShell Console</PackageName>
+      <Author>Adam Najmanowicz - Cognifide</Author>
+      <Version>2.0 (RC6)</Version>
+      <Revision />
+      <License />
+      <Comment />
+      <Attributes />
+      <Readme>To launch the Powershell console look for the 
+new icon in the right side of the Start menu.
+
+PowerShell Console provides 2 Immediately usable interfaces 
+The "PowerShell Console" available from the "Sitecore" menu 
+and the "PowerShell ISE" available from the 
+"Developer Tools" submenu.
+The ISE version comes with a sample script. 
+You can run the script to learn  about some of the power 
+behind the scripting environment.
+Review the script before running it, please.
+
+NEW:
+- 2.0 (RC6)
+  - Sheer interactive support new commandlets:
+    - Show-Alert - shows user alert
+    - Show-Confirm - requests user to confirm a decision
+    - Show-Input - requests user to provide text input
+    - Show-ModalDialog - shows modal dialog and returns response
+    - Show-YesNoCancel - shows Yes/No/Cancel modal dialog and returns response
+    - Execute-ShellCommand - executes Sitecore command
+  - sample scripts for new interactive commandlets
+- 2.0 (RC5)
+  - support for Sitecore queries in Get-Item e.g.:
+    - Get-Item . -Query "/sitecore/home//*"
+  - massive experience improvements to ISE UI
+  - Sitecore ISE and script results now work as Jobs
+  - Job running script sessions can now call ShowModal dialogs. Further support with predefined dialogs coming soon.
+  - Powershell did not previously supported interactivity. e.g. if user had to be prompted to delete an item or confirm an action. A proper popup dialog will be shown now.
+  - Context script results re-worked to look more professionally and make use of the interactivity improvements.
+  - audit scripts added
+- 2.0 (RC4)
+  - persistent sessions (for commands e.g. executed from context menus that need sessions to be persisted between user interactions)
+  - context menu script library now supports multiple levels of menu items (embedded folders within the Context Menu Script Library)
+  - ISE Save and Runtime ribbon buttons are now disabled if script is not saved to  script library.
+  - Runtime settings are now editable straight from ISE.
+- 2.0 (RC3)
+  - Scripted Rendering Data sources (script can be pointed from rendering parameters to resolve the data source).
+  - Item wrapper now has ProviderPath property that returns Path that can be used directly as PowerShell path i.e. drive:\pach\without\sitecore\root\item.
+  - Wrap-Item commandlet for wrapping items retrieved from the Sitecore API with the convenient properties for field access.
+  - Get-Item now works with wildcard versions and Languages selection (to return more than one result per Sitecore item) you can do e.g.: 
+    - Get-ChildItem -Language *
+    - Get-ChildItem -Language en*
+    - Get-ChildItem -Version *
+    - Get-ChildItem -Version * -Language en*
+    Just as before if Version is not given - latest version is returned, if language not specified - current/default language is used.
+  - Get-ItemFromUri commandlet now returns wrapped items.
+- 2.0 (RC2)
+  - Scripted Rendering Data Source definition.
+  - Scripted Data Source Definition.
+- 2.0 (RC1)
+  - Solution audit scripts.
+- 2.0 (Beta 14)
+  - Script libraries added to Core and Master to enable for easy script menagement.
+  - Content Editor Context Menu Scripts are now driven straight from the "Content Editor Context Menu" script library - no need to create menu items - this is now done automatically.
+  - Brand New ISE - now with:
+    - ability to open from libraries (context menu on script will now show and library management
+    - creation of new scripts straight from the ISE
+    - Right clicking the script from the Content Editor Will show "Edit with ISE" option to open ISE with the clicked script
+
+- 2.0 (Beta 13)
+  - fixes for Tab Expansion in the Ajax console
+  - web service refactoring - changed place
+  - auto completion and tab expansion code for the Rocks Plugin.
+  - New-Item now properly creates item creation history event for "Create Item" also added -StartWorkflow dynamic parameter to start workflow for newly created items.
+- command completion code now working for paths within all providers.
+- 2.0 (Beta 12)
+  - fix for normal console no longer going to master:\ by default.
+  - PowerShell console added to context menu - now starting with the location already set to the context item.
+  - new commandlets for handling workflow history Get-ItemWorkflowEvent for reading history and New-ItemWorkflowEvent for creating new events.
+- 2.0 (Beta 11)
+  - added "PS&gt; Console" to context menu to be able to run PowerShell from the content exitor tree - in context of the current item.
+  - limited access to the Powershell Console to "Sitecore Client Developing" role and Aministrators only.
+- 2.0 (Beta 10)
+  - Added error reporting to Sitecore log on PS provider operations
+  - added script execution logging to Sitecore log
+  - decreased Json message size to improve communication with the Visual Studio Rocks plugin.
+- 2.0 (Beta 9)
+  - new-item was not returning newly created item to the runspace pipeline for further operations. Does so now.(Thanks Alistair Deneys for making me look into this).
+  - Copy-item was not returning newly created item to the runspace pipeline for further operations. Does so now. (Thanks Alistair Deneys for making me look into this).
+  - Copy-item was expecting the second (Destination) parameter to be a path where the copied item is attached but you could not do something like copy-item item1 item2 to create a copy in place. it will work like that now, but if it detects any slashes \ or / it will fall back to the previous behavior which is treat the second string as destination parent for the original item. (Thanks Alistair Deneys for reporting this).
+  - Fix for Move-Item behavior as described in Sitecore Forums http://sdn.sitecore.net/SDN5/Forum/ShowPost.aspx?PostID=49038 - thanks Philip Vaartstra!
+  - Added Rename-Item command support to the Sitecore PS Provider. Couldn't believe it was missing!
+  - Extended error reporting (as per request of Philip Vaartstra)
+  - Support for resetting fields to standard values through Clear-ItemProperty commandlet.
+  - Remote script execution stub. (Delete Console/Services/RemoteAutomation.asmx - to remove support for remote automation)
+  - Improved support for additional applications - not crashing when settings don't exist.
+  - Console prepared for integration with Rocks Plugin
+  - improved login mechanism
+  - improved Output-Line support - now 3 formats supported jsterm, text, html
+- 2.0 (Beta8)
+  - improvements to handling settings - settings are now handled on a per-user basis (Copied from "All Users" on first save) for every app.
+  - Context Scripts, Ajax Terminal and ISe now have separate set of settings.
+  - Get-ItemTemplate commandlet added which can be piped from Get-Item query. -Recurse parameter causes the commandlet to list base templates as well as the immediate Template for item.
+  - fixes for console not working after Beta7.
+- 2.0 (Beta6)
+  *** Nick's improvements ***
+  - changed project to Web Application to allow web build/deploy
+  - changed project to use WeBlog-like system of deploy.targets to allow machine-specific sitecore DLL references and builds. rename deploy.targets.sample to deploy.targets, edit to your sitecore path, then unload/reload your Visual Studio project.
+  - updated terminal and web service to use a polling system for long-running commands. added settings for initial and max wait between polls -- javascript will exponentially backoff until max is reached. this allows Sitecore Desktop to continue to function while command runs.
+  - added animated gif that displays while command is still running
+  - created workaround for ASP.NET limitations on returned json size by returning command results in multiple payloads if needed
+  - improved some error handling on server side and in javascript
+  *** Adam's improvements ***
+  - made the console compatible with IE quirks mode so now it works properly within Sitecore Desktop on IE. Also added some IE related performance improvements.
+  - changed the way variables are added to runspace (they are no longer introduced as a script but rather done properly added by runspace.SessionStateProxy.SetVariable which makes it possible to add objects rather than only string - which made it possible to add variables like $request, $context, $response... will add more at later time.
+  - Script session now runs in the Request thread so it's possible for the scripts to access the HttpContext.Current. that however  is only working properly outside of Terminal environment as Terminal is running using multiple JSON requests and after the initial call the Context is not valid unless you perform "recycle-session" which gets rid of the session and allows you to do "login-user" on the next request. What is it useful for though is for PowerShell ISE and within all the automated scripts like UI actions (menu ribbon buttons), scheduled tasks etc. where they all run in a single request.
+  - the ability for the script to log into Sitecore and impersonate another user e.g.: "login-user -user admin -password b" with a caveat explained in the above bullet-point
+  - added Get-UserAgent commandlet - pretty self explanatory.
+  - fixed a problem with built in commandlets not being recognized in the default include file.
+- 2.0 (Beta5)
+  - added ability to extract powershell results from the running script.
+- 2.0 (Beta4)
+  - fixed a problem with not being able to change location to an item that is a leaf node in the sidecore tree. (curtesy of report by Mark Berkelaar)
+- 2.0 (Beta3)
+  - improved support for Firefox and Chrome (scrolling &amp; console sizing) &amp; IE (JSON support in quirks mode) - Thanks @MarasM
+- 2.0 (Beta2)
+  - ItemPath properties work again. Attached formaters for Sitecore types work again (curtesy of James Gardner report)
+- 2.0 (Beta) 
+  - JQuery Terminal - replaces the previous textbox based console (Thanks for the help @MarasM). As a Consequence it now behaves almost like a regular Windows PowerShell Console (remembering old calls, inline editing, tab completion etc.)  - Tab Expansion (command auto-completion on tab-press).
+  - ability to add commandlets in 3rd party dlls - you can write your own commandlets now
+  - fixed problems with get-item without specified version/language parameters.
+  - added support for settings properties that are not filled in the current item (accessible only through ReadAll() ), yet defined in item template.
+  - support for item serialization and deserialization. 
+  - explicit support for DateTime fields -e.g. $_.__Unpublish will now return DateTime type and you can assign DateTime to it as well as regular Sitecore Iso date strings. If you want to access the Iso date string use: $_.Fields["__Unpublish"].Value.
+- 1.4.0 Support for get-*item -version &amp; -language. Support for Analytics database access from PowerShell type "get-command get-analytics* | format-table -property Definition" to learn more. Fixed context scripts.
+- 1.3.0 Fixes for path (special case property) added support for all Standard Fields to be attached to all items as scripted properties
+- 1.2.2 Added Analytics Profile card automation
+- 1.2.1 Added Get-User commandlet, added support for building/importing/exporting Packages
+- 1.2.0 support for scheduled tasks calling scripts &amp; new Write-Log commandlet
+- 1.1.4 fixes to context script result console layout, fixes to context scripts, minor optimizations
+- 1.1.3 fixed a problem with open calais handler getting pulled in the mix and breaking things if my OpenCalais module was not installed.
+- 1.1.2. context scripts - check the context menu for items in context editor
+
+This project is very much a work in progress, 
+please report any problems with it to: adam.najmanowicz@cognifide.com
+
+Thank you for using 
+Sitecore PowerShell Console.
+
+Adam Najmanowicz - Cognifide
+
+http://www.cognifide.com/
+http://blog.najmanowicz.com/</Readme>
+      <Publisher>Cognifide Limited</Publisher>
+      <PostStep />
+      <PackageID />
+    </metadata>
+  </Metadata>
+  <SaveProject>True</SaveProject>
+  <Sources>
+    <xfiles>
+      <Entries>
+        <x-item>/App_Config/Include/Cognifide.PowerShell.config</x-item>
+        <x-item>/bin/Cognifide.PowerShell.dll</x-item>
+        <x-item>/Console/Assets/Sitecore.Types.ps1xml</x-item>
+        <x-item>/Console/Assets/Sitecore.Views.ps1xml</x-item>
+        <x-item>/Console/Assets/Splitter.png</x-item>
+        <x-item>/Console/Assets/stewie.png</x-item>
+        <x-item>/Console/Assets/toplogo.png</x-item>
+        <x-item>/Console/Assets/working.gif</x-item>
+        <x-item>/Console/Layouts/PowerShellTerminal.aspx</x-item>
+        <x-item>/Console/Scripts/jquery-1.7.1.min.js</x-item>
+        <x-item>/Console/Scripts/jquery.hotkeys.js</x-item>
+        <x-item>/Console/Scripts/jquery.mousewheel-min.js</x-item>
+        <x-item>/Console/Scripts/jquery.terminal.js</x-item>
+        <x-item>/Console/Scripts/json2.js</x-item>
+        <x-item>/Console/Scripts/PsHSplitter.js</x-item>
+        <x-item>/Console/Scripts/split.js</x-item>
+        <x-item>/Console/Services/PowerShellWebService.asmx</x-item>
+        <x-item>/Console/Services/RemoteAutomation.asmx</x-item>
+        <x-item>/Console/Styles/Console.css</x-item>
+        <x-item>/Console/Styles/jquery.terminal.css</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellIse.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellNewScript.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/ConfirmChoice.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/GetStringResponse.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResults.xml</x-item>
+        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
+        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
+      </Entries>
+      <Converter>
+        <FileToEntryConverter>
+          <Root>/</Root>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </FileToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>Binaries</Name>
+    </xfiles>
+    <xitems>
+      <Entries>
+        <x-item>/core/sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE/{10052E00-DF82-4271-93C4-994F9D4D6B80}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Documents and settings/All users/Start menu/Right/PowerShell Console/{1B72C2A5-EAF1-47CE-86FF-4E3C42F1DD84}/invariant/0</x-item>
+        <x-item>/core/sitecore/layout/Layouts/Applications/PowerShell Console/{A2EB766C-B606-4F6E-8697-039C1C5A7CC1}/invariant/0</x-item>
+        <x-item>/core/sitecore/layout/Layouts/Applications/PowerShell ISE Sheer/{D8E646FE-C705-4CE2-8C10-CACC6DB32334}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/{6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/{83B665CB-DE30-453E-AD18-338C851BBA46}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Console/{A6F7AE21-E569-492B-9122-578F0E696DCB}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Console/All Users/{6CB327FA-4783-4DF6-B3C2-F396073D7962}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Context/{BCE6F88B-4128-4292-BD13-0402358BFE7C}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Context/All Users/{D237B896-675E-4D63-B86E-6BA898BBBFF8}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Default/{6B3434F0-4398-4BE8-9C14-73EFC3367FC4}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Default/All Users/{910D33B7-AB6E-429A-9E56-8923346BED66}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/ISE/{0D691C42-71E5-44C3-8CDE-6A05FA88DFF8}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/ISE/All Users/{DB19F00D-05F0-4589-8807-189CE2807224}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/RemoteAutomation/{86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/RemoteAutomation/All Users/{C02D13EE-8F7C-426D-8623-EEA082B59A79}/invariant/0</x-item>
+      </Entries>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Merge</ItemMode>
+                  <ItemMergeMode>Merge</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>Core settings</Name>
+    </xitems>
+    <xitems>
+      <Entries>
+        <x-item>/master/sitecore/system/Tasks/Commands/PowerShellScriptCommand/{F5F55071-697B-4769-A992-2A755FC379E5}/invariant/0</x-item>
+        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/{25F45623-1047-4633-BCD2-310F592EB771}/invariant/0</x-item>
+        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/{C1E5CE93-CBD8-4BA5-B49F-16B5B8887CBB}/invariant/0</x-item>
+        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/After Execution/{D8662901-DE9B-47E4-A327-64F05F94BB1E}/invariant/0</x-item>
+        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/Before Execution/{7316EE03-242B-40FA-8FAD-EAC85168117C}/invariant/0</x-item>
+      </Entries>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>Master settings</Name>
+    </xitems>
+    <xitems>
+      <Entries>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script/{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
+      </Entries>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include />
+      <Exclude />
+      <Name>Context Menu</Name>
+    </xitems>
+    <items>
+      <Database>master</Database>
+      <Root>{5FB5EB9F-41C5-43DD-B9F7-70A482B21093}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Merge</ItemMode>
+                  <ItemMergeMode>Merge</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>False</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>Master templates</Name>
+    </items>
+    <items>
+      <Database>core</Database>
+      <Root>{D7C22826-9D04-476E-BDBE-780988899A9E}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Undefined</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>Core Templates</Name>
+    </items>
+    <items>
+      <Database>core</Database>
+      <Root>{DADC7C07-2606-4F1C-98C6-FB8162E55257}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Merge</ItemMode>
+                  <ItemMergeMode>Merge</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>Core Scripts</Name>
+    </items>
+    <items>
+      <Database>master</Database>
+      <Root>{DADC7C07-2606-4F1C-98C6-FB8162E55257}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Merge</ItemMode>
+                  <ItemMergeMode>Merge</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Wildcards</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>Master Scripts</Name>
+    </items>
+    <items>
+      <Database>core</Database>
+      <Root>{6857D035-AB70-4DAC-8E7F-C6534BB8141F}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>App New ISE</Name>
+    </items>
+    <items>
+      <Database>core</Database>
+      <Root>{C6771AF0-903F-432C-8595-E84FE79D8B6C}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>App Console</Name>
+    </items>
+  </Sources>
+  <Converter>
+    <TrivialConverter>
+      <Transforms />
+    </TrivialConverter>
+  </Converter>
+  <Include />
+  <Exclude />
+  <Name />
+</project>

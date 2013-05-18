@@ -1,0 +1,83 @@
+----item----
+version: 1
+id: {AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Layout/Paste Renderings
+parent: {8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}
+name: Paste Renderings
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 28
+
+Applications/32x32/paste.png
+----field----
+field: {F1A1FE9E-A60C-4DDB-A3A0-BB5B29FE732E}
+name: __Renderings
+key: __renderings
+content-length: 1113
+
+<?xml version="1.0" encoding="utf-16"?><r xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><d id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}" l="{14030E9F-CE92-49C6-AD87-7D49B50E42EA}"><r cac="0" cnd="" mvt="" ds="" id="{885B8314-7D8C-4CBB-8000-01421EA8F406}" par="" ph="main" uid="{43222D12-08C9-453B-AE96-D406EBB95126}" vbd="0" vbdev="0" vbl="0" vbp="0" vbqs="0" vbu="0" /><r cac="0" cnd="" mvt="" ds="" id="{CE4ADCFB-7990-4980-83FB-A00C1E3673DB}" par="" ph="/main/centercolumn" uid="{CF044AD9-0332-407A-ABDE-587214A2C808}" vbd="0" vbdev="0" vbl="0" vbp="0" vbqs="0" vbu="0" /><r cac="0" cnd="" mvt="" ds="" id="{493B3A83-0FA7-4484-8FC9-4680991CF743}" par="" ph="content" uid="{B343725A-3A93-446E-A9C8-3A2CBD3DB489}" vbd="0" vbdev="0" vbl="0" vbp="0" vbqs="0" vbu="0" /></d><d id="{46D2F427-4CE5-4E1F-BA10-EF3636F43534}" l="{14030E9F-CE92-49C6-AD87-7D49B50E42EA}"><r cac="0" cnd="" mvt="" ds="" id="{493B3A83-0FA7-4484-8FC9-4680991CF743}" par="" ph="content" uid="{A08C9132-DBD1-474F-A2CA-6CA26A4AA650}" vbd="0" vbdev="0" vbl="0" vbp="0" vbqs="0" vbu="0" /></d></r>
+----version----
+language: en
+version: 1
+revision: 5e012a58-6aad-49a3-8704-00318ec3a244
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 190
+
+$targetItem = get-item .
+$targetName = $targetItem.ProviderPath;
+$targetItem.__Renderings = $renderings;
+write-host "Renderings pasted from '$($sourceName)' to '$($targetName)'"
+#$targetItem
+----field----
+field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
+name: PersistentSessionId
+key: persistentsessionid
+content-length: 20
+
+renderingCopySession
+----field----
+field: {7805AAF7-E504-45ED-BEA6-AE8EC8104458}
+name: PersistentSessionBufferFlush
+key: persistentsessionbufferflush
+content-length: 38
+
+{D8662901-DE9B-47E4-A327-64F05F94BB1E}
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130502T104824
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+5e012a58-6aad-49a3-8704-00318ec3a244
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130502T154541:635031063410318282
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
