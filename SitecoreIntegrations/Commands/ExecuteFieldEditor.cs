@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
-using Cognifide.PowerShell.Shell;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Fields;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
-using Cognifide.PowerShell.Shell;
-using Cognifide.PowerShell.Shell.Host;
-using Cognifide.PowerShell.Shell.Settings;
+using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -447,12 +447,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var scriptSession = new ScriptSession(Settings.ApplicationName);
-            string contextScript = ScriptSession.GetDataContextSwitch(DataContext.CurrentItem);
 
             try
             {
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
-                scriptSession.ExecuteScriptPart(contextScript);
+                scriptSession.SetItemLocationContext(DataContext.CurrentItem);
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
 

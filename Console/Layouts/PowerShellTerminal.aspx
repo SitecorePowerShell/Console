@@ -1,5 +1,6 @@
 ﻿<%@ Page Language="C#" CodeBehind="PowerShellTerminal.aspx.cs" Inherits="Cognifide.PowerShell.Console.Layouts.PowerShellTerminal" %>
-<%@ Import Namespace="Cognifide.PowerShell" %><!DOCTYPE html>
+<%@ Import Namespace="Cognifide.PowerShell" %>
+<%@ Import Namespace="Cognifide.PowerShell.PowerShellIntegrations.Settings" %><!DOCTYPE html>
 <!-- !DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" -->
 <html>
     <head runat="server">
@@ -9,11 +10,11 @@
 
         <link href="~/Console/Styles/Console.css" type="text/css" rel="stylesheet" />
         <title>PowerShell for Sitecore</title>
-        <script type="text/javascript" language="javascript" src="/Console/Scripts/jquery-1.7.1.min.js"> </script>
-        <script type="text/javascript" language="javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </script>
-        <script type="text/javascript" language="javascript" src="/Console/Scripts/jquery.terminal.js"> </script>
+        <script type="text/javascript" src="/Console/Scripts/jquery-1.7.1.min.js"> </script>
+        <script type="text/javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </script>
+        <script type="text/javascript" src="/Console/Scripts/jquery.terminal.js"> </script>
         <link href="/Console/Styles/jquery.terminal.css" type="text/css" rel="Stylesheet" />
-        <script type="text/javascript" language="javascript" src="/Console/Scripts/split.js"> </script>
+        <script type="text/javascript" src="/Console/Scripts/split.js"> </script>
         <!--[if lt IE 9]>
             <script type="text/javascript" language="javascript" src="/Console/Scripts/json2.js"> </script>
         <![endif]-->
@@ -147,8 +148,8 @@
                         if (data["status"] == "working") {
                             var handle = data["handle"];
                             var attempts = 0;
-                            var initialWait = <%= Settings.InitialPollMillis %>;
-                            var maxWait = <%= Settings.MaxmimumPollMillis %>;
+                            var initialWait = <%= WebServiceSettings.InitialPollMillis %>;
+                            var maxWait = <%= WebServiceSettings.MaxmimumPollMillis %>;
                             (function poll(wait) {
                                 setTimeout(function() {
                                     getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",

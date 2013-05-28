@@ -9,6 +9,7 @@
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
       <Script Src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server" />
       <Script Src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" />
+      <script src="/Console/Scripts/jquery-1.7.1.min.js"> </script>
 
       <Script Key="XPathBuilder">
         scSitecore.prototype.setModified = function(value) {
@@ -18,7 +19,6 @@
       <script type="text/javascript" language="javascript">
         function onExecute() {
         document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../Console/Assets/working.gif' alt='Working'/&gt;";
-        /* scForm.postRequest("", "", "", "ise:updateresults"); */
         }
       </script>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
@@ -44,7 +44,7 @@
               <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
                 <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
                 <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="100%"
-                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" />
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" />
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
@@ -66,6 +66,20 @@
           </Border>
         </GridPanel-->
       </GridPanel>
+      <script type="text/javascript" language="javascript">
+        jQuery(document).ready(function($) {
+
+        window.parent.focus();
+        window.focus();
+
+        function setFocusOnConsole() {
+          $('body').focus();
+          WebForm_AutoFocus('Editor');
+        }
+
+        setTimeout(setFocusOnConsole, 1000);
+        })
+      </script>
 
     </FormPage>
   </PowerShellIse>

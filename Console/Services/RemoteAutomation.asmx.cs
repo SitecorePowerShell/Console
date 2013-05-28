@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Security.Authentication;
 using System.Web.Services;
-using Cognifide.PowerShell.Shell.Host;
-using Cognifide.PowerShell.Shell.Settings;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Security.Authentication;
 
 namespace Cognifide.PowerShell.Console.Services

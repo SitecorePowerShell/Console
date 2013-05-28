@@ -55,7 +55,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>ExtendedDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -103,7 +103,98 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shell\Commands\Interactive\Messages\ShellCommandInItemContextMessage.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\AnalyticsBaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationStateCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsBrowserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsCampaignCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsGeoIpCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsItemUrlCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsKeywordCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsLocationCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsNotificationSubscriptionCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsOsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageEventCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageEventDefinitionsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileCardsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsReferringSiteCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsScreensCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsStatusCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsTestDefinitionsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsTrafficTypesCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsUserAgentsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsViewCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorClassificationsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorTagCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\SetAnalyticsProfileCardCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\BaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\DatabaseContextBaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetArchiveCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetCacheCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetDatabaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetIndexCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetItemByUriCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetItemTemplateCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetSearchIndexCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetUserAgent.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseFormCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseShellCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ExecuteShellCommandCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\PromptMessage.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShellCommandInItemContextMessage.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowAlertCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowConfirmCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowInputCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowModalDialogCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowYesNoCancelCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\LoginUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\LogoutUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\BasePackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\ExportPackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\GetPackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\ImportPackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewExplicitFileSourceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewExplicitItemSourceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewFileSourceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewItemSourceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewPackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\PublishItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\RestartApplicationCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Serialization\DeserializeItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Serialization\SerializeItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\SetHostPropertyCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Workflows\ExecuteWorkflowCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Workflows\GetItemWorkflowEventCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Workflows\NewItemWorkflowEventCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\WrapItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\WriteLogCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Host\BufferSplitterCollection.cs" />
+    <Compile Include="PowerShellIntegrations\Host\CommandCompletion.cs" />
+    <Compile Include="PowerShellIntegrations\Host\OutputBuffer.cs" />
+    <Compile Include="PowerShellIntegrations\Host\OutputLine.cs" />
+    <Compile Include="PowerShellIntegrations\Host\OutputLineType.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptingHost.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptingHostRawUserInterface.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptingHostUserInterface.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptSession.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptSessionManager.cs" />
+    <Compile Include="PowerShellIntegrations\ItemExtensions.cs" />
+    <Compile Include="PowerShellIntegrations\ItemShellExtensions.cs" />
+    <Compile Include="PowerShellIntegrations\PathUtilities.cs" />
+    <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.cs" />
+    <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.DynamicParameters.cs" />
+    <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.Maintenance.cs" />
+    <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.PathHandling.cs" />
+    <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.PropertyProvider.cs" />
+    <Compile Include="PowerShellIntegrations\Settings\ApplicationNames.cs" />
+    <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
+    <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
     <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
@@ -125,113 +216,14 @@
       <DependentUpon>RemoteAutomation.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Shell\Commands\Interactive\BaseShellCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\BaseFormCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\ShowModalDialogCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\Messages\PromptMessage.cs" />
-    <Compile Include="Shell\Commands\Interactive\ShowConfirmCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\ShowAlertCommand.cs" />
+    <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedDataSource.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="Shell\Commands\Analytics\AnalyticsBaseCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorClassificationsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsUserAgentsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsTrafficTypesCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsTestDefinitionsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsScreensCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsReferringSiteCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageEventCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsPageEventDefinitionsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsOsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsItemUrlCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsNotificationSubscriptionCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsKeywordCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsGeoIpCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsBrowserCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsAutomationStateCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsAutomationCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorTagCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsStatusCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsLocationCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsVisitorCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\SetAnalyticsProfileCardCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileCardsCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsViewCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsCampaignCommand.cs" />
-    <Compile Include="Shell\Commands\Analytics\GetAnalyticsProfileItemCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\ShowYesNoCancelCommand.cs" />
-    <Compile Include="Shell\Commands\WrapItemCommand.cs" />
-    <Compile Include="Shell\Commands\GetItemByUriCommand.cs" />
-    <Compile Include="Shell\Commands\Workflows\ExecuteWorkflowCommand.cs" />
-    <Compile Include="Shell\Commands\Workflows\NewItemWorkflowEventCommand.cs" />
-    <Compile Include="Shell\Commands\Workflows\GetItemWorkflowEventCommand.cs" />
-    <Compile Include="Shell\Commands\GetItemTemplateCommand.cs" />
-    <Compile Include="Shell\Commands\LogoutUserCommand.cs" />
-    <Compile Include="Shell\Commands\LoginUserCommand.cs" />
-    <Compile Include="Shell\Commands\GetUserAgent.cs" />
-    <Compile Include="Shell\Commands\Serialization\DeserializeItemCommand.cs" />
-    <Compile Include="Shell\Commands\Serialization\SerializeItemCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\BasePackageCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\NewExplicitFileSourceCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\NewFileSourceCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\NewItemSourceCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\NewExplicitItemSourceCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\NewPackageCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\ImportPackageCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\ExportPackageCommand.cs" />
-    <Compile Include="Shell\Commands\Packages\GetPackageCommand.cs" />
-    <Compile Include="Shell\Commands\GetUserCommand.cs" />
-    <Compile Include="Shell\Commands\WriteLogCommand.cs" />
-    <Compile Include="Shell\Commands\SetHostPropertyCommand.cs" />
-    <Compile Include="Shell\Host\CommandCompletion.cs" />
-    <Compile Include="Shell\Host\OutputBuffer.cs" />
-    <Compile Include="Shell\Host\ScriptSessionManager.cs" />
-    <Compile Include="Shell\PathUtilities.cs" />
-    <Compile Include="Shell\Settings\ApplicationNames.cs" />
-    <Compile Include="Shell\Settings\ScriptItemFieldNames.cs" />
-    <Compile Include="Shell\ItemExtensions.cs" />
-    <Compile Include="Shell\Commands\BaseCommand.cs" />
-    <Compile Include="Shell\Commands\Interactive\ShowInputCommand.cs" />
-    <Compile Include="Shell\Commands\DatabaseContextBaseCommand.cs" />
-    <Compile Include="Shell\Commands\GetSearchIndexCommand.cs" />
-    <Compile Include="Shell\Commands\GetIndexCommand.cs" />
-    <Compile Include="Shell\Commands\GetCacheCommand.cs" />
-    <Compile Include="Shell\Commands\GetArchiveCommand.cs" />
-    <Compile Include="Shell\Commands\RestartApplicationCommand.cs" />
-    <Compile Include="Shell\Host\BufferSplitterCollection.cs" />
-    <Compile Include="Shell\Commands\Interactive\ExecuteShellCommandCommand.cs" />
-    <Compile Include="Shell\Commands\GetDatabaseCommand.cs" />
-    <Compile Include="Shell\Commands\PublishItemCommand.cs" />
-    <Compile Include="Shell\ItemShellExtensions.cs" />
-    <Compile Include="Shell\Settings\ApplicationSettings.cs" />
-    <Compile Include="Shell\Host\OutputLine.cs" />
-    <Compile Include="Shell\Host\OutputLineType.cs" />
-    <Compile Include="Shell\Host\ScriptingHost.cs" />
-    <Compile Include="Shell\Host\ScriptingHostRawUserInterface.cs" />
-    <Compile Include="Shell\Host\ScriptingHostUserInterface.cs" />
-    <Compile Include="Shell\Host\ScriptSession.cs" />
-    <Compile Include="Shell\Provider\PsSitecoreItemProvider.cs" />
-    <Compile Include="Shell\Provider\PsSitecoreItemProvider.DynamicParameters.cs">
-      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Shell\Provider\PsSitecoreItemProvider.PathHandling.cs">
-      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Shell\Provider\PsSitecoreItemProvider.Maintenance.cs">
-      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Shell\Provider\PsSitecoreItemProvider.PropertyProvider.cs">
-      <DependentUpon>PsSitecoreItemProvider.cs</DependentUpon>
-    </Compile>
+    <Compile Include="PowerShellIntegrations\Settings\WebServiceSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SitecoreAnalytics.Designer.cs">
+    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\SitecoreAnalytics.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SitecoreAnalytics.edmx</DependentUpon>
@@ -244,6 +236,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
+    <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -282,12 +275,22 @@
     <Content Include="Console\Services\RemoteAutomation.asmx" />
     <Content Include="Console\Styles\Console.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />
-    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResults.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellNewScript.xml" />
+    <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
+    <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResults.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellNewScript.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
@@ -300,7 +303,7 @@
     <None Include="Console\Assets\Sitecore.Types.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <EntityDeploy Include="SitecoreAnalytics.edmx">
+    <EntityDeploy Include="PowerShellIntegrations\Commandlets\Analytics\SitecoreAnalytics.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>SitecoreAnalytics.Designer.cs</LastGenOutput>
     </EntityDeploy>

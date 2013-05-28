@@ -9,8 +9,8 @@ using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Security;
 using System.Web.Services;
-using Cognifide.PowerShell.Shell.Host;
-using Cognifide.PowerShell.Shell.Settings;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
@@ -98,7 +98,7 @@ namespace Cognifide.PowerShell.Console.Services
                         ContextUser = Sitecore.Context.User
                     };
                 JobManager.Start(jobOptions);
-                Thread.Sleep(Settings.CommandWaitMillis);
+                Thread.Sleep(WebServiceSettings.CommandWaitMillis);
                 return PollCommandOutput(guid, handle, stringFormat);
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             result.status = StatusComplete;
             int lines = 0;
-            int buffer = Settings.SerializationSizeBuffer;
+            int buffer = WebServiceSettings.SerializationSizeBuffer;
             bool partial = false;
             var temp = new StringBuilder();
             var output = new StringBuilder();

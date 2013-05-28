@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cognifide.PowerShell.Shell.Host;
-using Cognifide.PowerShell.Shell.Settings;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Collections;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;

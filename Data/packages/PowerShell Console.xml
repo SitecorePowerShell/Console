@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Console</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.0 (RC6)</Version>
+      <Version>2.0 (RC7)</Version>
       <Revision />
       <License />
       <Comment />
@@ -21,6 +21,8 @@ behind the scripting environment.
 Review the script before running it, please.
 
 NEW:
+- 2.0 (RC7)
+ - Events hooks added - you can now add support for events in your scripts by uncommenting the relevant section in the Cognifide.Powershell.config and create scripts in the appropriate locations in the "Event Handlers" script library (sample scripts for some events added). Courtesy  of the suggestion by Kieran Marron.
 - 2.0 (RC6)
   - Sheer interactive support new commandlets:
     - Show-Alert - shows user alert
