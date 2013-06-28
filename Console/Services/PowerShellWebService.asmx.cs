@@ -232,6 +232,23 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
 
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object GetHelpForCommand(string guid, string command)
+        {
+            var serializer = new JavaScriptSerializer();
+            string result = serializer.Serialize(GetHelpOutputs(guid, command));
+            return result;
+        }
+
+        public static string[] GetHelpOutputs(string guid, string command)
+        {
+            ScriptSession session = GetScriptSession(guid);
+            IEnumerable<string> result = CommandHelp.GetHelp(session, command);
+            return result.ToArray();
+        }
+
+
         private static ScriptSession GetScriptSession(string guid)
         {
             lock (HttpContext.Current.Session)
@@ -239,9 +256,11 @@ namespace Cognifide.PowerShell.Console.Services
                 var session = HttpContext.Current.Session[guid] as ScriptSession;
                 if (session == null)
                 {
-                    session = new ScriptSession(ApplicationNames.AjaxConsole);
+                    session = new ScriptSession(ApplicationNames.AjaxConsole, false);
                     HttpContext.Current.Session[guid] = session;
                     session.Initialize();
+                    ApplicationSettings settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+                    session.ExecuteScriptPart(settings.Prescript);
                 }
                 return session;
             }

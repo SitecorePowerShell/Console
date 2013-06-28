@@ -24,80 +24,96 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
     public class PowerShellIse : BaseForm
     {
         private static readonly string[] pleaseWaitMessages =
-            {
-                "the architects are still drafting",
-                "the bits are breeding",
-                "we're running the script as fast as we can",
-                "pay no attention to the man behind the curtain",
-                "in the mean time enjoy the elevator music",
-                "while the little elves run your script",
-                "a few commandlets tried to escape, but we caught them",
-                "and dream of a faster computer",
-                "would you like fries with that?",
-                "checking the gravitational constant in your locale",
-                "go ahead -- hold your breath",
-                "at least you're not on hold",
-                "hum something loud while others stare",
-                "you're not in Kansas any more",
-                "the server is powered by a potato and two electrodes",
-                "I love you just the way you are",
-                "while I use your script to take over the world",
-                "we're testing your patience",
-                "as if you had any other choice",
-                "would you take a moment to fill our user survey?",
-                "but don't think of purple hippos",
-                "why don't you make me a sandwich in the mean time?",
-                "while the satellite moves into position",
-                "the bits are flowing slowly today",
-                "dig on the 'X' for buried treasure... ARRR!",
-                "it's still faster than YOU would do it manually!",
-                "you don't suffer from ADHD after all... Me neith-!... oh look a bunny... What was I doing again? Oh, right. Here we go."
-                ,
-                "the last time I tried this, the script didn't survive. Let's hope it works better this time.",
-                "testing script on Timmy... ... ... We're going to need another Timmy.",
-                "I should have had a V8 this morning.",
-                "my other wait message is much faster. You should try that one instead.",
-                "the version I have of this in testing has much funnier wait messages.",
-                "happy Elf and Sad Elf are talking about your script. ",
-                "all the elves are on break right now. Please hold.",
-                "just a sec, I know your data is here somewhere",
-                "measuring the cable length to fetch your data...",
-                "while I do things you dont really wanna know about",
-                "oiling clockworks",
-                "hitting your keyboard won't make me run it any faster",
-                "ensuring everything works perfectly",
-                "on no! Look out! Behind you!",
-                "preparing to spin you around rapidly",
-                "dusting off spellbooks",
-                "HELP!, I'm being held hostage, and forced to run scripts!",
-                "Searching for answer to life, the universe, and everything",
-                "while the gods contemplate your fate...",
-                "waiting for the system admin to hit enter...",
-                "paging for the system admin",
-                "warming up the processors",
-                "reconfiguring the office coffee machine",
-                "re-calibrating the internet",
-                "I'm working... no, just kidding",
-                "So, how are you?",
-                "are your shoelaces tied?",
-                "working... unlike you!",
-                "doing something useful...",
-                "oh, yeah, comments! Good idea!",
-                "prepare for awesomeness!",
-                "it's not you. It's me.",
-                "ouch! Careful where you point that thing!",
-                "attentively (which is what you agreed to in the Terms and Conditions)",
-                "QUIET !!! I'm trying to think here!",
-                "counting backwards from infinity",
-                "who is this General Failure and why is he reading my hard disk?",
-                "testing for perfection",
-                "deterministically simulating the future",
-                "embiggening prototypes",
-                "So, do you come here often?",
-                "Your script is important to us. Please hold.",
-                "damn it! I've lost it again. Searching...",
-                "commencing infinite loop (this may take some time)"
-            };
+        {
+            "the architects are still drafting",
+            "the bits are breeding",
+            "we're running the script as fast as we can",
+            "pay no attention to the man behind the curtain",
+            "in the mean time enjoy the elevator music",
+            "while the little elves run your script",
+            "a few commandlets tried to escape, but we caught them",
+            "and dream of a faster computer",
+            "would you like fries with that?",
+            "checking the gravitational constant in your locale",
+            "go ahead -- hold your breath",
+            "at least you're not on hold",
+            "hum something loud while others stare",
+            "you're not in Kansas any more",
+            "the server is powered by a potato and two electrodes",
+            "I love you just the way you are",
+            "while I use your script to take over the world",
+            "we're testing your patience",
+            "as if you had any other choice",
+            "would you take a moment to fill our user survey?",
+            "but don't think of purple hippos",
+            "why don't you make me a sandwich in the mean time?",
+            "while the satellite moves into position",
+            "the bits are flowing slowly today",
+            "dig on the 'X' for buried treasure... ARRR!",
+            "it's still faster than YOU would do it manually!",
+            "you don't suffer from ADHD after all... Me neith-!... oh look a bunny... What was I doing again? Oh, right. Here we go."
+            ,
+            "the last time I tried this, the script didn't survive. Let's hope it works better this time.",
+            "testing script on Timmy... ... ... We're going to need another Timmy.",
+            "I should have had a V8 this morning.",
+            "my other wait message is much faster. You should try that one instead.",
+            "the version I have of this in testing has much funnier wait messages.",
+            "happy Elf and Sad Elf are talking about your script. ",
+            "all the elves are on break right now. Please hold.",
+            "just a sec, I know your data is here somewhere",
+            "measuring the cable length to fetch your data...",
+            "while I do things you dont really wanna know about",
+            "oiling clockworks",
+            "hitting your keyboard won't make me run it any faster",
+            "ensuring everything works perfectly",
+            "on no! Look out! Behind you!",
+            "preparing to spin you around rapidly",
+            "dusting off spellbooks",
+            "HELP!, I'm being held hostage, and forced to run scripts!",
+            "Searching for answer to life, the universe, and everything",
+            "while the gods contemplate your fate...",
+            "waiting for the system admin to hit enter...",
+            "paging for the system admin",
+            "warming up the processors",
+            "reconfiguring the office coffee machine",
+            "re-calibrating the internet",
+            "I'm working... no, just kidding",
+            "So, how are you?",
+            "are your shoelaces tied?",
+            "working... unlike you!",
+            "doing something useful...",
+            "oh, yeah, comments! Good idea!",
+            "prepare for awesomeness!",
+            "it's not you. It's me.",
+            "ouch! Careful where you point that thing!",
+            "attentively (which is what you agreed to in the Terms and Conditions)",
+            "QUIET !!! I'm trying to think here!",
+            "counting backwards from infinity",
+            "who is this General Failure and why is he reading my hard disk?",
+            "testing for perfection",
+            "deterministically simulating the future",
+            "embiggening prototypes",
+            "So, do you come here often?",
+            "Your script is important to us. Please hold.",
+            "damn it! I've lost it again. Searching...",
+            "commencing infinite loop (this may take some time)"
+        };
+
+        private static readonly string[] hintMessages =
+        {
+            "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
+            "If you press <strong>Shift+Space</strong> ISE sill attempt to auto-complete your statement in-line.",
+            "By pressing <strong>Ctrl+Enter</strong> you can see help for the command you've just typed.",
+            "Your script will start in the location/folder picked by the <strong>Content Item</strong> dropdown.",
+            "You can change the color of the results dialog shown to your script users using the <strong>Console</strong> ribbon button.",
+            "If you save your script in the <strong>Content Editor Context Menu</strong> it will automatically show as a context menu option for items that users Right Click in the tree and will start in the location of that item.",
+            "All your scripts that share the same <strong>Persistent Session ID</strong> can re-use variables that were created by the scripts with the same session id that were run before.",
+            "<strong>Runtime</strong> ribbon button is active only if you're editong a script from library. Save your script in script library to enable it.",
+            "<strong>Script Library</strong> comes with a wealth of samples and useful scripts that you can base your scripts upon.",
+            "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
+            "You can download files from the Website and Data folders using the <strong>Get-File</strong> commandlet.",
+            "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets.",
+        };
 
         protected DataContext DataContext;
         protected TreePicker DataSource;
@@ -108,6 +124,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected JobMonitor Monitor;
         protected Scrollbox Result;
         protected Border RibbonPanel;
+        protected Literal TipText;
         protected bool ScriptRunning { get; set; }
         public ApplicationSettings Settings { get; set; }
 
@@ -191,6 +208,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 ItemId = itemId;
                 LoadItem(itemId);
             }
+            var rnd = new Random();
+            TipText.Text = hintMessages[rnd.Next(hintMessages.Length - 1)];
+
 
             if (Monitor == null)
             {

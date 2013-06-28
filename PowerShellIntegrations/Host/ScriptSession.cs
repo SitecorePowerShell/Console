@@ -65,7 +65,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
             RunspaceConfiguration conf = RunspaceConfiguration.Create();
             host = new ScriptingHost(Settings);
-            host.UI.RawUI.BufferSize = new Size(Settings.HostWidth, Int32.MaxValue);
             InitialSessionState initState = InitialSessionState.CreateDefault();
             initState.ThreadOptions = PSThreadOptions.UseCurrentThread;
             initState.ApartmentState = ApartmentState.STA;
@@ -89,6 +88,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 Initialize();
             }
+
+            if (Settings.UseTypeInfo)
+            {
+                Output.Clear();
+            }
+
+
         }
 
         public ApplicationSettings Settings { get; private set; }

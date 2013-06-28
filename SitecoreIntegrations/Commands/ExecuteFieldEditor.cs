@@ -38,8 +38,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         protected const string SettingsItemIsNull = "Settings item is null";
         protected const string RequireTemplateParameter = "requiretemplate";
 
-        private Item CurrentItem { get; set; }
-        private Item SettingsItem { get; set; }
+        protected Item CurrentItem { get; set; }
+        protected Item SettingsItem { get; set; }
 
         public override CommandState QueryState(CommandContext context)
         {
@@ -80,7 +80,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             return options;
         }
 
-        private void EnsureContext(ClientPipelineArgs args)
+        protected virtual void EnsureContext(ClientPipelineArgs args)
         {
             string path = args.Parameters[PathParameter];
             Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
@@ -144,6 +144,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             }
         }
 
+        public virtual bool CanExecute(CommandContext context)
+        {
+            return context.Items.Length > 0;
+        }
+
         /// <summary>
         ///     Executes the command in the specified context.
         /// </summary>
@@ -153,14 +158,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         public override void Execute(CommandContext context)
         {
             Assert.ArgumentNotNull(context, "context");
-            if (context.Items.Length < 1)
+            if (!CanExecute(context))
                 return;
             Context.ClientPage.Start(this, "StartFieldEditor", new ClientPipelineArgs(context.Parameters)
                 {
                     Parameters =
                         {
-                            {"uri", context.Items[0].Uri.ToString()} //,
-                            //{"ParentFrameName", context.Parameters["ParentFrameName"]}
+                            {"uri", context.Items[0].Uri.ToString()}
                         }
                 });
         }
@@ -171,7 +175,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         /// <param name="args">
         ///     The arguments.
         /// </param>
-        protected void StartFieldEditor(ClientPipelineArgs args)
+        protected virtual void StartFieldEditor(ClientPipelineArgs args)
         {
             HttpContext current = HttpContext.Current;
             if (current == null)

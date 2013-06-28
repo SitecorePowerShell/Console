@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Web.UI;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
 namespace Cognifide.PowerShell.Console.Layouts
 {
@@ -8,8 +10,14 @@ namespace Cognifide.PowerShell.Console.Layouts
         protected override void OnPreInit(EventArgs e)
         {
             Response.AddHeader("X-UA-Compatible", "IE=9");
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+            ForegroundColor = OutputLine.ProcessHtmlColor(settings.ForegroundColor);
+            BackgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             base.OnPreInit(e);
         }
+
+        protected string ForegroundColor { get; set; }
+        protected string BackgroundColor { get; set; }
 
         protected override void OnInit(EventArgs e)
         {

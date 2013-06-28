@@ -13,11 +13,12 @@ using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 {
-    [CmdletProvider("PsSitecoreItemProvider", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess)]
+    [CmdletProvider("PsSitecoreItemProvider", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-ChildItem")]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
+
         private ProviderInfo providerInfo;
 
         /// <summary>

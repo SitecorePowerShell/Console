@@ -1,21 +1,24 @@
-﻿body {
+﻿body
+{
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.middleArea pre, .resultsArea pre { margin: 4px; }
+.middleArea pre, .resultsArea pre
+{
+    margin: 4px;
+}
 
 #ResultsSplitter
 {
     border-top: black 1px dashed;
     border-bottom: black 1px dashed;
     background: url(/Console/Assets/Splitter.png) no-repeat center;
-    /* background: url(/sitecore/shell/themes/Standard/ComponentArt/Grid/pager/slider_bg.gif) no-repeat center; */
-    /* background: url(/sitecore/shell/themes/Standard/Images/startmenurightdivider.png) no-repeat center ; */
-
     padding: 0 4px 0 4px;
 }
-.console {
+
+.console
+{
     background-color: #012456;
     border: none;
     color: #fff;
@@ -30,12 +33,14 @@
     width: 99%;
 }
 
-.pre {
+.pre
+{
     font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
     white-space: pre-wrap;
 }
 
-#Result {
+#Result
+{
     /* padding: 0px !important; */
     margin: 0 !important;
     padding-bottom: 2px !important;
@@ -44,15 +49,28 @@
     padding-top: 3px !important;
 }
 
-#Result pre { margin: 4px 2px !important; }
+    #Result pre
+    {
+        margin: 4px 2px !important;
+    }
 
-.console a { color: #ffa; }
+.console a
+{
+    color: #ffa;
+}
 
-.console a:visited { color: #ffa; }
+    .console a:visited
+    {
+        color: #ffa;
+    }
 
-.console a:hover { text-decoration: underline; }
+    .console a:hover
+    {
+        text-decoration: underline;
+    }
 
-.indented-wide {
+.indented-wide
+{
     background-color: #012456;
     border: thin solid #aaa;
     color: #fff;
@@ -63,9 +81,13 @@
     width: 540px;
 }
 
-.sample { font-size: 90%; }
+.sample
+{
+    font-size: 90%;
+}
 
-.consoleWrapper {
+.consoleWrapper
+{
     background-color: #012456;
     border: none;
     bottom: 0;
@@ -80,7 +102,8 @@
     width: 100%;
 }
 
-.middleArea {
+.middleArea
+{
     background-color: #012456;
     border: none;
     bottom: 70px;
@@ -93,7 +116,8 @@
     width: 100%;
 }
 
-.resultsArea {
+.resultsArea
+{
     background-color: #012456;
     border: none;
     bottom: 17px;
@@ -106,7 +130,8 @@
     width: 100%;
 }
 
-.topArea {
+.topArea
+{
     height: 14px;
     left: 0;
     overflow: hidden;
@@ -115,9 +140,13 @@
     width: 100%;
 }
 
-.noscrolls { overflow: hidden; }
+.noscrolls
+{
+    overflow: hidden;
+}
 
-.bottomArea {
+.bottomArea
+{
     background-color: #012456;
     bottom: 0;
     height: 70px;
@@ -128,7 +157,8 @@
     right: 0;
 }
 
-.promoArea {
+.promoArea
+{
     background-color: #012456;
     bottom: 0;
     font-family: Arial, Helvetica, Garuda, sans-serif;
@@ -143,7 +173,8 @@
     right: 0;
 }
 
-.consoleEntry {
+.consoleEntry
+{
     background-color: #012456;
     border: none;
     bottom: 0;
@@ -156,7 +187,8 @@
     width: 100%;
 }
 
-.executeButton {
+.executeButton
+{
     bottom: 2px;
     display: none;
     float: left;
@@ -164,3 +196,182 @@
     right: 3px;
     width: 80px;
 }
+
+.terminal .terminal-output div a, .terminal .terminal-output div a:hover, .terminal .terminal-output div a:visited
+{
+    color: yellow;
+}
+
+.tip_no_hints
+{
+    display: none;
+    color: #1d1d1d;
+    background: #fff;
+    padding: 10px;
+    position: fixed;
+    z-index: 1000;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#working
+{
+    bottom: 0;
+    display: none;
+    float: right;
+    position: fixed;
+    right: 0;
+}
+
+#StatusBar
+{
+    height: 20px;
+    margin: 0 5px 0 8px;
+    overflow: hidden;
+    padding: 0 0 3px 0;
+}
+
+.status-bar-panel
+{
+    padding: 2px 2px;
+    border: solid 1px silver;
+    background-color: white;
+}
+
+.status-bar-text
+{
+    overflow: hidden;
+}
+
+.status-bar-pos
+{
+    width: 50px;
+    float: right;
+    margin-left: 2px;
+}
+
+#ajax-dialog
+{
+    display: none;
+    overflow-y: auto;
+    overflow-x: visible;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    border: 0;
+    padding: 4px 4px 0 4px;
+    margin: 4px;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+.ui-dialog-titlebar
+{
+    display: none;
+}
+
+.ps-help-header
+{
+    color: yellow;
+    font-size: 2em;
+}
+
+.ps-help-command-name
+{
+    color: yellow;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+.ps-help-parameter
+{
+    color: cyan;
+    font-size: 1.5em;
+}
+
+.ps-help-firstLine
+{
+    color: yellow;
+}
+
+a.ps-link
+{
+    color: yellow;
+    text-decoration: underline;
+}
+
+.ui-tooltip, .arrow:after
+{
+    background: #012456;
+    border: 2px solid yellow;
+    display: block;
+    position: absolute;
+    margin: 6px;
+}
+
+.ui-icon-info {
+    background: url(/temp/IconCache/PowerShell/16x16/PowerShell.png) center center;
+}
+.ui-state-highlight {
+    margin-top: 20px; 
+    margin-bottom: 6px; 
+    padding: 0 .7em;
+}
+
+#TipOfTheSession {
+    padding-bottom: 6px;
+    width: 360px;
+}
+
+.ui-tooltip
+{
+    padding: 10px 20px;
+    color: yellow;
+    border-radius: 20px;
+    font: bold 14px "Helvetica Neue", Sans-Serif;
+    text-transform: uppercase;
+    box-shadow: 0 0 7px #012456;
+}
+
+.arrow
+{
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+}
+
+    .arrow.top
+    {
+        top: -16px;
+        bottom: auto;
+    }
+
+    .arrow.left
+    {
+        left: 20%;
+    }
+
+    .arrow:after
+    {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: -20px;
+        width: 25px;
+        height: 25px;
+        box-shadow: 6px 5px 9px -9px #012456;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        tranform: rotate(45deg);
+    }
+
+    .arrow.top:after
+    {
+        bottom: -20px;
+        top: auto;
+    }

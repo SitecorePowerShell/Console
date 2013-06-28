@@ -30,6 +30,12 @@
           </Border>
         </Scrollbox>
       </Scrollbox>
+      <Style ID ="ConsoleStyle">
+        .console {
+          color: <Literal ID="ForegroundColor" />;
+          background-color: <Literal ID="BackgroundColor" />;
+        }
+    </Style>
     </FormPage>
   </PowerShellResults>
 </control>

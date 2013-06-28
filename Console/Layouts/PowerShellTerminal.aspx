@@ -47,16 +47,13 @@
 
                 var terminal =
                     $('body').terminal(function(command, term) {
-                        var buffer = "";
+                        var buffer;
                         if (command.length > 0 && command.lastIndexOf(' `') == command.length - 1) {
                             buffer = command;
                             term.push(function(subCommand) {
                                 if (subCommand.length == 0) {
                                     term.pop();
                                     callPowerShellHost(term, guid, buffer);
-                                    /*if (console) {
-                              console.log("buffer executed");
-                            }*/
                                     buffer = "";
                                 } else {
                                     buffer += '\n' + subCommand;
@@ -67,17 +64,15 @@
                             });
                         } else {
                             callPowerShellHost(term, guid, command);
-                            /*if (console) {
-                        console.log("command executed");
-                    }*/
                         }
                     }, {
-                        greetings: "Sitecore Powershell Console\r\nCopyright (c) 2010-2011 Cognifide Limited & Adam Najmanowicz. All rights Reserved\n\n",
+                        greetings: "Sitecore Powershell Console\r\nCopyright (c) 2010-2013 Cognifide Limited &amp; Adam Najmanowicz. All rights Reserved\n\n",
                         name: "mainConsole",
                         tabcompletion: true,
                         onTabCompletionInit: tabCompletionInit,
                         onTabCompletion: tabCompletion,
-                        onTabCompletionEnd: tabCompletionEnd
+                        onTabCompletionEnd: tabCompletionEnd,
+                        onTabCompletionNoHints:tabCompletionNoHints
                     });
 
                 if (!isBlank(getURLParameter("item") && getURLParameter("item") != "null")) {
@@ -90,34 +85,53 @@
                     getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
                         function(json) {
                             var data = JSON.parse(json.d);
-                            /*if (console) {
-                    console.log("setting tabCompletions to: " + data.toString());
-                    }*/
+                            if (!!console) {
+                                console.log("setting tabCompletions to: " + data.toString());
+                            }
                             tabCompletions = data;
                         });
-                    /*if (console) {
-            console.log("initializing tab completion");
-            }*/
+                    if (!!console) {
+                        console.log("initializing tab completion");
+                    }
                     return (tabCompletions) ? tabCompletions.length : 0;
                 }
 
                 function tabCompletion(term, tabCount) {
-                    /*if (console) {
-                console.log("tabCount is: " + tabCount.toString());
-                console.log("tabCompletions are: " + tabCompletions.toString());
-            }*/
+                    /*if (!!console) {
+                        console.log("tabCount is: " + tabCount.toString());
+                        console.log("tabCompletions are: " + tabCompletions.toString());
+                    }*/
+                    
                     if (tabCompletions) {
                         term.set_command(tabCompletions[tabCount]);
                     }
-                    /*if (console) {
-                console.log("tab completing");
-            }*/
+                    
+                    /*if (!!console) {
+                        console.log("tab completing");
+                    }*/
                 }
 
                 function tabCompletionEnd() {
-                    /*if (console) {
-            console.log("ending tab completion");
-            }*/
+                    if (!!console) {
+                        console.log("ending tab completion");
+                    }
+                }
+                function tabCompletionNoHints() {
+
+                    var tip = $('.tip_no_hints');
+
+                    //Absolute position the tooltip according to mouse position
+                    tip.css({  top: 10, left: 10 });
+
+                    tip.fadeIn(function() {
+                        window.setTimeout(function() {
+                            tip.fadeOut('slow');
+                        }, 1000);
+                    });
+
+                    /*if (!!console) {
+                        console.log("tab completion found no hints");
+                    }*/
                 }
             });
 
@@ -132,7 +146,7 @@
                         data: datastring,
                         processData: false,
                         cache: false,
-                        async: true
+                        async: false
                     }).done(doneFunction);
                 if (typeof(errorFunction) != "undefined") {
                     ajax.fail(errorFunction);
@@ -154,8 +168,8 @@
                                 setTimeout(function() {
                                     getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                         function(pollJson) {
-                                            var data = JSON.parse(pollJson.d);
-                                            if (data["status"] == "working") {
+                                            var jsonData = JSON.parse(pollJson.d);
+                                            if (jsonData["status"] == "working") {
                                                 if (attempts >= 0) {
                                                     attempts++;
                                                     var newWait = Math.pow(initialWait, 1 + (attempts / 50));
@@ -167,11 +181,11 @@
                                                 } else {
                                                     poll(maxWait);
                                                 }
-                                            } else if (data["status"] == "partial") {
-                                                displayResult(term, data);
+                                            } else if (jsonData["status"] == "partial") {
+                                                displayResult(term, jsonData);
                                                 poll(initialWait);
                                             } else {
-                                                displayResult(term, data);
+                                                displayResult(term, jsonData);
                                             }
                                         },
                                         function(jqXHR, textStatus, errorThrown) {
@@ -209,8 +223,9 @@
         </script>
     </head>
     <body style="overflow: visible;">
-        <div id="terminal" class="terminal2"></div>
-        <div id="working" style="bottom: 0; display: none; float: right; position: fixed; right: 0;"><img src="/Console/Assets/working.gif" alt="Working"></div>
+        <a href="#" class="tip_no_hints">No hints found</a>
+        <div id="terminal"></div>
+        <div id="working"><img src="/Console/Assets/working.gif" alt="Working"></div>
     </body>
     <script>
         jQuery(document).ready(function($) {
@@ -225,4 +240,13 @@
             setTimeout(setFocusOnConsole, 1000);
         })
     </script>
+    <style>
+        .terminal, .terminal .terminal-output, 
+        .terminal .terminal-output div, 
+        .terminal .terminal-output div div, 
+        .cmd, .terminal .cmd span, .terminal .cmd div {
+            color: <%= ForegroundColor %>;
+            background-color: <%= BackgroundColor %>;
+        }
+    </style>
 </html>

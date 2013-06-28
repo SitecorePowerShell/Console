@@ -6,24 +6,28 @@
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
-      <Script Src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server" />
-      <Script Src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" />
-      <script src="/Console/Scripts/jquery-1.7.1.min.js"> </script>
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
+      <Action ID="HasFile" Disabled="true" />
+
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
+      <Script src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery-1.7.1.min.js" runat="server"></Script>
+      <Script src="/Console/Scripts/json2.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!-- Caret position in pixels -->
+      <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!-- Caret position in text (in characters/selections) -->
+      <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!-- inline suggestions -->
+      <Script src="/Console/Scripts/jquery-ui.js"></Script> <!-- for autocomplete and overlay -->
+
+      <Script src="/Console/Scripts/ise.js" runat="server"></Script>
 
       <Script Key="XPathBuilder">
         scSitecore.prototype.setModified = function(value) {
         this.modified = false;
         }
       </Script>
-      <script type="text/javascript" language="javascript">
-        function onExecute() {
-        document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../Console/Assets/working.gif' alt='Working'/&gt;";
-        }
-      </script>
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
 
-      <Action ID="HasFile" Disabled="true" />
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
@@ -44,11 +48,11 @@
               <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
                 <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
                 <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="100%"
-                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" />
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" Title="Enter your script here..."/>
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
-            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane">
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Style="padding-bottom:0px">
               <Literal Text="Result:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
               <Scrollbox ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results"
                          GridPanel.Style="padding:0px">
@@ -59,28 +63,33 @@
             </GridPanel>
           </GridPanel>
         </GridPanel>
-
-        <!-- GridPanel ID="StatusBar" Width="100%" GridPanel.Row.Height="20px" Background="white" Columns="2" CellPadding="1">
-          <Border Border="solid 1px silver" >
-           <Literal ID="StatusText" Text="" Style="padding:1px"/>
+        <Border ID="StatusBar">
+          <Border class="status-bar-panel status-bar-pos">
+            Col: <Literal ID="PosX" Text=""/>
           </Border>
-        </GridPanel-->
+          <Border class="status-bar-panel status-bar-pos">
+            Ln: <Literal ID="PosY" Text=""/>
+          </Border>
+          <Border class="status-bar-panel status-bar-text">
+            <!--Literal ID="StatusText" -->
+              Press <strong>Ctrl+Space</strong> for Auto Suggest drop down / <strong>Shift+Space</strong> for inline autocompletion / <strong>Ctrl+Enter</strong> for command help.<!--/Literal-->
+          </Border>
+        </Border>
       </GridPanel>
-      <script type="text/javascript" language="javascript">
-        jQuery(document).ready(function($) {
-
-        window.parent.focus();
-        window.focus();
-
-        function setFocusOnConsole() {
-          $('body').focus();
-          WebForm_AutoFocus('Editor');
-        }
-
-        setTimeout(setFocusOnConsole, 1000);
-        })
-      </script>
-
+      <Border ID="Tip">
+      </Border>
+      <Border ID="Help">
+        This is dialog content.
+      </Border>
+      <Border id="TipOfTheSession">
+        <Border class="ui-state-highlight ui-corner-all">
+          <p>
+            <Literal class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></Literal>
+            <p><strong> Hey! Did you know that... </strong></p>
+            <Literal ID="TipText"></Literal>
+          </p>
+        </Border>
+      </Border>
     </FormPage>
   </PowerShellIse>
 </control>

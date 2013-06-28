@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Web.UI.WebControls;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
@@ -14,13 +15,17 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
     public class PowerShellResults : BaseForm
     {
         protected JobMonitor Monitor;
+        protected Scrollbox All;
         protected Scrollbox Result;
+        protected Scrollbox Promo;
+
         public string Script { get; set; }
         public ApplicationSettings Settings { get; set; }
         public bool NonInteractive { get; set; }
@@ -28,15 +33,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Item ScriptItem { get; set; }
         protected Item CurrentItem { get; set; }
 
-        protected string BackgroundColor
-        {
-            get { return Settings.BackgroundColor.ToString().Replace("DarkBlue", "#012456"); }
-        }
-
-        protected string ForegroundColor
-        {
-            get { return Settings.ForegroundColor.ToString().Replace("DarkBlue", "#012456"); }
-        }
+        protected Literal BackgroundColor;
+        protected Literal ForegroundColor;
 
         public string PersistentId { get; set; }
 
@@ -58,9 +56,19 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 CurrentItem = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
             }
-            Settings = ApplicationSettings.GetInstance(ApplicationNames.Context);
+            Settings = ApplicationSettings.GetInstance(ApplicationNames.Context,false);
             PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
             FlushOutputBuffer = ScriptItem[ScriptItemFieldNames.PersistentSessionBufferFlush];
+            var foregroundColor = OutputLine.ProcessHtmlColor(Settings.ForegroundColor);
+            var backgroundColor= OutputLine.ProcessHtmlColor(Settings.BackgroundColor);
+
+            All.Style.Add("color", foregroundColor);
+            All.Style.Add("background-color", backgroundColor);
+            Promo.Style.Add("color", foregroundColor);
+            Promo.Style.Add("background-color", backgroundColor);
+            Result.Style.Add("color", foregroundColor);
+            Result.Style.Add("background-color", backgroundColor);
+
 
             if (Monitor == null)
             {
@@ -89,7 +97,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         public void Execute()
         {
-            ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, true);
+            ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             string contextScript = string.Format("Set-HostProperty -HostWidth 80\n{0}\n{1}",
                                                  scriptSession.Settings.Prescript,
                                                  ScriptSession.GetDataContextSwitch(CurrentItem));

@@ -13,9 +13,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 {
     public class ApplicationSettings
     {
+/*
+        public const string SettingsDb = "core";
         private const string SettingsItemPath = "/sitecore/content/Applications/PowerShell/Settings/";
-        private const string IseSettingsItemAllUsers = "All Users";
-        private const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
+*/
+        public const string SettingsDb = "master";
+        public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
+        public const string IseSettingsItemAllUsers = "All Users";
+        public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
 
         private static readonly Dictionary<string, ApplicationSettings> instances =
             new Dictionary<string, ApplicationSettings>();
@@ -35,6 +40,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
         public string ApplicationName { get; private set; }
+
+        public static string GetSettingsPath(string applicationName, bool personalizedSettings)
+        {
+            return SettingsItemPath + GetSettingsName(applicationName, personalizedSettings);
+        }
+
+        public static string GetSettingsName(string applicationName, bool personalizedSettings)
+        {
+            return applicationName +
+                   (personalizedSettings
+                        ? "/" + CurrentDomain + "/" + CurrentUserName
+                        : "/All Users");
+        }
 
         public string AppSettingsPath
         {
@@ -66,12 +84,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
             return GetInstance(applicationName, true);
         }
 
+        internal static void ReloadInstance(string applicationName, bool personalizedSettings)
+        {
+            string settingsPath = GetSettingsName(applicationName, personalizedSettings);
+            if (instances.ContainsKey(settingsPath))
+            {
+                instances.Remove(settingsPath);
+            }
+        }
+
         public static ApplicationSettings GetInstance(string applicationName, bool personalizedSettings)
         {
-            string settingsPath = applicationName +
-                                  (personalizedSettings
-                                       ? "/" + CurrentDomain + "/" + CurrentUserName
-                                       : "/All Users");
+            string settingsPath = GetSettingsName(applicationName,personalizedSettings);
             ApplicationSettings instance = null;
             lock (instances)
             {
@@ -91,13 +115,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 
         private Item GetSettingsDto()
         {
-            Database coreDb = Factory.GetDatabase("core");
+            Database coreDb = Factory.GetDatabase(SettingsDb);
             return coreDb.GetItem(CurrentUserSettingsPath) ?? coreDb.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
         {
-            Database currentDb = Factory.GetDatabase("core");
+            Database currentDb = Factory.GetDatabase(SettingsDb);
             string appSettingsPath = AppSettingsPath;
             Item currentUserItem = currentDb.GetItem(CurrentUserSettingsPath);
             if (currentUserItem == null)

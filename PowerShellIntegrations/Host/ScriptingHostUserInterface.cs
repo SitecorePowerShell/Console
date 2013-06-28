@@ -47,15 +47,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void Write(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI);
             OutputLine lastline = Output[Output.Count - 1];
-            if (lastline.LineType == OutputLineType.Output && lastline.ForegroundColor == rawUi.ForegroundColor &&
-                lastline.BackgroundColor == RawUI.BackgroundColor)
+            if (!lastline.Terminated)
             {
                 lastline.Text += value;
+                if (value.EndsWith("\n"))
+                {
+                    lastline.Terminated = true;
+                }
             }
             else
             {
+                var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, false);
                 Output.AddRange(splitter);
             }
         }
@@ -63,45 +66,45 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI.BufferSize.Width, foregroundColor,
-                                              backgroundColor);
+                                              backgroundColor, false);
             Output.AddRange(splitter);
         }
 
         public override void WriteLine(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI);
+            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI, true);
             Output.AddRange(splitter);
         }
 
         public override void WriteErrorLine(string value)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width, ConsoleColor.Red,
-                                              ConsoleColor.Black);
+                                              ConsoleColor.Black, true);
             Output.AddRange(splitter);
         }
 
         public override void WriteDebugLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Debug, message, RawUI);
+            var splitter = new BufferSplitterCollection(OutputLineType.Debug, message, RawUI, true);
             Output.AddRange(splitter);
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Progress, record.StatusDescription, RawUI);
+            var splitter = new BufferSplitterCollection(OutputLineType.Progress, record.StatusDescription, RawUI, false);
             Output.AddRange(splitter);
         }
 
         public override void WriteVerboseLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, message, RawUI);
+            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, message, RawUI, true);
             Output.AddRange(splitter);
         }
 
         public override void WriteWarningLine(string message)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Warning, message, RawUI.BufferSize.Width,
-                                              ConsoleColor.Yellow, ConsoleColor.Black);
+                                              ConsoleColor.Yellow, ConsoleColor.Black, true);
             Output.AddRange(splitter);
         }
 

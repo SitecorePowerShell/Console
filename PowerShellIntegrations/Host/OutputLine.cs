@@ -12,59 +12,98 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public const string FormatResponseJsterm = "jsterm";
 
         public OutputLine(OutputLineType outputLineType, string value, ConsoleColor foregroundColor,
-                          ConsoleColor backgroundColor)
+                          ConsoleColor backgroundColor, bool terminated)
         {
             LineType = outputLineType;
             Text = value;
             ForegroundColor = foregroundColor;
             BackgroundColor = backgroundColor;
+            Terminated = terminated;
         }
 
         public OutputLineType LineType { get; internal set; }
         public string Text { get; internal set; }
         public ConsoleColor ForegroundColor { get; internal set; }
         public ConsoleColor BackgroundColor { get; internal set; }
+        public bool Terminated { get; internal set; }
 
         public void GetHtmlLine(StringBuilder output)
         {
+            var outString = Terminated ? Text.TrimEnd() : Text;
+
             output.AppendFormat(
-                "<span style='background-color:{0};color:{1};'>{2}</span>\r\n",
-                BackgroundColor.ToString().Replace("DarkBlue", "#012456"),
-                ForegroundColor.ToString().Replace("DarkBlue", "#012456"),
-                HttpUtility.HtmlEncode(Text.TrimEnd()));
+                Terminated
+                    ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
+                    : "<span style='background-color:{0};color:{1};'>{2}</span>",
+                ProcessHtmlColor(BackgroundColor),
+                ProcessHtmlColor(ForegroundColor),
+                HttpUtility.HtmlEncode(outString));
         }
 
         public string ToHtmlString()
         {
+            var outString = Terminated ? Text.TrimEnd() : Text;
             return String.Format(
-                "<span style='background-color:{0};color:{1};'>{2}</span>\r\n",
-                BackgroundColor.ToString().Replace("DarkBlue", "#012456"),
-                ForegroundColor.ToString().Replace("DarkBlue", "#012456"),
-                HttpUtility.HtmlEncode(Text.TrimEnd()));
+                Terminated
+                    ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
+                    : "<span style='background-color:{0};color:{1};'>{2}</span>",
+                ProcessHtmlColor(BackgroundColor),
+                ProcessHtmlColor(ForegroundColor),
+                HttpUtility.HtmlEncode(outString));
+        }
+
+        public static string ProcessHtmlColor(ConsoleColor color)
+        {
+            switch (color)
+            {
+                case (ConsoleColor.DarkBlue):
+                    return "#012456";
+                case (ConsoleColor.Green):
+                    return "Lime";
+                default:
+                    return color.ToString();
+            }
+        }
+
+        public static Color ProcessTerminalColor(ConsoleColor color)
+        {
+            switch (color)
+            {
+                case (ConsoleColor.DarkBlue):
+                    return Color.FromArgb(1, 0x24, 0x56);
+                case (ConsoleColor.Green):
+                    return Color.LimeGreen;
+                default:
+                    return Color.FromName(color.ToString());
+            }            
         }
 
         public void GetTerminalLine(StringBuilder output)
             //, ConsoleColor HostBackgroundColor, ConsoleColor HostForegroundColor)
         {
-            Color htmlBackgroundColor = BackgroundColor == ConsoleColor.DarkBlue
-                                            ? Color.FromArgb(1, 0x24, 0x56)
-                                            : Color.FromName(BackgroundColor.ToString());
-            Color htmlForegroundColor = Color.FromName(ForegroundColor.ToString());
+            var outString = Terminated ? Text.TrimEnd() : Text;
+            Color htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
+            Color htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
             output.AppendFormat(
-                "[[;#{0}{1}{2};#{3}{4}{5}]{6}] \r\n",
+                Terminated
+                    ? "[[;#{0}{1}{2};#{3}{4}{5}]{6}]\r\n"
+                    : "[[;#{0}{1}{2};#{3}{4}{5}]{6}]",
                 htmlForegroundColor.R.ToString("X2"),
                 htmlForegroundColor.G.ToString("X2"),
                 htmlForegroundColor.B.ToString("X2"),
                 htmlBackgroundColor.R.ToString("X2"),
                 htmlBackgroundColor.G.ToString("X2"),
                 htmlBackgroundColor.B.ToString("X2"),
-                HttpUtility.HtmlEncode(Text.TrimEnd()).Replace("[", "%((%").Replace("]", "%))%"));
+                HttpUtility.HtmlEncode(outString).Replace("[", "%((%").Replace("]", "%))%"));
         }
 
         public void GetPlainTextLine(StringBuilder output)
         {
             output.Append(Text);
-            output.Append("\n");
+            if (Terminated)
+            {
+                output.Append("\n");
+            }
         }
 
         public void GetLine(StringBuilder temp, string stringFormat)

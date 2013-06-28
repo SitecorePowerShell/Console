@@ -12,22 +12,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private readonly OutputLineType type;
         private readonly int width;
         private string value;
+        private bool terminated;
 
-        public BufferSplitterCollection(OutputLineType type, string value, PSHostRawUserInterface host)
+        public BufferSplitterCollection(OutputLineType type, string value, PSHostRawUserInterface host, bool terminated)
         {
             this.type = type;
             this.value = value;
+            this.terminated = terminated;
             width = host.BufferSize.Width;
             foregroundColor = host.ForegroundColor;
             backgroundColor = host.BackgroundColor;
         }
 
         public BufferSplitterCollection(OutputLineType type, string value, int width, ConsoleColor foregroundColor,
-                              ConsoleColor backgroundColor)
+                              ConsoleColor backgroundColor, bool terminated)
         {
             this.type = type;
             this.value = value;
             this.width = width;
+            this.terminated = terminated;
             this.foregroundColor = foregroundColor;
             this.backgroundColor = backgroundColor;
         }
@@ -36,10 +39,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             while (value.Length > width)
             {
-                yield return new OutputLine(type, value.Substring(0, width), foregroundColor, backgroundColor);
+                yield return new OutputLine(type, value.Substring(0, width), foregroundColor, backgroundColor, true);
                 value = value.Substring(width);
             }
-            yield return new OutputLine(type, value, foregroundColor, backgroundColor);
+            yield return new OutputLine(type, value, foregroundColor, backgroundColor, terminated);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

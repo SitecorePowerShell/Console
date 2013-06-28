@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Cognifide.PowerShell.SitecoreIntegrations.Applications;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -50,17 +51,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             if (isAbsolute)
             {
-                IEnumerable<PathInfo> rpResult = session.ExecuteScriptPart(string.Format("Resolve-Path \"{0}*\"",
-                                                                                         lastToken), false, true)
-                                                        .Cast<PathInfo>();
+                string commandLine = string.Format("Resolve-Path \"{0}*\"", lastToken);
+                var psResults = session.ExecuteScriptPart(commandLine, false, true);
+                IEnumerable<PathInfo> rpResult = psResults.Cast<PathInfo>();
                 result.AddRange(rpResult.Select(l => truncatedCommand + l.Path));
             }
             else
             {
-                IEnumerable<string> rpResult =
-                    session.ExecuteScriptPart(
-                        string.Format("Resolve-Path \"{0}*\" -Relative",
-                                      lastToken), false, true).Cast<string>();
+                string commandLine = string.Format("Resolve-Path \"{0}*\" -Relative", lastToken);
+                IEnumerable<string> rpResult = session.ExecuteScriptPart(commandLine, false, true).Cast<string>();
                 result.AddRange(rpResult.Select(l =>
                                                 l.Contains(" ")
                                                     ? string.Format("{0} \"{1}\"", truncatedCommand, l)

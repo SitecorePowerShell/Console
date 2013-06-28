@@ -9,7 +9,7 @@
         <TableHeaders>
           <TableColumnHeader>
             <Label>Name</Label>
-            <Width>30</Width>
+            <Width>32</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -19,7 +19,7 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Languages</Label>
-            <Width>16</Width>
+            <Width>24</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>

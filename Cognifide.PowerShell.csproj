@@ -145,6 +145,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\GetUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseShellCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\GetFileCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ExecuteShellCommandCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\PromptMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShellCommandInItemContextMessage.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\WriteLogCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\BufferSplitterCollection.cs" />
     <Compile Include="PowerShellIntegrations\Host\CommandCompletion.cs" />
+    <Compile Include="PowerShellIntegrations\Host\CommandHelp.cs" />
     <Compile Include="PowerShellIntegrations\Host\OutputBuffer.cs" />
     <Compile Include="PowerShellIntegrations\Host\OutputLine.cs" />
     <Compile Include="PowerShellIntegrations\Host\OutputLineType.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
     <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
@@ -217,6 +220,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
@@ -261,22 +265,37 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Console\Assets\Splitter.png" />
     <Content Include="Console\Assets\working.gif" />
     <Content Include="Console\Layouts\PowerShellTerminal.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Console\Scripts\ise.js" />
     <Content Include="Console\Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Console\Scripts\jquery-ui.js" />
+    <Content Include="Console\Scripts\jquery.a-tools-1.4.1.js" />
+    <Content Include="Console\Scripts\jquery.asuggest.js" />
+    <Content Include="Console\Scripts\jquery.caretposition.js" />
     <Content Include="Console\Scripts\jquery.hotkeys.js" />
     <Content Include="Console\Scripts\jquery.mousewheel-min.js" />
     <Content Include="Console\Scripts\jquery.terminal.js" />
     <Content Include="Console\Scripts\json2.js" />
+    <Content Include="Console\Scripts\PsHSplitter.js" />
     <Content Include="Console\Scripts\split.js" />
     <Content Include="Console\Services\PowerShellWebService.asmx" />
     <Content Include="Console\Services\RemoteAutomation.asmx" />
     <Content Include="Console\Styles\Console.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
+    <Content Include="Console\Styles\jquery.ui.all.css" />
+    <Content Include="Console\Styles\jquery.ui.autocomplete.css" />
+    <Content Include="Console\Styles\jquery.ui.base.css" />
+    <Content Include="Console\Styles\jquery.ui.core.css" />
+    <Content Include="Console\Styles\jquery.ui.theme.css" />
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\DownloadFile.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml">
@@ -291,6 +310,8 @@
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellNewScript.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="sitecore\shell\Override\Controls\Splitters\HSplitter.xml" />
+    <Content Include="Cognifide.PowerShell.dll-Help.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

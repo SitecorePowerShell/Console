@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
@@ -72,6 +76,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                          path, filter, updatedPath, updatedFilter);
                 throw;
             }
+        }
+
+        protected override string[] ExpandPath(string path)
+        {
+            path = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
+            string parent = GetParentFromPath(path);
+            string name = GetLeafFromPath(path).Trim('*');
+            if (parent.Contains("-") || parent.Contains(" "))
+            {
+                string[] segments = parent.Split(new char[]{'/'},StringSplitOptions.RemoveEmptyEntries);
+                StringBuilder escapedPath = new StringBuilder(path.Length+segments.Length*2+4);
+                for (int i = 0; i < segments.Length;i++)
+                {
+                    escapedPath.AppendFormat("/#{0}#", segments[i]);
+                }
+                parent = escapedPath.ToString();
+            }
+            Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
+                string.Format("/sitecore{0}/*[startswith(@@Name, '{1}')] ",
+                parent,name));
+            var results = items.Select(
+            item => string.Format("{0}:{1}",
+                item.Database.Name,item.Paths.Path.Substring(9).Replace('/','\\'))).ToArray();
+            return results;
         }
 
         private static string GetParentFromPath(string path)
