@@ -319,7 +319,9 @@ a.ps-link
 
 #TipOfTheSession {
     padding-bottom: 6px;
-    width: 360px;
+    width: 400px;
+    padding-right: 30px;
+    float: right;
 }
 
 .ui-tooltip

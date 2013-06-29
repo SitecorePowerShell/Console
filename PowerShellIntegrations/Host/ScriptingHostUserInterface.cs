@@ -19,6 +19,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     {
         private readonly ScriptingHostRawUserInterface rawUi;
 
+
         public ScriptingHostUserInterface(ApplicationSettings settings)
         {
             Output = new OutputBuffer();

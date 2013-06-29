@@ -1,0 +1,86 @@
+----item----
+version: 1
+id: {C02D13EE-8F7C-426D-8623-EEA082B59A79}
+database: master
+path: /sitecore/system/Modules/PowerShell/Settings/RemoteAutomation/All Users
+parent: {86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}
+name: All Users
+master: {00000000-0000-0000-0000-000000000000}
+template: {69316117-03A6-4679-A34A-21E8CE8701D5}
+templatekey: PowerShell Console Settings
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 23
+
+People/32x32/users1.png
+----version----
+language: en
+version: 1
+revision: df821679-9614-480a-8d34-13599b567847
+
+----field----
+field: {F59378A5-F21D-4E07-B7DE-7986DDA3A510}
+name: HostWidth
+key: hostwidth
+content-length: 3
+
+200
+----field----
+field: {F810EEC7-9A73-43E6-84C1-36E4951D2B3E}
+name: ForegroundColor
+key: foregroundcolor
+content-length: 5
+
+White
+----field----
+field: {AEEB1BB0-87B9-4E16-B5DE-D4CC544A992F}
+name: BackgroundColor
+key: backgroundcolor
+content-length: 8
+
+DarkBlue
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20111016T133400
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+df821679-9614-480a-8d34-13599b567847
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20120907T152453:634826282936397726
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

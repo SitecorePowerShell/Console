@@ -48,7 +48,7 @@
               <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
                 <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
                 <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="100%"
-                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" Title="Enter your script here..."/>
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false"/>
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
@@ -72,7 +72,7 @@
           </Border>
           <Border class="status-bar-panel status-bar-text">
             <!--Literal ID="StatusText" -->
-              Press <strong>Ctrl+Space</strong> for Auto Suggest drop down / <strong>Shift+Space</strong> for inline autocompletion / <strong>Ctrl+Enter</strong> for command help.<!--/Literal-->
+              Press <strong>Ctrl+Space</strong> for Auto Suggest drop down / <strong>Shift+Space</strong> for inline autocompletion / <strong>Shift+Enter</strong> for command help.<!--/Literal-->
           </Border>
         </Border>
       </GridPanel>

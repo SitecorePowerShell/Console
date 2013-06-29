@@ -1,0 +1,93 @@
+----item----
+version: 1
+id: {25C829E2-02B8-4132-8065-4F8606960AB4}
+database: core
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleSettings
+parent: {BB48D97A-3B30-4EC2-9F2B-88CE27970983}
+name: EditConsoleSettings
+master: {00000000-0000-0000-0000-000000000000}
+template: {1AB4F9AD-B004-413C-8924-3E07143A614B}
+templatekey: Field Editor Button
+
+----field----
+field: {4431914A-C40B-437C-8ADD-D2ED12CC8CC3}
+name: Icon
+key: icon
+content-length: 27
+
+people/16x16/cubes_blue.png
+----field----
+field: {CF738220-908D-4C3F-9482-32E625DAF13C}
+name: Fields
+key: fields
+content-length: 63
+
+HostWidth|ForegroundColor|BackgroundColor|UseTypeInfo|PreScript
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+200
+----version----
+language: en
+version: 1
+revision: 83871692-7e7b-42e8-abfe-3c1ed46fafc0
+
+----field----
+field: {108D3A63-BAAA-4560-86D8-3A112ED84717}
+name: Header
+key: header
+content-length: 23
+
+Script runtime settings
+----field----
+field: {5F0812AF-D370-4292-AFEE-F26A39B7406D}
+name: Tooltip
+key: tooltip
+content-length: 0
+
+
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20090528T094300
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+83871692-7e7b-42e8-abfe-3c1ed46fafc0
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130625T135341:635077652219083672
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Console</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.0 (RC7)</Version>
+      <Version>2.0 Final</Version>
       <Revision />
       <License />
       <Comment />
@@ -21,6 +21,18 @@ behind the scripting environment.
 Review the script before running it, please.
 
 NEW:
+- 2.0 Final
+- Massive ISE usability improvements
+  - autosuggest
+  - autocomplete
+  - Command help on Shift+Enter
+  - "Did you know" tips.
+  - Settings editing for ISE, Script Results and Console
+- Get-File commandlet added
+- jsTerminal and other javascript libraries updated.
+- code refactoring to improve compliance with MS library coding guidelines.
+- code re-organization to bring some peace to the previous chaos.
+- item provider is now ProviderCapabilities.ExpandWildcards enabled - uses Sitecore Query.
 - 2.0 (RC7)
  - Events hooks added - you can now add support for events in your scripts by uncommenting the relevant section in the Cognifide.Powershell.config and create scripts in the appropriate locations in the "Event Handlers" script library (sample scripts for some events added). Courtesy  of the suggestion by Kieran Marron.
 - 2.0 (RC6)
@@ -172,24 +184,35 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/Console/Assets/toplogo.png</x-item>
         <x-item>/Console/Assets/working.gif</x-item>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx</x-item>
-        <x-item>/Console/Scripts/jquery-1.7.1.min.js</x-item>
+        <x-item>/Console/Services/PowerShellWebService.asmx</x-item>
+        <x-item>/Console/Services/RemoteAutomation.asmx</x-item>
+        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
+        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
+        <x-item>/Console/Scripts/ise.js</x-item>
+        <x-item>/Console/Scripts/jquery.asuggest.js</x-item>
+        <x-item>/Console/Scripts/jquery.a-tools-1.4.1.js</x-item>
+        <x-item>/Console/Scripts/jquery.caretposition.js</x-item>
         <x-item>/Console/Scripts/jquery.hotkeys.js</x-item>
         <x-item>/Console/Scripts/jquery.mousewheel-min.js</x-item>
         <x-item>/Console/Scripts/jquery.terminal.js</x-item>
+        <x-item>/Console/Scripts/jquery-1.7.1.min.js</x-item>
+        <x-item>/Console/Scripts/jquery-ui.js</x-item>
         <x-item>/Console/Scripts/json2.js</x-item>
         <x-item>/Console/Scripts/PsHSplitter.js</x-item>
         <x-item>/Console/Scripts/split.js</x-item>
-        <x-item>/Console/Services/PowerShellWebService.asmx</x-item>
-        <x-item>/Console/Services/RemoteAutomation.asmx</x-item>
         <x-item>/Console/Styles/Console.css</x-item>
         <x-item>/Console/Styles/jquery.terminal.css</x-item>
+        <x-item>/Console/Styles/jquery.ui.all.css</x-item>
+        <x-item>/Console/Styles/jquery.ui.autocomplete.css</x-item>
+        <x-item>/Console/Styles/jquery.ui.base.css</x-item>
+        <x-item>/Console/Styles/jquery.ui.core.css</x-item>
+        <x-item>/Console/Styles/jquery.ui.theme.css</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/ConfirmChoice.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/DownloadFile.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/GetStringResponse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellIse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellNewScript.xml</x-item>
-        <x-item>/sitecore/shell/Applications/PowerShell/ConfirmChoice.xml</x-item>
-        <x-item>/sitecore/shell/Applications/PowerShell/GetStringResponse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResults.xml</x-item>
-        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
-        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
       </Entries>
       <Converter>
         <FileToEntryConverter>
@@ -218,17 +241,9 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/core/sitecore/layout/Layouts/Applications/PowerShell ISE Sheer/{D8E646FE-C705-4CE2-8C10-CACC6DB32334}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/PowerShell/{6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/{83B665CB-DE30-453E-AD18-338C851BBA46}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Console/{A6F7AE21-E569-492B-9122-578F0E696DCB}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Console/All Users/{6CB327FA-4783-4DF6-B3C2-F396073D7962}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Context/{BCE6F88B-4128-4292-BD13-0402358BFE7C}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Context/All Users/{D237B896-675E-4D63-B86E-6BA898BBBFF8}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Default/{6B3434F0-4398-4BE8-9C14-73EFC3367FC4}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/Default/All Users/{910D33B7-AB6E-429A-9E56-8923346BED66}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/ISE/{0D691C42-71E5-44C3-8CDE-6A05FA88DFF8}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/ISE/All Users/{DB19F00D-05F0-4589-8807-189CE2807224}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/RemoteAutomation/{86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/PowerShell/Settings/RemoteAutomation/All Users/{C02D13EE-8F7C-426D-8623-EEA082B59A79}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script/{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
       </Entries>
       <SkipVersions>False</SkipVersions>
       <Converter>
@@ -252,10 +267,6 @@ http://blog.najmanowicz.com/</Readme>
     <xitems>
       <Entries>
         <x-item>/master/sitecore/system/Tasks/Commands/PowerShellScriptCommand/{F5F55071-697B-4769-A992-2A755FC379E5}/invariant/0</x-item>
-        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/{25F45623-1047-4633-BCD2-310F592EB771}/invariant/0</x-item>
-        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/{C1E5CE93-CBD8-4BA5-B49F-16B5B8887CBB}/invariant/0</x-item>
-        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/After Execution/{D8662901-DE9B-47E4-A327-64F05F94BB1E}/invariant/0</x-item>
-        <x-item>/master/sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/Before Execution/{7316EE03-242B-40FA-8FAD-EAC85168117C}/invariant/0</x-item>
       </Entries>
       <SkipVersions>False</SkipVersions>
       <Converter>
@@ -275,31 +286,6 @@ http://blog.najmanowicz.com/</Readme>
       <Include />
       <Exclude />
       <Name>Master settings</Name>
-    </xitems>
-    <xitems>
-      <Entries>
-        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script/{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
-      </Entries>
-      <SkipVersions>False</SkipVersions>
-      <Converter>
-        <ItemToEntryConverter>
-          <Transforms>
-            <InstallerConfigurationTransform>
-              <Options>
-                <BehaviourOptions>
-                  <ItemMode>Overwrite</ItemMode>
-                  <ItemMergeMode>Undefined</ItemMergeMode>
-                </BehaviourOptions>
-              </Options>
-            </InstallerConfigurationTransform>
-          </Transforms>
-        </ItemToEntryConverter>
-      </Converter>
-      <Include />
-      <Exclude />
-      <Name>Context Menu</Name>
     </xitems>
     <items>
       <Database>master</Database>
@@ -531,7 +517,7 @@ http://blog.najmanowicz.com/</Readme>
     </items>
     <items>
       <Database>core</Database>
-      <Root>{6857D035-AB70-4DAC-8E7F-C6534BB8141F}</Root>
+      <Root>{6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}</Root>
       <SkipVersions>False</SkipVersions>
       <Converter>
         <ItemToEntryConverter>
@@ -584,11 +570,11 @@ http://blog.najmanowicz.com/</Readme>
         </ItemLanguageFilter>
       </Include>
       <Exclude />
-      <Name>App New ISE</Name>
+      <Name>Applications</Name>
     </items>
     <items>
-      <Database>core</Database>
-      <Root>{C6771AF0-903F-432C-8595-E84FE79D8B6C}</Root>
+      <Database>master</Database>
+      <Root>{DADC7C07-2606-4F1C-98C6-FB8162E55257}</Root>
       <SkipVersions>False</SkipVersions>
       <Converter>
         <ItemToEntryConverter>
@@ -596,7 +582,7 @@ http://blog.najmanowicz.com/</Readme>
             <InstallerConfigurationTransform>
               <Options>
                 <BehaviourOptions>
-                  <ItemMode>Overwrite</ItemMode>
+                  <ItemMode>Undefined</ItemMode>
                   <ItemMergeMode>Undefined</ItemMergeMode>
                 </BehaviourOptions>
               </Options>
@@ -623,7 +609,7 @@ http://blog.najmanowicz.com/</Readme>
         </ItemDateFilter>
         <ItemPublishFilter>
           <PublishDate />
-          <CheckWorkflow>True</CheckWorkflow>
+          <CheckWorkflow>False</CheckWorkflow>
         </ItemPublishFilter>
         <ItemTemplateFilter>
           <Templates />
@@ -641,7 +627,7 @@ http://blog.najmanowicz.com/</Readme>
         </ItemLanguageFilter>
       </Include>
       <Exclude />
-      <Name>App Console</Name>
+      <Name>Module</Name>
     </items>
   </Sources>
   <Converter>

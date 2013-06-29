@@ -3,16 +3,26 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web.UI;
 
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version . Minor Version . Build Number . Revision
+//
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("2.0.0.*")]
+[assembly: AssemblyFileVersion("2.0.1.0")]
+[assembly: AssemblyInformationalVersion("2.0.2.0")]
+[assembly: AssemblyProduct()
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
 [assembly: AssemblyTitle("Cognifide.PowerShell")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Cognifide PowerShell Console for Sitecore")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cognifide")]
-[assembly: AssemblyProduct("Cognifide PowerShell Plugin for Sitecore")]
-[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011")]
+[assembly: AssemblyProduct("Cognifide PowerShell Console for Sitecore")]
+[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
@@ -27,19 +37,3 @@ using System.Web.UI;
 
 [assembly: Guid("b61fbb56-aad3-4906-8d45-2ca883c101ec")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: WebResource("Cognifide.PowerShell.ConsoleResources.shortcut.js", "text/javascript")]
-[assembly: WebResource("Cognifide.PowerShell.ConsoleResources.toplogo.png", "image/png")]
-[assembly: WebResource("Cognifide.PowerShell.ConsoleResources.stewie.png", "image/png")]

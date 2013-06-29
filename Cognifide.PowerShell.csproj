@@ -244,8 +244,8 @@
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Console\Assets\stewie.png" />
-    <EmbeddedResource Include="Console\Assets\toplogo.png" />
+    <None Include="Console\Assets\stewie.png" />
+    <None Include="Console\Assets\toplogo.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -265,8 +265,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Console\Assets\Splitter.png" />
-    <Content Include="Console\Assets\working.gif" />
+    <None Include="Console\Assets\Splitter.png" />
+    <None Include="Console\Assets\working.gif" />
     <Content Include="Console\Layouts\PowerShellTerminal.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>

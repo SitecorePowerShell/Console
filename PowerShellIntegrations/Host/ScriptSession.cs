@@ -175,6 +175,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                         runspace.SessionStateProxy.SetVariable("response", HttpContext.Current.Response);
                     }
                     runspace.SessionStateProxy.SetVariable("ClientData", Context.ClientData);
+                    runspace.SessionStateProxy.SetVariable("SitecoreDataFolder", Sitecore.Configuration.Settings.DataFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreDebugFolder", Sitecore.Configuration.Settings.DebugFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreIndexFolder", Sitecore.Configuration.Settings.IndexFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreLayoutFolder", Sitecore.Configuration.Settings.LayoutFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreLogFolder", Sitecore.Configuration.Settings.LogFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder", Sitecore.Configuration.Settings.MediaFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder", Sitecore.Configuration.Settings.SerializationFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecoreTempFolder", Sitecore.Configuration.Settings.TempFolderPath);
+
                     try
                     {
                         runspace.SessionStateProxy.SetVariable("ClientPage", Context.ClientPage);

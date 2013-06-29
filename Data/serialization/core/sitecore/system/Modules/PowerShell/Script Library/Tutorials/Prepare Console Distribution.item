@@ -12,22 +12,33 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 82f427df-50f2-4b20-b009-e6135d471509
+revision: a7012b4d-e0eb-4a8a-804d-534aa1d6e046
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 544
+content-length: 1272
 
 $package = get-package "powershell console.xml"
 
-# master DB scripts - only include stuff that's not for internal testing
+##########################################################################
+# master DB scripts - only include stuff that's not for internal testing #
+##########################################################################
 $master_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
-$master_scripts | ft ProviderPath
+#$master_scripts | ft ProviderPath
 
+$master_scripts_source =  $master_scripts | New-ExplicitItemSource "Master Scripts" -InstallMode Merge -MergeMode Merge;
+$package.Sources.Add($master_scripts_source);
+
+$core_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
+#$core_scripts | ft ProviderPath
+
+#$package | Export-Package "powershell console (automate).xml"
 # cleanup user specific settings
-get-childitem -recurse "core:/content/Applications/PowerShell/Settings/" | ? { $_.ProviderPath -Match "sitecore" } | remove-item
+$settingsToCleanup = get-childitem -recurse "core:/content/Applications/PowerShell/Settings/"  | ? { $_.ProviderPath -Match "sitecore" }
+$settingsToCleanup | ft PSPath,ProvierPath -auto
+#get-childitem -recurse "core:/content/Applications/PowerShell/Settings/" | ? { $_.ProviderPath -Match "sitecore" } | remove-item
 #get-childitem -recurse | fl PSPath, PSParentPath,ItemPath,ContentPath,ProvierPath
 #Read-YesNoCancel
 ----field----
@@ -43,14 +54,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-82f427df-50f2-4b20-b009-e6135d471509
+a7012b4d-e0eb-4a8a-804d-534aa1d6e046
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130510T151143:635037955030266563
+20130515T135334:635042228149688281
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

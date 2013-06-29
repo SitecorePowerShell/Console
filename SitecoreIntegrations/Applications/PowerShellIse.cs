@@ -114,7 +114,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             "You can download files from the Website and Data folders using the <strong>Get-File</strong> commandlet.",
             "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets.",
         };
-
         protected DataContext DataContext;
         protected TreePicker DataSource;
         protected Combobox Databases;
