@@ -71,8 +71,9 @@
             Ln: <Literal ID="PosY" Text=""/>
           </Border>
           <Border class="status-bar-panel status-bar-text">
-            <!--Literal ID="StatusText" -->
-              Press <strong>Ctrl+Space</strong> for Auto Suggest drop down / <strong>Shift+Space</strong> for inline autocompletion / <strong>Shift+Enter</strong> for command help.<!--/Literal-->
+            <Literal ID="StatusTip">
+            </Literal>
+            <Image ID="RefreshHint" src="/Console/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
           </Border>
         </Border>
       </GridPanel>

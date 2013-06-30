@@ -271,6 +271,7 @@
   <ItemGroup>
     <None Include="Console\Assets\Splitter.png" />
     <None Include="Console\Assets\working.gif" />
+    <Content Include="Console\Assets\Cognifide.PowerShell.dll-Help.xml" />
     <Content Include="Console\Layouts\PowerShellTerminal.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>

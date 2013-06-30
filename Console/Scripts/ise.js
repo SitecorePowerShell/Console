@@ -5,6 +5,21 @@ function onExecute() {
 
 jQuery(document).ready(function($) {
 
+    var tips = [
+            "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
+            "If you press <strong>Shift+Space</strong> ISE sill attempt to auto-complete your statement in-line.",
+            "By pressing <strong>Ctrl+Enter</strong> you can see help for the command you've just typed.",
+            "Your script will start in the location/folder picked by the <strong>Content Item</strong> dropdown.",
+            "You can change the color of the results dialog shown to your script users using the <strong>Console</strong> ribbon button.",
+            "If you save your script in the <strong>Content Editor Context Menu</strong> it will automatically show as a context menu option for items that users Right Click in the tree and will start in the location of that item.",
+            "All your scripts that share the same <strong>Persistent Session ID</strong> can re-use variables that were created by the scripts with the same session id that were run before.",
+            "<strong>Runtime</strong> ribbon button is active only if you're editong a script from library. Save your script in script library to enable it.",
+            "<strong>Script Library</strong> comes with a wealth of samples and useful scripts that you can base your scripts upon.",
+            "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
+            "You can download files from the Website and Data folders using the <strong>Get-File</strong> commandlet.",
+            "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets."
+    ];
+    
     window.parent.focus();
     window.focus();
 
@@ -98,25 +113,50 @@ jQuery(document).ready(function($) {
     $.commandHelp = "";
     $("#Help").dialog({ autoOpen: false });
     editor.asuggest($.tabCompletions);
+    
+    var tipIndex = Math.floor(Math.random() * tips.length);
+    var tip = tips[tipIndex];
 
+    $("#TipText").html(tip);
+    $("#StatusTip").html(tip);
+    
     $("#TipOfTheSession").position({
-        my: "right bottom",
-        at: "right bottom",
-        within: $("#Editor"),
-        of: $("#Editor")
+        my: "left bottom",
+        at: "left bottom-30px",
+        within: $("#Result"),
+        of: $("#Result")
     }).css({
         right: 0,
         left: 0,
+/*
     }).mouseenter(function() {
         $("#TipOfTheSession").stop(true, true).show();
     }).mouseleave(function() {
         $("#TipOfTheSession")
             .delay(2000)
             .hide("drop", { direction: "down" }, "slow");
+*/
     }).hide()
-        .show("drop", { direction: "down" }, "slow")
-        .delay(5000)
-        .hide("drop", { direction: "down" }, "slow");
+        .show("drop", { direction: "down" }, "400")
+        .delay(2000)
+        .hide("drop", { direction: "down" }, "400",
+            function() {
+                $(".status-bar-text").animate({ backgroundColor: "#012456" }).animate({ backgroundColor: "#fff" });
+            });
+
+    $("#RefreshHint").click(function () {
+        tipIndex++;
+        if (tipIndex >= tips.length) {
+            tipIndex = 0;
+        }
+        var tip = tips[tipIndex];
+        $(".status-bar-text").animate({ backgroundColor: "#012456" },
+        function() {
+            $("#TipText").html(tip);
+            $("#StatusTip").html(tip);
+        }).animate({ backgroundColor: "#fff" });
+
+    });
 
     function _getCommandHelp(str) {
         getPowerShellResponse({ "guid": guid, "command": str }, "GetHelpForCommand",
