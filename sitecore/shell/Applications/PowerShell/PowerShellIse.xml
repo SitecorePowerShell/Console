@@ -11,6 +11,7 @@
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
 
+      <Script src="/sitecore/shell/controls/Sitecore.js" runat="server"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
       <Script src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery-1.7.1.min.js" runat="server"></Script>

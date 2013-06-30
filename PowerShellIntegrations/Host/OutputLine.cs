@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
@@ -31,25 +32,41 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
 
+            outString = HttpUtility.HtmlEncode(outString);
+            if (outString.Contains("{"))
+            {
+                outString = Regex.Replace(outString,
+                             @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
+                             "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
+                             RegexOptions.IgnoreCase);
+            }
             output.AppendFormat(
                 Terminated
                     ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
                     : "<span style='background-color:{0};color:{1};'>{2}</span>",
                 ProcessHtmlColor(BackgroundColor),
                 ProcessHtmlColor(ForegroundColor),
-                HttpUtility.HtmlEncode(outString));
+                outString);
         }
 
         public string ToHtmlString()
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
+            outString = HttpUtility.HtmlEncode(outString);
+            if (outString.Contains("{"))
+            {
+                outString = Regex.Replace(outString,
+                             @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
+                             "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
+                             RegexOptions.IgnoreCase);
+            }
             return String.Format(
                 Terminated
                     ? "<span style='background-color:{0};color:{1};'>{2}</span>\r\n"
                     : "<span style='background-color:{0};color:{1};'>{2}</span>",
                 ProcessHtmlColor(BackgroundColor),
                 ProcessHtmlColor(ForegroundColor),
-                HttpUtility.HtmlEncode(outString));
+                outString);
         }
 
         public static string ProcessHtmlColor(ConsoleColor color)

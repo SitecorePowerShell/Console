@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Text;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Engines;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Events;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
@@ -271,6 +274,35 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 args.WaitForPostBack();
             }
         }
+
+        [HandleMessage("item:load", true)]
+        protected void LoadContentEditor(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+
+
+            //Context.ClientPage.Start(this, "Action_PushToCMS");
+
+/*
+            Database dbCore = Sitecore.Configuration.Factory.GetDatabase("core");
+            Item contentEditor = dbCore.GetItem(new ID("{7EADA46B-11E2-4EC1-8C44-BE75784FF105}"));
+
+            Database dbMaster = Sitecore.Configuration.Factory.GetDatabase("master");
+            DatabaseEngines engine = new DatabaseEngines(dbMaster);
+
+            Item parentItem = dbMaster.GetItem("/sitecore/content/Home/Events/Parent/");
+
+            // Load existing related item if it exists
+            Event evt = new Event(new Guid(HttpContext.Current.Items["id"].ToString()));
+            Item item = dbMaster.SelectSingleItem("/sitecore/content/Home/Events/Parent/Item");
+*/
+
+            Sitecore.Text.UrlString parameters = new Sitecore.Text.UrlString();
+            parameters.Add("id", args.Parameters["id"]);
+            parameters.Add("fo", args.Parameters["id"]);
+            Sitecore.Shell.Framework.Windows.RunApplication("Content Editor", parameters.ToString());
+        }
+
 
         [HandleMessage("ise:new", true)]
         protected void NewScript(ClientPipelineArgs args)

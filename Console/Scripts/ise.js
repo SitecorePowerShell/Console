@@ -74,12 +74,6 @@ jQuery(document).ready(function($) {
 
     var editor = $($('#Editor')[0]);
 
-    function htmlEncode(value) {
-        //create a in-memory div, set it's inner text(which jQuery automatically encodes)
-        //then grab the encoded contents back out.  The div never exists on the page.
-        return $('<div/>').text(value).html();
-    }
-
     editor.keypress(function(event) {
         if (event.which === 32 && event.ctrlKey) {
             event.preventDefault();
@@ -128,14 +122,6 @@ jQuery(document).ready(function($) {
     }).css({
         right: 0,
         left: 0,
-/*
-    }).mouseenter(function() {
-        $("#TipOfTheSession").stop(true, true).show();
-    }).mouseleave(function() {
-        $("#TipOfTheSession")
-            .delay(2000)
-            .hide("drop", { direction: "down" }, "slow");
-*/
     }).hide()
         .show("drop", { direction: "down" }, "400")
         .delay(2000)
@@ -164,7 +150,7 @@ jQuery(document).ready(function($) {
                 var data = JSON.parse(json.d);
                 $.commandHelp = data[0];
             });
-    };
+    }
 
     function _getTabCompletions(str) {
         getPowerShellResponse({ "guid": guid, "command": str }, "CompleteCommand",
@@ -172,16 +158,15 @@ jQuery(document).ready(function($) {
                 var data = JSON.parse(json.d);
                 $.tabCompletions = data;
             });
-    };
+    }
     
-    var tip = $("#Tip");
     editor.autocomplete({
         appendTo: "#Tip",
         position: { my: "left top", at: "middle center" },
         source: function (request, response) {
             var str = _leftMatch(request.term, editor);
             _getTabCompletions(str);
-            str = (str != null) ? str : "";
+            str = (str !== null) ? str : "";
             response($.ui.autocomplete.filter($.tabCompletions, str));
         },
         //minLength: 2,  // does have no effect, regexpression is used instead
@@ -225,9 +210,10 @@ jQuery(document).ready(function($) {
         },
         search: function (event, ui) {
             var m = _leftMatch(this.value, this);
-            return (m != null)
+            return (m !== null);
         }
     });
+    
     editor.autocomplete("disable");
 
     function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
@@ -242,12 +228,8 @@ jQuery(document).ready(function($) {
                 processData: false,
                 cache: false,
                 async: false
-            }).done(doneFunction);//.fail(errorFunction);
-        /*
-                if (typeof(errorFunction) != "undefined") {
-                    ajax.fail(errorFunction);
-                }
-        */
+            }).done(doneFunction)
+              .fail(errorFunction);
     }
     
 });

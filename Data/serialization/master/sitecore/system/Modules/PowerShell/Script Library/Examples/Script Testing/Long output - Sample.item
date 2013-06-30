@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {3EB28CCB-E066-4F8E-947D-B76A976E205E}
+id: {FD61509C-AC87-46B2-B4C4-A2E9FEB8A135}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Examples/Script Testing/Long Running Script
+path: /sitecore/system/Modules/PowerShell/Script Library/Examples/Script Testing/Long output - Sample
 parent: {988FEC09-7846-492C-A09B-1981DCD72F00}
-name: Long Running Script
+name: Long output - Sample
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -12,37 +12,41 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 7eb93f8a-a6eb-418f-b43f-992378a175f2
+revision: 9ca00349-9270-4cbe-9181-ecbd7cded387
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 36
+content-length: 50
 
-Start-Sleep -s 10
-Write-host "Done!"
+$i = 1
+do {
+Write-Host $i
+$i++
+}
+while ($i -le 50)
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130510T005307
+20130509T234041
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-7eb93f8a-a6eb-418f-b43f-992378a175f2
+9ca00349-9270-4cbe-9181-ecbd7cded387
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130515T135846:635042231260459766
+20130515T135836:635042231169912891
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

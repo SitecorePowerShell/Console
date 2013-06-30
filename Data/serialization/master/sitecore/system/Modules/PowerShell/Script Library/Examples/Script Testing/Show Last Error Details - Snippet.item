@@ -1,0 +1,69 @@
+----item----
+version: 1
+id: {7E7C6105-9A15-4864-9BC8-4EB91D0568C7}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Examples/Script Testing/Show Last Error Details - Snippet
+parent: {988FEC09-7846-492C-A09B-1981DCD72F00}
+name: Show Last Error Details - Snippet
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: d6f3c73a-bbd1-4433-b7d6-da5ec83110ac
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 514
+
+#
+# Script from: 
+# http://stackoverflow.com/questions/795751/can-i-get-detailed-exception-stacktrace-in-powershell
+#
+# Append the following code to your script to see the last error
+#
+
+function Resolve-Error ($ErrorRecord=$Error[0])
+{
+   $ErrorRecord | Format-List * -Force
+   $ErrorRecord.InvocationInfo |Format-List *
+   $Exception = $ErrorRecord.Exception
+   for ($i = 0; $Exception; $i++, ($Exception = $Exception.InnerException))
+   {   "$i" * 80
+       $Exception |Format-List * -Force
+   }
+}
+
+Resolve-Error
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130630T145503
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+d6f3c73a-bbd1-4433-b7d6-da5ec83110ac
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130630T145551:635082009514323984
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

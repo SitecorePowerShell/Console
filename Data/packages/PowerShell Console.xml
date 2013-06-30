@@ -213,6 +213,8 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellIse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellNewScript.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResults.xml</x-item>
+        <x-item>/Console/Assets/Cognifide.PowerShell.dll-Help.xml</x-item>
+        <x-item>/Console/Assets/refresh.png</x-item>
       </Entries>
       <Converter>
         <FileToEntryConverter>
