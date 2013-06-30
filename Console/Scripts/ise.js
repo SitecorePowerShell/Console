@@ -144,7 +144,7 @@ jQuery(document).ready(function($) {
                 $(".status-bar-text").animate({ backgroundColor: "#012456" }).animate({ backgroundColor: "#fff" });
             });
 
-    $("#RefreshHint").click(function () {
+    $(".status-bar-text").click(function () {
         tipIndex++;
         if (tipIndex >= tips.length) {
             tipIndex = 0;
