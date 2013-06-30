@@ -31,26 +31,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             "[[;#f00;#000]Exception: {0}]\r\n" + "[[;#f00;#000]Type: {1}]\r\n" + "[[;#f00;#000]Stack trace:\r\n{2}]";
 
         private const string ConsoleInnerExceptionPrefix = "\r\n[[b;#fff;#F00]Inner ] {0}";
-        private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
         private readonly ScriptingHost host;
         private readonly Runspace runspace;
 
         private bool disposed;
         private bool initialized;
-
-        static ScriptSession()
-        {
-            XmlNodeList cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
-            foreach (XmlElement cmdltToInclude in cmdltsToIncludes)
-            {
-                string[] cmdltTypeDef = cmdltToInclude.Attributes["type"].Value.Split(',');
-                string cmdletType = cmdltTypeDef[0];
-                string cmdletAssembly = cmdltTypeDef[1];
-                WildcardPattern wildcard = GetWildcardPattern(cmdletType);
-                Assembly assembly = Assembly.Load(cmdletAssembly);
-                GetCommandletsFromAssembly(assembly, wildcard);
-            }
-        }
 
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
@@ -69,7 +54,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             initState.ThreadOptions = PSThreadOptions.UseCurrentThread;
             initState.ApartmentState = ApartmentState.STA;
             runspace = RunspaceFactory.CreateRunspace(host, conf);
-            conf.Cmdlets.Append(commandlets);
+            conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
             if (Settings.UseTypeInfo)
             {
                 conf.Formats.Prepend(
@@ -110,30 +95,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public string ApplianceType { get; set; }
-
-        protected static WildcardPattern GetWildcardPattern(string name)
-        {
-            if (String.IsNullOrEmpty(name))
-            {
-                name = "*";
-            }
-            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
-            var wildcard = new WildcardPattern(name, options);
-            return wildcard;
-        }
-
-        private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
-        {
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (type.GetCustomAttributes(typeof (CmdletAttribute), true).Length > 0 &&
-                    wildcard.IsMatch(type.FullName))
-                {
-                    var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
-                    commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type, ""));
-                }
-            }
-        }
 
         public void SetVariable(string varName, object varValue)
         {

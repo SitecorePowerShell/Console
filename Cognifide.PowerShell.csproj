@@ -80,6 +80,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -103,6 +104,9 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Analytics\AnalyticsBaseCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationStateCommand.cs" />
@@ -311,7 +315,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Override\Controls\Splitters\HSplitter.xml" />
-    <Content Include="Cognifide.PowerShell.dll-Help.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
@@ -328,6 +331,8 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>SitecoreAnalytics.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <Content Include="README.md" />
+    <Content Include="Properties\Cognifide.PowerShell.psd1" />
     <None Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

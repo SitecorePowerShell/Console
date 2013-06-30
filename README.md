@@ -18,7 +18,7 @@ If you have any issues with the PowerShell Console module, please report them in
 
 Enjoy!
 
-?Adam Najmanowicz - ?Cognifide
+[Adam Najmanowicz](http://blog.najmanowicz.com/) - [Cognifide](http://www.cognifide.com/)
 
 
 If you simply want to download the console go to The Sitecore Marketplace and download the latest pagage from the
