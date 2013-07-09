@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<SitecorePath>C:\websites\MySitecore\Website</SitecorePath>
+		<SitecorePath>C:\Projects\ZenGarden\Cognifide.SiteCore\Cognifide.SiteCore.Web\</SitecorePath>
+		<LibrariesPath>C:\Projects\sitecorepowershell\Trunk\Libraries\</LibrariesPath>
 	</PropertyGroup>
 </Project>

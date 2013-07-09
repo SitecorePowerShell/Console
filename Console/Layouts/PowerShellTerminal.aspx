@@ -10,7 +10,7 @@
 
         <link href="~/Console/Styles/Console.css" type="text/css" rel="stylesheet" />
         <title>PowerShell for Sitecore</title>
-        <script type="text/javascript" src="/Console/Scripts/jquery-1.7.1.min.js"> </script>
+        <script type="text/javascript" src="/Console/Scripts/jquery-1.10.2.min.js"> </script>
         <script type="text/javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </script>
         <script type="text/javascript" src="/Console/Scripts/jquery.terminal.js"> </script>
         <link href="/Console/Styles/jquery.terminal.css" type="text/css" rel="Stylesheet" />

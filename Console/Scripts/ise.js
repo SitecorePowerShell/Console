@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
             event.preventDefault();
             editor.autocomplete("enable");
             editor.autocomplete("search");
-        } else if (event.which === 32 && event.shiftKey) {
+        } else if ((event.which === 32 && event.shiftKey) ||event.which === 198) {
             var str = _leftMatch(editor[0].value, editor);
             _getTabCompletions(str);
             event.preventDefault();
@@ -178,11 +178,11 @@ jQuery(document).ready(function($) {
             var position = $("#Editor").position();
             var left = position.left;
             var top = position.top;
-            var pos = editor.getCaretPosition();
+            var pos = $("#Editor").getCaretPosition();
 
             $("#Tip > ul").css({
-                left: (left + pos.left) + "px",
-                top: (top + pos.top) + "px",
+                left: (left-1) + "px",
+                top: (top + pos.top + 2) + "px",
                 width: "auto",
                 "margin-right": "6px",
                 "margin-bottom": "30px",

@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Xml;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Sitecore.Configuration;
+using Sitecore.Pipelines;
+using Pipeline = Sitecore.Pipelines.Pipeline;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -15,6 +17,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     public class CognifideSitecorePowerShellSnapIn : CustomPSSnapIn
     {
         private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
+        private bool initialized = false;
 
         /// <summary>
         /// Create an instance of the CognifideSitecorePowerShellSnapIn class.
@@ -139,6 +142,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             get
             {
+                if (!initialized)
+                {
+                    Initialize();
+                }
                 if (_providers == null)
                 {
                     _providers = new Collection<ProviderConfigurationEntry>();
@@ -149,9 +156,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             }
         }
 
+        private void Initialize()
+        {
+            initialized = true;
+            Pipeline.Start("initialize", new PipelineArgs(), true);
+        }
+
         public static List<CmdletConfigurationEntry> Commandlets
         {
             get { return commandlets; }
         }
+        
     }
 }

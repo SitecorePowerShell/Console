@@ -148,7 +148,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
                 configuration.Edit(
                     p =>
                         {
-                            configuration["PreScript"] = HttpUtility.HtmlEncode(Prescript);
                             configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
                             ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
                             ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;

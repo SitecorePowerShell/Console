@@ -73,10 +73,18 @@
     <Reference Include="Sitecore.Client">
       <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Forms.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Sitecore.Forms.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SitecorePath)\bin\Sitecore.Forms.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Logging, Version=1.2.0.30715, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Sitecore.Update, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\Sitecore.Update.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -104,6 +112,7 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -277,7 +286,8 @@
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="Console\Scripts\ise.js" />
-    <Content Include="Console\Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Console\Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Console\Scripts\jquery-migrate-1.2.1.min.js" />
     <Content Include="Console\Scripts\jquery-ui.js" />
     <Content Include="Console\Scripts\jquery.a-tools-1.4.1.js" />
     <Content Include="Console\Scripts\jquery.asuggest.js" />

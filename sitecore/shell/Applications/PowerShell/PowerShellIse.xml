@@ -10,32 +10,25 @@
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
-
-      <Script src="/sitecore/shell/controls/Sitecore.js" runat="server"></Script>
-      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
-      <Script src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" runat="server"></Script>
-      <Script src="/Console/Scripts/jquery-1.7.1.min.js" runat="server"></Script>
+<!--
+      <Script src="/Console/Scripts/jquery-1.8.3.min.js" runat="server"></Script>
+-->
+      <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
       <Script src="/Console/Scripts/json2.js" runat="server"></Script>
-      <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!-- Caret position in pixels -->
-      <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!-- Caret position in text (in characters/selections) -->
-      <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!-- inline suggestions -->
-      <Script src="/Console/Scripts/jquery-ui.js"></Script> <!-- for autocomplete and overlay -->
-
+      <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!--Caret position in pixels-->
+      <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!--Caret position in text (in characters/selections)-->
+      <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!--inline suggestions-->
+      <Script src="/Console/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
       <Script src="/Console/Scripts/ise.js" runat="server"></Script>
-
-      <Script Key="XPathBuilder">
-        scSitecore.prototype.setModified = function(value) {
-        this.modified = false;
-        }
-      </Script>
-
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
 
       <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
         <Border ID="RibbonPanel" />
-        <GridPanel Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
+        <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
           <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
             <GridPanel Columns="1" Height="100%" GridPanel.Height="200px" Width="100%" GridPanel.ID="ScriptPane">
               <GridPanel Width="100%" Columns="2" GridPanel.Width="100%" >
@@ -57,8 +50,17 @@
               <Literal Text="Result:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
               <Scrollbox ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results"
                          GridPanel.Style="padding:0px">
-                <Border Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
+                <Border ID="EnterScriptInfo" Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
                   <Literal Text="Enter a a script in the Script field and Execute." />
+                </Border>
+                <Border Id="ProgressOverlay" Visible="false">
+                  <Border class="ui-state-highlight ui-corner-all">
+                    <p>
+                      <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+                    </p>
+                  </Border>
+                </Border>
+                <Border ID="ScriptResult">
                 </Border>
               </Scrollbox>
             </GridPanel>

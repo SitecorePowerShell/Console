@@ -12,6 +12,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
+using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -92,8 +93,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Progress, record.StatusDescription, RawUI, false);
-            Output.AddRange(splitter);
+            if (Context.Job == null)
+            {
+                throw new NotImplementedException();
+            }
+            Message message = Message.Parse(this,"ise:updateprogress");
+            message.Arguments.Add("Activity", record.Activity);
+            message.Arguments.Add("ActivityId", record.ActivityId.ToString());
+            message.Arguments.Add("CurrentOperation", record.CurrentOperation);
+            message.Arguments.Add("StatusDescription", record.StatusDescription);
+            message.Arguments.Add("ParentActivityId", record.ParentActivityId.ToString());
+            message.Arguments.Add("PercentComplete", record.PercentComplete.ToString());
+            message.Arguments.Add("RecordType", record.RecordType.ToString());
+            message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString());
+            JobContext.PostMessage(message);
+            //JobContext.Flush();
         }
 
         public override void WriteVerboseLine(string message)

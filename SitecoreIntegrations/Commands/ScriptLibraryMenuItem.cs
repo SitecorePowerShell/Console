@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
@@ -58,6 +60,51 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             Item parent = Factory.GetDatabase(scriptDb).GetItem(scriptLibPath);
             foreach (Item scriptItem in parent.Children)
             {
+                string allowedBranchesStr = scriptItem["AllowInBranches"];
+                if (!string.IsNullOrEmpty(allowedBranchesStr))
+                {
+                    MultilistField multiselectField = scriptItem.Fields["AllowInBranches"];
+                    if (multiselectField != null)
+                    {
+                        Item[] allowedBranches = multiselectField.GetItems();
+                        var found = false;
+                        for (int i = 0; !found && i < allowedBranches.Length; i++)
+                        {
+                            if (contextItem.ID == allowedBranches[i].ID ||
+                                contextItem.Axes.IsDescendantOf(allowedBranches[i]))
+                            {
+                                found = true;
+                            }
+                        }
+                        if (!found)
+                        {
+                            continue;
+                        }
+                    }
+                }
+                string allowedTemplatesStr = scriptItem["AllowOnTemplates"];
+                var baseTemplates = contextItem.Template.BaseTemplates.Select(t => t.ID).ToList();
+                baseTemplates.Add(contextItem.TemplateID);
+                if (!string.IsNullOrEmpty(allowedTemplatesStr))
+                {
+                    MultilistField multiselectField = scriptItem.Fields["AllowOnTemplates"];
+                    if (multiselectField != null)
+                    {
+                        var allowedTemplates = multiselectField.TargetIDs;
+                        var found = false;
+                        for (int i = 0; !found && i < allowedTemplates.Length; i++)
+                        {
+                            if (baseTemplates.Contains(allowedTemplates[i]))
+                            {
+                                found = true;
+                            }
+                        }
+                        if (!found)
+                        {
+                            continue;
+                        }
+                    }
+                }
                 var menuItem = new MenuItem
                     {
                         Header = scriptItem.DisplayName,

@@ -43,10 +43,7 @@
 {
     /* padding: 0px !important; */
     margin: 0 !important;
-    padding-bottom: 2px !important;
-    padding-left: 3px !important;
-    padding-right: 0 !important;
-    padding-top: 3px !important;
+    padding: 3px 0 2px 3px !important;
 }
 
     #Result pre
@@ -271,13 +268,13 @@
 
 .ps-help-header
 {
-    color: yellow;
+    color: #fcefa1;
     font-size: 2em;
 }
 
 .ps-help-command-name
 {
-    color: yellow;
+    color: #fcefa1;
     font-size: 3em;
     font-weight: bold;
 }
@@ -290,19 +287,19 @@
 
 .ps-help-firstLine
 {
-    color: yellow;
+    color: #fcefa1;
 }
 
 a.ps-link
 {
-    color: yellow;
+    color: #fcefa1;
     text-decoration: underline;
 }
 
 .ui-tooltip, .arrow:after
 {
     background: #012456;
-    border: 2px solid yellow;
+    border: 2px solid #fcefa1;
     display: block;
     position: absolute;
     margin: 6px;
@@ -333,9 +330,73 @@ a.ps-link
 .ui-tooltip
 {
     padding: 10px 20px;
-    color: yellow;
+    color: #fcefa1;
     border-radius: 20px;
     font: bold 14px "Helvetica Neue", Sans-Serif;
     text-transform: uppercase;
     box-shadow: 0 0 7px #012456;
+}
+
+#ProgressOverlay {
+    padding-right: 30px;
+    padding-left: 40px;
+    margin: auto;
+    margin-top: 30px;
+    width: 50%;
+}
+
+#OperationProgress {
+    padding-right: 30px;
+    padding-left: 40px;
+    margin: auto;
+    margin-top: 30px;
+    width: 90%;
+}
+
+#progressbar
+{
+    background-color: #012456;
+    border-radius: 13px; /* (height of inner div) / 2 + padding */
+    padding: 3px;
+    width: 300px;
+    margin: auto;
+}
+
+    #progressbar div
+    {
+        border: 1px solid #fcefa1 /*{borderColorHighlight}*/;
+        background: #fbf9ee;
+        height: 20px;
+        border-radius: 10px;
+    }
+
+.ui-menu-item 
+{
+    font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+}
+
+.ui-autocomplete
+{
+    border-top-width: 0;
+    padding: 0 1px;
+    /*padding-left: 0;*/
+    /*border-top-left-radius: 0;*/
+    /*border-top-right-radius: 0;*/
+}
+
+.ui-menu-item a {
+    padding: .1em .1em !important;
+    border: 1px solid  #fcefa1;
+}
+
+#Tip .ui-widget-content { border: 1px solid #012456 /*{borderColorContent}*/; background: #fcefa1/*{bgColorContent}*/ 50%/*{bgContentXPos}*/ 50%/*{bgContentYPos}*/ repeat-x/*{bgContentRepeat}*/; color: black/*{fcContent}*/; }
+#Tip .ui-widget-content a { color: #012456 /*{fcContent}*/; }
+
+#Tip .ui-state-hover, 
+#Tip .ui-widget-content .ui-state-hover, 
+#Tip .ui-widget-header .ui-state-hover, 
+#Tip .ui-state-focus, 
+#Tip .ui-widget-content .ui-state-focus, 
+#Tip .ui-widget-header .ui-state-focus {
+     border: 1px solid #fcefa1 /*{borderColorHover}*/; background: #012456/*{bgColorHover}*/  50%/*{bgHoverXPos}*/ 50%/*{bgHoverYPos}*/ repeat-x/*{bgHoverRepeat}*/; font-weight: normal/*{fwDefault}*/; color: white/*{fcHover}*/;
 }

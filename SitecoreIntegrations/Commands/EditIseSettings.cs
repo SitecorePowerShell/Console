@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             });
         }
  
-        protected virtual void StartFieldEditor(ClientPipelineArgs args)
+        protected override void StartFieldEditor(ClientPipelineArgs args)
         {
             base.StartFieldEditor(args);
             ApplicationSettings.ReloadInstance(AppName, Personalized);

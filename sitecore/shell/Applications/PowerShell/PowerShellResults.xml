@@ -6,15 +6,14 @@
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
-      <Script Src="/sitecore/shell/Applications/Layouts/IDE/IDE.js" />
 
       <script type="text/javascript" language="javascript">
         window.onload=function(){
         scForm.postRequest("", "", "", "psr:execute");
         }
       </script>
-
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResults,Cognifide.PowerShell" />
       <Scrollbox ID="All" class="consoleWrapper console pre">
         <Scrollbox ID="Promo" class="promoArea console pre">
@@ -24,6 +23,13 @@
           </Border>
         </Scrollbox>
         <Scrollbox ID="Result" class="resultsArea console pre">
+          <Border Id="OperationProgress" Visible="false">
+            <Border class="ui-state-highlight ui-corner-all">
+              <p>
+                <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+              </p>
+            </Border>
+          </Border>
           <Border Align="Center" Foreground="#fff">
             <Literal Text="\r\n\r\n\r\nYour script is being executed...\r\nPlease wait.\r\n\r\n" />
             <img src="../../../../Console/Assets/working.gif" alt="Working" />

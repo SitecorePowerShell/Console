@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
@@ -8,6 +9,8 @@ using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
+using Sitecore.Globalization;
 using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
 
@@ -218,6 +221,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                     return;
                 }
+                if (dic != null && dic[IdParam].IsSet)
+                {
+                    string Id = dic[IdParam].Value.ToString();
+                    Item itemById = Factory.GetDatabase(PSDriveInfo.Name).GetItem(new ID(Id));
+                    WriteMatchingItem(language, version, itemById);
+                    return;
+                }
 
                 Item item = GetItemForPath(path);
                 if (item != null)
@@ -234,10 +244,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
         private void WriteMatchingItem(string language, int version, Item item)
         {
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            if (dic != null && dic.ContainsKey(AmbiguousPathsParam) && dic[AmbiguousPathsParam].IsSet)
+            {
+                IEnumerable<Item> ambiguousItems =
+                    item.Parent.GetChildren()
+                        .Where(child => string.Equals(child.Name, item.Name, StringComparison.CurrentCultureIgnoreCase));
+                foreach (var ambiguousItem in ambiguousItems)
+                {
+                    WriteMatchingItemEx(language, version, ambiguousItem);
+                }
+            }
+            else
+            {
+                WriteMatchingItemEx(language,version,item);
+            }
+        }
+
+        private void WriteMatchingItemEx(string language, int version, Item item)
+        {
             // if language is forced get the item in proper language
             if (language != null || version != Version.Latest.Number)
             {
                 WildcardPattern pattern = GetWildcardPattern(language);
+                
                 Item[] allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
 
                 foreach (Item matchingItem in allVersions.Where(
@@ -385,12 +415,41 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             {
                 LogInfo("Executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
                         path, itemTypeName, newItemValue);
-                TemplateItem templateItem = GetItemForPath(itemTypeName);
+
+                itemTypeName = itemTypeName.Replace('\\', '/').Trim('/');
+                // for when the template name is starting with /sitecore/
+                if (itemTypeName.StartsWith("sitecore/", StringComparison.OrdinalIgnoreCase))
+                {
+                    itemTypeName = itemTypeName.Substring(9);
+                }
+                //for when the /templates at the start was missing
+                if (!itemTypeName.StartsWith("templates/", StringComparison.OrdinalIgnoreCase))
+                {
+                    itemTypeName = "templates/"+itemTypeName;
+                }
+                TemplateItem templateItem = GetItemForPath("/"+itemTypeName);
+
                 Item parentItem = GetItemForPath(GetParentFromPath(path));
-                Item createdItem = parentItem.Add(GetLeafFromPath(path), templateItem);
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+                if (dic != null && dic[ParentParam].IsSet)
+                {
+                    parentItem = dic[ParentParam].Value as Item;
+                }
 
+                Item createdItem = parentItem.Add(GetLeafFromPath(path), templateItem);
+
+                if (dic != null && dic[LanguageParam].IsSet)
+                {
+                    string forcedLanguage = dic[LanguageParam].Value.ToString();
+                    var language = LanguageManager.GetLanguage(forcedLanguage);
+                    // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
+                    // switching language with LanguageSwitcher didn't work
+                    // Thanks Kern!
+                    createdItem.Versions.RemoveAll(true);
+                    createdItem = createdItem.Database.GetItem(createdItem.ID, language);
+                    createdItem = createdItem.Versions.AddVersion();
+                }
                 // start default workflow on the created item if necessary
                 if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
                 {

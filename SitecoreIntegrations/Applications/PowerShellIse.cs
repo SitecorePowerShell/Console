@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Text;
-using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Engines;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Events;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
@@ -24,7 +22,7 @@ using Action = Sitecore.Web.UI.HtmlControls.Action;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellIse : BaseForm
+    public class PowerShellIse : BaseForm, IHasCommandContext
     {
         private static readonly string[] pleaseWaitMessages =
         {
@@ -107,14 +105,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Combobox Databases;
         protected Memo Editor;
         protected Action HasFile;
-        //protected Literal StatusText;
         protected JobMonitor Monitor;
         protected Scrollbox Result;
         protected Border RibbonPanel;
-        //protected Literal TipText;
+        protected Border ProgressOverlay;
+        protected Border ScriptResult;
+        protected Border EnterScriptInfo;
+
         protected bool ScriptRunning { get; set; }
         public ApplicationSettings Settings { get; set; }
-
+        protected Literal Progress;
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -146,6 +146,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             set { Context.ClientPage.ServerProperties["ItemID"] = value; }
         }
 
+        public CommandContext GetCommandContext()
+        {
+            var itemNotNull = Client.CoreDatabase.GetItem("{FDD5B2D5-31BE-41C3-AA76-64E5CC63B187}"); // /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon
+            var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
+            return context;
+        }
 
         /// <summary>
         ///     Builds the databases.
@@ -441,6 +447,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             var scriptSession = parameters[0] as ScriptSession;
             var contextScript = parameters[1] as string;
+            var scriptItemId = parameters[2] as string;
 
             if (scriptSession == null || contextScript == null)
             {
@@ -451,6 +458,23 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
                 scriptSession.ExecuteScriptPart(contextScript);
+                Item scriptItem = string.IsNullOrEmpty(scriptItemId) ? null : Client.ContentDatabase.GetItem(new ID(scriptItemId));
+                if (scriptItem != null)
+                {
+                    string dependencies = scriptItem["UsingScripts"];
+                    if (!string.IsNullOrEmpty(dependencies))
+                    {
+                        MultilistField multiselectField = scriptItem.Fields["UsingScripts"];
+                        if (multiselectField != null)
+                        {
+                            Item[] dependencyScriptItems = multiselectField.GetItems();
+                            foreach (var dependencyScriptItem in dependencyScriptItems)
+                            {
+                                scriptSession.ExecuteScriptPart(dependencyScriptItem.Fields[ScriptItemFieldNames.Script].Value);
+                            }
+                        }
+                    }
+                }
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
                 if (scriptSession.Output != null)
@@ -462,6 +486,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
                 if (Context.Job != null)
                 {
+                    JobContext.Flush();
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", output);
                     JobContext.PostMessage("ise:updateresults");
                     JobContext.Flush();
@@ -471,6 +496,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (Context.Job != null)
                 {
+                    JobContext.Flush();
                     Context.Job.Status.Result =
                         string.Format("<pre style='background:red;'>{0}</pre>",
                                       scriptSession.GetExceptionString(exc));
@@ -485,6 +511,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var scriptSession = new ScriptSession(Settings.ApplicationName);
+            EnterScriptInfo.Visible = false;
 
             try
             {
@@ -521,6 +548,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void JobExecute(ClientPipelineArgs args)
         {
             ScriptRunning = true;
+            EnterScriptInfo.Visible = false;
             UpdateRibbon();
 
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
@@ -530,13 +558,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var parameters = new object[]
                 {
                     scriptSession,
-                    contextScript
+                    contextScript,
+                    ItemId
                 };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters);
 
             var rnd = new Random();
-            Context.ClientPage.ClientResponse.SetInnerHtml("Result",
+            Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",
                                                            string.Format(
                                                                "<div align='Center' style='padding:32px 0px 32px 0px'>Please wait, {0}</br><img src='../../../../../Console/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
                                                                pleaseWaitMessages[
@@ -556,8 +585,41 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
             var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
-            Context.ClientPage.ClientResponse.SetInnerHtml("Result", result ?? "Script finished - no results to display.");
+            Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult", result ?? "Script finished - no results to display.");
+            ProgressOverlay.Visible = false;
             UpdateRibbon();
+        }
+
+        [HandleMessage("ise:updateprogress",true)]
+        protected virtual void UpdateProgress(ClientPipelineArgs args)
+        {
+            ScriptResult.Visible = true;
+            ProgressOverlay.Visible = true;
+            var sb = new StringBuilder();
+            sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
+            if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
+            {
+                sb.AppendFormat("<p><strong>Operation</strong>: {0}</p>", args.Parameters["CurrentOperation"]);
+            }
+            if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+            {
+                sb.AppendFormat("<p><strong>Status</strong>: {0}</p>", args.Parameters["StatusDescription"]);
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
+            {
+                int percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                if (percentComplete > -1)
+                    sb.AppendFormat("<p><strong>Progress</strong>: {0}%</p> <div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
+            {
+                int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                if (secondsRemaining > -1)
+                    sb.AppendFormat("<p><strong>Time Remaining</strong>:{0}seconds</p>", secondsRemaining);
+            }
+            Progress.Text = sb.ToString();
         }
 
 

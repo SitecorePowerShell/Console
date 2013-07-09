@@ -35,6 +35,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         protected Literal BackgroundColor;
         protected Literal ForegroundColor;
+        protected Literal Progress;
+
+        protected Border OperationProgress;
 
         public string PersistentId { get; set; }
 
@@ -137,6 +140,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
                 if (Context.Job != null)
                 {
+                    JobContext.Flush();
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", output);
                     JobContext.PostMessage("psr:updateresults");
                     JobContext.Flush();
@@ -146,6 +150,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (Context.Job != null)
                 {
+                    JobContext.Flush();
                     Context.Job.Status.Result =
                         string.Format("<pre style='background:red;'>{0}</pre>",
                                       scriptSession.GetExceptionString(exc));
@@ -160,6 +165,37 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
             Context.ClientPage.ClientResponse.SetInnerHtml("Result", result ?? "Script finished - no results to display.");
+        }
+
+        [HandleMessage("ise:updateprogress", true)]
+        protected virtual void UpdateProgress(ClientPipelineArgs args)
+        {
+            OperationProgress.Visible = true;
+            var sb = new StringBuilder();
+            sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
+            if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
+            {
+                sb.AppendFormat("<p><strong>Operation</strong>: {0}</p>", args.Parameters["CurrentOperation"]);
+            }
+            if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+            {
+                sb.AppendFormat("<p><strong>Status</strong>: {0}</p>", args.Parameters["StatusDescription"]);
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
+            {
+                int percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                if (percentComplete > -1)
+                    sb.AppendFormat("<p><strong>Progress</strong>: {0}%</p> <div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
+            {
+                int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                if (secondsRemaining > -1)
+                    sb.AppendFormat("<p><strong>Time Remaining</strong>:{0}seconds</p>", secondsRemaining);
+            }
+            Progress.Text = sb.ToString();
         }
 
         /// <summary>
