@@ -1951,7 +1951,8 @@
                         echo_command(command);
                     }
                     var position = lines.length-1;
-                    if (command === 'clear' && settings.clear) {
+                    var commandLow = command.toLowerCase();
+                    if ((commandLow === 'clear' || commandLow === 'cls' || commandLow === 'clear-host') && settings.clear) {
                         self.clear();
                     } else {
                         var result = interpreter['eval'](command, self);
@@ -2420,6 +2421,7 @@
                         throw e;
                     }
                     self.attr({ scrollTop: 0});
+                    show_greetings();
                     return self;
                 },
                 export_view: function() {

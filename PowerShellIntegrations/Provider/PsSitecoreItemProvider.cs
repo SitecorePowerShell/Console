@@ -19,6 +19,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
     [CmdletProvider("PsSitecoreItemProvider", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-ChildItem")]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-Item")]
+    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "New-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
 

@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
             event.preventDefault();
             editor.autocomplete("enable");
             editor.autocomplete("search");
-        } else if ((event.which === 32 && event.shiftKey) ||event.which === 198) {
+        } else if (event.which === 9 || (event.which === 32 && event.shiftKey)) {
             var str = _leftMatch(editor[0].value, editor);
             _getTabCompletions(str);
             event.preventDefault();
@@ -104,6 +104,7 @@ jQuery(document).ready(function($) {
     });
 
     $.tabCompletions = [];
+    $.tabCompletionsLowercase = [];
     $.commandHelp = "";
     $("#Help").dialog({ autoOpen: false });
     editor.asuggest($.tabCompletions);
@@ -157,6 +158,9 @@ jQuery(document).ready(function($) {
             function (json) {
                 var data = JSON.parse(json.d);
                 $.tabCompletions = data;
+                $.tabCompletionsLowercase = $.map(data, function (item, index) {
+                    return item.toLowerCase();
+                });
             });
     }
     

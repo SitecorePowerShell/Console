@@ -92,11 +92,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
         public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
         {
+            if (!string.IsNullOrEmpty(truncatedCommand))
+            {
+                truncatedCommand += " ";
+            }
             results.AddRange(tabExpandedResults.Select(l =>
-                                            l.IndexOfAny(wrapChars) > -1
-                                                ? string.Format("{0} \"{1}\"", truncatedCommand, l)
-                                                : truncatedCommand + l
-                                ));
+                l.IndexOfAny(wrapChars) > -1
+                    ? string.Format("{0}{1}'{2}'",
+                        truncatedCommand,
+                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty: " ",
+                        l.Trim('\''))
+                    : truncatedCommand + l
+                ));
+
         }
 
         private static string TruncatedCommand(string command, out string lastToken)

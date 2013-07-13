@@ -102,18 +102,21 @@
          */
         $area.getCompletion = function (performCycle) {
             var text = this.getChunk();
-            var selectionText = this.getSelection().text;
+            var textLower = text.toLowerCase();
+            var selectionText = this.getSelection().text.toLowerCase();
             //var suggests = this.suggests;
             var suggests = $.tabCompletions;
+            var suggestsLower = $.tabCompletionsLowercase;
             var foundAlreadySelectedValue = false;
             var firstMatchedValue = null;
             // search the variant
             for (var i = 0; i < suggests.length; i++) {
                 var suggest = suggests[i];
+                var suggestLower = suggestsLower[i];
                 // some variant is found
-                if (suggest.indexOf(text) == 0) {
+                if (suggestLower.indexOf(textLower) == 0) {
                     if (performCycle) {
-                        if (text + selectionText == suggest) {
+                        if (textLower + selectionText == suggestLower) {
                             foundAlreadySelectedValue = true;
                         } else if (foundAlreadySelectedValue) {
                             return suggest.substr(text.length);

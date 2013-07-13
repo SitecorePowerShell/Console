@@ -16,13 +16,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     [Cmdlet("Install", "UpdatePackage", DefaultParameterSetName = "ZipFileName")]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
-        [Parameter(Position = 0)]
-        public string FileName { get; set; }
+        [Parameter(Position = 0, Mandatory = true)]
+        public string Path { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter(Position = 0)]
+        public string RollbackPackagePath { get; set; }
+
+        [Parameter(Mandatory = true, HelpMessage = "Preview / Upgrade")]
         public UpgradeAction UpgradeAction { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter(Mandatory = true, HelpMessage = "Install / Update")]
         public InstallMode InstallMode { get; set; }
 
         protected override void ProcessRecord()
@@ -35,15 +38,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                 () =>
                 {
                     var installer = new DiffInstaller(UpgradeAction);
-                    MetadataView view = UpdateHelper.LoadMetadata(FileName);
+                    MetadataView view = UpdateHelper.LoadMetadata(Path);
 
                     bool hasPostAction;
                     string historyPath;
-                    List<ContingencyEntry> entries = installer.InstallPackage(FileName, InstallMode, log,
-                        out hasPostAction, out historyPath);
-                    installer.ExecutePostInstallationInstructions(FileName, historyPath, InstallMode, view, log,
-                        ref entries);
-                    UpdateHelper.SaveInstallationMessages(entries, historyPath);
+                    List<ContingencyEntry> entries = new List<ContingencyEntry>();
+                    entries = installer.InstallPackage(Path, InstallMode, log,entries, out hasPostAction, out historyPath);
+                    installer.ExecutePostInstallationInstructions(Path, historyPath, InstallMode, view, log, ref entries);
+                    foreach (var entry in entries)
+                    {
+                        WriteObject(entry);
+                    }
+                    //UpdateHelper.SaveInstallationMessages(entries, historyPath);
                 });
         }
     }

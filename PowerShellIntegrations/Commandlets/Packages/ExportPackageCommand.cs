@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
-        public string FileName { get; set; }
+        public string Path { get; set; }
 
         [Parameter(Position = 1, ValueFromPipeline = true)]
         public PackageProject Project { get; set; }
@@ -24,29 +24,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 
         protected override void ProcessRecord()
         {
-            string fileName = FileName;
+            string fileName = Path;
 
             if (!Zip.IsPresent)
             {
                 PerformInstallAction(() =>
+                {
+                    if (fileName == null)
                     {
-                        if (FileName != null)
-                        {
-                            if (fileName == null)
-                            {
-                                //name of the zip file when not defined
-                                fileName = string.Format(
-                                    "{0}-{1}.xml", Project.Metadata.PackageName, Project.Metadata.Version);
-                            }
+                        //name of the zip file when not defined
+                        fileName = string.Format(
+                            "{0}-{1}.xml", Project.Metadata.PackageName, Project.Metadata.Version);
+                    }
 
-                            if (!Path.IsPathRooted(fileName))
-                            {
-                                fileName = FullPackageProjectPath(fileName);
-                            }
+                    if (!System.IO.Path.IsPathRooted(fileName))
+                    {
+                        fileName = FullPackageProjectPath(fileName);
+                    }
 
-                            FileUtil.WriteToFile(fileName, IOUtils.StoreObject(Project));
-                        }
-                    });
+                    FileUtil.WriteToFile(fileName, IOUtils.StoreObject(Project));
+                });
             }
             else
             {
@@ -65,7 +62,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                                     "{0}-PS-{1}.zip", Project.Metadata.PackageName, Project.Metadata.Version);
                             }
 
-                            if (!Path.IsPathRooted(fileName))
+                            if (!System.IO.Path.IsPathRooted(fileName))
                             {
                                 fileName = FullPackagePath(fileName);
                             }

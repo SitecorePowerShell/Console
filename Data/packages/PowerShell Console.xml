@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Console</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.0 Final</Version>
+      <Version>2.1 Beta (for Michael West)</Version>
       <Revision />
       <License />
       <Comment />
@@ -195,7 +195,6 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/Console/Scripts/jquery.hotkeys.js</x-item>
         <x-item>/Console/Scripts/jquery.mousewheel-min.js</x-item>
         <x-item>/Console/Scripts/jquery.terminal.js</x-item>
-        <x-item>/Console/Scripts/jquery-1.7.1.min.js</x-item>
         <x-item>/Console/Scripts/jquery-ui.js</x-item>
         <x-item>/Console/Scripts/json2.js</x-item>
         <x-item>/Console/Scripts/PsHSplitter.js</x-item>
@@ -215,6 +214,8 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResults.xml</x-item>
         <x-item>/Console/Assets/Cognifide.PowerShell.dll-Help.xml</x-item>
         <x-item>/Console/Assets/refresh.png</x-item>
+        <x-item>/Console/Scripts/jquery-1.10.2.min.js</x-item>
+        <x-item>/Console/Scripts/jquery-migrate-1.2.1.min.js</x-item>
       </Entries>
       <Converter>
         <FileToEntryConverter>
@@ -243,7 +244,7 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/core/sitecore/layout/Layouts/Applications/PowerShell ISE Sheer/{D8E646FE-C705-4CE2-8C10-CACC6DB32334}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/PowerShell/{6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}/invariant/0</x-item>
-        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Context PowerShell Scripts/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script/{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
       </Entries>

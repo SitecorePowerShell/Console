@@ -97,18 +97,9 @@
                 }
 
                 function tabCompletion(term, tabCount) {
-                    /*if (!!console) {
-                        console.log("tabCount is: " + tabCount.toString());
-                        console.log("tabCompletions are: " + tabCompletions.toString());
-                    }*/
-                    
                     if (tabCompletions) {
                         term.set_command(tabCompletions[tabCount]);
                     }
-                    
-                    /*if (!!console) {
-                        console.log("tab completing");
-                    }*/
                 }
 
                 function tabCompletionEnd() {
@@ -128,10 +119,6 @@
                             tip.fadeOut('slow');
                         }, 1000);
                     });
-
-                    /*if (!!console) {
-                        console.log("tab completion found no hints");
-                    }*/
                 }
             });
 

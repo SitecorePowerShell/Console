@@ -3,7 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using Sitecore;
+using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Diagnostics;
+using Sitecore.Resources.Media;
+using Sitecore.Shell.Framework;
+using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -15,6 +20,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Border Buttons;
         protected Literal Text;
         protected string FileName { get; set; }
+        protected string Id { get; set; }
+        protected string Db { get; set; }
         protected Edit Hidden;
         protected Literal FileNameLabel;
         protected Literal SizeLabel;
@@ -23,14 +30,41 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
+
             FileName = WebUtil.SafeEncode(WebUtil.GetQueryString("fn"));
+
+            Id = WebUtil.SafeEncode(WebUtil.GetQueryString("id"));
+            Db = WebUtil.SafeEncode(WebUtil.GetQueryString("db"));
+
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             if (Context.ClientPage.IsEvent)
                 return;
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te"));
-            FileNameLabel.Text = FileName;
-            var file = new FileInfo(FileName);
-            SizeLabel.Text = ToFileSize(file.Length);
+
+            if (!string.IsNullOrEmpty(Id))
+            {
+                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                if (MediaManager.HasMediaContent(item))
+                {
+                    var media = MediaManager.GetMedia(item);
+                    FileNameLabel.Text = item.Name + "." + item["Extension"];
+                    long size;
+                    SizeLabel.Text = Int64.TryParse(item["size"],out size) ? ToFileSize(size) : "unknown";
+                }
+                else
+                {
+                    SheerResponse.Alert("There is no file attached.", new string[0]);
+                }
+            }
+            else if (!string.IsNullOrEmpty(FileName))
+            {
+                FileNameLabel.Text = FileName;
+                SheerResponse.Download(FileName);
+                Hidden.Value = "downloaded";
+                var file = new FileInfo(FileName);
+                SizeLabel.Text = ToFileSize(file.Length);
+            }
+
             string caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
             Context.ClientPage.Title = caption;
             Assert.ArgumentNotNull((object)e, "e");
@@ -87,8 +121,27 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         /// </summary>
         protected void Download()
         {
-            SheerResponse.Download(FileName);
-            Hidden.Value = "downloaded";
+            if (!string.IsNullOrEmpty(Id))
+            {
+                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                if (MediaManager.HasMediaContent(item))
+                {
+                    UrlString str = item.Uri.ToUrlString(string.Empty);
+                    str.Append("field", "Blob");
+                    Files.Download(str.ToString());
+                    Log.Audit(this, "Download file: {0}", new string[] {str.ToString()});
+                }
+                else
+                {
+                    SheerResponse.Alert("There is no file attached.", new string[0]);
+                }
+            }
+            else if (!string.IsNullOrEmpty(FileName))
+            {
+                SheerResponse.Download(FileName);
+                Hidden.Value = "downloaded";
+            }
+            
         }
 
     }

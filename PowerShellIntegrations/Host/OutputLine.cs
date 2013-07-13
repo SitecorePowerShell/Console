@@ -111,7 +111,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 htmlBackgroundColor.R.ToString("X2"),
                 htmlBackgroundColor.G.ToString("X2"),
                 htmlBackgroundColor.B.ToString("X2"),
-                HttpUtility.HtmlEncode(outString).Replace("[", "%((%").Replace("]", "%))%"));
+                HttpUtility.HtmlEncode(outString).Replace("[", "&#91;").Replace("]", "&#93;"));
         }
 
         public void GetPlainTextLine(StringBuilder output)

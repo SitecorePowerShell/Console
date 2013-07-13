@@ -112,6 +112,7 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\DownloadMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
@@ -158,7 +159,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\GetUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseShellCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\GetFileCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\DownloadFileCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ExecuteShellCommandCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\PromptMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShellCommandInItemContextMessage.cs" />

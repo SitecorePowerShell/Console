@@ -10,25 +10,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class GetPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
-        public string FileName { get; set; }
+        public string Path { get; set; }
 
         protected override void ProcessRecord()
         {
             PerformInstallAction(() =>
                 {
                     PackageProject packageProject = null;
-                    if (FileName != null)
+                    if (Path != null)
                     {
-                        string fileName = FileName;
+                        string fileName = Path;
 
-                        if (!Path.IsPathRooted(FileName))
+                        if (!System.IO.Path.IsPathRooted(Path))
                         {
-                            fileName = FullPackageProjectPath(FileName);
+                            fileName = FullPackageProjectPath(Path);
                         }
 
                         packageProject =
                             IOUtils.LoadObject(
-                                FileUtil.ReadFromFile(fileName))
+                                FileUtil.ReadFromFile(Path))
                             as PackageProject;
                     }
                     WriteObject(packageProject, false);

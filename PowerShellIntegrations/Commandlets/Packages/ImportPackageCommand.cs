@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class ImportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
-        public string FileName { get; set; }
+        public string Path { get; set; }
 
         [Parameter(Position = 1, ValueFromPipeline = true)]
         public PackageProject Project { get; set; }
@@ -20,15 +20,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         [Parameter]
         public SwitchParameter IncludeProject { get; set; }
 
-        [Parameter]
+        [Parameter(HelpMessage = "Undefined, Overwrite, Merge, Skip, SideBySide")]
         public InstallMode InstallMode { get; set; }
 
-        [Parameter]
+        [Parameter(HelpMessage = "Undefined, Clear, Append, Merge")]
         public MergeMode MergeMode { get; set; }
 
         protected override void ProcessRecord()
         {
-            string fileName = FileName;
+            string fileName = Path;
 
             PerformInstallAction(
                 () =>
@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                             Project.SaveProject = true;
                         }
 
-                        if (!Path.IsPathRooted(fileName))
+                        if (!System.IO.Path.IsPathRooted(fileName))
                         {
                             fileName = FullPackagePath(fileName);
                         }

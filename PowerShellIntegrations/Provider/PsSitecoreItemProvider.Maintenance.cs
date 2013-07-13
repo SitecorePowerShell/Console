@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 var drive = new PSDriveInfo(database.Name,
                                             providerInfo,
                                             database.Name + ":", //"\\sitecore\\",
-                                            String.Format("Sitecore database: '{0}')", database.Name),
+                                            String.Format("Sitecore '{0}' database.", database.Name),
                                             PSCredential.Empty);
                 result.Add(drive);
             }

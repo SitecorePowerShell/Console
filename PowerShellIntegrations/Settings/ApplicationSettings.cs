@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -69,14 +70,32 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
             get { return AppSettingsPath + IseSettingsItemAllUsers; }
         }
 
+        private static readonly char[] invalidChars = { '\\', '/', ':', '"', '<', '>', '|', '[', ']', '.' };
+
         private static string CurrentUserName
         {
-            get { return User.Current.LocalName; }
+            get
+            {
+                var currentUserName = User.Current.LocalName;
+                foreach (var invalidChar in invalidChars)
+                {
+                    currentUserName = currentUserName.Replace(invalidChar, '_');
+                }
+                return currentUserName;
+            }
         }
 
-        private static Domain CurrentDomain
+        private static string CurrentDomain
         {
-            get { return User.Current.Domain; }
+            get
+            {
+                var currentUserDomain = User.Current.Domain.Name;
+                foreach (var invalidChar in invalidChars)
+                {
+                    currentUserDomain = currentUserDomain.Replace(invalidChar, '_');
+                }
+                return currentUserDomain;
+            }
         }
 
         public static ApplicationSettings GetInstance(string applicationName)
