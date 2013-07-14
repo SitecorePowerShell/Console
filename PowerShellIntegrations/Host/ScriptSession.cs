@@ -159,9 +159,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public static string GetDataContextSwitch(Item item)
         {
-            return String.Format(
-                "cd \"{0}:{1}\"\n", item.Database.Name,
-                item.Paths.Path.Replace("/", "\\").Substring(9));
+            return item != null
+                ? string.Format(
+                    "cd \"{0}:{1}\"\n", item.Database.Name,
+                    item.Paths.Path.Replace("/", "\\").Substring(9))
+                : string.Empty;
         }
 
         public List<object> ExecuteScriptPart(string script)

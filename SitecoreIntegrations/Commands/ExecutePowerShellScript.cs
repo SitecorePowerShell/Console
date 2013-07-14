@@ -22,9 +22,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
             string warning = scriptItem[ScriptItemFieldNames.PreExecutionWarning];
             string showResults = scriptItem[ScriptItemFieldNames.ShowResults];
-            string itemId = context.Items[0].ID.ToString();
-            string itemDb = context.Items[0].Database.Name;
+            string itemId = string.Empty;
+            string itemDb = string.Empty;
 
+            if (context.Items.Length > 0)
+            {
+                itemId = context.Items[0].ID.ToString();
+                itemDb = context.Items[0].Database.Name;
+            }
             if (String.IsNullOrEmpty(warning))
             {
                 ExecuteScript(itemId, itemDb, scriptId, scriptDb, showResults);
@@ -75,7 +80,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             }
             else
             {
-                Item item = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
+                Item item = null;
+                if(!string.IsNullOrEmpty(itemDb) && !string.IsNullOrEmpty(itemId))  
+                {
+                    item = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
+                }
                 Item scriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
                 ScriptSession scriptSession = null;
 
@@ -85,11 +94,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                     scriptSession =
                         ScriptSessionManager.GetSession(persistentSessionId, ApplicationNames.Context, true);
                     scriptSession.Initialize(!string.IsNullOrEmpty(persistentSessionId));
-                    scriptSession.ExecuteScriptPart("Set-HostProperty -HostWidth 80");
+                    scriptSession.ExecuteScriptPart(string.Format("Set-HostProperty -HostWidth {0}",scriptSession.Settings.HostWidth));
                     scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
-                    scriptSession.ExecuteScriptPart(
-                        String.Format(
-                            "cd \"{0}:{1}\"", item.Database.Name, item.Paths.Path.Replace("/", "\\").Substring(9)));
+                    if (item != null)
+                    {
+                        scriptSession.SetItemLocationContext(item);
+                    }
+
                     scriptSession.ExecuteScriptPart(scriptItem[ScriptItemFieldNames.Script]);
                 }
                 finally

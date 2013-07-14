@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     [Cmdlet("Execute", "ShellCommand", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
     public class ExecuteShellCommandCommand : BaseShellCommand
     {
-        [ValidatePattern(@"[\*\?\[\]\-0-9a-zA-Z_]+\:[\*\?\[\]\-0-9a-zA-Z_]+")]
+        /*[ValidatePattern(@"[\*\?\[\]\-0-9a-zA-Z_]+\:[\*\?\[\]\-0-9a-zA-Z_]+")]*/
         [Parameter(Position = 0, Mandatory = true)]
         public string Name { get; set; }
 
@@ -22,7 +22,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     if (Sitecore.Context.Job != null)
                     {
                         JobContext.MessageQueue.PutMessage(new ShellCommandInItemContextMessage(Item, Name));
-                        WriteItem(Item);
+                        if (Item != null)
+                        {
+                            WriteItem(Item);
+                        }
                     }
                 });
         }

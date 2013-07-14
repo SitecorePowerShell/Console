@@ -112,6 +112,8 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseDialogCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\DownloadMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
@@ -234,6 +236,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\RebuildAllIntegrations.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\RebuildControlPanelIntegration.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
@@ -254,6 +258,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
+    <Compile Include="SitecoreIntegrations\Tasks\LibraryWatcher.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
   </ItemGroup>

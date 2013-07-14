@@ -24,7 +24,12 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Id</Label>
-            <Width>46</Width>
+            <Width>38</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>TemplateName</Label>
+            <Width>32</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
         </TableHeaders>
@@ -42,6 +47,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>ID</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TemplateName</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

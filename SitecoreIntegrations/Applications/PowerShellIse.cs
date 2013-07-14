@@ -458,23 +458,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
                 scriptSession.ExecuteScriptPart(contextScript);
-                Item scriptItem = string.IsNullOrEmpty(scriptItemId) ? null : Client.ContentDatabase.GetItem(new ID(scriptItemId));
-                if (scriptItem != null)
-                {
-                    string dependencies = scriptItem["UsingScripts"];
-                    if (!string.IsNullOrEmpty(dependencies))
-                    {
-                        MultilistField multiselectField = scriptItem.Fields["UsingScripts"];
-                        if (multiselectField != null)
-                        {
-                            Item[] dependencyScriptItems = multiselectField.GetItems();
-                            foreach (var dependencyScriptItem in dependencyScriptItems)
-                            {
-                                scriptSession.ExecuteScriptPart(dependencyScriptItem.Fields[ScriptItemFieldNames.Script].Value);
-                            }
-                        }
-                    }
-                }
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
                 if (scriptSession.Output != null)

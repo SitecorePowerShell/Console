@@ -10,12 +10,10 @@
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
-<!--
-      <Script src="/Console/Scripts/jquery-1.8.3.min.js" runat="server"></Script>
--->
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
       <Script src="/Console/Scripts/json2.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!--Caret position in pixels-->
       <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!--Caret position in text (in characters/selections)-->

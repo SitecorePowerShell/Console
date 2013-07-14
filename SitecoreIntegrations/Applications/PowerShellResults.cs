@@ -101,7 +101,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         public void Execute()
         {
             ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
-            string contextScript = string.Format("Set-HostProperty -HostWidth 80\n{0}\n{1}",
+            string contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}\n{2}",
+                                                 scriptSession.Settings.HostWidth,
                                                  scriptSession.Settings.Prescript,
                                                  ScriptSession.GetDataContextSwitch(CurrentItem));
 
