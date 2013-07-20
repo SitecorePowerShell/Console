@@ -87,7 +87,7 @@ namespace Cognifide.PowerShell.Console.Services
                     new {result = "Session recycled.", prompt = "PS >"});
             }
 
-            ScriptSession session = ScriptSession.GetScriptSession(guid);
+            ScriptSession session = GetScriptSession(guid);
             try
             {
                 string handle = ID.NewID.ToString();
@@ -115,6 +115,11 @@ namespace Cognifide.PowerShell.Console.Services
                                 prompt = string.Format("PS {0}>", session.CurrentLocation)
                             });
             }
+        }
+
+        private static ScriptSession GetScriptSession(string guid)
+        {
+            return ScriptSession.GetScriptSession(ApplicationNames.AjaxConsole, guid);
         }
 
         [WebMethod(EnableSession = true)]
@@ -148,7 +153,7 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var serializer = new JavaScriptSerializer();
 
-            ScriptSession session = ScriptSession.GetScriptSession(guid);
+            ScriptSession session = GetScriptSession(guid);
             var result = new Result();
             Job scriptJob = JobManager.GetJob(GetJobID(guid, handle));
             if (scriptJob == null)
@@ -226,7 +231,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         public static string[] GetTabCompletionOutputs(string guid, string command)
         {
-            ScriptSession session = ScriptSession.GetScriptSession(guid);
+            ScriptSession session = GetScriptSession(guid);
             IEnumerable<string> result = CommandCompletion.FindMatches(session, command);
             return result.ToArray();
         }
@@ -243,7 +248,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         public static string[] GetHelpOutputs(string guid, string command)
         {
-            ScriptSession session = ScriptSession.GetScriptSession(guid);
+            ScriptSession session = GetScriptSession(guid);
             IEnumerable<string> result = CommandHelp.GetHelp(session, command);
             return result.ToArray();
         }

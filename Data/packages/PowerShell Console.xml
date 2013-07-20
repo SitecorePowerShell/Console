@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Console</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.1 Beta (for Michael West)</Version>
+      <Version>2.1</Version>
       <Revision />
       <License />
       <Comment />
@@ -21,18 +21,47 @@ behind the scripting environment.
 Review the script before running it, please.
 
 NEW:
+- 2.1 (15 July 2013) - http://bit.ly/ScPs21Iss
+  - Add ability to turn off Context Script and Context Terminal for Content Editor in Ise and Conetent Editor (View ribbon) (ehancement)
+  - Add Close-Window commandlet to close the Results window from a script (enhancement)
+  - CoreDB hosted context scripts will show results window by default rather than hide. (behaviour-change)
+  - Scripts executed without context item that are showing no results window would fail. (bug)
+  - Add Template name to default Item properties (enhancement)
+  - Allow Download-File to skip the dialog that's showing user the download to be started (enhancement)
+  - PowerShell Console showing %((% in places where [ should be in the results - no more (bug)
+  - ISE will no longer show error when executing scripts if user name has dot in the name (bug)
+  - Get-File renamed to Download-File (breaking-change)
+  - Tab Completion Generates invalid path (bug)
+  - cls &amp; Clear-Host not working (bug)
+  - Module Name missing from Get-Command (wontfix)
+  - Execute command generates "scContent is not defined" (bug)
+  - Extra parentheses in Get-PSDrive description (bug enhancement)
+  - Allow Download-File commandlet to download files from Media Library (enhancement)
+  - Package manipulation commandlets have their FileName parameter name changed to Path (breaking-change)
+  - Support installation of update packages (enhancement)
+  - Enable scripts to be exposed in Control Panel (enhancement)
+  - Fix autocomplete and autosuggest for PowerShell 3.0 (bug)
+  - Console needs to be able to display progress info (enhancement)
+  - Make Context Menu scripts in Content Editor - Show/Hide depending on a place in the tree menu is shown. (enhancement)
+  - jQuery must be running in no-conflict mode (bug)
+  - Replace jQuery with the last 1.x version (enhancement)
+  - Template name that is provided to New-Item should be more flexible (enhancement)
+  - Get-ChildItem and Get-Item should be able to work with ambiguous paths (enhancement)
+  - New-Item should be able to work with Item given as -Parent rather than paths only (enhancement)
+  - New-Item should support -Language parameter (enhancement)
+
 - 2.0 Final
-- Massive ISE usability improvements
-  - autosuggest
-  - autocomplete
-  - Command help on Shift+Enter
-  - "Did you know" tips.
-  - Settings editing for ISE, Script Results and Console
-- Get-File commandlet added
-- jsTerminal and other javascript libraries updated.
-- code refactoring to improve compliance with MS library coding guidelines.
-- code re-organization to bring some peace to the previous chaos.
-- item provider is now ProviderCapabilities.ExpandWildcards enabled - uses Sitecore Query.
+  - Massive ISE usability improvements
+    - autosuggest
+    - autocomplete
+    - Command help on Shift+Enter
+    - "Did you know" tips.
+    - Settings editing for ISE, Script Results and Console
+  - Get-File commandlet added
+  - jsTerminal and other javascript libraries updated.
+  - code refactoring to improve compliance with MS library coding guidelines.
+  - code re-organization to bring some peace to the previous chaos.
+  - item provider is now ProviderCapabilities.ExpandWildcards enabled - uses Sitecore Query.
 - 2.0 (RC7)
  - Events hooks added - you can now add support for events in your scripts by uncommenting the relevant section in the Cognifide.Powershell.config and create scripts in the appropriate locations in the "Event Handlers" script library (sample scripts for some events added). Courtesy  of the suggestion by Kieran Marron.
 - 2.0 (RC6)
@@ -247,6 +276,10 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell/{3FB872EC-B14E-4603-AA0D-DB184E7605E7}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/Edit Script/{9D4A541D-3A5B-4BAE-B3F4-3790723EF3FC}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/{91447F09-FD62-4BE6-96AF-265FAEBD1429}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/{F1019C25-E817-40B9-AD1C-5D8471E328AC}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Scripts/{842009BC-2F45-4352-A82A-D9DA0481A2FE}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Terminal/{FE914D0B-2BDB-40D3-80B7-F691414A689E}/invariant/0</x-item>
+        <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/{8F698F43-8930-4810-9DEC-FE8118DD8C3A}/invariant/0</x-item>
       </Entries>
       <SkipVersions>False</SkipVersions>
       <Converter>

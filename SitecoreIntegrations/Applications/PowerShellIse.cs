@@ -478,14 +478,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
             UpdateRibbon();
-
-            //Job scriptJob = Factory.Get
-            if (Settings.SaveLastScript)
-            {
-                Settings.Load();
-                Settings.LastScript = Editor.Value;
-                Settings.Save();
-            }
         }
 
         [HandleMessage("ise:updateresults", true)]

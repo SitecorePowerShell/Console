@@ -38,17 +38,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private bool initialized;
         private Pipeline pipeline;
 
-        public static ScriptSession GetScriptSession(string guid)
+        public string ID { get; private set; }
+
+        public static ScriptSession GetScriptSession(string applianceType, string guid)
         {
             lock (HttpContext.Current.Session)
             {
+                if (string.IsNullOrEmpty(guid))
+                {
+                    guid = Guid.NewGuid().ToString();
+                }
                 var session = HttpContext.Current.Session[guid] as ScriptSession;
                 if (session == null)
                 {
                     session = new ScriptSession(ApplicationNames.AjaxConsole, false);
                     HttpContext.Current.Session[guid] = session;
+                    session.ID = guid; 
                     session.Initialize();
-                    ApplicationSettings settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+                    ApplicationSettings settings = ApplicationSettings.GetInstance(applianceType, false);
                     session.ExecuteScriptPart(settings.Prescript);
                 }
                 return session;
