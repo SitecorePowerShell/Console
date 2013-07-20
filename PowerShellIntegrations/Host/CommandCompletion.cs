@@ -18,14 +18,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             if (powershellVersion == 0)
             {
-                powershellVersion = (bool)session.ExecuteScriptPart("Test-Path Function:\\TabExpansion2", false, true)[0] ? 3 : 2;
+                powershellVersion = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
             }
 
             switch (powershellVersion)
             {
-                case(2):
+                case (2):
                     return FindMatches2(session, command);
-                case(3):
+                case (3):
                     return FindMatches3(session, command);
                 default:
                     return new string[0];
@@ -34,18 +34,29 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command)
         {
-            string lastToken;
-            var truncatedCommand = TruncatedCommand(command, out lastToken);
+            //string lastToken;
+            var truncatedCommand = String.Empty;
 
             string TabExpansionHelper =
-                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches.CompletionText } }";
+                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ) { 
+                    $results = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorColumn | % { $_.CompletionMatches.CompletionText }
+                    $split = $inputScript.Split('.')
+                    if($split.Length -gt 1) {
+                        foreach ($result in $results) {
+                            $split[-1] = $result
+                            $split -join '.'
+                        }
+                    } else {
+                        $results
+                    }
+                }";
             session.ExecuteScriptPart(TabExpansionHelper);
 
             var teCmd = new Command("ScPsTabExpansionHelper");
             teCmd.Parameters.Add("inputScript", command);
-            teCmd.Parameters.Add("cursorColumn",command.Length);
+            teCmd.Parameters.Add("cursorColumn", command.Length);
 
-            string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().Select(l=> l.StartsWith("& '") ? l.Substring(3).TrimEnd('\'') : l).ToArray();
+            string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().Select(l => l.StartsWith("& '") ? l.Substring(3).TrimEnd('\'') : l).ToArray();
             var result = new List<string>();
 
             WrapResults(truncatedCommand, teResult, result);
@@ -69,7 +80,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             //int prefixFileNameLength = Path.GetFileName(lastToken).Length;
             //string pathPrefix = lastToken.Substring(lastToken.Length - prefixFileNameLength);
             var splitPathResult = (session.ExecuteScriptPart(string.Format("Split-Path \"{0}*\" -IsAbsolute", lastToken), false, true).FirstOrDefault());
-            var isAbsolute = splitPathResult != null && (bool) splitPathResult;
+            var isAbsolute = splitPathResult != null && (bool)splitPathResult;
 
             if (isAbsolute)
             {
@@ -89,7 +100,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             return result;
         }
 
-        public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
+        public static char[] wrapChars = { ' ', '(', ')', '{', '}', '%', '@', '|' };
         public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
         {
             if (!string.IsNullOrEmpty(truncatedCommand))
@@ -100,7 +111,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 l.IndexOfAny(wrapChars) > -1
                     ? string.Format("{0}{1}'{2}'",
                         truncatedCommand,
-                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty: " ",
+                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
                         l.Trim('\''))
                     : truncatedCommand + l
                 ));
@@ -116,7 +127,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             switch (tokens.Count)
             {
                 case (0):
-                    break;
                 case (1):
                     break;
                 default:
