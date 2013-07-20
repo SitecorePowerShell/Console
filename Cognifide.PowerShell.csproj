@@ -237,6 +237,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\AbortQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContentEditorIntegrationBase.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextTerminal.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />

@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 var session = HttpContext.Current.Session[guid] as ScriptSession;
                 if (session == null)
                 {
-                    session = new ScriptSession(ApplicationNames.AjaxConsole, false);
+                    session = new ScriptSession(applianceType, false);
                     HttpContext.Current.Session[guid] = session;
                     session.ID = guid; 
                     session.Initialize();
@@ -212,7 +212,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            Pipeline pipeline = runspace.CreatePipeline(script);
+            pipeline = runspace.CreatePipeline(script);
             return ExecuteCommand(stringOutput, internalScript, pipeline);
         }
 

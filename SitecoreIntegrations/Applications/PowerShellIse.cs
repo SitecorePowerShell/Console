@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
@@ -216,48 +217,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             UpdateRibbon();
         }
 
-/*
-        [HandleMessage("ise:open", true)]
-        protected void OpenScript(ClientPipelineArgs args)
-        {
-            Assert.ArgumentNotNull(args, "args");
-            if (args.IsPostBack)
-            {
-                if (!args.HasResult)
-                    return;
-                LoadItem(args.Result);
-            }
-            else
-            {
-                const string header = "Open Script";
-                const string text = "Select the script item that you want to open.";
-                const string icon = "powershell/48x48/script.png";
-                const string button = "Open";
-                const string root = "/sitecore/system/Modules/PowerShell/Script Library";
-                const string selected = "/sitecore/system/Modules/PowerShell/Script Library/";
-
-                string str = selected;
-                if (selected.EndsWith("/"))
-                {
-                    Item obj = Context.ContentDatabase.Items[StringUtil.Left(selected, selected.Length - 1)];
-                    if (obj != null)
-                        str = obj.ID.ToString();
-                }
-                var urlString = new UrlString("/sitecore/shell/Applications/Item browser.aspx");
-                urlString.Append("id", selected);
-                urlString.Append("fo", str);
-                urlString.Append("ro", root);
-                urlString.Append("he", header);
-                urlString.Append("txt", text);
-                urlString.Append("ic", icon);
-                urlString.Append("btn", button);
-                SheerResponse.ShowModalDialog(urlString.ToString(), true);
-
-                args.WaitForPostBack();
-            }
-        }
-*/
-
         [HandleMessage("ise:saveas", true)]
         protected void SaveAs(ClientPipelineArgs args)
         {
@@ -464,6 +423,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
+            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+
             if (Settings.SaveLastScript)
             {
                 Settings.Load();
@@ -475,6 +436,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
+            var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
+            currentSession.Abort();
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
             UpdateRibbon();
@@ -484,6 +447,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
             var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
+            HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
             Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult", result ?? "Script finished - no results to display.");
             ProgressOverlay.Visible = false;
             UpdateRibbon();
