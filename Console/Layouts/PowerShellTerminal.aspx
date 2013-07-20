@@ -46,7 +46,7 @@
                 var tabCompletions = null;
 
                 var terminal =
-                    $('body').terminal(function(command, term) {
+                    $('#terminal').terminal(function(command, term) {
                         var buffer;
                         if (command.length > 0 && command.lastIndexOf(' `') == command.length - 1) {
                             buffer = command;
@@ -56,7 +56,7 @@
                                     callPowerShellHost(term, guid, buffer);
                                     buffer = "";
                                 } else {
-                                    buffer += '\n' + subCommand;
+                                    buffer += subCommand;
                                 }
                             }, {
                                 prompt: '>>',
@@ -194,17 +194,11 @@
                 if (data["status"] != "partial") {
                     term.resume();
                     jQuery("#working").hide();
+                    term.set_prompt(data["prompt"]);
                 }
 
-                term.set_prompt(data["prompt"]);
                 term.echo(data["result"]);
                 $("html").animate({ scrollTop: $(document).height() }, "slow");
-
-                /*if (console) {
-                    console.log(json);
-        console.log(data["prompt"]);
-        console.log(data["result"]);
-                }*/
             }
 
         </script>

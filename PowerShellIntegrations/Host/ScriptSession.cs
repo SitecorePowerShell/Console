@@ -36,6 +36,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         private bool disposed;
         private bool initialized;
+        private Pipeline pipeline;
+
+        public static ScriptSession GetScriptSession(string guid)
+        {
+            lock (HttpContext.Current.Session)
+            {
+                var session = HttpContext.Current.Session[guid] as ScriptSession;
+                if (session == null)
+                {
+                    session = new ScriptSession(ApplicationNames.AjaxConsole, false);
+                    HttpContext.Current.Session[guid] = session;
+                    session.Initialize();
+                    ApplicationSettings settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+                    session.ExecuteScriptPart(settings.Prescript);
+                }
+                return session;
+            }
+        }
 
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
@@ -188,7 +206,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
             Pipeline pipeline = runspace.CreatePipeline(script);
-
             return ExecuteCommand(stringOutput, internalScript, pipeline);
         }
 
@@ -196,11 +213,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            Pipeline pipeline = runspace.CreatePipeline();
+            pipeline = runspace.CreatePipeline();
 
             pipeline.Commands.Add(command);
 
             return ExecuteCommand(stringOutput, internalScript, pipeline);
+        }
+
+        public void Abort()
+        {
+            pipeline.Stop();
         }
 
         private List<object> ExecuteCommand(bool stringOutput, bool internalScript, Pipeline pipeline)

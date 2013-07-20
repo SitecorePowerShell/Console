@@ -979,6 +979,9 @@
                     }
                 } else if (e.which === 9 && !(e.ctrlKey || e.altKey)) { // TAB
                     self.insert('\t');
+                } else if (e.which === 27) { // Esc
+                    command = '';
+                    redraw();
                 } else if (e.which === 46) {
                     //DELETE
                     if (command !== '' && position < command.length) {

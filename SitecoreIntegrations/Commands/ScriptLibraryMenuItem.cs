@@ -15,6 +15,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
     [Serializable]
     public class ScriptLibraryMenuItem : Command
     {
+        public override CommandState QueryState(CommandContext context)
+        {
+            return PowerShellUiUserOptions.ShowContextMenuScripts ? CommandState.Enabled : CommandState.Hidden;
+        }
+
         public override void Execute(CommandContext context)
         {
             SheerResponse.DisableOutput();

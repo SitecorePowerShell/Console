@@ -96,9 +96,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public void GetTerminalLine(StringBuilder output)
-            //, ConsoleColor HostBackgroundColor, ConsoleColor HostForegroundColor)
         {
             var outString = Terminated ? Text.TrimEnd() : Text;
+            if (outString.EndsWith("\\"))
+            {
+                outString += " ";
+            }
             Color htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
             Color htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
             output.AppendFormat(

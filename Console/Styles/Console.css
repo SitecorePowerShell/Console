@@ -4,6 +4,23 @@
     overflow-y: auto;
 }
 
+html{
+    height:100%;
+    position:relative;
+/*    overflow-y: inherit;*/
+}
+/* make sure it is at least as tall as the viewport */
+
+#terminal{
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    overflow-y: auto;
+    z-index:-1
+}
+
 .middleArea pre, .resultsArea pre
 {
     margin: 4px;
@@ -357,7 +374,7 @@ a.ps-link
 {
     background-color: #012456;
     border-radius: 13px; /* (height of inner div) / 2 + padding */
-    padding: 3px;
+    padding: 3px 5px 3px 3px;
     width: 300px;
     margin: auto;
 }

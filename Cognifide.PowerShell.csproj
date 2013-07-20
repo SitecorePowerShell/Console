@@ -215,6 +215,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
     <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\ExecutionMessages.cs" />
     <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
@@ -236,9 +237,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\RebuildAllIntegrations.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ToggleContentEditorIntegrationBase.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ToggleContextTerminal.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\RebuildControlPanelIntegration.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
+    <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
@@ -258,7 +262,6 @@
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
-    <Compile Include="SitecoreIntegrations\Tasks\LibraryWatcher.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
   </ItemGroup>

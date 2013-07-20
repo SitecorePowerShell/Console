@@ -87,7 +87,7 @@ namespace Cognifide.PowerShell.Console.Services
                     new {result = "Session recycled.", prompt = "PS >"});
             }
 
-            ScriptSession session = GetScriptSession(guid);
+            ScriptSession session = ScriptSession.GetScriptSession(guid);
             try
             {
                 string handle = ID.NewID.ToString();
@@ -148,7 +148,7 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var serializer = new JavaScriptSerializer();
 
-            ScriptSession session = GetScriptSession(guid);
+            ScriptSession session = ScriptSession.GetScriptSession(guid);
             var result = new Result();
             Job scriptJob = JobManager.GetJob(GetJobID(guid, handle));
             if (scriptJob == null)
@@ -183,7 +183,7 @@ namespace Cognifide.PowerShell.Console.Services
             foreach (OutputLine outputLine in session.Output)
             {
                 outputLine.GetLine(temp, stringFormat);
-                if ((output.Length + temp.Length + buffer) > 65536)
+                if ((output.Length + temp.Length + buffer) > 131072)
                 {
                     session.Output.RemoveRange(0, lines);
                     partial = true;
@@ -193,7 +193,7 @@ namespace Cognifide.PowerShell.Console.Services
                 output.Append(temp);
                 temp.Remove(0, temp.Length);
             }
-            result.result = output.ToString();
+            result.result = output.ToString().TrimEnd(new char[] { '\r','\n'});
             result.prompt = string.Format("PS {0}>", session.CurrentLocation);
             if (partial)
             {
@@ -226,7 +226,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         public static string[] GetTabCompletionOutputs(string guid, string command)
         {
-            ScriptSession session = GetScriptSession(guid);
+            ScriptSession session = ScriptSession.GetScriptSession(guid);
             IEnumerable<string> result = CommandCompletion.FindMatches(session, command);
             return result.ToArray();
         }
@@ -243,28 +243,11 @@ namespace Cognifide.PowerShell.Console.Services
 
         public static string[] GetHelpOutputs(string guid, string command)
         {
-            ScriptSession session = GetScriptSession(guid);
+            ScriptSession session = ScriptSession.GetScriptSession(guid);
             IEnumerable<string> result = CommandHelp.GetHelp(session, command);
             return result.ToArray();
         }
 
-
-        private static ScriptSession GetScriptSession(string guid)
-        {
-            lock (HttpContext.Current.Session)
-            {
-                var session = HttpContext.Current.Session[guid] as ScriptSession;
-                if (session == null)
-                {
-                    session = new ScriptSession(ApplicationNames.AjaxConsole, false);
-                    HttpContext.Current.Session[guid] = session;
-                    session.Initialize();
-                    ApplicationSettings settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
-                    session.ExecuteScriptPart(settings.Prescript);
-                }
-                return session;
-            }
-        }
 
         protected string GetJobID(string sessionGuid, string handle)
         {
