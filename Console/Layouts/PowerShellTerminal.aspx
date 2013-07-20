@@ -1,6 +1,7 @@
 ﻿<%@ Page Language="C#" CodeBehind="PowerShellTerminal.aspx.cs" Inherits="Cognifide.PowerShell.Console.Layouts.PowerShellTerminal" %>
 <%@ Import Namespace="Cognifide.PowerShell" %>
-<%@ Import Namespace="Cognifide.PowerShell.PowerShellIntegrations.Settings" %><!DOCTYPE html>
+<%@ Import Namespace="Cognifide.PowerShell.PowerShellIntegrations.Settings" %>
+<!DOCTYPE html>
 <!-- !DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" -->
 <html>
     <head runat="server">
@@ -10,6 +11,15 @@
 
         <link href="~/Console/Styles/Console.css" type="text/css" rel="stylesheet" />
         <title>PowerShell for Sitecore</title>
+        <style>
+            .terminal, .terminal .terminal-output, 
+            .terminal .terminal-output div, 
+            .terminal .terminal-output div div, 
+            .cmd, .terminal .cmd span, .terminal .cmd div {
+                color: <%= ForegroundColor %>;
+                background-color: <%= BackgroundColor %>;
+            }
+        </style>
         <script type="text/javascript" src="/Console/Scripts/jquery-1.10.2.min.js"> </script>
         <script type="text/javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </script>
         <script type="text/javascript" src="/Console/Scripts/jquery.terminal.js"> </script>
@@ -221,13 +231,4 @@
             setTimeout(setFocusOnConsole, 1000);
         })
     </script>
-    <style>
-        .terminal, .terminal .terminal-output, 
-        .terminal .terminal-output div, 
-        .terminal .terminal-output div div, 
-        .cmd, .terminal .cmd span, .terminal .cmd div {
-            color: <%= ForegroundColor %>;
-            background-color: <%= BackgroundColor %>;
-        }
-    </style>
 </html>
