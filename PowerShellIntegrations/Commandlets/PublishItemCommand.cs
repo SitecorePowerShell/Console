@@ -1,12 +1,12 @@
-﻿using System;
-using System.Management.Automation;
-using Sitecore;
+﻿using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
+using System;
+using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
@@ -33,27 +33,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         public string[] Languages { get; set; }
 
         [Parameter]
-        public string PublishMode { get; set; }
+        public PublishMode PublishMode { get; set; }
 
         protected override void ProcessRecord()
         {
             Publish(Item, Path, Id, Recurse.IsPresent, Targets, Languages, PublishMode);
         }
 
-        public void Publish(Item item, string path, string id, bool recursive, string[] targets,
-                            string[] languages, string publishMode)
+        private void Publish(Item item, string path, string id, bool recursive, string[] targets, 
+                            string[] languages, PublishMode mode)
         {
             item = FindItemFromParameters(item, path, id);
-
-            PublishMode mode;
-            try
-            {
-                mode = (PublishMode) Enum.Parse(typeof (PublishMode), publishMode);
-            }
-            catch (Exception)
-            {
-                mode = Sitecore.Publishing.PublishMode.Smart;
-            }
 
             if (item != null)
             {
@@ -102,6 +92,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         private void PublishToTargetLanguage(Item item, string target, Language language, bool recursive,
                                              PublishMode mode)
         {
+            if (mode == PublishMode.Unknown)
+            {
+                mode = PublishMode.Smart;
+            }
+
             WriteVerbose(String.Format("Publishing item '{0}' in language '{1}' to target '{2}'", item.Name, language,
                                        target));
             WriteDebug(String.Format("[Debug]: Publishing item '{0}' in language '{1}' to target '{2}'", item.Name,
