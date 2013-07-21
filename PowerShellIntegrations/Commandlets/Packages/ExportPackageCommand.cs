@@ -11,6 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
+        [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         [Parameter(Position = 1, ValueFromPipeline = true)]

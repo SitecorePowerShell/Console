@@ -23,6 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
         public Item Item { get; set; }
 
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromPath", Mandatory = true)]
+        [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         protected override void ProcessRecord()

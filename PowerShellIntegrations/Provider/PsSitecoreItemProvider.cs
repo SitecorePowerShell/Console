@@ -11,6 +11,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Globalization;
+using Sitecore.Pipelines.SaveLayout;
 using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
 
@@ -241,6 +242,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 LogError(ex, "Error while executing GetItem(string path='{0}')", path);
                 throw;
             }
+        }
+
+        protected override void InvokeDefaultAction(string path)
+        {
+            base.InvokeDefaultAction(path);
         }
 
         private void WriteMatchingItem(string language, int version, Item item)

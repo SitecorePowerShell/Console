@@ -18,6 +18,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
         public Item Item { get; set; }
 
         [Parameter]
+        [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         [Parameter]

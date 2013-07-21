@@ -17,6 +17,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
+        [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         [Parameter(Position = 0)]

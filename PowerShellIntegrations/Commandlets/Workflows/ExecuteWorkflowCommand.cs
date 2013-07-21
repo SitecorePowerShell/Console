@@ -13,6 +13,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
         public Item Item { get; set; }
 
         [Parameter(Position = 0)]
+        [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         [Parameter]

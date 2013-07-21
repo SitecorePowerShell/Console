@@ -10,6 +10,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     public class GetPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
+        [Alias("FullName","FileName")]
         public string Path { get; set; }
 
         protected override void ProcessRecord()
