@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using Sitecore.Diagnostics;
+using System.Collections;
 using System.Management.Automation;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
@@ -18,6 +18,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             get { return separator; }
             set { separator = value; }
         }
+
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
 
         [Parameter]
         public LogNotificationLevel Log { get; set; }
@@ -83,6 +86,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         protected override void ProcessRecord()
         {
             LogObject(Object);
+
+            if (PassThru.IsPresent)
+            {
+                WriteObject(Object);
+            }
         }
     }
 }
