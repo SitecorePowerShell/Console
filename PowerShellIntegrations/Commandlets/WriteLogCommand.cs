@@ -78,6 +78,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                     Sitecore.Diagnostics.Log.Info(logMessage, this);
                     break;
             }
+
+            WriteVerbose(logMessage);
         }
 
         protected override void ProcessRecord()
