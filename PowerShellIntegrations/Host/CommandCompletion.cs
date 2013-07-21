@@ -12,16 +12,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
     public static class CommandCompletion
     {
-        private static int powershellVersion = 0;
+        private static int _powerShellVersionMajor;
+        
 
         public static IEnumerable<string> FindMatches(ScriptSession session, string command)
         {
-            if (powershellVersion == 0)
+            if (_powerShellVersionMajor == 0)
             {
-                powershellVersion = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
+                _powerShellVersionMajor = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
             }
 
-            switch (powershellVersion)
+            switch (_powerShellVersionMajor)
             {
                 case (2):
                     return FindMatches2(session, command);
@@ -34,32 +35,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command)
         {
-            //string lastToken;
-            var truncatedCommand = String.Empty;
+            string lastToken;
+            var truncatedCommand = TruncatedCommand(command, out lastToken);
 
             string TabExpansionHelper =
-                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ) { 
-                    $results = TabExpansion2 -inputScript $inputScript -cursorColumn $cursorColumn | % { $_.CompletionMatches.CompletionText }
-                    $split = $inputScript.Split('.')
-                    if($split.Length -gt 1) {
-                        foreach ($result in $results) {
-                            $split[-1] = $result
-                            $split -join '.'
-                        }
-                    } else {
-                        $results
-                    }
-                }";
+                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
             session.ExecuteScriptPart(TabExpansionHelper);
 
             var teCmd = new Command("ScPsTabExpansionHelper");
             teCmd.Parameters.Add("inputScript", command);
             teCmd.Parameters.Add("cursorColumn", command.Length);
 
-            string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().Select(l => l.StartsWith("& '") ? l.Substring(3).TrimEnd('\'') : l).ToArray();
+            string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().ToArray();
             var result = new List<string>();
 
-            WrapResults(truncatedCommand, teResult, result);
+            WrapResults3(truncatedCommand, teResult, result);
             return result;
         }
 
@@ -100,12 +90,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             return result;
         }
 
-        public static char[] wrapChars = { ' ', '(', ')', '{', '}', '%', '@', '|' };
+        public static char[] wrapChars = { ' ', '$', '(', ')', '{', '}', '%', '@', '|' };
         public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
         {
             if (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
             {
-                truncatedCommand += " "; 
+                truncatedCommand += " ";
             }
             results.AddRange(tabExpandedResults.Select(l =>
                 l.IndexOfAny(wrapChars) > -1
@@ -118,26 +108,58 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         }
 
+        public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
+        {
+            var truncatedCommandTail = (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
+                ? " " : string.Empty;
+            results.AddRange(tabExpandedResults.Select(l =>
+            {
+                var split = l.Split('|');
+                var type = split[0];
+                var content = split[1];
+                switch (type)
+                {
+                    case ("Variable"):
+                    case ("ParameterName"):
+                    case ("Command"):
+                        return string.Format("{0}{1}{2}",
+                            truncatedCommand, truncatedCommandTail, content);
+                    case ("Property"):
+                    case ("Method"):
+                        return truncatedCommand.EndsWith("]")
+                            ? string.Format("{0}{1}", truncatedCommand, content)
+                            : string.Format("{0}.{1}", truncatedCommand.Trim('.'), content);
+                    default:
+                        return string.Format("{0}{1}{2}",
+                            truncatedCommand, truncatedCommandTail,
+                            content.StartsWith("& '") ? content.Substring(2) : content);
+                }
+            }));
+
+        }
+
         private static string TruncatedCommand(string command, out string lastToken)
         {
             Collection<PSParseError> errors;
             Collection<PSToken> tokens = PSParser.Tokenize(command, out errors);
-            lastToken = tokens.Last().Content;
             string truncatedCommand = string.Empty;
+            lastToken = string.Empty;
             switch (tokens.Count)
             {
                 case (0):
+                    break;
                 case (1):
+                    PSToken lastPsToken = tokens.Last();
+                    if (lastPsToken.Type != PSTokenType.Variable && lastPsToken.Type != PSTokenType.Command)
+                    {
+                        truncatedCommand = command;
+                    }
                     break;
                 default:
-                    truncatedCommand = tokens.Take(tokens.Count - 1).
-                        Select(
-                            l =>
-                                l.Content.Contains(" ")
-                                    ? string.Format("\"{0}\"", l.Content)
-                                    : l.Content)
-                        .
-                        Aggregate((x, y) => x + " " + y) + " ";
+                    lastPsToken = tokens.Last();
+                    lastToken = lastPsToken.Content;
+                    command = command.TrimEnd(' ');
+                    truncatedCommand = command.Substring(0, command.Length - lastToken.Length);
                     break;
             }
             return truncatedCommand;

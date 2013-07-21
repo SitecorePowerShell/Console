@@ -79,10 +79,12 @@ jQuery(document).ready(function($) {
             event.preventDefault();
             editor.autocomplete("enable");
             editor.autocomplete("search");
+/*
         } else if (event.which === 9 || (event.which === 32 && event.shiftKey)) {
             var str = _leftMatch(editor[0].value, editor);
             _getTabCompletions(str);
             event.preventDefault();
+*/
         } else if (event.which === 13 && (event.shiftKey || event.ctrlKey)) {
             var command = _leftMatch(editor[0].value, editor);
             _getCommandHelp(command);
@@ -103,11 +105,15 @@ jQuery(document).ready(function($) {
 
     });
 
+/*
     $.tabCompletions = [];
     $.tabCompletionsLowercase = [];
+*/
     $.commandHelp = "";
     $("#Help").dialog({ autoOpen: false });
+/*
     editor.asuggest($.tabCompletions);
+*/
     
     var tipIndex = Math.floor(Math.random() * tips.length);
     var tip = tips[tipIndex];

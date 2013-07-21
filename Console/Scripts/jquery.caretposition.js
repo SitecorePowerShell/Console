@@ -38,7 +38,7 @@
             // calculate position
             getCaretPosition: function () {
                 var cal = calculator, self = this, element = self[0], elementOffset = self.offset();
-                console.log(this);
+                //console.log(this);
                 // IE has easy way to get caret offset position
                 if ($.browser.msie) {
                     // must get focus first

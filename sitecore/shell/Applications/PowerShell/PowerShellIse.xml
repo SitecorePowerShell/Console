@@ -17,7 +17,7 @@
       <Script src="/Console/Scripts/json2.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!--Caret position in pixels-->
       <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!--Caret position in text (in characters/selections)-->
-      <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!--inline suggestions-->
+      <!-- Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></--> <!--inline suggestions-->
       <Script src="/Console/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
       <Script src="/Console/Scripts/ise.js" runat="server"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />

@@ -15,90 +15,80 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             Collection<PSParseError> errors;
             Collection<PSToken> tokens = PSParser.Tokenize(command, out errors);
-            string lastToken = tokens.Last().Content;
-            string truncatedCommand = string.Empty;
-            switch (tokens.Count)
+            PSToken lastPsToken = tokens.Where(t => t.Type == PSTokenType.Command).LastOrDefault();
+            if (lastPsToken != null)
             {
-                case (0):
-                    break;
-                case (1):
-                    break;
-                default:
-
-                    truncatedCommand = tokens.Take(tokens.Count - 1).
-                                              Select(
-                                                  l =>
-                                                  l.Content.Contains(" ")
-                                                      ? string.Format("\"{0}\"", l.Content)
-                                                      : l.Content)
-                                             .
-                                              Aggregate((x, y) => x + " " + y) + " ";
-                    break;
+                session.Output.Clear();
+                string lastToken = lastPsToken.Content;
+                session.ExecuteScriptPart("Set-HostProperty -HostWidth 1000", false, true);
+                session.ExecuteScriptPart(string.Format("Get-Help {0} -Full", lastToken), true, true);
+                var sb = new StringBuilder();
+                int headerCount = 0;
+                int lineCount = 0;
+                if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)
+                {
+                    return new string[] { "<div class='ps-help-command-name'>&nbsp;</div><div class='ps-help-header' align='center'>No Command in line or help information found</div><div class='ps-help-parameter' align='center'>Cannot provide help in this context.</div>" };
+                }
+                session.Output.ForEach(l =>
+                {
+                    if (!l.Text.StartsWith(" "))
+                    {
+                        headerCount++;
+                    }
+                    else
+                    {
+                        lineCount++;
+                    }
+                });
+                bool listVIew = headerCount > lineCount;
+                int lineNo = -1;
+                session.Output.ForEach(l =>
+                {
+                    if (++lineNo > 0)
+                    {
+                        var line = System.Web.HttpUtility.HtmlEncode(l.Text.Trim());
+                        line = Regex.Replace(line,
+                            @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)",
+                            "<a target='_blank' href='$1' class='ps-link'>$1</a>");
+                        if (listVIew)
+                        {
+                            if (lineNo < 3)
+                            {
+                                sb.AppendFormat("<div class='ps-help-firstLine'>{0}</div>", line);
+                            }
+                            else
+                            {
+                                sb.AppendFormat("{0}\n", line);
+                            }
+                        }
+                        else if (lineNo > 1)
+                        {
+                            if (lineNo == 2)
+                            {
+                                sb.AppendFormat("<div class='ps-help-command-name'>{0}</div>", line);
+                            }
+                            else if (!l.Text.StartsWith(" "))
+                            {
+                                sb.AppendFormat("<div class='ps-help-header'>{0}</div>", line);
+                            }
+                            else if (l.Text.StartsWith("    -"))
+                            {
+                                sb.AppendFormat("<div class='ps-help-parameter'>{0}</div>", line);
+                            }
+                            else
+                            {
+                                sb.AppendFormat("{0}\n", line);
+                            }
+                        }
+                    }
+                });
+                session.Output.Clear();
+                //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
+                //List<string> result = teResult.Select(l => truncatedCommand + l).ToList();
+                var result = new string[] {sb.ToString()};
+                return result;
             }
-            lastToken = lastToken.Trim('"', '\'');
-            session.ExecuteScriptPart("Set-HostProperty -HostWidth 1000", false, true);
-            session.ExecuteScriptPart(string.Format("Get-Help {0} -Full", lastToken), true, true);
-            StringBuilder sb = new StringBuilder();
-            int headerCount = 0;
-            int lineCount = 0;
-            session.Output.ForEach(l =>
-            {
-                if (!l.Text.StartsWith(" "))
-                {
-                    headerCount++;
-                }
-                else
-                {
-                    lineCount++;
-                }
-            });
-            bool listVIew = headerCount > lineCount;
-            int lineNo = -1;
-            session.Output.ForEach(l =>
-            {
-                if (++lineNo > 0)
-                {
-                    var line = System.Web.HttpUtility.HtmlEncode(l.Text.Trim());
-                    line = Regex.Replace(line,
-                        @"((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)",
-                        "<a target='_blank' href='$1' class='ps-link'>$1</a>");
-                    if (listVIew)
-                    {
-                        if (lineNo < 3)
-                        {
-                            sb.AppendFormat("<div class='ps-help-firstLine'>{0}</div>", line);
-                        }
-                        else
-                        {
-                            sb.AppendFormat("{0}\n", line);
-                        }
-                    }
-                    else if (lineNo > 1)
-                    {
-                        if (lineNo == 2)
-                        {
-                            sb.AppendFormat("<div class='ps-help-command-name'>{0}</div>", line);
-                        }
-                        else if (!l.Text.StartsWith(" "))
-                        {
-                            sb.AppendFormat("<div class='ps-help-header'>{0}</div>", line);
-                        }
-                        else if (l.Text.StartsWith("    -"))
-                        {
-                            sb.AppendFormat("<div class='ps-help-parameter'>{0}</div>", line);
-                        }
-                        else
-                        {
-                            sb.AppendFormat("{0}\n", line);
-                        }
-                    }
-                }
-            });
-            session.Output.Clear();
-            //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
-            //List<string> result = teResult.Select(l => truncatedCommand + l).ToList();
-            var result = new string[] {sb.ToString()};
-            return result;
+            return new string[] {"No Command in line found - cannot provide help in this context."};
         }
     }
 }

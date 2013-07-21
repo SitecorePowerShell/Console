@@ -15,8 +15,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private Coordinates windowPosition;
         private Size windowSize;
 
+        /// <summary>
+        ///     A reference to the PSHost implementation.
+        /// </summary>
+        public OutputBuffer Output { get; private set; }
+
         public ScriptingHostRawUserInterface(ApplicationSettings settings)
         {
+            Output = new OutputBuffer();
             backgroundColor = settings.BackgroundColor;
             foregroundColor = settings.ForegroundColor;
             cursorPosition = new Coordinates(0, 0);
@@ -103,7 +109,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {
-            throw new NotImplementedException();
+            this.Output.Clear();
         }
 
         public override BufferCell[,] GetBufferContents(Rectangle rectangle)

@@ -23,14 +23,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public ScriptingHostUserInterface(ApplicationSettings settings)
         {
-            Output = new OutputBuffer();
             rawUi = new ScriptingHostRawUserInterface(settings);
         }
 
         /// <summary>
         ///     A reference to the PSHost implementation.
         /// </summary>
-        public OutputBuffer Output { get; private set; }
+        public OutputBuffer Output { get { return rawUi.Output; }}
 
         public override PSHostRawUserInterface RawUI
         {

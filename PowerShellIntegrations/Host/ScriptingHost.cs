@@ -89,7 +89,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         /// </summary>
         public override string Name
         {
-            get { return "Sitecore Console Host"; }
+            get
+            {
+                if (ScriptSession.PsVersion == null)
+                {
+                    return "Sitecore Console Host";
+                }
+                return string.Format("Sitecore Console Host {0} on Windows PowerShell {1}.{2}",
+                    GetType().Assembly.GetName().Version, ScriptSession.PsVersion.Major,
+                    ScriptSession.PsVersion.Minor);
+            }
         }
 
         /// <summary>
