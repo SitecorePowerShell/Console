@@ -3,7 +3,7 @@ using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet(VerbsCommon.Show, "Confirm", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.Show, "Confirm")]
     public class ShowConfirmCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]

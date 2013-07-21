@@ -87,16 +87,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         {
             if (item == null)
             {
-                PathInfo currentPathInfo = CurrentProviderLocation("CmsItemProvider");
                 if (!String.IsNullOrEmpty(id))
                 {
-                    Database currentDb = Factory.GetDatabase(currentPathInfo.Drive.Name);
+                    Database currentDb = Factory.GetDatabase(CurrentDrive);
                     item = currentDb.GetItem(new ID(id));
                 }
                 else if (!String.IsNullOrEmpty(path))
                 {
                     path = path.Replace('\\', '/');
-                    item = PathUtilities.GetItem(path, currentPathInfo.Drive.Name, currentPathInfo.ProviderPath);
+                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
                 }
                 else
                 {

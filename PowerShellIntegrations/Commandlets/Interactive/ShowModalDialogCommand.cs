@@ -6,7 +6,7 @@ using Sitecore.Web;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet(VerbsCommon.Show, "ModalDialog", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.Show, "ModalDialog")]
     public class ShowModalDialogCommand : BaseFormCommand
     {
         [Parameter(Mandatory = true)]

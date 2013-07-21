@@ -3,7 +3,7 @@ using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet(VerbsCommon.Show, "YesNoCancel", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.Show, "YesNoCancel")]
     public class ShowYesNoCancelCommand : BaseFormCommand
     {
         protected override void ProcessRecord()

@@ -7,8 +7,7 @@ jQuery(document).ready(function($) {
 
     var tips = [
             "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
-            "If you press <strong>Shift+Space</strong> ISE sill attempt to auto-complete your statement in-line.",
-            "By pressing <strong>Ctrl+Enter</strong> you can see help for the command you've just typed.",
+            "By pressing <strong>Ctrl+Enter</strong> you can see help for the command closest to the left of your cursor.",
             "Your script will start in the location/folder picked by the <strong>Content Item</strong> dropdown.",
             "You can change the color of the results dialog shown to your script users using the <strong>Console</strong> ribbon button.",
             "If you save your script in the <strong>Content Editor Context Menu</strong> it will automatically show as a context menu option for items that users Right Click in the tree and will start in the location of that item.",
@@ -16,6 +15,7 @@ jQuery(document).ready(function($) {
             "<strong>Runtime</strong> ribbon button is active only if you're editong a script from library. Save your script in script library to enable it.",
             "<strong>Script Library</strong> comes with a wealth of samples and useful scripts that you can base your scripts upon.",
             "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
+            "You can abort a script running in ISE with the <strong>Ctrl+Shift+E</strong> hotkey.",
             "You can download files from the Website and Data folders using the <strong>Get-File</strong> commandlet.",
             "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets."
     ];

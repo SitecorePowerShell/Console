@@ -10,7 +10,7 @@ using Sitecore.Publishing.Pipelines.PublishItem;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Publish", "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
+    [Cmdlet("Publish", "Item")]
     public class PublishItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

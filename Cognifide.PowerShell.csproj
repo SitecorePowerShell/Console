@@ -116,6 +116,8 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\DownloadMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>

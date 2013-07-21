@@ -5,7 +5,7 @@ using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Set", "HostProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet("Set", "HostProperty")]
     public class SetHostPropertyCommand : BaseCommand
     {
         [Parameter]

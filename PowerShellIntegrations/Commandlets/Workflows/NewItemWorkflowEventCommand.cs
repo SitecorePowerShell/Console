@@ -6,7 +6,7 @@ using Sitecore.Workflows.Simple;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
-    [Cmdlet("New", "ItemWorkflowEvent", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
+    [Cmdlet("New", "ItemWorkflowEvent")]
     public class NewItemWorkflowEventCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

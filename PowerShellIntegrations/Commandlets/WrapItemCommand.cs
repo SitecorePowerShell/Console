@@ -3,7 +3,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Wrap", "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
+    [Cmdlet("Wrap", "Item")]
     public class WrapItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

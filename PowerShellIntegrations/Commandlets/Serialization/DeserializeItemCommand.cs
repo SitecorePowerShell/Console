@@ -5,7 +5,7 @@ using Sitecore.Data.Serialization;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 {
-    [Cmdlet("Deserialize", "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
+    [Cmdlet("Deserialize", "Item")]
     public class DeserializeItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

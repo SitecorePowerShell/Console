@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet(VerbsCommon.Show, "Input", SupportsShouldProcess = true, DefaultParameterSetName = "Prompt")]
+    [Cmdlet(VerbsCommon.Show, "Input")]
     public class ShowInputCommand : BaseShellCommand
     {
         [Parameter(Position = 0, Mandatory = true)]

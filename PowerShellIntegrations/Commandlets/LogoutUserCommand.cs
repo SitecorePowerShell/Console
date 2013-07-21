@@ -11,7 +11,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             RecoverHttpContext();
 
             AuthenticationManager.Logout();
-            
 
             SessionState.PSVariable.Set("me", string.Empty);
         }

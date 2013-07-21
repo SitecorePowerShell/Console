@@ -11,7 +11,7 @@ using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 {
-    [Cmdlet("Serialize", "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Item")]
+    [Cmdlet("Serialize", "Item")]
     public class SerializeItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

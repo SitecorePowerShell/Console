@@ -211,9 +211,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Assert.ArgumentNotNull(args, "args");
             ScriptItemId = string.Empty;
             Editor.Value = string.Empty;
-            Context.ClientPage.ClientResponse.SetInnerHtml(
-                "Result",
-                "<div align='Center' style='padding:32px 0 0 0;color:#999999;'>Enter a a script in the Script field and Execute.</div>");
+            EnterScriptInfo.Visible = true;
+            ScriptResult.Value = string.Empty;
+            ScriptResult.Visible = false;
             UpdateRibbon();
         }
 
@@ -450,6 +450,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
             Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult", result ?? "Script finished - no results to display.");
             ProgressOverlay.Visible = false;
+            ScriptResult.Visible = true;
+
             UpdateRibbon();
         }
 

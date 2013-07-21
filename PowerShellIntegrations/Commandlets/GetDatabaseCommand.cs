@@ -4,7 +4,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Get", "Database", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "Database", DefaultParameterSetName = "Name")]
     public class GetDatabaseCommand : BaseCommand
     {
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
