@@ -17,9 +17,23 @@
       <Script src="/Console/Scripts/json2.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery.caretposition.js" runat="server"></Script> <!--Caret position in pixels-->
       <Script src="/Console/Scripts/jquery.a-tools-1.4.1.js" runat="server"></Script> <!--Caret position in text (in characters/selections)-->
-      <!-- Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></--> <!--inline suggestions-->
+      <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!--inline suggestions-->
       <Script src="/Console/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
       <Script src="/Console/Scripts/ise.js" runat="server"></Script>
+      <Script src="/Console/Scripts/src-noconflict/ace.js" runat="server"></Script>
+      <Script runat="server">
+          jQuery(document).ready(function() {
+              var textarea = jQuery('#Editor').hide();
+              var editor = ace.edit("description");
+              editor.setTheme("ace/theme/powershellise");
+              editor.getSession().setMode("ace/mode/powershell");
+              editor.setShowPrintMargin(false);
+              editor.getSession().setValue(textarea.val());
+              editor.getSession().on('change', function() {
+                textarea.val(editor.getSession().getValue());
+              });
+          });
+      </Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
@@ -39,8 +53,9 @@
               <Space GridPanel.Style="padding:0px 4px 4px 4px" />
               <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
                 <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
-                <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="100%"
+                <Memo ID="Editor" Width="100%" Height="1%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="1%"
                       GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false"/>
+                <Border ID="description" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%" GridPanel.Width="100%" />
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
