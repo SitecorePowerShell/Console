@@ -13,9 +13,9 @@ templatekey: Command
 field: {752579A7-EF2F-45B7-B9D1-9B682308B7A5}
 name: Type
 key: type
-content-length: 66
+content-length: 87
 
-Cognifide.PowerShell.Tasks.ExecuteScriptTask, Cognifide.PowerShell
+Cognifide.PowerShell.SitecoreIntegrations.Tasks.ExecuteScriptTask, Cognifide.PowerShell
 ----field----
 field: {4BC75539-D5C4-487B-AF35-FF13D62BD286}
 name: Method
@@ -26,7 +26,7 @@ Update
 ----version----
 language: en
 version: 1
-revision: 9bad9814-eb34-4955-b8fc-9a1fb3f25f56
+revision: 2e399e9e-a79c-41e2-8859-4d81fb573e44
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9bad9814-eb34-4955-b8fc-9a1fb3f25f56
+2e399e9e-a79c-41e2-8859-4d81fb573e44
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20111129T140504:634581723041306583
+20130511T134920:635038769606015625
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

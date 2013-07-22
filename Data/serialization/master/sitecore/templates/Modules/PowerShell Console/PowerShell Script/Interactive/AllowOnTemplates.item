@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+id: {DE7C5020-BF54-40B4-8A3C-B102BA76A2F1}
 database: master
-path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script/PowerShell/Script
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/AllowOnTemplates
 parent: {5B440046-583E-4030-B3DB-FF6B71CDD725}
-name: Script
+name: AllowOnTemplates
 master: {00000000-0000-0000-0000-000000000000}
 template: {455A3E98-A627-4B40-8035-E683A0331AC7}
 templatekey: Template field
@@ -13,28 +13,35 @@ templatekey: Template field
 field: {AB162CC0-DC80-4ABF-8871-998EE5D7BA32}
 name: Type
 key: type
-content-length: 15
+content-length: 10
 
-Multi-Line Text
+TreelistEx
+----field----
+field: {1EB8AE32-E190-44A6-968D-ED904C794EBF}
+name: Source
+key: source
+content-length: 386
+
+DataSource=/sitecore/templates&IncludeTemplatesForSelection=Template,Branch,Command Template&IncludeTemplatesForDisplay=Branch folder,Branch,Template folder,Template,Folder,Node,Main section,Command Template&ExcludeItemsForDisplay={0DE95AE4-41AB-4D01-9EB0-67441B7C2450},{EB2E4FFD-2761-4653-B052-26A64D385227},{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1},{13D6D6C6-C50B-4BBD-B331-2B04F1A58F21}
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
 content-length: 3
 
-100
+400
 ----version----
 language: en
 version: 1
-revision: 1350dd23-8698-4997-b3ec-7f0365548190
+revision: 577f388f-aa73-46b6-afe4-0a7e201bafde
 
 ----field----
 field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
 name: Title
 key: title
-content-length: 11
+content-length: 69
 
-Script body
+Show only for items based on following templates or their descendants
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -48,7 +55,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20111128T134400
+20130706T231053
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -62,14 +69,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1350dd23-8698-4997-b3ec-7f0365548190
+577f388f-aa73-46b6-afe4-0a7e201bafde
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130502T130715:635030968356148360
+20130708T201155:635089111159600859
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

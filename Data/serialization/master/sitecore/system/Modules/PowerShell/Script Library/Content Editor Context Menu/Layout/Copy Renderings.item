@@ -19,7 +19,7 @@ Applications/32x32/copy.png
 ----version----
 language: en
 version: 1
-revision: 94fffd63-22d7-4c28-9ce6-2df262f14350
+revision: 2a88d5d6-2325-4545-83e9-292baa067f17
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
@@ -41,13 +41,6 @@ content-length: 20
 
 renderingCopySession
 ----field----
-field: {7805AAF7-E504-45ED-BEA6-AE8EC8104458}
-name: PersistentSessionBufferFlush
-key: persistentsessionbufferflush
-content-length: 77
-
-{7316EE03-242B-40FA-8FAD-EAC85168117C}|{D8662901-DE9B-47E4-A327-64F05F94BB1E}
-----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
@@ -60,14 +53,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-94fffd63-22d7-4c28-9ce6-2df262f14350
+2a88d5d6-2325-4545-83e9-292baa067f17
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130502T154531:635031063312105391
+20130722T015847:635100551275996484
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -1,40 +1,54 @@
 ----item----
 version: 1
-id: {7316EE03-242B-40FA-8FAD-EAC85168117C}
-database: core
-path: /sitecore/system/Modules/PowerShell/Persistent Sessions/Buffer Flush/Before Execution
-parent: {C1E5CE93-CBD8-4BA5-B49F-16B5B8887CBB}
-name: Before Execution
+id: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+database: master
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/Script
+parent: {5B440046-583E-4030-B3DB-FF6B71CDD725}
+name: Script
 master: {00000000-0000-0000-0000-000000000000}
-template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
-templatekey: Standard template
+template: {455A3E98-A627-4B40-8035-E683A0331AC7}
+templatekey: Template field
 
+----field----
+field: {AB162CC0-DC80-4ABF-8871-998EE5D7BA32}
+name: Type
+key: type
+content-length: 15
+
+Multi-Line Text
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
-content-length: 1
+content-length: 3
 
-0
-----field----
-field: {A4F985D9-98B3-4B52-AAAF-4344F6E747C6}
-name: __Workflow
-key: __workflow
-content-length: 38
-
-{A5BC37E7-ED96-4C1E-8590-A26E64DB55EA}
+100
 ----version----
 language: en
 version: 1
-revision: 9814437b-271c-4162-aa53-b6870e9a33db
+revision: 8eb71323-46fe-4e68-885d-608f4c0f335e
 
+----field----
+field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
+name: Title
+key: title
+content-length: 11
+
+Script body
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130502T122317
+20111128T134400
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9814437b-271c-4162-aa53-b6870e9a33db
+8eb71323-46fe-4e68-885d-608f4c0f335e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130502T123948:635030951884546797
+20130708T201155:635089111159151641
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -63,10 +77,3 @@ key: __updated by
 content-length: 14
 
 sitecore\admin
-----field----
-field: {3E431DE1-525E-47A3-B6B0-1CCBEC3A8C98}
-name: __Workflow state
-key: __workflow state
-content-length: 38
-
-{190B1C84-F1BE-47ED-AA41-F42193D9C8FC}

@@ -5,7 +5,7 @@ database: core
 path: /sitecore/content/Applications/PowerShell
 parent: {C74AC643-53C8-4F1E-9508-840CDC72AACA}
 name: PowerShell
-master: {73C2385C-9A34-4125-9419-F64376B34A62}
+master: {00000000-0000-0000-0000-000000000000}
 template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
 templatekey: Folder
 

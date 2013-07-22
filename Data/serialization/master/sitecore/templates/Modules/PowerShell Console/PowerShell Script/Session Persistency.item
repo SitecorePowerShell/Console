@@ -10,6 +10,13 @@ template: {E269FBB5-3750-427A-9149-7AA950B49301}
 templatekey: Template section
 
 ----field----
+field: {E2E2B75D-A2F7-4075-BDE2-D13306E9E350}
+name: Collapsed by Default
+key: collapsed by default
+content-length: 1
+
+1
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -26,7 +33,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 62fa1a18-844a-4647-a6ad-081fb9c6b95c
+revision: ff11f31b-b9f9-4c34-a571-e06ba327727d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-62fa1a18-844a-4647-a6ad-081fb9c6b95c
+ff11f31b-b9f9-4c34-a571-e06ba327727d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130502T130715:635030968357017500
+20130708T201155:635089111159971953
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

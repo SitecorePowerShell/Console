@@ -26,7 +26,7 @@ content-length: 1113
 ----version----
 language: en
 version: 1
-revision: 5e012a58-6aad-49a3-8704-00318ec3a244
+revision: 0f1d7dbf-5672-48f5-9827-31a3b9a01789
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
@@ -47,13 +47,6 @@ content-length: 20
 
 renderingCopySession
 ----field----
-field: {7805AAF7-E504-45ED-BEA6-AE8EC8104458}
-name: PersistentSessionBufferFlush
-key: persistentsessionbufferflush
-content-length: 38
-
-{D8662901-DE9B-47E4-A327-64F05F94BB1E}
-----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
@@ -66,14 +59,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5e012a58-6aad-49a3-8704-00318ec3a244
+0f1d7dbf-5672-48f5-9827-31a3b9a01789
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130502T154541:635031063410318282
+20130722T015847:635100551276260156
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

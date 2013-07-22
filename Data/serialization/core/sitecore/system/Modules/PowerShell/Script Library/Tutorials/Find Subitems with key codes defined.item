@@ -31,13 +31,6 @@ content-length: 1
 
 1
 ----field----
-field: {7805AAF7-E504-45ED-BEA6-AE8EC8104458}
-name: PersistentSessionBufferFlush
-key: persistentsessionbufferflush
-content-length: 38
-
-{D8662901-DE9B-47E4-A327-64F05F94BB1E}
-----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
 key: __owner

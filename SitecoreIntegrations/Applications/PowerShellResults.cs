@@ -41,9 +41,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         public string PersistentId { get; set; }
 
-        public string FlushOutputBuffer { get; set; }
-
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -61,7 +58,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context,false);
             PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
-            FlushOutputBuffer = ScriptItem[ScriptItemFieldNames.PersistentSessionBufferFlush];
             var foregroundColor = OutputLine.ProcessHtmlColor(Settings.ForegroundColor);
             var backgroundColor= OutputLine.ProcessHtmlColor(Settings.BackgroundColor);
 
