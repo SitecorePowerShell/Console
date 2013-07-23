@@ -17,9 +17,22 @@ color: #0000FF;\
 }\
 .ace-powershell-ise .ace_instance {\
 color: #FF4500;\
-}|
+}\
 .ace-powershell-ise {\
 background-color: #FFFFFF;\
+}\
+.ace-powershell-ise .ace_cursor {\
+border-left: 2px solid #000000;\
+}\
+.ace-powershell-ise .ace_overwrite-cursors .ace_cursor {\
+border-left: 0px;\
+border-bottom: 1px solid #000000;\
+}\
+.ace-powershell-ise .ace_gutter {\
+background: #f0f0f0;\
+}\
+.ace-powershell-ise .ace_marker-layer .ace_active-line {\
+background: #f0f0f0;\
 }";
 
 exports.cssClass = "ace-powershell-ise";
