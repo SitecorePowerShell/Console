@@ -55,7 +55,7 @@
                 <Literal Text="Script:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
                 <Memo ID="Editor" Width="100%" Height="1%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="1%"
                       GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false"/>
-                <Border ID="description" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%" GridPanel.Width="100%" />
+                <Border ID="description" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%" GridPanel.Width="99%" />
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
