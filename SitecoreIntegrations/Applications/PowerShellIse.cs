@@ -301,6 +301,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
             {
                 Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
+                SheerResponse.Eval("cognified.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
                 UpdateRibbon();
             }
