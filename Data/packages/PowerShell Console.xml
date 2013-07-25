@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Console</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.1</Version>
+      <Version>2.2</Version>
       <Revision />
       <License />
       <Comment />
@@ -206,45 +206,69 @@ http://blog.najmanowicz.com/</Readme>
       <Entries>
         <x-item>/App_Config/Include/Cognifide.PowerShell.config</x-item>
         <x-item>/bin/Cognifide.PowerShell.dll</x-item>
+        <x-item>/Console/Assets/bg_left.gif</x-item>
+        <x-item>/Console/Assets/bg_middle.gif</x-item>
+        <x-item>/Console/Assets/bg_right.gif</x-item>
+        <x-item>/Console/Assets/Cognifide.PowerShell.dll-Help.xml</x-item>
+        <x-item>/Console/Assets/fg_left.gif</x-item>
+        <x-item>/Console/Assets/fg_middle.gif</x-item>
+        <x-item>/Console/Assets/fg_right.gif</x-item>
+        <x-item>/Console/Assets/highlight.png</x-item>
+        <x-item>/Console/Assets/ind-highlight.png</x-item>
+        <x-item>/Console/Assets/question.png</x-item>
+        <x-item>/Console/Assets/refresh.png</x-item>
         <x-item>/Console/Assets/Sitecore.Types.ps1xml</x-item>
         <x-item>/Console/Assets/Sitecore.Views.ps1xml</x-item>
         <x-item>/Console/Assets/Splitter.png</x-item>
         <x-item>/Console/Assets/stewie.png</x-item>
         <x-item>/Console/Assets/toplogo.png</x-item>
         <x-item>/Console/Assets/working.gif</x-item>
+        <x-item>/Console/Layouts/PowerShellLayout.aspx</x-item>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx</x-item>
-        <x-item>/Console/Services/PowerShellWebService.asmx</x-item>
-        <x-item>/Console/Services/RemoteAutomation.asmx</x-item>
-        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
-        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
+        <x-item>/Console/Layouts/PowerShellTerminal.aspx.cs</x-item>
+        <x-item>/Console/Layouts/PowerShellTerminal.aspx.designer.cs</x-item>
         <x-item>/Console/Scripts/ise.js</x-item>
         <x-item>/Console/Scripts/jquery.asuggest.js</x-item>
         <x-item>/Console/Scripts/jquery.a-tools-1.4.1.js</x-item>
         <x-item>/Console/Scripts/jquery.caretposition.js</x-item>
         <x-item>/Console/Scripts/jquery.hotkeys.js</x-item>
         <x-item>/Console/Scripts/jquery.mousewheel-min.js</x-item>
+        <x-item>/Console/Scripts/jquery.qtip.js</x-item>
+        <x-item>/Console/Scripts/jquery.qtip.min.js</x-item>
         <x-item>/Console/Scripts/jquery.terminal.js</x-item>
+        <x-item>/Console/Scripts/jquery.VistaProgressBar-0.6.js</x-item>
+        <x-item>/Console/Scripts/jquery-1.10.2.min.js</x-item>
+        <x-item>/Console/Scripts/jquery-migrate-1.2.1.min.js</x-item>
         <x-item>/Console/Scripts/jquery-ui.js</x-item>
+        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/</x-item>
+        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Changelog.txt</x-item>
+        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Licence.txt</x-item>
+        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/progressbar.js</x-item>
+        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Readme.txt</x-item>
         <x-item>/Console/Scripts/json2.js</x-item>
         <x-item>/Console/Scripts/PsHSplitter.js</x-item>
+        <x-item>/Console/Scripts/Runner.js</x-item>
         <x-item>/Console/Scripts/split.js</x-item>
+        <x-item>/Console/Services/PowerShellWebService.asmx</x-item>
+        <x-item>/Console/Services/RemoteAutomation.asmx</x-item>
         <x-item>/Console/Styles/Console.css</x-item>
+        <x-item>/Console/Styles/jquery.qtip.min.css</x-item>
         <x-item>/Console/Styles/jquery.terminal.css</x-item>
         <x-item>/Console/Styles/jquery.ui.all.css</x-item>
         <x-item>/Console/Styles/jquery.ui.autocomplete.css</x-item>
         <x-item>/Console/Styles/jquery.ui.base.css</x-item>
         <x-item>/Console/Styles/jquery.ui.core.css</x-item>
         <x-item>/Console/Styles/jquery.ui.theme.css</x-item>
+        <x-item>/Console/Styles/Runner.css</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/ConfirmChoice.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/DownloadFile.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/GetStringResponse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellIse.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellNewScript.xml</x-item>
-        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResults.xml</x-item>
-        <x-item>/Console/Assets/Cognifide.PowerShell.dll-Help.xml</x-item>
-        <x-item>/Console/Assets/refresh.png</x-item>
-        <x-item>/Console/Scripts/jquery-1.10.2.min.js</x-item>
-        <x-item>/Console/Scripts/jquery-migrate-1.2.1.min.js</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResultViewerText.xml</x-item>
+        <x-item>/sitecore/shell/Applications/PowerShell/PowerShellRunner.xml</x-item>
+        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
+        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
       </Entries>
       <Converter>
         <FileToEntryConverter>
