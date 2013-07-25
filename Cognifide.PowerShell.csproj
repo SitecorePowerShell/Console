@@ -217,12 +217,13 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerText.cs" />
     <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ExecutionMessages.cs" />
     <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
-    <Compile Include="SitecoreIntegrations\Applications\PowerShellResults.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ScriptRunner.cs" />
     <Compile Include="Console\Layouts\PowerShellTerminal.aspx.cs">
       <DependentUpon>PowerShellTerminal.aspx</DependentUpon>
@@ -293,7 +294,16 @@
   <ItemGroup>
     <None Include="Console\Assets\Splitter.png" />
     <None Include="Console\Assets\working.gif" />
+    <Content Include="Console\Assets\bg_left.gif" />
+    <Content Include="Console\Assets\bg_middle.gif" />
+    <Content Include="Console\Assets\bg_right.gif" />
     <Content Include="Console\Assets\Cognifide.PowerShell.dll-Help.xml" />
+    <Content Include="Console\Assets\fg_left.gif" />
+    <Content Include="Console\Assets\fg_middle.gif" />
+    <Content Include="Console\Assets\fg_right.gif" />
+    <Content Include="Console\Assets\highlight.png" />
+    <Content Include="Console\Assets\ind-highlight.png" />
+    <Content Include="Console\Assets\question.png" />
     <Content Include="Console\Assets\refresh.png" />
     <Content Include="Console\Layouts\PowerShellTerminal.aspx">
       <SubType>ASPXCodeBehind</SubType>
@@ -307,13 +317,21 @@
     <Content Include="Console\Scripts\jquery.caretposition.js" />
     <Content Include="Console\Scripts\jquery.hotkeys.js" />
     <Content Include="Console\Scripts\jquery.mousewheel-min.js" />
+    <Content Include="Console\Scripts\jquery.qtip.min.js" />
     <Content Include="Console\Scripts\jquery.terminal.js" />
+    <Content Include="Console\Scripts\jquery.VistaProgressBar-0.6.js" />
+    <Content Include="Console\Scripts\js.VistaProgressBar-0.6\Changelog.txt" />
+    <Content Include="Console\Scripts\js.VistaProgressBar-0.6\Licence.txt" />
+    <Content Include="Console\Scripts\js.VistaProgressBar-0.6\progressbar.js" />
+    <Content Include="Console\Scripts\js.VistaProgressBar-0.6\Readme.txt" />
+    <Content Include="Console\Scripts\Runner.js" />
     <Content Include="Console\Scripts\json2.js" />
     <Content Include="Console\Scripts\PsHSplitter.js" />
     <Content Include="Console\Scripts\split.js" />
     <Content Include="Console\Services\PowerShellWebService.asmx" />
     <Content Include="Console\Services\RemoteAutomation.asmx" />
     <Content Include="Console\Styles\Console.css" />
+    <Content Include="Console\Styles\jquery.qtip.min.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
     <Content Include="Console\Styles\jquery.ui.all.css" />
@@ -321,7 +339,11 @@
     <Content Include="Console\Styles\jquery.ui.base.css" />
     <Content Include="Console\Styles\jquery.ui.core.css" />
     <Content Include="Console\Styles\jquery.ui.theme.css" />
+    <Content Include="Console\Styles\Runner.css" />
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerText.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Applications\PowerShell\DownloadFile.xml">
@@ -330,7 +352,7 @@
     <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResults.xml">
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellRunner.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml">

@@ -4,7 +4,7 @@ using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Write", "Log", DefaultParameterSetName = "Message")]
+    [Cmdlet("Write", "Log")]
     public class WriteLogCommand : BaseCommand
     {
         private object separator = " ";
