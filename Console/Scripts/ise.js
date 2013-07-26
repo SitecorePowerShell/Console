@@ -9,7 +9,7 @@ function extend(ns, ns_string) {
     var parts = ns_string.split('.'),
         parent = ns,
         pl, i;
-    if (parts[0] == "myApp") {
+    if (parts[0] == "cognified") {
         parts = parts.slice(1);
     }
     pl = parts.length;
@@ -134,8 +134,29 @@ extend(cognified, 'powershell');
             editor.val(codeeditor.getSession().getValue());
         });
 
+        var codeeeditorcommands = [{
+            name: 'autocomplete',
+            bindKey: { win: 'ctrl-space', mac: 'command-space', sender: 'codeeditor|cli' },
+            exec: function (env, args, request) {
+                console.log('autocomplete');
+            }
+        }, {
+            name: "help",
+            bindKey: { win: "ctrl-enter|shift-enter", mac: "ctrl-enter|command-enter", sender: 'codeeditor|cli' },
+            exec: function (env, args, request) {
+                console.log('help');
+            },
+            readOnly: true
+        }];
+
+        codeeditor.commands.addCommands(codeeeditorcommands);
+
         cognified.powershell.updateEditor = function () {
             codeeditor.getSession().setValue(editor.val());
+        };
+
+        cognified.powershell.clearEditor = function () {
+            codeeditor.getSession().setValue('');
         };
 
         /*

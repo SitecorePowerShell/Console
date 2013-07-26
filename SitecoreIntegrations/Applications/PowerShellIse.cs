@@ -211,6 +211,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Assert.ArgumentNotNull(args, "args");
             ScriptItemId = string.Empty;
             Editor.Value = string.Empty;
+            SheerResponse.Eval("cognified.powershell.clearEditor();");
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
             ScriptResult.Visible = false;
@@ -494,7 +495,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             UpdateRibbon();
         }
-            /// <summary>
+        
+        /// <summary>
         ///     Updates the ribbon.
         /// </summary>
         private void UpdateRibbon()
