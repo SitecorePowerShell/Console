@@ -277,13 +277,6 @@
   <ItemGroup>
     <None Include="Console\Assets\stewie.png" />
     <None Include="Console\Assets\toplogo.png" />
-    <Content Include="web.config" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
