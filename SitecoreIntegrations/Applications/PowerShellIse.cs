@@ -211,7 +211,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Assert.ArgumentNotNull(args, "args");
             ScriptItemId = string.Empty;
             Editor.Value = string.Empty;
-            SheerResponse.Eval("cognified.powershell.clearEditor();");
+            SheerResponse.Eval("cognifide.powershell.clearEditor();");
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
             ScriptResult.Visible = false;
@@ -302,7 +302,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
             {
                 Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
-                SheerResponse.Eval("cognified.powershell.updateEditor();");
+                SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
                 UpdateRibbon();
             }
