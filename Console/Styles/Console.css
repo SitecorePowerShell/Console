@@ -280,6 +280,10 @@ html{
     margin-left: 2px;
 }
 
+.ui-dialog {
+    z-index: 1;
+}
+
 #ajax-dialog
 {
     display: none;

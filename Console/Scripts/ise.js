@@ -187,23 +187,31 @@ extend(cognified, 'powershell');
 
         codeeditor.setAutoScrollEditorIntoView(true);
 
-        /*
-        var codeeeditorcommands = [{
-            name: 'autocomplete',
-            bindKey: { win: 'ctrl-space', mac: 'command-space', sender: 'codeeditor|cli' },
-            exec: function (env, args, request) {
-                console.log('autocomplete');
-            }
-        }, {
+        var codeeeditorcommands = [ {
             name: "help",
             bindKey: { win: "ctrl-enter|shift-enter", mac: "ctrl-enter|command-enter", sender: 'codeeditor|cli' },
             exec: function (env, args, request) {
-                console.log('help');
+                var command = codeeditor.session.getTextRange(codeeditor.getSelectionRange());
+                if (command) {
+                    _getCommandHelp(command);
+                    var ajaxDialog = $('<div id="ajax-dialog"/>').html($.commandHelp).appendTo('body');
+                    ajaxDialog.dialog({
+                        modal: true,
+                        close: function (event, ui) {
+                            $(this).remove();
+                        },
+                        height: $(window).height() - 20,
+                        width: $(window).width() * 2 / 3,
+                        show: "slow",
+                        hide: "slow"
+                    });
+                    $('#ajax-dialog').scrollTop("0");
+                }
             },
             readOnly: true
         }];
 
-        codeeditor.commands.addCommands(codeeeditorcommands);*/
+        codeeditor.commands.addCommands(codeeeditorcommands);
 
         cognified.powershell.updateEditor = function () {
             codeeditor.getSession().setValue(editor.val());
