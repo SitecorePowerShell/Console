@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 case (2):
                     return FindMatches2(session, command);
                 case (3):
+                case (4):
                     return FindMatches3(session, command);
                 default:
                     return new string[0];
