@@ -310,6 +310,27 @@
     <Content Include="Console\Layouts\PowerShellTerminal.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Console\Scripts\ace\ace.js" />
+    <Content Include="Console\Scripts\ace\emmet-core\emmet.js" />
+    <Content Include="Console\Scripts\ace\ext-elastic_tabstops_lite.js" />
+    <Content Include="Console\Scripts\ace\ext-emmet.js" />
+    <Content Include="Console\Scripts\ace\ext-keybinding_menu.js" />
+    <Content Include="Console\Scripts\ace\ext-language_tools.js" />
+    <Content Include="Console\Scripts\ace\ext-modelist.js" />
+    <Content Include="Console\Scripts\ace\ext-options.js" />
+    <Content Include="Console\Scripts\ace\ext-searchbox.js" />
+    <Content Include="Console\Scripts\ace\ext-settings_menu.js" />
+    <Content Include="Console\Scripts\ace\ext-spellcheck.js" />
+    <Content Include="Console\Scripts\ace\ext-split.js" />
+    <Content Include="Console\Scripts\ace\ext-static_highlight.js" />
+    <Content Include="Console\Scripts\ace\ext-statusbar.js" />
+    <Content Include="Console\Scripts\ace\ext-textarea.js" />
+    <Content Include="Console\Scripts\ace\ext-themelist.js" />
+    <Content Include="Console\Scripts\ace\ext-whitespace.js" />
+    <Content Include="Console\Scripts\ace\mode-powershell.js" />
+    <Content Include="Console\Scripts\ace\snippets-powershell.js" />
+    <Content Include="Console\Scripts\ace\snippets\powershell.js" />
+    <Content Include="Console\Scripts\ace\theme-powershellise.js" />
     <Content Include="Console\Scripts\ise.js" />
     <Content Include="Console\Scripts\jquery-1.10.2.min.js" />
     <Content Include="Console\Scripts\jquery-migrate-1.2.1.min.js" />
