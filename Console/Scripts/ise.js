@@ -225,6 +225,10 @@ extend(cognified, 'powershell');
             codeeditor.getSession().setValue('');
         };
 
+        cognified.powershell.resizeEditor = function () {
+            codeeditor.resize();
+        };
+
         /*
             $.tabCompletions = [];
             $.tabCompletionsLowercase = [];
