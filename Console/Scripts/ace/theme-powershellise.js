@@ -33,6 +33,9 @@ background: #f0f0f0;\
 }\
 .ace-powershell-ise .ace_marker-layer .ace_active-line {\
 background: #f0f0f0;\
+}\
+.ace-powershell-ise .ace_marker-layer .ace_selection {\
+background: #B5D5FF\
 }";
 
 exports.cssClass = "ace-powershell-ise";
