@@ -9,7 +9,7 @@ function extend(ns, ns_string) {
     var parts = ns_string.split('.'),
         parent = ns,
         pl, i;
-    if (parts[0] == "cognified") {
+    if (parts[0] == "cognifide") {
         parts = parts.slice(1);
     }
     pl = parts.length;
@@ -23,10 +23,10 @@ function extend(ns, ns_string) {
     return parent;
 }
 
-var cognified = cognified || {};
-extend(cognified, 'powershell');
+var cognifide = cognifide || {};
+extend(cognifide, 'powershell');
 
-(function ($, window, cognified, ace, undefined) {
+(function ($, window, cognifide, ace, undefined) {
     $(function () {
         var tips = [
                 "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
@@ -217,15 +217,15 @@ extend(cognified, 'powershell');
 
         codeeditor.commands.addCommands(codeeeditorcommands);
 
-        cognified.powershell.updateEditor = function () {
+        cognifide.powershell.updateEditor = function () {
             codeeditor.getSession().setValue(editor.val());
         };
 
-        cognified.powershell.clearEditor = function () {
+        cognifide.powershell.clearEditor = function () {
             codeeditor.getSession().setValue('');
         };
 
-        cognified.powershell.resizeEditor = function () {
+        cognifide.powershell.resizeEditor = function () {
             codeeditor.resize();
         };
 
@@ -367,4 +367,4 @@ extend(cognified, 'powershell');
                   .fail(errorFunction);
         }
     });
-}(jQuery, window, window.cognified = window.cognified || {}, window.ace = window.ace || {}));
+}(jQuery, window, window.cognifide = window.cognifide || {}, window.ace = window.ace || {}));
