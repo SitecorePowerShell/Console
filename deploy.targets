@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<SitecorePath>C:\inetpub\wwwroot\Sitecore7\Website\</SitecorePath>
-		<LibrariesPath>C:\inetpub\wwwroot\Sitecore7\Libraries\</LibrariesPath>
-	</PropertyGroup>
-</Project>
