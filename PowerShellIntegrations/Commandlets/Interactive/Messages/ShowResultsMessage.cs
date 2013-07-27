@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Web;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -13,8 +15,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class ShowResultsMessage : BasePipelineMessage, IMessage
     {
-        public ShowResultsMessage()
+
+        public string Html { get; private set; }
+        
+        public ShowResultsMessage(string html)
         {
+            Html = html;
         }
 
         /// <summary>
@@ -24,6 +30,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         protected override void ShowUI()
         {
             Context.ClientPage.ClientResponse.CloseWindow();
+
+            string resultSig = Guid.NewGuid().ToString();
+            HttpContext.Current.Session[resultSig] = Html;
+            UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
+            urlString.Add("sid", resultSig);
+            var response = SheerResponse.ShowModalDialog(urlString.ToString(), "800", "600");
         }
     }
 }

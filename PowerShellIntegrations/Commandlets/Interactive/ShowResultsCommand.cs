@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Linq;
 using System.Management.Automation;
+using System.Text;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 
@@ -29,7 +32,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                     if (Text.IsPresent)
                     {
-                        //response = JobContext.ShowModalDialog(hashParams, Control, WidthString, HeightString);                        
+                        var rawHost = (Host.UI.RawUI as ScriptingHostRawUserInterface);
+                        if (rawHost != null)
+                        {
+                            var output = new StringBuilder(10240);
+                            foreach (OutputLine outputLine in rawHost.Output)
+                            {
+                                outputLine.GetHtmlLine(output);
+                            }
+                            var message = new ShowResultsMessage(output.ToString());
+                            JobContext.MessageQueue.PutMessage(message);
+                        }
                     } else if (Parameters != null)
                     {
 
