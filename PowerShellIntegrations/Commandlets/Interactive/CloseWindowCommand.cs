@@ -15,7 +15,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Close, "Window")]
-    public class CloseDialogCommand : BaseFormCommand
+    public class CloseWindowCommand : BaseFormCommand
     {
         protected override void ProcessRecord()
         {
