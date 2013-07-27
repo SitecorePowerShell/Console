@@ -81,6 +81,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width, ConsoleColor.Red,
                                               ConsoleColor.Black, true);
+            Output.HasErrors = true;
             Output.AddRange(splitter);
         }
 

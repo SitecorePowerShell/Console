@@ -35,13 +35,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 string cmdletType = cmdltTypeDef[0];
                 string cmdletAssembly = cmdltTypeDef[1];
                 WildcardPattern wildcard = GetWildcardPattern(cmdletType);
+                try{
                 Assembly assembly = Assembly.Load(cmdletAssembly);
                 GetCommandletsFromAssembly(assembly, wildcard);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is System.Reflection.ReflectionTypeLoadException)
+                    {
+                        var typeLoadException = ex as ReflectionTypeLoadException;
+                        var loaderExceptions = typeLoadException.LoaderExceptions;
+                        var message = string.Empty;
+                        foreach (var exc in loaderExceptions)
+                        {
+                            message += exc.Message;
+                        }
+                        throw new Exception(message);
+                    }
+                }
             }
         }
 
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
         {
+
             foreach (Type type in assembly.GetTypes())
             {
                 if (type.GetCustomAttributes(typeof(CmdletAttribute), true).Length > 0 &&
