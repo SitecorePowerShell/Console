@@ -223,6 +223,9 @@ extend(cognifide, 'powershell');
             codeeditor.getSession().setValue('');
         };
 
+        cognifide.powershell.resizeEditor = function() {
+            codeeditor.resize();
+        };
         /*
             $.tabCompletions = [];
             $.tabCompletionsLowercase = [];

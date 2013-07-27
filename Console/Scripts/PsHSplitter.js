@@ -104,7 +104,7 @@ scHSplitter.prototype.mouseUp = function (tag, evt, id, target, nopost) {
             if (nopost != "nopost") {
                 scForm.postEvent(tag, evt, id + ".Release(\"" + prev.offsetHeight.toString() + "\", \"" + next.offsetHeight.toString() + "\")");
             }
-            cognified.powershell.resizeEditor();
+            cognifide.powershell.resizeEditor();
         }
     }
 }
