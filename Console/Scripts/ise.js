@@ -193,7 +193,11 @@ extend(cognifide, 'powershell');
             name: "help",
             bindKey: { win: "ctrl-enter|shift-enter", mac: "ctrl-enter|command-enter", sender: 'codeeditor|cli' },
             exec: function (env, args, request) {
-                var command = codeeditor.session.getTextRange(codeeditor.getSelectionRange());
+                var range = codeeditor.getSelectionRange();
+                if (range.start.row === range.end.row && range.start.column === range.end.column) {
+                    range.start.column = 0;
+                }
+                var command = codeeditor.session.getTextRange(range);
                 if (command) {
                     _getCommandHelp(command);
                     var ajaxDialog = $('<div id="ajax-dialog"/>').html($.commandHelp).appendTo('body');
