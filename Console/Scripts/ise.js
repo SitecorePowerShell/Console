@@ -136,7 +136,7 @@ extend(cognified, 'powershell');
         });
 
         ace.config.loadModule("ace/ext/emmet", function () {
-            ace.require("ace/lib/net").loadScript("/Console/Scripts/src-noconflict/emmet-core/emmet.js", function () {
+            ace.require("ace/lib/net").loadScript("/Console/Scripts/ace/emmet-core/emmet.js", function () {
                 codeeditor.setOption("enableEmmet", true);
             });
 

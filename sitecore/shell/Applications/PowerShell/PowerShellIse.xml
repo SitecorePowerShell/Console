@@ -20,7 +20,7 @@
       <Script src="/Console/Scripts/jquery.asuggest.js" runat="server"></Script> <!--inline suggestions-->
       <Script src="/Console/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
       <Script src="/Console/Scripts/ise.js" runat="server"></Script>
-      <Script src="/Console/Scripts/src-noconflict/ace.js" runat="server"></Script>
+      <Script src="/Console/Scripts/ace/ace.js" runat="server"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
