@@ -6,10 +6,11 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messag
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
+using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet(VerbsCommon.Show, "Results")]
+    [Cmdlet(VerbsCommon.Show, "Result")]
     public class ShowResultsCommand : BaseFormCommand
     {
         [Parameter(ParameterSetName = "Custom Viewer from Control Name", Mandatory = true)]
@@ -32,11 +33,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                     if (Text.IsPresent)
                     {
-                        var rawHost = (Host.UI.RawUI as ScriptingHostRawUserInterface);
-                        if (rawHost != null)
+                        ScriptSession session = SessionState.PSVariable.Get("ScriptSession").Value as ScriptSession;
+                        if (session!= null)
                         {
                             var output = new StringBuilder(10240);
-                            foreach (OutputLine outputLine in rawHost.Output)
+                            foreach (OutputLine outputLine in session.Output)
                             {
                                 outputLine.GetHtmlLine(output);
                             }

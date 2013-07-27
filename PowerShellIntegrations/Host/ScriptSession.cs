@@ -187,6 +187,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     {
                     }
                     runspace.SessionStateProxy.SetVariable("HostSettings", Settings);
+                    runspace.SessionStateProxy.SetVariable("ScriptSession", this);
                     if (PsVersion == null)
                     {
                         PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
