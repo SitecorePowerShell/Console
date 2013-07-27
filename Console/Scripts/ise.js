@@ -161,6 +161,10 @@ extend(cognified, 'powershell');
 
             var keyWordCompleter = {
                 getCompletions: function (editor, session, pos, prefix, callback) {
+                    session.$mode.$keywordList = [];
+                    //var range = editor.getSelectionRange();
+                    //range.start.column = 0;
+                    //prefix = session.getTextRange(range);
                     if (prefix) {
                         _getTabCompletions(prefix);
                     } else {
