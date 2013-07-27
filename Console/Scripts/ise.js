@@ -134,6 +134,13 @@ extend(cognified, 'powershell');
         codeeditor.session.on('change', function () {
             editor.val(codeeditor.session.getValue());
         });
+        var posx = $("#PosX");
+        var posy = $("#PosY");
+        $('#CodeEditor').on('keyup mousedown', function () {
+            var position = codeeditor.getCursorPosition();
+            posx.text(position.column);
+            posy.text((position.row + 1));
+        });
 
         ace.config.loadModule("ace/ext/emmet", function () {
             ace.require("ace/lib/net").loadScript("/Console/Scripts/ace/emmet-core/emmet.js", function () {
