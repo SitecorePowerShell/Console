@@ -65,10 +65,13 @@
 }
 
 #AbortButton, #OkButton{
-    padding: 4px 8px;
+    padding: 0px 8px;
     display: block;
     float: right;
     margin-top: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    height: 24px;
 }
 
 a#ViewButton {
@@ -78,6 +81,7 @@ a#ViewButton {
     float: left;
     color: green;
     text-decoration: underline;
+    width: 200px;
 }
 
 a#ViewErrorsButton {
@@ -87,6 +91,7 @@ a#ViewErrorsButton {
     float: left;
     color: red;
     text-decoration: underline;    
+    width: 200px;
 }
 
 @keyframes greenPulse

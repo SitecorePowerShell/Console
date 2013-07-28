@@ -161,7 +161,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         Output = output.ToString(),
                         HasErrors = scriptSession.Output.HasErrors
                     };
-                    JobContext.PostMessage("psr:updateresults");
+                    object jobMessageResult = JobContext.SendMessage("psr:updateresults");
                     JobContext.Flush();
                 }
             }
@@ -193,7 +193,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("psr:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
-            var result = (RunnerOutput)JobManager.GetJob(Monitor.JobHandle).Status.Result;
+            var job = JobManager.GetJob(Monitor.JobHandle);
+            var result = (RunnerOutput)job.Status.Result;
             var printResults = result.Output ?? "Script finished - no results to display.";
             if (!string.IsNullOrEmpty(result.Errors))
             {

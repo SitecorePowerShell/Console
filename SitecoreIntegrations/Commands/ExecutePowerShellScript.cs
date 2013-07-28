@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             str.Append("scriptDb", scriptDb);
             str.Append("autoClose", showResults);
             Context.ClientPage.ClientResponse.Broadcast(
-                SheerResponse.ShowModalDialog(str.ToString(), "400", "200", "PowerShell Script Results", false),
+                SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
                 "Shell");
         }
     }

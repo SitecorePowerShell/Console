@@ -42,7 +42,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                                 outputLine.GetHtmlLine(output);
                             }
                             var message = new ShowResultsMessage(output.ToString());
+                            
                             JobContext.MessageQueue.PutMessage(message);
+                            JobContext.Flush();
                         }
                     } else if (Parameters != null)
                     {

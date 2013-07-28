@@ -29,8 +29,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         /// </summary>
         protected override void ShowUI()
         {
-            Context.ClientPage.ClientResponse.CloseWindow();
-
             string resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Html;
             UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));

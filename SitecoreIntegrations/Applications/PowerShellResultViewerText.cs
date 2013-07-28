@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             Result.Style.Add("color", foregroundColor);
             Result.Style.Add("background-color", backgroundColor);
-            Result.Text = (string) HttpContext.Current.Session[sid];
+            Result.Text = HttpContext.Current.Session[sid] as string ?? string.Empty;
             HttpContext.Current.Session.Remove(sid);
         }
 
