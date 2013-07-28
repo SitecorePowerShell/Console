@@ -1412,13 +1412,15 @@ ace.define('ace/autocomplete/text_completer', ['require', 'exports', 'module' , 
     exports.getCompletions = function(editor, session, pos, prefix, callback) {
         var wordScore = wordDistance(session, pos, prefix);
         var wordList = filterPrefix(prefix, Object.keys(wordScore));
-        callback(null, wordList.map(function(word) {
-            return {
-                name: word,
-                value: word,
-                score: wordScore[word],
-                meta: "local"
-            };
+        callback(null, wordList.map(function (word) {
+            if (word.indexOf('$') === 0) {
+                return {
+                    name: word,
+                    value: word,
+                    score: wordScore[word],
+                    meta: "local variable"
+                };
+            }
         }));
     };
 });

@@ -56,75 +56,9 @@ extend(cognifide, 'powershell');
 
         var guid = "ECBC33D9-A623-4A97-888B-375B627B4189";
 
-        // Defines for the example the match to take which is any word (with Umlauts!!).
-        /*
-        function _leftMatch(string, area) {
-            var selectionStart = ('context' in area) ? area.context.selectionStart : area.selectionStart;
-            var preCursor = string.substring(0, selectionStart);
-            var allMatches = preCursor.match(/[^\n].*$/);
-            var substr = allMatches[0];
-            return substr;
-        }
-
-        function _setCursorPosition(area, pos) {
-            if (area.setSelectionRange) {
-                area.setSelectionRange(pos, pos);
-            } else if (area.createTextRange) {
-                var range = area.createTextRange();
-                range.collapse(true);
-                range.moveEnd('character', pos);
-                range.moveStart('character', pos);
-                range.select();
-            }
-        }
-        */
         var editor = $($('#Editor')[0]);
         editor.hide();
-        /*
-        editor.keypress(function(event) {
-            if (event.which === 32 && event.ctrlKey) {
-                event.preventDefault();
-                editor.autocomplete("enable");
-                editor.autocomplete("search");
-                //
-                 //       } else if (event.which === 9 || (event.which === 32 && event.shiftKey)) {
-                 //           var str = _leftMatch(editor[0].value, editor);
-                 //           _getTabCompletions(str);
-                //            event.preventDefault();
-                //
-            } else if (event.which === 13 && (event.shiftKey || event.ctrlKey)) {
-                var command = _leftMatch(editor[0].value, editor);
-                _getCommandHelp(command);
-                event.preventDefault();
-                var ajaxDialog = $('<div id="ajax-dialog"/>').html($.commandHelp).appendTo('body');
-                ajaxDialog.dialog({
-                    modal: true,
-                    close: function(event, ui) {
-                        $(this).remove();
-                    },
-                    height: $(window).height() - 20,
-                    width: $(window).width() * 2 / 3,
-                    show: "slow",
-                    hide: "slow"
-                });
-                $('#ajax-dialog').scrollTop("0");
-            }
-        }).keyup(function() { // Editor caret position
-            var ctrl = this;
-            var val = ctrl.value;
-            var pos = $(this).getSelection().start;
-            var spl = val.substr(0, pos).split("\n");
-            $("#PosX").text(spl[spl.length - 1].length);
-            $("#PosY").text(spl.length);
-        }).mousedown(function() {
-            var ctrl = this;
-            var val = ctrl.value;
-            var pos = $(this).getSelection().start;
-            var spl = val.substr(0, pos).split("\n");
-            $("#PosX").text(spl[spl.length - 1].length);
-            $("#PosY").text(spl.length);
-        });
-        */
+
         // Setup the ace code editor.
         var codeeditor = ace.edit("CodeEditor");
         codeeditor.setTheme("ace/theme/powershellise");
@@ -163,22 +97,30 @@ extend(cognifide, 'powershell');
                 getCompletions: function (editor, session, pos, prefix, callback) {
                     session.$mode.$keywordList = [];
 
-                    if (prefix) {
-                        _getTabCompletions(prefix);
+                    var range = codeeditor.getSelectionRange();
+                    range.start.column = 0;
+                    var line = codeeditor.session.getTextRange(range);
+
+                    if (line) {
+                        _getTabCompletions(line);
                     } else {
                         $.tabCompletions = [""];
                     }
                     var keywords = $.tabCompletions;
                     var prefixLower = prefix.toLowerCase();
-                    keywords = keywords.filter(function (w) {
-                        return w.toLowerCase().lastIndexOf(prefixLower, 0) == 0;
-                    });
+                    if (prefix.length > 0) {
+                        keywords = keywords.filter(function(w) {
+                            var pipeIndex = w.indexOf('|', 0) + 1;
+                            return w.toLowerCase().indexOf(prefixLower, 0) == pipeIndex;
+                        });
+                    }
                     callback(null, keywords.map(function (word) {
+                        var hint = word.split('|');
                         return {
-                            name: word,
-                            value: word,
-                            score: 0,
-                            meta: "keyword"
+                            name: hint[1],
+                            value: hint[1],
+                            score: 30,
+                            meta: hint[0]
                         };
                     }));
                 }
@@ -230,15 +172,8 @@ extend(cognifide, 'powershell');
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
         };
-        /*
-            $.tabCompletions = [];
-            $.tabCompletionsLowercase = [];
-        */
         $.commandHelp = "";
         $("#Help").dialog({ autoOpen: false });
-        /*
-            editor.asuggest($.tabCompletions);
-        */
 
         var tipIndex = Math.floor(Math.random() * tips.length);
         var tip = tips[tipIndex];
@@ -285,73 +220,12 @@ extend(cognifide, 'powershell');
         }
 
         function _getTabCompletions(str) {
-            getPowerShellResponse({ "guid": guid, "command": str }, "CompleteCommand",
+            getPowerShellResponse({ "guid": guid, "command": str }, "CompleteAceCommand",
                 function (json) {
                     var data = JSON.parse(json.d);
                     $.tabCompletions = data;
-                    /*
-                    $.tabCompletionsLowercase = $.map(data, function (item, index) {
-                        return item.toLowerCase();
-                    });*/
                 });
         }
-        /*
-        editor.autocomplete({
-            appendTo: "#Tip",
-            position: { my: "left top", at: "middle center" },
-            source: function (request, response) {
-                var str = _leftMatch(request.term, editor);
-                _getTabCompletions(str);
-                str = (str !== null) ? str : "";
-                response($.ui.autocomplete.filter($.tabCompletions, str));
-            },
-            //minLength: 2,  // does have no effect, regexpression is used instead
-            focus: function () {
-                // prevent value inserted on focus
-                return false;
-            },
-            open: function () {
-                var position = $("#Editor").position();
-                var left = position.left;
-                var top = position.top;
-                var pos = $("#Editor").getCaretPosition();
-
-                $("#Tip > ul").css({
-                    left: (left - 1) + "px",
-                    top: (top + pos.top + 2) + "px",
-                    width: "auto",
-                    "margin-right": "6px",
-                    "margin-bottom": "30px",
-                    "max-height": ($(window).height() - top - pos.top - 40) + "px",
-                    "overflow-y": "auto",
-                });
-            },
-            close: function () {
-                // prevent value inserted on focus
-                editor.autocomplete("disable");
-                return false;
-            },
-            // Insert the match inside the ui element at the current position by replacing the matching substring
-            select: function (event, ui) {
-                //alert("completing "+ui.item.value);},
-                var m = _leftMatch(this.value, this);
-                var editor1 = $("#Editor");
-                var selectionStart = editor1[0].selectionStart;
-                var beg = editor1[0].value.substring(0, selectionStart - m.length);
-                this.value = beg + ui.item.value + editor1[0].value.substring(selectionStart, this.value.length);
-                var pos = beg.length + ui.item.value.length;
-                _setCursorPosition(this, pos);
-                editor.autocomplete("disable");
-                return false;
-            },
-            search: function (event, ui) {
-                var m = _leftMatch(this.value, this);
-                return (m !== null);
-            }
-        });
-
-        editor.autocomplete("disable");
-        */
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
             var datastring = JSON.stringify(callData);
             var ajax =

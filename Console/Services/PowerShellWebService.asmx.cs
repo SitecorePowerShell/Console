@@ -214,22 +214,31 @@ namespace Cognifide.PowerShell.Console.Services
 		public string[] CompleteRocksCommand(string guid, string command, string username, string password)
 		{
 			LoginUser(username, password);
-			return GetTabCompletionOutputs(guid, command);
+			return GetTabCompletionOutputs(guid, command, false);
 		}
 
-		[WebMethod(EnableSession = true)]
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object CompleteAceCommand(string guid, string command)
+        {
+            var serializer = new JavaScriptSerializer();
+            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
+            return result;
+        }
+
+        [WebMethod(EnableSession = true)]
 		[ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
 		public object CompleteCommand(string guid, string command)
 		{
 			var serializer = new JavaScriptSerializer();
-			var result = serializer.Serialize(GetTabCompletionOutputs(guid, command));
+			var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
 			return result;
 		}
 
-		public static string[] GetTabCompletionOutputs(string guid, string command)
+		public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
 		{
 			var session = GetScriptSession(guid);
-			var result = CommandCompletion.FindMatches(session, command);
+			var result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
 			return result.ToArray();
 		}
 

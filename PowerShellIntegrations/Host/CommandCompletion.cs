@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private static int _powerShellVersionMajor;
         
 
-        public static IEnumerable<string> FindMatches(ScriptSession session, string command)
+        public static IEnumerable<string> FindMatches(ScriptSession session, string command, bool aceResponse)
         {
             if (_powerShellVersionMajor == 0)
             {
@@ -25,16 +25,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             switch (_powerShellVersionMajor)
             {
                 case (2):
-                    return FindMatches2(session, command);
+                    return FindMatches2(session, command, aceResponse);
                 case (3):
                 case (4):
-                    return FindMatches3(session, command);
+                    return FindMatches3(session, command, aceResponse);
                 default:
                     return new string[0];
             }
         }
 
-        public static IEnumerable<string> FindMatches3(ScriptSession session, string command)
+        public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand(command, out lastToken);
@@ -50,11 +50,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().ToArray();
             var result = new List<string>();
 
-            WrapResults3(truncatedCommand, teResult, result);
+            WrapResults3(truncatedCommand, teResult, result, aceResponse);
             return result;
         }
 
-        public static IEnumerable<string> FindMatches2(ScriptSession session, string command)
+        public static IEnumerable<string> FindMatches2(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand(command, out lastToken);
@@ -66,7 +66,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
             var result = new List<string>();
-            WrapResults(truncatedCommand, teResult, result);
+            WrapResults(truncatedCommand, teResult, result, aceResponse);
 
             //int prefixFileNameLength = Path.GetFileName(lastToken).Length;
             //string pathPrefix = lastToken.Substring(lastToken.Length - prefixFileNameLength);
@@ -79,42 +79,55 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 var psResults = session.ExecuteScriptPart(commandLine, false, true);
                 IEnumerable<string> rpResult = psResults.Cast<PathInfo>().Select(p => p.Path);
                 //result.AddRange(rpResult.Select(l => truncatedCommand + l.Path));
-                WrapResults(truncatedCommand, rpResult, result);
+                WrapResults(truncatedCommand, rpResult, result, aceResponse);
             }
             else
             {
                 string commandLine = string.Format("Resolve-Path \"{0}*\" -Relative", lastToken);
                 IEnumerable<string> rpResult = session.ExecuteScriptPart(commandLine, false, true).Cast<string>();
-                WrapResults(truncatedCommand, rpResult, result);
+                WrapResults(truncatedCommand, rpResult, result, aceResponse);
             }
 
             return result;
         }
 
         public static char[] wrapChars = { ' ', '$', '(', ')', '{', '}', '%', '@', '|' };
-        public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
+        public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results, bool aceResponse)
         {
             if (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
             {
                 truncatedCommand += " ";
             }
             results.AddRange(tabExpandedResults.Select(l =>
-                l.IndexOfAny(wrapChars) > -1
-                    ? string.Format("{0}{1}'{2}'",
-                        truncatedCommand,
-                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
-                        l.Trim('\''))
-                    : truncatedCommand + l
-                ));
+            {
+                if (aceResponse)
+                {
+                    return "Server-side|"+l;
+                }
+                else
+                {
+                    return l.IndexOfAny(wrapChars) > -1
+                         ? string.Format("{0}{1}'{2}'",
+                             truncatedCommand,
+                             string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
+                             l.Trim('\''))
+                         : truncatedCommand + l;
+                }
+            }
+            ));
 
         }
 
-        public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results)
+        public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results, bool aceResponse)
         {
             var truncatedCommandTail = (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
                 ? " " : string.Empty;
             results.AddRange(tabExpandedResults.Select(l =>
             {
+                if (aceResponse)
+                {
+                    return l;
+                }
                 var split = l.Split('|');
                 var type = split[0];
                 var content = split[1];

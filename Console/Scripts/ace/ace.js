@@ -14033,7 +14033,10 @@ var Text = function(parentEl) {
         return screenColumn + value.length;
     };
 
-    this.renderIndentGuide = function(stringBuilder, value) {
+    this.renderIndentGuide = function (stringBuilder, value) {
+        if (!value) {
+            return "";
+        }
         var cols = value.search(this.$indentGuideRe);
         if (cols <= 0)
             return value;
