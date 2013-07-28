@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
@@ -112,7 +113,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (itemId.Length > 0)
             {
                 ScriptItemId = itemId;
-                LoadItem(itemId);
+                LoadItem(WebUtil.GetQueryString("db"),itemId);
             }
             var rnd = new Random();
 /*
@@ -180,7 +181,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!args.HasResult)
                     return;
-                LoadItem(args.Result);
+                LoadItem(Client.ContentDatabase.Name, args.Result);
                 UpdateRibbon();
             }
             else
@@ -194,6 +195,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
         }
 
+        [HandleMessage("ise:mruopen", true)]
+        protected void MruOpen(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            LoadItem(args.Parameters["db"],args.Parameters["id"]);
+            UpdateRibbon();
+        }
+
         [HandleMessage("item:load", true)]
         protected void LoadContentEditor(ClientPipelineArgs args)
         {
@@ -205,6 +214,57 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Windows.RunApplication("Content Editor", parameters.ToString());
         }
 
+        protected void MruUpdate(string db, string id, string name, string icon)
+        {
+            Assert.ArgumentNotNull(db, "db");
+            Assert.ArgumentNotNull(id, "id");
+
+            Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU");
+            if (mruMenu == null)
+            {
+                mruMenu = Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
+            }
+            var mruItems = mruMenu.Children;
+            if (mruItems.Count > 0 && mruItems[0]["Message"].Contains(id))
+            {
+                // Opened scritp already first.
+                return;
+            }
+            else
+            {
+                Item openedScript = mruItems.Where(mruItem => mruItem["Message"].Contains(id)).FirstOrDefault();
+                if (openedScript == null)
+                {
+
+                    openedScript = mruMenu.Add(name, new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
+                }
+                openedScript.Edit(args =>
+                {
+                    openedScript["Message"] = string.Format("ise:mruopen(id={0},db={1})", id, db);
+                    openedScript["Icon"] = icon;
+                    openedScript["Display name"] = name;
+                    openedScript[FieldIDs.Sortorder] = "0";
+                });
+
+                int sortOrder = 1;
+                foreach (Item mruItem in mruItems)
+                {
+                    if (sortOrder > 9)
+                    {
+                        mruItem.Delete();
+                        continue;
+                    }
+                    if (!(mruItem["Message"].Contains(id)))
+                    {
+                        mruItem.Edit(args =>
+                        {
+                            mruItem[FieldIDs.Sortorder] = sortOrder.ToString();
+                            sortOrder++;
+                        });
+                    }
+                }
+            }
+        }
         [HandleMessage("ise:new", true)]
         protected void NewScript(ClientPipelineArgs args)
         {
@@ -289,13 +349,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:reload", true)]
         protected void ReloadItem(ClientPipelineArgs args)
         {
-            LoadItem(ScriptItemId);
+            LoadItem(Client.ContentDatabase.Name,ScriptItemId);
         }
 
-        private void LoadItem(string id)
+        private void LoadItem(string db, string id)
         {
             Assert.ArgumentNotNull(id, "id");
-            Item scriptItem = Client.ContentDatabase.GetItem(id);
+            Assert.ArgumentNotNull(db, "db");
+            Item scriptItem = Factory.GetDatabase(db).GetItem(id);
             if (scriptItem == null)
                 return;
 
@@ -304,6 +365,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
                 SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
+                MruUpdate(scriptItem.Database.Name, scriptItem.ID.ToString(), scriptItem.Name, scriptItem[FieldIDs.Icon]);
                 UpdateRibbon();
             }
             else
