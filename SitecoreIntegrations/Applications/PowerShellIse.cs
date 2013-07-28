@@ -296,6 +296,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 DataContext.EnableEvents();
                 ScriptItemId = scriptItem.ID.ToString();
                 SaveItem(new ClientPipelineArgs());
+                MruUpdate(scriptItem.Database.Name, scriptItem.ID.ToString(), scriptItem.Name, scriptItem[FieldIDs.Icon]);
                 UpdateRibbon();
             }
             else
