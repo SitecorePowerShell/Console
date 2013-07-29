@@ -1039,8 +1039,13 @@ var Autocomplete = function() {
         var matches = [];
         util.parForEach(editor.completers, function(completer, next) {
             completer.getCompletions(editor, session, pos, prefix, function(err, results) {
-                if (!err)
+                if (!err) {
+                    if (results.length > 0 && results[0].meta === "Prefix") {
+                        prefix = results[0].value;
+                        results.splice(0, 1);
+                    }
                     matches = matches.concat(results);
+                }
                 next();
             });
         }, function() {
@@ -1313,7 +1318,7 @@ dom.importCssString("\
     z-index: -1;\
 }\
 .ace_autocomplete {\
-    width: 200px;\
+    width: 350px;\
     z-index: 200000;\
     background: #f8f8f8;\
     border: 1px lightgray solid;\

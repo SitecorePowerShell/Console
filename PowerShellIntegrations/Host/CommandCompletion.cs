@@ -49,6 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().ToArray();
             var result = new List<string>();
+            result.Add("Prefix|" + lastToken);
 
             WrapResults3(truncatedCommand, teResult, result, aceResponse);
             return result;
@@ -66,6 +67,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
             var result = new List<string>();
+            result.Add("Prefix|"+lastToken);
             WrapResults(truncatedCommand, teResult, result, aceResponse);
 
             //int prefixFileNameLength = Path.GetFileName(lastToken).Length;

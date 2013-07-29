@@ -304,6 +304,7 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Scripts/{842009BC-2F45-4352-A82A-D9DA0481A2FE}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Terminal/{FE914D0B-2BDB-40D3-80B7-F691414A689E}/invariant/0</x-item>
         <x-item>/core/sitecore/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/{8F698F43-8930-4810-9DEC-FE8118DD8C3A}/invariant/0</x-item>
+        <x-item>/core/sitecore/system/Modules/PowerShell/{DADC7C07-2606-4F1C-98C6-FB8162E55257}/invariant/0</x-item>
       </Entries>
       <SkipVersions>False</SkipVersions>
       <Converter>
@@ -463,7 +464,7 @@ http://blog.najmanowicz.com/</Readme>
     </items>
     <items>
       <Database>core</Database>
-      <Root>{DADC7C07-2606-4F1C-98C6-FB8162E55257}</Root>
+      <Root>{A3572733-5062-43E9-A447-54698BC1C637}</Root>
       <SkipVersions>False</SkipVersions>
       <Converter>
         <ItemToEntryConverter>
@@ -688,6 +689,63 @@ http://blog.najmanowicz.com/</Readme>
       </Include>
       <Exclude />
       <Name>Module</Name>
+    </items>
+    <items>
+      <Database>core</Database>
+      <Root>{42FFA0E6-F121-432A-821D-D40C53560563}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms>
+            <InstallerConfigurationTransform>
+              <Options>
+                <BehaviourOptions>
+                  <ItemMode>Undefined</ItemMode>
+                  <ItemMergeMode>Undefined</ItemMergeMode>
+                </BehaviourOptions>
+              </Options>
+            </InstallerConfigurationTransform>
+          </Transforms>
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>Core Colors</Name>
     </items>
   </Sources>
   <Converter>
