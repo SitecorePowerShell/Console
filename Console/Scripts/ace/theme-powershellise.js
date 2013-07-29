@@ -36,6 +36,10 @@ background: #f0f0f0;\
 }\
 .ace-powershell-ise .ace_marker-layer .ace_selection {\
 background: #B5D5FF\
+}\
+.ace-powershell-ise .ace_marker-layer .ace_bracket {\
+margin: -1px 0 0 -1px;\
+border: 1px solid #C0C0C0;\
 }";
 
 exports.cssClass = "ace-powershell-ise";
