@@ -8,7 +8,6 @@ using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
@@ -99,6 +98,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if (Monitor == null)
+            {
+                if (!Context.ClientPage.IsEvent)
+                {
+                    Monitor = new JobMonitor { ID = "Monitor" };
+                    Context.ClientPage.Controls.Add(Monitor);
+                }
+                else
+                {
+                    Monitor = (JobMonitor)Context.ClientPage.FindControl("Monitor");
+                }
+            }
+
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -114,24 +127,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 ScriptItemId = itemId;
                 LoadItem(WebUtil.GetQueryString("db"),itemId);
-            }
-            var rnd = new Random();
-/*
-            TipText.Text = hintMessages[rnd.Next(hintMessages.Length - 1)];
-            StatusText.Text = TipText.Text;
-*/
-
-            if (Monitor == null)
-            {
-                if (!Context.ClientPage.IsEvent)
-                {
-                    Monitor = new JobMonitor {ID = "Monitor"};
-                    Context.ClientPage.Controls.Add(Monitor);
-                }
-                else
-                {
-                    Monitor = Context.ClientPage.FindControl("Monitor") as JobMonitor;
-                }
             }
 
             Monitor.JobFinished += MonitorJobFinished;
@@ -208,7 +203,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Assert.ArgumentNotNull(args, "args");
 
-            var parameters = new Sitecore.Text.UrlString();
+            var parameters = new UrlString();
             parameters.Add("id", args.Parameters["id"]);
             parameters.Add("fo", args.Parameters["id"]);
             Windows.RunApplication("Content Editor", parameters.ToString());
@@ -219,25 +214,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Assert.ArgumentNotNull(db, "db");
             Assert.ArgumentNotNull(id, "id");
 
-            Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU");
-            if (mruMenu == null)
-            {
-                mruMenu = Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
-            }
-            var mruItems = mruMenu.Children;
-            if (mruItems.Count > 0 && mruItems[0]["Message"].Contains(id))
-            {
-                // Opened scritp already first.
-                return;
-            }
-            else
-            {
-                Item openedScript = mruItems.Where(mruItem => mruItem["Message"].Contains(id)).FirstOrDefault();
-                if (openedScript == null)
-                {
+            Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
+                          Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
 
-                    openedScript = mruMenu.Add(name, new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
-                }
+            var mruItems = mruMenu.Children;
+            if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
+            {
+                Item openedScript = mruItems.FirstOrDefault(mruItem => mruItem["Message"].Contains(id)) ??
+                                    mruMenu.Add(name, new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
                 openedScript.Edit(args =>
                 {
                     openedScript["Message"] = string.Format("ise:mruopen(id={0},db={1})", id, db);
@@ -256,9 +240,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     }
                     if (!(mruItem["Message"].Contains(id)))
                     {
-                        mruItem.Edit(args =>
+                        Item item = mruItem;
+                        item.Edit(args =>
                         {
-                            mruItem[FieldIDs.Sortorder] = sortOrder.ToString();
+                            item[FieldIDs.Sortorder] = sortOrder.ToString("G");
                             sortOrder++;
                         });
                     }
@@ -379,7 +364,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             var scriptSession = parameters[0] as ScriptSession;
             var contextScript = parameters[1] as string;
-            var scriptItemId = parameters[2] as string;
 
             if (scriptSession == null || contextScript == null)
             {
@@ -501,7 +485,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
-            var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
+            var currentSession = (ScriptSession)HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             currentSession.Abort();
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
@@ -543,7 +527,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                 if (secondsRemaining > -1)
-                    sb.AppendFormat("<p><strong>{0:c} </strong> remaining.</p>", new TimeSpan(0, 0, 0, secondsRemaining));
+                    sb.AppendFormat("<p><strong>{0:c} </strong> remaining.</p>", new TimeSpan(0, 0, secondsRemaining));
             }
 
             if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
@@ -556,7 +540,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
 
         [HandleMessage("ise:updateribbon")]
-        private void UpdateRibbon(Message message)
+        protected void UpdateRibbon(Message message)
         {
             UpdateRibbon();
         }
