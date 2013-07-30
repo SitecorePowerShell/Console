@@ -1,7 +1,7 @@
 <project>
   <Metadata>
     <metadata>
-      <PackageName>Sitecore PowerShell Console</PackageName>
+      <PackageName>Sitecore PowerShell Extensions</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
       <Version>2.2</Version>
       <Revision />
@@ -21,6 +21,33 @@ behind the scripting environment.
 Review the script before running it, please.
 
 NEW:
+- 2.2 (30 July 2013) - http://bit.ly/ScPs22Issues
+  - Masive improvements to the ISE editing experience thanks to Michael West's involvement and skills! (@MichaelWest101)
+  - Issue #55 [regression-fix] ACE EDITOR Auto-completion drop-down does not scale to accommodate the length of longer paths.
+  - Issue #54 [regression-fix] ACE EDITOR Suggestions only show local keywords
+  - Issue #53 [enhancement] Open ribbon button to get MRU list
+  - Issue #52 [regression-fix] ACE EDITOR Cannot select code to Copy/Paste/Delete
+  - Issue #51 [regression-fix] ACE EDITOR Path completion is broken
+  - Issue #50 [regression-fix] ACE EDITOR Parameters collected from other commands show for all commands even if not applicable.
+  - Issue #49 [regression-fix] ACE EDITOR Line and Column caret position indicators don't work after switching to Ace Editor
+  - Issue #48 [regression-fix] ACE EDITOR Splitter move does not cause more lines show in the Ace editor.
+  - Issue #47 [regression-fix] ACE EDITOR Shift+Enter Help doesn't work.
+  - Issue #46 [behaviour-change] Remove Persistent Session Buffer flush functionality - Use Clear-Host within script instead
+  - Issue #45 [enhancement] Add Verbose SwitchParameter support to Write-Log
+  - Issue #44 [behaviour-change] Shift+Space autosuggest removed - it causes more problems than it's worth. Shift+Ctrl provides enough context help.
+  - Issue #43 [enhancement] Shift+Enter Help should find the last command in the line it was launched instead of showing error if not executed after command.
+  - Issue #42 [enhancement]  Adjustments to code completion for issue #32
+  - Issue #41 [bug] Fix Defunct Content Editor Integration Toggles bug
+  - Issue #39 [enhancement] Feature - Cmdlet to run Task Schedule
+  - Issue #38 [enhancement] Cls now works in ISE
+  - Issue #37 [enhancement] Abort script functionality added to ISE and Script runner 
+  - Issue #36 [enhancement] ISE - New Script Button
+  - Issue #35 [bug] Get-Command Blank Line
+  - Issue #34 [bug] Get-Command Clear-Host Output
+  - Issue #33 [enhancement] Console Adjustments
+  - Issue #32 [enhancement] Pressing tab for $host.UI produces host . UI bug
+  - Issue #9 [enhancement] Scripts should be able to call other scripts in the library that are run before the script itself
+
 - 2.1 (15 July 2013) - http://bit.ly/ScPs21Iss
   - Add ability to turn off Context Script and Context Terminal for Content Editor in Ise and Conetent Editor (View ribbon) (ehancement)
   - Add Close-Window commandlet to close the Results window from a script (enhancement)
@@ -206,6 +233,8 @@ http://blog.najmanowicz.com/</Readme>
       <Entries>
         <x-item>/App_Config/Include/Cognifide.PowerShell.config</x-item>
         <x-item>/bin/Cognifide.PowerShell.dll</x-item>
+        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
+        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
         <x-item>/Console/Assets/bg_left.gif</x-item>
         <x-item>/Console/Assets/bg_middle.gif</x-item>
         <x-item>/Console/Assets/bg_right.gif</x-item>
@@ -227,11 +256,29 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx</x-item>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx.cs</x-item>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx.designer.cs</x-item>
+        <x-item>/Console/Scripts/ace/ace.js</x-item>
+        <x-item>/Console/Scripts/ace/emmet-core/</x-item>
+        <x-item>/Console/Scripts/ace/emmet-core/emmet.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-elastic_tabstops_lite.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-emmet.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-keybinding_menu.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-language_tools.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-modelist.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-options.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-searchbox.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-settings_menu.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-spellcheck.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-split.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-static_highlight.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-statusbar.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-textarea.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-themelist.js</x-item>
+        <x-item>/Console/Scripts/ace/ext-whitespace.js</x-item>
+        <x-item>/Console/Scripts/ace/mode-powershell.js</x-item>
+        <x-item>/Console/Scripts/ace/snippets/powershell.js</x-item>
+        <x-item>/Console/Scripts/ace/snippets-powershell.js</x-item>
+        <x-item>/Console/Scripts/ace/theme-powershellise.js</x-item>
         <x-item>/Console/Scripts/ise.js</x-item>
-        <x-item>/Console/Scripts/jquery.asuggest.js</x-item>
-        <x-item>/Console/Scripts/jquery.a-tools-1.4.1.js</x-item>
-        <x-item>/Console/Scripts/jquery.caretposition.js</x-item>
-        <x-item>/Console/Scripts/jquery.hotkeys.js</x-item>
         <x-item>/Console/Scripts/jquery.mousewheel-min.js</x-item>
         <x-item>/Console/Scripts/jquery.qtip.js</x-item>
         <x-item>/Console/Scripts/jquery.qtip.min.js</x-item>
@@ -240,11 +287,6 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/Console/Scripts/jquery-1.10.2.min.js</x-item>
         <x-item>/Console/Scripts/jquery-migrate-1.2.1.min.js</x-item>
         <x-item>/Console/Scripts/jquery-ui.js</x-item>
-        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/</x-item>
-        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Changelog.txt</x-item>
-        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Licence.txt</x-item>
-        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/progressbar.js</x-item>
-        <x-item>/Console/Scripts/js.VistaProgressBar-0.6/Readme.txt</x-item>
         <x-item>/Console/Scripts/json2.js</x-item>
         <x-item>/Console/Scripts/PsHSplitter.js</x-item>
         <x-item>/Console/Scripts/Runner.js</x-item>
@@ -267,8 +309,6 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellNewScript.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellResultViewerText.xml</x-item>
         <x-item>/sitecore/shell/Applications/PowerShell/PowerShellRunner.xml</x-item>
-        <x-item>/sitecore/shell/Override/Controls/Splitters/HSplitter.xml</x-item>
-        <x-item>/sitecore/shell/Themes/Standard/PowerShell.zip</x-item>
       </Entries>
       <Converter>
         <FileToEntryConverter>
