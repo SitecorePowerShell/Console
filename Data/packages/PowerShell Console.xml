@@ -21,7 +21,7 @@ behind the scripting environment.
 Review the script before running it, please.
 
 NEW:
-- 2.2 (30 July 2013) - http://bit.ly/ScPs22Issues
+- 2.2 (30 July 2013) - http://bit.ly/ScPs22Iss
   - Masive improvements to the ISE editing experience thanks to Michael West's involvement and skills! (@MichaelWest101)
   - Issue #55 [regression-fix] ACE EDITOR Auto-completion drop-down does not scale to accommodate the length of longer paths.
   - Issue #54 [regression-fix] ACE EDITOR Suggestions only show local keywords
@@ -254,8 +254,6 @@ http://blog.najmanowicz.com/</Readme>
         <x-item>/Console/Assets/working.gif</x-item>
         <x-item>/Console/Layouts/PowerShellLayout.aspx</x-item>
         <x-item>/Console/Layouts/PowerShellTerminal.aspx</x-item>
-        <x-item>/Console/Layouts/PowerShellTerminal.aspx.cs</x-item>
-        <x-item>/Console/Layouts/PowerShellTerminal.aspx.designer.cs</x-item>
         <x-item>/Console/Scripts/ace/ace.js</x-item>
         <x-item>/Console/Scripts/ace/emmet-core/</x-item>
         <x-item>/Console/Scripts/ace/emmet-core/emmet.js</x-item>
