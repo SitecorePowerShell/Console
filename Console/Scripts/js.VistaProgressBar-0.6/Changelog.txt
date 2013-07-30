@@ -1,7 +1,0 @@
-Version .6 June 23rd 2007
--- Added indeterminate mode
--- Fixed bug where progress bar would go over 100%
--- Added addtional documents to the release - Licence, Readme, Changelog
-
-Version .5 June 16th 2007
--- First Release

@@ -76,7 +76,7 @@ var snippetCompleter = {
 
 var completers = [snippetCompleter, textCompleter, keyWordCompleter];
 exports.addCompleter = function(completer) {
-    completers.push(completer);
+    completers.unshift(completer);
 };
 
 var expandSnippet = {
@@ -925,7 +925,7 @@ var Autocomplete = function() {
         }.bind(this));
     };
 
-    this.openPopup = function(editor, keepPopupPosition) {
+    this.openPopup = function(editor, keepPopupPosition, prefixLength) {
         if (!this.popup)
             this.$init();
 
@@ -934,10 +934,12 @@ var Autocomplete = function() {
         var renderer = editor.renderer;
         if (!keepPopupPosition) {
             var lineHeight = renderer.layerConfig.lineHeight;
-            var pos = renderer.$cursorLayer.getPixelPosition(null, true);
+            var position = renderer.$cursorLayer.session.selection.getCursor();
+            position.column = position.column - prefixLength;
+            var pos = renderer.$cursorLayer.getPixelPosition(position, true);
             var rect = editor.container.getBoundingClientRect();
             pos.top += rect.top - renderer.layerConfig.offset;
-            pos.left += rect.left;
+            pos.left += rect.left-5;
             pos.left += renderer.$gutterLayer.gutterWidth;
 
             this.popup.show(pos, lineHeight);
@@ -1040,7 +1042,7 @@ var Autocomplete = function() {
         util.parForEach(editor.completers, function(completer, next) {
             completer.getCompletions(editor, session, pos, prefix, function(err, results) {
                 if (!err) {
-                    if (results.length > 0 && results[0].meta === "Prefix") {
+                    if (results.length > 0 && (results[0] !== undefined) && results[0].meta === "Prefix") {
                         prefix = results[0].value;
                         results.splice(0, 1);
                     }
@@ -1080,7 +1082,8 @@ var Autocomplete = function() {
         this.updateCompletions();
     }
     
-    this.updateCompletions = function(keepPopupPosition) {
+    this.updateCompletions = function (keepPopupPosition) {
+        that = this;
         this.gatherCompletions(this.editor, function(err, results) {
             var matches = results && results.matches;
             if (!matches || !matches.length)
@@ -1088,7 +1091,7 @@ var Autocomplete = function() {
 
             this.completions = new FilteredList(matches);
             this.completions.setFilter(results.prefix);
-            this.openPopup(this.editor, keepPopupPosition);
+            that.openPopup(this.editor, keepPopupPosition, results.prefix.length);
             this.popup.setHighlight(results.prefix);
         }.bind(this));
     };
@@ -1292,6 +1295,24 @@ var AcePopup = function(parentNode) {
         el.style.display = "";
         this.renderer.$textLayer.checkForSizeChanges();
 
+        var size = 350;
+        for (var i = 0; i < popup.data.length; i++) {
+            var data = popup.data[i];
+            if (data) {
+                var dataSize = (data.value.length + data.meta.length) * 7;
+                if (size < dataSize) {
+                    size = dataSize;
+                }
+            }
+        }
+        el.style.width = (size+24) + "px";
+
+        for (var i = 0; i < el.children.length; i++) {
+            if (el.children[i].className === "ace_scroller") {
+                el.children[i].style.width = size + "px";
+                el.children[i].children[0].style.width = size + "px";
+            }
+        }
         this._signal("show");
     };
 
@@ -1318,7 +1339,7 @@ dom.importCssString("\
     z-index: -1;\
 }\
 .ace_autocomplete {\
-    width: 350px;\
+    min-width: 350px;\
     z-index: 200000;\
     background: #f8f8f8;\
     border: 1px lightgray solid;\
