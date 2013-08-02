@@ -36,6 +36,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Border ProgressOverlay;
         protected Border ScriptResult;
         protected Border EnterScriptInfo;
+        protected Border ScriptName;
 
         protected bool ScriptRunning { get; set; }
         public ApplicationSettings Settings { get; set; }
@@ -181,11 +182,30 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else
             {
-                Dialogs.BrowseItem("Open Script",
-                                   "Select the script item that you want to open.",
-                                   "powershell/48x48/script.png", "Open",
-                                   "/sitecore/system/Modules/PowerShell/Script Library",
-                                   "/sitecore/system/Modules/PowerShell/Script Library/");
+                const string header = "Open Script";
+                const string text = "Select the script item that you want to open.";
+                const string icon = "powershell/48x48/script.png";
+                const string button = "Open";
+                const string root = "/sitecore/system/Modules/PowerShell/Script Library";
+                const string selected = "/sitecore/system/Modules/PowerShell/Script Library/";
+
+                string str = selected;
+                if (selected.EndsWith("/"))
+                {
+                    Item obj = Context.ContentDatabase.Items[StringUtil.Left(selected, selected.Length - 1)];
+                    if (obj != null)
+                        str = obj.ID.ToString();
+                }
+                var urlString = new UrlString(UIUtil.GetUri("control:PowerShellScriptBrowser"));
+                urlString.Append("id", selected);
+                urlString.Append("fo", str);
+                urlString.Append("ro", root);
+                urlString.Append("he", header);
+                urlString.Append("txt", text);
+                urlString.Append("ic", icon);
+                urlString.Append("btn", button);
+                urlString.Append("opn", "1");
+                SheerResponse.ShowModalDialog(urlString.ToString(), true);
                 args.WaitForPostBack();
             }
         }
@@ -209,11 +229,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Windows.RunApplication("Content Editor", parameters.ToString());
         }
 
-        protected void MruUpdate(string db, string id, string name, string icon)
+        protected void MruUpdate(Item scriptItem)
         {
-            Assert.ArgumentNotNull(db, "db");
-            Assert.ArgumentNotNull(id, "id");
+            Assert.ArgumentNotNull(scriptItem, "scriptItem");
 
+            string db = scriptItem.Database.Name;
+            string id = scriptItem.ID.ToString();
+            string name = scriptItem.Name;
+            string icon = scriptItem[FieldIDs.Icon];
+            SheerResponse.SetInnerHtml("ScriptName", string.Format("Script: {0}:{1}", db, scriptItem.Paths.Path.Substring(9)));
             Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
                           Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
 
@@ -281,7 +305,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 DataContext.EnableEvents();
                 ScriptItemId = scriptItem.ID.ToString();
                 SaveItem(new ClientPipelineArgs());
-                MruUpdate(scriptItem.Database.Name, scriptItem.ID.ToString(), scriptItem.Name, scriptItem[FieldIDs.Icon]);
+                MruUpdate(scriptItem);
                 UpdateRibbon();
             }
             else
@@ -300,7 +324,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     if (obj != null)
                         str = obj.ID.ToString();
                 }
-                var urlString = new UrlString(UIUtil.GetUri("control:PowerShellNewScript"));
+                var urlString = new UrlString(UIUtil.GetUri("control:PowerShellScriptBrowser"));
                 urlString.Append("id", selected);
                 urlString.Append("fo", str);
                 urlString.Append("ro", root);
@@ -309,7 +333,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 urlString.Append("ic", icon);
                 urlString.Append("btn", button);
                 SheerResponse.ShowModalDialog(urlString.ToString(), true);
-
                 args.WaitForPostBack();
             }
         }
@@ -351,7 +374,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
                 SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
-                MruUpdate(scriptItem.Database.Name, scriptItem.ID.ToString(), scriptItem.Name, scriptItem[FieldIDs.Icon]);
+                MruUpdate(scriptItem);
                 UpdateRibbon();
             }
             else

@@ -225,7 +225,7 @@
     <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ExecutionMessages.cs" />
     <Compile Include="SitecoreIntegrations\Applications\GetStringResponse.cs" />
-    <Compile Include="SitecoreIntegrations\Applications\PowerShellIseNew.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellScriptBrowser.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ScriptRunner.cs" />
@@ -375,7 +375,7 @@
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellNewScript.xml">
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellScriptBrowser.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Override\Controls\Splitters\HSplitter.xml" />

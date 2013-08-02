@@ -14,13 +14,14 @@ using Sitecore.Web.UI.XmlControls;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellIseNew : DialogForm
+    public class PowerShellScriptBrowser : DialogForm
     {
         // Fields
         protected XmlControl Dialog;
         protected Edit Filename;
         protected DataContext ScriptDataContext;
         protected TreeviewEx Treeview;
+        protected Border NamePanel;
 
         // Methods
         private Item GetCurrentItem(Message message)
@@ -90,6 +91,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 Item folder = ScriptDataContext.GetFolder();
                 Assert.IsNotNull(folder, "Item not found");
                 //this.Filename.Value = this.ShortenPath(folder.Paths.Path);
+                NamePanel.Visible = WebUtil.SafeEncode(WebUtil.GetQueryString("opn")) != "1";
             }
         }
 
@@ -100,38 +102,58 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Item selectedItem = Treeview.GetSelectionItem();
             string scriptName = Filename.Value;
 
-            if (selectedItem == null)
+            bool opening = WebUtil.SafeEncode(WebUtil.GetQueryString("opn")) == "1";
+
+
+            if (opening)
             {
-                SheerResponse.Alert(
-                    "Select a library where you want your script saved and specify a name for your script.",
-                    new string[0]);
-            }
-            else if (selectedItem.TemplateName == "PowerShell Script Library" && scriptName.Length == 0)
-            {
-                SheerResponse.Alert("Specify a name for your script.", new string[0]);
-            }
-            else if (selectedItem.TemplateName == "PowerShell Script") // selected existing script.
-            {
-                var parameters = new NameValueCollection();
-                parameters["fullPath"] = selectedItem.Paths.Path;
-                parameters["message"] = "Are you sure you want to overwrite the selected script?";
-                Context.ClientPage.Start(this, "OverwriteScript", parameters);
+                if (selectedItem == null || selectedItem.TemplateName != "PowerShell Script")
+                {
+                    SheerResponse.Alert(
+                        "Select a script you want to open.",
+                        new string[0]);
+                }
+                else
+                {
+                    Context.ClientPage.ClientResponse.SetDialogValue(selectedItem.Paths.Path);
+                    SheerResponse.CloseWindow();
+                }
             }
             else
             {
-                string fullPath = selectedItem.Paths.Path + "/" + Filename.Value;
-                if (selectedItem.Children[scriptName] != null)
+                if (selectedItem == null)
+                {
+                    SheerResponse.Alert(
+                        "Select a library where you want your script saved and specify a name for your script.",
+                        new string[0]);
+                }
+                else if (selectedItem.TemplateName == "PowerShell Script Library" && scriptName.Length == 0)
+                {
+                    SheerResponse.Alert("Specify a name for your script.", new string[0]);
+                }
+                else if (selectedItem.TemplateName == "PowerShell Script") // selected existing script.
                 {
                     var parameters = new NameValueCollection();
-                    parameters["fullPath"] = fullPath;
-                    parameters["message"] =
-                        "Script with that name already exists, are you sure you want to overwrite the script?";
+                    parameters["fullPath"] = selectedItem.Paths.Path;
+                    parameters["message"] = "Are you sure you want to overwrite the selected script?";
                     Context.ClientPage.Start(this, "OverwriteScript", parameters);
                 }
                 else
                 {
-                    Context.ClientPage.ClientResponse.SetDialogValue(fullPath);
-                    base.OnOK(sender, args);
+                    string fullPath = selectedItem.Paths.Path + "/" + Filename.Value;
+                    if (selectedItem.Children[scriptName] != null)
+                    {
+                        var parameters = new NameValueCollection();
+                        parameters["fullPath"] = fullPath;
+                        parameters["message"] =
+                            "Script with that name already exists, are you sure you want to overwrite the script?";
+                        Context.ClientPage.Start(this, "OverwriteScript", parameters);
+                    }
+                    else
+                    {
+                        Context.ClientPage.ClientResponse.SetDialogValue(fullPath);
+                        base.OnOK(sender, args);
+                    }
                 }
             }
         }

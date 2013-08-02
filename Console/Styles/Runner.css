@@ -98,18 +98,17 @@ a#ViewErrorsButton {
 {
     from
     {
-        box-shadow: 0 0 0px #06B025;
+        box-shadow: 0 0 19px #fff;
     }
 
     50%
     {
-        box-shadow: 0 0 18px #91bd09;
+        box-shadow: 0 0 18px #06B025;
     }
 
     to
     {
-        background-color: #749a02;
-        box-shadow: 0 0 9px #333;
+        box-shadow: 0 0 19px #fff;
     }
 }
 @-webkit-keyframes greenPulse
