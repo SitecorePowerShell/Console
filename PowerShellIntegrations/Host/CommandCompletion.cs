@@ -148,9 +148,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             truncatedCommand, truncatedCommandTail, content);
                     case ("Property"):
                     case ("Method"):
-                        return truncatedCommand.EndsWith("]")
-                            ? string.Format("{0}{1}", truncatedCommand, content)
-                            : string.Format("{0}.{1}", truncatedCommand.Trim('.'), content);
+                        return string.Format("{0}{1}", truncatedCommand, content);
                     default:
                         return string.Format("{0}{1}{2}",
                             truncatedCommand, truncatedCommandTail,
@@ -181,7 +179,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     lastPsToken = tokens.Last();
                     lastToken = lastPsToken.Content;
                     command = command.TrimEnd(' ');
-                    truncatedCommand = command.Substring(0, command.Length - lastToken.Length);
+                    if (lastPsToken.Type == PSTokenType.Operator)
+                    {
+                        truncatedCommand = command;
+                    }
+                    else
+                    {
+                        truncatedCommand = command.Substring(0, command.Length - lastToken.Length);
+                    }
                     break;
             }
             return truncatedCommand;

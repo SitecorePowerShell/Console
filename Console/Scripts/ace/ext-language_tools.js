@@ -1005,7 +1005,9 @@ var Autocomplete = function() {
         } else {
             if (this.completions.filterText) {
                 var range = this.editor.selection.getRange();
-                range.start.column -= this.completions.filterText.length;
+                if (data.meta === "ProviderContainer" || data.meta === "ProviderItem") {
+                    range.start.column -= this.completions.filterText.length;
+                }
                 this.editor.session.remove(range);
             }
             if (data.snippet)
