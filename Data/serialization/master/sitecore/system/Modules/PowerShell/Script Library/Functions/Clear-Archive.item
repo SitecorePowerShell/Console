@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 3c52dfb9-3437-4a46-9e7c-fac085876fa8
+revision: 7495e733-97e7-4fc6-b0ba-c74564883040
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1248
+content-length: 1372
 
 function Clear-Archive {
     <#
@@ -34,6 +34,11 @@ function Clear-Archive {
             Removes all items in the recycle bin.
             
             PS master:\> Clear-Archive -Days 0
+            
+        .NOTES
+            Michael West
+            michaellwest.blogspot.com
+            @MichaelWest101
             
     #>
     [CmdletBinding()]
@@ -72,14 +77,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3c52dfb9-3437-4a46-9e7c-fac085876fa8
+7495e733-97e7-4fc6-b0ba-c74564883040
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130802T224412:635110802520568241
+20130803T101937:635111219771441186
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
