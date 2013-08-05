@@ -31,6 +31,13 @@ content-length: 3
 
 c79
 ----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Core3/32x32/open_document.png
+----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
@@ -47,7 +54,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: 6de7288b-6a10-4145-8c6d-21f2f3a8c4a3
+revision: e27a198d-8985-4ae9-9bc1-b9d94c2ce46b
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -90,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6de7288b-6a10-4145-8c6d-21f2f3a8c4a3
+e27a198d-8985-4ae9-9bc1-b9d94c2ce46b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130430T170900:635029385404428282
+20130804T212028:635112480280406342
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
