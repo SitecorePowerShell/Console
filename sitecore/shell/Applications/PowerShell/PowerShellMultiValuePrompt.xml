@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellMultiValuePrompt>
+    <WizardForm CodeBeside="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell">
+      <WizardFormFirstPage ID="FirstPage" Icon="powershell/32x32/powershell.png">
+        <Border Class="scWizardWelcomeTitle">
+          <Literal ID="Welcome" Text="Welcome to the Script Configuration Wizard."/>
+        </Border>
+        <Literal Text="This wizard helps you:"/>
+        <ul>
+          <li class="scWizardBullet">
+            <Literal Text="Pick parameters for your script."/>
+          </li>
+          <li class="scWizardBullet">
+            <Literal Text="Look awesome..."/>
+          </li>
+          <li class="scWizardBullet">
+            <Literal Text="Look professional..."/>
+          </li>
+        </ul>
+      </WizardFormFirstPage>
+      <WizardFormPage ID="Settings" Header="Settings" Text="Select the publishing settings. Click Publish to publish." Icon="Custom/32x32/Publish.png">
+        <Border Align="Right" Foreground="#999999">
+          <Literal
+            Text="Sitecore PowerShell Extensions - Copyright (c) 2010-2013 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+        </Border>
+      </WizardFormPage>
+      <WizardFormLastPage ID="LastPage" Icon="Custom/32x32/Publish.png">
+        <GridPanel Cellpadding="2" Width="100%" Height="100%" Fixed="true">
+
+          <Border GridPanel.Style="padding:0px 0px 16px 0px; font-weight:bold">
+            <Literal Text="The wizard has completed. Click Finish to close the wizard."/>
+          </Border>
+
+          <Border GridPanel.Style="padding:0px 0px 2px 0px">
+            <Literal ID="Status"/>
+          </Border>
+
+          <Border ID="ShowResultPane" GridPanel.Style="padding:8px 0px 2px 0px" Click="ShowResult" RollOver="true" Class="scRollOver">
+            <Literal Text="Click here to see additional information."/>
+          </Border>
+
+          <Border ID="ResultLabel" GridPanel.Style="padding:8px 0px 2px 0px" Visible="false">
+            <Literal Text="Result:"/>
+          </Border>
+
+          <Memo ID="ResultText" ReadOnly="true" Width="100%" Height="100%" GridPanel.Height="100%" Visible="false"/>
+
+        </GridPanel>
+      </WizardFormLastPage>
+
+    </WizardForm>
+  </PowerShellMultiValuePrompt>
+</control>

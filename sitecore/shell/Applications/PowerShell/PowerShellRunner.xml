@@ -19,7 +19,7 @@
       <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
       <Literal ID="CurrentProgressValue" Visible="false" runat="server"/>
       <Literal ID="Result" runat="server" />
-        <Border runat="server" Width="100%">
+      <Border runat="server" Width="100%">
         <GridPanel ID="header" runat="server" Columns="2" Width="100%">
           <Border runat="server" Padding="2px 16px 0px 0px" GridPanel.Width="100%" GridPanel.VAlign="top">
             <div id="HeaderIconContainer">
@@ -56,15 +56,19 @@
         <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2013 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
         <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results</a>
         <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results (there were errors)</a>
-        <Button ID="OkButton" Click="OkClick" Visible="false"><Literal runat="server" Text="Close" ID="CloseLiteral"/></Button>
-        <Button ID="AbortButton" Click="AbortClick"><Literal runat="server" Text="Abort" ID="AbortLiteral"/></Button>
+        <Button ID="OkButton" Click="OkClick" Visible="false">
+          <Literal runat="server" Text="Close" ID="CloseLiteral"/>
+        </Button>
+        <Button ID="AbortButton" Click="AbortClick">
+          <Literal runat="server" Text="Abort" ID="AbortLiteral"/>
+        </Button>
       </Scrollbox>
       <Style ID ="ConsoleStyle">
         .console {
-          color: <Literal ID="ForegroundColor" />;
-          background-color: <Literal ID="BackgroundColor" />;
+        color: <Literal ID="ForegroundColor" />;
+        background-color: <Literal ID="BackgroundColor" />;
         }
-    </Style>
+      </Style>
     </FormPage>
   </PowerShellRunner>
 </control>

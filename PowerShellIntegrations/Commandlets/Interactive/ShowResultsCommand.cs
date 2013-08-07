@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                             {
                                 outputLine.GetHtmlLine(output);
                             }
-                            var message = new ShowResultsMessage(output.ToString());
+                            var message = new ShowResultsMessage(output.ToString(), WidthString, HeightString);
                             
                             JobContext.MessageQueue.PutMessage(message);
                             JobContext.Flush();
