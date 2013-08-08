@@ -1,0 +1,38 @@
+﻿
+#Copyright {
+    float: left;
+    margin-left: 6px;
+}
+
+.qtip {
+    max-width: 355px;
+}
+
+#PromoLiteral {
+    display: none;
+}
+
+#Result_ {
+    display: none;
+}
+
+#Promo
+{
+    bottom: 4px;
+    display: block;
+    float: right;
+    position: absolute;
+    right: 0px;
+    left: 0px;
+    color: #CBCDCB;
+    border-top: #E3E3E3 solid 1px;
+}
+
+#Promo a
+{
+    color: #ABADAB;
+}
+.timeRemaining {
+    margin-top: 3px;
+    display: inline-block;
+}

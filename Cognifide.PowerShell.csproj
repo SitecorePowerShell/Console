@@ -351,6 +351,7 @@
     <Content Include="Console\Services\PowerShellWebService.asmx" />
     <Content Include="Console\Services\RemoteAutomation.asmx" />
     <Content Include="Console\Styles\Console.css" />
+    <Content Include="Console\Styles\VariablePrompt.css" />
     <Content Include="Console\Styles\jquery.qtip.min.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />

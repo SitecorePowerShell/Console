@@ -2,18 +2,19 @@
     scForm.postRequest("", "", "", "psr:execute");
 };
 
-jQuery(document).ready(function($) {
-    $('#progressbar').empty().VistaProgressBar({
-        mode: 'indeterminate',
-        width: 355,
-        highlightspeed: 3000
-    });
-    $('#progressbar').VistaProgressBar('start');
+jQuery(document).ready(function ($) {
+    if ($('#progressbar').length > 0) {
+        $('#progressbar').empty().VistaProgressBar({
+            mode: 'indeterminate',
+            width: 355,
+            highlightspeed: 3000
+        });
+        $('#progressbar').VistaProgressBar('start');
+    }
     $('#Copyright').each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
                 text: "Copyright (c) 2010-2013 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
-                //text: $(this).next('span'), // Use the "div" element next to this for the content
                 title: 'Sitecore PowerShell Extensions'
             },
             position: {
@@ -40,6 +41,7 @@ function undeterminateProgress(id) {
         highlightspeed: 3000
     }).VistaProgressBar('start');
 }
+
 function updateProgress(id, progress) {
     var widget = $ise(id);
     var mode = widget.VistaProgressBar('getMode');

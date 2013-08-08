@@ -21,14 +21,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public object[] Parameters { get; private set; }
         public string Width { get; private set; }
         public string Height { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
         private Handle jobHandle;
 
-        public ShowMultiValuePromptMessage(object[] parameters, string width, string height)
+        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description)
         {
             jobHandle = JobContext.JobHandle;
             Parameters = parameters;
             Width = width;
             Height = height;
+            Title = title;
+            Description = description;
         }
 
         /// <summary>
@@ -41,7 +45,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             HttpContext.Current.Session[resultSig] = Parameters;
             UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
-            SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "",true);
+            urlString.Add("te", Title);
+            urlString.Add("ds", Description);
+            SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 
         /// <summary>

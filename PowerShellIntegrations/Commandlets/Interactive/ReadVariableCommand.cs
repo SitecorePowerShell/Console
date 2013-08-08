@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString);
+                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description);
 
                 foreach (Hashtable result in Parameters)
                 {
@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                     if (result["Variable"] != null)
                     {
-                        variable = (PSVariable) result["Variable"];
+                        variable = ((PSObject) result["Variable"]).BaseObject as PSVariable;
                     }
 
                     if (variable != null)

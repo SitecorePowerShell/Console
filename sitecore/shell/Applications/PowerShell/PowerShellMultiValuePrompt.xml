@@ -2,54 +2,75 @@
 
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellMultiValuePrompt>
-    <WizardForm CodeBeside="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell">
-      <WizardFormFirstPage ID="FirstPage" Icon="powershell/32x32/powershell.png">
-        <Border Class="scWizardWelcomeTitle">
-          <Literal ID="Welcome" Text="Welcome to the Script Configuration Wizard."/>
-        </Border>
-        <Literal Text="This wizard helps you:"/>
-        <ul>
-          <li class="scWizardBullet">
-            <Literal Text="Pick parameters for your script."/>
-          </li>
-          <li class="scWizardBullet">
-            <Literal Text="Look awesome..."/>
-          </li>
-          <li class="scWizardBullet">
-            <Literal Text="Look professional..."/>
-          </li>
-        </ul>
-      </WizardFormFirstPage>
-      <WizardFormPage ID="Settings" Header="Settings" Text="Select the publishing settings. Click Publish to publish." Icon="Custom/32x32/Publish.png">
-        <Border Align="Right" Foreground="#999999">
-          <Literal
-            Text="Sitecore PowerShell Extensions - Copyright (c) 2010-2013 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
-        </Border>
-      </WizardFormPage>
-      <WizardFormLastPage ID="LastPage" Icon="Custom/32x32/Publish.png">
-        <GridPanel Cellpadding="2" Width="100%" Height="100%" Fixed="true">
+    <FormPage>
+      <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery-ui.js"></Script>
+      <Script src="/Console/Scripts/jquery.qtip.min.js" runat="server"></Script>
+      <Script src="/Console/Scripts/Runner.js" runat="server"></Script>
+      <Stylesheet Src="/Console/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/VariablePrompt.css" DeviceDependant="true" runat="server" />
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
 
-          <Border GridPanel.Style="padding:0px 0px 16px 0px; font-weight:bold">
-            <Literal Text="The wizard has completed. Click Finish to close the wizard."/>
+      <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+      <GridPanel runat="server" Width="100%" Height="100%">
+        <GridPanel runat="server" Columns="2" Height="64px" GridPanel.Class="scWizardHeader">
+
+          <Border runat="server" GridPanel.Width="100%" GridPanel.VAlign="top">
+            <Border runat="server" Class="scWizardTitle">
+              <Literal runat="server" Text="Dialog Header" ID="DialogHeader"/>
+            </Border>
+            <Border runat="server" Class="scWizardText">
+              <Literal runat="server" Text="Dialog Text" ID="DialogDescription"/>
+            </Border>
           </Border>
 
-          <Border GridPanel.Style="padding:0px 0px 2px 0px">
-            <Literal ID="Status"/>
-          </Border>
-
-          <Border ID="ShowResultPane" GridPanel.Style="padding:8px 0px 2px 0px" Click="ShowResult" RollOver="true" Class="scRollOver">
-            <Literal Text="Click here to see additional information."/>
-          </Border>
-
-          <Border ID="ResultLabel" GridPanel.Style="padding:8px 0px 2px 0px" Visible="false">
-            <Literal Text="Result:"/>
-          </Border>
-
-          <Memo ID="ResultText" ReadOnly="true" Width="100%" Height="100%" GridPanel.Height="100%" Visible="false"/>
+          <ThemedImage runat="server" Src="powershell/24x24/powershell.png" Width="32" Height="32" Margin="0px 8px 0px 0px"/>
 
         </GridPanel>
-      </WizardFormLastPage>
+        <Space runat="server" GridPanel.Class="scTopEdge"/>
+        <Space runat="server" GridPanel.Class="scBottomEdge"/>
 
-    </WizardForm>
+        <GridPanel runat="server" Width="100%" GridPanel.Height="100%"  GridPanel.Style="background:#e9e9e9; white-space:nowrap" Class="EntryGrid" Columns="1" Cellpadding="2px" Style="padding:8px" 
+                   ID="ValuePanel">
+<!--
+          <Literal Text="Item:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
+          <TreePicker ID="DataSource" DataContext="DataContext" SelectOnly="true" Padding="1" />
+          
+          <Literal Text="Text:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px"  runat="server"/>
+          <Memo ID="Memo" Height="100%" Width="80%" Wrap="off" Value="Value" spellcheck="false"/>
+
+          <Literal Text="Text:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px"  runat="server"/>
+          <Edit ID="Edit" Height="100%" Width="80%" Wrap="off" Value="Value" spellcheck="false"/>
+
+          <Literal Text="Date Time:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
+          <DateTimePicker ID="DateTime" runat="server" Format="MM/dd/yyyy" />
+
+          <Literal Text="Date:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
+          <DateTimePicker ID="Date" runat="server" Format="MM/dd/yyyy" ShowTime="false"/>
+
+          <Literal Text="Time:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
+          <TimePicker ID="Time" runat="server"/>
+
+          <Literal Text="CheckBox:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
+          <Checkbox ID="Check" runat="server" Header="Can I do it?"/>
+-->
+
+        </GridPanel>
+
+        <Space runat="server" GridPanel.Class="scBottomEdge"/>
+        <Space runat="server" GridPanel.Class="scTopEdge"/>
+
+        <Border runat="server" Height="25" Align="right" GridPanel.Height="36" GridPanel.Style="background:#e9e9e9; white-space:nowrap">
+          <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2013 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <Button runat="server" ID="OKButton" Class="scButton" Click="OkClick" Header="OK"/>
+          <Button runat="server" ID="CancelButton" Class="scButton" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+        </Border>
+
+      </GridPanel>
+
+    </FormPage>
   </PowerShellMultiValuePrompt>
 </control>
