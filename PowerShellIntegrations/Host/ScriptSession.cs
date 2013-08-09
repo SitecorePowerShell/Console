@@ -74,12 +74,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             // of the Runspace session (aka SessionState.)
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
+
             RunspaceConfiguration conf = RunspaceConfiguration.Create();
-            host = new ScriptingHost(Settings);
             InitialSessionState initState = InitialSessionState.CreateDefault();
             initState.ThreadOptions = PSThreadOptions.UseCurrentThread;
             initState.ApartmentState = ApartmentState.STA;
-            runspace = RunspaceFactory.CreateRunspace(host, conf);
+            host = new ScriptingHost(Settings,conf);
+            runspace = host.Runspace;
+
+
             conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
             if (Settings.UseTypeInfo)
             {

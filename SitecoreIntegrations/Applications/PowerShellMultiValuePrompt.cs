@@ -24,6 +24,7 @@ using Sitecore.Web.UI.Pages;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
+using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
 using DateTime = System.DateTime;
 using Edit = Sitecore.Web.UI.HtmlControls.Edit;
 using Label = Sitecore.Web.UI.HtmlControls.Label;
@@ -40,6 +41,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal DialogDescription;
         protected Border DataContextPanel;
         protected GridPanel ValuePanel;
+        protected Button OKButton;
+        protected Button CancelButton;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -47,9 +50,23 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
             string sid = WebUtil.GetQueryString("sid");
-            object[] variables = (object[]) HttpContext.Current.Session[sid];
+            var variables = (object[]) HttpContext.Current.Session[sid];
+
             DialogHeader.Text = WebUtil.GetQueryString("te");
             DialogDescription.Text = WebUtil.GetQueryString("ds");
+            
+            string okText = WebUtil.GetQueryString("ob");
+            if (!string.IsNullOrEmpty(okText))
+            {
+                OKButton.Header = okText;
+            }
+            
+            string cancelText = WebUtil.GetQueryString("cb");
+            if (!string.IsNullOrEmpty(cancelText))
+            {
+                CancelButton.Header = cancelText;
+            }
+
             AddControls(variables);
         }
 
@@ -59,9 +76,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             foreach (Hashtable variable in variables)
             {
                 var name = variable["Title"] as string;
-                var label = new Literal { Text = name + ":" };
+                if (variable["Value"].GetType() != typeof (bool))
+                {
+                    var label = new Literal {Text = name + ":"};
+                    label.Class = "varTitle";
+                    ValuePanel.Controls.Add(label);
+                }
                 var input = GetVariableEditor(variable);
-                ValuePanel.Controls.Add(label);
                 ValuePanel.Controls.Add(input);
             }
         }
@@ -74,49 +95,59 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             if (type == typeof (DateTime))
             {
-                var dateTimePicker = new DateTimePicker();
-                dateTimePicker.Style.Add("float", "left");
-                dateTimePicker.ID = Control.GetUniqueID("variable_" + name + "_");
-                dateTimePicker.ShowTime = variable["ShowTime"] != null && (bool) variable["ShowTime"];
-                dateTimePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.Display, "inline");
-                dateTimePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.VerticalAlign, "middle");
-                dateTimePicker.Value = DateUtil.ToIsoDate((DateTime) value);
+                var dateTimePicker = new DateTimePicker
+                {
+                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    ShowTime = variable["ShowTime"] != null && (bool) variable["ShowTime"],
+                    Value = DateUtil.ToIsoDate((DateTime) value)
+                };
                 return dateTimePicker;
             }
 
             if (type == typeof (Item))
             {
                 var item = (Item) value;
-                var dataContext = new DataContext();
-                dataContext.DefaultItem = item.Paths.Path;
-                dataContext.ID = Control.GetUniqueID("dataContext");
-                dataContext.DataViewName = "Master";
-                dataContext.Root = "/sitecore";
-                dataContext.Parameters = "databasename=" + item.Database.Name;
-                dataContext.Database = item.Database.Name;
-                dataContext.Selected = new[]{new DataUri(item.ID, item.Language, item.Version)};
-                dataContext.Folder = item.ID.ToString();
-                dataContext.Language = item.Language;
-                dataContext.Version = item.Version;
+                var dataContext = new DataContext
+                {
+                    DefaultItem = item.Paths.Path,
+                    ID = Control.GetUniqueID("dataContext"),
+                    DataViewName = "Master",
+                    Root = "/sitecore",
+                    Parameters = "databasename=" + item.Database.Name,
+                    Database = item.Database.Name,
+                    Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
+                    Folder = item.ID.ToString(),
+                    Language = item.Language,
+                    Version = item.Version
+                };
                 DataContextPanel.Controls.Add(dataContext);
 
-                var treePicker = new TreePicker();
-                treePicker.Style.Add("float", "left");
-                treePicker.ID = Control.GetUniqueID("variable_" + name + "_");
-                treePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.Display, "inline");
-                treePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.VerticalAlign, "middle");
+                var treePicker = new TreePicker
+                {
+                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    Value = item.ID.ToString(),
+                    DataContext = dataContext.ID
+                };
                 treePicker.Class += " treePicker";
-                treePicker.Value = item.ID.ToString();
-                treePicker.DataContext = dataContext.ID;
                 return treePicker;
+            }
+
+            if (type == typeof(bool))
+            {
+                var checkBox = new Checkbox
+                {
+                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    Header = (string) variable["Title"],
+                    HeaderStyle = "margin-top:20px; display:inline-block;",
+                    Checked = (bool) value
+                };
+                checkBox.Class = "varCheckbox";
+                return checkBox;
             }
 
             var edit = new Edit();
             edit.Style.Add("float", "left");
             edit.ID = Control.GetUniqueID("variable_" + name + "_");
-            edit.Style.Add(System.Web.UI.HtmlTextWriterStyle.Display, "inline");
-            edit.Style.Add(System.Web.UI.HtmlTextWriterStyle.VerticalAlign, "middle");
-            edit.Style.Add(System.Web.UI.HtmlTextWriterStyle.Width, "300px");
             edit.Class += " scContentControl textEdit";
             edit.Value = value.ToString();
             return edit;
@@ -155,8 +186,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         else if (control is TreePicker)
                         {
                             string contextID = (control as TreePicker).DataContext;
-                            var context = (DataContext)DataContextPanel.FindControl(contextID);
+                            var context = (DataContext) DataContextPanel.FindControl(contextID);
                             result.Add("Value", context.CurrentItem);
+                        }
+                        else if (control is Checkbox)
+                        {
+                            bool boolValue = (control as Checkbox).Checked;
+                            result.Add("Value", boolValue);
                         }
                         else if (control is Edit)
                         {
@@ -171,8 +207,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         protected void CancelClick()
         {
-            string sid = WebUtil.GetQueryString("sid");
-            SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
         }
     }

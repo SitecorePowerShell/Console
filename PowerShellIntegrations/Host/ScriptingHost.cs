@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
 using System.Threading;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Sitecore.Form.Core.Utility;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -12,12 +16,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     ///     are not implemented throw a NotImplementedException exception or
     ///     return nothing.
     /// </summary>
-    internal class ScriptingHost : PSHost
+    internal class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
+
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
         private readonly Guid myId = Guid.NewGuid();
+        private readonly Stack<Runspace> pushedRunspaces;
+        private readonly RunspaceConfiguration runspaceConfiguration;
+        private Runspace runspace;
+ 
 
         /// <summary>
         ///     The culture information of the thread that created
@@ -40,9 +49,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         ///     a reference to the host application object so that it
         ///     can be informed of when to exit.
         /// </summary>
-        public ScriptingHost(ApplicationSettings settings)
+        public ScriptingHost(ApplicationSettings settings, RunspaceConfiguration runspaceConfiguration)
         {
+            this.runspaceConfiguration = runspaceConfiguration;
             ui = new ScriptingHostUserInterface(settings);
+            pushedRunspaces = new Stack<Runspace>();
         }
 
         /// <summary>
@@ -162,15 +173,57 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         /// <summary>
-        ///     Indicate to the host application that exit has
-        ///     been requested. Pass the exit code that the host
-        ///     application should use when exiting the process.
+        /// Indicate to the host application that exit has
+        /// been requested. Pass the exit code that the host
+        /// application should use when exiting the process.
         /// </summary>
-        /// <param name="exitCode">The exit code to use.</param>
+        /// <param name="exitCode">The exit code that the host application should use.</param>
         public override void SetShouldExit(int exitCode)
         {
-            //this.program.ShouldExit = true;
-            //this.program.ExitCode = exitCode;
+        }
+
+        public void PushRunspace(Runspace runspace)
+        {
+            pushedRunspaces.Push(runspace);
+        }
+
+        public void PopRunspace()
+        {
+            pushedRunspaces.Pop();
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a request 
+        /// to open a PSSession has been made.
+        /// </summary>
+        public bool IsRunspacePushed
+        {
+            get
+            {
+                return 0 < pushedRunspaces.Count;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the runspace used by the PSSession.
+        /// </summary>
+        public Runspace Runspace
+        {
+            get
+            {
+                if (null == runspace)
+                {
+                    runspace = RunspaceFactory.CreateRunspace(this, runspaceConfiguration);
+                }
+
+                var stack = pushedRunspaces;
+                if (0 == stack.Count)
+                {
+                    return runspace;
+                }
+
+                return stack.Peek();
+            }
         }
     }
 }

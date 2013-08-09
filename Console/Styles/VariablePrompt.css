@@ -32,7 +32,13 @@
 {
     color: #ABADAB;
 }
-.timeRemaining {
-    margin-top: 3px;
-    display: inline-block;
+
+.varTitle {
+    margin-top: 8px;
+    display: block;
+}
+
+.varCheckbox {
+    margin-top: 20px;
+    float: left;
 }

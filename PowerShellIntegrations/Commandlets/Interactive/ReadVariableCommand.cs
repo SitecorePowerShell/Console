@@ -17,11 +17,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public string Description { get; set; }
 
+        [Parameter]
+        public string CancelButtonName { get; set; }
+        
+        [Parameter]
+        public string OkButtonName { get; set; }
+
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
-                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description);
+                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description, OkButtonName, CancelButtonName);
 
                 foreach (Hashtable result in Parameters)
                 {
@@ -66,9 +72,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                 JobContext.MessageQueue.PutMessage(message);
                 var results = (object[])JobContext.MessageQueue.GetResult();
-                foreach (Hashtable result in results)
+                WriteObject(results != null ? "ok" : "cancel");
+                if (results != null)
                 {
-                    SessionState.PSVariable.Set((string)result["Name"],result["Value"]);
+                    foreach (Hashtable result in results)
+                    {
+                        SessionState.PSVariable.Set((string) result["Name"], result["Value"]);
+                    }
                 }
             });
         }

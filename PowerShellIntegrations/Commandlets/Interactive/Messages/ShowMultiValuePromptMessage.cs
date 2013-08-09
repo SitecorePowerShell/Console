@@ -23,17 +23,23 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string Height { get; private set; }
         public string Title { get; private set; }
         public string Description { get; private set; }
+        public string CancelButtonName { get; private set; }
+        public string OkButtonName { get; private set; }
+
         private Handle jobHandle;
 
-        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description)
+        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description, string okButtonName, string cancelButtonName)
         {
             jobHandle = JobContext.JobHandle;
             Parameters = parameters;
             Width = width;
             Height = height;
             Title = title;
+            OkButtonName = okButtonName;
+            CancelButtonName = cancelButtonName;
             Description = description;
         }
+
 
         /// <summary>
         /// Shows a confirmation dialog.
@@ -47,6 +53,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             urlString.Add("sid", resultSig);
             urlString.Add("te", Title);
             urlString.Add("ds", Description);
+            if (!string.IsNullOrEmpty(OkButtonName))
+            {
+                urlString.Add("ob", OkButtonName);
+            }
+            if (!string.IsNullOrEmpty(CancelButtonName))
+            {
+                urlString.Add("cb", CancelButtonName);
+            }
             SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 
