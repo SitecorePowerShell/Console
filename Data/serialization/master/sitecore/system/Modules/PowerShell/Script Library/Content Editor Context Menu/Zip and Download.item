@@ -20,14 +20,21 @@ Software/32x32/compress_green.png
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
-content-length: 1
+content-length: 3
 
-0
+200
 ----version----
 language: en
 version: 1
-revision: d5a0ca99-3d97-4ebf-84af-168af5606641
+revision: 17d32362-b4dc-471f-ae66-05d9184a59af
 
+----field----
+field: {0A1619D4-71CB-4697-AEBF-28B3C253B37B}
+name: AllowInBranches
+key: allowinbranches
+content-length: 38
+
+{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -79,13 +86,6 @@ Download-File -FullName $zipPath | Out-Null
 Remove-Item $zipPath
 Close-Window
 ----field----
-field: {0A1619D4-71CB-4697-AEBF-28B3C253B37B}
-name: AllowInBranches
-key: allowinbranches
-content-length: 38
-
-{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}
-----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
@@ -98,14 +98,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d5a0ca99-3d97-4ebf-84af-168af5606641
+17d32362-b4dc-471f-ae66-05d9184a59af
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130714T125305:635094031853219922
+20130723T105941:635101739817655000
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

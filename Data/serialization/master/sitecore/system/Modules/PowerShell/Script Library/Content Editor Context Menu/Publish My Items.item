@@ -22,11 +22,11 @@ name: __Sortorder
 key: __sortorder
 content-length: 3
 
-300
+500
 ----version----
 language: en
 version: 1
-revision: 235ce0b9-1dff-48f4-9f25-61802b651811
+revision: b89f9c2a-830f-41ab-9aad-2d859ae19209
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
@@ -36,13 +36,6 @@ content-length: 163
 
 get-item -path . | where-object {$_.UpdatedBy –eq $me} | publish-item -verbose
 get-childitem -recurse | where-object {$_.UpdatedBy –eq $me} | publish-item -verbose
-----field----
-field: {756BECB0-A794-45C5-9F75-233B1A3FC7BE}
-name: ShowResults
-key: showresults
-content-length: 1
-
-1
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -56,14 +49,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-235ce0b9-1dff-48f4-9f25-61802b651811
+b89f9c2a-830f-41ab-9aad-2d859ae19209
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130510T151914:635037959546301719
+20130723T105941:635101739818416718
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -22,36 +22,32 @@ name: __Sortorder
 key: __sortorder
 content-length: 3
 
-200
+400
 ----version----
 language: en
 version: 1
-revision: c7ea2b2e-e488-4125-9135-f32fdb87b888
+revision: 4e6c7804-8e6a-403e-a05a-c8ca4300fcab
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 132
+content-length: 397
 
-get-childitem -recurse | `
+$runScript = Show-Confirm "This script might take a long while on a larger branches - are you sure you want to run this script?"
+
+Set-HostProperty -HostWidth 60
+
+if($runScript -eq "yes"){
+    get-childitem -recurse | `
     Group-Object "__Updated By" | `
-    Sort count -descending | `
-    format-table -property count, name
-----field----
-field: {5C652979-E929-4CE2-BB8A-AAF1927B6D31}
-name: PreExecutionWarning
-key: preexecutionwarning
-content-length: 104
-
-This script can take some time to execute on a bigger site - are you sure you want to launch the script?
-----field----
-field: {756BECB0-A794-45C5-9F75-233B1A3FC7BE}
-name: ShowResults
-key: showresults
-content-length: 1
-
-1
+        Sort count -descending | `
+        format-table -property count, name
+    Show-Result -Text
+    Close-Window
+} else {
+  Close-Window
+}
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -65,14 +61,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c7ea2b2e-e488-4125-9135-f32fdb87b888
+4e6c7804-8e6a-403e-a05a-c8ca4300fcab
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130510T151914:635037959545979453
+20130809T153951:635116595910004610
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

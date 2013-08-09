@@ -1,0 +1,83 @@
+----item----
+version: 1
+id: {20D867D5-584B-4494-99A8-0511667E9BEB}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Recent Author Activity
+parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
+name: Recent Author Activity
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 35
+
+Business/32x32/businessman_edit.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+300
+----version----
+language: en
+version: 1
+revision: 661bc52e-72f6-48b9-910e-7935d8016bf5
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 936
+
+$item = get-item .
+
+$result = Read-Variable -Parameters `
+    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Description="Date since when you want the activity to be reported"; ShowTime=$true}, `
+    @{ Name = "item"; Title="Branch to Analyse"; Description="Branch you want to analyse."} `
+    -Description "This report will analyse the branch you select and will tell you which of the pages have been changed since your selected date/time" `
+    -Title "Analyse author activilty" -Width 500 -Height 260 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Exit
+}
+$item = Wrap-Item -Item $item
+Get-Childitem $item.ProviderPath -recurse | `
+    Where-Object {$from.Subtract($_.__Updated).Minutes -lt 0} | `
+    Format-Table Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } } -auto
+Show-Result -Text
+Close-Window
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20121129T134338
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+661bc52e-72f6-48b9-910e-7935d8016bf5
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130809T153428:635116592689018282
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
