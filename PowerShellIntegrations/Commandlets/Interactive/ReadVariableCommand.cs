@@ -35,7 +35,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                     if (result["Variable"] != null)
                     {
-                        variable = ((PSObject) result["Variable"]).BaseObject as PSVariable;
+                        variable = (PSVariable)((PSObject)result["Variable"]).BaseObject;
+                        result.Add("Name",variable.Name);
                     }
 
                     if (variable != null)
@@ -43,7 +44,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         object varValue = result["Value"];
                         if (varValue == null)
                         {
-                            result.Add("Value", variable.Value);
+                            varValue = variable.Value;
+                            while (varValue is PSObject)
+                            {
+                                varValue = ((PSObject) varValue).ImmediateBaseObject;
+                            }
+                            result.Add("Value", varValue);
                         }
                         object varTitle = result["Title"];
                         if (varTitle == null)

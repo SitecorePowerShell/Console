@@ -8,11 +8,12 @@
       <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery-ui.js"></Script>
       <Script src="/Console/Scripts/jquery.qtip.min.js" runat="server"></Script>
-      <Script src="/Console/Scripts/Runner.js" runat="server"></Script>
+      <Script src="/Console/Scripts/VariablePrompt.js" runat="server"></Script>
       <Stylesheet Src="/Console/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/VariablePrompt.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
 
+      <Border runat="server" ID="DataContextPanel" Style="display:none;"></Border>
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
       <GridPanel runat="server" Width="100%" Height="100%">
         <GridPanel runat="server" Columns="2" Height="64px" GridPanel.Class="scWizardHeader">
