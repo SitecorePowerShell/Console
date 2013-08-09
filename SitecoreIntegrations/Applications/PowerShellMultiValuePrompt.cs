@@ -92,9 +92,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 dataContext.ID = Control.GetUniqueID("dataContext");
                 dataContext.DataViewName = "Master";
                 dataContext.Root = "/sitecore";
-                dataContext.AddSelected(new DataUri(item.ID, item.Language, item.Version));
-                DataContextPanel.Controls.Add(dataContext);
                 dataContext.Parameters = "databasename=" + item.Database.Name;
+                dataContext.Database = item.Database.Name;
+                dataContext.Selected = new[]{new DataUri(item.ID, item.Language, item.Version)};
+                dataContext.Folder = item.ID.ToString();
+                dataContext.Language = item.Language;
+                dataContext.Version = item.Version;
+                DataContextPanel.Controls.Add(dataContext);
 
                 var treePicker = new TreePicker();
                 treePicker.Style.Add("float", "left");
@@ -102,7 +106,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 treePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.Display, "inline");
                 treePicker.Style.Add(System.Web.UI.HtmlTextWriterStyle.VerticalAlign, "middle");
                 treePicker.Class += " treePicker";
-                treePicker.Value = item.Paths.Path;
+                treePicker.Value = item.ID.ToString();
                 treePicker.DataContext = dataContext.ID;
                 return treePicker;
             }
@@ -150,7 +154,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         }
                         else if (control is TreePicker)
                         {
-                            result.Add("Value", (control as TreePicker).GetContextItem());
+                            string contextID = (control as TreePicker).DataContext;
+                            var context = (DataContext)DataContextPanel.FindControl(contextID);
+                            result.Add("Value", context.CurrentItem);
                         }
                         else if (control is Edit)
                         {
