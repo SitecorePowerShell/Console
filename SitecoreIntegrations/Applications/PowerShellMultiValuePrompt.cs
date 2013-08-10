@@ -1,41 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.UI.WebControls;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
-using Sitecore.Configuration;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Applications.ContentEditor;
-using Sitecore.Shell.Framework;
-using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
-using Sitecore.Web.UI.Pages;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
-using Button = Sitecore.Web.UI.HtmlControls.Button;
-using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
-using DateTime = System.DateTime;
-using Edit = Sitecore.Web.UI.HtmlControls.Edit;
-using Label = Sitecore.Web.UI.HtmlControls.Label;
-using Literal = Sitecore.Web.UI.HtmlControls.Literal;
-using Panel = Sitecore.Web.UI.HtmlControls.Panel;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
     public class PowerShellMultiValuePrompt : DialogPage
     {
 
+        private static Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*", RegexOptions.Singleline | RegexOptions.Compiled);
         protected Literal Result;
         protected Literal DialogHeader;
         protected Literal DialogDescription;
@@ -145,10 +127,19 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return checkBox;
             }
 
-            var edit = new Edit();
+            Control edit = new Edit();
+            if (variable["lines"] != null && ((int)variable["lines"] > 1))
+            {
+                edit = new Memo();
+                edit.Attributes.Add("rows", variable["lines"].ToString());
+            }
+            else
+            {
+                edit = new Edit();
+            }
             edit.Style.Add("float", "left");
             edit.ID = Control.GetUniqueID("variable_" + name + "_");
-            edit.Class += " scContentControl textEdit";
+            edit.Class += " scContentControl textEdit clr"+value.GetType().Name;
             edit.Value = value.ToString();
             return edit;
         }
@@ -194,16 +185,62 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                             bool boolValue = (control as Checkbox).Checked;
                             result.Add("Value", boolValue);
                         }
-                        else if (control is Edit)
+                        else if (control is Edit || control is Memo)
                         {
-                            result.Add("Value", (control as Edit).Value);
+                            string value = control.Value;
+                            string type = GetClrTypeName(control.Class);
+                            switch (type)
+                            {
+                                case("Int16"):
+                                    result.Add("Value", Int16.Parse(value));
+                                    break;
+                                case ("Int32"):
+                                    result.Add("Value", Int32.Parse(value));
+                                    break;
+                                case ("Int64"):
+                                    result.Add("Value", Int64.Parse(value));
+                                    break;
+                                case ("UInt16"):
+                                    result.Add("Value", UInt16.Parse(value));
+                                    break;
+                                case ("UInt32"):
+                                    result.Add("Value", UInt32.Parse(value));
+                                    break;
+                                case ("UInt64"):
+                                    result.Add("Value", UInt64.Parse(value));
+                                    break;
+                                case ("Byte"):
+                                    result.Add("Value", Byte.Parse(value));
+                                    break;
+                                case ("Single"):
+                                    result.Add("Value", Single.Parse(value));
+                                    break;
+                                case ("Double"):
+                                    result.Add("Value", Double.Parse(value));
+                                    break;
+                                case ("Decimal"):
+                                    result.Add("Value", Decimal.Parse(value));
+                                    break;
+                                default:
+                                    result.Add("Value", value);
+                            }
                         }
 
                     }
                 }
             }
             return results.ToArray();
-        }       
+        }
+
+        protected string GetClrTypeName(string classNames)
+        {
+            Match typeMatch = typeRegex.Match(classNames);
+            if (typeMatch.Success)
+            {
+                return typeMatch.Groups["type"].Value;
+            }
+            return string.Empty;
+        }
 
         protected void CancelClick()
         {

@@ -55,7 +55,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             LogErrors(() =>
             {
                 string response = null;
-                var hashParams = new Hashtable();
+                var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
                 if (Item != null)
                 {
                     if (NoDialog.IsPresent)

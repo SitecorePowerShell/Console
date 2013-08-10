@@ -35,29 +35,6 @@
 
         <GridPanel runat="server" Width="100%" GridPanel.Height="100%"  GridPanel.Style="background:#e9e9e9; white-space:nowrap" Class="EntryGrid" Columns="1" Cellpadding="2px" Style="padding:8px" 
                    ID="ValuePanel">
-<!--
-          <Literal Text="Item:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
-          <TreePicker ID="DataSource" DataContext="DataContext" SelectOnly="true" Padding="1" />
-          
-          <Literal Text="Text:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px"  runat="server"/>
-          <Memo ID="Memo" Height="100%" Width="80%" Wrap="off" Value="Value" spellcheck="false"/>
-
-          <Literal Text="Text:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px"  runat="server"/>
-          <Edit ID="Edit" Height="100%" Width="80%" Wrap="off" Value="Value" spellcheck="false"/>
-
-          <Literal Text="Date Time:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
-          <DateTimePicker ID="DateTime" runat="server" Format="MM/dd/yyyy" />
-
-          <Literal Text="Date:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
-          <DateTimePicker ID="Date" runat="server" Format="MM/dd/yyyy" ShowTime="false"/>
-
-          <Literal Text="Time:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
-          <TimePicker ID="Time" runat="server"/>
-
-          <Literal Text="CheckBox:" GridPanel.Align="left" GridPanel.Style="white-space:nowrap; padding-top:16px" runat="server"/>
-          <Checkbox ID="Check" runat="server" Header="Can I do it?"/>
--->
-
         </GridPanel>
 
         <Space runat="server" GridPanel.Class="scBottomEdge"/>

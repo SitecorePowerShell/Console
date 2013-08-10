@@ -42,3 +42,9 @@
     margin-top: 20px;
     float: left;
 }
+
+.scContentControl
+{
+    border: solid 1px ButtonShadow;
+    padding: 2px;
+}
