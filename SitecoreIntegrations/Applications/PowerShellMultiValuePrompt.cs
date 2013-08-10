@@ -94,7 +94,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     DefaultItem = item.Paths.Path,
                     ID = Control.GetUniqueID("dataContext"),
                     DataViewName = "Master",
-                    Root = "/sitecore",
+                    Root = variable["Root"] as string ?? "/sitecore",
                     Parameters = "databasename=" + item.Database.Name,
                     Database = item.Database.Name,
                     Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
@@ -133,9 +133,28 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 edit = new Memo();
                 edit.Attributes.Add("rows", variable["lines"].ToString());
             }
+            else if (variable["Options"] != null)
+            {
+                edit = new Combobox();
+                string[] options = ((string) variable["Options"]).Split('|');
+                int i = 0;
+                while (i < options.Length)
+                {
+                    var item = new ListItem()
+                    {
+                        Header = options[i++],
+                        Value = options[i++],
+                    };
+                    edit.Controls.Add(item);
+                }
+            }
             else
             {
                 edit = new Edit();
+            }
+            if (!string.IsNullOrEmpty((string)variable["Tooltip"]))
+            {
+                edit.ToolTip = (string)variable["Tooltip"];
             }
             edit.Style.Add("float", "left");
             edit.ID = Control.GetUniqueID("variable_" + name + "_");
@@ -223,6 +242,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                     break;
                                 default:
                                     result.Add("Value", value);
+                                    break;
                             }
                         }
 

@@ -46,5 +46,10 @@
 .scContentControl
 {
     border: solid 1px ButtonShadow;
-    padding: 2px;
+    padding-left: 2px;
+}
+
+.wk .scComboboxEdit
+{
+    padding-left: 2px;
 }
