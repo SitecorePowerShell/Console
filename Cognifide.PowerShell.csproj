@@ -254,6 +254,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\RebuildControlPanelIntegration.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
     <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />

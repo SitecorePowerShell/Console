@@ -53,3 +53,15 @@
 {
     padding-left: 2px;
 }
+
+.scUserPickerEdit {
+    border: solid 1px ButtonShadow;
+    padding-left: 2px;    
+}
+
+.scUserPickerButton
+{
+    margin-left: 4px;
+    margin-top: 2px;
+    vertical-align: top;
+}

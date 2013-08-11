@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI.WebControls;
+using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Pipelines;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
+using Button = Sitecore.Web.UI.HtmlControls.Button;
+using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -33,6 +40,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return;
             string sid = WebUtil.GetQueryString("sid");
             var variables = (object[]) HttpContext.Current.Session[sid];
+            HttpContext.Current.Session.Remove(sid);
 
             DialogHeader.Text = WebUtil.GetQueryString("te");
             DialogDescription.Text = WebUtil.GetQueryString("ds");
@@ -58,7 +66,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             foreach (Hashtable variable in variables)
             {
                 var name = variable["Title"] as string;
-                if (variable["Value"].GetType() != typeof (bool))
+                if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
                     var label = new Literal {Text = name + ":"};
                     label.Class = "varTitle";
@@ -68,6 +76,28 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 ValuePanel.Controls.Add(input);
             }
         }
+
+
+
+        private void HandleClickEvent(Message message, string eventname)
+        {
+            if (eventname.StartsWith("itemselector"))
+            {
+                var parts = eventname.Split(':');
+                if (parts.Length == 2)
+                {
+                    var iselector = Sitecore.Context.ClientPage.FindSubControl(parts[1]) as UserPicker;
+                    if (iselector != null)
+                    {
+                        Sitecore.Context.ClientPage.Start(iselector, "Clicked");
+                    }
+                }
+            }
+            else
+            {
+//                base.HandleMessage(message);
+            }
+        }      
 
         private System.Web.UI.Control GetVariableEditor(Hashtable variable)
         {
@@ -127,7 +157,29 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return checkBox;
             }
 
-            Control edit = new Edit();
+            string editorParam = variable["Editor"] as string;
+            if (!string.IsNullOrEmpty(editorParam))
+            {
+                bool showRoles = editorParam.IndexOf("role", StringComparison.OrdinalIgnoreCase) > -1;
+                bool showUsers = editorParam.IndexOf("user", StringComparison.OrdinalIgnoreCase) > -1;
+                bool multiple = editorParam.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
+                if (showRoles || showUsers)
+                {
+                    UserPicker picker = new UserPicker();
+                    picker.Style.Add("float", "left");
+                    picker.ID = Control.GetUniqueID("variable_" + name + "_");
+                    picker.Class += " scContentControl textEdit clr" + value.GetType().Name;
+                    picker.Value = value.ToString();
+                    picker.ExcludeRoles = !showRoles;
+                    picker.ExcludeUsers = !showUsers;
+                    picker.DomainName = variable["Domain"] as string ?? variable["DomainName"] as string;
+                    picker.Multiple = multiple;
+                    picker.Click = "UserPickerClick(" + picker.ID + ")";
+                    return picker;
+                }
+            }
+
+            Control edit;
             if (variable["lines"] != null && ((int)variable["lines"] > 1))
             {
                 edit = new Memo();
@@ -160,7 +212,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             edit.ID = Control.GetUniqueID("variable_" + name + "_");
             edit.Class += " scContentControl textEdit clr"+value.GetType().Name;
             edit.Value = value.ToString();
+
             return edit;
+        }
+
+        protected void UserPickerClick()
+        {
+            string requestParams = Sitecore.Context.ClientPage.Request.Params["__PARAMETERS"];
+            if(requestParams.StartsWith("UserPickerClick("))
+            {
+                string controlId = requestParams.Substring(16, requestParams.IndexOf(')') - 16);
+                var picker = ValuePanel.FindControl(controlId) as UserPicker;
+                if (picker != null)
+                {
+                    Sitecore.Context.ClientPage.Start(picker, "Clicked");
+                }
+            }
         }
 
         protected void OKClick()
@@ -244,6 +311,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                     result.Add("Value", value);
                                     break;
                             }
+                        }
+                        else if (control is UserPicker)
+                        {
+                            result.Add("Value",control.Value.Split('|'));
                         }
 
                     }

@@ -21,10 +21,25 @@
         var controlWidth = ($(window).width() - 24) + "px";
         $(".treePicker").css({ width: controlWidth });
         $(".textEdit").css({ width: controlWidth });        
+        if ($(".scUserPickerButton").length > 0) {
+            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 14) + "px";
+            $(".scUserPickerEdit").css({ width: controlWidth });
+        }
     });
     $(window).resize(function() {
         var controlWidth = ($(window).width() - 24) + "px";
         $(".treePicker").css({ width: controlWidth });
         $(".textEdit").css({ width: controlWidth });
+        if ($(".scUserPickerButton").length > 0) {
+            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() -14) + "px";
+            $(".scUserPickerEdit").css({ width: controlWidth });
+        }
     });
 });
+
+function RefreshPickerSize() {
+    if ($ise(".scUserPickerButton").length > 0) {
+        controlWidth = ($ise(window).width() - $ise(".scUserPickerButton")[0].offsetWidth - 32) + "px";
+        $ise(".scUserPickerEdit").css({ width: controlWidth });
+    }
+}

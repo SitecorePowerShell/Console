@@ -68,6 +68,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                             result.Add("Description", variable.Description);
                         }
                     }
+
+                    if (result["Value"] == null)
+                    {
+                        result.Add("Value", string.Empty);
+                    }
                 }
 
                 JobContext.MessageQueue.PutMessage(message);
