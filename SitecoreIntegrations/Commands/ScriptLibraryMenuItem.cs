@@ -69,7 +69,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
             foreach (Item scriptItem in parent.Children)
             {
-                if (!EvaluateRules(scriptItem["ShowRule"], scriptItem.Database, contextItem))
+                if (!EvaluateRules(scriptItem["ShowRule"], contextItem))
                 {
                     continue;
                 }
@@ -80,7 +80,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
                 };
-                menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], scriptItem.Database, contextItem);
+                menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], contextItem);
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
@@ -103,14 +103,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             return string.Empty;
         }
 
-        public static bool EvaluateRules(string strRules, Database database, Item contextItem)
+        public static bool EvaluateRules(string strRules, Item contextItem)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
             {
                 return true;
             }
             // hacking the rules xml
-            var rules = RuleFactory.ParseRules<RuleContext>(database, strRules);
+            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
             var ruleContext = new RuleContext
             {
                 Item = contextItem
