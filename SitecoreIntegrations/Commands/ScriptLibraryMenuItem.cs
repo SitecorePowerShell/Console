@@ -80,7 +80,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
                 };
-                menuItem.Disabled = !EvaluateRules(scriptItem["EnabledRule"], scriptItem.Database, contextItem);
+                menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], scriptItem.Database, contextItem);
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
