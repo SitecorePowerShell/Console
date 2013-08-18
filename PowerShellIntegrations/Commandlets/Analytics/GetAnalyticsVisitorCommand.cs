@@ -4,6 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsVisitor", DefaultParameterSetName = "Name")]
+    [OutputType(new[] { typeof(Visitors) })]
     public class GetAnalyticsVisitorCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

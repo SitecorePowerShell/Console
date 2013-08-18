@@ -6,6 +6,7 @@ using Sitecore.Search;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "SearchIndex", DefaultParameterSetName = "Name")]
+    [OutputType(new[] { typeof(Index) })]
     public class GetSearchIndexCommand : BaseCommand
     {
         private static SearchConfiguration _configuration;

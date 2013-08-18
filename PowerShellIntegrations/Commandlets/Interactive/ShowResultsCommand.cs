@@ -11,6 +11,7 @@ using Sitecore.Web.Authentication;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Result")]
+    [OutputType(new[] { typeof(string) })]
     public class ShowResultsCommand : BaseFormCommand
     {
         [Parameter(ParameterSetName = "Custom Viewer from Control Name", Mandatory = true)]

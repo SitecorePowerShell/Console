@@ -6,6 +6,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Execute", "ShellCommand")]
+    [OutputType(new[] { typeof(Item) })]
     public class ExecuteShellCommandCommand : BaseShellCommand
     {
         /*[ValidatePattern(@"[\*\?\[\]\-0-9a-zA-Z_]+\:[\*\?\[\]\-0-9a-zA-Z_]+")]*/

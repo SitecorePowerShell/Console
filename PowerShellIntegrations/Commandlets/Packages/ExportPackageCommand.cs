@@ -73,7 +73,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                                 writer.Initialize(Installer.CreateInstallationContext());
                                 PackageGenerator.GeneratePackage(Project, writer);
                             }
-                            // WriteObject(Project, false);
                         });
             }
         }

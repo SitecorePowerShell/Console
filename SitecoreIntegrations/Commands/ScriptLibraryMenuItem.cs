@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
+using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -27,8 +30,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             var menuItems = new List<Control>();
             string menuItemId = context.Parameters["menuItemId"];
             Item contextItem = context.Items.Length == 1
-                                   ? context.Items[0]
-                                   : Context.Database.GetItem(new ID(context.Parameters["id"]));
+                ? context.Items[0]
+                : Context.Database.GetItem(new ID(context.Parameters["id"]));
             GetLibraryMenuItems(contextItem, menuItems, context.Parameters["scriptDB"], context.Parameters["scriptPath"]);
 
             foreach (Control item in menuItems)
@@ -37,7 +40,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                 if (menuItem != null)
                 {
                     subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey, menuItem.Click,
-                                menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
+                        menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                 }
             }
             SheerResponse.EnableOutput();
@@ -60,67 +63,29 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         }
 
         private static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, string scriptDb,
-                                                string scriptLibPath)
+            string scriptLibPath)
         {
             Item parent = Factory.GetDatabase(scriptDb).GetItem(scriptLibPath);
+
             foreach (Item scriptItem in parent.Children)
             {
-                string allowedBranchesStr = scriptItem["AllowInBranches"];
-                if (!string.IsNullOrEmpty(allowedBranchesStr))
+                if (!EvaluateRules(scriptItem["ShowRule"], scriptItem.Database, contextItem))
                 {
-                    MultilistField multiselectField = scriptItem.Fields["AllowInBranches"];
-                    if (multiselectField != null)
-                    {
-                        Item[] allowedBranches = multiselectField.GetItems();
-                        var found = false;
-                        for (int i = 0; !found && i < allowedBranches.Length; i++)
-                        {
-                            if (contextItem.ID == allowedBranches[i].ID ||
-                                contextItem.Axes.IsDescendantOf(allowedBranches[i]))
-                            {
-                                found = true;
-                            }
-                        }
-                        if (!found)
-                        {
-                            continue;
-                        }
-                    }
+                    continue;
                 }
-                string allowedTemplatesStr = scriptItem["AllowOnTemplates"];
-                var baseTemplates = contextItem.Template.BaseTemplates.Select(t => t.ID).ToList();
-                baseTemplates.Add(contextItem.TemplateID);
-                if (!string.IsNullOrEmpty(allowedTemplatesStr))
-                {
-                    MultilistField multiselectField = scriptItem.Fields["AllowOnTemplates"];
-                    if (multiselectField != null)
-                    {
-                        var allowedTemplates = multiselectField.TargetIDs;
-                        var found = false;
-                        for (int i = 0; !found && i < allowedTemplates.Length; i++)
-                        {
-                            if (baseTemplates.Contains(allowedTemplates[i]))
-                            {
-                                found = true;
-                            }
-                        }
-                        if (!found)
-                        {
-                            continue;
-                        }
-                    }
-                }
+
                 var menuItem = new MenuItem
-                    {
-                        Header = scriptItem.DisplayName,
-                        Icon = scriptItem.Appearance.Icon,
-                        ID = scriptItem.ID.ToShortID().ToString()
-                    };
+                {
+                    Header = scriptItem.DisplayName,
+                    Icon = scriptItem.Appearance.Icon,
+                    ID = scriptItem.ID.ToShortID().ToString(),
+                };
+                menuItem.Disabled = !EvaluateRules(scriptItem["EnabledRule"], scriptItem.Database, contextItem);
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
                     menuItem.Click = string.Format("item:executescript(id={0},script={1},scriptDb={2})",
-                                                   contextItem.ID, scriptItem.ID, scriptItem.Database.Name);
+                        contextItem.ID, scriptItem.ID, scriptItem.Database.Name);
                 }
                 else
                 {
@@ -136,6 +101,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         public override string GetClick(CommandContext context, string click)
         {
             return string.Empty;
+        }
+
+        public static bool EvaluateRules(string strRules, Database database, Item contextItem)
+        {
+            if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
+            {
+                return true;
+            }
+            // hacking the rules xml
+            var rules = RuleFactory.ParseRules<RuleContext>(database, strRules);
+            var ruleContext = new RuleContext
+            {
+                Item = contextItem
+            };
+
+            return rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
     }
 }

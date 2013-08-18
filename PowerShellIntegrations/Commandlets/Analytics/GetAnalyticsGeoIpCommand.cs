@@ -4,6 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsGeoIP")]
+    [OutputType(new[] { typeof(GeoIps) })]
     public class GetAnalyticsGeoIPCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

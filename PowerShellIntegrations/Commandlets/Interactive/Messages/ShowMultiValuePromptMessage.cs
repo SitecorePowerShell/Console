@@ -51,8 +51,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             HttpContext.Current.Session[resultSig] = Parameters;
             UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
-            urlString.Add("te", Title);
-            urlString.Add("ds", Description);
+            if (!string.IsNullOrEmpty(Title))
+            {
+                urlString.Add("te", Title);
+            }
+            if (!string.IsNullOrEmpty(Description))
+            {
+                urlString.Add("ds", Description);
+            }
             if (!string.IsNullOrEmpty(OkButtonName))
             {
                 urlString.Add("ob", OkButtonName);

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Rules;
 using Sitecore.Shell.Applications.Dialogs.ProgressBoxes;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Framework.Jobs;
@@ -41,6 +43,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             Context.ClientPage.ClientResponse.Broadcast(
                 SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
                 "Shell");
+        }
+
+        public override CommandState QueryState(CommandContext context)
+        {
+            return base.QueryState(context);
         }
     }
 }

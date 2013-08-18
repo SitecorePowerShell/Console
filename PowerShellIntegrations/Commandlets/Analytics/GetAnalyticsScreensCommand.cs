@@ -4,6 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsScreen")]
+    [OutputType(new[] { typeof(Screens) })]
     public class GetAnalyticsScreensCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

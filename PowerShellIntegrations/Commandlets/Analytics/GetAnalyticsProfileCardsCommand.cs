@@ -10,6 +10,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
     [Cmdlet("Get", "AnalyticsProfileCards")]
+    [OutputType(new[] { typeof(Item) })]
     public class GetAnalyticsProfileCardsCommand : DatabaseContextBaseCommand
     {
         public const string ProfileCardsHubTemplate =

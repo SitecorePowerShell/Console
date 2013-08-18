@@ -6,12 +6,13 @@ using Sitecore.Data.Indexing;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
+#pragma warning disable 612, 618
     [Cmdlet("Get", "Index", DefaultParameterSetName = "Name")]
+    [OutputType(new[] { typeof(Index) })]
     public class GetIndexCommand : DatabaseContextBaseCommand
     {
         protected override void ProcessRecord(IEnumerable<Database> databases)
         {
-#pragma warning disable 612, 618
             if (String.IsNullOrEmpty(Name))
             {
                 foreach (Database database in databases)
@@ -31,7 +32,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                     WildcardWrite(Name, indices, index => index.Name);
                 }
             }
-#pragma warning restore 612, 618
         }
     }
+#pragma warning restore 612, 618
 }

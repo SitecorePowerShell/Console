@@ -42,9 +42,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var variables = (object[]) HttpContext.Current.Session[sid];
             HttpContext.Current.Session.Remove(sid);
 
-            DialogHeader.Text = WebUtil.GetQueryString("te");
-            DialogDescription.Text = WebUtil.GetQueryString("ds");
-            
+            string title = WebUtil.GetQueryString("te");
+            if (!string.IsNullOrEmpty(title))
+            {
+                DialogHeader.Text = title;
+            }
+
+            string description = WebUtil.GetQueryString("ds");
+            if (!string.IsNullOrEmpty(description))
+            {
+                DialogDescription.Text = description;
+            }
             string okText = WebUtil.GetQueryString("ob");
             if (!string.IsNullOrEmpty(okText))
             {

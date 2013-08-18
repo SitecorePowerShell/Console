@@ -1,14 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Management.Automation;
 using System.Security.Policy;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Read", "Variable")]
+    [OutputType(new[] { typeof(string) })]
     public class ReadVariableCommand : BaseFormCommand
     {
         [Parameter]
@@ -23,6 +26,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public string OkButtonName { get; set; }
 
+        public ReadVariableCommand()
+        {
+            Width = 500;
+            Height = 300;
+        }
         protected override void ProcessRecord()
         {
             LogErrors(() =>
@@ -68,7 +76,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                             result.Add("Description", variable.Description);
                         }
                     }
-
+                    
                     if (result["Value"] == null)
                     {
                         result.Add("Value", string.Empty);

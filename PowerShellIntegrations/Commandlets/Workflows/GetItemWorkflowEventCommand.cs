@@ -6,6 +6,7 @@ using Sitecore.Workflows.Simple;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
     [Cmdlet("Get", "ItemWorkflowEvent")]
+    [OutputType(new[] { typeof(WorkflowEvent) })]
     public class GetItemWorkflowEventCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -23,9 +24,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 
         protected override void ProcessRecord()
         {
-            //Sitecore.Shell.Framework.Commands.ItemNew
-            //Sitecore.Shell.Framework.Commands.AddFromTemplate
-            //Sitecore.Shell.Framework.Pipelines.AddFromTemplate
             Item = FindItemFromParameters(Item, Path, Id);
 
             WorkflowEvent[] workflowHistory =

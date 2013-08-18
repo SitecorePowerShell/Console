@@ -211,7 +211,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             AbortButton.Visible = false;
             ScriptSession scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
-            scriptSession.Dispose();
+
+
+            string scriptId = WebUtil.GetQueryString("scriptId");
+            string scriptDb = WebUtil.GetQueryString("scriptDb");
+            ScriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
+            PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
+            if (string.IsNullOrEmpty(PersistentId))
+            {
+                scriptSession.Dispose();
+            }
         }
 
         protected virtual void OkClick()

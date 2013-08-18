@@ -6,6 +6,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Input")]
+    [OutputType(new[] { typeof(string) })]
     public class ShowInputCommand : BaseShellCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -40,31 +41,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     }
                     var alertresult = JobContext.MessageQueue.GetResult() as string;
                     WriteObject(alertresult);
-
-                    /*
-                                    var parameters = new Hashtable();
-                                    ValidatedAdd(parameters, "te", Prompt);
-                                    //ValidatedAdd(parameters, "cp", Title);
-                                    ValidatedAdd(parameters, "dv", DefaultValue);
-                                    ValidatedAdd(parameters, "vd", Validation);
-                                    ValidatedAdd(parameters, "em", ErrorMessage);
-                                    ValidatedAdd(parameters, "ml", MaxLength);
-
-                                    string yesnoresult = JobContext.ShowModalDialog(parameters, "GetStringResponse",
-                                                                                    Width.ToString(CultureInfo.InvariantCulture),
-                                                                                    (Height < 100 ? 150 : Height).ToString(CultureInfo.InvariantCulture));
-                                    WriteObject(yesnoresult);
-                    */
                 });
 
-        }
-
-        private void ValidatedAdd(Hashtable parameters, string paramName, object paramValue)
-        {
-            if (paramValue != null)
-            {
-                parameters.Add(paramName, paramValue);
-            }
         }
     }
 }

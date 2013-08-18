@@ -10,6 +10,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Execute", "Script")]
+    [OutputType(new[] { typeof(object) })]
     public class ExecuteScriptCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item", Mandatory = true, Position = 0)]

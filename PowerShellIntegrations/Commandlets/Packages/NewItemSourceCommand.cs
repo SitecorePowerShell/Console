@@ -5,6 +5,7 @@ using Sitecore.Install.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "ItemSource", DefaultParameterSetName = "Item")]
+    [OutputType(new[] { typeof(ItemSource) })]
     public class NewItemSourceCommand : BasePackageCommand
     {
         private ItemSource source;

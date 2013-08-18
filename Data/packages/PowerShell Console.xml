@@ -3,7 +3,7 @@
     <metadata>
       <PackageName>Sitecore PowerShell Extensions</PackageName>
       <Author>Adam Najmanowicz - Cognifide</Author>
-      <Version>2.2</Version>
+      <Version>2.3</Version>
       <Revision />
       <License />
       <Comment />
@@ -784,6 +784,54 @@ http://blog.najmanowicz.com/</Readme>
       </Include>
       <Exclude />
       <Name>Core Colors</Name>
+    </items>
+    <items>
+      <Database>master</Database>
+      <Root>{AFA2E88F-BF7A-4491-BBDA-9964DBE15DBA}</Root>
+      <SkipVersions>False</SkipVersions>
+      <Converter>
+        <ItemToEntryConverter>
+          <Transforms />
+        </ItemToEntryConverter>
+      </Converter>
+      <Include>
+        <ItemNameFilter>
+          <Pattern />
+          <FilterSearchType>Simple</FilterSearchType>
+        </ItemNameFilter>
+        <ItemDateFilter>
+          <FilterType>CreatedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemDateFilter>
+          <FilterType>ModifiedFilter</FilterType>
+          <NotOlderThan />
+          <ActionDateTo />
+          <ActionDateFrom />
+        </ItemDateFilter>
+        <ItemPublishFilter>
+          <PublishDate />
+          <CheckWorkflow>True</CheckWorkflow>
+        </ItemPublishFilter>
+        <ItemTemplateFilter>
+          <Templates />
+        </ItemTemplateFilter>
+        <ItemUserFilter>
+          <FilterType>Created</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemUserFilter>
+          <FilterType>Modified</FilterType>
+          <Accounts />
+        </ItemUserFilter>
+        <ItemLanguageFilter>
+          <Languages />
+        </ItemLanguageFilter>
+      </Include>
+      <Exclude />
+      <Name>PowerShell Rules</Name>
     </items>
   </Sources>
   <Converter>

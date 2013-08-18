@@ -14,6 +14,7 @@ using Sitecore.Update.Engine;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("Install", "UpdatePackage", DefaultParameterSetName = "ZipFileName")]
+    [OutputType(new[] { typeof(ContingencyEntry) })]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]

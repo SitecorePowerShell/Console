@@ -11,6 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
     [Cmdlet("Get", "AnalyticsProfileItem")]
+    [OutputType(new[] { typeof(Item) })]
     public class GetAnalyticsProfileItemCommand : DatabaseContextBaseCommand
     {
         public const string MarketingCenterProfiles = "/sitecore/system/Marketing Center/Profiles";

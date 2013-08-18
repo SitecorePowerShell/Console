@@ -5,6 +5,7 @@ using Sitecore.Install.Files;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "ExplicitFileSource", DefaultParameterSetName = "File")]
+    [OutputType(new[] { typeof(ExplicitFileSource) })]
     public class NewExplicitFileSourceCommand : BasePackageCommand
     {
         private ExplicitFileSource source;

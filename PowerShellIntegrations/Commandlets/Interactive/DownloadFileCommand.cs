@@ -15,6 +15,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Download", "File")]
+    [OutputType(new[] { typeof(String) }, ParameterSetName = new[] { "ItemInput", "FileInput" })]
     public class DownloadFileCommand : BaseFormCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, 

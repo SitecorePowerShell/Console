@@ -114,6 +114,13 @@
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Console\Services\RemoteScriptCall.aspx.cs">
+      <DependentUpon>RemoteScriptCall.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Console\Services\RemoteScriptCall.aspx.designer.cs">
+      <DependentUpon>RemoteScriptCall.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowMultiValuePromptMessage.cs" />
@@ -223,6 +230,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerGrid.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellMultiValuePrompt.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerText.cs" />
     <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
@@ -274,6 +282,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ScriptLibraryMenuItem.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Rules\PowerShellSessionExists.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
@@ -352,6 +361,7 @@
     <Content Include="Console\Scripts\split.js" />
     <Content Include="Console\Services\PowerShellWebService.asmx" />
     <Content Include="Console\Services\RemoteAutomation.asmx" />
+    <Content Include="Console\Services\RemoteScriptCall.aspx" />
     <Content Include="Console\Styles\Console.css" />
     <Content Include="Console\Styles\VariablePrompt.css" />
     <Content Include="Console\Styles\jquery.qtip.min.css" />
@@ -364,6 +374,9 @@
     <Content Include="Console\Styles\jquery.ui.theme.css" />
     <Content Include="Console\Styles\Runner.css" />
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerGrid.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellMultiValuePrompt.xml">

@@ -172,7 +172,7 @@ extend(cognifide, 'powershell');
             of: $("#Result")
         }).css({
             right: 0,
-            left: 0,
+            left: 0
         }).hide()
             .show("drop", { direction: "down" }, "400")
             .delay(2000)

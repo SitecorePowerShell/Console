@@ -20,10 +20,10 @@
 
           <Border runat="server" GridPanel.Width="100%" GridPanel.VAlign="top">
             <Border runat="server" Class="scWizardTitle">
-              <Literal runat="server" Text="Dialog Header" ID="DialogHeader"/>
+              <Literal runat="server" Text="Script parameters" ID="DialogHeader"/>
             </Border>
             <Border runat="server" Class="scWizardText">
-              <Literal runat="server" Text="Dialog Text" ID="DialogDescription"/>
+              <Literal runat="server" Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/>
             </Border>
           </Border>
 

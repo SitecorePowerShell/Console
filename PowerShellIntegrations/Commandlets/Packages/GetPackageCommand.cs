@@ -7,6 +7,7 @@ using Sitecore.Install.Serialization;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("Get", "Package", DefaultParameterSetName = "FileName")]
+    [OutputType(new[] { typeof(PackageProject) })]
     public class GetPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]

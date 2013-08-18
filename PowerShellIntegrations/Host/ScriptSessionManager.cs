@@ -12,6 +12,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             return GetSession(persistentId, ApplicationNames.Default, false);
         }
 
+        public static bool SessionExists(string persistentId)
+        {
+            return cache.ContainsKey(persistentId);
+        }
+
         public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
         {
             // sessions with no persistent ID, are just created new every time
