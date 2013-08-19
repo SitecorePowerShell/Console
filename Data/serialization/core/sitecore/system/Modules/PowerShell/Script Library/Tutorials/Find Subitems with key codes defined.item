@@ -24,13 +24,6 @@ Get-ChildItem * -recurse | `
     where-object { -not ([string]::IsNullOrEmpty($_.KeyCode) -and [string]::IsNullOrEmpty($_."Access Key")) } | `
     format-table @{Label="Path"; Expression={ $_.Paths.Path } }, KeyCode, "Access Key" -AutoSize
 ----field----
-field: {756BECB0-A794-45C5-9F75-233B1A3FC7BE}
-name: ShowResults
-key: showresults
-content-length: 1
-
-1
-----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
 key: __owner

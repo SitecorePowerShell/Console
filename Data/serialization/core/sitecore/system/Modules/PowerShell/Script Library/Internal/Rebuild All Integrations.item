@@ -30,13 +30,6 @@ foreach($command in $commands){
 }
 Close-Window
 ----field----
-field: {756BECB0-A794-45C5-9F75-233B1A3FC7BE}
-name: ShowResults
-key: showresults
-content-length: 1
-
-1
-----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created

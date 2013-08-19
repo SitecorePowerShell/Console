@@ -26,29 +26,52 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: b8f44f7d-87eb-4c94-b23f-a3e4e104fa11
+revision: afca3486-88e7-4010-b211-95d56d10514f
 
+----field----
+field: {613D128B-7BF2-40F4-84CB-6717408F9806}
+name: ShowRule
+key: showrule
+content-length: 11
+
+<ruleset />
+----field----
+field: {05EECF47-0BB9-4B85-B926-0BC6DD987EC8}
+name: EnableRule
+key: enablerule
+content-length: 443
+
+<ruleset>
+  <rule uid="{1E97DF07-DD24-4A30-B3AA-867CD8A48595}">
+    <conditions>
+      <or uid="78CA3C40D5CA47F89C1217D3B3637BCD">
+        <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="931B3345C65941AC8A797FC63BE99C4F" />
+        <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="0EFD8F0FE2E448D48F048B9EB42CEC80" persistentsessionid="renderingCopySession" />
+      </or>
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130502T132852
+20130502T132800
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-b8f44f7d-87eb-4c94-b23f-a3e4e104fa11
+afca3486-88e7-4010-b211-95d56d10514f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130723T105941:635101739818719453
+20130818T024011:635123904117422344
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

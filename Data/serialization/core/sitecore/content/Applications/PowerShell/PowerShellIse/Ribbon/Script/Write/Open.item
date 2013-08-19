@@ -6,37 +6,37 @@ path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Writ
 parent: {D6C55BB3-43D3-4516-A1A9-9836702B29FE}
 name: Open
 master: {00000000-0000-0000-0000-000000000000}
-template: {1DB34C92-03B0-4475-9A39-DA14E4D9D8FC}
-templatekey: Large Button
+template: {97B61451-9A75-4F59-93A5-DBD8D4F44421}
+templatekey: Large Menu Combo Button
 
 ----field----
-field: {D47ED548-84D5-4622-9886-5CC164727507}
+field: {F5A07916-7BCA-4FBA-857C-A5D166C332D4}
 name: Icon
 key: icon
 content-length: 29
 
 Core3/24x24/open_document.png
 ----field----
-field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
+field: {FC6B80F1-406D-47F0-A2B3-FCD7A8EA9D74}
 name: Click
 key: click
 content-length: 8
 
 ise:open
 ----field----
-field: {CCD6BDE9-0A7A-4DA3-B0ED-D3C0F65379FE}
-name: KeyCode
-key: keycode
-content-length: 3
+field: {3F5BD18E-8CEE-4CD5-9EE3-77863947B312}
+name: Menu
+key: menu
+content-length: 39
 
-c79
+/sitecore/system/Modules/PowerShell/MRU
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
 content-length: 29
 
-Core3/32x32/open_document.png
+Core3/24x24/open_document.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -54,36 +54,36 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: e27a198d-8985-4ae9-9bc1-b9d94c2ce46b
+revision: fd6f9774-be50-47b6-a92b-1a73a82b3404
 
 ----field----
-field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
+field: {B11F9F5F-88FC-48C5-9501-2E827EF40EAD}
 name: Header
 key: header
 content-length: 4
 
 Open
 ----field----
-field: {A1A31A93-C4A0-4396-B629-67C33001A3CF}
+field: {DB8C4E34-586C-4DED-BC95-B993FC3A01A8}
 name: Tooltip
 key: tooltip
-content-length: 37
+content-length: 34
 
-Open a script from script repository.
+Open a script from script library.
 ----field----
 field: {C8F93AFE-BFD4-4E8F-9C61-152559854661}
 name: __Valid from
 key: __valid from
 content-length: 15
 
-20060320T112016
+20060320T112000
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20060721T115628
+20060721T115600
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e27a198d-8985-4ae9-9bc1-b9d94c2ce46b
+fd6f9774-be50-47b6-a92b-1a73a82b3404
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130804T212028:635112480280406342
+20130728T184146:635106337069895782
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

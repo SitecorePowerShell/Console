@@ -26,15 +26,21 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 17d32362-b4dc-471f-ae66-05d9184a59af
+revision: e9807de1-29dc-4cc8-9b8f-84ddcca15df7
 
 ----field----
-field: {0A1619D4-71CB-4697-AEBF-28B3C253B37B}
-name: AllowInBranches
-key: allowinbranches
-content-length: 38
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 276
 
-{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}
+<ruleset>
+  <rule uid="{956918AC-10F5-4E9A-9525-8D07770E8BB5}">
+    <conditions>
+      <condition id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}" uid="612656656A694BD796FDA5F5602E4EFB" itemid="{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}" />
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -91,21 +97,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20130708T023132
+20130708T023100
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-17d32362-b4dc-471f-ae66-05d9184a59af
+e9807de1-29dc-4cc8-9b8f-84ddcca15df7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130723T105941:635101739817655000
+20130818T003220:635123827407575390
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -19,8 +19,34 @@ Applications/32x32/copy.png
 ----version----
 language: en
 version: 1
-revision: 2a88d5d6-2325-4545-83e9-292baa067f17
+revision: 13c6d6d9-1ff2-41ab-b256-2ff3d7c50405
 
+----field----
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 228
+
+<ruleset>
+  <rule uid="{788F6C3C-E498-486A-9EC1-906DA5EAE120}">
+    <conditions>
+      <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="7CC3B10C5B6D4958A0A6AC3034BA6D50" />
+    </conditions>
+  </rule>
+</ruleset>
+----field----
+field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+name: EnableRule
+key: enablerule
+content-length: 228
+
+<ruleset>
+  <rule uid="{5359F51B-70D1-4725-9D4B-896BFE9DA3A6}">
+    <conditions>
+      <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="49C2786831EF456A9663AA001D4DB281" />
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -46,21 +72,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20130502T104337
+20130502T104300
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-2a88d5d6-2325-4545-83e9-292baa067f17
+13c6d6d9-1ff2-41ab-b256-2ff3d7c50405
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130722T015847:635100551275996484
+20130818T023648:635123902082002422
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

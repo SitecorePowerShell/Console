@@ -24,13 +24,6 @@ content-length: 151
 
 ise:editsettings(button=/sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleSettings,preservesections=1,appName=Console,personal=0)
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 31
-
-PowerShell/32x32/PowerShell.png
-----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
@@ -47,7 +40,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: 70c0d23f-5b7e-4ae9-a52d-5c362871acab
+revision: 775b17c2-26cf-4e11-9eb2-2416f47b975f
 
 ----field----
 field: {C184F18B-B452-44D6-8376-FACD6CEF8A42}
@@ -90,14 +83,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-70c0d23f-5b7e-4ae9-a52d-5c362871acab
+775b17c2-26cf-4e11-9eb2-2416f47b975f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130804T213121:635112486813602611
+20130625T110135:635077548958888360
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

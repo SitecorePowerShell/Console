@@ -29,13 +29,6 @@ version: 1
 revision: bdf71f0a-e669-46f7-9b75-c4a48e8f5927
 
 ----field----
-field: {756BECB0-A794-45C5-9F75-233B1A3FC7BE}
-name: ShowResults
-key: showresults
-content-length: 1
-
-1
-----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
 key: __owner

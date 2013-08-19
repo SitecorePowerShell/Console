@@ -26,30 +26,32 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 661bc52e-72f6-48b9-910e-7935d8016bf5
+revision: 8937426d-3947-4b3b-b301-e22b77f1f90e
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 936
+content-length: 1120
 
 $item = get-item .
 
 $result = Read-Variable -Parameters `
-    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Description="Date since when you want the activity to be reported"; ShowTime=$true}, `
+    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-7); Title="Changes from"; Description="Since when you want the activity to be reported?"; ShowTime=$true}, `
+    @{ Name = "to"; Value=[System.DateTime]::Now; Title="Changes to"; Description="Until when you want the activity to be reported?"; ShowTime=$true}, `
     @{ Name = "item"; Title="Branch to Analyse"; Description="Branch you want to analyse."} `
     -Description "This report will analyse the branch you select and will tell you which of the pages have been changed since your selected date/time" `
-    -Title "Analyse author activilty" -Width 500 -Height 260 `
+    -Title "Analyse author activilty" -Width 500 -Height 300 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
 
 if($result -ne "ok")
 {
     Exit
 }
+
 $item = Wrap-Item -Item $item
 Get-Childitem $item.ProviderPath -recurse | `
-    Where-Object {$from.Subtract($_.__Updated).Minutes -lt 0} | `
+    Where-Object {$from.CompareTo($_.__Updated) -lt 0 -and $to.CompareTo($_.__Updated) -gt 0} | `
     Format-Table Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } } -auto
 Show-Result -Text
 Close-Window
@@ -66,14 +68,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-661bc52e-72f6-48b9-910e-7935d8016bf5
+8937426d-3947-4b3b-b301-e22b77f1f90e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130809T153428:635116592689018282
+20130812T075235:635118907557137656
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
