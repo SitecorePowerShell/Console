@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 
                         packageProject =
                             IOUtils.LoadObject(
-                                FileUtil.ReadFromFile(Path))
+                                FileUtil.ReadFromFile(fileName))
                             as PackageProject;
                     }
                     WriteObject(packageProject, false);

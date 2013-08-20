@@ -120,7 +120,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 foreach (Item childItem in children)
                 {
                     Item child = childItem;
-                    WriteMatchingItem(language, version, child);
+                    if (wildcard.IsMatch(child.Name))
+                    {
+                        WriteMatchingItem(language, version, child);
+                    }
                     string childUrl = VirtualPathUtility.AppendTrailingSlash(path) + child.Name;
 
                     // if the specified item exists and recurse has been set then 

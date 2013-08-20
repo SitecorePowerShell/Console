@@ -12,35 +12,98 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: a7012b4d-e0eb-4a8a-804d-534aa1d6e046
+revision: 900607d8-1fcf-4f31-8c06-0a0e1ecd860c
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1272
+content-length: 5145
 
-$package = get-package "powershell console.xml"
+$package = get-package "PowerShell Console.xml"
+$package.Sources.Clear();
 
-##########################################################################
-# master DB scripts - only include stuff that's not for internal testing #
-##########################################################################
-$master_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
-#$master_scripts | ft ProviderPath
+$psVersion = 2.3
 
-$master_scripts_source =  $master_scripts | New-ExplicitItemSource "Master Scripts" -InstallMode Merge -MergeMode Merge;
-$package.Sources.Add($master_scripts_source);
+# Item templates
+$source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name "Master Item Templates" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:\templates\Modules\PowerShell Console' | New-ItemSource -Name "Core Item Templates" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
 
-$core_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
-#$core_scripts | ft ProviderPath
+# Module Root
+$source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Core Module Root" -InstallMode Merge -MergeMode Merge
+$package.Sources.Add($source);
 
-#$package | Export-Package "powershell console (automate).xml"
-# cleanup user specific settings
-$settingsToCleanup = get-childitem -recurse "core:/content/Applications/PowerShell/Settings/"  | ? { $_.ProviderPath -Match "sitecore" }
-$settingsToCleanup | ft PSPath,ProvierPath -auto
-#get-childitem -recurse "core:/content/Applications/PowerShell/Settings/" | ? { $_.ProviderPath -Match "sitecore" } | remove-item
-#get-childitem -recurse | fl PSPath, PSParentPath,ItemPath,ContentPath,ProvierPath
-#Read-YesNoCancel
+# Colors
+$source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Module Root" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Rules Engine Rules
+$source = Get-Item 'master:\system\Modules\PowerShell\Rules' |  New-ItemSource -Name "Rules Engine" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Script Library
+$source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Master Script Library" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Prepare settings - cleanup
+$settingsToCleanup = get-childitem sitecore -Path master:\system\Modules\PowerShell\Settings\ -recurse | remove-item -recurse
+
+# Settings
+$source = Get-Item master:\system\Modules\PowerShell\Settings | New-ItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Applications
+$source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Application Layouts
+$source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Start Menu
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Content Editor Context Menu integration
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/'  -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Content Editor Ribbon integration
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #1" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #2" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Task Integration
+$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+
+# Files
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell.config" | New-ExplicitFileSource -Name "Configuration File"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath\bin\Cognifide.PowerShell.dll" | New-ExplicitFileSource -Name "PowerShell Binary"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath\sitecore/shell/Override/Controls/Splitters/HSplitter.xml" | New-ExplicitFileSource -Name "Splitter Fix"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath/sitecore/shell/Themes/Standard/PowerShell.zip" | New-ExplicitFileSource -Name "Icons"
+$package.Sources.Add($source);
+$source = Get-ChildItem -exclude *.cs -Path "$AppPath\Console" -Recurse -File | New-ExplicitFileSource -Name "Console Assets"
+$package.Sources.Add($source);
+$source = Get-ChildItem -Path "$AppPath\sitecore\Shell\Applications\Powershell\*" -Recurse -File | New-ExplicitFileSource -Name "Application Files"
+$package.Sources.Add($source);
+
+Export-Package -Project $package -Path "Sitecore PowerShell Extensions-$psVersion.xml"
+Export-Package -Project $package -Path "Sitecore PowerShell Extensions-$psVersion.zip" -Zip
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -54,14 +117,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a7012b4d-e0eb-4a8a-804d-534aa1d6e046
+900607d8-1fcf-4f31-8c06-0a0e1ecd860c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130515T135334:635042228149688281
+20130820T150951:635126081912913281
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

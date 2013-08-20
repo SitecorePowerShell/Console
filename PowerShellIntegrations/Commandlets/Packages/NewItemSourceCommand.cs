@@ -1,6 +1,8 @@
 ﻿using System.Management.Automation;
 using Sitecore.Data.Items;
+using Sitecore.Install.Configuration;
 using Sitecore.Install.Items;
+using Sitecore.Install.Utils;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
@@ -25,6 +27,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         [Parameter(Position = 3)]
         public string Root { get; set; }
 
+        [Parameter()]
+        public InstallMode InstallMode { get; set; }
+
+        [Parameter]
+        public MergeMode MergeMode { get; set; }
+
         protected override void ProcessRecord()
         {
             source = new ItemSource {Name = Name}; //Create source – source should be based on BaseSource              
@@ -39,6 +47,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                 source.Root = Root;
             }
             source.SkipVersions = SkipVersions.IsPresent;
+            source.Converter.Transforms.Add(new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
         }
 
         protected override void EndProcessing()

@@ -67,6 +67,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.PowerShell.Commands.Utility, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Analytics">
       <HintPath>$(SitecorePath)\bin\Sitecore.Analytics.dll</HintPath>
     </Reference>
@@ -123,12 +127,14 @@
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\OutListViewCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowMultiValuePromptMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ReadVariableCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowResultsMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowResultsCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\DownloadMessage.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Packages\GetItemReferenceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
