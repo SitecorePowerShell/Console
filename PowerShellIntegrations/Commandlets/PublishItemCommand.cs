@@ -94,9 +94,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         {
             if (languageWildcardPatterns.Count == 0)
             {
-                foreach (Language language in item.Languages)
+                if (Item != null)
                 {
-                    PublishToTargetLanguage(item, target, language);
+                    PublishToTargetLanguage(item, target, item.Language);
+                }
+                else
+                {
+                    List<string> publishedLangs = new List<string>();
+                    foreach (var langItem in item.Versions.GetVersions(true).Reverse())
+                    {
+                        if (!publishedLangs.Contains(langItem.Language.Name))
+                        {
+                            publishedLangs.Add(langItem.Language.Name);
+                            PublishToTargetLanguage(langItem, target, langItem.Language);
+                        }
+                    }
                 }
             }
             else
@@ -118,10 +130,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 PublishMode = PublishMode.Smart;
             }
 
-            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}' to target '{2}'", item.Name, language,
-                                       target));
-            WriteDebug(String.Format("[Debug]: Publishing item '{0}' in language '{1}' to target '{2}'", item.Name,
-                                     language, target));
+            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'", 
+                item.Name, language, item.Version, target));
+            WriteDebug(String.Format("[Debug] Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'", 
+                item.Name, language, item.Version, target));
             Database webDb = Factory.GetDatabase(target);
             var options = new PublishOptions(Factory.GetDatabase("master"), webDb, PublishMode, language, DateTime.Now)
                 {
