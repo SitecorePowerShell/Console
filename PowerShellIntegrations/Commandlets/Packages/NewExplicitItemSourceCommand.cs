@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 
         protected override void ProcessRecord()
         {
-            source.Entries.Add(new ItemReference(Item.Uri, false).ToString());
+            source.Entries.Add(new ItemReference(Item.Database.Name,Item.Paths.Path, Item.ID,Sitecore.Globalization.Language.Invariant,Sitecore.Data.Version.Latest).ToString());
         }
 
         protected override void EndProcessing()

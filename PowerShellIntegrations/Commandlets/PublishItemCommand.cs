@@ -1,4 +1,6 @@
-﻿using Sitecore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -13,6 +15,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     [Cmdlet("Publish", "Item")]
     public class PublishItemCommand : BaseCommand
     {
+        private IEnumerable<Language> siteLanguages;
+
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public Item Item { get; set; }
 
@@ -27,21 +31,41 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         public SwitchParameter Recurse { get; set; }
 
         [Parameter]
-        public string[] Targets { get; set; }
+        [Alias("Targets")]
+        public string[] Target { get; set; }
 
         [Parameter]
-        public string[] Languages { get; set; }
+        [Alias("Languages")]
+        public string[] Language { get; set; }
 
         [Parameter]
         public PublishMode PublishMode { get; set; }
 
-        protected override void ProcessRecord()
+        private List<WildcardPattern> languageWildcardPatterns { get; set; }
+
+        protected override void BeginProcessing()
         {
-            Publish(Item, Path, Id, Recurse.IsPresent, Targets, Languages, PublishMode);
+            if (Language == null || !Language.Any())
+            {
+                languageWildcardPatterns = new List<WildcardPattern>();
+            }
+            else
+            {
+                languageWildcardPatterns =
+                    Language.Select(
+                        language =>
+                            new WildcardPattern(language, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
+                        .ToList();
+                siteLanguages = Context.Database.GetLanguages();
+            }
         }
 
-        private void Publish(Item item, string path, string id, bool recursive, string[] targets, 
-                            string[] languages, PublishMode mode)
+        protected override void ProcessRecord()
+        {
+            Publish(Item, Path, Id);
+        }
+
+        private void Publish(Item item, string path, string id)
         {
             item = FindItemFromParameters(item, path, id);
 
@@ -52,49 +76,46 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                     throw new PSInvalidOperationException("Only items from the 'master' database can be published!");
                 }
 
-                if (targets != null)
+                if (Target != null)
                 {
-                    foreach (string target in targets)
+                    foreach (string target in Target)
                     {
-                        PublishToTarget(item, target, recursive, languages, mode);
+                        PublishToTarget(item, target);
                     }
                 }
                 else
                 {
-                    PublishToTarget(item, "web", recursive, languages, mode);
+                    PublishToTarget(item, "web");
                 }
             }
         }
 
-        private void PublishToTarget(Item item, string target, bool recursive, string[] languages,
-                                     PublishMode mode)
+        private void PublishToTarget(Item item, string target)
         {
-            if (languages == null)
+            if (languageWildcardPatterns.Count == 0)
             {
-                Language language = Context.Language;
-                PublishToTargetLanguage(item, target, language, recursive, mode);
+                foreach (Language language in item.Languages)
+                {
+                    PublishToTargetLanguage(item, target, language);
+                }
             }
             else
             {
-                foreach (Language siteLanguage in Context.Database.GetLanguages())
+                foreach (Language siteLanguage in from siteLanguage in siteLanguages
+                    from wildcard in languageWildcardPatterns
+                    where wildcard.IsMatch(siteLanguage.Name)
+                    select siteLanguage)
                 {
-                    foreach (string language in languages)
-                    {
-                        if (siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase))
-                        {
-                            PublishToTargetLanguage(item, target, siteLanguage, recursive, mode);
-                        }
-                    }
+                    PublishToTargetLanguage(item, target, siteLanguage);
                 }
             }
         }
 
-        private void PublishToTargetLanguage(Item item, string target, Language language, bool recursive,
-                                             PublishMode mode)
+        private void PublishToTargetLanguage(Item item, string target, Language language)
         {
-            if (mode == PublishMode.Unknown)
+            if (PublishMode == PublishMode.Unknown)
             {
-                mode = PublishMode.Smart;
+                PublishMode = PublishMode.Smart;
             }
 
             WriteVerbose(String.Format("Publishing item '{0}' in language '{1}' to target '{2}'", item.Name, language,
@@ -102,9 +123,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             WriteDebug(String.Format("[Debug]: Publishing item '{0}' in language '{1}' to target '{2}'", item.Name,
                                      language, target));
             Database webDb = Factory.GetDatabase(target);
-            var options = new PublishOptions(Factory.GetDatabase("master"), webDb, mode, language, DateTime.Now)
+            var options = new PublishOptions(Factory.GetDatabase("master"), webDb, PublishMode, language, DateTime.Now)
                 {
-                    Deep = recursive
+                    Deep = Recurse.IsPresent
                 };
             PublishItemPipeline.Run(item.ID, options);
         }

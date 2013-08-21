@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Management.Automation;
 using Sitecore.Install.Files;
+using Sitecore.IO;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
@@ -25,7 +27,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         {
             if (File is FileInfo)
             {
-                source.Entries.Add((File as FileInfo).FullName);
+                string siteRoot = FileUtil.MapPath("/");
+                string fullName = (File as FileInfo).FullName;
+                if (fullName.StartsWith(siteRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    fullName = fullName.Substring(siteRoot.Length - 1).Replace('\\','/');
+                }
+                source.Entries.Add(fullName);
             }
         }
 
