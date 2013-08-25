@@ -71,12 +71,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             {
                                 sb.AppendFormat("<div class='ps-help-header'>{0}</div>", line);
                             }
+                            else if (l.Text.StartsWith("    --")) // normal line with output or example
+                            {
+                                sb.AppendFormat("{0}\n", l.Text.Substring(4));
+                            }
                             else if (l.Text.StartsWith("    -"))
                             {
                                 sb.AppendFormat("<div class='ps-help-parameter'>{0}</div>", line);
                             }
-                            else
+                            else if (l.Text.StartsWith("    "))
                             {
+                                line = l.Text.StartsWith("    ") ? l.Text.Substring(4) : l.Text;
                                 sb.AppendFormat("{0}\n", line);
                             }
                         }
