@@ -13,18 +13,19 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Publish", "Item")]
+    [OutputType(new Type[] {}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
     public class PublishItemCommand : BaseCommand
     {
         private IEnumerable<Language> siteLanguages;
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item from Pipeline")]
         public Item Item { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Item from Path")]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Item from ID")]
         public string Id { get; set; }
 
         [Parameter]

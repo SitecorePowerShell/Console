@@ -15,19 +15,19 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Download", "File")]
-    [OutputType(new[] { typeof(String) }, ParameterSetName = new[] { "ItemInput", "FileInput" })]
+    [OutputType(new[] { typeof(String) }, ParameterSetName = new[] { "Download Item", "Download File" })]
     public class DownloadFileCommand : BaseFormCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, 
-            Mandatory = true, Position = 0, ParameterSetName = "FileInput")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
+            Mandatory = true, Position = 0, ParameterSetName = "Download File")]
         public string FullName
         {
             get;
             set;
         }
 
-        [Parameter(ParameterSetName = "ItemInput")]
-        [Parameter(ParameterSetName = "FileInput")]
+        [Parameter(ParameterSetName = "Download Item")]
+        [Parameter(ParameterSetName = "Download File")]
         public string Message
         {
             get;
@@ -35,15 +35,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         }
 
         [Parameter(ValueFromPipeline = true,
-            Mandatory = true, Position = 0, ParameterSetName = "ItemInput")]
+            Mandatory = true, Position = 0, ParameterSetName = "Download Item")]
         public Item Item
         {
             get;
             set;
         }
 
-        [Parameter(ParameterSetName = "ItemInput")]
-        [Parameter(ParameterSetName = "FileInput")]
+        [Parameter(ParameterSetName = "Download Item")]
+        [Parameter(ParameterSetName = "Download File")]
         public SwitchParameter NoDialog
         {
             get;
