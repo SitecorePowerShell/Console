@@ -81,7 +81,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             }
                             else if (l.Text.StartsWith("    "))
                             {
-                                line = l.Text.StartsWith("    ") ? l.Text.Substring(4) : l.Text;
+                                line = (l.Text.StartsWith("    ") ? l.Text.Substring(4) : l.Text).Replace("<", "&lt;").Replace(">", "&gt;");
+                                line = urlRegex.Replace(line, "<a href='$1' target='_blank'>$1</a>");
                                 sb.AppendFormat("{0}\n", line);
                             }
                         }
@@ -95,5 +96,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             }
             return new string[] {"No Command in line found - cannot provide help in this context."};
         }
+
+        static Regex urlRegex = new Regex(@"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'"".,<>?«»“”‘’]))", RegexOptions.Singleline | RegexOptions.Compiled);
     }
 }
