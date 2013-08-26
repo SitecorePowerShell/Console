@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
-using Sitecore.Form.Core.Utility;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {

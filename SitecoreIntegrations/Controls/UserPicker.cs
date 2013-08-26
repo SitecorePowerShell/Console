@@ -1,7 +1,4 @@
-﻿using System;
-using Cognifide.PowerShell.Console.Services;
-using Sitecore.Security;
-using Sitecore.Shell.Framework.Commands.Media;
+﻿using Sitecore.Security;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 

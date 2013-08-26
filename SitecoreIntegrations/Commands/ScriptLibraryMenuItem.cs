@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
-using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;

@@ -6,7 +6,6 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messag
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
-using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {

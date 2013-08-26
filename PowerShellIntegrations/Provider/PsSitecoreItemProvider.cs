@@ -10,8 +10,6 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Globalization;
-using Sitecore.Pipelines.SaveLayout;
 using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
 

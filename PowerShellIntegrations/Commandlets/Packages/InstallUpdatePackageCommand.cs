@@ -9,7 +9,6 @@ using Sitecore.Update.Installer;
 using Sitecore.Update.Installer.Utils;
 using Sitecore.Update.Metadata;
 using Sitecore.Update.Utils;
-using Sitecore.Update.Engine;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {

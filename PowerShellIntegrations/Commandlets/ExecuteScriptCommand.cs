@@ -1,11 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
+﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore.Data.Items;
-using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {

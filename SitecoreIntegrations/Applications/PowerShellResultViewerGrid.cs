@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Web;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using Action = Sitecore.Web.UI.HtmlControls.Action;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Text;
 using System.Web;
-using Cognifide.PowerShell.Console.Services;
 using Sitecore;
-using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Resources.Media;
-using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 

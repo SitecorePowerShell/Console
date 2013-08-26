@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Linq;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Rules;
-using Sitecore.Shell.Applications.Dialogs.ProgressBoxes;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Shell.Framework.Jobs;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 

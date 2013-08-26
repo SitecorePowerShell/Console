@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Management.Automation;
-using System.Threading;
-using Sitecore.Data;
+﻿using System.Management.Automation;
 using Sitecore.Data.Items;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Security.Accounts;
-using Sitecore.Security.Authentication;
 using Sitecore.Tasks;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler

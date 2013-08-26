@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
-using System.Web.UI.WebControls;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
@@ -20,7 +18,6 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
-using Label = Sitecore.Web.UI.HtmlControls.Label;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications

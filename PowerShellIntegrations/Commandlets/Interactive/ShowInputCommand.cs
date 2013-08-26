@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore.Jobs.AsyncUI;
 

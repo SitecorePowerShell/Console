@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
-using Cognifide.PowerShell.SitecoreIntegrations.Applications;
-using Sitecore.Form.Core.Utility;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -34,6 +30,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             }
         }
 
+        public static string GetPrefix(ScriptSession session, string command)
+        {
+            string lastToken;
+            var truncatedCommand = TruncatedCommand(command, out lastToken);
+            return string.IsNullOrEmpty(lastToken) ? command : lastToken;
+        }
+
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
@@ -49,10 +52,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             string[] teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().ToArray();
             var result = new List<string>();
-            if (aceResponse)
-            {
-                result.Add("Prefix|" + (string.IsNullOrEmpty(lastToken) ? command : lastToken));
-            }
 
             WrapResults3(truncatedCommand, teResult, result, aceResponse);
             return result;
@@ -70,10 +69,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
             var result = new List<string>();
-            if (aceResponse)
-            {
-                result.Add("Prefix|" + (string.IsNullOrEmpty(lastToken) ? command : lastToken));
-            }
             WrapResults(truncatedCommand, teResult, result, aceResponse);
 
             //int prefixFileNameLength = Path.GetFileName(lastToken).Length;

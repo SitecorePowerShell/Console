@@ -1,25 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
 using Cognifide.PowerShell.PowerShellIntegrations;
-using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
-using Sitecore.Data.Templates;
 using Sitecore.Diagnostics;
-using Sitecore.Form.UI.Controls;
-using Sitecore.Install.Utils;
-using Sitecore.Shell.Applications.Layouts.IDE.Editors.Xslt;
-using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Text;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 {

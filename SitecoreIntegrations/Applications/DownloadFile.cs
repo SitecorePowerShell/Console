@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Web;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Sitecore.IO;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;

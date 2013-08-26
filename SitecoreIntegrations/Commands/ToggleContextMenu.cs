@@ -1,8 +1,5 @@
 ﻿using System;
-using Sitecore;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Web.UI.HtmlControls;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 {

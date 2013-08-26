@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Web.UI;
 
 // Version information for an assembly consists of the following four values:
 //

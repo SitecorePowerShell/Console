@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
+﻿using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Text;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Web;
-using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
