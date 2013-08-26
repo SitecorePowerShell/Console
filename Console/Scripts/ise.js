@@ -91,21 +91,16 @@ extend(cognifide, 'powershell');
                         $.tabCompletions = [""];
                     }
                     var keywords = $.tabCompletions;
-                    var prefixLower = prefix.toLowerCase();
-                    if (prefix.length > 0) {
-                        keywords = keywords.filter(function(w) {
-                            var pipeIndex = w.indexOf('|', 0) + 1;
-                            return w.toLowerCase().indexOf(prefixLower, 0) == pipeIndex;
-                        });
-                    }
+
                     callback(null, keywords.map(function (word) {
                         var hint = word.split('|');
                         return {
                             name: hint[1],
                             value: hint[1],
                             score: 30,
-                            meta: hint[0]
-                        };
+                            meta: hint[0],
+                            completer: this
+                    };
                     }));
                 }
             };
@@ -133,7 +128,7 @@ extend(cognifide, 'powershell');
                             $(this).remove();
                         },
                         height: $(window).height() - 20,
-                        width: $(window).width() * 2 / 3,
+                        width: $(window).width() * 18/20,
                         show: "slow",
                         hide: "slow"
                     });
@@ -156,6 +151,16 @@ extend(cognifide, 'powershell');
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
         };
+
+        cognifide.powershell.getAutocompletionPrefix = function (text) {
+            var data;
+                getPowerShellResponse({ "guid": guid, "command": text }, "GetAutoCompletionPrefix",
+                function(json) {
+                    data = JSON.parse(json.d);
+                });
+            return data;
+        };
+            
         $.commandHelp = "";
         $("#Help").dialog({ autoOpen: false });
 

@@ -1044,10 +1044,6 @@ var Autocomplete = function() {
         util.parForEach(editor.completers, function(completer, next) {
             completer.getCompletions(editor, session, pos, prefix, function(err, results) {
                 if (!err) {
-                    if (results.length > 0 && (results[0] !== undefined) && results[0].meta === "Prefix") {
-                        prefix = results[0].value;
-                        results.splice(0, 1);
-                    }
                     matches = matches.concat(results);
                 }
                 next();
@@ -1373,6 +1369,8 @@ exports.parForEach = function(array, fn, callback) {
 var ID_REGEX = /[a-zA-Z_0-9\$-]/;
 
 exports.retrievePrecedingIdentifier = function(text, pos, regex) {
+    return cognifide.powershell.getAutocompletionPrefix(text);
+    /*    
     regex = regex || ID_REGEX;
     var buf = [];
     for (var i = pos-1; i >= 0; i--) {
@@ -1382,6 +1380,7 @@ exports.retrievePrecedingIdentifier = function(text, pos, regex) {
             break;
     }
     return buf.reverse().join("");
+    */
 }
 
 exports.retrieveFollowingIdentifier = function(text, pos, regex) {
@@ -1439,16 +1438,19 @@ ace.define('ace/autocomplete/text_completer', ['require', 'exports', 'module' , 
 
     exports.getCompletions = function(editor, session, pos, prefix, callback) {
         var wordScore = wordDistance(session, pos, prefix);
-        var wordList = filterPrefix(prefix, Object.keys(wordScore));
-        callback(null, wordList.map(function (word) {
+        var wordList = Object.keys(wordScore);//filterPrefix(prefix, Object.keys(wordScore));
+        var results = [];
+        for (var i = 0; i < results.length; i++) {
+            var word = wordList[i];
             if (word.indexOf('$') === 0) {
-                return {
+                results.add({
                     name: word,
                     value: word,
                     score: wordScore[word],
                     meta: "local variable"
-                };
+                });
             }
-        }));
+        }
+        callback(null, results);
     };
 });

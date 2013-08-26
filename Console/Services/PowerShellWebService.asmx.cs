@@ -156,7 +156,7 @@ namespace Cognifide.PowerShell.Console.Services
 			if (scriptJob == null)
 			{
 				result.status = StatusError;
-				result.result = "Sorry, can't find your command result. Well this is embarassing. Try again?";
+				result.result = "Can't find your command result. This might mean that your session has timed out or your script caused the application to restart.";
 				result.prompt = string.Format("PS {0}>", session.CurrentLocation);
 				session.Output.Clear();
 				return serializer.Serialize(result);
@@ -235,7 +235,17 @@ namespace Cognifide.PowerShell.Console.Services
 			return result;
 		}
 
-		public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object GetAutoCompletionPrefix(string guid, string command)
+        {
+            var serializer = new JavaScriptSerializer();
+            var session = GetScriptSession(guid);
+            var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
+            return result;
+        }
+        
+        public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
 		{
 			var session = GetScriptSession(guid);
 			var result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
