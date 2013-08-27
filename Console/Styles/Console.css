@@ -6,7 +6,8 @@
 
 html{
     height:100%;
-    position:relative;
+    width:100%;
+/*    position:relative;
 /*    overflow-y: inherit;*/
 }
 /* make sure it is at least as tall as the viewport */
