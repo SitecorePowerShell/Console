@@ -82,11 +82,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing GetChildItems(string path='{0}', string recurse='{1}')", path, recurse);
-                WildcardPattern wildcard = null;
-                if (!string.IsNullOrEmpty(Filter))
-                {
-                    wildcard = new WildcardPattern(Filter, WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
-                }
+                WildcardPattern wildcard = new WildcardPattern(Filter ?? "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
                 string language;
                 int version;
                 GetVersionAndLanguageParams(out version, out language);

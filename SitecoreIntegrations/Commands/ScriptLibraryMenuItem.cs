@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             string menuItemId = context.Parameters["menuItemId"];
             Item contextItem = context.Items.Length == 1
                 ? context.Items[0]
-                : Context.Database.GetItem(new ID(context.Parameters["id"]));
+                : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
             GetLibraryMenuItems(contextItem, menuItems, context.Parameters["scriptDB"], context.Parameters["scriptPath"]);
 
             foreach (Control item in menuItems)
@@ -81,15 +81,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
-                    menuItem.Click = string.Format("item:executescript(id={0},script={1},scriptDb={2})",
-                        contextItem.ID, scriptItem.ID, scriptItem.Database.Name);
+                    menuItem.Click = string.Format("item:executescript(id={0},db={1},script={2},scriptDb={3})",
+                        contextItem.ID, contextItem.Database.Name, scriptItem.ID, scriptItem.Database.Name);
                 }
                 else
                 {
                     menuItem.Type = MenuItemType.Submenu;
                     menuItem.Click = string.Format(
-                        "item:scriptlibrary(id={0},scriptPath={1},scriptDB={2},menuItemId={3})",
-                        contextItem.ID, scriptItem.Paths.Path, scriptItem.Database.Name, menuItem.ID);
+                        "item:scriptlibrary(id={0},db={1},scriptPath={2},scriptDB={3},menuItemId={4})",
+                        contextItem.ID, contextItem.Database.Name, scriptItem.Paths.Path, scriptItem.Database.Name, menuItem.ID);
                 }
                 menuItems.Add(menuItem);
             }
