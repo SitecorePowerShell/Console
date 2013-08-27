@@ -4,6 +4,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
@@ -16,7 +17,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     [OutputType(new Type[] {}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
     public class PublishItemCommand : BaseCommand
     {
-        private IEnumerable<Language> siteLanguages;
 
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item from Pipeline")]
         public Item Item { get; set; }
@@ -57,7 +57,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                         language =>
                             new WildcardPattern(language, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
                         .ToList();
-                siteLanguages = Context.Database.GetLanguages();
             }
         }
 
@@ -114,7 +113,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             }
             else
             {
-                foreach (Language siteLanguage in from siteLanguage in siteLanguages
+                foreach (Language siteLanguage in from siteLanguage in item.Database.GetLanguages()
                     from wildcard in languageWildcardPatterns
                     where wildcard.IsMatch(siteLanguage.Name)
                     select siteLanguage)

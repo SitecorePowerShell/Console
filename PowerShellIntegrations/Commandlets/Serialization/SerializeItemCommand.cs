@@ -84,7 +84,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             }
             else
             {
-                foreach (Language siteLanguage in Context.Database.GetLanguages())
+                foreach (Language siteLanguage in item.Database.GetLanguages())
                 {
                     if (languages.Any(language => siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
                     {
