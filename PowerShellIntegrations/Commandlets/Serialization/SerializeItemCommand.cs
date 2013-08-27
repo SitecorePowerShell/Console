@@ -79,7 +79,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 
             if (languages == null)
             {
-                Language language = Context.Language;
+                Language language = item.Language;
                 SerializeToTargetLanguage(item, target, language, recursive);
             }
             else
