@@ -210,7 +210,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 GetVersionAndLanguageParams(out version, out language);
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                if (dic != null && dic[QueryParam].IsSet)
+                if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
                 {
                     string query = dic[QueryParam].Value.ToString();
                     Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
@@ -220,7 +220,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                     return;
                 }
-                if (dic != null && dic[IdParam].IsSet)
+                if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
                 {
                     string Id = dic[IdParam].Value.ToString();
                     Item itemById = Factory.GetDatabase(PSDriveInfo.Name).GetItem(new ID(Id));
