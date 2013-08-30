@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Security.Authentication;
+using AuthenticationManager = Sitecore.Security.Authentication.AuthenticationManager;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -40,6 +41,11 @@ namespace Cognifide.PowerShell.Console.Services
             }
             session.ExecuteScriptPart(script, true);
             Result.Text = session.Output.ToString();
+            if (session.Output.HasErrors)
+            {
+                HttpContext.Current.Response.StatusCode = 424;
+                HttpContext.Current.Response.StatusDescription = "Method Failure";
+            }
 
         }
     }
