@@ -12,19 +12,26 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 5ac5f68a-f6cc-4242-ab04-e1b68c4c2160
+revision: 97a6acaf-3d3f-4a4e-9ccd-26415649d5ca
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 491
+content-length: 959
 
 Get-Childitem master:\content\Demo\Int\Presentation\Designs | remove-item
 Get-Childitem master:\content\Demo\Int\Presentation\Snippets | where-object {$_.Name -ne "HomePage Snippet"}  | remove-item
 Get-ChildItem master:\content\Demo\Int\Data\Images | remove-item
 Get-ChildItem master:\content\Demo\Int\Data\Texts | remove-item
 Get-item master:\content\Demo\Int\Presentation\Designs |% { $_.ZenGardenTheme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=%7b84890464-20C4-44BC-847F-D098DC1A6BF7%7d"}
+Get-ChildItem -Path 'master:\content\Demo\Int\Data\Carousels\Home Page Carousel' -filter *expert* | remove-item
+Get-ChildItem -Path 'master:\content\Demo\Int\Data\Lists\Header Link List' -filter *twit* | remove-item
+Get-ChildItem -Path 'master:\content\Demo\Int\Data\Lists\Header Link List' -filter *face* | remove-item
+Get-item master:\content\Demo\Int\Home |% { $_.Design = ""}
+Get-item master:\content\Demo\Int\Presentation\Designs |% { $_.TemplatesMapping = ""}
+
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -38,14 +45,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5ac5f68a-f6cc-4242-ab04-e1b68c4c2160
+97a6acaf-3d3f-4a4e-9ccd-26415649d5ca
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130807T151341:635114852215077734
+20130830T155513:635134749130386329
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
