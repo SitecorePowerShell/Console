@@ -172,7 +172,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     break;
                 default:
                     lastPsToken = tokens.Last();
-                    lastToken = command.Substring(lastPsToken.Start,lastPsToken.Length);
+                    int start = lastPsToken.Start;
+                    if ((lastPsToken.Content == "\\" || lastPsToken.Content == "/") &&
+                        tokens[tokens.Count - 2].Type == PSTokenType.String)
+                    {
+                        start = tokens[tokens.Count - 2].Start;
+                    }
+                    lastToken = command.Substring(start,lastPsToken.EndColumn-1-start);
                     command = command.TrimEnd(' ');
                     if (lastPsToken.Type == PSTokenType.Operator)
                     {
