@@ -36,12 +36,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         ScriptSession session = SessionState.PSVariable.Get("ScriptSession").Value as ScriptSession;
                         if (session!= null)
                         {
-                            var output = new StringBuilder(10240);
-                            foreach (OutputLine outputLine in session.Output)
-                            {
-                                outputLine.GetHtmlLine(output);
-                            }
-                            var message = new ShowResultsMessage(output.ToString(), WidthString, HeightString);
+                            var message = new ShowResultsMessage(session.Output.ToString(), WidthString, HeightString);
                             
                             JobContext.MessageQueue.PutMessage(message);
                             JobContext.Flush();

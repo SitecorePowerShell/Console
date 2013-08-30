@@ -45,12 +45,12 @@ namespace Cognifide.PowerShell.Console.Services
                 if (scriptSession.Output.Count > 0)
                 {
                     result.Add(new NameValue
-                        {
-                            Name = "output",
-                            Value =
-                                scriptSession.Output.Select(p => p.Text).Aggregate(
-                                    (current, next) => current + "\n" + next)
-                        });
+                    {
+                        Name = "output",
+                        Value =
+                            scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
+                                (current, next) => current + next)
+                    });
                 }
                 foreach (string variable in returnVariables.Split('|'))
                 {

@@ -141,21 +141,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 scriptSession.ExecuteScriptPart(contextScript);
                 scriptSession.ExecuteScriptPart(script);
-                var output = new StringBuilder(10240);
-                if (scriptSession.Output != null)
-                {
-                    foreach (OutputLine outputLine in scriptSession.Output)
-                    {
-                        outputLine.GetHtmlLine(output);
-                    }
-                }
                 if (Context.Job != null)
                 {
                     JobContext.Flush();
                     Context.Job.Status.Result = new RunnerOutput
                     {
                         Errors = string.Empty,
-                        Output = output.ToString(),
+                        Output = scriptSession.Output.ToHtml(),
                         HasErrors = scriptSession.Output.HasErrors
                     };
                     object jobMessageResult = JobContext.SendMessage("psr:updateresults");

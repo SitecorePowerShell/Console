@@ -399,17 +399,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 scriptSession.ExecuteScriptPart(contextScript);
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
-                if (scriptSession.Output != null)
-                {
-                    foreach (OutputLine outputLine in scriptSession.Output)
-                    {
-                        outputLine.GetHtmlLine(output);
-                    }
-                }
                 if (Context.Job != null)
                 {
                     JobContext.Flush();
-                    Context.Job.Status.Result = string.Format("<pre>{0}</pre>", output);
+                    Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
                     JobContext.PostMessage("ise:updateresults");
                     JobContext.Flush();
                 }
@@ -440,15 +433,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
                 scriptSession.SetItemLocationContext(DataContext.CurrentItem);
                 scriptSession.ExecuteScriptPart(Editor.Value);
-                var output = new StringBuilder(10240);
 
                 if (scriptSession.Output != null)
                 {
-                    foreach (OutputLine outputLine in scriptSession.Output)
-                    {
-                        outputLine.GetHtmlLine(output);
-                    }
-                    Context.ClientPage.ClientResponse.SetInnerHtml("Result", output.ToString());
+                    Context.ClientPage.ClientResponse.SetInnerHtml("Result", scriptSession.Output.ToHtml());
                 }
             }
             catch (Exception exc)
