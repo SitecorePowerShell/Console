@@ -32,9 +32,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                 {
                     if (fileName == null)
                     {
-                        //name of the zip file when not defined
+                        //name of the zip file when not defined                        
                         fileName = string.Format(
-                            "{0}-{1}.xml", Project.Metadata.PackageName, Project.Metadata.Version);
+                            "{0}{1}{2}.xml",
+                            Project.Metadata.PackageName,
+                            string.IsNullOrEmpty(Project.Metadata.Version) ? "" : "-",
+                            Project.Metadata.Version);
                     }
 
                     if (!System.IO.Path.IsPathRooted(fileName))
