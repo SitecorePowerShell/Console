@@ -1,7 +1,9 @@
-﻿using System.Management.Automation;
+﻿using System.IO;
+using System.Management.Automation;
 using Sitecore.IO;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;
+using Sitecore.Shell.Applications.ContentEditor;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
@@ -9,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
     [OutputType(new[] { typeof(PackageProject) })]
     public class GetPackageCommand : BasePackageCommand
     {
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0,Mandatory = true)]
         [Alias("FullName","FileName")]
         public string Path { get; set; }
 
@@ -27,12 +29,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                             fileName = FullPackageProjectPath(Path);
                         }
 
-                        packageProject =
-                            IOUtils.LoadObject(
-                                FileUtil.ReadFromFile(fileName))
-                            as PackageProject;
+                        if (System.IO.File.Exists(fileName))
+                        {
+                            packageProject =
+                                IOUtils.LoadObject(
+                                    FileUtil.ReadFromFile(fileName))
+                                    as PackageProject;
+                        }
+                        WriteObject(packageProject, false);
                     }
-                    WriteObject(packageProject, false);
                 });
         }
     }
