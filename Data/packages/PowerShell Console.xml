@@ -2,226 +2,39 @@
   <Metadata>
     <metadata>
       <PackageName>Sitecore PowerShell Extensions</PackageName>
-      <Author>Adam Najmanowicz - Cognifide</Author>
+      <Author>Adam Najmanowicz - Cognifide, Michael West</Author>
       <Version>2.3</Version>
       <Revision />
       <License />
       <Comment />
       <Attributes />
-      <Readme>To launch the Powershell console look for the 
-new icon in the right side of the Start menu.
+      <Readme>This module provides 2 immediately usable interfaces 
+The "PowerShell Console" available from the "Sitecore"
+menu and the "PowerShell ISE" available from the 
+"Developer Tools" sub-menu.
 
-PowerShell Console provides 2 Immediately usable interfaces 
-The "PowerShell Console" available from the "Sitecore" menu 
-and the "PowerShell ISE" available from the 
-"Developer Tools" submenu.
-The ISE version comes with a sample script. 
-You can run the script to learn  about some of the power 
-behind the scripting environment.
-Review the script before running it, please.
+ISE comes with a sample script and script library 
+for you to experiment with. Enjoy!
 
 NEW:
-- 2.2 (30 July 2013) - http://bit.ly/ScPs22Iss
-  - Masive improvements to the ISE editing experience thanks to Michael West's involvement and skills! (@MichaelWest101)
-  - Issue #55 [regression-fix] ACE EDITOR Auto-completion drop-down does not scale to accommodate the length of longer paths.
-  - Issue #54 [regression-fix] ACE EDITOR Suggestions only show local keywords
-  - Issue #53 [enhancement] Open ribbon button to get MRU list
-  - Issue #52 [regression-fix] ACE EDITOR Cannot select code to Copy/Paste/Delete
-  - Issue #51 [regression-fix] ACE EDITOR Path completion is broken
-  - Issue #50 [regression-fix] ACE EDITOR Parameters collected from other commands show for all commands even if not applicable.
-  - Issue #49 [regression-fix] ACE EDITOR Line and Column caret position indicators don't work after switching to Ace Editor
-  - Issue #48 [regression-fix] ACE EDITOR Splitter move does not cause more lines show in the Ace editor.
-  - Issue #47 [regression-fix] ACE EDITOR Shift+Enter Help doesn't work.
-  - Issue #46 [behaviour-change] Remove Persistent Session Buffer flush functionality - Use Clear-Host within script instead
-  - Issue #45 [enhancement] Add Verbose SwitchParameter support to Write-Log
-  - Issue #44 [behaviour-change] Shift+Space autosuggest removed - it causes more problems than it's worth. Shift+Ctrl provides enough context help.
-  - Issue #43 [enhancement] Shift+Enter Help should find the last command in the line it was launched instead of showing error if not executed after command.
-  - Issue #42 [enhancement]  Adjustments to code completion for issue #32
-  - Issue #41 [bug] Fix Defunct Content Editor Integration Toggles bug
-  - Issue #39 [enhancement] Feature - Cmdlet to run Task Schedule
-  - Issue #38 [enhancement] Cls now works in ISE
-  - Issue #37 [enhancement] Abort script functionality added to ISE and Script runner 
-  - Issue #36 [enhancement] ISE - New Script Button
-  - Issue #35 [bug] Get-Command Blank Line
-  - Issue #34 [bug] Get-Command Clear-Host Output
-  - Issue #33 [enhancement] Console Adjustments
-  - Issue #32 [enhancement] Pressing tab for $host.UI produces host . UI bug
-  - Issue #9 [enhancement] Scripts should be able to call other scripts in the library that are run before the script itself
+- 2.3 (1 September 2013)
+  Release Notes: http://bit.ly/ScPs23Iss
+- 2.2 (30 July 2013)
+  Release Notes: http://bit.ly/ScPs22Iss
+- 2.1 (15 July 2013)
+  Release Notes: http://bit.ly/ScPs21Iss
 
-- 2.1 (15 July 2013) - http://bit.ly/ScPs21Iss
-  - Add ability to turn off Context Script and Context Terminal for Content Editor in Ise and Conetent Editor (View ribbon) (ehancement)
-  - Add Close-Window commandlet to close the Results window from a script (enhancement)
-  - CoreDB hosted context scripts will show results window by default rather than hide. (behaviour-change)
-  - Scripts executed without context item that are showing no results window would fail. (bug)
-  - Add Template name to default Item properties (enhancement)
-  - Allow Download-File to skip the dialog that's showing user the download to be started (enhancement)
-  - PowerShell Console showing %((% in places where [ should be in the results - no more (bug)
-  - ISE will no longer show error when executing scripts if user name has dot in the name (bug)
-  - Get-File renamed to Download-File (breaking-change)
-  - Tab Completion Generates invalid path (bug)
-  - cls &amp; Clear-Host not working (bug)
-  - Module Name missing from Get-Command (wontfix)
-  - Execute command generates "scContent is not defined" (bug)
-  - Extra parentheses in Get-PSDrive description (bug enhancement)
-  - Allow Download-File commandlet to download files from Media Library (enhancement)
-  - Package manipulation commandlets have their FileName parameter name changed to Path (breaking-change)
-  - Support installation of update packages (enhancement)
-  - Enable scripts to be exposed in Control Panel (enhancement)
-  - Fix autocomplete and autosuggest for PowerShell 3.0 (bug)
-  - Console needs to be able to display progress info (enhancement)
-  - Make Context Menu scripts in Content Editor - Show/Hide depending on a place in the tree menu is shown. (enhancement)
-  - jQuery must be running in no-conflict mode (bug)
-  - Replace jQuery with the last 1.x version (enhancement)
-  - Template name that is provided to New-Item should be more flexible (enhancement)
-  - Get-ChildItem and Get-Item should be able to work with ambiguous paths (enhancement)
-  - New-Item should be able to work with Item given as -Parent rather than paths only (enhancement)
-  - New-Item should support -Language parameter (enhancement)
+Please report any problems in our issue tracker:
+http://bit.ly/ScPsIss
 
-- 2.0 Final
-  - Massive ISE usability improvements
-    - autosuggest
-    - autocomplete
-    - Command help on Shift+Enter
-    - "Did you know" tips.
-    - Settings editing for ISE, Script Results and Console
-  - Get-File commandlet added
-  - jsTerminal and other javascript libraries updated.
-  - code refactoring to improve compliance with MS library coding guidelines.
-  - code re-organization to bring some peace to the previous chaos.
-  - item provider is now ProviderCapabilities.ExpandWildcards enabled - uses Sitecore Query.
-- 2.0 (RC7)
- - Events hooks added - you can now add support for events in your scripts by uncommenting the relevant section in the Cognifide.Powershell.config and create scripts in the appropriate locations in the "Event Handlers" script library (sample scripts for some events added). Courtesy  of the suggestion by Kieran Marron.
-- 2.0 (RC6)
-  - Sheer interactive support new commandlets:
-    - Show-Alert - shows user alert
-    - Show-Confirm - requests user to confirm a decision
-    - Show-Input - requests user to provide text input
-    - Show-ModalDialog - shows modal dialog and returns response
-    - Show-YesNoCancel - shows Yes/No/Cancel modal dialog and returns response
-    - Execute-ShellCommand - executes Sitecore command
-  - sample scripts for new interactive commandlets
-- 2.0 (RC5)
-  - support for Sitecore queries in Get-Item e.g.:
-    - Get-Item . -Query "/sitecore/home//*"
-  - massive experience improvements to ISE UI
-  - Sitecore ISE and script results now work as Jobs
-  - Job running script sessions can now call ShowModal dialogs. Further support with predefined dialogs coming soon.
-  - Powershell did not previously supported interactivity. e.g. if user had to be prompted to delete an item or confirm an action. A proper popup dialog will be shown now.
-  - Context script results re-worked to look more professionally and make use of the interactivity improvements.
-  - audit scripts added
-- 2.0 (RC4)
-  - persistent sessions (for commands e.g. executed from context menus that need sessions to be persisted between user interactions)
-  - context menu script library now supports multiple levels of menu items (embedded folders within the Context Menu Script Library)
-  - ISE Save and Runtime ribbon buttons are now disabled if script is not saved to  script library.
-  - Runtime settings are now editable straight from ISE.
-- 2.0 (RC3)
-  - Scripted Rendering Data sources (script can be pointed from rendering parameters to resolve the data source).
-  - Item wrapper now has ProviderPath property that returns Path that can be used directly as PowerShell path i.e. drive:\pach\without\sitecore\root\item.
-  - Wrap-Item commandlet for wrapping items retrieved from the Sitecore API with the convenient properties for field access.
-  - Get-Item now works with wildcard versions and Languages selection (to return more than one result per Sitecore item) you can do e.g.: 
-    - Get-ChildItem -Language *
-    - Get-ChildItem -Language en*
-    - Get-ChildItem -Version *
-    - Get-ChildItem -Version * -Language en*
-    Just as before if Version is not given - latest version is returned, if language not specified - current/default language is used.
-  - Get-ItemFromUri commandlet now returns wrapped items.
-- 2.0 (RC2)
-  - Scripted Rendering Data Source definition.
-  - Scripted Data Source Definition.
-- 2.0 (RC1)
-  - Solution audit scripts.
-- 2.0 (Beta 14)
-  - Script libraries added to Core and Master to enable for easy script menagement.
-  - Content Editor Context Menu Scripts are now driven straight from the "Content Editor Context Menu" script library - no need to create menu items - this is now done automatically.
-  - Brand New ISE - now with:
-    - ability to open from libraries (context menu on script will now show and library management
-    - creation of new scripts straight from the ISE
-    - Right clicking the script from the Content Editor Will show "Edit with ISE" option to open ISE with the clicked script
+Thank you for using Sitecore PowerShell Extensions.
 
-- 2.0 (Beta 13)
-  - fixes for Tab Expansion in the Ajax console
-  - web service refactoring - changed place
-  - auto completion and tab expansion code for the Rocks Plugin.
-  - New-Item now properly creates item creation history event for "Create Item" also added -StartWorkflow dynamic parameter to start workflow for newly created items.
-- command completion code now working for paths within all providers.
-- 2.0 (Beta 12)
-  - fix for normal console no longer going to master:\ by default.
-  - PowerShell console added to context menu - now starting with the location already set to the context item.
-  - new commandlets for handling workflow history Get-ItemWorkflowEvent for reading history and New-ItemWorkflowEvent for creating new events.
-- 2.0 (Beta 11)
-  - added "PS&gt; Console" to context menu to be able to run PowerShell from the content exitor tree - in context of the current item.
-  - limited access to the Powershell Console to "Sitecore Client Developing" role and Aministrators only.
-- 2.0 (Beta 10)
-  - Added error reporting to Sitecore log on PS provider operations
-  - added script execution logging to Sitecore log
-  - decreased Json message size to improve communication with the Visual Studio Rocks plugin.
-- 2.0 (Beta 9)
-  - new-item was not returning newly created item to the runspace pipeline for further operations. Does so now.(Thanks Alistair Deneys for making me look into this).
-  - Copy-item was not returning newly created item to the runspace pipeline for further operations. Does so now. (Thanks Alistair Deneys for making me look into this).
-  - Copy-item was expecting the second (Destination) parameter to be a path where the copied item is attached but you could not do something like copy-item item1 item2 to create a copy in place. it will work like that now, but if it detects any slashes \ or / it will fall back to the previous behavior which is treat the second string as destination parent for the original item. (Thanks Alistair Deneys for reporting this).
-  - Fix for Move-Item behavior as described in Sitecore Forums http://sdn.sitecore.net/SDN5/Forum/ShowPost.aspx?PostID=49038 - thanks Philip Vaartstra!
-  - Added Rename-Item command support to the Sitecore PS Provider. Couldn't believe it was missing!
-  - Extended error reporting (as per request of Philip Vaartstra)
-  - Support for resetting fields to standard values through Clear-ItemProperty commandlet.
-  - Remote script execution stub. (Delete Console/Services/RemoteAutomation.asmx - to remove support for remote automation)
-  - Improved support for additional applications - not crashing when settings don't exist.
-  - Console prepared for integration with Rocks Plugin
-  - improved login mechanism
-  - improved Output-Line support - now 3 formats supported jsterm, text, html
-- 2.0 (Beta8)
-  - improvements to handling settings - settings are now handled on a per-user basis (Copied from "All Users" on first save) for every app.
-  - Context Scripts, Ajax Terminal and ISe now have separate set of settings.
-  - Get-ItemTemplate commandlet added which can be piped from Get-Item query. -Recurse parameter causes the commandlet to list base templates as well as the immediate Template for item.
-  - fixes for console not working after Beta7.
-- 2.0 (Beta6)
-  *** Nick's improvements ***
-  - changed project to Web Application to allow web build/deploy
-  - changed project to use WeBlog-like system of deploy.targets to allow machine-specific sitecore DLL references and builds. rename deploy.targets.sample to deploy.targets, edit to your sitecore path, then unload/reload your Visual Studio project.
-  - updated terminal and web service to use a polling system for long-running commands. added settings for initial and max wait between polls -- javascript will exponentially backoff until max is reached. this allows Sitecore Desktop to continue to function while command runs.
-  - added animated gif that displays while command is still running
-  - created workaround for ASP.NET limitations on returned json size by returning command results in multiple payloads if needed
-  - improved some error handling on server side and in javascript
-  *** Adam's improvements ***
-  - made the console compatible with IE quirks mode so now it works properly within Sitecore Desktop on IE. Also added some IE related performance improvements.
-  - changed the way variables are added to runspace (they are no longer introduced as a script but rather done properly added by runspace.SessionStateProxy.SetVariable which makes it possible to add objects rather than only string - which made it possible to add variables like $request, $context, $response... will add more at later time.
-  - Script session now runs in the Request thread so it's possible for the scripts to access the HttpContext.Current. that however  is only working properly outside of Terminal environment as Terminal is running using multiple JSON requests and after the initial call the Context is not valid unless you perform "recycle-session" which gets rid of the session and allows you to do "login-user" on the next request. What is it useful for though is for PowerShell ISE and within all the automated scripts like UI actions (menu ribbon buttons), scheduled tasks etc. where they all run in a single request.
-  - the ability for the script to log into Sitecore and impersonate another user e.g.: "login-user -user admin -password b" with a caveat explained in the above bullet-point
-  - added Get-UserAgent commandlet - pretty self explanatory.
-  - fixed a problem with built in commandlets not being recognized in the default include file.
-- 2.0 (Beta5)
-  - added ability to extract powershell results from the running script.
-- 2.0 (Beta4)
-  - fixed a problem with not being able to change location to an item that is a leaf node in the sidecore tree. (curtesy of report by Mark Berkelaar)
-- 2.0 (Beta3)
-  - improved support for Firefox and Chrome (scrolling &amp; console sizing) &amp; IE (JSON support in quirks mode) - Thanks @MarasM
-- 2.0 (Beta2)
-  - ItemPath properties work again. Attached formaters for Sitecore types work again (curtesy of James Gardner report)
-- 2.0 (Beta) 
-  - JQuery Terminal - replaces the previous textbox based console (Thanks for the help @MarasM). As a Consequence it now behaves almost like a regular Windows PowerShell Console (remembering old calls, inline editing, tab completion etc.)  - Tab Expansion (command auto-completion on tab-press).
-  - ability to add commandlets in 3rd party dlls - you can write your own commandlets now
-  - fixed problems with get-item without specified version/language parameters.
-  - added support for settings properties that are not filled in the current item (accessible only through ReadAll() ), yet defined in item template.
-  - support for item serialization and deserialization. 
-  - explicit support for DateTime fields -e.g. $_.__Unpublish will now return DateTime type and you can assign DateTime to it as well as regular Sitecore Iso date strings. If you want to access the Iso date string use: $_.Fields["__Unpublish"].Value.
-- 1.4.0 Support for get-*item -version &amp; -language. Support for Analytics database access from PowerShell type "get-command get-analytics* | format-table -property Definition" to learn more. Fixed context scripts.
-- 1.3.0 Fixes for path (special case property) added support for all Standard Fields to be attached to all items as scripted properties
-- 1.2.2 Added Analytics Profile card automation
-- 1.2.1 Added Get-User commandlet, added support for building/importing/exporting Packages
-- 1.2.0 support for scheduled tasks calling scripts &amp; new Write-Log commandlet
-- 1.1.4 fixes to context script result console layout, fixes to context scripts, minor optimizations
-- 1.1.3 fixed a problem with open calais handler getting pulled in the mix and breaking things if my OpenCalais module was not installed.
-- 1.1.2. context scripts - check the context menu for items in context editor
-
-This project is very much a work in progress, 
-please report any problems with it to: adam.najmanowicz@cognifide.com
-
-Thank you for using 
-Sitecore PowerShell Console.
-
-Adam Najmanowicz - Cognifide
+Copyright (c) 2010-2013 Adam Najmanowicz - Cognifide
+Copyright (c) 2013 Michael West
 
 http://www.cognifide.com/
-http://blog.najmanowicz.com/</Readme>
+http://blog.najmanowicz.com/
+http://michaellwest.blogspot.com/</Readme>
       <Publisher>Cognifide Limited</Publisher>
       <PostStep />
       <PackageID />
