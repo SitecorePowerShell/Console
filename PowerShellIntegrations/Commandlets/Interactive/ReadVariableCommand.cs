@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
@@ -85,7 +86,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     foreach (Hashtable result in results)
                     {
-                        SessionState.PSVariable.Set((string) result["Name"], result["Value"]);
+                        object resultValue = result["Value"];
+                        if (resultValue is Item)
+                        {
+                            resultValue = ItemShellExtensions.GetPsObject(SessionState, resultValue as Item);
+                        }
+                        SessionState.PSVariable.Set((string)result["Name"], resultValue);
                     }
                 }
             });
