@@ -1355,6 +1355,7 @@
     var format_re = /\[\[([gbius]*);([^;]*);([^;\]]*);?([^;\]]*);?([^\]]*)\]([^\]]*\\\][^\]]*|[^\]]*|[^\[]*\[[^\]]*)\]?/g;
     var color_hex_re = /#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})/;
     var url_re = /https?:\/\/(?:(?!&[^;]+;)[^\s:"'<>)])+/g;
+    var guid_re = /(\{{1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{1})/g;
     var email_regex = /((([^<>('")[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))/g;
     $.terminal = {
         // split text into lines with equal length and make each line be renderd
@@ -1534,7 +1535,8 @@
                             link = link.replace(/\.$/, '');
                             return '<a target="_blank" href="' + link + '">' + link + '</a>' +
                                 (comma ? '.' : '');
-                        }).replace(email_regex, '<a href="mailto:$1">$1</a>');
+                        }).replace(email_regex, '<a href="mailto:$1">$1</a>')
+                            .replace(guid_re, "<a href=\"/sitecore/shell/sitecore/content/Applications/Content%20Editor.aspx?id=$1&fo=$1\" target=\"_blank\">$1</a>");
                     } else {
                         return string;
                     }
