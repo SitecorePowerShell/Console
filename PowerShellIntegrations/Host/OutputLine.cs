@@ -120,10 +120,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public void GetPlainTextLine(StringBuilder output)
         {
             output.Append(Text);
-            if (Terminated)
-            {
-                output.Append("\n");
-            }
         }
 
         public void GetLine(StringBuilder temp, string stringFormat)

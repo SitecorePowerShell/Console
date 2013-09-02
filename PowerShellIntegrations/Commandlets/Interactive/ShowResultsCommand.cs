@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         ScriptSession session = SessionState.PSVariable.Get("ScriptSession").Value as ScriptSession;
                         if (session!= null)
                         {
-                            var message = new ShowResultsMessage(session.Output.ToString(), WidthString, HeightString);
+                            var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString);
                             
                             JobContext.MessageQueue.PutMessage(message);
                             JobContext.Flush();

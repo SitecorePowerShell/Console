@@ -12,18 +12,48 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 900607d8-1fcf-4f31-8c06-0a0e1ecd860c
+revision: 7f306535-4324-4a18-a63c-c9cb8e2c0ac4
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5145
+content-length: 6182
 
-$package = get-package "PowerShell Console.xml"
+$package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
-$psVersion = 2.3
+$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Version = "2.3";
+$package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
+The "PowerShell Console" available from the "Sitecore"
+menu and the "PowerShell ISE" available from the 
+"Developer Tools" sub-menu.
+
+PowerShell ISE comes with a sample script and
+Script Library for you to experiment with. Enjoy!
+
+Most Recent Releases:
+- 2.3 (1 September 2013)
+  Release Notes: http://bit.ly/ScPs23Iss
+- 2.2 (30 July 2013)
+  Release Notes: http://bit.ly/ScPs22Iss
+- 2.1 (15 July 2013)
+  Release Notes: http://bit.ly/ScPs21Iss
+
+Please report any problems in our issue tracker:
+http://bit.ly/ScPsIss
+
+Thank you for using Sitecore PowerShell Extensions.
+
+Copyright (c) 2010-2013 Adam Najmanowicz - Cognifide
+Copyright (c) 2013 Michael West
+
+http://www.cognifide.com/
+http://blog.najmanowicz.com/
+http://michaellwest.blogspot.com/'
 
 # Item templates
 $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name "Master Item Templates" -InstallMode Overwrite -MergeMode Merge
@@ -102,8 +132,8 @@ $package.Sources.Add($source);
 $source = Get-ChildItem -Path "$AppPath\sitecore\Shell\Applications\Powershell\*" -Recurse -File | New-ExplicitFileSource -Name "Application Files"
 $package.Sources.Add($source);
 
-Export-Package -Project $package -Path "Sitecore PowerShell Extensions-$psVersion.xml"
-Export-Package -Project $package -Path "Sitecore PowerShell Extensions-$psVersion.zip" -Zip
+Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).xml"
+Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -117,14 +147,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-900607d8-1fcf-4f31-8c06-0a0e1ecd860c
+7f306535-4324-4a18-a63c-c9cb8e2c0ac4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130820T150951:635126081912913281
+20130901T224455:635136722956690937
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
