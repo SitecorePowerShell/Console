@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand(command, out lastToken);
-            return string.IsNullOrEmpty(lastToken) ? command : lastToken;
+            return string.IsNullOrEmpty(lastToken) ? string.Empty : lastToken;
         }
 
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
@@ -159,10 +159,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Collection<PSToken> tokens = PSParser.Tokenize(command, out errors);
             string truncatedCommand = string.Empty;
             lastToken = string.Empty;
+            PSToken lastPsToken;
             switch (tokens.Count)
             {
                 case (0):
                     break;
+/*
                 case (1):
                     PSToken lastPsToken = tokens.Last();
                     if (lastPsToken.Type != PSTokenType.Variable && lastPsToken.Type != PSTokenType.Command)
@@ -170,10 +172,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                         truncatedCommand = command;
                     }
                     break;
+*/
                 default:
                     lastPsToken = tokens.Last();
                     int start = lastPsToken.Start;
-                    if ((lastPsToken.Content == "\\" || lastPsToken.Content == "/") &&
+                    if ((lastPsToken.Content == "\\" || lastPsToken.Content == "/") && tokens.Count > 1 &
                         tokens[tokens.Count - 2].Type == PSTokenType.String)
                     {
                         start = tokens[tokens.Count - 2].Start;
@@ -183,6 +186,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     if (lastPsToken.Type == PSTokenType.Operator)
                     {
                         truncatedCommand = command;
+                        lastToken = string.Empty;
                     }
                     else
                     {
