@@ -10,16 +10,22 @@ Get-ChildItem -Path master:\content\home -Recurse | % { $_.Text += "<p>Updated w
 ```
 - Find the oldest page on your site:
 ```
-Get-ChildItem -Path master:\content\home -Recurse | Select-Object -Property Name,Id,"__Updated" | Sort-Object -Property "__Updated"
+gci master:\content\home -Recurse | select Name,Id,"__Updated" | sort "__Updated"
 ```
 - Remove a file from the Data directory:
 ```
-Get-ChildItem -Path $SitecoreDataFolder\packages -Filter "readme.txt" | Remove-Item
+gci $SitecoreDataFolder\packages -Filter "readme.txt" | ri
 ```
 - Rename items in the Media Library:
 ```
-Get-ChildItem -Path "master:\media library\Images" | % { Rename-Item -Path $_.ItemPath -NewName ($_.Name + "-old") }
+gci "master:\media library\Images" | % { rni $_.ItemPath -NewName ($_.Name + "-old") }
 ```
+
+Note:
+Aliases and positional parameters were used in the above examples
+* gci = Get-ChildItem
+* ri = Remove-Item
+* rni = Rename-Item
 
 If you can answer yes to any of those (and more), you will certainly find this module a powerful and necessary tool.
 
@@ -34,7 +40,7 @@ Enjoy!
 [Michael West] (http://michaellwest.blogspot.com)
 
 
-If you simply want to download the module go to The Sitecore Marketplace and download the latest from the 
+If you simply want to download the module go to the Sitecore Marketplace and download the latest from the
 [Sitecore PowerShell Extensions Page](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx)
 
 [Training Videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b)
