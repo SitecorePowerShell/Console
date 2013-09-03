@@ -164,15 +164,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 case (0):
                     break;
-/*
-                case (1):
-                    PSToken lastPsToken = tokens.Last();
-                    if (lastPsToken.Type != PSTokenType.Variable && lastPsToken.Type != PSTokenType.Command)
-                    {
-                        truncatedCommand = command;
-                    }
-                    break;
-*/
                 default:
                     lastPsToken = tokens.Last();
                     int start = lastPsToken.Start;
