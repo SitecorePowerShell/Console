@@ -270,6 +270,12 @@ html{
     float: right;
     margin-left: 2px;
 }
+.status-bar-paging
+{
+    float: right;
+    width: 80px;
+    margin-left: 2px;
+}
 
 .ui-dialog {
     z-index: 1;
@@ -437,3 +443,5 @@ a.ps-link
 #Tip .ui-widget-header .ui-state-focus {
      border: 1px solid #fcefa1 /*{borderColorHover}*/; background: #012456/*{bgColorHover}*/  50%/*{bgHoverXPos}*/ 50%/*{bgHoverYPos}*/ repeat-x/*{bgHoverRepeat}*/; font-weight: normal/*{fwDefault}*/; color: white/*{fcHover}*/;
 }
+#Filter { margin-top: 8px; }
+#Input_Filter{ width: 300px;padding-left: 3px;}

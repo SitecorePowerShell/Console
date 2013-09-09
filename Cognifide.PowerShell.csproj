@@ -127,13 +127,16 @@
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\OutListViewCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowListViewMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowMultiValuePromptMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ReadVariableCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowResultsMessage.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowResultsCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowListViewCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\DownloadMessage.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowResultsCommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
@@ -235,7 +238,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
-    <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerGrid.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerList.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellMultiValuePrompt.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerText.cs" />
     <Compile Include="SitecoreIntegrations\Applications\DownloadFile.cs" />
@@ -267,6 +270,8 @@
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\RebuildControlPanelIntegration.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\ListViewComparer.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\PowerShellListView.cs" />
     <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
     <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
@@ -351,6 +356,7 @@
     <Content Include="Console\Scripts\ace\snippets-powershell.js" />
     <Content Include="Console\Scripts\ace\snippets\powershell.js" />
     <Content Include="Console\Scripts\ace\theme-powershellise.js" />
+    <Content Include="Console\Scripts\listview.js" />
     <Content Include="Console\Scripts\VariablePrompt.js" />
     <Content Include="Console\Scripts\ise.js" />
     <Content Include="Console\Scripts\jquery-1.10.2.min.js" />
@@ -381,7 +387,7 @@
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerGrid.xml">
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerList.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellMultiValuePrompt.xml">

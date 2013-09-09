@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
-  <PowerShellResultViewerGrid>
-    <FormPage Application="PowerShell/PowerShellGridView">
+  <PowerShellResultViewerList>
+    <FormPage Application="PowerShell/PowerShellListView">
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerGrid,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
@@ -16,19 +16,20 @@
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
       <Script src="/Console/Scripts/json2.js" runat="server"></Script>
       <Script src="/Console/Scripts/jquery-ui.js"></Script>
+      <Script src="/Console/Scripts/listview.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
         <Border ID="RibbonPanel" />
         <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
-          <ListView ID="Viewer" Width="100%" Height="100%"/>
+          <PowerShellListView ID="ListViewer" Width="100%" Height="100%" Background="white" Multiselect="true" runat="server"></PowerShellListView>
         </GridPanel>
         <Border ID="StatusBar">
-          <Border class="status-bar-panel status-bar-pos">
-            Col: <Literal ID="PosX" Text=""/>
+          <Border class="status-bar-panel status-bar-paging">
+            Results: <Literal ID="ItemCount" Text=""/>
           </Border>
-          <Border class="status-bar-panel status-bar-pos">
-            Ln: <Literal ID="PosY" Text=""/>
+          <Border class="status-bar-panel status-bar-paging">
+            Page: <Literal ID="CurrentPage" Text=""/> / <Literal ID="PageCount" Text=""/>
           </Border>
           <Border class="status-bar-panel status-bar-text">
             <Literal ID="StatusTip">
@@ -37,22 +38,6 @@
           </Border>
         </Border>
       </GridPanel>
-      <Border ID="Tip">
-      </Border>
-      <Border ID="Help">
-        This is dialog content.
-      </Border>
-      <Border id="TipOfTheSession">
-        <Border class="ui-state-highlight ui-corner-all">
-          <p>
-            <Literal class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></Literal>
-            <p>
-              <strong> Hey! Did you know that... </strong>
-            </p>
-            <Literal ID="TipText"></Literal>
-          </p>
-        </Border>
-      </Border>
     </FormPage>
-  </PowerShellResultViewerGrid>
+  </PowerShellResultViewerList>
 </control>

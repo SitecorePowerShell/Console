@@ -5,13 +5,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     public class BaseFormCommand : BaseShellCommand
     {
-        [Parameter(ValueFromPipeline = true, Position = 0)]
+        [Parameter]
         public string Title { get; set; }
 
-        [Parameter(Position = 1)]
+        [Parameter]
         public int Width { get; set; }
 
-        [Parameter(Position = 2)]
+        [Parameter]
         public int Height { get; set; }
 
         protected string WidthString { get { return Width.ToString(CultureInfo.InvariantCulture); } }

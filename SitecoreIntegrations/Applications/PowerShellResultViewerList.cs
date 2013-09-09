@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Globalization;
+using System.Web.Configuration;
+using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -12,15 +16,17 @@ using Sitecore.Web.UI.WebControls.Ribbons;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellResultViewerGrid : BaseForm, IHasCommandContext
+    public class PowerShellResultViewerList : BaseForm, IHasCommandContext
     {
         protected JobMonitor Monitor;
-        protected Scrollbox Result;
         protected Border RibbonPanel;
-        protected Border ProgressOverlay;
-        protected Border ScriptResult;
-        protected Border EnterScriptInfo;
-        protected Border ScriptName;
+        protected Border StatusBar;
+        protected Literal StatusTip;
+        protected Image RefreshHint;
+        protected PowerShellListView ListViewer;
+        protected Literal ItemCount;
+        protected Literal CurrentPage;
+        protected Literal PageCount;
         
         public string ParentFrameName
         {
@@ -66,8 +72,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (Context.ClientPage.IsEvent)
                 return;
 
+            string sid = WebUtil.GetQueryString("sid");
+            ListViewer.ContextId = sid;
+            ListViewer.Refresh();
+            ChangePage(ListViewer.CurrentPage);
             Monitor.JobFinished += MonitorJobFinished;
             Monitor.JobDisappeared += MonitorJobFinished;
+            ListViewer.View = "Details";
+            ListViewer.DblClick = "OnDoubleClick";
 
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
@@ -76,6 +88,33 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         private void MonitorJobFinished(object sender, EventArgs e)
         {
             UpdateRibbon();
+        }
+
+        [HandleMessage("pslv:filter")]
+        public void Filter()
+        {
+            ListViewer.Filter = Context.ClientPage.Request.Params["Input_Filter"];
+            ListViewer.Refresh();
+            ChangePage(1);
+        }
+
+        public void OnDoubleClick()
+        {
+            if (ListViewer.GetSelectedItems().Length <= 0) return;
+            var clickedId = Int32.Parse(ListViewer.GetSelectedItems()[0].Value);
+            var originalData = ListViewer.Data.Data[clickedId].Original;
+            if(originalData is Item)
+            {
+                var clickedItem = originalData as Item;
+                var urlParams = new UrlString();
+                urlParams.Add("id", clickedItem.ID.ToString());
+                urlParams.Add("fo", clickedItem.ID.ToString());
+                urlParams.Add("la", clickedItem.Language.Name);
+                urlParams.Add("vs", clickedItem.Version.Number.ToString(CultureInfo.InvariantCulture));
+                urlParams.Add("sc_content", clickedItem.Database.Name);
+                Windows.RunApplication("Content editor", urlParams.ToString());
+            }
+            ListViewer.Refresh();
         }
 
         /// <summary>
@@ -87,8 +126,30 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Error.AssertObject(message, "message");
             Item item = ScriptItemId == null ? null : Client.ContentDatabase.GetItem(ScriptItemId);
 
-            base.HandleMessage(message);
-
+            switch (message.Name)
+            {
+                case ("pslv:filter"):
+                    Filter();
+                    message.CancelBubble = true;
+                    message.CancelDispatch = true;
+                    return;
+                case ("pslvnav:first"):
+                    ChangePage(0);
+                    return;
+                case ("pslvnav:last"):
+                    ChangePage(Int32.MaxValue);
+                    return;
+                case ("pslvnav:previous"):
+                    ChangePage(ListViewer.CurrentPage - 1);
+                    ListViewer.Refresh();
+                    return;
+                case ("pslvnav:next"):
+                    ChangePage(ListViewer.CurrentPage + 1);
+                    return;
+                default:
+                    base.HandleMessage(message);
+                    break;
+            }
             var context = new CommandContext(item);
             foreach (string key in message.Arguments.AllKeys)
             {
@@ -101,6 +162,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
 
             Dispatcher.Dispatch(message, context);
+        }
+
+        private void ChangePage(int newPage)
+        {
+            int count = ListViewer.FilteredCount;
+            int pageSize = ListViewer.Data.PageSize;
+            int pageCount = count/pageSize + ((count%pageSize > 0) ? 1 : 0);            
+            newPage = Math.Min(Math.Max(1, newPage),pageCount);
+            ListViewer.CurrentPage = newPage;
+            ItemCount.Text = count.ToString(CultureInfo.InvariantCulture);
+            CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
+            PageCount.Text = (pageCount).ToString(CultureInfo.InvariantCulture);
+            SheerResponse.Eval(string.Format("updateStatusBarCounters({0},{1},{2});", ItemCount.Text, CurrentPage.Text, PageCount.Text));
+            ListViewer.Refresh();
         }
 
         [HandleMessage("ise:updateribbon")]
@@ -118,13 +193,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Item item = ScriptItemId == null ? null : Client.ContentDatabase.GetItem(ScriptItemId);
             ribbon.CommandContext = new CommandContext(item);
             ribbon.ShowContextualTabs = false;
-/*
-            ribbon.CommandContext.Parameters["HasFile"] = HasFile.Disabled ? "0" : "1";
-            ribbon.CommandContext.Parameters["ScriptRunning"] = ScriptRunning ? "1" : "0";
-*/
-
-            Item obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellGridView/Ribbon");
-            Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellGridView/Ribbon");
+            Item obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon");
+            Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
         }
@@ -135,6 +205,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
             return context;
         }
+
 
     }
 }
