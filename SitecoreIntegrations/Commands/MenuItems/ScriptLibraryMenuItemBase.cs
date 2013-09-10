@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -10,10 +9,10 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
+namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
     [Serializable]
-    public class ScriptLibraryMenuItem : Command
+    public abstract class ScriptLibraryMenuItemBase : Command
     {
         public override CommandState QueryState(CommandContext context)
         {
@@ -23,12 +22,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         public override void Execute(CommandContext context)
         {
             SheerResponse.DisableOutput();
-            var subMenu = new Menu();
+            var subMenu = new ContextMenu();
             var menuItems = new List<Control>();
             string menuItemId = context.Parameters["menuItemId"];
             Item contextItem = context.Items.Length == 1
                 ? context.Items[0]
-                : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
+                : string.IsNullOrEmpty(context.Parameters["db"]) || string.IsNullOrEmpty(context.Parameters["id"])
+                    ? null
+                    : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
             GetLibraryMenuItems(contextItem, menuItems, context.Parameters["scriptDB"], context.Parameters["scriptPath"]);
 
             foreach (Control item in menuItems)
@@ -36,12 +37,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                 var menuItem = item as MenuItem;
                 if (menuItem != null)
                 {
-                    subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey, menuItem.Click,
+                    var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey, menuItem.Click,
                         menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
+                    subItem.Disabled = menuItem.Disabled;
                 }
             }
             SheerResponse.EnableOutput();
-            SheerResponse.ShowPopup(menuItemId, "right", subMenu);
+            subMenu.Visible = true;
+            SheerResponse.ShowContextMenu(menuItemId, "right", subMenu);
         }
 
         public override Control[] GetSubmenuItems(CommandContext context)
@@ -49,15 +52,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             if (context.Items.Length != 1)
                 return null;
 
-            const string scriptLibPath =
-                "/sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu";
             var menuItems = new List<Control>();
 
-            GetLibraryMenuItems(context.Items[0], menuItems, "core", scriptLibPath);
-            GetLibraryMenuItems(context.Items[0], menuItems, "master", scriptLibPath);
+            GetLibraryMenuItems(context.Items[0], menuItems, "core", ScriptLibraryPath);
+            GetLibraryMenuItems(context.Items[0], menuItems, "master", ScriptLibraryPath);
 
             return menuItems.ToArray();
         }
+
+        public abstract string ScriptLibraryPath { get; }
 
         private static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, string scriptDb,
             string scriptLibPath)
@@ -81,15 +84,33 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
-                    menuItem.Click = string.Format("item:executescript(id={0},db={1},script={2},scriptDb={3})",
-                        contextItem.ID, contextItem.Database.Name, scriptItem.ID, scriptItem.Database.Name);
+                    if (contextItem != null)
+                    {
+                        menuItem.Click = string.Format("item:executescript(id={0},db={1},script={2},scriptDb={3})",
+                            contextItem.ID, contextItem.Database.Name, scriptItem.ID, scriptItem.Database.Name);
+                    }
+                    else
+                    {
+                        menuItem.Click = string.Format("item:executescript(script={0},scriptDb={1})",
+                            scriptItem.ID, scriptItem.Database.Name);
+                    }
                 }
                 else
                 {
                     menuItem.Type = MenuItemType.Submenu;
-                    menuItem.Click = string.Format(
-                        "item:scriptlibrary(id={0},db={1},scriptPath={2},scriptDB={3},menuItemId={4})",
-                        contextItem.ID, contextItem.Database.Name, scriptItem.Paths.Path, scriptItem.Database.Name, menuItem.ID);
+                    if (contextItem != null)
+                    {
+                        menuItem.Click = string.Format(
+                            "item:scriptlibrary(id={0},db={1},scriptPath={2},scriptDB={3},menuItemId={4})",
+                            contextItem.ID, contextItem.Database.Name, scriptItem.Paths.Path, scriptItem.Database.Name,
+                            menuItem.ID);
+                    }
+                    else
+                    {
+                        menuItem.Click = string.Format(
+                            "item:scriptlibrary(scriptPath={0},scriptDB={1},menuItemId={2})",
+                            scriptItem.Paths.Path, scriptItem.Database.Name, menuItem.ID);
+                    }
                 }
                 menuItems.Add(menuItem);
             }

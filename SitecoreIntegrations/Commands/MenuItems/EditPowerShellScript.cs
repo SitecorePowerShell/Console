@@ -6,7 +6,7 @@ using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 
-namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
+namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
     [Serializable]
     public class EditPowerShellScript : Command

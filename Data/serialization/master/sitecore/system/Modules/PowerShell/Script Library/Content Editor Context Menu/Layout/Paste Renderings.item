@@ -26,21 +26,15 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: ed73283a-ba7e-438f-9e2e-bed4509b202f
+revision: 44d4528a-2377-4aa7-991c-47e7671e6a4d
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 271
+content-length: 11
 
-<ruleset>
-  <rule uid="{849651FB-69D4-4FDA-B7EC-29E04FE77966}">
-    <conditions>
-      <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="E628DAEB007D4F77BD3A16BE88C60FC2" persistentsessionid="renderingCopySession" />
-    </conditions>
-  </rule>
-</ruleset>
+<ruleset />
 ----field----
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
@@ -85,14 +79,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ed73283a-ba7e-438f-9e2e-bed4509b202f
+44d4528a-2377-4aa7-991c-47e7671e6a4d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130818T023717:635123902372939922
+20130911T000435:635144546757075313
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -19,21 +19,15 @@ Applications/32x32/copy.png
 ----version----
 language: en
 version: 1
-revision: 13c6d6d9-1ff2-41ab-b256-2ff3d7c50405
+revision: d5b52fa9-a272-41e6-a74e-918ea358ce9a
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 228
+content-length: 11
 
-<ruleset>
-  <rule uid="{788F6C3C-E498-486A-9EC1-906DA5EAE120}">
-    <conditions>
-      <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="7CC3B10C5B6D4958A0A6AC3034BA6D50" />
-    </conditions>
-  </rule>
-</ruleset>
+<ruleset />
 ----field----
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
@@ -79,14 +73,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-13c6d6d9-1ff2-41ab-b256-2ff3d7c50405
+d5b52fa9-a272-41e6-a74e-918ea358ce9a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130818T023648:635123902082002422
+20130911T000417:635144546570102656
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

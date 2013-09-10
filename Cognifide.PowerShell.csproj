@@ -265,6 +265,8 @@
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="SitecoreIntegrations\Commands\AbortQueryState.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ContentEditorContextMenuItem.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ReportsScriptLibraryMenuItem.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContentEditorIntegrationBase.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextTerminal.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
@@ -287,11 +289,11 @@
     </Compile>
     <Compile Include="SitecoreIntegrations\Commands\RuntimeQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ItemDefinedQueryState.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\EditPowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\EditPowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecuteFieldEditor.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ScriptLibraryMenuItem.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellConsole.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ExecutePowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ScriptLibraryMenuItemBase.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellConsole.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Rules\PowerShellSessionExists.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />

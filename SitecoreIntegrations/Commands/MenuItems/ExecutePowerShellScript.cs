@@ -8,7 +8,7 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
+namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
     [Serializable]
     public class ExecutePowerShellScript : Command
