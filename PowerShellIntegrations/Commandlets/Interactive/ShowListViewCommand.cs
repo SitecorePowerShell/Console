@@ -43,6 +43,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         public string Icon { get; set; }
 
         [Parameter]
+        public string InfoTitle { get; set; }
+
+        [Parameter]
+        public string InfoDescription { get; set; }
+
+        [Parameter]
         public SwitchParameter Modal { get; set; }
 
         protected override void BeginProcessing()
@@ -91,7 +97,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     var message =
                         new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results", Icon,
-                            WidthString, HeightString, Modal.IsPresent);
+                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription);
 
                     JobContext.MessageQueue.PutMessage(message);
                     JobContext.Flush();

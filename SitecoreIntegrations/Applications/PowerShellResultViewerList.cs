@@ -8,11 +8,14 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
+using Image = Sitecore.Web.UI.HtmlControls.Image;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -27,7 +30,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal ItemCount;
         protected Literal CurrentPage;
         protected Literal PageCount;
-        
+        protected Literal InfoTitle;
+        protected Literal Description;
+        protected GridPanel InfoPanel;
+        protected ThemedImage InfoIcon;
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -80,7 +86,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Monitor.JobDisappeared += MonitorJobFinished;
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
+            string infoTitle = ListViewer.Data.InfoTitle;
+            string infoDescription = ListViewer.Data.InfoDescription;
 
+            if (string.IsNullOrEmpty(infoTitle) && string.IsNullOrEmpty(infoDescription))
+            {
+                InfoPanel.Visible = false;
+            }
+            else
+            {
+                InfoTitle.Text = infoTitle ?? string.Empty;
+                Description.Text = infoDescription ?? string.Empty;
+                if (!string.IsNullOrEmpty(ListViewer.Data.Icon))
+                {
+                    InfoIcon.Src = ListViewer.Data.Icon;
+                }
+            }
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
         }

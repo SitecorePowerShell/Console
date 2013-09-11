@@ -25,9 +25,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public int PageSize { get; private set; }
         public ScriptSession Session { get; private set; }
         public bool Modal { get; set; }
+        public string InfoTitle { get; private set; }
+        public string InfoDescription { get; private set; }
 
 
-        public ShowListViewMessage(List<ShowListViewCommand.SvlDataObject> data, int pageSize, string title, string icon, string width, string height, bool modal)
+        public ShowListViewMessage(List<ShowListViewCommand.SvlDataObject> data, int pageSize, string title, string icon,
+            string width, string height, bool modal, string infoTitle, string infoDescription)
         {
             Data = data;
             Title = title;
@@ -36,11 +39,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             PageSize = pageSize;
             Icon = icon;
             Modal = modal;
+            InfoTitle = infoTitle;
+            InfoDescription = infoDescription;
         }
 
         public void Execute()
         {
-            string resultSig = Guid.NewGuid().ToString();            
+            string resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = this;
             if (!Modal)
             {
@@ -54,7 +59,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerList"));
                 urlString.Add("sid", resultSig);
-                SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);                
+                SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
             }
         }
     }

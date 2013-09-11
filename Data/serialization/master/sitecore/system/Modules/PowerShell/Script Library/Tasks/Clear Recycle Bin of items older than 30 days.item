@@ -12,15 +12,18 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 2f1853eb-864b-4537-8680-890249ccaf96
+revision: 593c1b25-7467-4017-8a1e-875f102605f8
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 52
+content-length: 172
 
-Write-Log “Recycle bin clear scheduled task started”
+Write-Log "Recycle bin clear scheduled task started"
+
+Execute-Script -Path 'master:\system\Modules\PowerShell\Script Library\Functions\Clear-Archive'
+Clear-Archive -Days 30
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -34,14 +37,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2f1853eb-864b-4537-8680-890249ccaf96
+593c1b25-7467-4017-8a1e-875f102605f8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130721T153046:635100174469672421
+20130911T124310:635145001906073672
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

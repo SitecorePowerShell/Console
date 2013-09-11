@@ -445,3 +445,16 @@ a.ps-link
 }
 #Filter { margin-top: 8px; }
 #Input_Filter{ width: 300px;padding-left: 3px;}
+
+/* List view Page*/
+.scEditorWarningIcon {
+    margin: 0 16px 0 8px;
+}
+.scEditorWarningTitle {
+    width: 100%;
+    float: left;
+}
+.scEditorWarningHelp {
+    width: 100%;
+    float: left;
+}
