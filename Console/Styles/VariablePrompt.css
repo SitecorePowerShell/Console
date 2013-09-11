@@ -65,3 +65,16 @@
     margin-top: 2px;
     vertical-align: top;
 }
+
+.EntryGrid
+{
+    background: #e9e9e9;
+    white-space: nowrap;
+    vertical-align: top;
+    height: 100%;
+}
+
+#ValuePanel {
+    padding: 8px;
+    width: 100%;
+}
