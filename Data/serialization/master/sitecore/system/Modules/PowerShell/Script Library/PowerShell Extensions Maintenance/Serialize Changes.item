@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 9b39598e-f18c-4c96-a43a-c39031fdf461
+revision: 5fbab165-64f2-4d18-b2d7-c00d260b66c9
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3422
+content-length: 3295
 
 # Item templates
 Get-Item 'master:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
@@ -60,21 +60,20 @@ Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Serialize-Item
 Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Serialize-Item -Recurse
 
 # Start Menu icons
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE\' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console\' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
+Get-Item 'core:/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE/' | Serialize-Item
+Get-Item 'core:/content/Documents and settings/All users/Start menu/Right/PowerShell Console/' | Serialize-Item
 
 # Content Editor Context Menu integration
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/PowerShell/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/PowerShell Console/' | Serialize-Item
 
 # Content Editor Ribbon integration
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\Scripts\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\Terminal\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Strips\View\PowerShell\' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Scripts/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/Terminal/' | Serialize-Item
+Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | Serialize-Item
 
 
 #-name * -path "master:\system\Modules\PowerShell\Settings" -Exclude "sitecore" -Recurse
@@ -91,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9b39598e-f18c-4c96-a43a-c39031fdf461
+5fbab165-64f2-4d18-b2d7-c00d260b66c9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T002410:635144558508462031
+20130819T132011:635125152115991953
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
