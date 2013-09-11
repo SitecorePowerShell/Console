@@ -108,20 +108,27 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             object value = variable["Value"];
             string name = (string) variable["Name"];
+            string editor = variable["Editor"] as string;
             Type type = value.GetType();
 
-            if (type == typeof (DateTime))
+            if (type == typeof (DateTime) ||
+                (!string.IsNullOrEmpty(editor) &&
+                 (editor.IndexOf("date", StringComparison.OrdinalIgnoreCase) > -1 ||
+                  editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var dateTimePicker = new DateTimePicker
                 {
                     ID = Control.GetUniqueID("variable_" + name + "_"),
-                    ShowTime = variable["ShowTime"] != null && (bool) variable["ShowTime"],
-                    Value = DateUtil.ToIsoDate((DateTime) value)
+                    ShowTime = (variable["ShowTime"] != null && (bool) variable["ShowTime"]) ||
+                               (!string.IsNullOrEmpty(editor) &&
+                                editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1),
                 };
+                dateTimePicker.Value = value is DateTime ? DateUtil.ToIsoDate((DateTime)value) : (string)value;
                 return dateTimePicker;
             }
 
-            if (type == typeof (Item))
+            if (type == typeof (Item) || 
+                (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var item = (Item) value;
                 var dataContext = new DataContext
@@ -149,7 +156,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return treePicker;
             }
 
-            if (type == typeof(bool))
+            if (type == typeof(bool) ||
+                (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var checkBox = new Checkbox
                 {
@@ -162,12 +170,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return checkBox;
             }
 
-            string editorParam = variable["Editor"] as string;
-            if (!string.IsNullOrEmpty(editorParam))
+            if (!string.IsNullOrEmpty(editor))
             {
-                bool showRoles = editorParam.IndexOf("role", StringComparison.OrdinalIgnoreCase) > -1;
-                bool showUsers = editorParam.IndexOf("user", StringComparison.OrdinalIgnoreCase) > -1;
-                bool multiple = editorParam.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
+                bool showRoles = editor.IndexOf("role", StringComparison.OrdinalIgnoreCase) > -1;
+                bool showUsers = editor.IndexOf("user", StringComparison.OrdinalIgnoreCase) > -1;
+                bool multiple = editor.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
                 if (showRoles || showUsers)
                 {
                     UserPicker picker = new UserPicker();

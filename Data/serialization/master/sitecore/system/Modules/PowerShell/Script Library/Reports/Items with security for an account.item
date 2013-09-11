@@ -19,34 +19,40 @@ Applications/32x32/document_forbidden.png
 ----version----
 language: en
 version: 1
-revision: 19f24ee8-da8a-40cb-b7c9-a8667195984a
+revision: 0a9e0d33-e63b-41bf-9227-86deac029a4c
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 972
+content-length: 1074
 
 $item = get-item master:\content\
 $result = Read-Variable -Parameters `
     @{ Name = "item"; Title="Start Item"; Tooltip="Branch you want to analyse."}, `
-    @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user role"} `
+    @{ Name = "user"; Title="Select User"; Tooltip="Tooltip for user"; Editor="user role"} `
     -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
     -Title "Security for a user" -Width 600 -Height 280 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
 
 if($result -ne "ok")
 {
+    Close-Window
     Exit
 }
 
 $user = $user.Replace("\","\\")
+if("$user" -eq ""){
+    $user="\|"
+}
+
 gci $item.ProviderPath -r -Version * -Language * | Where-Object {$_.__Security -match $user } | `
     Show-ListView -Property @{Label="Name"; Expression={$_.DisplayName} }, Version, Language, `
         @{Label="Updated"; Expression={$_.__Updated} }, `
         @{Label="Created"; Expression={$_.__Created} }, `
-        @{Label="Path"; Expression={$_.ItemPath} } `
-        -PageSize 1000
+        @{Label="Path"; Expression={$_.ItemPath} }, `
+        @{Label="Security"; Expression={$_.__Security} } `
+        -PageSize 30
 Close-Window
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -61,14 +67,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-19f24ee8-da8a-40cb-b7c9-a8667195984a
+0a9e0d33-e63b-41bf-9227-86deac029a4c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T010821:635144585017778438
+20130911T035803:635144686835112422
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
