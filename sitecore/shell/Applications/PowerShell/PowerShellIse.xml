@@ -8,6 +8,7 @@
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/ise.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
@@ -45,7 +46,7 @@
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
-            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Style="padding-bottom:0px">
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Style="padding-bottom:2px">
               <Literal Text="Result:" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
               <Scrollbox ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results" GridPanel.Style="padding:0px">
                 <Border ID="EnterScriptInfo" Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
@@ -65,10 +66,10 @@
           </GridPanel>
         </GridPanel>
         <Border ID="StatusBar">
-          <Border class="status-bar-panel status-bar-pos">
+          <Border class="status-bar-panel status-bar-right">
             Col: <Literal ID="PosX" Text=""/>
           </Border>
-          <Border class="status-bar-panel status-bar-pos">
+          <Border class="status-bar-panel status-bar-right">
             Ln: <Literal ID="PosY" Text=""/>
           </Border>
           <Border class="status-bar-panel status-bar-text">

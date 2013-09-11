@@ -34,10 +34,10 @@
           <PowerShellListView ID="ListViewer" Width="100%" Height="100%" Background="white" Multiselect="true" runat="server"></PowerShellListView>
         </GridPanel>
         <Border ID="StatusBar">
-          <Border class="status-bar-panel status-bar-paging">
+          <Border class="status-bar-panel status-bar-left">
             Results: <Literal ID="ItemCount" Text=""/>
           </Border>
-          <Border class="status-bar-panel status-bar-paging">
+          <Border class="status-bar-panel status-bar-left">
             Page: <Literal ID="CurrentPage" Text=""/> / <Literal ID="PageCount" Text=""/>
           </Border>
           <Border class="status-bar-panel status-bar-text">

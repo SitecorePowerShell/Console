@@ -183,7 +183,7 @@ extend(cognifide, 'powershell');
             .delay(2000)
             .hide("drop", { direction: "down" }, "400",
                 function () {
-                    $(".status-bar-text").animate({ backgroundColor: "#012456" }).animate({ backgroundColor: "#fff" });
+                    $(".status-bar-text").animate({ backgroundColor: "#fcefa1" }).animate({ backgroundColor: "#fff" });
                 });
 
         $(".status-bar-text").click(function () {

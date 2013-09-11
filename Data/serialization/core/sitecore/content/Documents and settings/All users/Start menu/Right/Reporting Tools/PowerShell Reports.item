@@ -92,7 +92,7 @@ name: __Sortorder
 key: __sortorder
 content-length: 3
 
-100
+-50
 ----field----
 field: {A791F095-2521-4B4D-BEF9-21DDA221F608}
 name: __Style
@@ -304,7 +304,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 44aec685-359c-4405-aa6d-ae843056783a
+revision: 3c351084-5696-4eb1-b78d-c6bf2cae426e
 
 ----field----
 field: {326CD362-CB1C-4E81-B5F2-5EFA940351F7}
@@ -389,14 +389,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-44aec685-359c-4405-aa6d-ae843056783a
+3c351084-5696-4eb1-b78d-c6bf2cae426e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130910T234507:635144535073051875
+20130911T234640:635145400002909610
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

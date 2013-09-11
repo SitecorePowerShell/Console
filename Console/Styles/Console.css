@@ -247,7 +247,7 @@ html{
 #StatusBar
 {
     height: 20px;
-    margin: 0 5px 0 8px;
+    margin: 2px 5px 0 8px;
     overflow: hidden;
     padding: 0 0 3px 0;
 }
@@ -264,17 +264,18 @@ html{
     overflow: hidden;
 }
 
-.status-bar-pos
+.status-bar-right
 {
     width: 50px;
     float: right;
     margin-left: 2px;
 }
-.status-bar-paging
+.status-bar-left
 {
-    float: right;
+    float: left;
     width: 80px;
-    margin-left: 2px;
+    margin-right: 2px;
+    padding-left: 3px;
 }
 
 .ui-dialog {

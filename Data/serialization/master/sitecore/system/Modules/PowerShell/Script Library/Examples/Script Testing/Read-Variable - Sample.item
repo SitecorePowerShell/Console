@@ -12,18 +12,18 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: b134bc2c-ddd7-4bc5-bd7a-0395f95d9c15
+revision: 66331bea-a49c-4208-a2f5-c97ac4f9a767
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1785
+content-length: 1789
 
 $item = get-item master:\content\Demo\Int\Presentation\Designs
 $parent = get-item . |% { $_.Parent } 
 $result = Read-Variable -Parameters `
-    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; ShowTime=$true}, `
+    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, `
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tooltip="Branch you want to analyse."}, `
     @{ Variable = get-variable "parent" }, `
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; }, `
@@ -68,14 +68,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b134bc2c-ddd7-4bc5-bd7a-0395f95d9c15
+66331bea-a49c-4208-a2f5-c97ac4f9a767
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130811T231440:635118596803945312
+20130912T010431:635145446716483828
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

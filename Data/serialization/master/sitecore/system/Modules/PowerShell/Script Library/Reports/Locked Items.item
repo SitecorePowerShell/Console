@@ -19,15 +19,15 @@ Applications/32x32/document_lock.png
 ----version----
 language: en
 version: 1
-revision: 496521cd-7f4e-4fde-8266-651fcc2916e5
+revision: fca9f954-fbbe-4374-8789-63495cfd836e
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1815
+content-length: 1803
 
-$item = get-item master:\content\cognifidecom
+$item = get-item master:\content\
 #$since = [DateTime]::Now
 $result = Read-Variable -Parameters `
     @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."}, `
@@ -81,14 +81,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-496521cd-7f4e-4fde-8266-651fcc2916e5
+fca9f954-fbbe-4374-8789-63495cfd836e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T034300:635144677807397578
+20130912T000022:635145408227304141
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

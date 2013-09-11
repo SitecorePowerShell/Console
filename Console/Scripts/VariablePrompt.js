@@ -22,7 +22,7 @@
         $(".treePicker").css({ width: controlWidth });
         $(".textEdit").css({ width: controlWidth });        
         if ($(".scUserPickerButton").length > 0) {
-            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 14) + "px";
+            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 30) + "px";
             $(".scUserPickerEdit").css({ width: controlWidth });
         }
     });
@@ -31,7 +31,7 @@
         $(".treePicker").css({ width: controlWidth });
         $(".textEdit").css({ width: controlWidth });
         if ($(".scUserPickerButton").length > 0) {
-            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() -14) + "px";
+            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 30) + "px";
             $(".scUserPickerEdit").css({ width: controlWidth });
         }
     });
