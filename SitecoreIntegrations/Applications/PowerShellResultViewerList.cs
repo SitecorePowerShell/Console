@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
+using System.Linq;
 using System.Web.Configuration;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -167,6 +172,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 case ("pslvnav:next"):
                     ChangePage(ListViewer.CurrentPage + 1);
                     return;
+                case("export:results"):
+                    ExportResults(message);
+                    return;
                 default:
                     base.HandleMessage(message);
                     break;
@@ -183,6 +191,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
 
             Dispatcher.Dispatch(message, context);
+        }
+
+        private void ExportResults(Message message)
+        {
+
+            Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
+            Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
+            var session = new ScriptSession(ApplicationNames.Default);
+            String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
+                                : string.Empty;
+            var results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
+            session.SetVariable("resultSet", results);
+            session.SetVariable("formatProperty", ListViewer.Data.Property);
+            var result = session.ExecuteScriptPart(script, false).First().ToString();
+            SheerResponse.Download(result);
         }
 
         private void ChangePage(int newPage)

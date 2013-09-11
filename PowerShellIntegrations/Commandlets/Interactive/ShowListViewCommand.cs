@@ -97,7 +97,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     var message =
                         new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results", Icon,
-                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription);
+                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property);
 
                     JobContext.MessageQueue.PutMessage(message);
                     JobContext.Flush();

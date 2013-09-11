@@ -274,6 +274,7 @@
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
     <Compile Include="SitecoreIntegrations\Controls\ListViewComparer.cs" />
     <Compile Include="SitecoreIntegrations\Controls\PowerShellListView.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\RibbonExportScriptsPanel.cs" />
     <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
     <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />

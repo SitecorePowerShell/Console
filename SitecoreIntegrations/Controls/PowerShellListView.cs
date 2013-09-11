@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore;
 using Sitecore.Data.Items;
@@ -113,12 +114,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             int offset = (CurrentPage - 1)*pageSize;
             var columnNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            string filter = Filter;
-            bool unfiltered = string.IsNullOrEmpty(filter);
-            var filteredEnum = unfiltered
-                ? Data.Data
-                : Data.Data.FindAll(p => p.Display.Values.Any(
-                    value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
+            var filteredEnum = GetFilteredItems();
 
             FilteredCount = filteredEnum.Count();
             foreach (var result in filteredEnum.Skip(offset).Take(pageSize))
@@ -148,6 +144,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
             Sitecore.Context.ClientPage.ClientResponse.EnableOutput();
             Sitecore.Context.ClientPage.ClientResponse.SetOuterHtml(ID, this);
+        }
+
+        public List<ShowListViewCommand.SvlDataObject> GetFilteredItems()
+        {
+            string filter = Filter;
+            bool unfiltered = string.IsNullOrEmpty(filter);
+            var filteredEnum = unfiltered
+                ? Data.Data
+                : Data.Data.FindAll(p => p.Display.Values.Any(
+                    value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
+            return filteredEnum;
         }
     }
 }
