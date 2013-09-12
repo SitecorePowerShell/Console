@@ -377,6 +377,7 @@
     <Content Include="Console\Services\RemoteAutomation.asmx" />
     <Content Include="Console\Services\RemoteScriptCall.aspx" />
     <Content Include="Console\Styles\Console.css" />
+    <Content Include="Console\Styles\ise.css" />
     <Content Include="Console\Styles\VariablePrompt.css" />
     <Content Include="Console\Styles\jquery.qtip.min.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />
