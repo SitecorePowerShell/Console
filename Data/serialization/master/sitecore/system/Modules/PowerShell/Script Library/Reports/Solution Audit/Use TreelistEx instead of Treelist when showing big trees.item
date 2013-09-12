@@ -1,0 +1,64 @@
+----item----
+version: 1
+id: {5EDE870F-3D48-4753-B763-77E511AC464C}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Use TreelistEx instead of Treelist when showing big trees
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Use TreelistEx instead of Treelist when showing big trees
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: 38c4d57a-f63d-4e6b-820d-2ba3420ff578
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 757
+
+# Which of my Templates use TreeList fields?
+#
+# Sitecore recommendation:
+#    Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants — 
+#    or have lots of Treelist fields in one single item. TreelistEx only computes the tree 
+#    when you click Edit whereas a Treelist will compute it every time it is rendered.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+
+get-childitem -recurse | `
+  where-object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Treelist" } |  `
+  select-object Name, @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path }} |
+  format-table Template, Name
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130130T224038
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+38c4d57a-f63d-4e6b-820d-2ba3420ff578
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130206T172912:634957685529320625
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

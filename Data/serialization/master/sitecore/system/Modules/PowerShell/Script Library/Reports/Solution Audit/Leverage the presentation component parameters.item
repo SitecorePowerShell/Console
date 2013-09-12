@@ -1,0 +1,74 @@
+----item----
+version: 1
+id: {9BB0D6B2-8351-48DF-812F-BECDE518CA79}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Leverage the presentation component parameters
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Leverage the presentation component parameters
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: cadc4d17-0e91-4d09-9194-3c718346ef73
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1523
+
+# Do my items assign rights to users?
+#
+# Sitecore recommendation:
+#    Leverage the presentation component parameters. 
+#        You could use the parameters to allow users to configure/modify the behavior of the component, 
+#        for example, the number of items shown in a list, the CSS classes to use, the URL for a feed it is showing, and so on.
+#
+# Before executing this script point the "Context Item" to where you store your solution layouts e.g. "/sitecore/Sublayouts/My Site Sublayouts"
+#
+# How to read this report?
+# ------------------------
+# The report will show you the numer of all sublayouts and list all sublayouts that do not define rendering parameters.
+# It does not necessarily mean that a sublayout without rendering parameters are problematic (they may be so simple not to require any), 
+# but if you see almost none of them defnining it, it might mean that you're not leveraging Sitecore functionality to its full potential.
+#
+
+$sublayouts = get-childitem -recurse | `
+  where-object { $_.TemplateName -eq "Sublayout" } | `
+  select-object Name, @{Name="Has Rendering Parameters"; Expression={$_."Parameters Template" -ne ""}};
+$no_rp_sublayouts = $sublayouts | where-object { $_."Has Rendering Parameters" -eq $False };
+
+write-host -fore Yellow "Your solution has $($sublayouts.Count) sublayouts. $($no_rp_sublayouts.Count) of those do not use rendering parameters."
+$no_rp_sublayouts | format-table @{Name="Sublayouts without rendering parameters"; Expression={$_.Name}}
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130207T152327
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+cadc4d17-0e91-4d09-9194-3c718346ef73
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130207T160057:634958496574357031
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
