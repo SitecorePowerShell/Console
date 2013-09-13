@@ -12,19 +12,19 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: f0569f4a-bd20-4c7f-8859-21abef015a29
+revision: 0cb83714-7d08-4c71-a7d8-c7e7c0f57ab8
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1000
+content-length: 1058
 
 <#
 Provides an JSON result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
 http://hostname/Console/Services/RemoteScriptCall.ashx?scriptDB=master&script=/Examples/API/ChildrenAsJson&user=admin&password=b&itemDB=master&item=/sitecore/content
 
-If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters
+If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
 http://hostname/Console/Services/RemoteScriptCall.ashx?script=/Examples/API/ChildrenAsJson&item=/sitecore/content
 #>
 
@@ -51,14 +51,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f0569f4a-bd20-4c7f-8859-21abef015a29
+0cb83714-7d08-4c71-a7d8-c7e7c0f57ab8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130913T054627:635146479871279375
+20130913T055009:635146482096767656
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
