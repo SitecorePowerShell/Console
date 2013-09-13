@@ -174,7 +174,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     }
                     lastToken = command.Substring(start,lastPsToken.EndColumn-1-start);
                     command = command.TrimEnd(' ');
-                    if (lastPsToken.Type == PSTokenType.Operator)
+                    if (lastPsToken.Type == PSTokenType.Operator && lastPsToken.Content != "-")
                     {
                         truncatedCommand = command;
                         lastToken = string.Empty;

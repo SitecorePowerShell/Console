@@ -1367,7 +1367,7 @@ exports.parForEach = function(array, fn, callback) {
 var ID_REGEX = /[a-zA-Z_0-9\$-]/;
 
 exports.retrievePrecedingIdentifier = function(text, pos, regex) {
-    return cognifide.powershell.getAutocompletionPrefix(text);
+    return cognifide.powershell.getAutocompletionPrefix(text.substring(0,pos));
     /*    
     regex = regex || ID_REGEX;
     var buf = [];
