@@ -12,13 +12,26 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: b3eb05ee-73c9-438f-a37e-ccf5f588034d
+revision: 96c246e3-bf5e-42b1-95ac-3471929407fc
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1881
+content-length: 2402
+
+$location = gi 'master:\media library'
+$result = Read-Variable -Parameters `
+    @{ Name = "location"; Title="Branch to download"; Tooltip="Branch you want to zip and download."; Root="/sitecore/media library/"} `
+    -Description "The script will zip all the content of the folder of your choice and allow you to download the zip file." `
+    -Title "Download files from media library" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
 
 function ZipItems( $zipArchive, $sourcedir )
 {
@@ -54,13 +67,12 @@ function ZipItems( $zipArchive, $sourcedir )
   $ZipPackage.Close()
 }
 
-$location = get-location
 $dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
-$zipName = Split-Path -leaf $location | % { $_ -replace " ", ""}
+$zipName = Split-Path -leaf $location.ProviderPath | % { $_ -replace " ", ""}
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $zipPath = "$dataFolder\$zipName-$datetime.zip"
 
-ZipItems $zipPath $location
+ZipItems $zipPath $location.ProviderPath
 Download-File -FullName $zipPath | Out-Null
 Remove-Item $zipPath
 ----field----
@@ -76,14 +88,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b3eb05ee-73c9-438f-a37e-ccf5f588034d
+96c246e3-bf5e-42b1-95ac-3471929407fc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130718T154137:635097588977440000
+20130913T150939:635146817797243672
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
