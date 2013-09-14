@@ -19,13 +19,13 @@ Network/32x32/fingerprint.png
 ----version----
 language: en
 version: 1
-revision: 07418e59-c61c-4b6a-ac5b-d66bd9919a09
+revision: de70d7bf-8bf5-433c-9e36-2e414965522c
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4446
+content-length: 4228
 
 # How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
 #
@@ -56,25 +56,20 @@ if($result -ne "ok")
     Exit
 }
 
+$templates = Get-ChildItem $item.ProviderPath -recurse | Where-Object { $_.TemplateName -eq "Template"}
 
-$template_sv = 
-  Get-ChildItem $item.ProviderPath -recurse | `
-    Where-Object { $_.TemplateName -eq "Template"} | `
+$template_sv = $templates | `
     Select-Object `
       @{Name="Template"; Expression={$_.ItemPath -replace "/Sitecore/templates/", "" }}, `
       @{Name="_SV"; Expression={$_.Children["__Standard Values"] -ne $null }}    
 
 $has_sv = $template_sv | group-object _SV | where-object {$_.Name -eq "True" } | Select-object Count;
 $has_no_sv = $template_sv | group-object _SV | where-object {$_.Name -eq "False" } | Select-object Count;
-Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined.:"
+Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined."
 
-#$template_sv | Where-Object { $_._SV -eq "False" } | Format-Table @{ Name="Templates that do not define __Standard Values"; Expression={$_.Template}}
-
-
-Get-ChildItem $item.ProviderPath  -recurse | `
-  where-object { $_.TemplateName -eq "Template"} | `
-Show-ListView -Property Name, `
-    @{Name="Standard Values";  Expression={if($_.Children["__Standard Values"] -ne $null}}, `
+$templates | `
+  Show-ListView -Property Name, `
+    @{Name="Standard Values";  Expression={$_.Children["__Standard Values"] -ne $null}}, `
     @{Name="Default Workflow"; Expression={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}}, `
     @{Name="Insert Options";   Expression={$_.Children["__Standard Values"]["__masters"] -ne ""}}, `
     @{Name="Insert Rules";     Expression={$_.Children["__Standard Values"]["__Insert Rules"] -ne ""}}, `
@@ -84,7 +79,7 @@ Show-ListView -Property Name, `
         -InfoTitle "Sitecore recommendation:" `
         -InfoDescription "<i>__Standard Values</i> — Define layout details, initial workflow, and insert options to a template. This reduces administration and centrally manages system settings, rather than setting them on individual items.<br/><br/>
                           Found <b>$($template_sv.Count)</b> templates. <b>$($has_no_sv.Count)</b> of those have no <i>__Standard Values</i> defined, while the remaining <b>$($has_sv.Count)</b> do.<br/>
-                          Templates that do not define <i>__Standard Values</i> cannot even begin to adhere to this practice as the required settings are set on __Standard Values.<br/>
+                          Templates that do not define <i>__Standard Values</i> cannot even begin to adhere to this practice as the required settings are set on <i>__Standard Values</i>.<br/>
                           For the templates that have standard values defined you can see  whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.<br/>
                           Lack of <i>__Standard Values</i>, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user's experience."
 Close-Window
@@ -108,14 +103,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-07418e59-c61c-4b6a-ac5b-d66bd9919a09
+de70d7bf-8bf5-433c-9e36-2e414965522c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130914T202441:635147870811817812
+20130914T223809:635147950896417421
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

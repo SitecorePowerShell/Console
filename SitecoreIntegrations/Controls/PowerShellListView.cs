@@ -133,7 +133,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 foreach (var column in result.Display.Keys)
                 {
                     columnNames.Add(column);
-                    lvi.ColumnValues.Add(column, result.Display[column]);
+                    var val = result.Display[column];
+                    lvi.ColumnValues.Add(column,
+                        val == "False"
+                            ? "<div class='unchecked'></div>"
+                            : val == "True"
+                                ? "<div class='checked'></div>"
+                                : val);
                 }
                 Controls.Add(lvi);
             }

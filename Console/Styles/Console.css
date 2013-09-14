@@ -459,3 +459,17 @@ a.ps-link
     width: 100%;
     float: left;
 }
+
+.checked {
+width: 13px;
+height: 13px;
+margin: auto;
+background-image: url("/Console/Assets/checked.png");
+}
+
+.unchecked {
+width: 13px;
+height: 13px;
+margin: auto;
+background-image: url("/Console/Assets/unchecked.png");
+}
