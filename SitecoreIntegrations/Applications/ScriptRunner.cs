@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Management.Automation;
 using System.Threading;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -49,6 +50,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 JobContext.Job.Status.Result = ex;
                 JobContext.PostMessage("ise:updateresult");
                 JobContext.Flush();
+            }
+            finally
+            {
+                foreach (var parameter in Parameters)
+                {
+                    if (parameter is IDisposable)
+                    {
+                        (parameter as IDisposable).Dispose();
+                    }
+                }
             }
         }
     }

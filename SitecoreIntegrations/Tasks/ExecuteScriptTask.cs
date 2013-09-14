@@ -10,13 +10,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
     {
         public void Update(Item[] items, CommandItem command, ScheduleItem schedule)
         {
-            var session = new ScriptSession(ApplicationNames.Default);
-            foreach (Item item in items)
+            using (var session = new ScriptSession(ApplicationNames.Default))
             {
-                string script = item["Script"];
-                if (!String.IsNullOrEmpty(script))
+                foreach (Item item in items)
                 {
-                    session.ExecuteScriptPart(script);
+                    string script = item["Script"];
+                    if (!String.IsNullOrEmpty(script))
+                    {
+                        session.ExecuteScriptPart(script);
+                    }
                 }
             }
         }

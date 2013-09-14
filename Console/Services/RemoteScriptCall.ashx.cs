@@ -49,26 +49,28 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            var session = new ScriptSession(ApplicationNames.Default);
-            String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
-
-            if (!string.IsNullOrEmpty(itemParam))
+            using (var session = new ScriptSession(ApplicationNames.Default))
             {
-                Item item = itemDb.GetItem(itemParam);
-                if (item != null)
-                    session.SetItemLocationContext(item);
-            }
+                String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
 
-            context.Response.ContentType = "text/plain";
+                if (!string.IsNullOrEmpty(itemParam))
+                {
+                    Item item = itemDb.GetItem(itemParam);
+                    if (item != null)
+                        session.SetItemLocationContext(item);
+                }
 
-            session.ExecuteScriptPart(script, true);
+                context.Response.ContentType = "text/plain";
 
-            context.Response.Write(session.Output.ToString());
+                session.ExecuteScriptPart(script, true);
 
-            if (session.Output.HasErrors)
-            {
-                context.Response.StatusCode = 424;
-                context.Response.StatusDescription = "Method Failure";
+                context.Response.Write(session.Output.ToString());
+
+                if (session.Output.HasErrors)
+                {
+                    context.Response.StatusCode = 424;
+                    context.Response.StatusDescription = "Method Failure";
+                }
             }
 
         }

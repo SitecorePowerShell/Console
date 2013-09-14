@@ -198,15 +198,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
-            var session = new ScriptSession(ApplicationNames.Default);
-            String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                                : string.Empty;
-            var results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
-            session.SetVariable("resultSet", results);
-            session.SetVariable("formatProperty", ListViewer.Data.Property);
-            var result = session.ExecuteScriptPart(script, false).First().ToString();
-            SheerResponse.Download(result);
+            using (var session = new ScriptSession(ApplicationNames.Default))
+            {
+                String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                    ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
+                    : string.Empty;
+                var results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
+                session.SetVariable("resultSet", results);
+                session.SetVariable("formatProperty", ListViewer.Data.Property);
+                var result = session.ExecuteScriptPart(script, false).First().ToString();
+                SheerResponse.Download(result);
+            }
         }
 
         private void ChangePage(int newPage)

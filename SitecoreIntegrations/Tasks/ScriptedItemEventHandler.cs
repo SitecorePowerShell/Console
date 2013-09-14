@@ -30,20 +30,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
             {
                 return;
             }
-            var session = new ScriptSession(ApplicationNames.Default);
-
-            foreach (Item scriptItem in libraryItem.Children)
+            using (var session = new ScriptSession(ApplicationNames.Default))
             {
-                if (item != null)
-                {
-                    session.SetItemLocationContext(item);
-                }
 
-                session.SetVariable("eventArgs", eventArgs);
-                string script = scriptItem["Script"];
-                if (!String.IsNullOrEmpty(script))
+                foreach (Item scriptItem in libraryItem.Children)
                 {
-                    session.ExecuteScriptPart(script);
+                    if (item != null)
+                    {
+                        session.SetItemLocationContext(item);
+                    }
+
+                    session.SetVariable("eventArgs", eventArgs);
+                    string script = scriptItem["Script"];
+                    if (!String.IsNullOrEmpty(script))
+                    {
+                        session.ExecuteScriptPart(script);
+                    }
                 }
             }
         }

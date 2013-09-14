@@ -45,13 +45,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
             Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
             Item scriptItem = item.Database.GetItem(scriptSource);
-            var session = new ScriptSession(ApplicationNames.Default);
-            String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                                : string.Empty;
-            script = String.Format(
-                "cd \"{0}:{1}\"\n", item.Database.Name, item.Paths.Path.Replace("/", "\\").Substring(9)) + script;
-            return session.ExecuteScriptPart(script, false).Cast<Item>();
+            using (var session = new ScriptSession(ApplicationNames.Default))
+            {
+                String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                    ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
+                    : string.Empty;
+                script = String.Format(
+                    "cd \"{0}:{1}\"\n", item.Database.Name, item.Paths.Path.Replace("/", "\\").Substring(9)) + script;
+                return session.ExecuteScriptPart(script, false).Cast<Item>();
+            }
         }
     }
 }

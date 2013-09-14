@@ -425,7 +425,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void ClientExecute(ClientPipelineArgs args)
         {
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            var scriptSession = new ScriptSession(Settings.ApplicationName);
+            using(var scriptSession = new ScriptSession(Settings.ApplicationName)){
             EnterScriptInfo.Visible = false;
 
             try
@@ -445,7 +445,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                                                string.Format("<pre style='background:red;'>{0}</pre>",
                                                                              scriptSession.GetExceptionString(exc)));
             }
-
+}
             if (Settings.SaveLastScript)
             {
                 Settings.Load();
@@ -498,6 +498,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             var currentSession = (ScriptSession)HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             currentSession.Abort();
+            currentSession.Dispose();
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
             UpdateRibbon();
