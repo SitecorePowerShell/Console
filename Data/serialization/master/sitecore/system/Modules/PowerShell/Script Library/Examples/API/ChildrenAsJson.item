@@ -12,7 +12,7 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 0cb83714-7d08-4c71-a7d8-c7e7c0f57ab8
+revision: e3e79260-cffe-489d-98c8-476c58705cb6
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
@@ -37,7 +37,7 @@ if ($HttpContext -ne $null){
     $HttpContext.Response.ContentType = "application/json";
 }
 #return some of the children's properties as JSON
-gci . | select-object Name, DiaplayName, TemplateName, Language, Version, Paths | convertto-json
+gci . | select-object Name, DisplayName, TemplateName, Language, Version, Paths | convertto-json
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -51,14 +51,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0cb83714-7d08-4c71-a7d8-c7e7c0f57ab8
+e3e79260-cffe-489d-98c8-476c58705cb6
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130913T055009:635146482096767656
+20130913T180829:635146925090495625
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
