@@ -9,16 +9,23 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Network/32x32/fingerprint.png
 ----version----
 language: en
 version: 1
-revision: 34c03766-7446-404e-a11f-42f732048047
+revision: 07418e59-c61c-4b6a-ac5b-d66bd9919a09
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3057
+content-length: 4446
 
 # How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
 #
@@ -36,33 +43,51 @@ content-length: 3057
 # Just because SV does not define one or more of those values, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience.
 #
 
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
+    -Description "Sitecore <i>__Standard Values</i> recommendation" `
+    -Title "How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+
 $template_sv = 
-  get-childitem -recurse | `
-    where-object { $_.TemplateName -eq "Template"} | `
-    select-object `
+  Get-ChildItem $item.ProviderPath -recurse | `
+    Where-Object { $_.TemplateName -eq "Template"} | `
+    Select-Object `
       @{Name="Template"; Expression={$_.ItemPath -replace "/Sitecore/templates/", "" }}, `
       @{Name="_SV"; Expression={$_.Children["__Standard Values"] -ne $null }}    
 
 $has_sv = $template_sv | group-object _SV | where-object {$_.Name -eq "True" } | Select-object Count;
 $has_no_sv = $template_sv | group-object _SV | where-object {$_.Name -eq "False" } | Select-object Count;
-Write-host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined. This report provides 2 lists.:"
-Write-host -f Yellow "1) List of $($has_no_sv.Count) Templates that don't define Standard values and thus are not capable to adhere to the recommended practice."
-Write-host -f Yellow "1) List of $($has_sv.Count) Templates that define Standard values and their adherence to recommended practice."
+Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined.:"
 
-$template_sv | where-object { $_._SV -eq "False" } | format-table @{ Name="Templates that do not define __Standard Values"; Expression={$_.Template}}
+#$template_sv | Where-Object { $_._SV -eq "False" } | Format-Table @{ Name="Templates that do not define __Standard Values"; Expression={$_.Template}}
 
 
-get-childitem -recurse | `
-  where-object { $_.TemplateName -eq "Template" -and $_.Children["__Standard Values"]} | `
-  select-object `
-    @{Name="Template"; Expression={$_.ItemPath -replace "/Sitecore/templates/", "" }}, `
-    @{Name="__StandardValues"; Expression={$_.Children["__Standard Values"]}} | `
-  format-table -auto Template, `
-    @{Name="Default Workflow"; Expression={$_.__StandardValues["__Default Workflow"] -ne ""}}, `
-    @{Name="Insert Options";   Expression={$_.__StandardValues["__masters"] -ne ""}}, `
-    @{Name="Insert Rules";     Expression={$_.__StandardValues["__Insert Rules"] -ne ""}}, `
-    @{Name="Has Renderings";   Expression={$_.__StandardValues["__Renderings"] -ne "" }}
-
+Get-ChildItem $item.ProviderPath  -recurse | `
+  where-object { $_.TemplateName -eq "Template"} | `
+Show-ListView -Property Name, `
+    @{Name="Standard Values";  Expression={if($_.Children["__Standard Values"] -ne $null}}, `
+    @{Name="Default Workflow"; Expression={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}}, `
+    @{Name="Insert Options";   Expression={$_.Children["__Standard Values"]["__masters"] -ne ""}}, `
+    @{Name="Insert Rules";     Expression={$_.Children["__Standard Values"]["__Insert Rules"] -ne ""}}, `
+    @{Name="Has Renderings";   Expression={$_.Children["__Standard Values"]["__Renderings"] -ne "" }}, `
+    @{Name="Path";             Expression={ $_.Paths.Path -replace "/Sitecore/templates/", ""}} `
+    -Title "Standard values recommendations compliance." `
+        -InfoTitle "Sitecore recommendation:" `
+        -InfoDescription "<i>__Standard Values</i> — Define layout details, initial workflow, and insert options to a template. This reduces administration and centrally manages system settings, rather than setting them on individual items.<br/><br/>
+                          Found <b>$($template_sv.Count)</b> templates. <b>$($has_no_sv.Count)</b> of those have no <i>__Standard Values</i> defined, while the remaining <b>$($has_sv.Count)</b> do.<br/>
+                          Templates that do not define <i>__Standard Values</i> cannot even begin to adhere to this practice as the required settings are set on __Standard Values.<br/>
+                          For the templates that have standard values defined you can see  whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.<br/>
+                          Lack of <i>__Standard Values</i>, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user's experience."
+Close-Window
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
@@ -83,14 +108,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-34c03766-7446-404e-a11f-42f732048047
+07418e59-c61c-4b6a-ac5b-d66bd9919a09
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130205T201758:634956922782564297
+20130914T202441:635147870811817812
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
