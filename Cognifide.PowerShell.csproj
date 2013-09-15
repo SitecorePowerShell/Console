@@ -270,6 +270,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\RebuildControlPanelIntegration.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\RibbonActionScriptsPanel.cs" />
     <Compile Include="SitecoreIntegrations\Controls\ListViewComparer.cs" />
     <Compile Include="SitecoreIntegrations\Controls\PowerShellListView.cs" />
     <Compile Include="SitecoreIntegrations\Controls\RibbonExportScriptsPanel.cs" />

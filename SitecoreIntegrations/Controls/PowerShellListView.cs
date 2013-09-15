@@ -48,7 +48,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
         protected override void DoClick(Message message)
         {
-            base.DoClick(message);
             string source = Sitecore.Context.ClientPage.ClientRequest.Source;
             if (source.StartsWith("SortBy"))
             {

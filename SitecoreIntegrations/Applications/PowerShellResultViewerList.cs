@@ -243,6 +243,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Item obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon");
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
+            if (ListViewer.Data.Data.Count > 0)
+            {
+                ribbon.CommandContext.Parameters.Add("type", ListViewer.Data.Data[0].Original.GetType().Name);
+            }
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
         }
 

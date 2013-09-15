@@ -92,7 +92,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             base.EndProcessing();
             LogErrors(() =>
             {
-                int pageSize = PageSize == 0  ? 20 : PageSize;
+                int pageSize = PageSize == 0  ? 25 : PageSize;
                 if (Data != null)
                 {
                     var message =
