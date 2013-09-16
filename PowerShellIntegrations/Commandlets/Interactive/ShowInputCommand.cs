@@ -29,14 +29,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     if (!string.IsNullOrEmpty(Validation) || MaxLength > 0)
                     {
-                        JobContext.MessageQueue.PutMessage(new PromptMessage(Prompt, DefaultValue ?? "",
-                                                                             Validation ?? ".*",
-                                                                             ErrorMessage ?? "Invalid format",
-                                                                             MaxLength < 1 ? int.MaxValue : MaxLength));
+                        PutMessage(new PromptMessage(Prompt, DefaultValue ?? "",
+                            Validation ?? ".*",
+                            ErrorMessage ?? "Invalid format",
+                            MaxLength < 1 ? int.MaxValue : MaxLength));
                     }
                     else
                     {
-                        JobContext.MessageQueue.PutMessage(new PromptMessage(Prompt, DefaultValue ?? ""));
+                        PutMessage(new PromptMessage(Prompt, DefaultValue ?? ""));
                     }
                     var alertresult = JobContext.MessageQueue.GetResult() as string;
                     WriteObject(alertresult);

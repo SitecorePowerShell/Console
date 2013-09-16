@@ -79,7 +79,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     }
                 }
 
-                JobContext.MessageQueue.PutMessage(message);
+                PutMessage(message);
                 var results = (object[])JobContext.MessageQueue.GetResult();
                 WriteObject(results != null ? "ok" : "cancel");
                 if (results != null)

@@ -26,13 +26,13 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 4e6c7804-8e6a-403e-a05a-c8ca4300fcab
+revision: ad2f7e5c-c9a7-4f32-945a-6f80ac94dfc2
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 397
+content-length: 618
 
 $runScript = Show-Confirm "This script might take a long while on a larger branches - are you sure you want to run this script?"
 
@@ -42,8 +42,11 @@ if($runScript -eq "yes"){
     get-childitem -recurse | `
     Group-Object "__Updated By" | `
         Sort count -descending | `
-        format-table -property count, name
-    Show-Result -Text
+        Show-ListView -property Name, `
+        @{Label="Items Updated"; Expression={$_.count}}, `
+        @{Label="Icon"; Expression={ [Sitecore.Security.Accounts.User]::FromName("$($_.name)", $false).Profile.Portrait } } `
+        -Modal -Width 690 -Height 600
+#    Show-Result -Text
     Close-Window
 } else {
   Close-Window
@@ -61,14 +64,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4e6c7804-8e6a-403e-a05a-c8ca4300fcab
+ad2f7e5c-c9a7-4f32-945a-6f80ac94dfc2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130809T153951:635116595910004610
+20130916T012701:635148916217226563
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

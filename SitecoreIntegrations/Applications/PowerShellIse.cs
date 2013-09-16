@@ -383,44 +383,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
         }
 
-        protected void ExecuteInternal(params object[] parameters)
-        {
-            var scriptSession = parameters[0] as ScriptSession;
-            var contextScript = parameters[1] as string;
-
-            if (scriptSession == null || contextScript == null)
-            {
-                return;
-            }
-
-            try
-            {
-                scriptSession.ExecuteScriptPart(Settings.Prescript);
-                scriptSession.ExecuteScriptPart(contextScript);
-                scriptSession.ExecuteScriptPart(Editor.Value);
-                var output = new StringBuilder(10240);
-                if (Context.Job != null)
-                {
-                    JobContext.Flush();
-                    Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
-                    JobContext.PostMessage("ise:updateresults");
-                    JobContext.Flush();
-                }
-            }
-            catch (Exception exc)
-            {
-                if (Context.Job != null)
-                {
-                    JobContext.Flush();
-                    Context.Job.Status.Result =
-                        string.Format("<pre style='background:red;'>{0}</pre>",
-                                      scriptSession.GetExceptionString(exc));
-                    JobContext.PostMessage("ise:updateresults");
-                    JobContext.Flush();
-                }
-            }
-        }
-
         [HandleMessage("ise:run", true)]
         protected virtual void ClientExecute(ClientPipelineArgs args)
         {
@@ -490,6 +452,44 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 Settings.Load();
                 Settings.LastScript = Editor.Value;
                 Settings.Save();
+            }
+        }
+
+        protected void ExecuteInternal(params object[] parameters)
+        {
+            var scriptSession = parameters[0] as ScriptSession;
+            var contextScript = parameters[1] as string;
+
+            if (scriptSession == null || contextScript == null)
+            {
+                return;
+            }
+
+            try
+            {
+                scriptSession.ExecuteScriptPart(Settings.Prescript);
+                scriptSession.ExecuteScriptPart(contextScript);
+                scriptSession.ExecuteScriptPart(Editor.Value);
+                var output = new StringBuilder(10240);
+                if (Context.Job != null)
+                {
+                    JobContext.Flush();
+                    Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
+                    JobContext.PostMessage("ise:updateresults");
+                    JobContext.Flush();
+                }
+            }
+            catch (Exception exc)
+            {
+                if (Context.Job != null)
+                {
+                    JobContext.Flush();
+                    Context.Job.Status.Result =
+                        string.Format("<pre style='background:red;'>{0}</pre>",
+                                      scriptSession.GetExceptionString(exc));
+                    JobContext.PostMessage("ise:updateresults");
+                    JobContext.Flush();
+                }
             }
         }
 

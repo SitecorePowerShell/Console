@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     {
         protected override void ProcessRecord()
         {
-            JobContext.MessageQueue.PutMessage(new CloseWindowMessage());
+            PutMessage(new CloseWindowMessage());
         }
     }
 }

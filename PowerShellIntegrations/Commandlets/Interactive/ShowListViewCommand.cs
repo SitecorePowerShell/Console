@@ -95,12 +95,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 int pageSize = PageSize == 0  ? 25 : PageSize;
                 if (Data != null)
                 {
-                    var message =
-                        new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results", Icon,
-                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property);
-
-                    JobContext.MessageQueue.PutMessage(message);
-                    JobContext.Flush();
+                    PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results", Icon,
+                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property));
+                    FlushMessages();
                 }
                 SessionState.PSVariable.Remove("$ScPsSlvProperties");
             });

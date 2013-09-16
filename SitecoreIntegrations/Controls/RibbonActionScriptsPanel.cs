@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                         RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                             Translate.Text(scriptItem.DisplayName),
                             scriptItem["__Icon"], string.Empty,
-                            string.Format("export:results(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
+                            string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                                 scriptItem.ID),
                             EvaluateRules(scriptItem["EnableRule"]), false);
                     }
@@ -53,7 +53,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 //Item = contextItem
             };
 
-            return rules.Rules.Any(rule => rule.Evaluate(ruleContext));
+            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
 
     }

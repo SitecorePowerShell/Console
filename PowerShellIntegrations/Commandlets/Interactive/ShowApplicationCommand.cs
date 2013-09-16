@@ -36,8 +36,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         var message =
                             new ShowApplicationMessage(Application, Title, Icon, WidthString, HeightString, Modal.IsPresent, Parameter);
 
-                        JobContext.MessageQueue.PutMessage(message);
-                        JobContext.Flush();
+                        PutMessage(message);
+                    FlushMessages();
                 });
         }
     }

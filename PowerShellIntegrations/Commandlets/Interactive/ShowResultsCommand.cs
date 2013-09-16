@@ -38,8 +38,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         {
                             var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString);
                             
-                            JobContext.MessageQueue.PutMessage(message);
-                            JobContext.Flush();
+                            PutMessage(message);
+                            FlushMessages();
                         }
                     } else if (Parameters != null)
                     {

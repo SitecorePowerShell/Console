@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Globalization;
 using System.Linq;
-using System.Web.Configuration;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
@@ -13,7 +12,6 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -175,6 +173,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 case("export:results"):
                     ExportResults(message);
                     return;
+                case ("listview:action"):
+                    ListViewAction(message);
+                    return;
                 default:
                     base.HandleMessage(message);
                     break;
@@ -192,10 +193,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             Dispatcher.Dispatch(message, context);
         }
-
+        
         private void ExportResults(Message message)
         {
-
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
             using (var session = new ScriptSession(ApplicationNames.Default))
@@ -255,6 +255,56 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var itemNotNull = Client.CoreDatabase.GetItem("{98EF2F7D-C17A-4A53-83A8-0EA2C0517AD6}"); // /sitecore/content/Applications/PowerShell/PowerShellGridView/Ribbon
             var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
             return context;
+        }
+
+        private void ListViewAction(Message message)
+        {
+            Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
+            Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
+
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.Default);
+            var scriptSession = new ScriptSession(settings.ApplicationName);
+
+            String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
+                : string.Empty;
+            var results = ListViewer.SelectedItems.Select(p =>
+            {
+                var id = Int32.Parse(p.Value);
+                return ListViewer.Data.Data[id].Original;
+            }).ToList();
+            scriptSession.SetVariable("resultSet", results);
+            scriptSession.SetVariable("formatProperty", ListViewer.Data.Property);
+
+            var parameters = new object[]
+            {
+                scriptSession,
+                script,
+            };
+
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters);
+            Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
+            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+        }
+
+        protected void ExecuteInternal(params object[] parameters)
+        {
+            var scriptSession = parameters[0] as ScriptSession;
+            var script = parameters[1] as string;
+
+            if (scriptSession == null || script == null)
+            {
+                return;
+            }
+
+            try
+            {
+                scriptSession.ExecuteScriptPart(script);
+            }
+            catch (Exception exc)
+            {
+                Log.Error(scriptSession.GetExceptionString(exc), exc);
+            }
         }
 
 

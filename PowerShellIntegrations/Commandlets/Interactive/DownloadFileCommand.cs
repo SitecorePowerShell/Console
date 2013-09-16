@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     if (NoDialog.IsPresent)
                     {
-                        JobContext.MessageQueue.PutMessage(new DownloadMessage(Item));
+                        PutMessage(new DownloadMessage(Item));
                         return;
                     }
                     hashParams.Add("id", Item.ID);
@@ -67,13 +67,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     var file = FileUtil.MapPath(FullName);
                     if (!File.Exists(file))
                     {
-                        JobContext.Alert("You cannot download:\n" + FullName + "\n\n The file could not be found.");
+                        PutMessage(new AlertMessage("You cannot download:\n" + FullName + "\n\n The file could not be found."));
                         return;
                     }
                     
                     if (NoDialog.IsPresent)
                     {
-                        JobContext.MessageQueue.PutMessage(new DownloadMessage(FullName));
+                        PutMessage(new DownloadMessage(FullName));
                         return;
                     }
 
@@ -82,9 +82,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     if (!file.StartsWith(str1, StringComparison.InvariantCultureIgnoreCase) &&
                         !file.StartsWith(str2, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        JobContext.Alert(
+                        PutMessage(new AlertMessage(
                             "Files from outside of the Sitecore Data and Website folders cannot be downloaded.\n\n" +
-                            "Copy the file to the Sitecore Data folder and try again.");
+                            "Copy the file to the Sitecore Data folder and try again."));
                         return;
                     }
                     hashParams.Add("fn", FullName);

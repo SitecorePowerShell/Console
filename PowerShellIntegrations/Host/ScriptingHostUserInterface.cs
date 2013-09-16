@@ -93,10 +93,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            if (Context.Job == null)
-            {
-                throw new NotImplementedException();
-            }
             Message message = Message.Parse(this,"ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString());
@@ -106,8 +102,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             message.Arguments.Add("PercentComplete", record.PercentComplete.ToString());
             message.Arguments.Add("RecordType", record.RecordType.ToString());
             message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString());
-            JobContext.PostMessage(message);
-            //JobContext.Flush();
+            var sheerMessage = new SendMessageMessage(message, false);
+            if (JobContext.IsJob)
+            {
+                JobContext.MessageQueue.PutMessage(sheerMessage);
+            }
+            else
+            {
+                sheerMessage.Execute();
+            }
         }
 
         public override void WriteVerboseLine(string message)

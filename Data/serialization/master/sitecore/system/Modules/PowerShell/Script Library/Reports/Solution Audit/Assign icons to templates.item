@@ -19,13 +19,13 @@ People/32x32/palette_preferences.png
 ----version----
 language: en
 version: 1
-revision: 443b00b7-6446-464e-96f2-e29dcb77c329
+revision: 88feef12-b94a-43a5-9c92-9d20f761891b
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2120
+content-length: 2103
 
 # How many of my templates define or no an icon? Which templates I need to examine to check if adding an icon would benefit my users?
 #
@@ -59,8 +59,6 @@ $has_no_icon = $template_icons | where-object {$_.Name -eq "False" } | Select-ob
 $title = "Found $($has_icon.Count + $has_no_icon.Count) templates. $($has_icon.Count) of those have icons defined while $($has_no_icon.Count) don't specify an icon."
 Write-host -f Yellow $title
 
-$template_icons
-
 get-childitem $item.ProviderPath -recurse | `
     where-object { $_.TemplateName -eq "Template" -and $_.__icon -eq ""} |  `
         Show-ListView -Property Name, `
@@ -82,14 +80,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-443b00b7-6446-464e-96f2-e29dcb77c329
+88feef12-b94a-43a5-9c92-9d20f761891b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T235647:635145406076688906
+20130915T215515:635148789151962891
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

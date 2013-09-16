@@ -22,7 +22,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     if (Sitecore.Context.Job != null)
                     {
-                        JobContext.MessageQueue.PutMessage(new ShellCommandInItemContextMessage(Item, Name));
+                        PutMessage(new ShellCommandInItemContextMessage(Item, Name));
                         if (Item != null)
                         {
                             WriteItem(Item);

@@ -11,10 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         protected override void ProcessRecord()
         {
-            LogErrors(() =>
-                {
-                    JobContext.Alert(Title);
-                });
+            LogErrors(() => PutMessage(new AlertMessage(Title)));
         }
     }
 }
