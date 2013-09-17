@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: a6f2a9ff-b740-48b3-8a6d-7249859e98b7
+revision: 91210762-a342-4c67-b7ce-4ca03cae69d1
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6199
+content-length: 6399
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -116,7 +116,9 @@ $source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/Vie
 $package.Sources.Add($source);
 
 # Task Integration
-$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Overwrite -MergeMode Merge
 $package.Sources.Add($source);
 
 # Files
@@ -148,14 +150,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a6f2a9ff-b740-48b3-8a6d-7249859e98b7
+91210762-a342-4c67-b7ce-4ca03cae69d1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T145356:635145080363280703
+20130917T121430:635150168703597500
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
