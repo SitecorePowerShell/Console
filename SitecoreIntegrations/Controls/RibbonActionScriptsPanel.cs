@@ -26,7 +26,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 {
                     foreach (Item scriptItem in scriptLibrary.Children)
                     {
-                        if (!EvaluateRules(scriptItem["ShowRule"]))
+                        if (!EvaluateRules(scriptItem["ShowRule"], context.CustomData as Item))
                         {
                             continue;
                         }
@@ -35,12 +35,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                             scriptItem["__Icon"], string.Empty,
                             string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                                 scriptItem.ID),
-                            EvaluateRules(scriptItem["EnableRule"]), false);
+                            EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item), false);
                     }
                 }
             }
         }
-        public static bool EvaluateRules(string strRules)
+        public static bool EvaluateRules(string strRules, Item item)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
             {
@@ -50,7 +50,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
             var ruleContext = new RuleContext
             {
-                //Item = contextItem
+                Item = item
             };
 
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));

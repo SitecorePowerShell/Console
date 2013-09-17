@@ -1,6 +1,6 @@
 ﻿namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
-    public class ReportsScriptLibraryMenuItem : ScriptLibraryMenuItemBase
+    public class StartMenuScriptLibraryMenuItem : ScriptLibraryMenuItemBase
     {
         public override string ScriptLibraryPath
         {
@@ -9,6 +9,5 @@
                 return "/sitecore/system/Modules/PowerShell/Script Library/";
             }
         }
-
     }
 }

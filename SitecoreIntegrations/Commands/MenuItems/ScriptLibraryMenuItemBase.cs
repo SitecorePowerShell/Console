@@ -134,7 +134,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                 Item = contextItem
             };
 
-            return rules.Rules.Any(rule => rule.Evaluate(ruleContext));
+            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
     }
 }
