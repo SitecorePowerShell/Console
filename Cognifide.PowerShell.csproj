@@ -122,6 +122,7 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\GetSessionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowApplicationMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowApplicationCommand.cs" />
