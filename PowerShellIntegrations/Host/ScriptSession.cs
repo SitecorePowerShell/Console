@@ -175,6 +175,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                         Sitecore.Configuration.Settings.LogFolder);
                     runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder",
                         Sitecore.Configuration.Settings.MediaFolder);
+                    runspace.SessionStateProxy.SetVariable("SitecorePackageFolder",
+                        Sitecore.Configuration.Settings.PackagePath);
                     runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder",
                         Sitecore.Configuration.Settings.SerializationFolder);
                     runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",

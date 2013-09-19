@@ -47,6 +47,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     {
                         variable = (PSVariable)((PSObject)result["Variable"]).BaseObject;
                         result.Add("Name",variable.Name);
+                        name = variable.Name;
                     }
 
                     if (variable != null)
@@ -64,7 +65,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         object varTitle = result["Title"];
                         if (varTitle == null)
                         {
-                            result.Add("Title", variable.Name);
+                            result.Add("Title", string.IsNullOrEmpty(variable.Name) ? name : variable.Name);
                         }
                         object varDesc = result["Description"];
                         if (varDesc == null)
@@ -75,7 +76,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     
                     if (result["Value"] == null)
                     {
-                        result.Add("Value", string.Empty);
+                        if (result.ContainsKey("Value"))
+                        {
+                            result["Value"] = string.Empty;
+                        }
+                        else
+                        {
+                            result.Add("Value", string.Empty);
+                        }
                     }
                 }
 
