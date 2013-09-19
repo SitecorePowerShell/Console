@@ -26,12 +26,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         {
             jobHandle = JobContext.JobHandle;
             Parameters = parameters;
-            Width = width;
-            Height = height;
-            Title = title;
-            OkButtonName = okButtonName;
-            CancelButtonName = cancelButtonName;
-            Description = description;
+            Width = width ?? string.Empty;
+            Height = height ?? string.Empty;
+            Title = title ?? string.Empty;
+            OkButtonName = okButtonName ?? string.Empty;
+            CancelButtonName = cancelButtonName ?? string.Empty;
+            Description = description ?? string.Empty;
         }
 
 
