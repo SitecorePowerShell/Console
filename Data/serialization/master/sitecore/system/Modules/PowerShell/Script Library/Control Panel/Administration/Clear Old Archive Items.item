@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 3380806e-1262-4985-b800-224eaec89633
+revision: 00b6edb4-3469-403f-afd8-691366d897be
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 612
+content-length: 629
 
 $result = Read-Variable -Parameters `
     @{ Name = "expired"; Value=[DateTime]::Now.AddDays(-30); Title="Clear items older than"; Tooltip="Date before which the archive items should be removed"; ShowTime=$true} `
@@ -28,6 +28,7 @@ $result = Read-Variable -Parameters `
 
 if($result -ne "ok")
 {
+    Close-Window
     Exit
 }
 
@@ -46,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3380806e-1262-4985-b800-224eaec89633
+00b6edb4-3469-403f-afd8-691366d897be
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130901T215342:635136692227755390
+20130919T124211:635151913311296484
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
