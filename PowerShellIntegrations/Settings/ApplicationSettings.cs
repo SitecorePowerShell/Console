@@ -12,10 +12,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 {
     public class ApplicationSettings
     {
-/*
-        public const string SettingsDb = "core";
-        private const string SettingsItemPath = "/sitecore/content/Applications/PowerShell/Settings/";
-*/
         public const string SettingsDb = "master";
         public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
         public const string IseSettingsItemAllUsers = "All Users";

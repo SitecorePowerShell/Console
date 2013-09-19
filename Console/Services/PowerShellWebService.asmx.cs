@@ -117,7 +117,7 @@ namespace Cognifide.PowerShell.Console.Services
 
 		private static ScriptSession GetScriptSession(string guid)
 		{
-			return ScriptSession.GetScriptSession(ApplicationNames.AjaxConsole, guid);
+		    return ScriptSessionManager.GetSession(guid,ApplicationNames.AjaxConsole, false);
 		}
 
 		[WebMethod(EnableSession = true)]
@@ -206,7 +206,8 @@ namespace Cognifide.PowerShell.Console.Services
 				session.Output.Clear();
 			}
 			HttpContext.Current.Response.ContentType = "application/json";
-			return serializer.Serialize(result);
+			var serializedResult = serializer.Serialize(result);
+		    return serializedResult;
 		}
 
 		[WebMethod(EnableSession = true)]

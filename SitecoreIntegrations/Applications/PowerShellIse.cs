@@ -434,7 +434,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     ScriptItemId
                 };
 
-            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters);
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, true);
 
             var rnd = new Random();
             Context.ClientPage.ClientResponse.SetInnerHtml(

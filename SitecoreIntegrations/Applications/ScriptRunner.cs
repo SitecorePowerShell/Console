@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Management.Automation;
 using System.Threading;
 using Sitecore.Diagnostics;
@@ -11,13 +12,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
     {
         private readonly ProgressBoxMethod method;
         private readonly object[] parameters;
+        private readonly bool autoDispose;
 
-        public ScriptRunner(ProgressBoxMethod method, object[] parameters)
+        public ScriptRunner(ProgressBoxMethod method, object[] parameters,bool autoDispose)
         {
             Assert.ArgumentNotNull(method, "method");
             Assert.ArgumentNotNull(parameters, "parameters");
             this.method = method;
             this.parameters = parameters;
+            this.autoDispose = autoDispose;
         }
 
         public ProgressBoxMethod Method
@@ -53,11 +56,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             finally
             {
-                foreach (var parameter in Parameters)
+                if (autoDispose)
                 {
-                    if (parameter is IDisposable)
+                    foreach (var parameter in Parameters.OfType<IDisposable>())
                     {
-                        (parameter as IDisposable).Dispose();
+                        parameter.Dispose();
                     }
                 }
             }

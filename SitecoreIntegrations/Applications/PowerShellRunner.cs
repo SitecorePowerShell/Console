@@ -114,7 +114,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     contextScript,
                     ScriptItem[ScriptItemFieldNames.Script]
                 };
-            var runner = new ScriptRunner(ExecuteInternal, parameters);
+            var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
         }

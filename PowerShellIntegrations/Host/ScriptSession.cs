@@ -35,8 +35,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private Pipeline pipeline;
         public static Version PsVersion { get; private set; }
 
-        public string ID { get; private set; }
+        public string ID { get; internal set; }
 
+/*
         public static ScriptSession GetScriptSession(string applianceType, string guid)
         {
             lock (HttpContext.Current.Session)
@@ -58,6 +59,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 return session;
             }
         }
+*/
 
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
@@ -272,26 +274,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    // Dispose managed resources.
-                    runspace.Dispose();
-                }
-
-                // There are no unmanaged resources to release, but
-                // if we add them, they need to be released here.
-            }
-            disposed = true;
-
-            // If it is available, make the call to the
-            // base class's Dispose(Boolean) method
-            //base.Dispose(disposing);
-        }
-
         public string GetExceptionString(Exception exc)
         {
             string exception = String.Empty;
@@ -340,7 +322,33 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public void Close()
         {
             runspace.Dispose();
+            disposed = true;            
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    Close();
+                    if (!string.IsNullOrEmpty(ID))
+                    {
+                        ScriptSessionManager.RemoveSession(ID);
+                    }
+                }
+
+                // There are no unmanaged resources to release, but
+                // if we add them, they need to be released here.
+            }
+            disposed = true;
+
+            // If it is available, make the call to the
+            // base class's Dispose(Boolean) method
+            //base.Dispose(disposing);
+        }
+
 
         #endregion
 

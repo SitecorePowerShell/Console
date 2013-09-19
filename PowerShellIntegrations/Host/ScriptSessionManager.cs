@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
     public static class ScriptSessionManager
     {
-        private static readonly Dictionary<string, ScriptSession> cache = new Dictionary<string, ScriptSession>();
+        //private static readonly HashSet<string> sessions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private const string sessionIdPrefix = "$scriptSession$";
 
         public static ScriptSession GetSession(string persistentId)
         {
@@ -14,7 +18,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public static bool SessionExists(string persistentId)
         {
-            return cache.ContainsKey(persistentId);
+            return HttpContext.Current.Session[sessionIdPrefix + persistentId] != null;
+        }
+
+        public static void RemoveSession(string persistentId)
+        {
+            HttpContext.Current.Session.Remove(sessionIdPrefix + persistentId);
         }
 
         public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
@@ -25,15 +34,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 return new ScriptSession(applicanceType, personalizedSettings);
             }
 
-            lock (cache)
+            lock (HttpContext.Current.Session)
             {
-                if (cache.ContainsKey(persistentId))
+                if (SessionExists(persistentId))
                 {
-                    return cache[persistentId];
+                    return HttpContext.Current.Session[sessionIdPrefix + persistentId] as ScriptSession;
                 }
-                
+
                 var session = new ScriptSession(applicanceType, personalizedSettings);
-                cache.Add(persistentId, session);
+                session.ID = persistentId;
+                HttpContext.Current.Session[sessionIdPrefix + persistentId] = session;
+                session.ID = persistentId;
+                session.Initialize();
+                session.ExecuteScriptPart(session.Settings.Prescript);
                 return session;
             }
         }
@@ -43,15 +56,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Dictionary<string, ScriptSession> tempCache;
 
             //copy dictionary to release lock quickly
-            lock (cache)
+            lock (HttpContext.Current.Session)
             {
-                tempCache = new Dictionary<string, ScriptSession>(cache);
-                cache.Clear();
-            }
-
-            foreach (var session in tempCache)
-            {
-                session.Value.Dispose();
+                foreach (string key in HttpContext.Current.Session.Keys)
+                {
+                    if (key.StartsWith(sessionIdPrefix))
+                    {
+                        var session = HttpContext.Current.Session[key] as ScriptSession;
+                        if (session != null)
+                        {
+                            session.Dispose();
+                        }
+                    }
+                }
             }
         }
     }
