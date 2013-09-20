@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 91210762-a342-4c67-b7ce-4ca03cae69d1
+revision: 58d97c98-e369-4e5e-bb4e-99aa82c99127
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6399
+content-length: 6489
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -137,6 +137,8 @@ $package.Sources.Add($source);
 
 Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).xml"
 Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -150,14 +152,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-91210762-a342-4c67-b7ce-4ca03cae69d1
+58d97c98-e369-4e5e-bb4e-99aa82c99127
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130917T121430:635150168703597500
+20130920T110226:635152717464888359
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
