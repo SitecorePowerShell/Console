@@ -5,6 +5,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages
 {
@@ -48,6 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 context = new CommandContext();
             }
+            context.Parameters.Add(Message.Parse(null,command).Arguments);
             Command shellCommand = CommandManager.GetCommand(command);
             if (shellCommand == null)
                 return;
