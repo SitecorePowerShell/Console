@@ -216,3 +216,5 @@ pip-log.txt
 /Website/
 /Database/
 /Data/
+!/Data/packages/
+!/Data/serialization/
