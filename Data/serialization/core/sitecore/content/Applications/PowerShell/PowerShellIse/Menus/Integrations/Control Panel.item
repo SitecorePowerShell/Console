@@ -20,9 +20,9 @@ Applications/32x32/preferences.png
 field: {CAB694FC-E37C-44EB-9012-488B775CF638}
 name: Message
 key: message
-content-length: 23
+content-length: 81
 
-ise:rebuildcontrolpanel
+item:executescript(script={19E33653-B884-49D0-8E8F-5E29BF5D29B9},scriptDb=master)
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -33,7 +33,7 @@ Applications/32x32/preferences.png
 ----version----
 language: en
 version: 1
-revision: 760fe13d-0397-468c-9d5d-98206b7d5aa1
+revision: 681d54bb-d621-4e28-92bb-cf602cae008f
 
 ----field----
 field: {9B72A62B-2775-423D-B17A-EC34A9F31AF8}
@@ -55,21 +55,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20130506T084250
+20130506T084200
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-760fe13d-0397-468c-9d5d-98206b7d5aa1
+681d54bb-d621-4e28-92bb-cf602cae008f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130713T231631:635093541912466407
+20130920T143417:635152844579407969
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
