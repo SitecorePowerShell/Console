@@ -33,14 +33,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static string GetPrefix(ScriptSession session, string command)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand(command, out lastToken);
+            var truncatedCommand = TruncatedCommand(session,command, out lastToken);
             return string.IsNullOrEmpty(lastToken) ? string.Empty : lastToken;
         }
 
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand(command, out lastToken);
+            var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
 
             string TabExpansionHelper =
                 @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
@@ -60,7 +60,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static IEnumerable<string> FindMatches2(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand(command, out lastToken);
+            var truncatedCommand = TruncatedCommand2(command, out lastToken);
 
             var teCmd = new Command("TabExpansion");
             teCmd.Parameters.Add("line", command);
@@ -153,7 +153,46 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         }
 
-        private static string TruncatedCommand(string command, out string lastToken)
+        private static string TruncatedCommand(ScriptSession session, string command, out string lastToken)
+        {
+            {
+                if (_powerShellVersionMajor == 0)
+                {
+                    _powerShellVersionMajor = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
+                }
+
+                switch (_powerShellVersionMajor)
+                {
+                    case (2):
+                        return TruncatedCommand2(command, out lastToken);
+                    case (3):
+                    case (4):
+                        return TruncatedCommand3(session, command, out lastToken);
+                    default:
+                        lastToken = string.Empty;
+                        return string.Empty;
+                }
+            }
+        }
+
+        private static string TruncatedCommand3(ScriptSession session, string command, out string lastToken)
+        {
+            string TabExpansionHelper =
+                @"function ScPsReplacementIndex( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.ReplacementIndex } }";
+            session.ExecuteScriptPart(TabExpansionHelper);
+
+            var teCmd = new Command("ScPsReplacementIndex");
+            teCmd.Parameters.Add("inputScript", command);
+            teCmd.Parameters.Add("cursorColumn", command.Length);
+
+            int teResult = session.ExecuteCommand(teCmd, false, true).Cast<int>().First();
+
+            lastToken = command.Substring(teResult);
+            return command.Substring(0,teResult);
+            
+        }
+
+        private static string TruncatedCommand2(string command, out string lastToken)
         {
             Collection<PSParseError> errors;
             Collection<PSToken> tokens = PSParser.Tokenize(command, out errors);
@@ -173,7 +212,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                         start = tokens[tokens.Count - 2].Start;
                     }
                     lastToken = command.Substring(start,lastPsToken.EndColumn-1-start);
-                    command = command.TrimEnd(' ');
+                    //command = command.TrimEnd(' ');
                     if (lastPsToken.Type == PSTokenType.Operator && lastPsToken.Content != "-")
                     {
                         truncatedCommand = command;
