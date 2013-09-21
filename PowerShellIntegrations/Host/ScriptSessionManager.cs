@@ -53,8 +53,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public static void Clear()
         {
-            Dictionary<string, ScriptSession> tempCache;
-
             //copy dictionary to release lock quickly
             lock (HttpContext.Current.Session)
             {
