@@ -20,8 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             {
                 ItemUri uri = Sitecore.Data.ItemUri.Parse(ItemUri);
                 Item item = Factory.GetDatabase(uri.DatabaseName).GetItem(uri.ItemID, uri.Language, uri.Version);
-                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-                WriteObject(psobj, false);
+                WriteItem(item);
             }
         }
     }
