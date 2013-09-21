@@ -8,13 +8,13 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
-    [Cmdlet("Expand", "Tokens", DefaultParameterSetName = "Item")]
+    [Cmdlet("Expand", "Token")]
     [OutputType(new[] { typeof(Item) })]
-    public class ExpandTokensCommand : BaseCommand
+    public class ExpandTokenCommand : BaseCommand
     {
         private static readonly MasterVariablesReplacer TokenReplacer = Factory.GetMasterVariablesReplacer();
 
-        [Parameter(Position = 0, Mandatory = true)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public Item Item { get; set; }
 
         protected override void ProcessRecord()
@@ -31,8 +31,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
                 throw ex;
             }
 
-            PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, Item);
-            WriteObject(psobj, false);
+            WriteItem(Item);
         }
     }
 }
