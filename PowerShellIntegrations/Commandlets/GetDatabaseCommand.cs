@@ -5,7 +5,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Get", "Database", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "Database")]
     [OutputType(new[] { typeof(Database) })]
     public class GetDatabaseCommand : BaseCommand
     {

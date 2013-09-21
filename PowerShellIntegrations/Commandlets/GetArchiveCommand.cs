@@ -6,7 +6,7 @@ using Sitecore.Data.Archiving;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Get", "Archive", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "Archive")]
     [OutputType(new[] { typeof(Archive) })]
     public class GetArchiveCommand : DatabaseContextBaseCommand
     {

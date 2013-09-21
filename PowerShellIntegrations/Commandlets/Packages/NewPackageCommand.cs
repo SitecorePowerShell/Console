@@ -3,7 +3,7 @@ using Sitecore.Install;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("New", "Package", DefaultParameterSetName = "FileName")]
+    [Cmdlet("New", "Package")]
     [OutputType(new[] { typeof(PackageProject) })]
     public class NewPackageCommand : BasePackageCommand
     {

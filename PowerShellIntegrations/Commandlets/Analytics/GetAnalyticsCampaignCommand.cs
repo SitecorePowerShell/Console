@@ -2,7 +2,7 @@
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsCampaign", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "AnalyticsCampaign")]
     [OutputType(new[] { typeof(Campaigns) })]
     public class GetAnalyticsCampaignCommand : AnalyticsBaseCommand
     {

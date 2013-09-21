@@ -4,7 +4,7 @@ using Sitecore.Caching;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Get", "Cache", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "Cache")]
     [OutputType(new[] { typeof(Cache) })]
     public class GetCacheCommand : BaseCommand
     {

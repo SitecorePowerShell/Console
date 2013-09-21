@@ -5,14 +5,14 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    [Cmdlet("Get", "User", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "User", DefaultParameterSetName = "From Name")]
     [OutputType(new[] { typeof(User) })]
     public class GetUserCommand : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, Position = 0)]
+        [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "From Name")]
         public string Name { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Current User")]
         public SwitchParameter Current { get; set; }
 
         protected override void ProcessRecord()

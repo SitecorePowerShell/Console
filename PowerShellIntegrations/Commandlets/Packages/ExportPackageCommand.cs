@@ -6,7 +6,7 @@ using Sitecore.Install.Zip;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Export", "Package", DefaultParameterSetName = "ZipFileName")]
+    [Cmdlet("Export", "Package")]
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]

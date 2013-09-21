@@ -7,7 +7,7 @@ using Sitecore.Shell.Applications.ContentEditor;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Get", "Package", DefaultParameterSetName = "FileName")]
+    [Cmdlet("Get", "Package")]
     [OutputType(new[] { typeof(PackageProject) })]
     public class GetPackageCommand : BasePackageCommand
     {

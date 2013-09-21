@@ -7,14 +7,14 @@ using Sitecore.Tasks;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
 {
-    [Cmdlet(VerbsCommon.Get, "TaskSchedule", DefaultParameterSetName = "DatabaseName")]
+    [Cmdlet(VerbsCommon.Get, "TaskSchedule", DefaultParameterSetName = "From Path")]
     [OutputType(new[] { typeof(ScheduleItem) })]
     public class GetTaskSchedule : DatabaseContextBaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromItem", Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item", Mandatory = true)]
         public Item Item { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromPath", Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Path", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 

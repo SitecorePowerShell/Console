@@ -5,7 +5,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsView", DefaultParameterSetName = "Name")]
+    [Cmdlet("Get", "AnalyticsView")]
     [OutputType(new[] { typeof(Pages) })]
     public class GetAnalyticsViewCommand : AnalyticsBaseCommand
     {
