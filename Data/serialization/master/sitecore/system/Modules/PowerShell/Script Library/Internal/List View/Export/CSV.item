@@ -19,19 +19,20 @@ Control/32x32/listview_b.png
 ----version----
 language: en
 version: 1
-revision: bf97ef75-1772-4d1c-b39f-70281db82cc0
+revision: 2f828601-0c98-449d-b410-6d58eb432e12
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 274
+content-length: 327
 
 $dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $csvFile  = "$dataFolder\report-$datetime.csv"
 
-[psCustomObject]$resultSet | Select-Object -Property $formatProperty | Export-Csv $csvFile -NoTypeInformation
+$format = & ([scriptblock]::Create($formatProperty))        
+[psCustomObject]$resultSet | Select-Object -Property $format | Export-Csv $csvFile -NoTypeInformation
 $csvFile
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -46,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-bf97ef75-1772-4d1c-b39f-70281db82cc0
+2f828601-0c98-449d-b410-6d58eb432e12
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T175831:635145191111513125
+20130922T222443:635154854835184922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

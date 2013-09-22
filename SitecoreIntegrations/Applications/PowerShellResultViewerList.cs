@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -205,8 +206,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     : string.Empty;
                 var results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
                 session.SetVariable("resultSet", results);
-                session.SetVariable("formatProperty", ListViewer.Data.Property);
-                var result = session.ExecuteScriptPart(script, false).First().ToString();
+                var formatProperty = ListViewer.Data.Property.Cast<Hashtable>()
+                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
+                    .Aggregate((a, b) => a + b).TrimEnd(',');
+                session.SetVariable("formatProperty", formatProperty);
+                var result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }
         }
