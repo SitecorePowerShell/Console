@@ -237,7 +237,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             string id = scriptItem.ID.ToString();
             string name = scriptItem.Name;
             string icon = scriptItem[FieldIDs.Icon];
-            SheerResponse.SetInnerHtml("ScriptName", string.Format("Script: {0}:{1}", db, scriptItem.Paths.Path.Substring(9)));
+            ScriptName.Value = string.Format("Script: {0}:{1}", db, scriptItem.Paths.Path.Substring(9));
+            SheerResponse.SetInnerHtml("ScriptName", ScriptName.Value);
             Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
                           Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
 
@@ -284,6 +285,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
             ScriptResult.Visible = false;
+            SheerResponse.SetInnerHtml("ScriptName", string.Empty);
+            ScriptName.Value = string.Empty;
             UpdateRibbon();
         }
 
