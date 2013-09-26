@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Text;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Sitecore.Drawing.Exif.Properties;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 
@@ -33,7 +34,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Data { get; set; }
 
-        [Parameter(Mandatory = true)]
         public object[] Property { get; set; }
 
         [Parameter]
@@ -53,13 +53,37 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         protected override void BeginProcessing()
         {
-            SessionState.PSVariable.Set("ScPsSlvProperties", Property);
+            if (Property != null)
+            {
+                SessionState.PSVariable.Set("ScPsSlvProperties", Property);
+            }
             base.BeginProcessing();
         }
 
         protected override void ProcessRecord()
         {
             SessionState.PSVariable.Set("ScPsSlvPipelineObject", Data);
+
+            if (Property == null && SessionState.PSVariable.Get("ScPsSlvProperties") == null)
+            {
+                ScriptBlock propScript =
+                    InvokeCommand.NewScriptBlock(
+                        "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayProperty }");
+                PSObject propDefault = InvokeCommand.InvokeScript(SessionState, propScript).First();
+                propScript =
+                    InvokeCommand.NewScriptBlock(
+                        "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+                Collection<PSObject> propResult = InvokeCommand.InvokeScript(SessionState, propScript);
+                List<object> properties = new List<object>(propResult.Count+1);
+                properties.Add(propDefault.ToString());
+                if (propResult.Count() > 0)
+                {
+                    properties.AddRange(propResult.Where(p=> p != null).Cast<object>());
+                }
+                Property = properties.ToArray();
+                SessionState.PSVariable.Set("ScPsSlvProperties", Property);
+            }
+            
             ScriptBlock script =
                 InvokeCommand.NewScriptBlock("$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties");
             Collection<PSObject> result = InvokeCommand.InvokeScript(SessionState, script);
