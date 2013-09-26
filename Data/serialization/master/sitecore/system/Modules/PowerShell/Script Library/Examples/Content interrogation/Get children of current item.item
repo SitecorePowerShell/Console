@@ -12,15 +12,16 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: d67a9d24-cb06-488f-be43-1b153cb7ff91
+revision: 8cd1e1c5-d40e-492b-9604-86afa186ff44
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 68
+content-length: 196
 
-Get-ChildItem | ft Name, Children, Languages, Id, TemplateName -auto
+# Get all the items from the current path, then creates an autosized formatted table with the specified columns.
+Get-ChildItem | Format-Table Name, Children, Languages, Id, TemplateName -AutoSize
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -34,14 +35,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d67a9d24-cb06-488f-be43-1b153cb7ff91
+8cd1e1c5-d40e-492b-9604-86afa186ff44
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130830T182849:635134841299653907
+20130920T183429:635152988699203883
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -12,21 +12,18 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: d67eeb05-fc78-4803-bcea-03f0f01c1d15
+revision: 43cca913-ccc0-403f-92a0-4cca98f5b0e6
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 249
+content-length: 245
 
-#checks how many of which fields my solution uses
+# Determine the number of usages for each field.
 cd master:/templates/
-get-childitem -recurse | `
-  where-object { $_.TemplateName -eq "Template Field" } |  `
-  group-object Type | `
-  sort count -descending | `
-  format-table Count, Name -AutoSize
+Get-ChildItem -Recurse | Where-Object { $_.TemplateName -eq "Template Field" } |  
+  Group-Object Type | Sort-Object Count -Descending | Format-Table Count, Name -AutoSize
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -40,14 +37,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d67eeb05-fc78-4803-bcea-03f0f01c1d15
+43cca913-ccc0-403f-92a0-4cca98f5b0e6
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130515T140254:635042233741866016
+20130920T183800:635152990805290658
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
