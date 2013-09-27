@@ -418,7 +418,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
-                        path, itemTypeName, newItemValue);
+                    path, itemTypeName, newItemValue);
 
                 itemTypeName = itemTypeName.Replace('\\', '/').Trim('/');
                 // for when the template name is starting with /sitecore/
@@ -429,9 +429,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 //for when the /templates at the start was missing
                 if (!itemTypeName.StartsWith("templates/", StringComparison.OrdinalIgnoreCase))
                 {
-                    itemTypeName = "templates/"+itemTypeName;
+                    itemTypeName = "templates/" + itemTypeName;
                 }
-                TemplateItem templateItem = GetItemForPath("/"+itemTypeName);
+
+                Item srcItem = GetItemForPath("/" + itemTypeName);
 
                 Item parentItem = GetItemForPath(GetParentFromPath(path));
 
@@ -441,7 +442,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     parentItem = dic[ParentParam].Value as Item;
                 }
 
-                Item createdItem = parentItem.Add(GetLeafFromPath(path), templateItem);
+                Item createdItem = null;
+                if (srcItem.TemplateName == "Template")
+                {
+                    createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
+                }
+                else if (srcItem.TemplateName == "Branch")
+                {
+                    createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
+                }
 
                 if (dic != null && dic[LanguageParam].IsSet)
                 {
@@ -470,8 +479,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                         "Error while executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
-                         path, itemTypeName, newItemValue);
+                    "Error while executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
+                    path, itemTypeName, newItemValue);
                 throw;
             }
         }
