@@ -1,0 +1,101 @@
+----item----
+version: 1
+id: {29846B49-9512-4685-9037-9C064350BCE9}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Cognifide Internal/Create new Zen Garden Tenant
+parent: {DC92BD2C-9C61-4F01-A208-DAEAC9824968}
+name: Create new Zen Garden Tenant
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: 9b311146-b1c5-4a53-9400-002f05c16982
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2161
+
+#remove-item 'master:\templates\Tenant Templates\New Tenant'
+$masterTenantTemplates = "master:/templates/Tenant Templates/Demo"
+$tenantName = "New tenant"
+$marketName = "int"
+$hostName = "newtenant"
+<#$result = Read-Variable -Parameters `
+    @{ Name = "tenantName"; Value="New tenant"; Title="Tenant Name"}, `
+    @{ Name = "marketName"; Value="int"; Title="Market Name"} `
+    -Description "This script will create a new fully functional tenant within your Zen Garden enabled Sitecore instance." `
+    -Title "Create a new Zen Garden tenant" -Width 500 -Height 320 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+if($result -ne "ok")
+{
+    Exit
+}
+#>
+
+$tenantTemplatesPath = "master:/templates/Tenant Templates/$tenantName"
+$tenantPath = "master:/content/$tenantName"
+$marketPath = "$tenantPath/$marketName"
+
+# Create Templates
+#Copy-Item "master:/templates/Tenant Templates/Demo" $tenantPath -Recurse
+$tenant = Get-Item "master:/templates/Tenant Templates/$tenantName"
+$tenant."__Display name" = $tenantName
+
+#Replace Insert Options to link to new templates
+gci $masterTenantTemplates -Recurse | `
+    Where-Object { $_.TemplateName -eq "Template" } | `
+    ForEach-Object {
+        $oldTemplateId = $_.Id
+        $newTemplateId = (Get-Item "$tenantPath/$($_.Name)").Id
+        gci -path $tenantTemplatesPath -recurse -Filter "__Standard Values" | ForEach-Object { $_.__Masters = $_.__Masters -replace $oldTemplateId, $newTemplateId}
+}
+
+#Create Tenant
+New-Item -Path master:\content -Name $tenantName -ItemType "Cognifide/ZenGarden/TenantTemplate"
+
+#Create Market
+New-Item -Path $tenantPath -Name $marketName -ItemType "Branches/Cognifide/ZenGarden/MarketBranch"
+
+$site = Get-Item "$marketPath/Settings/Sites/Site"
+$site.HostName = $HostName
+$site.StartItem = (Get-Item "$marketPath/Home").ID
+$settings = Get-Item "$marketPath/Settings"
+$settings.Templates = (Get-Item $tenantTemplatesPath).ID
+$designs = Get-Item "$marketPath/Presentation/Designs"
+$designs.Theme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=%7b5BC33F0E-A0F8-434E-9808-E32C6BABF76E%7d"
+New-Item -Path 'master:\media library' -Name $tenantName -ItemType "System/Media/Media folder"
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130927T153843
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+9b311146-b1c5-4a53-9400-002f05c16982
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130927T184336:635159042167040859
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
