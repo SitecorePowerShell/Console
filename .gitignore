@@ -218,3 +218,4 @@ pip-log.txt
 /Data/
 !/Data/packages/
 !/Data/serialization/
+Data/serialization/master/sitecore/system/Tasks/Schedules/Test-PowerShell.item
