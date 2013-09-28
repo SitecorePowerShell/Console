@@ -12,64 +12,117 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 9b311146-b1c5-4a53-9400-002f05c16982
+revision: 28f50109-afe5-4f29-9960-e011536cb8c4
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2161
+content-length: 4376
 
-#remove-item 'master:\templates\Tenant Templates\New Tenant'
-$masterTenantTemplates = "master:/templates/Tenant Templates/Demo"
-$tenantName = "New tenant"
-$marketName = "int"
-$hostName = "newtenant"
-<#$result = Read-Variable -Parameters `
+Write-Progress -Activity "Asking for parameters"
+$result = Read-Variable -Parameters `
     @{ Name = "tenantName"; Value="New tenant"; Title="Tenant Name"}, `
-    @{ Name = "marketName"; Value="int"; Title="Market Name"} `
+    @{ Name = "marketName"; Value="int"; Title="Market Name"}, `
+    @{ Name = "removeExistingTenant"; Value=$false; Title="Remove current tenant/market & theme if exists"}, `
+    @{ Name = "hostName"; Value="newtenant"; Title="Host name"}, `
+    @{ Name = "createNewTheme"; Value=$true; Title="Create new theme"} `
     -Description "This script will create a new fully functional tenant within your Zen Garden enabled Sitecore instance." `
-    -Title "Create a new Zen Garden tenant" -Width 500 -Height 320 `
+    -Title "Create a new Zen Garden tenant" -Width 500 -Height 420 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
 if($result -ne "ok")
 {
     Exit
 }
-#>
 
+$masterTenantTemplates = "master:/templates/Tenant Templates/Demo"
 $tenantTemplatesPath = "master:/templates/Tenant Templates/$tenantName"
 $tenantPath = "master:/content/$tenantName"
 $marketPath = "$tenantPath/$marketName"
+$seoTenantName = $tenantName.ToLower().Replace(' ', '-')
 
-# Create Templates
-#Copy-Item "master:/templates/Tenant Templates/Demo" $tenantPath -Recurse
-$tenant = Get-Item "master:/templates/Tenant Templates/$tenantName"
-$tenant."__Display name" = $tenantName
-
-#Replace Insert Options to link to new templates
-gci $masterTenantTemplates -Recurse | `
-    Where-Object { $_.TemplateName -eq "Template" } | `
-    ForEach-Object {
-        $oldTemplateId = $_.Id
-        $newTemplateId = (Get-Item "$tenantPath/$($_.Name)").Id
-        gci -path $tenantTemplatesPath -recurse -Filter "__Standard Values" | ForEach-Object { $_.__Masters = $_.__Masters -replace $oldTemplateId, $newTemplateId}
+if($removeExistingTenant){
+    Write-Progress -Activity "Deleting old folders"
+    remove-item "master:\templates\Tenant Templates\$tenantName" -Recurse
+    remove-item "master:\content\$tenantName" -Recurse
+    remove-item "master:\media library\$tenantName" -Recurse
+    remove-item "master:\media library\themes\$tenantName" -Recurse
+    remove-item "master:\media library\themes\$seoTenantName" -Recurse
+    remove-item "master:\media library\$seoTenantName" -Recurse
 }
 
-#Create Tenant
-New-Item -Path master:\content -Name $tenantName -ItemType "Cognifide/ZenGarden/TenantTemplate"
+Write-Progress -Activity "Creating Templates"
+# Create Templates
+if(-not (Test-Path -Path $tenantTemplatesPath))
+{
+    Copy-Item $masterTenantTemplates $tenantTemplatesPath -Recurse
+    $tenant = Get-Item $tenantTemplatesPath
+    $tenant."__Display name" = $tenantName
 
-#Create Market
-New-Item -Path $tenantPath -Name $marketName -ItemType "Branches/Cognifide/ZenGarden/MarketBranch"
+    #Replace Insert Options to link to new templates
+    gci $masterTenantTemplates -Recurse | `
+        Where-Object { $_.TemplateName -eq "Template" } | `
+        ForEach-Object {
+            $oldTemplateId = $_.Id
+            $newTemplateId = (Get-Item "$tenantTemplatesPath/$($_.Name)").Id
+            Get-ChildItem -path $tenantTemplatesPath -recurse -Filter "__Standard Values" | ForEach-Object { $_.__Masters = $_.__Masters -replace $oldTemplateId, $newTemplateId}
+            Get-Item -path $marketPath | ForEach-Object { $_.__Masters = $_.__Masters -replace $oldTemplateId, $newTemplateId}
+    }
+}
 
+Write-Progress -Activity "Creating Tenant"
+# Create Tenant
+if(-not (Test-Path -Path $tenantPath))
+{
+    New-Item -Path master:\content -Name $tenantName -ItemType "Cognifide/ZenGarden/TenantTemplate" | Out-Null
+}
+
+if(Test-Path -Path $marketPath)
+{
+    Show-Alert "Market '$marketName' in Tenant '$TenantName' already exists - aborting"
+    Exit
+}
+
+# Create Market
+Write-Progress -Activity "Creating market"
+New-Item -Path $tenantPath -Name $marketName -ItemType "Branches/Cognifide/ZenGarden/MarketBranch" | Out-Null
+
+#Change Home Template
+$homeTemplate = Get-Item "master:\templates\Tenant Templates\$tenantName\Home Page"
+$homeItem = Get-Item "$marketPath\Home"
+$homeItem.ChangeTemplate($homeTemplate)
+
+Get-Item -path $marketPath | ForEach-Object { $_.__Masters = $_.__Masters -replace "{EB7D237A-4570-4C7D-9F70-2937E66DE9FE}", "$($homeTemplate.ID)"}
+
+Write-Progress -Activity "Setting up site parameters"
+# Setup Site node
 $site = Get-Item "$marketPath/Settings/Sites/Site"
 $site.HostName = $HostName
 $site.StartItem = (Get-Item "$marketPath/Home").ID
+
+# Setup Tenant templates
 $settings = Get-Item "$marketPath/Settings"
 $settings.Templates = (Get-Item $tenantTemplatesPath).ID
+
+# Setup theme
 $designs = Get-Item "$marketPath/Presentation/Designs"
-$designs.Theme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=%7b5BC33F0E-A0F8-434E-9808-E32C6BABF76E%7d"
-New-Item -Path 'master:\media library' -Name $tenantName -ItemType "System/Media/Media folder"
+
+Write-Progress -Activity "Setting up site theme"
+if($createNewTheme)
+{
+    Copy-Item "master:/media library/themes/Balsamiq v2" "master:\media library\themes\$tenantName" -Recurse
+    $theme = Get-Item "master:\media library\themes\$seoTenantName"
+    $theme."__Display name" = $tenantName
+    $designs.ZenGardenTheme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=$($theme.ID)"
+} else {
+    # Set default theme to Balsamiq
+    $designs.ZenGardenTheme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=%7b5BC33F0E-A0F8-434E-9808-E32C6BABF76E%7d"
+}
+
+$mediaPath = New-Item -Path 'master:\media library' -Name $tenantName -ItemType "System/Media/Media folder"
+
+Write-Host "Done! Don't forget to publish the templates, theme and the tenant!"
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -84,14 +137,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9b311146-b1c5-4a53-9400-002f05c16982
+28f50109-afe5-4f29-9960-e011536cb8c4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130927T184336:635159042167040859
+20130928T025621:635159337814584609
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
