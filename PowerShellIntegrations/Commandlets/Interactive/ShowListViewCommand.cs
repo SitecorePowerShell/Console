@@ -1,39 +1,22 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Collections.Generic;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Text;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Sitecore.Drawing.Exif.Properties;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Web;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "ListView")]
-    [OutputType(new[] { typeof(string) })]
+    [OutputType(new[] {typeof (string)})]
     public class ShowListViewCommand : BaseFormCommand
     {
-        public class SvlDataObject
-        {
-            public SvlDataObject(int capacity)
-            {
-                Display = new Dictionary<string, string>(capacity, StringComparer.OrdinalIgnoreCase);
-            }
-            public object Original { get; set; }
-            public Dictionary<string,string> Display { get; set; }
-            public int Id { get; internal set; }
-        }
-
-        private List<SvlDataObject> cumulativeData = new List<SvlDataObject>();
+        private readonly List<SvlDataObject> cumulativeData = new List<SvlDataObject>();
 
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Data { get; set; }
 
+        [Parameter]
         public object[] Property { get; set; }
 
         [Parameter]
@@ -74,26 +57,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
                 Collection<PSObject> propResult = InvokeCommand.InvokeScript(SessionState, propScript);
-                List<object> properties = new List<object>(propResult.Count+1);
+                var properties = new List<object>(propResult.Count + 1);
                 properties.Add(propDefault.ToString());
                 if (propResult.Count() > 0)
                 {
-                    properties.AddRange(propResult.Where(p=> p != null).Cast<object>());
+                    properties.AddRange(propResult.Where(p => p != null).Cast<object>());
                 }
                 Property = properties.ToArray();
                 SessionState.PSVariable.Set("ScPsSlvProperties", Property);
             }
-            
+
             ScriptBlock script =
                 InvokeCommand.NewScriptBlock("$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties");
             Collection<PSObject> result = InvokeCommand.InvokeScript(SessionState, script);
 
             if (result.Count() > 0)
             {
-                var varValue = Data;
+                object varValue = Data;
                 while (varValue is PSObject)
                 {
-                    varValue = ((PSObject)varValue).ImmediateBaseObject;
+                    varValue = ((PSObject) varValue).ImmediateBaseObject;
                 }
 
                 var slvDataObject = new SvlDataObject(Property.Length)
@@ -102,7 +85,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     Id = cumulativeData.Count
                 };
 
-                foreach (var psPropertyInfo in result[0].Properties)
+                foreach (PSPropertyInfo psPropertyInfo in result[0].Properties)
                 {
                     slvDataObject.Display.Add(psPropertyInfo.Name, (psPropertyInfo.Value ?? string.Empty).ToString());
                 }
@@ -116,16 +99,28 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             base.EndProcessing();
             LogErrors(() =>
             {
-                int pageSize = PageSize == 0  ? 25 : PageSize;
+                int pageSize = PageSize == 0 ? 25 : PageSize;
                 if (Data != null)
                 {
-                    PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results", Icon,
-                            WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property));
+                    PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results",
+                        Icon,
+                        WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property));
                     FlushMessages();
                 }
                 SessionState.PSVariable.Remove("$ScPsSlvProperties");
             });
         }
 
+        public class SvlDataObject
+        {
+            public SvlDataObject(int capacity)
+            {
+                Display = new Dictionary<string, string>(capacity, StringComparer.OrdinalIgnoreCase);
+            }
+
+            public object Original { get; set; }
+            public Dictionary<string, string> Display { get; set; }
+            public int Id { get; internal set; }
+        }
     }
 }
