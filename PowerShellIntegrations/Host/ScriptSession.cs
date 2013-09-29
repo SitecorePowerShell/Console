@@ -220,6 +220,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         internal List<object> ExecuteScriptPart(string script, bool stringOutput, bool internalScript)
         {
+            return ExecuteScriptPart(script, stringOutput, internalScript, true);
+        }
+
+        internal List<object> ExecuteScriptPart(string script, bool stringOutput, bool internalScript,
+            bool marshalResults)
+        {
             if (String.IsNullOrEmpty(script))
             {
                 return null;
@@ -230,7 +236,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
             pipeline = runspace.CreatePipeline(script);
-            return ExecuteCommand(stringOutput, internalScript, pipeline);
+            return ExecuteCommand(stringOutput, internalScript, pipeline, marshalResults);
         }
 
         internal List<object> ExecuteCommand(Command command, bool stringOutput, bool internalScript)
@@ -249,7 +255,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             pipeline.Stop();
         }
 
-        private List<object> ExecuteCommand(bool stringOutput, bool internalScript, Pipeline pipeline)
+        private List<object> ExecuteCommand(bool stringOutput, bool internalScript, Pipeline pipeline,
+            bool marshallResults = true)
         {
             if (!internalScript)
             {
@@ -266,10 +273,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Collection<PSObject> execResults = pipeline.Invoke();
 
             //Output = host.Output;
-
-            List<object> results = execResults.Select(p => p.BaseObject).ToList();
-
-            return results;
+            if (marshallResults)
+                return execResults.Select(p => p.BaseObject).ToList();
+            return execResults.Cast<object>().ToList();
         }
 
         private void PipelineStateChanged(object sender, PipelineStateEventArgs e)

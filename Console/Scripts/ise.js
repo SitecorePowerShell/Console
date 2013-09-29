@@ -160,7 +160,24 @@ extend(cognifide, 'powershell');
                 });
             return data;
         };
-            
+
+        cognifide.powershell.showCommandHelp = function (command) {
+            _getCommandHelp(command);
+            var ajaxDialog = $('<div id="ajax-dialog"/>').html($.commandHelp).appendTo('body');
+            ajaxDialog.dialog({
+                modal: true,
+                close: function (event, ui) {
+                    $(this).remove();
+                },
+                height: $(window).height() - 20,
+                width: $(window).width() * 18 / 20,
+                show: "slow",
+                hide: "slow"
+            });
+            $('#ajax-dialog').scrollTop("0");
+            return false;
+        };
+
         $.commandHelp = "";
         $("#Help").dialog({ autoOpen: false });
 

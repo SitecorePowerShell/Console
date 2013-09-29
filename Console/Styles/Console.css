@@ -288,17 +288,77 @@ html{
     overflow-y: auto;
     overflow-x: visible;
     word-wrap: break-word;
-    white-space: pre-wrap;
     border: 0;
     padding: 4px 4px 0 4px;
     margin: 4px 4px 4px 20px;
-    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+.codeSnippetContainerCodeContainer {
+    border-left: solid 1px #939393;
+    border-bottom: solid 1px #939393;
+    border-right: solid 1px #939393;
+    border-top: solid 1px #939393;
+    clear: both;
+    margin-bottom: 12px;
+    position: relative;
+    top: -1px;
+}
+
+.codeSnippetContainerCode {
+    width: auto;
+    margin: 0;
+    padding-right: 21px;
+    padding-left: 21px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.example-description {
+    margin-bottom: 18px;
+}
+
+.ui-widget-content {
+    border-color: #707070;
+}
+
+.ui-widget-content h1.title {
+    font-size: 2.769em;
+    font-weight: normal;
+    font-family: 'Segoe UI Light','Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
+    color: #707070;
+}
+
+.ui-widget-content h1, .ui-widget-content h2 {
+    font-family: 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
+    font-weight: normal;
+    color: #2a2a2a;
+    font-size: 2.2em;
+    -webkit-margin-after: 0.2em;
+}
+
+.ui-widget-content h3, 
+.ui-widget-content h4, .ui-widget-content h5 {
+    font-family: 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
+    font-weight: normal;
+    color: #2a2a2a;
+    font-size: 1.692em;
+    -webkit-margin-after: 0.2em;
+
+}
+
+.ui-widget-content table, .ui-widget-content th, .ui-widget-content td {
+    border: 1px solid #bbb;
+    padding: 4px;
+    border-collapse: collapse;
+    font-family: 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
+    font-size: 1.1em;
+    margin-top: 1em;
 }
 
 #ajax-dialog a
 {
     text-decoration:underline;
-    color: #fcefa1;
+    color: #0095c4;
 }
 
 .ui-dialog {
@@ -310,33 +370,9 @@ html{
     display: none;
 }
 
-.ps-help-header
-{
-    color: #fcefa1;
-    font-size: 2em;
-}
-
-.ps-help-command-name
-{
-    color: #fcefa1;
-    font-size: 3em;
-    font-weight: bold;
-}
-
-.ps-help-parameter
-{
-    color: cyan;
-    font-size: 1.5em;
-}
-
-.ps-help-firstLine
-{
-    color: #fcefa1;
-}
-
 a.ps-link
 {
-    color: #fcefa1;
+    color: #0095c4;
     text-decoration: underline;
 }
 
