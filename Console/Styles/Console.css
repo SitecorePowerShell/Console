@@ -346,6 +346,11 @@ html{
 
 }
 
+.ui-widget-content ul li {
+    margin-bottom: 1.2em;
+    -webkit-margin-after: 1.2em;
+}
+
 .ui-widget-content table, .ui-widget-content th, .ui-widget-content td {
     border: 1px solid #bbb;
     padding: 4px;
