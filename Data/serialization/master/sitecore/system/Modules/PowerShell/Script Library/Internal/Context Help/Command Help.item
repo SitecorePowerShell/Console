@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 39ccbc07-b37d-4fbf-a0c5-dedf075ab66b
+revision: 12b0df07-4422-4ae3-8faf-35bfbc4578f3
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5060
+content-length: 5059
 
 #Based on http://poshcode.org/1612
 function FixString {
@@ -38,14 +38,14 @@ if($helpFor -eq $null){
 $c = get-help $helpFor -full
 
 $alias = "";
-get-alias | where-object { $_.Definition -eq "$helpFor" } | % { $alias += $_.Name + " " } | out-null
+get-alias | where-object { $_.Definition -eq "$helpFor" } | % { $alias += "<li>$($_.Name)</li>" } | out-null
 
 "<h1 class='title'>$($c.Name)</h1><div>$($c.synopsis)</div>"
 
 if ($alias.Length -gt 0) 
 {
     "<h2>Aliases</h2>
-    <p>The following abbreviations are aliases for this cmdlet:</p><ul><li>$alias</li></ul>"
+    <p>The following abbreviations are aliases for this cmdlet:</p><ul>$alias</ul>"
 }
 
 "<h2>Syntax</h2><div class='codeSnippetContainerCodeContainer'><div class='codeSnippetContainerCode'><code>"
@@ -176,14 +176,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-39ccbc07-b37d-4fbf-a0c5-dedf075ab66b
+12b0df07-4422-4ae3-8faf-35bfbc4578f3
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130930T023206:635161051265031483
+20130930T023938:635161055780939687
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
