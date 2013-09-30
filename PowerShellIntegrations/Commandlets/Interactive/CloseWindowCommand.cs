@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Close, "Window")]
-    public class CloseWindowCommand : BaseFormCommand
+    public class CloseWindowCommand : BaseShellCommand  
     {
         protected override void ProcessRecord()
         {

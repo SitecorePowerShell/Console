@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using System.Web;
 using System.Xml;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Sitecore.Configuration;
@@ -58,14 +59,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
         {
-
+            string helpPath = System.IO.Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
+                              "\\Console\\Assets\\Cognifide.PowerShell.dll-Help.xml";
             foreach (Type type in assembly.GetTypes())
             {
                 if (type.GetCustomAttributes(typeof(CmdletAttribute), true).Length > 0 &&
                     wildcard.IsMatch(type.FullName))
                 {
                     var attribute = (CmdletAttribute)(type.GetCustomAttributes(typeof(CmdletAttribute), true)[0]);
-                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type, "..\\Console\\Assets\\Cognifide.PowerShell-Help.xml"));
+                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type, helpPath));
                 }
             }
         }
@@ -166,7 +168,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 if (_providers == null)
                 {
                     _providers = new Collection<ProviderConfigurationEntry>();
-                    _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider", typeof(PsSitecoreItemProvider), "..\\Console\\Assets\\Cognifide.PowerShell-Help.xml"));
+                    _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider", typeof(PsSitecoreItemProvider), "..\\Console\\Assets\\Cognifide.PowerShell.dll-Help.xml"));
                 }
 
                 return _providers;
