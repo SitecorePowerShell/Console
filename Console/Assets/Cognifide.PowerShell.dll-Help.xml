@@ -52,10 +52,25 @@
 	<maml:alertSet>
 		<maml:title></maml:title>
 		<maml:alert>
-			<maml:para>Closes the window that launched the PowerShell runtime</maml:para>
+			<maml:para>The command closes the Window that runs the script. This only applies to runners that e.g. is launched from Context Menu. If Close-Window is not executed before the end of script the Window that runs the script will remain visible, allowing user to e.g. see the text view of the results.</maml:para>
 		</maml:alert>
 	</maml:alertSet>
 	<command:examples>
+		<command:example>
+			<maml:title>--------------  Example 1  --------------</maml:title>
+			<maml:introduction>
+				<maml:para></maml:para>
+			</maml:introduction>
+			<dev:code>PS C:\&gt; Close-Window</dev:code>
+			<dev:remarks>
+				<maml:para>Closes the runner window.</maml:para>
+			</dev:remarks>
+			<command:commandLines>
+				<command:commandLine>
+					<command:commandText></command:commandText>
+				</command:commandLine>
+			</command:commandLines>
+		</command:example>
 	</command:examples>
 	<maml:relatedLinks>
 		<maml:navigationLink>
