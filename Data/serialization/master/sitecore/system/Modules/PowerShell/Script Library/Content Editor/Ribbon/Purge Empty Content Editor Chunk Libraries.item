@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {BEDFC6CC-F296-44D3-B56C-81FB5B2698DE}
+id: {95D4486E-78B8-440A-B17B-967CB349AEEB}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Event Handlers/Configuration/Delete event handler folders with no scripts
-parent: {29F31D23-75B4-445D-A7E5-DF3370D21933}
-name: Delete event handler folders with no scripts
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Ribbon/Purge Empty Content Editor Chunk Libraries
+parent: {71B2E08D-48BD-419C-8577-28F5CC2BC1E9}
+name: Purge Empty Content Editor Chunk Libraries
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -12,36 +12,37 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: d93bca28-486a-4513-a2b5-c0080b5c06ed
+revision: bf041f6f-7606-44f5-a671-16c0edd6b616
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 94
+content-length: 126
 
-Purge-EmptyLibrary "master:/sitecore/system/Modules/PowerShell/Script Library/Event Handlers/"
+Import-Function Purge-EmptyLibrary
+Purge-EmptyLibrary "master:\system\Modules\PowerShell\Script Library\Content Editor\Ribbon"
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130526T000213
+20131001T173013
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-d93bca28-486a-4513-a2b5-c0080b5c06ed
+bf041f6f-7606-44f5-a671-16c0edd6b616
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131001T192235:635162521556481719
+20131001T192440:635162522809030547
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

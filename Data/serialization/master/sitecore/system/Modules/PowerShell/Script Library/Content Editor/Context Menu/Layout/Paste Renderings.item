@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {E6B36111-8411-414B-A7E9-58E75B365EA7}
+id: {AFA7A862-9433-4EFE-ACA4-487A35CA0B6C}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Packaging/Add Branch to Package
-parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
-name: Add Branch to Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Layout/Paste Renderings
+parent: {8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}
+name: Paste Renderings
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,33 +13,38 @@ templatekey: PowerShell Script
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 29
+content-length: 28
 
-Software/16x16/branch_add.png
+Applications/32x32/paste.png
+----field----
+field: {F1A1FE9E-A60C-4DDB-A3A0-BB5B29FE732E}
+name: __Renderings
+key: __renderings
+content-length: 0
+
+
 ----version----
 language: en
 version: 1
-revision: e0282e51-09c6-4aa9-bf4f-8e258170624b
+revision: 44d4528a-2377-4aa7-991c-47e7671e6a4d
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 52
+content-length: 11
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
 key: enablerule
-content-length: 306
+content-length: 271
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset>
-  <rule uid="{53E0EE5B-77EB-4FE5-AFC3-C676DE31736E}">
+  <rule uid="{46627A39-8DE7-4CC1-98EC-BE138EA5A406}">
     <conditions>
-      <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="5E3F148A40024D15A7E2F6E789A78A08" persistentsessionid="packageBuilder" />
+      <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="E4AF57274FC0443BB00101AF72354352" persistentsessionid="renderingCopySession" />
     </conditions>
   </rule>
 </ruleset>
@@ -47,41 +52,41 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 206
+content-length: 190
 
-# Item branch
-$path = Get-Item . | ForEach-Object { $_.ProviderPath } 
-$source = Get-Item . | New-ItemSource -Name "$path" -InstallMode Overwrite -MergeMode Merge
-$package.Sources.Add($source);
-Close-Window
+$targetItem = get-item .
+$targetName = $targetItem.ProviderPath;
+$targetItem.__Renderings = $renderings;
+write-host "Renderings pasted from '$($sourceName)' to '$($targetName)'"
+#$targetItem
 ----field----
 field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
 name: PersistentSessionId
 key: persistentsessionid
-content-length: 14
+content-length: 20
 
-packageBuilder
+renderingCopySession
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130919T134500
+20130502T104800
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-e0282e51-09c6-4aa9-bf4f-8e258170624b
+44d4528a-2377-4aa7-991c-47e7671e6a4d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T170438:635152070784790625
+20130911T000435:635144546757075313
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

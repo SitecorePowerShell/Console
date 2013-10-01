@@ -2,7 +2,7 @@
 version: 1
 id: {721FDA95-893E-4704-8260-7A5C24E660F8}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Zip and Download
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Zip and Download
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
 name: Zip and Download
 master: {00000000-0000-0000-0000-000000000000}

@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
+id: {8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Packaging
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Layout
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
-name: Packaging
+name: Layout
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
@@ -13,58 +13,65 @@ templatekey: PowerShell Script Library
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 20
+content-length: 40
 
-People/16x16/box.png
+Applications/32x32/text_rich_colored.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
 content-length: 3
 
-700
+600
 ----version----
 language: en
 version: 1
-revision: 45bad8a0-7986-4ca5-bf4e-53f5bb23e897
+revision: afca3486-88e7-4010-b211-95d56d10514f
 
 ----field----
 field: {613D128B-7BF2-40F4-84CB-6717408F9806}
 name: ShowRule
 key: showrule
-content-length: 52
+content-length: 11
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
 field: {05EECF47-0BB9-4B85-B926-0BC6DD987EC8}
 name: EnableRule
 key: enablerule
-content-length: 52
+content-length: 443
 
-<?xml version="1.0" encoding="utf-16"?>
-<ruleset />
+<ruleset>
+  <rule uid="{1E97DF07-DD24-4A30-B3AA-867CD8A48595}">
+    <conditions>
+      <or uid="78CA3C40D5CA47F89C1217D3B3637BCD">
+        <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="931B3345C65941AC8A797FC63BE99C4F" />
+        <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="0EFD8F0FE2E448D48F048B9EB42CEC80" persistentsessionid="renderingCopySession" />
+      </or>
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130919T133624
+20130502T132800
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-45bad8a0-7986-4ca5-bf4e-53f5bb23e897
+afca3486-88e7-4010-b211-95d56d10514f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T170421:635152070615825782
+20130818T024011:635123904117422344
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

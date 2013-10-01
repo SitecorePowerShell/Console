@@ -66,7 +66,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             string scriptLibPath)
         {
             Item parent = Factory.GetDatabase(scriptDb).GetItem(scriptLibPath);
-
+            if (parent == null)
+            {
+                return;
+            }
             foreach (Item scriptItem in parent.Children)
             {
                 if (!EvaluateRules(scriptItem["ShowRule"], contextItem))

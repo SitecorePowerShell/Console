@@ -10,7 +10,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
         {
             get
             {
-                return ScriptLibrary.Path+"Content Editor Context Menu";
+                return ScriptLibrary.Path+"Content Editor/Context Menu";
             }
         }
 

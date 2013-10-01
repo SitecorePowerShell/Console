@@ -2,7 +2,7 @@
 version: 1
 id: {9C3AF32E-8104-465A-9843-56EDC2B024BB}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Packaging/Download Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Packaging/Download Package
 parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
 name: Download Package
 master: {00000000-0000-0000-0000-000000000000}

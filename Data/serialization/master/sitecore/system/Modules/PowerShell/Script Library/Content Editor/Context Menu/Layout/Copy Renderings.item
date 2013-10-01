@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {E6F6FCAA-644A-418C-A5F2-19352D66A260}
+id: {CC45B728-3141-4B2D-BC6E-CA74EE04AED2}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Packaging/Start New Package
-parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
-name: Start New Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Layout/Copy Renderings
+parent: {8E5FDEAE-4C9D-4A8B-A58B-A5D2C0CF9128}
+name: Copy Renderings
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,79 +13,74 @@ templatekey: PowerShell Script
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 24
+content-length: 27
 
-People/16x16/box_new.png
-----field----
-field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
-name: __Sortorder
-key: __sortorder
-content-length: 3
-
-200
+Applications/32x32/copy.png
 ----version----
 language: en
 version: 1
-revision: 43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+revision: d5b52fa9-a272-41e6-a74e-918ea358ce9a
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 52
+content-length: 11
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
 key: enablerule
-content-length: 52
+content-length: 228
 
-<?xml version="1.0" encoding="utf-16"?>
-<ruleset />
+<ruleset>
+  <rule uid="{5359F51B-70D1-4725-9D4B-896BFE9DA3A6}">
+    <conditions>
+      <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="49C2786831EF456A9663AA001D4DB281" />
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 212
+content-length: 157
 
-$package = new-package "Content Package";
-$package.Sources.Clear();
+$sourceItem = get-item .
+$renderings = $sourceItem.__Renderings;
+$sourceName = $sourceItem.ProviderPath; 
+write-host "Rendering copied from $($sourceName)"
 
-$package.Metadata.Author = "$me";
-$package.Metadata.Publisher = "";
-$package.Metadata.Version = "";
-$package.Metadata.Readme = '';
-Close-Window
+
 ----field----
 field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
 name: PersistentSessionId
 key: persistentsessionid
-content-length: 14
+content-length: 20
 
-packageBuilder
+renderingCopySession
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20130919T133600
+20130502T104300
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+d5b52fa9-a272-41e6-a74e-918ea358ce9a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T142424:635151974648433204
+20130911T000417:635144546570102656
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

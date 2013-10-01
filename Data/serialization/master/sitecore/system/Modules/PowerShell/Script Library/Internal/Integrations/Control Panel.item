@@ -19,19 +19,20 @@ Applications/16x16/preferences.png
 ----version----
 language: en
 version: 1
-revision: fa43f430-9f42-4714-b68d-b9c80a5b9067
+revision: 97395b49-15da-439f-8b22-624b88ed023b
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2155
+content-length: 2372
 
 $scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
 $controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
 
 # Add new scripts to Control Panel
 Get-Childitem $scriptLibPath | ForEach-Object {
+    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Creating New Scripts"
     $section = $_;
     if($section.TemplateName -eq "PowerShell Script Library"){
         Get-Childitem $_.ProviderPath | ForEach-Object {
@@ -61,6 +62,7 @@ Get-Childitem $scriptLibPath | ForEach-Object {
 
 #Remove non existing scripts from Control Panel
 Get-Childitem $controlPanelPath | ForEach-Object {
+    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
     $cpSection = $_;
     Get-Childitem $_.ProviderPath | ForEach-Object {
         $cpEntry = $_
@@ -74,6 +76,7 @@ Get-Childitem $controlPanelPath | ForEach-Object {
         }
     }
 }
+Close-Window
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -87,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fa43f430-9f42-4714-b68d-b9c80a5b9067
+97395b49-15da-439f-8b22-624b88ed023b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130920T143202:635152843222435312
+20131001T182549:635162487499919219
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
