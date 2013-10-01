@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 session.SetVariable("helpFor",lastToken);
                 Item scriptItem =
                     Database.GetDatabase("master")
-                        .GetItem("/sitecore/system/Modules/PowerShell/Script Library/Internal/Context Help/Command Help");
+                        .GetItem(ScriptLibrary.Path+"Internal/Context Help/Command Help");
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
                 var sb = new StringBuilder();
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)

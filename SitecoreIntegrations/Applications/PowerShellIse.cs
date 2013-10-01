@@ -186,8 +186,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 const string text = "Select the script item that you want to open.";
                 const string icon = "powershell/48x48/script.png";
                 const string button = "Open";
-                const string root = "/sitecore/system/Modules/PowerShell/Script Library";
-                const string selected = "/sitecore/system/Modules/PowerShell/Script Library/";
+                const string root = ScriptLibrary.Path;
+                const string selected = ScriptLibrary.Path;
 
                 string str = selected;
                 if (selected.EndsWith("/"))
@@ -317,8 +317,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 const string text = "Select the Library that you want to save your script to.";
                 const string icon = "powershell/48x48/script.png";
                 const string button = "Select";
-                const string root = "/sitecore/system/Modules/PowerShell/Script Library";
-                const string selected = "/sitecore/system/Modules/PowerShell/Script Library/";
+                const string root = ScriptLibrary.Path;
+                const string selected = ScriptLibrary.Path;
 
                 string str = selected;
                 if (selected.EndsWith("/"))

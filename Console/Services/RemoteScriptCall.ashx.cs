@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Data;
@@ -41,7 +42,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (scriptItem == null)
             {
-                scriptItem = scriptDb.GetItem("/sitecore/system/Modules/PowerShell/Script Library/" + scriptParam);
+                scriptItem = scriptDb.GetItem(ScriptLibrary.Path + scriptParam);
             }
 
             if (scriptItem == null || scriptItem.Fields[ScriptItemFieldNames.Script] == null)

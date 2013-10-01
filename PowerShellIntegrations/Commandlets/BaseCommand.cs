@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     {
         protected bool IsCurrentDriveSitecore
         {
-            get { return SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof (PsSitecoreItemProvider)); }
+            get { return SessionState.Drive.Current.Provider.ImplementingType == typeof(PsSitecoreItemProvider) || SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof(PsSitecoreItemProvider)); }
         }
 
         protected ProviderInfo Provider

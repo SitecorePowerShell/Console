@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
@@ -11,7 +12,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
     public class ScriptedItemEventHandler
     {
         private const string EventHandlerLibraryPath =
-            "/sitecore/system/Modules/PowerShell/Script Library/Event Handlers/";
+            ScriptLibrary.Path + "Event Handlers/";
         
         public void OnEvent(object sender, EventArgs args)
         {

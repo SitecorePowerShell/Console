@@ -2,9 +2,9 @@
 version: 1
 id: {7E7C6105-9A15-4864-9BC8-4EB91D0568C7}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Functions/Resolve-Error - Shows Last Error Details
+path: /sitecore/system/Modules/PowerShell/Script Library/Functions/Resolve-Error
 parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
-name: Resolve-Error - Shows Last Error Details
+name: Resolve-Error
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script

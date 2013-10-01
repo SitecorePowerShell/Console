@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.UI;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -16,7 +17,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-            Item parent = Factory.GetDatabase("master").GetItem("/sitecore/system/Modules/PowerShell/Script Library/Internal/List View/Export");
+            Item parent = Factory.GetDatabase("master").GetItem(ScriptLibrary.Path + "Internal/List View/Export");
 
             foreach (Item scriptItem in parent.Children)
             {

@@ -1,4 +1,6 @@
-﻿namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
+﻿using Cognifide.PowerShell.PowerShellIntegrations;
+
+namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
     public class StartMenuScriptLibraryMenuItem : ScriptLibraryMenuItemBase
     {
@@ -6,7 +8,7 @@
         {
             get
             {
-                return "/sitecore/system/Modules/PowerShell/Script Library/";
+                return ScriptLibrary.Path;
             }
         }
     }

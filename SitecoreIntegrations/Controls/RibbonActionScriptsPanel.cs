@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Web.UI;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -21,7 +22,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             {
                 Item scriptLibrary =
                     Factory.GetDatabase("master")
-                        .GetItem("/sitecore/system/Modules/PowerShell/Script Library/Internal/List View/Ribbon/"+typeName);
+                        .GetItem(ScriptLibrary.Path+"Internal/List View/Ribbon/"+typeName);
                 if (scriptLibrary != null)
                 {
                     foreach (Item scriptItem in scriptLibrary.Children)

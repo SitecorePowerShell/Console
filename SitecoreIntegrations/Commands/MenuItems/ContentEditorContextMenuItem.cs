@@ -1,4 +1,5 @@
-﻿using Sitecore.Shell.Framework.Commands;
+﻿using Cognifide.PowerShell.PowerShellIntegrations;
+using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
@@ -9,7 +10,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
         {
             get
             {
-                return "/sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu";
+                return ScriptLibrary.Path+"Content Editor Context Menu";
             }
         }
 

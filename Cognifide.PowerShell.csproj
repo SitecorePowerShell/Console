@@ -124,6 +124,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\GetSessionCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\ImportFunctionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowApplicationMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowApplicationCommand.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.Maintenance.cs" />
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.PathHandling.cs" />
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.PropertyProvider.cs" />
+    <Compile Include="PowerShellIntegrations\ScriptLibrary.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ApplicationNames.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />

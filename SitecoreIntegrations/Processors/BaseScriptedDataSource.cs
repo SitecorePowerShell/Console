@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Collections;
@@ -17,7 +18,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
             
             return dataSource != null &&
                    (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) > -1 ||
-                    dataSource.IndexOf("/sitecore/system/Modules/PowerShell/Script Library/",
+                    dataSource.IndexOf(ScriptLibrary.Path,
                                        StringComparison.OrdinalIgnoreCase) > -1);
         }
 

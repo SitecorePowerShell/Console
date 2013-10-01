@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 12b0df07-4422-4ae3-8faf-35bfbc4578f3
+revision: c1a47d68-b9a6-48b9-8a1c-7d5de10d3383
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5059
+content-length: 4931
 
 #Based on http://poshcode.org/1612
 function FixString {
@@ -51,28 +51,26 @@ if ($alias.Length -gt 0)
 "<h2>Syntax</h2><div class='codeSnippetContainerCodeContainer'><div class='codeSnippetContainerCode'><code>"
 foreach($syntax in $c.syntax.syntaxItem)
 {
-    #"$($c.syntax.syntaxItem | gm * | out-string -width 20000)"
-    "<p><i><b>$($syntax.Name) </b></i>"
+    "<p><i><b>$($syntax.Name)</b></i>"
     foreach($param in $syntax.parameter){
+        Write-host -NoNewline " "
         if($param.required -eq "false"){
             Write-host -NoNewline "["
         }
         if($param.position -ne "named"){
-            Write-host -NoNewline "[-$($param.Name)] "
+            Write-host -NoNewline "[-$($param.Name)]"
         } else {
-            Write-host -NoNewline "-$($param.Name) "
+            Write-host -NoNewline "-$($param.Name)"
         }
-        if($param.parameterValue -ne $null){
-            Write-host -NoNewline "&lt;$($param.parameterValue)&gt;"
+        if($param.parameterValue -ne $null -and $param.parameterValue -ne "SwitchParameter"){
+            Write-host -NoNewline " &lt;$($param.parameterValue)&gt;"
         }
         if($param.required -eq "false"){
             Write-host -NoNewline "] "
         }
-        #"$($param)"
     }
     "</p>"
 }
-  #$(FixString($c.syntax | fl * | out-string  -width 2000).Trim())
   "</code></div></div>"
   "<h2> Detailed Description </h2>"
 
@@ -124,7 +122,6 @@ if (($c.returnValues | Out-String ).Trim().Length -gt 0)
 if (($c.alertSet | Out-String).Trim().Length -gt 0) 
 {
     "<h2> Notes </h2>"
-    #"<div>$(FixString($c.alertSet | out-string))</div>"
     foreach($alert in $c.alertSet.alert){
         "<p>$(FixString($alert | out-string))</p>"
     }
@@ -176,14 +173,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-12b0df07-4422-4ae3-8faf-35bfbc4578f3
+c1a47d68-b9a6-48b9-8a1c-7d5de10d3383
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130930T023938:635161055780939687
+20131001T153258:635162383788610625
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

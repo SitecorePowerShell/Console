@@ -600,6 +600,40 @@
 	<command:syntax>
 		<command:syntaxItem>
 			<maml:name>Execute-Script</maml:name>
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+				<maml:name>ContentDatabase</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+			</command:parameter>
+		</command:syntaxItem>
+		<command:syntaxItem>
+			<maml:name>Execute-Script</maml:name>
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+				<maml:name>Path</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
+				<maml:name>Location</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+			</command:parameter>
+		</command:syntaxItem>
+		<command:syntaxItem>
+			<maml:name>Execute-Script</maml:name>
 			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="0">
 				<maml:name>Item</maml:name>
 				<maml:description>
@@ -608,28 +642,32 @@
 				<command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
 			</command:parameter>
 		</command:syntaxItem>
-		<command:syntaxItem>
-			<maml:name>Execute-Script</maml:name>
-			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="0">
-				<maml:name>Path</maml:name>
-				<maml:description>
-					<maml:para></maml:para>
-				</maml:description>
-				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-			</command:parameter>
-		</command:syntaxItem>
-		<command:syntaxItem>
-			<maml:name>Execute-Script</maml:name>
-			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
-				<maml:name>PipelineVariable</maml:name>
-				<maml:description>
-					<maml:para></maml:para>
-				</maml:description>
-				<command:parameterValue required="true" variableLength="false">string</command:parameterValue>
-			</command:parameter>
-		</command:syntaxItem>
 	</command:syntax>
 	<command:parameters>
+		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+			<maml:name>Path</maml:name>
+			<maml:description>
+				<maml:para></maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+			<maml:name>ContentDatabase</maml:name>
+			<maml:description>
+				<maml:para></maml:para>
+			</maml:description>
+			<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+			<dev:type>
+				<maml:name>SwitchParameter</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
 		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="0">
 			<maml:name>Item</maml:name>
 			<maml:description>
@@ -642,14 +680,14 @@
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
-		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="0">
-			<maml:name>Path</maml:name>
+		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
+			<maml:name>Location</maml:name>
 			<maml:description>
 				<maml:para></maml:para>
 			</maml:description>
-			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
 			<dev:type>
-				<maml:name>String</maml:name>
+				<maml:name>SwitchParameter</maml:name>
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
@@ -1843,7 +1881,7 @@
 	</command:examples>
 	<maml:relatedLinks>
 		<maml:navigationLink>
-			<maml:linkText></maml:linkText>
+			<maml:linkText>Unknown</maml:linkText>
 			<maml:uri></maml:uri>
 		</maml:navigationLink>
 	</maml:relatedLinks>
@@ -5554,6 +5592,109 @@
 			<command:parameterValue required="true" variableLength="false">string</command:parameterValue>
 			<dev:type>
 				<maml:name>string</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+	</command:parameters>
+	<command:inputTypes>
+		<command:inputType>
+			<dev:type>
+				<maml:name></maml:name>
+				<maml:uri/>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+			</dev:type>
+			<maml:description></maml:description>
+		</command:inputType>
+	</command:inputTypes>
+	<command:returnValues>
+		<command:returnValue>
+			<dev:type>
+				<maml:name></maml:name>
+				<maml:uri/>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+			</dev:type>
+			<maml:description></maml:description>
+	</command:returnValue>
+		</command:returnValues>
+	<command:terminatingErrors></command:terminatingErrors>
+	<command:nonTerminatingErrors></command:nonTerminatingErrors>
+	<maml:alertSet>
+		<maml:title></maml:title>
+		<maml:alert>
+			<maml:para></maml:para>
+		</maml:alert>
+	</maml:alertSet>
+	<command:examples>
+	</command:examples>
+	<maml:relatedLinks>
+	</maml:relatedLinks>
+</command:command>
+<command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+<!--Generated by PS Help Cmdlet Editor-->
+	<command:details>
+		<command:name>Import-Function</command:name>
+		<maml:description>
+			<maml:para></maml:para>
+		</maml:description>
+		<maml:copyright>
+			<maml:para />
+		</maml:copyright>
+		<command:verb>Import</command:verb>
+		<command:noun>Function</command:noun>
+		<dev:version />
+	</command:details>
+	<maml:description>
+	<!--This is the Description section-->
+		<maml:para></maml:para>
+	</maml:description>
+	<command:syntax>
+		<command:syntaxItem>
+			<maml:name>Import-Function</maml:name>
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+				<maml:name>Name</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
+		</command:syntaxItem>
+		<command:syntaxItem>
+			<maml:name>Import-Function</maml:name>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+				<maml:name>Library</maml:name>
+				<maml:description>
+					<maml:para></maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
+		</command:syntaxItem>
+	</command:syntax>
+	<command:parameters>
+		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="0">
+			<maml:name>Name</maml:name>
+			<maml:description>
+				<maml:para></maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+			<maml:name>Library</maml:name>
+			<maml:description>
+				<maml:para></maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
