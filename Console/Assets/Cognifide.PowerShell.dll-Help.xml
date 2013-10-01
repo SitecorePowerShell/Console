@@ -607,7 +607,7 @@
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
-			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>ContentDatabase</maml:name>
 				<maml:description>
 					<maml:para></maml:para>
@@ -624,7 +624,7 @@
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
-			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
+			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>Location</maml:name>
 				<maml:description>
 					<maml:para></maml:para>
@@ -656,7 +656,7 @@
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
-		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="1">
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 			<maml:name>ContentDatabase</maml:name>
 			<maml:description>
 				<maml:para></maml:para>
@@ -680,7 +680,7 @@
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
-		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
+		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="named">
 			<maml:name>Location</maml:name>
 			<maml:description>
 				<maml:para></maml:para>
@@ -688,18 +688,6 @@
 			<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
 			<dev:type>
 				<maml:name>SwitchParameter</maml:name>
-				<maml:uri/>
-			</dev:type>
-			<dev:defaultValue></dev:defaultValue>
-		</command:parameter>
-		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
-			<maml:name>PipelineVariable</maml:name>
-			<maml:description>
-				<maml:para></maml:para>
-			</maml:description>
-			<command:parameterValue required="true" variableLength="false">string</command:parameterValue>
-			<dev:type>
-				<maml:name>string</maml:name>
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>

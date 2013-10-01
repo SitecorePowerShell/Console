@@ -25,10 +25,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
-        [Parameter(ParameterSetName = ParameterSetNameFromContentDatabase, Position = 1)]
+        [Parameter(ParameterSetName = ParameterSetNameFromContentDatabase)]
         public SwitchParameter ContentDatabase { get; set; }
 
-        [Parameter(ParameterSetName = ParameterSetNameFromCurrentLocation, Mandatory = true, Position = 1)]
+        [Parameter(ParameterSetName = ParameterSetNameFromCurrentLocation, Mandatory = true)]
         public SwitchParameter Location { get; set; }
 
         // Methods
