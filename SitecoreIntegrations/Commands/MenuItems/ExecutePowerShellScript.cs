@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Linq;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
+using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
@@ -40,9 +43,37 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                 "Shell");
         }
 
+/*
         public override CommandState QueryState(CommandContext context)
         {
+            if (context.Items.Length == 1)
+            {
+            if (!EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
+            {
+                continue;
+            }
+
+            menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], context.Items[0]);
+            }
             return base.QueryState(context);
         }
+
+        public static bool EvaluateRules(string strRules, Item contextItem)
+        {
+            if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
+            {
+                return true;
+            }
+            // hacking the rules xml
+            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
+            var ruleContext = new RuleContext
+            {
+                Item = contextItem
+            };
+
+            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
+        }
+*/
+
     }
 }

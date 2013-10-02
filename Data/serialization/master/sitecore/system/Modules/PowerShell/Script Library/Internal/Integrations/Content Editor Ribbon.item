@@ -19,7 +19,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: d11a2340-269a-4c4a-b75a-4dc5d6b217a3
+revision: 546ad67c-5815-43c1-9279-34f8affedfd8
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -41,53 +41,91 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2106
+content-length: 3429
 
 $scriptLibPath = "master:\system\Modules\PowerShell\Script Library\Content Editor\Ribbon"
-$chunksPath = 'core:\content\Applications\Content Editor\Ribbons\Chunks\'
+$stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
+cd core:\
 # Add new scripts to Control Panel
-Get-Childitem $scriptLibPath | ForEach-Object {
-    $library = $_;
-    if($library.TemplateName -eq "PowerShell Script Library"){
-        Get-Childitem $library.ProviderPath | ForEach-Object {
-            $script = $_
-            $chunk = Get-Item "$chunksPath/$($library.Name)"
-            $button = Get-Item "$chunksPath/$($library.Name)/$($script.Name)"
-            if($chunk -ne $null){
-                # Cannot create chunks and associate them with ribbons yet
-                if($button -eq $null){
-                    $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
-                    "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'."
-                }
-                else
-                {
-                    "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'."
-                }
-                $button.__Icon = $script.__Icon; 
-                $button.Icon = $script.__Icon; 
-                $button.Header = $script.Name;
-                $button.__Sortorder = $script.__Sortorder;
-                $button.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
-            }
-        }
+Get-Childitem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
+  $stripLibrary = $_;
+  $strip = Get-Item "$stripsPath/$($stripLibrary.Name)"
+  if($strip -eq $null){
+    Write-Host "Adding Strip '$($strip.Name)'." -f Green
+    $strip = New-Item -path "$stripsPath" -Name "$($stripLibrary.Name)" -ItemType "System/Ribbon/Strip"
+    $strip.Header = $stripLibrary.Name
+  }
+
+  Get-Childitem $stripLibrary.ProviderPath | ForEach-Object {
+    $chunkLibrary = $_
+    $chunk = Get-Item "$stripsPath/$($stripLibrary.Name)/$($chunkLibrary.Name)"
+    if($chunk -eq $null){
+      Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+      $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
+      $chunk.Header = $chunkLibrary.Name
     }
+
+    if($chunk.TemplateName -eq "Reference") {
+        $chunk = Get-Item . -ID $chunk.Reference
+        "Translating reference '$stripsPath/$($stripLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)"    
+    } else {
+        "Using chunk directly '$($chunk.ProviderPath)'"
+    }
+
+    Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
+      $script = $_
+      $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)"
+
+      if($button -eq $null){
+        $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
+        Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+      } else { 
+        if($button.Click -match "item:executescript"){
+          Write-Host "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'." -f Green
+        } else {
+          Write-Host "Cannot Update Script '$($script.Name)' in Chunk '$($chunk.Name)'. It's not a PowerShell Extensions button" -f Green
+          continue
+        }
+      }
+      $button.__Icon = $script.__Icon; 
+      $button.Icon = $script.__Icon; 
+      $button.Header = $script.Name;
+      $button.__Sortorder = $script.__Sortorder;
+      $button.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
+    }
+  }
 }
 
 #Remove non existing scripts from Control Panel
-Get-Childitem $chunksPath | ForEach-Object {
+Get-Childitem $stripsPath | ForEach-Object {
+  $strip = $_;
+  Get-Childitem $strip.ProviderPath | ForEach-Object {
     $chunk = $_;
-    Get-Childitem $_.ProviderPath | ForEach-Object {
-        $button = $_
-        if($button.Click -match "item:executescript"){
-            $library = Get-Item "$scriptLibPath/$($chunk.Name)"
-            $script = Get-Item "$scriptLibPath/$($chunk.Name)/$($button.Name)"
-            if($library -eq $null -or $script -eq $null){
-                "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists"
-                $button | remove-item
-            }
-        }
+    $chunkName = $_.Name;
+    if($chunk.TemplateName -eq "Reference") {
+        $chunk = Get-Item . -ID $chunk.Reference
     }
+    Get-Childitem $chunk.ProviderPath | ForEach-Object {
+      $button = $_
+      if($button.Click -match "item:executescript"){
+        if(-not (Test-Path "$scriptLibPath/$($strip.Name)/$chunkName/$($button.Name)")){
+          Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists" -f y
+          $button | remove-item
+        }
+      }
+    }
+    if($chunk.Children.Count -eq 0)
+    {
+        Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+        $chunk | Remove-Item
+    }
+  }
+  if($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
+  {
+    Write-Host "Removing Strip '$($strip.Name)'" -f y
+    $strip | Remove-Item
+  }
 }
 Close-Window
 ----field----
@@ -103,14 +141,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d11a2340-269a-4c4a-b75a-4dc5d6b217a3
+546ad67c-5815-43c1-9279-34f8affedfd8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131001T183049:635162490496823516
+20131002T022942:635162777825134375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

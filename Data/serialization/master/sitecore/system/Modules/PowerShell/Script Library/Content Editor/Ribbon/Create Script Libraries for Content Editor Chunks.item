@@ -12,27 +12,25 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 2003c02e-e074-447f-a275-a69db85148be
+revision: ec202033-49c9-418a-b3e3-570c111ef7af
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 815
+content-length: 740
 
 $ribbonLibraryPath = "master:\system\Modules\PowerShell\Script Library\Content Editor\Ribbon"
 $strips = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips'
 
 foreach($strip in $strips.Children)
 {
-    $strip
     if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)"))
     {
         New-Item -Path $ribbonLibraryPath -Name $strip.Name -ItemType "Modules/PowerShell Console/PowerShell Script Library"
         foreach($chunk in $strip.Children)
         {
-            "$ribbonLibraryPath\$($strip.Name)\$($chunk.Name)"
-            if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)\"$($chunk.Name)"))
+            if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)\$($chunk.Name)"))
             {
                 New-Item -Path "$ribbonLibraryPath/$($strip.Name)" -Name "$($chunk.Name)" -ItemType "Modules/PowerShell Console/PowerShell Script Library"
             }
@@ -52,14 +50,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2003c02e-e074-447f-a275-a69db85148be
+ec202033-49c9-418a-b3e3-570c111ef7af
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131001T192345:635162522252809844
+20131002T004053:635162712535134375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
