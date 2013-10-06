@@ -1,4 +1,6 @@
-﻿using Sitecore;
+﻿using System.Threading;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Jobs.AsyncUI;
 
@@ -24,6 +26,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             else
             {
                 message.Execute();
+            }
+        }
+
+        public object GetResult(IMessageWithResult message)
+        {
+            if (JobContext.IsJob)
+            {
+                return JobContext.MessageQueue.GetResult();
+            }
+            else
+            {
+                return message.MessageQueue.GetResult();
             }
         }
 

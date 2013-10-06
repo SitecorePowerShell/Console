@@ -88,7 +88,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 }
 
                 PutMessage(message);
-                var results = (object[])JobContext.MessageQueue.GetResult();
+                var results = (object[])GetResult(message);
                 WriteObject(results != null ? "ok" : "cancel");
                 if (results != null)
                 {

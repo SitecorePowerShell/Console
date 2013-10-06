@@ -126,6 +126,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\GetSessionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\ImportFunctionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\IMessageWithResult.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowApplicationMessage.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowApplicationCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowListViewMessage.cs" />

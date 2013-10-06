@@ -3,13 +3,14 @@ using System.Web;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Syndication;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowMultiValuePromptMessage : IMessage
+    public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
     {
 
         public object[] Parameters { get; private set; }
@@ -21,10 +22,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string OkButtonName { get; private set; }
 
         private Handle jobHandle;
+        public MessageQueue MessageQueue { get; private set; }
+        public object Result { get; private set; }
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description, string okButtonName, string cancelButtonName)
         {
-            jobHandle = JobContext.JobHandle;
+            MessageQueue = new MessageQueue();
+            if (JobContext.IsJob)
+            {
+                jobHandle = JobContext.JobHandle;
+            }
             Parameters = parameters;
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
@@ -82,24 +89,41 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         {
             if (!args.IsPostBack)
             {
-                Context.ClientPage.ServerProperties["#pipelineJob"] = jobHandle.ToString();
+                if (jobHandle != null)
+                {
+                    Context.ClientPage.ServerProperties["#pipelineJob"] = jobHandle.ToString();
+                }
                 ShowUI();
                 args.WaitForPostBack();
             }
             else
             {
-                jobHandle = Handle.Parse(StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]));
-                Job job = JobManager.GetJob(this.jobHandle);
-                if (job == null)
-                    return;
                 if (args.HasResult)
                 {
                     var result = HttpContext.Current.Session[args.Result];
                     HttpContext.Current.Session.Remove(args.Result);
-                    job.MessageQueue.PutResult(result);
+                    Result = result;
                 }
                 else
-                    job.MessageQueue.PutResult(null);
+                {
+                    Result = null;
+                }
+                
+
+                string strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
+                if (!String.IsNullOrEmpty(strJobId))
+                {
+                    jobHandle = Handle.Parse(strJobId);
+                    Job job = JobManager.GetJob(this.jobHandle);
+                    if (job != null)
+                    {
+                        job.MessageQueue.PutResult(Result);
+                    }
+                }
+                else
+                {
+                    MessageQueue.PutResult(Result);
+                }
             }
         }
 

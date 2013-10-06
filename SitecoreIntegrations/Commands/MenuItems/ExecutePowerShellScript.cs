@@ -43,9 +43,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                 "Shell");
         }
 
-/*
+
         public override CommandState QueryState(CommandContext context)
         {
+/*
             if (context.Items.Length == 1)
             {
             if (!EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
@@ -55,6 +56,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 
             menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], context.Items[0]);
             }
+*/
             return base.QueryState(context);
         }
 
@@ -73,7 +75,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
-*/
 
     }
 }
