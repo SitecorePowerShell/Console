@@ -12,22 +12,33 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 02ec2983-0089-446a-b34c-8669189b14d6
+revision: a49a6a41-f94d-4d60-87e9-7087db560d47
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 629
+content-length: 744
 
-$result = Read-Variable -Parameters `
-    @{ Name = "expired"; Value=[DateTime]::Now.AddDays(-30); Title="Clear items older than"; Tooltip="Date before which the archive items should be removed"; ShowTime=$true} `
-    -Description "This script will remove items from recycle bins that are older than the date of your choice" `
-    -Title "Starting Parameters" -Width 400 -Height 200 `
-    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+$parameters = @{
+    Title = "Starting Parameters"
+    Description = "This script will remove items from recycle bins that are older than the date of your choice"
+    Width = 400
+    Height = 200
+    OkButtonName = "Proceed"
+    CancelButtonName = "Abort"
+    Parameters = @{
+        Name = "expired"
+        Value = [DateTime]::Now.AddDays(-30)
+        Title = "Clear items older than"
+        Tooltip = "Date before which the archive items should be removed"
+        ShowTime = $true
+    }
+}
 
-if($result -ne "ok")
-{
+$result = Read-Variable @parameters
+
+if($result -ne "ok") {
     Close-Window
     Exit
 }
@@ -47,14 +58,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-02ec2983-0089-446a-b34c-8669189b14d6
+a49a6a41-f94d-4d60-87e9-7087db560d47
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130920T142004:635152836049984141
+20131006T132937:635166629779498152
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

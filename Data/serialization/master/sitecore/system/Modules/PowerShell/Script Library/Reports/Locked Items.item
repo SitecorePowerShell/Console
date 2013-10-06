@@ -19,54 +19,59 @@ Applications/32x32/document_lock.png
 ----version----
 language: en
 version: 1
-revision: 49bf0041-79a0-4ecc-a737-5f92830c9b4b
+revision: 0f62aeea-1585-4bd8-93a3-22eae6304519
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1803
+content-length: 1885
 
-$item = get-item master:\content\
-#$since = [DateTime]::Now
-$result = Read-Variable -Parameters `
-    @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."}, `
-    @{ Name = "user"; Title="Locking User"; Tooltip="Tooltip for user"; Editor="user"}, `
-    @{ Name = "since"; Title="Locked Since (leave empty is to ignore)"; Tooltip="Locked since"; Editor="date time"} `
-    -Description "This report will analyse the branch and will tell you which items havehave beenn locked. If user is selected only items locked by the user will be shown." `
-    -Title "Items Locked" -Width 600 -Height 300 `
-    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+$item = Get-Item -Path master:\content\
 
-if($result -ne "ok")
-{
+$props = @{
+    Title = "Items Locked"
+    Description = "This report will analyse the branch and will tell you which items havehave beenn locked. If user is selected only items locked by the user will be shown."
+    Width = 600
+    Height = 300
+    OkButtonName = "Proceed"
+    CancelButtonName = "Abort"
+    Parameters = @(
+        @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."},
+        @{ Name = "user"; Title="Locking User"; Tooltip="Tooltip for user"; Editor="user"},
+        @{ Name = "since"; Title="Locked Since (leave empty is to ignore)"; Tooltip="Locked since"; Editor="date time"}
+    )
+}
+
+$result = Read-Variable @props
+
+if($result -ne "ok") {
     Close-Window
     Exit
 }
 
-
-if("$user" -eq ""){
-    $items = gci $item.ProviderPath -r -Version * -Language * | Where-Object { $_.__Lock -match "owner=" }
-}
-else{
-    $user = $user.Replace("\","\\")
-    $items = gci $item.ProviderPath -r -Version * -Language * | Where-Object { $_.__Lock -match "owner=""$user""" }
+if($user) {
+    $owner = $user.Replace("\","\\")
+    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -match "owner=""$owner""" }
+} else{
+    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock }
 }
 
-if($since.Year -ne 1){
+if($since.Year -ne 1) {
     $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date}
 }
 
-$items | `
-    Show-ListView -Property @{Label="Name"; Expression={$_.DisplayName} }, `
-        @{Label="Owner"; Expression={ $_.__Owner} }, `
-        @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} }, `
-        @{Label="Locked by"; Expression={$_.Locking.GetOwner() } }, `
-        @{Label="Updated"; Expression={$_.__Updated} }, `
-        @{Label="Updated by"; Expression={$_."__Updated by"} }, `
-        @{Label="Created"; Expression={$_.__Created} }, `
-        @{Label="Created by"; Expression={$_."__Created by"} }, `
-        @{Label="Path"; Expression={$_.ItemPath} } `
-        -PageSize 25
+$items |
+    Show-ListView -PageSize 25 -Property @{Label="Name"; Expression={$_.DisplayName} },
+        @{Label="Owner"; Expression={ $_.__Owner} },
+        @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} },
+        @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
+        @{Label="Updated"; Expression={$_.__Updated} },
+        @{Label="Updated by"; Expression={$_."__Updated by"} },
+        @{Label="Created"; Expression={$_.__Created} },
+        @{Label="Created by"; Expression={$_."__Created by"} },
+        @{Label="Path"; Expression={$_.ItemPath} }
+        
 Close-Window
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -81,14 +86,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-49bf0041-79a0-4ecc-a737-5f92830c9b4b
+0f62aeea-1585-4bd8-93a3-22eae6304519
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130916T004202:635148889224570313
+20131006T135628:635166645885671484
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

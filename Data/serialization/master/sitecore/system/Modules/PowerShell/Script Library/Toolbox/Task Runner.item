@@ -19,7 +19,7 @@ People/16x16/stopwatch_run.png
 ----version----
 language: en
 version: 1
-revision: 8990641b-843b-4e3f-af6b-9cecdf1943cb
+revision: 6c2160ca-ce0e-4411-a0be-ddc9662ee41b
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -41,12 +41,12 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 337
+content-length: 421
 
-gci master:\system\Tasks\Schedules -rec | Where-Object { $_.TemplateName -eq "Schedule" } | `
-    Show-ListView -Property `
-        @{Label="Name"; Expression={ $_.DisplayName } }, `
-        @{Label="Last Run"; Expression={ $_."Last Run" } },`
+# Get all the items recursively where the TemplateName equals "Schedule".
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } |
+    Show-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
+        @{Label="Last Run"; Expression={ $_."Last Run" } },
         @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } }
 Close-Window
 ----field----
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8990641b-843b-4e3f-af6b-9cecdf1943cb
+6c2160ca-ce0e-4411-a0be-ddc9662ee41b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130917T113505:635150145054720547
+20131006T132423:635166626637339781
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
