@@ -43,4 +43,6 @@ Enjoy!
 If you simply want to download the module go to the Sitecore Marketplace and download the latest from the
 [Sitecore PowerShell Extensions Page](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx)
 
+[All kind of Resources about Sitecore PowerShell Extensions](http://blog.najmanowicz.com/sitecore-powershell-console/)
+
 [Training Videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b)
