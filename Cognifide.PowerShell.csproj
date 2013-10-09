@@ -281,6 +281,7 @@
     <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
     <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
+    <Compile Include="SitecoreIntegrations\Processors\RewriteUrl.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedDataSource.cs" />

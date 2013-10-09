@@ -12,26 +12,28 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 519c2564-0c91-4782-a061-c48cf9cfe1a3
+revision: c6eb1c58-75b6-476e-94bc-7bb219a0741e
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1057
+content-length: 977
 
 <#
 Provides an XML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
-http://hostname/Console/Services/RemoteScriptCall.ashx?scriptDB=master&script=/Examples/API/ChildrenAsXml&user=admin&password=b&itemDB=master&item=/sitecore/content
+http://hostname/-/script/v1/Examples/API/ChildrenAsXml?scriptDB=master&user=admin&password=b&itemDB=master&item=content
 
 If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
-http://hostname/Console/Services/RemoteScriptCall.ashx?script=/Examples/API/ChildrenAsXml&item=/sitecore/content
+http://hostname/-/script/v1/Examples/API/ChildrenAsXml?item=content
 #>
 
 #if the location is not Sitecore tree, switch to root of Master Database
 if((Get-Location).Provider.Name -ne "CmsItemProvider"){
     Set-Location master:\
 }
+
+cd $item
 
 if ($HttpContext -ne $null){
     $HttpContext.Response.ContentType = "text/xml";
@@ -51,14 +53,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-519c2564-0c91-4782-a061-c48cf9cfe1a3
+c6eb1c58-75b6-476e-94bc-7bb219a0741e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130913T055019:635146482197295000
+20131008T200409:635168594496159375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

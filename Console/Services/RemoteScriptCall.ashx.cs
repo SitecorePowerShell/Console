@@ -23,8 +23,6 @@ namespace Cognifide.PowerShell.Console.Services
             string password = HttpContext.Current.Request.Params.Get("password");
             string scriptParam = HttpContext.Current.Request.Params.Get("script");
             string scriptDbParam = HttpContext.Current.Request.Params.Get("scriptDb");
-            string itemParam = HttpContext.Current.Request.Params.Get("item");
-            string itemDbParam = HttpContext.Current.Request.Params.Get("itemDb");
 
             bool authenticated = !string.IsNullOrEmpty(userName) &&
                                  !string.IsNullOrEmpty(password) &&
@@ -33,10 +31,6 @@ namespace Cognifide.PowerShell.Console.Services
             Database scriptDb = !authenticated || string.IsNullOrEmpty(scriptDbParam)
                 ? Sitecore.Context.Database
                 : Database.GetDatabase(scriptDbParam);
-
-            Database itemDb = !authenticated || string.IsNullOrEmpty(itemDbParam)
-                ? Sitecore.Context.Database
-                : Database.GetDatabase(itemDbParam);
 
             Item scriptItem = scriptDb.GetItem(scriptParam);
 
@@ -54,14 +48,16 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
 
-                if (!string.IsNullOrEmpty(itemParam))
-                {
-                    Item item = itemDb.GetItem(itemParam);
-                    if (item != null)
-                        session.SetItemLocationContext(item);
-                }
+                Item item = Sitecore.Context.Database.GetRootItem();
+                if (item != null)
+                    session.SetItemLocationContext(item);
 
                 context.Response.ContentType = "text/plain";
+
+                foreach (var param in HttpContext.Current.Request.Params.AllKeys)
+                {
+                    session.SetVariable(param, HttpContext.Current.Request.Params[param]);
+                }
 
                 session.ExecuteScriptPart(script, true);
 

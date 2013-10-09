@@ -12,13 +12,13 @@ templatekey: PowerShell Script
 ----version----
 language: en
 version: 1
-revision: 9693783e-6424-408d-a1ac-f36888e49f3b
+revision: 77cddd66-2dd7-4d26-9c45-333a5fbd3e4f
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1115
+content-length: 1125
 
 <#
 Provides an JSON result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
@@ -33,11 +33,13 @@ if((Get-Location).Provider.Name -ne "CmsItemProvider"){
     Set-Location master:\
 }
 
+cd $item
+
 if ($HttpContext -ne $null){
     $HttpContext.Response.ContentType = "application/json";
 }
 #return some of the children's properties as JSON
-gci . | select-object @{Label="Path"; Expression={ $_.Paths.Path}}  , Name, DisplayName, TemplateName, Language, Version, Paths | convertto-json -Depth 3
+gci . | select-object @{Label="Path"; Expression={ $_.Paths.Path}}  , Name, DisplayName, TemplateName, Language, Version, Paths | convertto-json -Depth 2
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -51,14 +53,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9693783e-6424-408d-a1ac-f36888e49f3b
+77cddd66-2dd7-4d26-9c45-333a5fbd3e4f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T125156:635151919163005468
+20131008T201229:635168599491510937
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
