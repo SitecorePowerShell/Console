@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore.Data.Items;
@@ -60,6 +62,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                             {
                                 varValue = ((PSObject) varValue).ImmediateBaseObject;
                             }
+
+                            if (varValue is IEnumerable<object>)
+                            {
+                                varValue = (varValue as IEnumerable<object>).Select(p =>
+                                {
+                                    while (p is PSObject)
+                                    {
+                                        p = ((PSObject)p).ImmediateBaseObject;
+                                    }
+                                    return p;
+                                }).ToList();
+                            }
                             result.Add("Value", varValue);
                         }
                         object varTitle = result["Title"];
@@ -98,6 +112,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         if (resultValue is Item)
                         {
                             resultValue = ItemShellExtensions.GetPsObject(SessionState, resultValue as Item);
+                        }
+                        if (resultValue is List<Item>)
+                        {
+                            resultValue =
+                                (resultValue as List<Item>).Select(p => ItemShellExtensions.GetPsObject(SessionState, p))
+                                    .ToArray();
                         }
                         SessionState.PSVariable.Set((string)result["Name"], resultValue);
                     }

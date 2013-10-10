@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
@@ -8,13 +9,17 @@ using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
+using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
+using DateTime = System.DateTime;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
+using Memo = Sitecore.Web.UI.HtmlControls.Memo;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -127,6 +132,48 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return dateTimePicker;
             }
 
+            if(!string.IsNullOrEmpty(editor) && (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1))
+            {
+                Item item = null;
+                List<Item> items = null;
+                if (value is Item)
+                {
+                    item = (Item) value;
+                    items = new List<Item> {item};
+                } else if (value is IEnumerable<object>)
+                {
+                    items = (value as IEnumerable<object>).Cast<Item>().ToList();
+                    item = items.First();
+                }
+
+                var dataContext = new DataContext
+                {
+                    DefaultItem = item.Paths.Path,
+                    ID = Control.GetUniqueID("dataContext"),
+                    DataViewName = "Master",
+                    Root = variable["Root"] as string ?? "/sitecore",
+                    Parameters = "databasename=" + item.Database.Name,
+                    Database = item.Database.Name,
+                    Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
+                    Folder = item.ID.ToString(),
+                    Language = item.Language,
+                    Version = item.Version
+                };
+                DataContextPanel.Controls.Add(dataContext);
+
+                var treeList = new TreeList
+                {
+                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    Value = string.Join("|", items.Select(i => i.ID.ToString()).ToArray()),
+                    DataContext = dataContext.ID,
+                    AllowMultipleSelection = true,
+                    DatabaseName = item.Database.Name,
+                    Database = item.Database.Name,
+                    Source = variable["Root"] as string ?? "/sitecore"
+                };
+                treeList.Class += " treePicker";
+                return treeList;
+            }
             if (type == typeof (Item) || 
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
@@ -263,7 +310,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     
                     var result = new Hashtable(2);
                     results.Add(result);
-                    result.Add("Name",parts[1]);
+                    result.Add("Name",String.Join("_",parts.Skip(1).Take(parts.Length-2).ToArray()));
 
                     var controlValue = control.Value;
                     if (controlValue != null)
@@ -282,6 +329,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         {
                             bool boolValue = (control as Checkbox).Checked;
                             result.Add("Value", boolValue);
+                        }
+                        else if (control is Combobox)
+                        {
+                            var boolValue = (control as Combobox).Value;
+                            result.Add("Value", boolValue);
+                        }                            
+                        else if (control is TreeList)
+                        {
+                            TreeList treeList = control as TreeList;
+                            string strIds = treeList.GetValue();
+                            string[] ids = strIds.Split('|');
+                            Database db = Database.GetDatabase(treeList.DatabaseName);
+                            List<Item> items = ids.Select(p => db.GetItem(p)).ToList();
+                            result.Add("Value", items);                            
                         }
                         else if (control is Edit || control is Memo)
                         {
