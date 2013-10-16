@@ -26,33 +26,57 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 8937426d-3947-4b3b-b301-e22b77f1f90e
+revision: a8aec367-952d-4428-8350-65d1ee2fc889
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1120
+content-length: 1453
 
-$item = get-item .
+# Get the item based on the current context
+$item = Get-Item -Path .
 
-$result = Read-Variable -Parameters `
-    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-7); Title="Changes from"; Description="Since when you want the activity to be reported?"; ShowTime=$true}, `
-    @{ Name = "to"; Value=[System.DateTime]::Now; Title="Changes to"; Description="Until when you want the activity to be reported?"; ShowTime=$true}, `
-    @{ Name = "item"; Title="Branch to Analyse"; Description="Branch you want to analyse."} `
-    -Description "This report will analyse the branch you select and will tell you which of the pages have been changed since your selected date/time" `
-    -Title "Analyse author activilty" -Width 500 -Height 300 `
-    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+$props = @{
+    Parameters = @(
+        @{
+            Name = "from"
+            Value = [System.DateTime]::Now.AddDays(-7)
+            Title = "Changes from"
+            Description = "Since when you want the activity to be reported?"
+            ShowTime=$true
+        },
+        @{
+            Name = "to"
+            Value = [System.DateTime]::Now
+            Title = "Changes to"
+            Description="Until when you want the activity to be reported?"
+            ShowTime =$true
+        },
+        @{
+            Name = "item"
+            Title="Branch to Analyse"
+            Description="Branch you want to analyse."
+        }
+    )
+    Title = "Analyse author activilty"
+    Description = "This report will analyse the branch you select and will tell you which of the pages have been changed since your selected date/time"
+    OkButtonName = "Proceed"
+    CancelButtonName = "Abort"
+    Width = 500
+    Height = 300
+}
 
-if($result -ne "ok")
-{
+$result = Read-Variable @props
+
+if($result -ne "ok") {
     Exit
 }
 
 $item = Wrap-Item -Item $item
-Get-Childitem $item.ProviderPath -recurse | `
-    Where-Object {$from.CompareTo($_.__Updated) -lt 0 -and $to.CompareTo($_.__Updated) -gt 0} | `
-    Format-Table Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } } -auto
+Get-Childitem $item.ProviderPath -Recurse |
+    Where-Object { $from.CompareTo($_.__Updated) -lt 0 -and $to.CompareTo($_.__Updated) -gt 0 } |
+    Format-Table Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } } -AutoSize
 Show-Result -Text
 Close-Window
 ----field----
@@ -68,14 +92,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8937426d-3947-4b3b-b301-e22b77f1f90e
+a8aec367-952d-4428-8350-65d1ee2fc889
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130812T075235:635118907557137656
+20131015T230908:635174753483132625
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
