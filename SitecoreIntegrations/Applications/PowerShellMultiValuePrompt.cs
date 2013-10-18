@@ -169,7 +169,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     AllowMultipleSelection = true,
                     DatabaseName = item.Database.Name,
                     Database = item.Database.Name,
-                    Source = variable["Root"] as string ?? "/sitecore"
+                    Source = variable["Root"] as string ?? "/sitecore",
+                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName"
                 };
                 treeList.Class += " treePicker";
                 return treeList;
