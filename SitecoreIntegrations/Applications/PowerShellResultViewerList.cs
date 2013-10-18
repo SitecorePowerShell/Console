@@ -206,9 +206,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     : string.Empty;
                 var results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
                 session.SetVariable("resultSet", results);
-                var formatProperty = ListViewer.Data.Property.Cast<Hashtable>()
-                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
-                    .Aggregate((a, b) => a + b).TrimEnd(',');
+                var formatProperty = ListViewer.Data.Property
+                    .Select(p =>
+                    {
+                        if (p is Hashtable)
+                        {
+                            var v = p as Hashtable;
+                            return "@{Label=\"" + v["Label"] + "\";Expression={" + v["Expression"] + "}},";
+                        }
+                        return "@{Label=\"" + p + "\";Expression={$_." + p + "}},";
+                    }).Aggregate((a, b) => a + b).TrimEnd(',');
                 session.SetVariable("formatProperty", formatProperty);
                 var result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
