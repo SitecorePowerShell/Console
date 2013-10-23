@@ -19,7 +19,7 @@ Network/16x16/web.png
 ----version----
 language: en
 version: 1
-revision: 87696484-10c4-48f0-b3b3-c0edece4b461
+revision: caedd0b1-2684-4d4a-a823-e48b69982835
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -41,7 +41,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2306
+content-length: 2480
 
 # Script configuration
 # --------------------
@@ -50,10 +50,10 @@ $createAt = gi "master:/content/Home/"
 $itemTemplate = gi "master:/templates/Sample/Sample Item"
 
 $result = Read-Variable -Parameters `
-    @{ Name = "sitemapUrl"; Value="http://www.cognifide.com/sitemap"; Title="Item to create the site under"; Root="/sitecore/content/"}, `
-    @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"}, `
-    @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"}, `
-    @{ Name = "prefix"; Value="http://www.cognifide.com/"; Title="Prefix to chop off URLs"; }, `
+    @{ Name = "sitemapUrl"; Value="http://www.cognifide.com/sitemap"; Title="Item to create the site under"; Root="/sitecore/content/"},
+    @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"},
+    @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"},
+    @{ Name = "prefix"; Value="http://www.cognifide.com/"; Title="Prefix to chop off URLs"; },
     @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";} `
     -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
     -Title "Find items with security set for a user instead of role" -Width 600 -Height 400 `
@@ -64,6 +64,8 @@ if($result -ne "ok")
     Close-Window
     Exit
 }
+
+cd $createAt.ProviderPath
 
 $createAt = $createAt.Paths.Path
 $itemTemplate = $itemTemplate.Paths.Path
@@ -102,12 +104,16 @@ $locations = $w.urlset.url | `
                  Expression = {$_.loc -replace $prefix,"" -replace $postfix,""}}
  
 # send url's for creation
+$i = 0;
 $locations | % { 
+    $i++;
   $name = $_.Path.Trim('/')
   if(-not (Test-Path "$createAt/$name")){
+    Write-Progress -PercentComplete (($i/$locations.length) * 100) -Activity "Creating Page" -CurrentOperation "$name"
     CreateItem $name
   }
 }
+Show-Result -Text
 Close-Window
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -122,14 +128,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-87696484-10c4-48f0-b3b3-c0edece4b461
+caedd0b1-2684-4d4a-a823-e48b69982835
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130917T113530:635150145303441250
+20131016T014931:635174849713565000
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

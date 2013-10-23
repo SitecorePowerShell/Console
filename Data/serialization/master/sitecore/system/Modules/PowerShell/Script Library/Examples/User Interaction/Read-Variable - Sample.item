@@ -1,0 +1,89 @@
+----item----
+version: 1
+id: {2DBC9AA6-6D94-4176-B9B7-9FF97DD4D7D1}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Examples/User Interaction/Read-Variable - Sample
+parent: {97909803-E651-41E4-A13A-BA1A831685B3}
+name: Read-Variable - Sample
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: 7098ef15-7d08-4a64-94aa-d95bbb986fb1
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2057
+
+$item = get-item master:\content\Home
+$items = get-Childitem master:\
+$parent = get-item . |% { $_.Parent } 
+$result = Read-Variable -Parameters `
+    @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
+    @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"}, 
+    @{ Name = "items"; Title="Bunch of Items"; Root="/sitecore/templates"; editor="treelist"; DisplayFieldName="__ID"}, 
+    @{ Variable = get-variable "parent" }, 
+    @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; }, 
+    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Tooltip for singleline"; }, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Text"; lines=3; Tooltip="Tooltip for multiline"; }, 
+    @{ Name = "anOption"; Value="2"; Title="An Option"; Options="One|1|Two|2|Three|3"; Tooltip="Tooltip for dropdown"; }, 
+    @{ Name = "number"; Value=110; Title="I need this number too"; Tooltip="Tooltip for number"; }, 
+    @{ Name = "fraction"; Value=1.1; Title="I just a bit over 1 of this"; Tooltip="Tooltip for float"; }, 
+    @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"}, 
+    @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"} `
+    -Description "This report will analyse the branch and will tell you which of the pages have been changed since your selected date" `
+    -Title "Starting Parameters" -Width 500 -Height 720 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Exit
+}
+
+"Variables from dialog:"
+'$from:      ' + $from
+'$item:      ' + $item.Paths.Path
+'$parent:    ' + $parent.Paths.Path
+'$silent:    ' + $silent
+'$someText:  ' + $someText
+'$multiText: ' + $multiText
+'$anOption:  ' + $anOption
+'$number:    ' + $number
+'$user:      ' + $user
+'$role:      ' + $role
+'$fraction:  ' + $fraction
+'$items: '
+$items
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130809T152429
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+7098ef15-7d08-4a64-94aa-d95bbb986fb1
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20131010T190720:635170288406594453
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

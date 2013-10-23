@@ -26,13 +26,13 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: a8aec367-952d-4428-8350-65d1ee2fc889
+revision: fc020407-b177-4084-adfa-62b44fe48dcb
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1453
+content-length: 1393
 
 # Get the item based on the current context
 $item = Get-Item -Path .
@@ -76,8 +76,8 @@ if($result -ne "ok") {
 $item = Wrap-Item -Item $item
 Get-Childitem $item.ProviderPath -Recurse |
     Where-Object { $from.CompareTo($_.__Updated) -lt 0 -and $to.CompareTo($_.__Updated) -gt 0 } |
-    Format-Table Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } } -AutoSize
-Show-Result -Text
+    Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } }
+
 Close-Window
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -92,14 +92,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a8aec367-952d-4428-8350-65d1ee2fc889
+fc020407-b177-4084-adfa-62b44fe48dcb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131015T230908:635174753483132625
+20131023T171514:635181453143592188
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
