@@ -65,6 +65,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
         }
 
+        public void SetContextItem(Item item)
+        {
+            SetVariable("SitecoreContextItem", item);            
+        }
+
         public ScriptSession(string applianceType, bool personalizedSettings)
         {
             // Create and open a PowerShell runspace.  A runspace is a container 
@@ -362,7 +367,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public void SetItemLocationContext(Item item)
         {
-            string contextScript = ScriptSession.GetDataContextSwitch(item);
+            SetContextItem(item);
+            string contextScript = GetDataContextSwitch(item);
             ExecuteScriptPart(contextScript);
         }
 

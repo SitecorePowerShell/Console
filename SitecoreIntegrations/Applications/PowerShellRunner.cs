@@ -8,7 +8,9 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
@@ -19,6 +21,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
+using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -58,6 +61,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             string itemId = WebUtil.GetQueryString("id");
             string itemDb = WebUtil.GetQueryString("db");
+            string itemLang = WebUtil.GetQueryString("lang");
+            string itemVer = WebUtil.GetQueryString("ver");
+
             string scriptId = WebUtil.GetQueryString("scriptId");
             string scriptDb = WebUtil.GetQueryString("scriptDb");
 
@@ -65,7 +71,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             ScriptItem.Fields.ReadAll();
             if (!string.IsNullOrEmpty(itemId) && !string.IsNullOrEmpty(itemDb))
             {
-                CurrentItem = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
+                Database db = Factory.GetDatabase(itemDb);
+                if (!string.IsNullOrEmpty(itemLang))
+                {
+                    CurrentItem = db.GetItem(new ID(itemId), Language.Parse(itemLang), Version.Parse(itemVer));
+                }
+                else
+                {
+                    CurrentItem = db.GetItem(new ID(itemId));
+                }
             }
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context,false);
             PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
@@ -103,10 +117,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         public void Execute()
         {
             ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
-            string contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}\n{2}",
+            scriptSession.SetItemLocationContext(CurrentItem);
+            string contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}",
                                                  scriptSession.Settings.HostWidth,
-                                                 scriptSession.Settings.Prescript,
-                                                 ScriptSession.GetDataContextSwitch(CurrentItem));
+                                                 scriptSession.Settings.Prescript);
 
             var parameters = new object[]
                 {

@@ -428,12 +428,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var scriptSession = new ScriptSession(Settings.ApplicationName);
-            string contextScript = ScriptSession.GetDataContextSwitch(DataContext.CurrentItem);
+            scriptSession.SetItemLocationContext(DataContext.CurrentItem);
 
             var parameters = new object[]
                 {
                     scriptSession,
-                    contextScript,
                     ScriptItemId
                 };
 
@@ -461,9 +460,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected void ExecuteInternal(params object[] parameters)
         {
             var scriptSession = parameters[0] as ScriptSession;
-            var contextScript = parameters[1] as string;
 
-            if (scriptSession == null || contextScript == null)
+            if (scriptSession == null)
             {
                 return;
             }
@@ -471,7 +469,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             try
             {
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
-                scriptSession.ExecuteScriptPart(contextScript);
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
                 if (Context.Job != null)

@@ -51,8 +51,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
                 String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
-                script = String.Format(
-                    "cd \"{0}:{1}\"\n", item.Database.Name, item.Paths.Path.Replace("/", "\\").Substring(9)) + script;
+                script = string.Format("{0}\n{1}", ScriptSession.GetDataContextSwitch(item), script);
                 return session.ExecuteScriptPart(script, false).Cast<Item>();
             }
         }

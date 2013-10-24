@@ -25,16 +25,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             string showResults = scriptItem[ScriptItemFieldNames.ShowResults];
             string itemId = string.Empty;
             string itemDb = string.Empty;
+            string itemLang = string.Empty;
+            string itemVer = string.Empty;
 
             if (context.Items.Length > 0)
             {
                 itemId = context.Items[0].ID.ToString();
                 itemDb = context.Items[0].Database.Name;
+                itemLang = context.Items[0].Language.Name;
+                itemVer = context.Items[0].Version.Number.ToString();
             }
 
             var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
             str.Append("id", itemId);
             str.Append("db", itemDb);
+            str.Append("lang", itemLang);
+            str.Append("ver", itemVer);
             str.Append("scriptId", scriptId);
             str.Append("scriptDb", scriptDb);
             str.Append("autoClose", showResults);
