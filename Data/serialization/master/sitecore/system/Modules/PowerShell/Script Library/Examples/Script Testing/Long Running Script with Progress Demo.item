@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
-name: __Sortorder
-key: __sortorder
-content-length: 3
-
-250
-----version----
-language: en
-version: 1
-revision: 17850e93-5213-4672-85ca-ddbb92e2e96e
-
-----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -41,6 +29,18 @@ for($i = 0; $i -le 10; $i++){
   Start-Sleep -m 500
 }
 Write-Host "$([System.DateTime]::Now)"
+
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+250
+----version----
+language: en
+version: 1
+revision: 17850e93-5213-4672-85ca-ddbb92e2e96e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}

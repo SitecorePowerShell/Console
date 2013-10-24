@@ -9,11 +9,6 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
-----version----
-language: en
-version: 1
-revision: b8923ea1-92f6-4c21-801f-8d75e8709d71
-
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -23,6 +18,11 @@ content-length: 303
 # Uses Show-ModalDialog to execute the ConfirmChoice XML control
 # the buttons must be named btn_0, btn_1...
 Show-ModalDialog -Control "ConfirmChoice" -Parameters @( 'btn_0|Yes (returns btn_0)', 'btn_1|No (returns btn_1)', 'btn_2|return btn_2', 'te|Message Text', 'cp|My Caption') -Height 120 -Width 400
+----version----
+language: en
+version: 1
+revision: b8923ea1-92f6-4c21-801f-8d75e8709d71
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

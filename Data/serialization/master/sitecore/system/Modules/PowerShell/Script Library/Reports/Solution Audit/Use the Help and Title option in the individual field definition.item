@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 28
-
-Applications/32x32/about.png
-----version----
-language: en
-version: 1
-revision: 65e280f2-92e6-4a94-85eb-1bf9b9683baa
-
-----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -83,6 +71,18 @@ $fields | `
         -InfoDescription "Use the Help option in the individual field definition items to provide extra information to users about fields. <br/>
                           Also consider using the Title field of the definition item to present a different name for the field to the user. <br/><br/>
                           Fields below fail to deliver on this recomendation."
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 28
+
+Applications/32x32/about.png
+----version----
+language: en
+version: 1
+revision: 65e280f2-92e6-4a94-85eb-1bf9b9683baa
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

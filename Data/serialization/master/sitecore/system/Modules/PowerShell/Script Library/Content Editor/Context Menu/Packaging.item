@@ -10,6 +10,22 @@ template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
 
 ----field----
+field: {613D128B-7BF2-40F4-84CB-6717408F9806}
+name: ShowRule
+key: showrule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {05EECF47-0BB9-4B85-B926-0BC6DD987EC8}
+name: EnableRule
+key: enablerule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -28,22 +44,6 @@ language: en
 version: 1
 revision: 45bad8a0-7986-4ca5-bf4e-53f5bb23e897
 
-----field----
-field: {613D128B-7BF2-40F4-84CB-6717408F9806}
-name: ShowRule
-key: showrule
-content-length: 52
-
-<?xml version="1.0" encoding="utf-16"?>
-<ruleset />
-----field----
-field: {05EECF47-0BB9-4B85-B926-0BC6DD987EC8}
-name: EnableRule
-key: enablerule
-content-length: 52
-
-<?xml version="1.0" encoding="utf-16"?>
-<ruleset />
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

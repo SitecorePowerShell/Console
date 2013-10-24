@@ -9,11 +9,6 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
-----version----
-language: en
-version: 1
-revision: 8dff3796-a952-4fe5-8c95-aa1532c9c728
-
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -33,6 +28,11 @@ Show-Application `
     -Application "Content Editor" `
     -Parameter @{id ="$($item.ID)"; fo="$($item.ID)";la="$($item.Language.Name)"; vs="$($item.Version.Number)";sc_content="$($item.Database.Name)"} `
 
+
+----version----
+language: en
+version: 1
+revision: 8dff3796-a952-4fe5-8c95-aa1532c9c728
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}

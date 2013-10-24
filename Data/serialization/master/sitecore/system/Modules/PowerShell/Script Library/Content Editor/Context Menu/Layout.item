@@ -10,25 +10,6 @@ template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 40
-
-Applications/32x32/text_rich_colored.png
-----field----
-field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
-name: __Sortorder
-key: __sortorder
-content-length: 3
-
-600
-----version----
-language: en
-version: 1
-revision: afca3486-88e7-4010-b211-95d56d10514f
-
-----field----
 field: {613D128B-7BF2-40F4-84CB-6717408F9806}
 name: ShowRule
 key: showrule
@@ -51,6 +32,25 @@ content-length: 443
     </conditions>
   </rule>
 </ruleset>
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 40
+
+Applications/32x32/text_rich_colored.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+600
+----version----
+language: en
+version: 1
+revision: afca3486-88e7-4010-b211-95d56d10514f
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

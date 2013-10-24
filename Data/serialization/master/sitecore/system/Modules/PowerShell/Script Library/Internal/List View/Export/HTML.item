@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 37
-
-WordProcessing/32x32/imp_exp_html.png
-----version----
-language: en
-version: 1
-revision: 19295795-495d-4304-b417-a8800dbdd629
-
-----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -34,6 +22,18 @@ $csvFile  = "$dataFolder\report-$datetime.htm"
 $format = & ([scriptblock]::Create($formatProperty))        
 [psCustomObject]$resultSet | Select-Object -Property $format | ConvertTo-Html | Out-File $csvFile
 $csvFile
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 37
+
+WordProcessing/32x32/imp_exp_html.png
+----version----
+language: en
+version: 1
+revision: 19295795-495d-4304-b417-a8800dbdd629
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

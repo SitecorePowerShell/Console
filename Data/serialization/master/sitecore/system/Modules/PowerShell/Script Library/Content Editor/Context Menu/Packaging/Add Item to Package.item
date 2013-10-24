@@ -10,25 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 30
-
-Software/16x16/element_add.png
-----field----
-field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
-name: __Sortorder
-key: __sortorder
-content-length: 3
-
-250
-----version----
-language: en
-version: 1
-revision: bb4b3d68-43af-455e-8b4b-0cd52c300a5a
-
-----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
@@ -68,6 +49,25 @@ key: persistentsessionid
 content-length: 14
 
 packageBuilder
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+Software/16x16/element_add.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+250
+----version----
+language: en
+version: 1
+revision: bb4b3d68-43af-455e-8b4b-0cd52c300a5a
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

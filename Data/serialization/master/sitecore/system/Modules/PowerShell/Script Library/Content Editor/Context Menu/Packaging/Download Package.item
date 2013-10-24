@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 25
-
-People/16x16/box_next.png
-----version----
-language: en
-version: 1
-revision: 2036ff09-1d9e-47ee-8369-250b7e2fe512
-
-----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
@@ -93,6 +81,18 @@ key: persistentsessionid
 content-length: 14
 
 packageBuilder
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 25
+
+People/16x16/box_next.png
+----version----
+language: en
+version: 1
+revision: 2036ff09-1d9e-47ee-8369-250b7e2fe512
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

@@ -10,18 +10,6 @@ template: {69316117-03A6-4679-A34A-21E8CE8701D5}
 templatekey: PowerShell Console Settings
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 23
-
-People/32x32/users1.png
-----version----
-language: en
-version: 1
-revision: 34098e31-2688-4848-96a1-10e8f9f63e38
-
-----field----
 field: {F59378A5-F21D-4E07-B7DE-7986DDA3A510}
 name: HostWidth
 key: hostwidth
@@ -98,6 +86,18 @@ key: usetypeinfo
 content-length: 1
 
 1
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 23
+
+People/32x32/users1.png
+----version----
+language: en
+version: 1
+revision: 34098e31-2688-4848-96a1-10e8f9f63e38
+
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner

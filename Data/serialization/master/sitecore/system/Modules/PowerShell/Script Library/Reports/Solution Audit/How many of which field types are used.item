@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 34
-
-Control/32x32/multi_controls_b.png
-----version----
-language: en
-version: 1
-revision: b10fc202-bb49-4b3c-8cb9-7e5bcb5220d7
-
-----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -52,6 +40,18 @@ get-childitem $item.ProviderPath -recurse | `
             -Title "Field types used by templates." `
             -InfoDescription "Field types used by templates under $($item.Paths.Path) branch." 
 Close-Window  
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 34
+
+Control/32x32/multi_controls_b.png
+----version----
+language: en
+version: 1
+revision: b10fc202-bb49-4b3c-8cb9-7e5bcb5220d7
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}

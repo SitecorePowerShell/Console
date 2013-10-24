@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 29
-
-Network/32x32/fingerprint.png
-----version----
-language: en
-version: 1
-revision: 21781293-bcae-4a44-8d70-72175ae69ea0
-
-----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -94,6 +82,18 @@ $results = @{
 
 $templates | Show-ListView @results
 Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Network/32x32/fingerprint.png
+----version----
+language: en
+version: 1
+revision: 21781293-bcae-4a44-8d70-72175ae69ea0
+
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name

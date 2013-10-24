@@ -9,11 +9,6 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
-----version----
-language: en
-version: 1
-revision: 28f50109-afe5-4f29-9960-e011536cb8c4
-
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -123,6 +118,11 @@ if($createNewTheme)
 $mediaPath = New-Item -Path 'master:\media library' -Name $tenantName -ItemType "System/Media/Media folder"
 
 Write-Host "Done! Don't forget to publish the templates, theme and the tenant!"
+
+----version----
+language: en
+version: 1
+revision: 28f50109-afe5-4f29-9960-e011536cb8c4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}

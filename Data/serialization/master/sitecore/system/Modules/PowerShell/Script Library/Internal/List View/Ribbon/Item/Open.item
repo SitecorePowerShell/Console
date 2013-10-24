@@ -10,18 +10,6 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 26
-
-Control/16x16/treeview.png
-----version----
-language: en
-version: 1
-revision: f48d6083-9cb2-47b0-8d23-c285a8ab8cbf
-
-----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
@@ -51,6 +39,18 @@ Show-Application `
     -Application "Content Editor" `
     -Parameter @{id ="$($item.ID)"; fo="$($item.ID)";la="$($item.Language.Name)"; vs="$($item.Version.Number)";sc_content="$($item.Database.Name)"} `
 }
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 26
+
+Control/16x16/treeview.png
+----version----
+language: en
+version: 1
+revision: f48d6083-9cb2-47b0-8d23-c285a8ab8cbf
+
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created

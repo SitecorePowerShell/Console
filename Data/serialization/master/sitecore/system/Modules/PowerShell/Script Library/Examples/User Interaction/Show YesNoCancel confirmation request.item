@@ -9,11 +9,6 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
-----version----
-language: en
-version: 1
-revision: 01c9310b-2c0d-4a9e-b9d7-7dc13ed860e3
-
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
@@ -25,6 +20,11 @@ $result = Show-Confirm "The script is pausing until you press a button"
 
 # print the result
 $result
+----version----
+language: en
+version: 1
+revision: 01c9310b-2c0d-4a9e-b9d7-7dc13ed860e3
+
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
