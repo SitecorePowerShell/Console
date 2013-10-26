@@ -40,24 +40,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             return AddDynamicParameter(type, name, ref dic, false);
         }
 
-        protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic, bool valueFromPipeline)
+        protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic,
+            bool valueFromPipeline)
         {
             bool paramAdded = false;
 
             if (dic == null || !dic.ContainsKey(name))
             {
                 var attrib = new ParameterAttribute
-                    {
-                        Mandatory = false,
-                        ValueFromPipeline = valueFromPipeline,
-                    };
+                {
+                    Mandatory = false,
+                    ValueFromPipeline = valueFromPipeline,
+                };
 
                 var param = new RuntimeDefinedParameter
-                    {
-                        IsSet = false,
-                        Name = name,
-                        ParameterType = type
-                    };
+                {
+                    IsSet = false,
+                    Name = name,
+                    ParameterType = type
+                };
                 param.Attributes.Add(attrib);
 
                 if (dic == null)
@@ -101,7 +102,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             if (dic != null && dic[LanguageParam].IsSet)
             {
                 string forcedLanguage = dic[LanguageParam].Value.ToString();
-                language = forcedLanguage.Contains("*") ? forcedLanguage : LanguageManager.GetLanguage(forcedLanguage).Name;
+                language = forcedLanguage.Contains("*")
+                    ? forcedLanguage
+                    : LanguageManager.GetLanguage(forcedLanguage).Name;
             }
 
             version = Version.Latest.Number;
@@ -127,7 +130,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
             bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
 
             return paramAdded ? dic : null;
         }
@@ -146,9 +149,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
-            
+            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
+
             return paramAdded ? dic : null;
         }
 
@@ -156,7 +159,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
         private static void SignalPathDoesNotExistError(string path)
         {
             throw new ObjectNotFoundException(string.Format("Cannot find path '{0}' because it does not exist.",
-                                                            path));
+                path));
         }
 
         private void CheckOperationAllowed(string operation, bool isOperationAllowed, string path)
@@ -177,8 +180,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             bool paramAdded = AddDynamicParameter(typeof (SwitchParameter), StartWorkflowParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof(string), LanguageParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof(Item), ParentParam, ref dic, true);            
+            paramAdded |= AddDynamicParameter(typeof (string), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof (Item), ParentParam, ref dic, true);
             return paramAdded ? dic : null;
         }
     }

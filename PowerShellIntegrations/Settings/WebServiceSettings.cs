@@ -16,7 +16,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 
         public static int MaxmimumPollMillis
         {
-            get { return Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 5000); }
+            get
+            {
+                return Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 5000);
+            }
         }
 
         public static int SerializationSizeBuffer

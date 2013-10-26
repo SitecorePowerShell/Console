@@ -67,7 +67,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public void SetContextItem(Item item)
         {
-            SetVariable("SitecoreContextItem", item);            
+            SetVariable("SitecoreContextItem", item);
         }
 
         public ScriptSession(string applianceType, bool personalizedSettings)
@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             InitialSessionState initState = InitialSessionState.CreateDefault();
             initState.ThreadOptions = PSThreadOptions.UseCurrentThread;
             initState.ApartmentState = ApartmentState.STA;
-            host = new ScriptingHost(Settings,conf);
+            host = new ScriptingHost(Settings, conf);
             runspace = host.Runspace;
 
 
@@ -110,8 +110,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 Output.Clear();
             }
-
-
         }
 
         public ApplicationSettings Settings { get; private set; }
@@ -198,7 +196,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     runspace.SessionStateProxy.SetVariable("ScriptSession", this);
                     if (PsVersion == null)
                     {
-                        PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
+                        PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                     }
                 }
             }
@@ -299,7 +297,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             if (exc.InnerException != null)
             {
                 exception += String.Format(HtmlInnerExceptionPrefix, LineEndformat,
-                                           GetExceptionString(exc.InnerException));
+                    GetExceptionString(exc.InnerException));
             }
             return exception;
         }
@@ -335,7 +333,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public void Close()
         {
             runspace.Dispose();
-            disposed = true;            
+            disposed = true;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -362,7 +360,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             //base.Dispose(disposing);
         }
 
-
         #endregion
 
         public void SetItemLocationContext(Item item)
@@ -371,6 +368,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             string contextScript = GetDataContextSwitch(item);
             ExecuteScriptPart(contextScript);
         }
-
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Management.Automation;
 using System.Threading;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -14,7 +13,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         private readonly object[] parameters;
         private readonly bool autoDispose;
 
-        public ScriptRunner(ProgressBoxMethod method, object[] parameters,bool autoDispose)
+        public ScriptRunner(ProgressBoxMethod method, object[] parameters, bool autoDispose)
         {
             Assert.ArgumentNotNull(method, "method");
             Assert.ArgumentNotNull(parameters, "parameters");

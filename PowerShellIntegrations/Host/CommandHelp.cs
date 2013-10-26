@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
-using System.Text.RegularExpressions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
@@ -20,25 +19,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 session.Output.Clear();
                 string lastToken = lastPsToken.Content;
-                session.SetVariable("helpFor",lastToken);
+                session.SetVariable("helpFor", lastToken);
                 Item scriptItem =
                     Database.GetDatabase("master")
-                        .GetItem(ScriptLibrary.Path+"Internal/Context Help/Command Help");
+                        .GetItem(ScriptLibrary.Path + "Internal/Context Help/Command Help");
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
                 var sb = new StringBuilder();
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)
                 {
-                    return new string[]
+                    return new[]
                     {
                         "<div class='ps-help-command-name'>&nbsp;</div><div class='ps-help-header' align='center'>No Command in line or help information found</div><div class='ps-help-parameter' align='center'>Cannot provide help in this context.</div>"
                     };
                 }
                 session.Output.ForEach(l => sb.Append(l.Text));
                 session.Output.Clear();
-                var result = new string[] {sb.ToString()};
+                var result = new[] {sb.ToString()};
                 return result;
             }
-            return new string[] {"No Command in line found - cannot provide help in this context."};
+            return new[] {"No Command in line found - cannot provide help in this context."};
         }
 
         private const string helpScript = @"#Based on http://poshcode.org/1612

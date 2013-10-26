@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
         {
             if (query != null)
             {
-                foreach (T result in query)
+                foreach (var result in query)
                 {
                     WriteObject(result);
                 }

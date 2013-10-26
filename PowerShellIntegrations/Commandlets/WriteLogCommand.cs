@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 if ((enumerable = o as IEnumerable) != null)
                 {
                     bool flag = false;
-                    foreach (object o1 in enumerable)
+                    foreach (var o1 in enumerable)
                     {
                         if (flag && Separator != null)
                         {

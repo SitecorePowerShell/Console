@@ -34,8 +34,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 
             WorkflowEvent lastEvent =
                 ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.GetHistory(Item)
-                                                                   .OrderBy(p => p.Date)
-                                                                   .Last();
+                    .OrderBy(p => p.Date)
+                    .Last();
             ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.AddHistory(
                 Item,
                 string.IsNullOrEmpty(OldState) ? lastEvent.NewState : OldState,

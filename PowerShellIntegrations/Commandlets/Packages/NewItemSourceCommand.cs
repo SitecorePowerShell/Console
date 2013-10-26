@@ -7,7 +7,7 @@ using Sitecore.Install.Utils;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "ItemSource")]
-    [OutputType(new[] { typeof(ItemSource) })]
+    [OutputType(new[] {typeof (ItemSource)})]
     public class NewItemSourceCommand : BasePackageCommand
     {
         private ItemSource source;
@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         [Parameter(Position = 3)]
         public string Root { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public InstallMode InstallMode { get; set; }
 
         [Parameter]
@@ -47,7 +47,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                 source.Root = Root;
             }
             source.SkipVersions = SkipVersions.IsPresent;
-            source.Converter.Transforms.Add(new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+            source.Converter.Transforms.Add(
+                new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
         }
 
         protected override void EndProcessing()

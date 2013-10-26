@@ -1,22 +1,22 @@
 ﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
+using Sitecore;
 using Sitecore.Data.Items;
-using Sitecore.Exceptions;
-using ItemNotFoundException = System.Management.Automation.ItemNotFoundException;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Execute", "Script", DefaultParameterSetName = "From Content Database Library")]
-    [OutputType(new[] { typeof(object) })]
+    [OutputType(new[] {typeof (object)})]
     public class ExecuteScriptCommand : BaseShellCommand
     {
         private const string ParameterSetNameFromItem = "From Item";
         private const string ParameterSetNameFromFullPath = "From Full Path";
         private const string ParameterSetNameFromCurrentLocation = "From Current Database Library";
-        private const string ParameterSetNameFromContentDatabase  = "From Content Database Library";
+        private const string ParameterSetNameFromContentDatabase = "From Content Database Library";
 
-        [Parameter(ParameterSetName = ParameterSetNameFromItem, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true, Position = 0)]
+        [Parameter(ParameterSetName = ParameterSetNameFromItem, ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true, Mandatory = true, Position = 0)]
         public Item Item { get; set; }
 
         [Parameter(ParameterSetName = ParameterSetNameFromFullPath, Mandatory = true, Position = 0)]
@@ -42,9 +42,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             else if (Path != null)
             {
                 Item curItem = null;
-                if (ParameterSetName == ParameterSetNameFromFullPath || ParameterSetName == ParameterSetNameFromContentDatabase)
+                if (ParameterSetName == ParameterSetNameFromFullPath ||
+                    ParameterSetName == ParameterSetNameFromContentDatabase)
                 {
-                    curItem = PathUtilities.GetItem(Path, Sitecore.Context.ContentDatabase.Name, ScriptLibrary.Path);
+                    curItem = PathUtilities.GetItem(Path, Context.ContentDatabase.Name, ScriptLibrary.Path);
                 }
                 if (curItem == null || ParameterSetName == ParameterSetNameFromCurrentLocation)
                 {
@@ -58,7 +59,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 script = curItem["script"];
             }
 
-            object sendToPipeline = InvokeCommand.InvokeScript(script, false, PipelineResultTypes.Output | PipelineResultTypes.Error,null,new object[0]);
+            object sendToPipeline = InvokeCommand.InvokeScript(script, false,
+                PipelineResultTypes.Output | PipelineResultTypes.Error, null, new object[0]);
             WriteObject(sendToPipeline);
         }
     }

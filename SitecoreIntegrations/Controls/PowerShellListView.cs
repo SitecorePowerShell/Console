@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore;
@@ -43,7 +44,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
         public ShowListViewMessage Data
         {
-            get { return (ShowListViewMessage) System.Web.HttpContext.Current.Session[ContextId]; }
+            get { return (ShowListViewMessage) HttpContext.Current.Session[ContextId]; }
         }
 
         protected override void DoClick(Message message)

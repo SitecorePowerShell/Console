@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+﻿using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Jobs.AsyncUI;
@@ -11,12 +10,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         protected override void BeginProcessing()
         {
             LogErrors(() =>
-                {
-                    if (JobContext.IsJob)
-                        Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
-                });
+            {
+                if (JobContext.IsJob)
+                    Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
+            });
         }
-        
+
         public void PutMessage(IMessage message)
         {
             if (JobContext.IsJob)
@@ -35,10 +34,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             {
                 return JobContext.MessageQueue.GetResult();
             }
-            else
-            {
-                return message.MessageQueue.GetResult();
-            }
+            return message.MessageQueue.GetResult();
         }
 
         protected void FlushMessages()
@@ -48,6 +44,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 JobContext.Flush();
             }
         }
-
     }
 }

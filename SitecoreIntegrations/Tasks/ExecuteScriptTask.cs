@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
         {
             using (var session = new ScriptSession(ApplicationNames.Default))
             {
-                foreach (Item item in items)
+                foreach (var item in items)
                 {
                     string script = item["Script"];
                     if (!String.IsNullOrEmpty(script))

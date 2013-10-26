@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected bool ScriptRunning { get; set; }
         public ApplicationSettings Settings { get; set; }
         protected Literal Progress;
-        
+
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -62,8 +62,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         public CommandContext GetCommandContext()
         {
-            var itemNotNull = Client.CoreDatabase.GetItem("{FDD5B2D5-31BE-41C3-AA76-64E5CC63B187}"); // /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon
-            var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
+            var itemNotNull = Client.CoreDatabase.GetItem("{FDD5B2D5-31BE-41C3-AA76-64E5CC63B187}");
+                // /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon
+            var context = new CommandContext {RibbonSourceUri = itemNotNull.Uri};
             return context;
         }
 
@@ -74,17 +75,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         private void BuildDatabases(string database)
         {
             Assert.ArgumentNotNull(database, "database");
-            foreach (string name in Factory.GetDatabaseNames())
+            foreach (var name in Factory.GetDatabaseNames())
             {
                 if (!Factory.GetDatabase(name).ReadOnly)
                 {
                     var listItem = new ListItem
-                        {
-                            ID = Control.GetUniqueID("ListItem"),
-                            Header = name,
-                            Value = name,
-                            Selected = name == database
-                        };
+                    {
+                        ID = Control.GetUniqueID("ListItem"),
+                        Header = name,
+                        Value = name,
+                        Selected = name == database
+                    };
                     Databases.Controls.Add(listItem);
                 }
             }
@@ -104,12 +105,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new JobMonitor { ID = "Monitor" };
+                    Monitor = new JobMonitor {ID = "Monitor"};
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = (JobMonitor)Context.ClientPage.FindControl("Monitor");
+                    Monitor = (JobMonitor) Context.ClientPage.FindControl("Monitor");
                 }
             }
 
@@ -127,7 +128,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (itemId.Length > 0)
             {
                 ScriptItemId = itemId;
-                LoadItem(WebUtil.GetQueryString("db"),itemId);
+                LoadItem(WebUtil.GetQueryString("db"), itemId);
             }
 
             Monitor.JobFinished += MonitorJobFinished;
@@ -156,7 +157,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             base.HandleMessage(message);
 
             var context = new CommandContext(item);
-            foreach (string key in message.Arguments.AllKeys)
+            foreach (var key in message.Arguments.AllKeys)
             {
                 context.Parameters.Add(key, message.Arguments[key]);
             }
@@ -214,7 +215,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected void MruOpen(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            LoadItem(args.Parameters["db"],args.Parameters["id"]);
+            LoadItem(args.Parameters["db"], args.Parameters["id"]);
             UpdateRibbon();
         }
 
@@ -239,8 +240,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             string icon = scriptItem[FieldIDs.Icon];
             ScriptName.Value = string.Format("Script: {0}:{1}", db, scriptItem.Paths.Path.Substring(9));
             SheerResponse.SetInnerHtml("ScriptName", ScriptName.Value);
-            Item mruMenu= Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
-                          Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
+            Item mruMenu = Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
+                           Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
 
             var mruItems = mruMenu.Children;
             if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
@@ -275,6 +276,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
             }
         }
+
         [HandleMessage("ise:new", true)]
         protected void NewScript(ClientPipelineArgs args)
         {
@@ -361,7 +363,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:reload", true)]
         protected void ReloadItem(ClientPipelineArgs args)
         {
-            LoadItem(Client.ContentDatabase.Name,ScriptItemId);
+            LoadItem(Client.ContentDatabase.Name, ScriptItemId);
         }
 
         private void LoadItem(string db, string id)
@@ -390,27 +392,28 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void ClientExecute(ClientPipelineArgs args)
         {
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            using(var scriptSession = new ScriptSession(Settings.ApplicationName)){
-            EnterScriptInfo.Visible = false;
-
-            try
+            using (var scriptSession = new ScriptSession(Settings.ApplicationName))
             {
-                scriptSession.ExecuteScriptPart(Settings.Prescript);
-                scriptSession.SetItemLocationContext(DataContext.CurrentItem);
-                scriptSession.ExecuteScriptPart(Editor.Value);
+                EnterScriptInfo.Visible = false;
 
-                if (scriptSession.Output != null)
+                try
                 {
-                    Context.ClientPage.ClientResponse.SetInnerHtml("Result", scriptSession.Output.ToHtml());
+                    scriptSession.ExecuteScriptPart(Settings.Prescript);
+                    scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                    scriptSession.ExecuteScriptPart(Editor.Value);
+
+                    if (scriptSession.Output != null)
+                    {
+                        Context.ClientPage.ClientResponse.SetInnerHtml("Result", scriptSession.Output.ToHtml());
+                    }
+                }
+                catch (Exception exc)
+                {
+                    Context.ClientPage.ClientResponse.SetInnerHtml("Result",
+                        string.Format("<pre style='background:red;'>{0}</pre>",
+                            scriptSession.GetExceptionString(exc)));
                 }
             }
-            catch (Exception exc)
-            {
-                Context.ClientPage.ClientResponse.SetInnerHtml("Result",
-                                                               string.Format("<pre style='background:red;'>{0}</pre>",
-                                                                             scriptSession.GetExceptionString(exc)));
-            }
-}
             if (Settings.SaveLastScript)
             {
                 Settings.Load();
@@ -431,10 +434,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             scriptSession.SetItemLocationContext(DataContext.CurrentItem);
 
             var parameters = new object[]
-                {
-                    scriptSession,
-                    ScriptItemId
-                };
+            {
+                scriptSession,
+                ScriptItemId
+            };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, true);
 
@@ -443,7 +446,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 "ScriptResult",
                 string.Format(
                     "<div align='Center' style='padding:32px 0px 32px 0px'>Please wait, {0}</br>" +
-                    "<img src='../../../../../Console/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>", ExecutionMessages.PleaseWaitMessages[
+                    "<img src='../../../../../Console/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
+                    ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
@@ -486,7 +490,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     JobContext.Flush();
                     Context.Job.Status.Result =
                         string.Format("<pre style='background:red;'>{0}</pre>",
-                                      scriptSession.GetExceptionString(exc));
+                            scriptSession.GetExceptionString(exc));
                     JobContext.PostMessage("ise:updateresults");
                     JobContext.Flush();
                 }
@@ -496,7 +500,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
-            var currentSession = (ScriptSession)HttpContext.Current.Session[Monitor.JobHandle.ToString()];
+            var currentSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             currentSession.Abort();
             currentSession.Dispose();
             ScriptRunning = false;
@@ -509,14 +513,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
-            Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult", result ?? "Script finished - no results to display.");
+            Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",
+                result ?? "Script finished - no results to display.");
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
 
             UpdateRibbon();
         }
 
-        [HandleMessage("ise:updateprogress",true)]
+        [HandleMessage("ise:updateprogress", true)]
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
             ScriptResult.Visible = true;
@@ -556,7 +561,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             UpdateRibbon();
         }
-        
+
         /// <summary>
         ///     Updates the ribbon.
         /// </summary>

@@ -6,10 +6,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
     {
         public override string ScriptLibraryPath
         {
-            get
-            {
-                return ScriptLibrary.Path;
-            }
+            get { return ScriptLibrary.Path; }
         }
     }
 }

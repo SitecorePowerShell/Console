@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             ValidationExpression = WebUtil.GetQueryString("vd");
             ErrorMessage = WebUtil.GetQueryString("em");
             MaxLength = WebUtil.GetQueryString("lm");
-            
+
             if (Context.ClientPage.IsEvent)
                 return;
 

@@ -61,12 +61,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             Context.ClientPage.Start(this, "StartFieldEditor", new ClientPipelineArgs(context.Parameters)
             {
                 Parameters =
-                        {
-                            {"uri", CurrentItem.Uri.ToString()}
-                        }
+                {
+                    {"uri", CurrentItem.Uri.ToString()}
+                }
             });
         }
- 
+
         protected override void StartFieldEditor(ClientPipelineArgs args)
         {
             base.StartFieldEditor(args);

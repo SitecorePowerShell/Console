@@ -6,20 +6,19 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 {
     public class UserPicker : Control
     {
-
         protected Edit Viewer;
         protected Button PickButton;
 
         public UserPicker()
         {
-			Viewer = new Edit();
-			Viewer.ReadOnly = true;
+            Viewer = new Edit();
+            Viewer.ReadOnly = true;
             Viewer.Class = "scUserPickerEdit textEdit clrString";
-			PickButton = new Button();
-			PickButton.Header = "...";
+            PickButton = new Button();
+            PickButton.Header = "...";
             PickButton.Class = "scUserPickerButton";
             Controls.Add(Viewer);
-			Controls.Add(PickButton);
+            Controls.Add(PickButton);
         }
 
         public string Click
@@ -31,10 +30,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
         public override string Value
         {
-            get
-            {
-                return base.Value;
-            }
+            get { return base.Value; }
             set
             {
                 Viewer.Value = string.Empty;
@@ -81,7 +77,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
         {
             if (!args.IsPostBack)
             {
-                SelectAccountOptions options = new SelectAccountOptions();
+                var options = new SelectAccountOptions();
                 options.Multiple = Multiple;
                 options.ExcludeUsers = ExcludeUsers;
                 options.ExcludeRoles = ExcludeRoles;
@@ -102,6 +98,5 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 }
             }
         }
-
     }
 }
