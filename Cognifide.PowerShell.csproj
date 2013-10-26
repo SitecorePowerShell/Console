@@ -363,6 +363,7 @@
     <Content Include="Console\Scripts\ace\snippets-powershell.js" />
     <Content Include="Console\Scripts\ace\snippets\powershell.js" />
     <Content Include="Console\Scripts\ace\theme-powershellise.js" />
+    <Content Include="Console\Scripts\console.js" />
     <Content Include="Console\Scripts\listview.js" />
     <Content Include="Console\Scripts\VariablePrompt.js" />
     <Content Include="Console\Scripts\ise.js" />
