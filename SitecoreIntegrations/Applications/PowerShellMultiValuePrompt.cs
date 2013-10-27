@@ -87,28 +87,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
         }
 
-
-
-        private void HandleClickEvent(Message message, string eventname)
-        {
-            if (eventname.StartsWith("itemselector"))
-            {
-                var parts = eventname.Split(':');
-                if (parts.Length == 2)
-                {
-                    var iselector = Sitecore.Context.ClientPage.FindSubControl(parts[1]) as UserPicker;
-                    if (iselector != null)
-                    {
-                        Sitecore.Context.ClientPage.Start(iselector, "Clicked");
-                    }
-                }
-            }
-            else
-            {
-//                base.HandleMessage(message);
-            }
-        }      
-
         private System.Web.UI.Control GetVariableEditor(Hashtable variable)
         {
             object value = variable["Value"];
@@ -154,7 +132,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Root = variable["Root"] as string ?? "/sitecore",
                     Parameters = "databasename=" + item.Database.Name,
                     Database = item.Database.Name,
-                    Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
+                    Selected = new[] { new DataUri(item.ID, item.Language, item.Version) },
                     Folder = item.ID.ToString(),
                     Language = item.Language,
                     Version = item.Version
@@ -169,9 +147,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     AllowMultipleSelection = true,
                     DatabaseName = item.Database.Name,
                     Database = item.Database.Name,
-                    Source = variable["Root"] as string ?? "/sitecore",
-                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName"
-                };
+                    Source = variable["Source"] as string ?? "/sitecore",
+                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
+                    };
                 treeList.Class += " treePicker";
                 return treeList;
             }

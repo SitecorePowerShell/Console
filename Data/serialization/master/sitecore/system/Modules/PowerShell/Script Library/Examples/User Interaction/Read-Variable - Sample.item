@@ -13,15 +13,17 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2057
+content-length: 2242
 
 $item = get-item master:\content\Home
-$items = get-Childitem master:\
+$items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
 $parent = get-item . |% { $_.Parent } 
 $result = Read-Variable -Parameters `
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"}, 
-    @{ Name = "items"; Title="Bunch of Items"; Root="/sitecore/templates"; editor="treelist"; DisplayFieldName="__ID"}, 
+    @{ Name = "items"; Title="Bunch of Items"; 
+        Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        editor="treelist"}, 
     @{ Variable = get-variable "parent" }, 
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; }, 
     @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Tooltip for singleline"; }, 
@@ -57,7 +59,7 @@ $items
 ----version----
 language: en
 version: 1
-revision: 7098ef15-7d08-4a64-94aa-d95bbb986fb1
+revision: b52d6c3f-1a63-430d-adf9-8387715b48c1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -72,14 +74,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7098ef15-7d08-4a64-94aa-d95bbb986fb1
+b52d6c3f-1a63-430d-adf9-8387715b48c1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131010T190720:635170288406594453
+20131027T150100:635184828607884610
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
