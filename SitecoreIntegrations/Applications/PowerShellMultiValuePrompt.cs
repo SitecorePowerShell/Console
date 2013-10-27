@@ -114,39 +114,28 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 Item item = null;
                 List<Item> items = null;
+                string strValue = string.Empty;
                 if (value is Item)
                 {
                     item = (Item) value;
                     items = new List<Item> {item};
+                    strValue = item.ID.ToString();
                 } else if (value is IEnumerable<object>)
                 {
                     items = (value as IEnumerable<object>).Cast<Item>().ToList();
                     item = items.First();
+                    strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
 
-                var dataContext = new DataContext
-                {
-                    DefaultItem = item.Paths.Path,
-                    ID = Control.GetUniqueID("dataContext"),
-                    DataViewName = "Master",
-                    Root = variable["Root"] as string ?? "/sitecore",
-                    Parameters = "databasename=" + item.Database.Name,
-                    Database = item.Database.Name,
-                    Selected = new[] { new DataUri(item.ID, item.Language, item.Version) },
-                    Folder = item.ID.ToString(),
-                    Language = item.Language,
-                    Version = item.Version
-                };
-                DataContextPanel.Controls.Add(dataContext);
+                string dbName = item == null ? "master" : item.Database.Name;
 
                 var treeList = new TreeList
                 {
                     ID = Control.GetUniqueID("variable_" + name + "_"),
-                    Value = string.Join("|", items.Select(i => i.ID.ToString()).ToArray()),
-                    DataContext = dataContext.ID,
+                    Value = strValue,
                     AllowMultipleSelection = true,
-                    DatabaseName = item.Database.Name,
-                    Database = item.Database.Name,
+                    DatabaseName = dbName,
+                    Database = dbName,
                     Source = variable["Source"] as string ?? "/sitecore",
                     DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
                     };
