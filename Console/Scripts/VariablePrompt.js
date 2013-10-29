@@ -1,4 +1,5 @@
 ﻿jQuery(document).ready(function ($) {
+
     $('#Copyright').each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
@@ -17,29 +18,30 @@
                 event: false,
                 inactive: 3000
             }
-        });
-        var controlWidth = ($(window).width() - 24) + "px";
-        $(".treePicker").css({ width: controlWidth });
-        $(".textEdit").css({ width: controlWidth });        
-        if ($(".scUserPickerButton").length > 0) {
-            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 30) + "px";
-            $(".scUserPickerEdit").css({ width: controlWidth });
-        }
+        });	
+	ResizeDialogControls();
     });
     $(window).resize(function() {
-        var controlWidth = ($(window).width() - 24) + "px";
-        $(".treePicker").css({ width: controlWidth });
-        $(".textEdit").css({ width: controlWidth });
-        if ($(".scUserPickerButton").length > 0) {
-            controlWidth = ($(window).width() - $(".scUserPickerButton").outerWidth() - 30) + "px";
-            $(".scUserPickerEdit").css({ width: controlWidth });
-        }
+	ResizeDialogControls();
     });
 });
 
-function RefreshPickerSize() {
+function ResizeDialogControls() {
+    var chromeHeight = 	$ise(".scWizardHeader").height() +$ise("#BottomPanel").height() + 36;
+    var windowW = $ise(window).width();
+    var windowH = $ise(window).height();
+    var tabsWidth = (windowW - 26) + "px";
+    var controlWidth = (windowW - 24 - tabsOffset) + "px";
+    var windowWidth = (windowW - 14) + "px";
+    var tabsHeight = (windowH - chromeHeight) + "px";
+    console.log("windowW:"+windowW + "; windowH:"+windowH+"; controlWidth:"+controlWidth+"; windowWidth:"+windowWidth+"; tabsHeight:"+tabsHeight+ "; chromeHeight:"+chromeHeight);
+
+    $ise("#ValuePanel").css({ width: windowWidth });
+    $ise("#Tabstrip").css({ height: tabsHeight, width: tabsWidth});
+    $ise(".treePicker").css({ width: controlWidth });
+    $ise(".textEdit").css({ width: controlWidth });        
     if ($ise(".scUserPickerButton").length > 0) {
-        controlWidth = ($ise(window).width() - $ise(".scUserPickerButton")[0].offsetWidth - 32) + "px";
+        controlWidth = (windowW- $ise(".scUserPickerButton")[0].offsetWidth - 36 - tabsOffset) + "px";
         $ise(".scUserPickerEdit").css({ width: controlWidth });
     }
-}
+};

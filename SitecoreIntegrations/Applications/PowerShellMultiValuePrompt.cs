@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI.WebControls;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Controls;
@@ -26,18 +27,24 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
     public class PowerShellMultiValuePrompt : DialogPage
     {
 
-        private static Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*", RegexOptions.Singleline | RegexOptions.Compiled);
+        private static Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
+            RegexOptions.Singleline | RegexOptions.Compiled);
+
         protected Literal Result;
         protected Literal DialogHeader;
         protected Literal DialogDescription;
+        protected Literal TabOffsetValue;
         protected Border DataContextPanel;
         protected GridPanel ValuePanel;
         protected Button OKButton;
         protected Button CancelButton;
+        protected Tabstrip Tabstrip;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            Tabstrip.OnTabClicked += tabstrip_OnChange;
+
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
             string sid = WebUtil.GetQueryString("sid");
@@ -45,6 +52,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             HttpContext.Current.Session.Remove(sid);
 
             string title = WebUtil.GetQueryString("te");
+
             if (!string.IsNullOrEmpty(title))
             {
                 DialogHeader.Text = title;
@@ -60,7 +68,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 OKButton.Header = okText;
             }
-            
+
             string cancelText = WebUtil.GetQueryString("cb");
             if (!string.IsNullOrEmpty(cancelText))
             {
@@ -72,19 +80,64 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         private void AddControls(object[] variables)
         {
+            var tabs = new Dictionary<string, GridPanel>(StringComparer.OrdinalIgnoreCase);
+            foreach (Hashtable variable in variables)
+            {
+                var tabName = variable["Tab"] as string;
+                if (!string.IsNullOrEmpty(tabName) && !Tabstrip.Visible)
+                {
+                    Tabstrip.Visible = true;
+                    break;
+                }
+            }
 
             foreach (Hashtable variable in variables)
             {
+                var tabName = (variable["Tab"] as string) ?? "Other";
                 var name = variable["Title"] as string;
+                var container = GetContainer(tabs, tabName);
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
                     var label = new Literal {Text = name + ":"};
                     label.Class = "varTitle";
-                    ValuePanel.Controls.Add(label);
+                    container.Controls.Add(label);
                 }
                 var input = GetVariableEditor(variable);
-                ValuePanel.Controls.Add(input);
+                container.Controls.Add(input);
             }
+
+            TabOffsetValue.Text = string.Format("<script type='text/javascript'>var tabsOffset={0};</script>",
+                tabs.Count > 0 ? 24 : 0);
+        }
+
+        public void tabstrip_OnChange(object sender, EventArgs e)
+        {
+            SheerResponse.Eval("ResizeDialogControls();");
+        }
+
+        private WebControl GetContainer(Dictionary<string, GridPanel> tabs, string tabName)
+        {
+            if (!Tabstrip.Visible)
+            {
+                return ValuePanel;
+            }
+            if (!tabs.ContainsKey(tabName))
+            {
+                Tab tab = new Tab();
+                tab.Header = tabName;
+                tab.ID = Control.GetUniqueID("tab_");
+                tab.Height = new Unit("100%");
+                Tabstrip.Controls.Add(tab);
+                Tabstrip.Width = new Unit("100%");
+                Tabstrip.Height = new Unit("100%");
+                GridPanel panel = new GridPanel();
+                panel.Width = new Unit("100%");
+                panel.CssClass = "ValuePanel";
+                tab.Controls.Add(panel);
+                tabs.Add(tabName, panel);
+                return panel;
+            }
+            return tabs[tabName];
         }
 
         private System.Web.UI.Control GetVariableEditor(Hashtable variable)
@@ -106,11 +159,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                (!string.IsNullOrEmpty(editor) &&
                                 editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1),
                 };
-                dateTimePicker.Value = value is DateTime ? DateUtil.ToIsoDate((DateTime)value) : (string)value;
+                dateTimePicker.Value = value is DateTime ? DateUtil.ToIsoDate((DateTime) value) : (string) value;
                 return dateTimePicker;
             }
 
-            if(!string.IsNullOrEmpty(editor) && (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1))
+            if (!string.IsNullOrEmpty(editor) && (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1))
             {
                 Item item = null;
                 List<Item> items = null;
@@ -120,7 +173,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     item = (Item) value;
                     items = new List<Item> {item};
                     strValue = item.ID.ToString();
-                } else if (value is IEnumerable<object>)
+                }
+                else if (value is IEnumerable<object>)
                 {
                     items = (value as IEnumerable<object>).Cast<Item>().ToList();
                     item = items.First();
@@ -138,11 +192,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Database = dbName,
                     Source = variable["Source"] as string ?? "/sitecore",
                     DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
-                    };
+                };
                 treeList.Class += " treePicker";
                 return treeList;
             }
-            if (type == typeof (Item) || 
+            if (type == typeof (Item) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var item = (Item) value;
@@ -171,7 +225,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return treePicker;
             }
 
-            if (type == typeof(bool) ||
+            if (type == typeof (bool) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var checkBox = new Checkbox
@@ -207,7 +261,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
 
             Control edit;
-            if (variable["lines"] != null && ((int)variable["lines"] > 1))
+            if (variable["lines"] != null && ((int) variable["lines"] > 1))
             {
                 edit = new Memo();
                 edit.Attributes.Add("rows", variable["lines"].ToString());
@@ -231,13 +285,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 edit = new Edit();
             }
-            if (!string.IsNullOrEmpty((string)variable["Tooltip"]))
+            if (!string.IsNullOrEmpty((string) variable["Tooltip"]))
             {
-                edit.ToolTip = (string)variable["Tooltip"];
+                edit.ToolTip = (string) variable["Tooltip"];
             }
             edit.Style.Add("float", "left");
             edit.ID = Control.GetUniqueID("variable_" + name + "_");
-            edit.Class += " scContentControl textEdit clr"+value.GetType().Name;
+            edit.Class += " scContentControl textEdit clr" + value.GetType().Name;
             edit.Value = value.ToString();
 
             return edit;
@@ -246,7 +300,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected void UserPickerClick()
         {
             string requestParams = Sitecore.Context.ClientPage.Request.Params["__PARAMETERS"];
-            if(requestParams.StartsWith("UserPickerClick("))
+            if (requestParams.StartsWith("UserPickerClick("))
             {
                 string controlId = requestParams.Substring(16, requestParams.IndexOf(')') - 16);
                 var picker = ValuePanel.FindControl(controlId) as UserPicker;
@@ -271,97 +325,127 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var results = new List<object>();
             foreach (Control control in ValuePanel.Controls)
             {
-                string controlId = control.ID;
-                if (controlId != null && controlId.StartsWith("variable_"))
+                if (control is Tabstrip)
                 {
-                    string[] parts = controlId.Split('_');
-                    
-                    var result = new Hashtable(2);
-                    results.Add(result);
-                    result.Add("Name",String.Join("_",parts.Skip(1).Take(parts.Length-2).ToArray()));
-
-                    var controlValue = control.Value;
-                    if (controlValue != null)
+                    foreach (WebControl tab in  control.Controls)
                     {
-                        if (control is DateTimePicker)
+                        if (tab is Tab)
                         {
-                            result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
-                        }
-                        else if (control is TreePicker)
-                        {
-                            string contextID = (control as TreePicker).DataContext;
-                            var context = (DataContext) DataContextPanel.FindControl(contextID);
-                            result.Add("Value", context.CurrentItem);
-                        }
-                        else if (control is Checkbox)
-                        {
-                            bool boolValue = (control as Checkbox).Checked;
-                            result.Add("Value", boolValue);
-                        }
-                        else if (control is Combobox)
-                        {
-                            var boolValue = (control as Combobox).Value;
-                            result.Add("Value", boolValue);
-                        }                            
-                        else if (control is TreeList)
-                        {
-                            TreeList treeList = control as TreeList;
-                            string strIds = treeList.GetValue();
-                            string[] ids = strIds.Split('|');
-                            Database db = Database.GetDatabase(treeList.DatabaseName);
-                            List<Item> items = ids.Select(p => db.GetItem(p)).ToList();
-                            result.Add("Value", items);                            
-                        }
-                        else if (control is Edit || control is Memo)
-                        {
-                            string value = control.Value;
-                            string type = GetClrTypeName(control.Class);
-                            switch (type)
+                            foreach (WebControl panel in tab.Controls)
                             {
-                                case("Int16"):
-                                    result.Add("Value", Int16.Parse(value));
-                                    break;
-                                case ("Int32"):
-                                    result.Add("Value", Int32.Parse(value));
-                                    break;
-                                case ("Int64"):
-                                    result.Add("Value", Int64.Parse(value));
-                                    break;
-                                case ("UInt16"):
-                                    result.Add("Value", UInt16.Parse(value));
-                                    break;
-                                case ("UInt32"):
-                                    result.Add("Value", UInt32.Parse(value));
-                                    break;
-                                case ("UInt64"):
-                                    result.Add("Value", UInt64.Parse(value));
-                                    break;
-                                case ("Byte"):
-                                    result.Add("Value", Byte.Parse(value));
-                                    break;
-                                case ("Single"):
-                                    result.Add("Value", Single.Parse(value));
-                                    break;
-                                case ("Double"):
-                                    result.Add("Value", Double.Parse(value));
-                                    break;
-                                case ("Decimal"):
-                                    result.Add("Value", Decimal.Parse(value));
-                                    break;
-                                default:
-                                    result.Add("Value", value);
-                                    break;
+                                if (panel is GridPanel)
+                                {
+                                    foreach (Control editor in panel.Controls)
+                                    {
+                                        GetEditorValue(editor, results);
+                                    }
+                                }
                             }
                         }
-                        else if (control is UserPicker)
-                        {
-                            result.Add("Value",control.Value.Split('|'));
-                        }
-
+                        GetEditorValue(control, results);
                     }
                 }
             }
             return results.ToArray();
+        }
+
+        private void GetEditorValue(Control control, List<object> results)
+        {
+            string controlId = control.ID;
+            if (controlId != null && controlId.StartsWith("variable_"))
+            {
+                object result = GetVariableValue(control);
+                results.Add(result);
+            }
+        }
+
+        private object GetVariableValue(Control control)
+        {
+            string controlId = control.ID;
+            string[] parts = controlId.Split('_');
+
+            var result = new Hashtable(2);
+            result.Add("Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray()));
+
+            var controlValue = control.Value;
+            if (controlValue != null)
+            {
+                if (control is DateTimePicker)
+                {
+                    result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
+                }
+                else if (control is TreePicker)
+                {
+                    string contextID = (control as TreePicker).DataContext;
+                    var context = (DataContext) DataContextPanel.FindControl(contextID);
+                    result.Add("Value", context.CurrentItem);
+                }
+                else if (control is Checkbox)
+                {
+                    bool boolValue = (control as Checkbox).Checked;
+                    result.Add("Value", boolValue);
+                }
+                else if (control is Combobox)
+                {
+                    var boolValue = (control as Combobox).Value;
+                    result.Add("Value", boolValue);
+                }
+                else if (control is TreeList)
+                {
+                    TreeList treeList = control as TreeList;
+                    string strIds = treeList.GetValue();
+                    string[] ids = strIds.Split('|');
+                    Database db = Database.GetDatabase(treeList.DatabaseName);
+                    List<Item> items = ids.Select(p => db.GetItem(p)).ToList();
+                    result.Add("Value", items);
+                }
+                else if (control is Edit || control is Memo)
+                {
+                    string value = control.Value;
+                    string type = GetClrTypeName(control.Class);
+                    switch (type)
+                    {
+                        case ("Int16"):
+                            result.Add("Value", Int16.Parse(value));
+                            break;
+                        case ("Int32"):
+                            result.Add("Value", Int32.Parse(value));
+                            break;
+                        case ("Int64"):
+                            result.Add("Value", Int64.Parse(value));
+                            break;
+                        case ("UInt16"):
+                            result.Add("Value", UInt16.Parse(value));
+                            break;
+                        case ("UInt32"):
+                            result.Add("Value", UInt32.Parse(value));
+                            break;
+                        case ("UInt64"):
+                            result.Add("Value", UInt64.Parse(value));
+                            break;
+                        case ("Byte"):
+                            result.Add("Value", Byte.Parse(value));
+                            break;
+                        case ("Single"):
+                            result.Add("Value", Single.Parse(value));
+                            break;
+                        case ("Double"):
+                            result.Add("Value", Double.Parse(value));
+                            break;
+                        case ("Decimal"):
+                            result.Add("Value", Decimal.Parse(value));
+                            break;
+                        default:
+                            result.Add("Value", value);
+                            break;
+                    }
+                }
+                else if (control is UserPicker)
+                {
+                    result.Add("Value", control.Value.Split('|'));
+                }
+            }
+            return result;
         }
 
         protected string GetClrTypeName(string classNames)

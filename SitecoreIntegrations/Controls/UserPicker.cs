@@ -98,7 +98,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 {
                     Value = args.Result;
                     Sitecore.Context.ClientPage.ClientResponse.Refresh(Parent);
-                    Sitecore.Context.ClientPage.ClientResponse.Eval("RefreshPickerSize()");
+                    Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();");
                 }
             }
         }

@@ -38,6 +38,11 @@
     display: block;
 }
 
+.scTabPage .varTitle {
+    margin: 8px 0 4px 2px;
+    display: block;
+}
+
 .varCheckbox {
     margin-top: 20px;
     float: left;
@@ -54,7 +59,7 @@
     padding-left: 2px;
 }
 
-.scUserPickerEdit {
+.scUser	PickerEdit {
     border: solid 1px ButtonShadow;
     padding-left: 2px;    
 }
@@ -75,6 +80,20 @@
 }
 
 #ValuePanel {
+    padding: 8px 0 0 8px;
+    width: 100%;
+}
+
+/*
+.scTabs {
+    padding: 8px;
+    width: 100%;
+} */
+.scBottomEdge, .scTopEdge {
+    height: 1px;
+}
+
+.scTabPage {
     padding: 8px;
     width: 100%;
 }
