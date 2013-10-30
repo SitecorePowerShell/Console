@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
     {
         public override CommandState QueryState(CommandContext context)
         {
-            return context.Parameters["ScriptRunning"] == "1" ? CommandState.Enabled: CommandState.Disabled;
+            return context.Parameters["ScriptRunning"] == "1" ? CommandState.Enabled : CommandState.Disabled;
         }
 
         public override void Execute(CommandContext context)

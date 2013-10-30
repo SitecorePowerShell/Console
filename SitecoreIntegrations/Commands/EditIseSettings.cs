@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             Personalized = args.Parameters[PersonalParameter] == "1";
 */
 
-            var settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
+            string settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
             CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
 
             Assert.IsNotNull(CurrentItem, CurrentItemIsNull);
@@ -49,11 +49,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
             Assert.ArgumentNotNull(context, "context");
 
-            var settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
+            string settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
             CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
             if (CurrentItem == null)
             {
-                var settings = ApplicationSettings.GetInstance(AppName, Personalized);
+                ApplicationSettings settings = ApplicationSettings.GetInstance(AppName, Personalized);
                 settings.Save();
                 CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
             }
@@ -61,12 +61,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             Context.ClientPage.Start(this, "StartFieldEditor", new ClientPipelineArgs(context.Parameters)
             {
                 Parameters =
-                        {
-                            {"uri", CurrentItem.Uri.ToString()}
-                        }
+                {
+                    {"uri", CurrentItem.Uri.ToString()}
+                }
             });
         }
- 
+
         protected override void StartFieldEditor(ClientPipelineArgs args)
         {
             base.StartFieldEditor(args);

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using System.Web;
 using System.Xml;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Sitecore.Configuration;
@@ -18,14 +18,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     public class CognifideSitecorePowerShellSnapIn : CustomPSSnapIn
     {
         private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
-        private bool initialized = false;
-
-        /// <summary>
-        /// Create an instance of the CognifideSitecorePowerShellSnapIn class.
-        /// </summary>
-        public CognifideSitecorePowerShellSnapIn()
-        {
-        }
+        private bool initialized;
 
         static CognifideSitecorePowerShellSnapIn()
         {
@@ -36,17 +29,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 string cmdletType = cmdltTypeDef[0];
                 string cmdletAssembly = cmdltTypeDef[1];
                 WildcardPattern wildcard = GetWildcardPattern(cmdletType);
-                try{
-                Assembly assembly = Assembly.Load(cmdletAssembly);
-                GetCommandletsFromAssembly(assembly, wildcard);
+                try
+                {
+                    Assembly assembly = Assembly.Load(cmdletAssembly);
+                    GetCommandletsFromAssembly(assembly, wildcard);
                 }
                 catch (Exception ex)
                 {
-                    if (ex is System.Reflection.ReflectionTypeLoadException)
+                    if (ex is ReflectionTypeLoadException)
                     {
                         var typeLoadException = ex as ReflectionTypeLoadException;
-                        var loaderExceptions = typeLoadException.LoaderExceptions;
-                        var message = string.Empty;
+                        Exception[] loaderExceptions = typeLoadException.LoaderExceptions;
+                        string message = string.Empty;
                         foreach (var exc in loaderExceptions)
                         {
                             message += exc.Message;
@@ -59,15 +53,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
         {
-            string helpPath = System.IO.Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
+            string helpPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
                               "\\Console\\Assets\\Cognifide.PowerShell.dll-Help.xml";
-            foreach (Type type in assembly.GetTypes())
+            foreach (var type in assembly.GetTypes())
             {
-                if (type.GetCustomAttributes(typeof(CmdletAttribute), true).Length > 0 &&
+                if (type.GetCustomAttributes(typeof (CmdletAttribute), true).Length > 0 &&
                     wildcard.IsMatch(type.FullName))
                 {
-                    var attribute = (CmdletAttribute)(type.GetCustomAttributes(typeof(CmdletAttribute), true)[0]);
-                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type, helpPath));
+                    var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
+                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type,
+                        helpPath));
                 }
             }
         }
@@ -86,77 +81,60 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
 
         /// <summary>
-        /// Specify the name of the PowerShell snap-in.
+        ///     Specify the name of the PowerShell snap-in.
         /// </summary>
         public override string Name
         {
-            get
-            {
-                return "CognifideSitecorePowerShellSnapIn";
-            }
+            get { return "CognifideSitecorePowerShellSnapIn"; }
         }
 
         /// <summary>
-        /// Specify the vendor for the PowerShell snap-in.
+        ///     Specify the vendor for the PowerShell snap-in.
         /// </summary>
         public override string Vendor
         {
-            get
-            {
-                return "Cognifide";
-            }
+            get { return "Cognifide"; }
         }
 
         /// <summary>
-        /// Specify the localization resource information for the vendor. 
-        /// Use the format: resourceBaseName,VendorName. 
+        ///     Specify the localization resource information for the vendor.
+        ///     Use the format: resourceBaseName,VendorName.
         /// </summary>
         public override string VendorResource
         {
-            get
-            {
-                return "CognifideSitecorePowerShellSnapIn,Cognifide";
-            }
+            get { return "CognifideSitecorePowerShellSnapIn,Cognifide"; }
         }
 
         /// <summary>
-        /// Specify a description of the PowerShell snap-in.
+        ///     Specify a description of the PowerShell snap-in.
         /// </summary>
         public override string Description
         {
-            get
-            {
-                return "This snap-in integrates Sitecore & Powershell.";
-            }
+            get { return "This snap-in integrates Sitecore & Powershell."; }
         }
 
         /// <summary>
-        /// Specify the localization resource information for the description. 
-        /// Use the format: resourceBaseName,Description. 
+        ///     Specify the localization resource information for the description.
+        ///     Use the format: resourceBaseName,Description.
         /// </summary>
         public override string DescriptionResource
         {
-            get
-            {
-                return "CognifideSitecorePowerShellSnapIn,This snap-in integrates Sitecore & Powershell.";
-            }
+            get { return "CognifideSitecorePowerShellSnapIn,This snap-in integrates Sitecore & Powershell."; }
         }
 
         /// <summary>
-        /// Specify the cmdlets that belong to this custom PowerShell snap-in.
+        ///     Specify the cmdlets that belong to this custom PowerShell snap-in.
         /// </summary>
         public override Collection<CmdletConfigurationEntry> Cmdlets
         {
-            get
-            {
-                return new Collection<CmdletConfigurationEntry>(commandlets);
-            }
+            get { return new Collection<CmdletConfigurationEntry>(commandlets); }
         }
 
         /// <summary>
-        /// Specify the providers that belong to this custom PowerShell snap-in.
+        ///     Specify the providers that belong to this custom PowerShell snap-in.
         /// </summary>
         private Collection<ProviderConfigurationEntry> _providers;
+
         public override Collection<ProviderConfigurationEntry> Providers
         {
             get
@@ -168,7 +146,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 if (_providers == null)
                 {
                     _providers = new Collection<ProviderConfigurationEntry>();
-                    _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider", typeof(PsSitecoreItemProvider), "..\\Console\\Assets\\Cognifide.PowerShell.dll-Help.xml"));
+                    _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider",
+                        typeof (PsSitecoreItemProvider), "..\\Console\\Assets\\Cognifide.PowerShell.dll-Help.xml"));
                 }
 
                 return _providers;
@@ -185,6 +164,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             get { return commandlets; }
         }
-        
     }
 }

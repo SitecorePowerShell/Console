@@ -11908,7 +11908,7 @@ $.widget( "ui.menu", {
 	expand: function( event ) {
 		var newItem = this.active &&
 			this.active
-				.children( ".ui-menu " )
+				.children( ".ui-menu" )
 				.children( ".ui-menu-item" )
 				.first();
 
@@ -14147,7 +14147,7 @@ $.widget( "ui.tabs", {
 			.addClass( "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" )
 			.attr( "role", "tablist" );
 
-		this.tabs = this.tablist.find( "> li:has(a[href])" )
+		this.tabs = this.tablist.find( "* > li:has(a[href])" )
 			.addClass( "ui-state-default ui-corner-top" )
 			.attr({
 				role: "tab",
@@ -14207,7 +14207,7 @@ $.widget( "ui.tabs", {
 
 	// allow overriding how to find the list for rare usage scenarios (#7715)
 	_getList: function() {
-		return this.element.find( "ol,ul" ).eq( 0 );
+		return this.element.find( "ol, ul" ).eq( 0 );
 	},
 
 	_createPanel: function( id ) {

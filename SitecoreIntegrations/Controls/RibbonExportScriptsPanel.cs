@@ -7,7 +7,6 @@ using Sitecore.Globalization;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 
@@ -31,6 +30,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                     EvaluateRules(scriptItem["EnableRule"]), false);
             }
         }
+
         public static bool EvaluateRules(string strRules)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
@@ -38,14 +38,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 return true;
             }
             // hacking the rules xml
-            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
-            var ruleContext = new RuleContext
-            {
-                //Item = contextItem
-            };
+            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
+            var ruleContext = new RuleContext();
 
             return rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
-
     }
 }

@@ -32,12 +32,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                     : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
             GetLibraryMenuItems(contextItem, menuItems, context.Parameters["scriptDB"], context.Parameters["scriptPath"]);
 
-            foreach (Control item in menuItems)
+            foreach (var item in menuItems)
             {
                 var menuItem = item as MenuItem;
                 if (menuItem != null)
                 {
-                    var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey, menuItem.Click,
+                    MenuItem subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
+                        menuItem.Click,
                         menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                     subItem.Disabled = menuItem.Disabled;
                 }
@@ -131,7 +132,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                 return true;
             }
             // hacking the rules xml
-            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
+            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
             var ruleContext = new RuleContext
             {
                 Item = contextItem

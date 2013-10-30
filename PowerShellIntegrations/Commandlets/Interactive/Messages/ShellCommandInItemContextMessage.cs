@@ -12,14 +12,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessage
     {
-        private string itemUri;
-        private string itemDb;
-        private string command;
+        private readonly string itemUri;
+        private readonly string itemDb;
+        private readonly string command;
         private Handle jobHandle;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage"/> class.
-        /// 
+        ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
         public ShellCommandInItemContextMessage(Item item, string command)
@@ -34,22 +33,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         }
 
         /// <summary>
-        /// Shows a confirmation dialog.
-        /// 
+        ///     Shows a confirmation dialog.
         /// </summary>
         protected override void ShowUI()
         {
             CommandContext context = null;
             if (!string.IsNullOrEmpty(itemUri))
             {
-                var item = Factory.GetDatabase(itemDb).GetItem(new DataUri(itemUri));
+                Item item = Factory.GetDatabase(itemDb).GetItem(new DataUri(itemUri));
                 context = new CommandContext(item);
             }
             else
             {
                 context = new CommandContext();
             }
-            context.Parameters.Add(Message.Parse(null,command).Arguments);
+            context.Parameters.Add(Message.Parse(null, command).Arguments);
             Command shellCommand = CommandManager.GetCommand(command);
             if (shellCommand == null)
                 return;

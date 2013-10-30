@@ -5,7 +5,7 @@ using Sitecore.Caching;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "Cache")]
-    [OutputType(new[] { typeof(Cache) })]
+    [OutputType(new[] {typeof (Cache)})]
     public class GetCacheCommand : BaseCommand
     {
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]

@@ -3,7 +3,6 @@ using System.Web;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Syndication;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -12,7 +11,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
     {
-
         public object[] Parameters { get; private set; }
         public string Width { get; private set; }
         public string Height { get; private set; }
@@ -25,7 +23,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public MessageQueue MessageQueue { get; private set; }
         public object Result { get; private set; }
 
-        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description, string okButtonName, string cancelButtonName)
+        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
+            string description, string okButtonName, string cancelButtonName)
         {
             MessageQueue = new MessageQueue();
             if (JobContext.IsJob)
@@ -43,14 +42,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
 
 
         /// <summary>
-        /// Shows a confirmation dialog.
-        /// 
+        ///     Shows a confirmation dialog.
         /// </summary>
         protected virtual void ShowUI()
         {
             string resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Parameters;
-            UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
+            var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
             if (!string.IsNullOrEmpty(Title))
             {
@@ -72,8 +70,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         }
 
         /// <summary>
-        /// Starts the pipeline.
-        /// 
+        ///     Starts the pipeline.
         /// </summary>
         public void Execute()
         {
@@ -81,8 +78,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         }
 
         /// <summary>
-        /// Entry point for a pipeline.
-        /// 
+        ///     Entry point for a pipeline.
         /// </summary>
         /// <param name="args">The arguments.</param>
         public void Pipeline(ClientPipelineArgs args)
@@ -100,7 +96,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 if (args.HasResult)
                 {
-                    var result = HttpContext.Current.Session[args.Result];
+                    object result = HttpContext.Current.Session[args.Result];
                     HttpContext.Current.Session.Remove(args.Result);
                     Result = result;
                 }
@@ -108,13 +104,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 {
                     Result = null;
                 }
-                
+
 
                 string strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
                 if (!String.IsNullOrEmpty(strJobId))
                 {
                     jobHandle = Handle.Parse(strJobId);
-                    Job job = JobManager.GetJob(this.jobHandle);
+                    Job job = JobManager.GetJob(jobHandle);
                     if (job != null)
                     {
                         job.MessageQueue.PutResult(Result);
@@ -126,6 +122,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 }
             }
         }
-
     }
 }

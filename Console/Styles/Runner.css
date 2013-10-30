@@ -4,7 +4,7 @@
     animation-iteration-count: infinite;
     -webkit-animation-name: greenPulse;
     -webkit-animation-duration: 3s;
-    -webkit-animation-iteration-count: infinite;    
+    -webkit-animation-iteration-count: infinite;
 }
 
 .status {
@@ -22,20 +22,14 @@
     margin-left: 6px;
     margin-top: 4px;
 }
-.qtip {
-    max-width: 355px;
-}
 
-#PromoLiteral {
-    display: none;
-}
+.qtip { max-width: 355px; }
 
-#Result_ {
-    display: none;
-}
+#PromoLiteral { display: none; }
 
-#Promo
-{
+#Result_ { display: none; }
+
+#Promo {
     bottom: 4px;
     display: block;
     float: right;
@@ -46,14 +40,10 @@
     border-top: #E3E3E3 solid 1px;
 }
 
-#HeaderTextContainer {
-    display: inline-block;
-}
+#HeaderTextContainer { display: inline-block; }
 
-#Promo a
-{
-    color: #ABADAB;
-}
+#Promo a { color: #ABADAB; }
+
 .timeRemaining {
     margin-top: 3px;
     display: inline-block;
@@ -64,7 +54,7 @@
     display: inline-block;
 }
 
-#AbortButton, #OkButton{
+#AbortButton, #OkButton {
     padding: 0px 8px;
     display: block;
     float: right;
@@ -77,7 +67,7 @@
 a#ViewButton {
     padding: 8px 20px;
     display: none;
-    margin:auto;
+    margin: auto;
     float: left;
     color: green;
     text-decoration: underline;
@@ -87,90 +77,78 @@ a#ViewButton {
 a#ViewErrorsButton {
     padding: 8px 20px;
     display: none;
-    margin:auto;
+    margin: auto;
     float: left;
     color: red;
-    text-decoration: underline;    
+    text-decoration: underline;
     width: 200px;
 }
 
-@keyframes greenPulse
-{
-    from
-    {
-        box-shadow: 0 0 19px #fff;
-    }
+@keyframes greenPulse {
+    from { box-shadow: 0 0 19px #fff; }
 
-    50%
-    {
-        box-shadow: 0 0 18px #06B025;
-    }
+    50% { box-shadow: 0 0 18px #06B025; }
 
-    to
-    {
-        box-shadow: 0 0 19px #fff;
-    }
+    to { box-shadow: 0 0 19px #fff; }
 }
-@-webkit-keyframes greenPulse
-{
-    from
-    {
-        -webkit-box-shadow: 0 0 19px #fff;
-    }
 
-    50%
-    {
-        -webkit-box-shadow: 0 0 19px #06B025;
-    }
+@-webkit-keyframes greenPulse {
+    from { -webkit-box-shadow: 0 0 19px #fff; }
 
-    to
-    {
-        -webkit-box-shadow: 0 0 19px #fff;
-    }
+    50% { -webkit-box-shadow: 0 0 19px #06B025; }
+
+    to { -webkit-box-shadow: 0 0 19px #fff; }
 }
 
 .progressbar_bg_middle {
-	background-image: url(../Assets/bg_middle.gif);
-	background-repeat: repeat-x;
-	overflow:hidden;
+    background-image: url(../Assets/bg_middle.gif);
+    background-repeat: repeat-x;
+    overflow: hidden;
 }
+
 .progressbar_bg_right {
-	background-image: url(../Assets/bg_right.gif);
-	background-repeat: no-repeat;
-	background-position: right;
+    background-image: url(../Assets/bg_right.gif);
+    background-repeat: no-repeat;
+    background-position: right;
 }
+
 .progressbar_bg_left {
-	background-image: url(../Assets/bg_left.gif);
-	background-repeat: no-repeat;
-	background-position: left;
-	padding: 1px;
+    background-image: url(../Assets/bg_left.gif);
+    background-repeat: no-repeat;
+    background-position: left;
+    padding: 1px;
 }
+
 .progressbar_fg {
-	width: 0%;
-	background-image: url(../Assets/fg_middle.gif);
-	background-repeat: repeat-x;
-	overflow:hidden;
+    width: 0%;
+    background-image: url(../Assets/fg_middle.gif);
+    background-repeat: repeat-x;
+    overflow: hidden;
 }
+
 .progressbar_fg_right {
-	background-image: url(../Assets/fg_right.gif);
-	background-repeat: no-repeat;
-	background-position: right;
+    background-image: url(../Assets/fg_right.gif);
+    background-repeat: no-repeat;
+    background-position: right;
 }
+
 .progressbar_fg_left {
-	background-image: url(../Assets/fg_left.gif);
-	background-repeat: no-repeat;
-	background-position: left;
-	height: 14px;
+    background-image: url(../Assets/fg_left.gif);
+    background-repeat: no-repeat;
+    background-position: left;
+    height: 14px;
 }
-.progressbar_highlight{
-	background-image: url(../Assets/highlight.png);
-	margin-left:-120px;
-	height: 14px;
-	width:120px;
+
+.progressbar_highlight {
+    background-image: url(../Assets/highlight.png);
+    margin-left: -120px;
+    height: 14px;
+    width: 120px;
 }
-.progressbar_highlight_ind{
-	background-image: url(../Assets/ind-highlight.png);
-	margin-left:-120px;
-	height: 14px;
-	width:120px;
+
+.progressbar_highlight_ind {
+    background-image: url(../Assets/ind-highlight.png);
+    margin-left: -120px;
+    height: 14px;
+    width: 120px;
 }

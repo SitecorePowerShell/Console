@@ -4,7 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsVisits")]
-    [OutputType(new[] { typeof(Visits) })]
+    [OutputType(new[] {typeof (Visits)})]
     public class GetAnalyticsVisitsCommand : AnalyticsBaseCommand
     {
         [Parameter(ValueFromPipeline = true)]

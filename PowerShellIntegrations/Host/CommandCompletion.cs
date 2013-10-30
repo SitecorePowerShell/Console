@@ -9,13 +9,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     public static class CommandCompletion
     {
         private static int _powerShellVersionMajor;
-        
+
 
         public static IEnumerable<string> FindMatches(ScriptSession session, string command, bool aceResponse)
         {
             if (_powerShellVersionMajor == 0)
             {
-                _powerShellVersionMajor = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
+                _powerShellVersionMajor =
+                    (int) session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
             }
 
             switch (_powerShellVersionMajor)
@@ -33,14 +34,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static string GetPrefix(ScriptSession session, string command)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand(session,command, out lastToken);
+            string truncatedCommand = TruncatedCommand(session, command, out lastToken);
             return string.IsNullOrEmpty(lastToken) ? string.Empty : lastToken;
         }
 
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
+            string truncatedCommand = TruncatedCommand3(session, command, out lastToken);
 
             string TabExpansionHelper =
                 @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
@@ -60,7 +61,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static IEnumerable<string> FindMatches2(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand2(command, out lastToken);
+            string truncatedCommand = TruncatedCommand2(command, out lastToken);
 
             var teCmd = new Command("TabExpansion");
             teCmd.Parameters.Add("line", command);
@@ -73,13 +74,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             //int prefixFileNameLength = Path.GetFileName(lastToken).Length;
             //string pathPrefix = lastToken.Substring(lastToken.Length - prefixFileNameLength);
-            var splitPathResult = (session.ExecuteScriptPart(string.Format("Split-Path \"{0}*\" -IsAbsolute", lastToken), false, true).FirstOrDefault());
-            var isAbsolute = splitPathResult != null && (bool)splitPathResult;
+            object splitPathResult =
+                (session.ExecuteScriptPart(string.Format("Split-Path \"{0}*\" -IsAbsolute", lastToken), false, true)
+                    .FirstOrDefault());
+            bool isAbsolute = splitPathResult != null && (bool) splitPathResult;
 
             if (isAbsolute)
             {
                 string commandLine = string.Format("Resolve-Path \"{0}*\"", lastToken);
-                var psResults = session.ExecuteScriptPart(commandLine, false, true);
+                List<object> psResults = session.ExecuteScriptPart(commandLine, false, true);
                 IEnumerable<string> rpResult = psResults.Cast<PathInfo>().Select(p => p.Path);
                 //result.AddRange(rpResult.Select(l => truncatedCommand + l.Path));
                 WrapResults(truncatedCommand, rpResult, result, aceResponse);
@@ -94,8 +97,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             return result;
         }
 
-        public static char[] wrapChars = { ' ', '$', '(', ')', '{', '}', '%', '@', '|' };
-        public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results, bool aceResponse)
+        public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
+
+        public static void WrapResults(string truncatedCommand, IEnumerable<string> tabExpandedResults,
+            List<string> results, bool aceResponse)
         {
             if (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
             {
@@ -105,35 +110,33 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 if (aceResponse)
                 {
-                    return "Server-side|"+l;
+                    return "Server-side|" + l;
                 }
-                else
-                {
-                    return l.IndexOfAny(wrapChars) > -1
-                         ? string.Format("{0}{1}'{2}'",
-                             truncatedCommand,
-                             string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
-                             l.Trim('\''))
-                         : truncatedCommand + l;
-                }
+                return l.IndexOfAny(wrapChars) > -1
+                    ? string.Format("{0}{1}'{2}'",
+                        truncatedCommand,
+                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
+                        l.Trim('\''))
+                    : truncatedCommand + l;
             }
-            ));
-
+                ));
         }
 
-        public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults, List<string> results, bool aceResponse)
+        public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults,
+            List<string> results, bool aceResponse)
         {
-            var truncatedCommandTail = (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
-                ? " " : string.Empty;
+            string truncatedCommandTail = (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
+                ? " "
+                : string.Empty;
             results.AddRange(tabExpandedResults.Select(l =>
             {
                 if (aceResponse)
                 {
                     return l;
                 }
-                var split = l.Split('|');
-                var type = split[0];
-                var content = split[1];
+                string[] split = l.Split('|');
+                string type = split[0];
+                string content = split[1];
                 switch (type)
                 {
                     case ("Variable"):
@@ -150,7 +153,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             content.StartsWith("& '") ? content.Substring(2) : content);
                 }
             }));
-
         }
 
         private static string TruncatedCommand(ScriptSession session, string command, out string lastToken)
@@ -158,7 +160,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             {
                 if (_powerShellVersionMajor == 0)
                 {
-                    _powerShellVersionMajor = (int)session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
+                    _powerShellVersionMajor =
+                        (int) session.ExecuteScriptPart("$PSVersionTable.PSVersion.Major", false, true)[0];
                 }
 
                 switch (_powerShellVersionMajor)
@@ -188,8 +191,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             int teResult = session.ExecuteCommand(teCmd, false, true).Cast<int>().First();
 
             lastToken = command.Substring(teResult);
-            return command.Substring(0,teResult);
-            
+            return command.Substring(0, teResult);
         }
 
         private static string TruncatedCommand2(string command, out string lastToken)
@@ -211,7 +213,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     {
                         start = tokens[tokens.Count - 2].Start;
                     }
-                    lastToken = command.Substring(start,lastPsToken.EndColumn-1-start);
+                    lastToken = command.Substring(start, lastPsToken.EndColumn - 1 - start);
                     //command = command.TrimEnd(' ');
                     if (lastPsToken.Type == PSTokenType.Operator && lastPsToken.Content != "-")
                     {

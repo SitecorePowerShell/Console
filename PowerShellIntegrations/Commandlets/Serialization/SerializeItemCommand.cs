@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -42,7 +41,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
         }
 
         public void Serialize(Item item, string path, string id, bool recursive, string target,
-                              string[] languages, PathInfo currentPathInfo)
+            string[] languages, PathInfo currentPathInfo)
         {
             if (item == null)
             {
@@ -73,8 +72,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             if (!string.IsNullOrEmpty(target) && ItemPathsAbsolute.IsPresent)
             {
                 target = target.EndsWith("\\")
-                             ? target + item.Parent.Paths.FullPath.Replace("/", "\\")
-                             : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
+                    ? target + item.Parent.Paths.FullPath.Replace("/", "\\")
+                    : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
             }
 
             if (languages == null)
@@ -84,9 +83,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             }
             else
             {
-                foreach (Language siteLanguage in item.Database.GetLanguages())
+                foreach (var siteLanguage in item.Database.GetLanguages())
                 {
-                    if (languages.Any(language => siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
+                    if (
+                        languages.Any(
+                            language =>
+                                siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
                     {
                         SerializeToTargetLanguage(item, target, siteLanguage, recursive);
                     }

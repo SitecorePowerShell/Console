@@ -7,13 +7,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class CloseWindowMessage : BasePipelineMessage, IMessage
     {
-        public CloseWindowMessage()
-        {
-        }
-
         /// <summary>
-        /// Shows a confirmation dialog.
-        /// 
+        ///     Shows a confirmation dialog.
         /// </summary>
         protected override void ShowUI()
         {

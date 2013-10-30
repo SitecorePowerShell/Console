@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Input")]
-    [OutputType(new[] { typeof(string) })]
+    [OutputType(new[] {typeof (string)})]
     public class ShowInputCommand : BaseShellCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -26,22 +26,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         protected override void ProcessRecord()
         {
             LogErrors(() =>
+            {
+                if (!string.IsNullOrEmpty(Validation) || MaxLength > 0)
                 {
-                    if (!string.IsNullOrEmpty(Validation) || MaxLength > 0)
-                    {
-                        PutMessage(new PromptMessage(Prompt, DefaultValue ?? "",
-                            Validation ?? ".*",
-                            ErrorMessage ?? "Invalid format",
-                            MaxLength < 1 ? int.MaxValue : MaxLength));
-                    }
-                    else
-                    {
-                        PutMessage(new PromptMessage(Prompt, DefaultValue ?? ""));
-                    }
-                    var alertresult = JobContext.MessageQueue.GetResult() as string;
-                    WriteObject(alertresult);
-                });
-
+                    PutMessage(new PromptMessage(Prompt, DefaultValue ?? "",
+                        Validation ?? ".*",
+                        ErrorMessage ?? "Invalid format",
+                        MaxLength < 1 ? int.MaxValue : MaxLength));
+                }
+                else
+                {
+                    PutMessage(new PromptMessage(Prompt, DefaultValue ?? ""));
+                }
+                var alertresult = JobContext.MessageQueue.GetResult() as string;
+                WriteObject(alertresult);
+            });
         }
     }
 }

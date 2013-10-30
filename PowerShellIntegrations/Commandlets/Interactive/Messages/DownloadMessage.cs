@@ -12,12 +12,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class DownloadMessage : BasePipelineMessage, IMessage
     {
-        private Item item;
-        private string fileName;
+        private readonly Item item;
+        private readonly string fileName;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage"/> class.
-        /// 
+        ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
         public DownloadMessage(Item item)
@@ -31,8 +30,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         }
 
         /// <summary>
-        /// Shows a confirmation dialog.
-        /// 
+        ///     Shows a confirmation dialog.
         /// </summary>
         protected override void ShowUI()
         {
@@ -41,7 +39,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 UrlString str = item.Uri.ToUrlString(string.Empty);
                 str.Append("field", "Blob");
                 Files.Download(str.ToString());
-                Log.Audit(this, "Download file: {0}", new string[] {str.ToString()});
+                Log.Audit(this, "Download file: {0}", new[] {str.ToString()});
             }
             else if (!string.IsNullOrEmpty(fileName))
             {

@@ -2503,14 +2503,14 @@
                         var scrollTop = self.scrollTop();
                         if (!is_scrolled_into_view(self)) {
                             self.enable();
-                            $('html,body').animate({scrollTop: offsetTop-50}, 500);
+                            $('html, body').animate({scrollTop: offsetTop-50}, 500);
                             return self;
                         } else {
                             terminals.front().disable();
                             var next = terminals.rotate().enable();
                             // 100 provides buffer in viewport
                             var x = next.offset().top - 50;
-                            $('html,body').animate({scrollTop: x}, 500);
+                            $('html, body').animate({scrollTop: x}, 500);
                             try {
                                 settings.onTerminalChange(next);
                             } catch (e) {

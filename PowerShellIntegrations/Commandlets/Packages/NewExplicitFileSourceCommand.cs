@@ -7,7 +7,7 @@ using Sitecore.IO;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "ExplicitFileSource")]
-    [OutputType(new[] { typeof(ExplicitFileSource) })]
+    [OutputType(new[] {typeof (ExplicitFileSource)})]
     public class NewExplicitFileSourceCommand : BasePackageCommand
     {
         private ExplicitFileSource source;
@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
                 string fullName = (File as FileInfo).FullName;
                 if (fullName.StartsWith(siteRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    fullName = fullName.Substring(siteRoot.Length - 1).Replace('\\','/');
+                    fullName = fullName.Substring(siteRoot.Length - 1).Replace('\\', '/');
                 }
                 source.Entries.Add(fullName);
             }

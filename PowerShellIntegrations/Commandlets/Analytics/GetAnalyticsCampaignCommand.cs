@@ -3,7 +3,7 @@
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsCampaign")]
-    [OutputType(new[] { typeof(Campaigns) })]
+    [OutputType(new[] {typeof (Campaigns)})]
     public class GetAnalyticsCampaignCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

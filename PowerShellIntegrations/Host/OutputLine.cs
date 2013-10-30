@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public const string FormatResponseJsterm = "jsterm";
 
         public OutputLine(OutputLineType outputLineType, string value, ConsoleColor foregroundColor,
-                          ConsoleColor backgroundColor, bool terminated)
+            ConsoleColor backgroundColor, bool terminated)
         {
             LineType = outputLineType;
             Text = value;
@@ -30,15 +30,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public void GetHtmlLine(StringBuilder output)
         {
-            var outString = Terminated ? Text.TrimEnd() : Text;
+            string outString = Terminated ? Text.TrimEnd() : Text;
 
             outString = HttpUtility.HtmlEncode(outString);
             if (outString.Contains("{"))
             {
                 outString = Regex.Replace(outString,
-                             @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
-                             "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
-                             RegexOptions.IgnoreCase);
+                    @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
+                    "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
+                    RegexOptions.IgnoreCase);
             }
             output.AppendFormat(
                 Terminated
@@ -51,14 +51,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public string ToHtmlString()
         {
-            var outString = Terminated ? Text.TrimEnd() : Text;
+            string outString = Terminated ? Text.TrimEnd() : Text;
             outString = HttpUtility.HtmlEncode(outString);
             if (outString.Contains("{"))
             {
                 outString = Regex.Replace(outString,
-                             @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
-                             "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
-                             RegexOptions.IgnoreCase);
+                    @"\b[A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12}\b",
+                    "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id={$0})')\" href=\"#\">$0</a>",
+                    RegexOptions.IgnoreCase);
             }
             return String.Format(
                 Terminated
@@ -92,12 +92,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     return Color.LimeGreen;
                 default:
                     return Color.FromName(color.ToString());
-            }            
+            }
         }
 
         public void GetTerminalLine(StringBuilder output)
         {
-            var outString = Terminated ? Text.TrimEnd() : Text;
+            string outString = Terminated ? Text.TrimEnd() : Text;
             if (outString.EndsWith("\\"))
             {
                 outString += " ";
@@ -132,7 +132,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 case (FormatResponseJsterm):
                     GetTerminalLine(temp);
                     break;
-                //case (FormatResponseText):
+                    //case (FormatResponseText):
                 default:
                     GetPlainTextLine(temp);
                     break;

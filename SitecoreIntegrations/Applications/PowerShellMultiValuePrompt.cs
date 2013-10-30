@@ -17,6 +17,7 @@ using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
+using Control = System.Web.UI.Control;
 using DateTime = System.DateTime;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
@@ -26,8 +27,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
     public class PowerShellMultiValuePrompt : DialogPage
     {
-
-        private static Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
+        private static readonly Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
         protected Literal Result;
@@ -93,16 +93,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             foreach (Hashtable variable in variables)
             {
-                var tabName = (variable["Tab"] as string) ?? "Other";
+                string tabName = (variable["Tab"] as string) ?? "Other";
                 var name = variable["Title"] as string;
-                var container = GetContainer(tabs, tabName);
+                WebControl container = GetContainer(tabs, tabName);
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
                     var label = new Literal {Text = name + ":"};
                     label.Class = "varTitle";
                     container.Controls.Add(label);
                 }
-                var input = GetVariableEditor(variable);
+                Control input = GetVariableEditor(variable);
                 container.Controls.Add(input);
             }
 
@@ -123,14 +123,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             if (!tabs.ContainsKey(tabName))
             {
-                Tab tab = new Tab();
+                var tab = new Tab();
                 tab.Header = tabName;
-                tab.ID = Control.GetUniqueID("tab_");
+                tab.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_");
                 tab.Height = new Unit("100%");
                 Tabstrip.Controls.Add(tab);
                 Tabstrip.Width = new Unit("100%");
                 Tabstrip.Height = new Unit("100%");
-                GridPanel panel = new GridPanel();
+                var panel = new GridPanel();
                 panel.Width = new Unit("100%");
                 panel.CssClass = "ValuePanel";
                 tab.Controls.Add(panel);
@@ -140,11 +140,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             return tabs[tabName];
         }
 
-        private System.Web.UI.Control GetVariableEditor(Hashtable variable)
+        private Control GetVariableEditor(Hashtable variable)
         {
             object value = variable["Value"];
-            string name = (string) variable["Name"];
-            string editor = variable["Editor"] as string;
+            var name = (string) variable["Name"];
+            var editor = variable["Editor"] as string;
             Type type = value.GetType();
 
             if (type == typeof (DateTime) ||
@@ -154,7 +154,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 var dateTimePicker = new DateTimePicker
                 {
-                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     ShowTime = (variable["ShowTime"] != null && (bool) variable["ShowTime"]) ||
                                (!string.IsNullOrEmpty(editor) &&
                                 editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1),
@@ -185,7 +185,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
                 var treeList = new TreeList
                 {
-                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Value = strValue,
                     AllowMultipleSelection = true,
                     DatabaseName = dbName,
@@ -203,7 +203,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 var dataContext = new DataContext
                 {
                     DefaultItem = item.Paths.Path,
-                    ID = Control.GetUniqueID("dataContext"),
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
                     DataViewName = "Master",
                     Root = variable["Root"] as string ?? "/sitecore",
                     Parameters = "databasename=" + item.Database.Name,
@@ -217,7 +217,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
                 var treePicker = new TreePicker
                 {
-                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Value = item.ID.ToString(),
                     DataContext = dataContext.ID
                 };
@@ -230,7 +230,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 var checkBox = new Checkbox
                 {
-                    ID = Control.GetUniqueID("variable_" + name + "_"),
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Header = (string) variable["Title"],
                     HeaderStyle = "margin-top:20px; display:inline-block;",
                     Checked = (bool) value
@@ -246,9 +246,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 bool multiple = editor.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
                 if (showRoles || showUsers)
                 {
-                    UserPicker picker = new UserPicker();
+                    var picker = new UserPicker();
                     picker.Style.Add("float", "left");
-                    picker.ID = Control.GetUniqueID("variable_" + name + "_");
+                    picker.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                     picker.Class += " scContentControl textEdit clr" + value.GetType().Name;
                     picker.Value = value.ToString();
                     picker.ExcludeRoles = !showRoles;
@@ -260,7 +260,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
             }
 
-            Control edit;
+            Sitecore.Web.UI.HtmlControls.Control edit;
             if (variable["lines"] != null && ((int) variable["lines"] > 1))
             {
                 edit = new Memo();
@@ -273,7 +273,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 int i = 0;
                 while (i < options.Length)
                 {
-                    var item = new ListItem()
+                    var item = new ListItem
                     {
                         Header = options[i++],
                         Value = options[i++],
@@ -290,7 +290,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 edit.ToolTip = (string) variable["Tooltip"];
             }
             edit.Style.Add("float", "left");
-            edit.ID = Control.GetUniqueID("variable_" + name + "_");
+            edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
             edit.Class += " scContentControl textEdit clr" + value.GetType().Name;
             edit.Value = value.ToString();
 
@@ -313,7 +313,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         protected void OKClick()
         {
-            var variables = GetVariableValues();
+            object[] variables = GetVariableValues();
             string sid = WebUtil.GetQueryString("sid");
             HttpContext.Current.Session[sid] = variables;
             SheerResponse.SetDialogValue(sid);
@@ -323,7 +323,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         private object[] GetVariableValues()
         {
             var results = new List<object>();
-            foreach (Control control in ValuePanel.Controls)
+            foreach (Sitecore.Web.UI.HtmlControls.Control control in ValuePanel.Controls)
             {
                 if (control is Tabstrip)
                 {
@@ -335,7 +335,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                             {
                                 if (panel is GridPanel)
                                 {
-                                    foreach (Control editor in panel.Controls)
+                                    foreach (Sitecore.Web.UI.HtmlControls.Control editor in panel.Controls)
                                     {
                                         GetEditorValue(editor, results);
                                     }
@@ -349,7 +349,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             return results.ToArray();
         }
 
-        private void GetEditorValue(Control control, List<object> results)
+        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control control, List<object> results)
         {
             string controlId = control.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
@@ -359,7 +359,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
         }
 
-        private object GetVariableValue(Control control)
+        private object GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
         {
             string controlId = control.ID;
             string[] parts = controlId.Split('_');
@@ -367,7 +367,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var result = new Hashtable(2);
             result.Add("Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray()));
 
-            var controlValue = control.Value;
+            string controlValue = control.Value;
             if (controlValue != null)
             {
                 if (control is DateTimePicker)
@@ -387,12 +387,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
                 else if (control is Combobox)
                 {
-                    var boolValue = (control as Combobox).Value;
+                    string boolValue = (control as Combobox).Value;
                     result.Add("Value", boolValue);
                 }
                 else if (control is TreeList)
                 {
-                    TreeList treeList = control as TreeList;
+                    var treeList = control as TreeList;
                     string strIds = treeList.GetValue();
                     string[] ids = strIds.Split('|');
                     Database db = Database.GetDatabase(treeList.DatabaseName);

@@ -52,13 +52,13 @@ namespace Cognifide.PowerShell.Console.Services
                                 (current, next) => current + next)
                     });
                 }
-                foreach (string variable in returnVariables.Split('|'))
+                foreach (var variable in returnVariables.Split('|'))
                 {
                     result.Add(new NameValue
-                        {
-                            Name = variable,
-                            Value = (scriptSession.GetVariable(variable) ?? string.Empty).ToString()
-                        });
+                    {
+                        Name = variable,
+                        Value = (scriptSession.GetVariable(variable) ?? string.Empty).ToString()
+                    });
                 }
                 return result.ToArray();
             }

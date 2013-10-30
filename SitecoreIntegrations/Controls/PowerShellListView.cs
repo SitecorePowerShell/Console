@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore;
@@ -43,7 +44,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
         public ShowListViewMessage Data
         {
-            get { return (ShowListViewMessage) System.Web.HttpContext.Current.Session[ContextId]; }
+            get { return (ShowListViewMessage) HttpContext.Current.Session[ContextId]; }
         }
 
         protected override void DoClick(Message message)
@@ -70,7 +71,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
         private void SelectAll()
         {
-            foreach (var item in this.Items)
+            foreach (var item in Items)
             {
                 item.Selected = !item.Selected;
             }
@@ -81,7 +82,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             string columnName = ColumnNames.GetKey(columnIndex);
             if (SortBy == columnName)
             {
-                SortAscending = !this.SortAscending;
+                SortAscending = !SortAscending;
             }
             else
             {
@@ -89,7 +90,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 SortAscending = true;
             }
 
-            var sorted = SortAscending
+            IOrderedEnumerable<ShowListViewCommand.SvlDataObject> sorted = SortAscending
                 ? Data.Data.OrderBy(item => item.Display[columnName], ListViewComparer.Instance)
                 : Data.Data.OrderByDescending(item => item.Display[columnName], ListViewComparer.Instance);
             Data.Data = sorted.ToList();
@@ -113,13 +114,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             int offset = (CurrentPage - 1)*pageSize;
             var columnNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            var filteredEnum = GetFilteredItems();
+            List<ShowListViewCommand.SvlDataObject> filteredEnum = GetFilteredItems();
 
             FilteredCount = filteredEnum.Count();
             foreach (var result in filteredEnum.Skip(offset).Take(pageSize))
             {
                 var lvi = new ListviewItem();
-                var keys = result.Display.Keys;
+                Dictionary<string, string>.KeyCollection keys = result.Display.Keys;
                 lvi.ID = GetUniqueID("lvi");
                 lvi.Icon = keys.Contains("__icon")
                     ? result.Display["__Icon"]
@@ -132,7 +133,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 foreach (var column in result.Display.Keys)
                 {
                     columnNames.Add(column);
-                    var val = result.Display[column];
+                    string val = result.Display[column];
                     lvi.ColumnValues.Add(column,
                         val == "False"
                             ? "<div class='unchecked'></div>"
@@ -155,7 +156,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
         {
             string filter = Filter;
             bool unfiltered = string.IsNullOrEmpty(filter);
-            var filteredEnum = unfiltered
+            List<ShowListViewCommand.SvlDataObject> filteredEnum = unfiltered
                 ? Data.Data
                 : Data.Data.FindAll(p => p.Display.Values.Any(
                     value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));

@@ -16,15 +16,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     /// </summary>
     internal class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
-
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
         private readonly Guid myId = Guid.NewGuid();
+
         private readonly Stack<Runspace> pushedRunspaces;
         private readonly RunspaceConfiguration runspaceConfiguration;
         private Runspace runspace;
- 
+
 
         /// <summary>
         ///     The culture information of the thread that created
@@ -171,9 +171,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         /// <summary>
-        /// Indicate to the host application that exit has
-        /// been requested. Pass the exit code that the host
-        /// application should use when exiting the process.
+        ///     Indicate to the host application that exit has
+        ///     been requested. Pass the exit code that the host
+        ///     application should use when exiting the process.
         /// </summary>
         /// <param name="exitCode">The exit code that the host application should use.</param>
         public override void SetShouldExit(int exitCode)
@@ -191,19 +191,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         /// <summary>
-        /// Gets a value indicating whether a request 
-        /// to open a PSSession has been made.
+        ///     Gets a value indicating whether a request
+        ///     to open a PSSession has been made.
         /// </summary>
         public bool IsRunspacePushed
         {
-            get
-            {
-                return 0 < pushedRunspaces.Count;
-            }
+            get { return 0 < pushedRunspaces.Count; }
         }
 
         /// <summary>
-        /// Gets or sets the runspace used by the PSSession.
+        ///     Gets or sets the runspace used by the PSSession.
         /// </summary>
         public Runspace Runspace
         {
@@ -214,7 +211,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     runspace = RunspaceFactory.CreateRunspace(this, runspaceConfiguration);
                 }
 
-                var stack = pushedRunspaces;
+                Stack<Runspace> stack = pushedRunspaces;
                 if (0 == stack.Count)
                 {
                     return runspace;

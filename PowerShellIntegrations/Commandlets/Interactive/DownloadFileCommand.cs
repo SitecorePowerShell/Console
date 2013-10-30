@@ -10,40 +10,24 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Download", "File")]
-    [OutputType(new[] { typeof(String) }, ParameterSetName = new[] { "Download Item", "Download File" })]
+    [OutputType(new[] {typeof (String)}, ParameterSetName = new[] {"Download Item", "Download File"})]
     public class DownloadFileCommand : BaseFormCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             Mandatory = true, Position = 0, ParameterSetName = "Download File")]
-        public string FullName
-        {
-            get;
-            set;
-        }
+        public string FullName { get; set; }
 
         [Parameter(ParameterSetName = "Download Item")]
         [Parameter(ParameterSetName = "Download File")]
-        public string Message
-        {
-            get;
-            set;
-        }
+        public string Message { get; set; }
 
         [Parameter(ValueFromPipeline = true,
             Mandatory = true, Position = 0, ParameterSetName = "Download Item")]
-        public Item Item
-        {
-            get;
-            set;
-        }
+        public Item Item { get; set; }
 
         [Parameter(ParameterSetName = "Download Item")]
         [Parameter(ParameterSetName = "Download File")]
-        public SwitchParameter NoDialog
-        {
-            get;
-            set;
-        }
+        public SwitchParameter NoDialog { get; set; }
 
 
         protected override void ProcessRecord()
@@ -64,13 +48,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 }
                 else if (!string.IsNullOrEmpty(FullName))
                 {
-                    var file = FileUtil.MapPath(FullName);
+                    string file = FileUtil.MapPath(FullName);
                     if (!File.Exists(file))
                     {
-                        PutMessage(new AlertMessage("You cannot download:\n" + FullName + "\n\n The file could not be found."));
+                        PutMessage(
+                            new AlertMessage("You cannot download:\n" + FullName + "\n\n The file could not be found."));
                         return;
                     }
-                    
+
                     if (NoDialog.IsPresent)
                     {
                         PutMessage(new DownloadMessage(FullName));

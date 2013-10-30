@@ -8,7 +8,6 @@ using Sitecore.Data.Items;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
@@ -73,7 +72,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                 return true;
             }
             // hacking the rules xml
-            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
+            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
             var ruleContext = new RuleContext
             {
                 Item = contextItem
@@ -81,6 +80,5 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
-
     }
 }

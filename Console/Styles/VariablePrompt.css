@@ -1,23 +1,15 @@
-﻿
-#Copyright {
+﻿#Copyright {
     float: left;
     margin-left: 6px;
 }
 
-.qtip {
-    max-width: 355px;
-}
+.qtip { max-width: 355px; }
 
-#PromoLiteral {
-    display: none;
-}
+#PromoLiteral { display: none; }
 
-#Result_ {
-    display: none;
-}
+#Result_ { display: none; }
 
-#Promo
-{
+#Promo {
     bottom: 4px;
     display: block;
     float: right;
@@ -28,10 +20,7 @@
     border-top: #E3E3E3 solid 1px;
 }
 
-#Promo a
-{
-    color: #ABADAB;
-}
+#Promo a { color: #ABADAB; }
 
 .varTitle {
     margin-top: 8px;
@@ -48,31 +37,25 @@
     float: left;
 }
 
-.scContentControl
-{
+.scContentControl {
     border: solid 1px ButtonShadow;
     padding-left: 2px;
 }
 
-.wk .scComboboxEdit
-{
+.wk .scComboboxEdit { padding-left: 2px; }
+
+.scUser PickerEdit {
+    border: solid 1px ButtonShadow;
     padding-left: 2px;
 }
 
-.scUser	PickerEdit {
-    border: solid 1px ButtonShadow;
-    padding-left: 2px;    
-}
-
-.scUserPickerButton
-{
+.scUserPickerButton {
     margin-left: 4px;
     margin-top: 2px;
     vertical-align: top;
 }
 
-.EntryGrid
-{
+.EntryGrid {
     background: #e9e9e9;
     white-space: nowrap;
     vertical-align: top;
@@ -89,9 +72,8 @@
     padding: 8px;
     width: 100%;
 } */
-.scBottomEdge, .scTopEdge {
-    height: 1px;
-}
+
+.scBottomEdge, .scTopEdge { height: 1px; }
 
 .scTabPage {
     padding: 8px;
