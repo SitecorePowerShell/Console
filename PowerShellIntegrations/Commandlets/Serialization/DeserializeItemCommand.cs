@@ -38,12 +38,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
         public void Deserialize(string path)
         {
             var options = new LoadOptions
-                {
-                    Database = Database,
-                    Root = Root,
-                    UseNewID = UseNewId.IsPresent,
-                    DisableEvents = DisableEvents.IsPresent
-                };
+            {
+                Database = Database,
+                Root = Root,
+                UseNewID = UseNewId.IsPresent,
+                DisableEvents = DisableEvents.IsPresent
+            };
 
             if (Recurse.IsPresent)
             {

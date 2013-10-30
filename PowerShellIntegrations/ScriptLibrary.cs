@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Cognifide.PowerShell.PowerShellIntegrations
+﻿namespace Cognifide.PowerShell.PowerShellIntegrations
 {
     public class ScriptLibrary
     {

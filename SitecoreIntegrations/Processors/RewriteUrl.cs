@@ -1,11 +1,8 @@
-﻿    using Sitecore;
-    using Sitecore.Diagnostics;
-    using Sitecore.Pipelines.PreprocessRequest;
-    using Sitecore.Text;
-    using Sitecore.Web;
-    using System;
-    using System.Web;
-
+﻿using System;
+using Sitecore.Diagnostics;
+using Sitecore.Pipelines.PreprocessRequest;
+using Sitecore.Text;
+using Sitecore.Web;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
 {
@@ -15,7 +12,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
         {
             int num;
             Assert.ArgumentNotNull(path, "path");
-            string str = path.TrimStart(new char[] { '/' }).Split(new char[] { '/' })[2];
+            string str = path.TrimStart(new[] {'/'}).Split(new[] {'/'})[2];
             Assert.IsTrue(str.StartsWith("v"), "Version token is wrong.");
             Assert.IsTrue(int.TryParse(str.Replace("v", string.Empty), out num), "Version not recognized.");
             return num;
@@ -31,25 +28,25 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
                 {
                     Assert.ArgumentNotNull(arguments.Context, "context");
                     Uri url = arguments.Context.Request.Url;
-                    string[] sourceArray = url.LocalPath.TrimStart('/').Split('/' );
+                    string[] sourceArray = url.LocalPath.TrimStart('/').Split('/');
                     if (sourceArray.Length < 3)
                     {
                         return;
                     }
                     int length = sourceArray.Length - 3;
-                    string[] destinationArray = new string[length];
+                    var destinationArray = new string[length];
                     Array.Copy(sourceArray, 3, destinationArray, 0, length);
                     string scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
                     string query = url.Query.TrimStart('?');
                     query += string.Format("{0}script={1}", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath);
-                    WebUtil.RewriteUrl(new UrlString { Path = "/Console/Services/RemoteScriptCall.ashx", Query = query }.ToString());
+                    WebUtil.RewriteUrl(
+                        new UrlString {Path = "/Console/Services/RemoteScriptCall.ashx", Query = query}.ToString());
                 }
             }
             catch (Exception exception)
             {
-                Log.Error("Error during the SPE API call",exception);
+                Log.Error("Error during the SPE API call", exception);
             }
         }
-
     }
 }

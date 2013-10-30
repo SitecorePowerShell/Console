@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.Authentication;
@@ -16,7 +15,6 @@ namespace Cognifide.PowerShell.Console.Services
     /// </summary>
     public class RemoteScriptCall : IHttpHandler
     {
-
         public void ProcessRequest(HttpContext context)
         {
             string userName = HttpContext.Current.Request.Params.Get("user");
@@ -29,7 +27,7 @@ namespace Cognifide.PowerShell.Console.Services
                                  AuthenticationManager.Login(userName, password, false);
 
             Database scriptDb = !authenticated || string.IsNullOrEmpty(scriptDbParam)
-                ? Sitecore.Context.Database
+                ? Context.Database
                 : Database.GetDatabase(scriptDbParam);
 
             Item scriptItem = scriptDb.GetItem(scriptParam);
@@ -48,7 +46,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
 
-                Item item = Sitecore.Context.Database.GetRootItem();
+                Item item = Context.Database.GetRootItem();
                 if (item != null)
                     session.SetItemLocationContext(item);
 
@@ -69,15 +67,11 @@ namespace Cognifide.PowerShell.Console.Services
                     context.Response.StatusDescription = "Method Failure";
                 }
             }
-
         }
 
         public bool IsReusable
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
     }
 }

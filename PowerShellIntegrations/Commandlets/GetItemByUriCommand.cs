@@ -7,7 +7,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "ItemByUri")]
-    [OutputType(new[] { typeof(Item) })]
+    [OutputType(new[] {typeof (Item)})]
     public class GetItemByUriCommand : BaseCommand
     {
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]

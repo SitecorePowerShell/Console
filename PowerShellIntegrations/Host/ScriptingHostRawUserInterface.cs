@@ -118,7 +118,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip,
-                                                  BufferCell fill)
+            BufferCell fill)
         {
             throw new NotImplementedException();
         }

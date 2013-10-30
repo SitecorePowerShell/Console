@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
+
 [assembly: AssemblyVersion("2.5.0.*")]
 [assembly: AssemblyFileVersion("2.5.0.0")]
 [assembly: AssemblyInformationalVersion("2.5.0.0")]
@@ -16,6 +17,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+
 [assembly: AssemblyTitle("Cognifide.PowerShell")]
 [assembly: AssemblyDescription("Cognifide PowerShell Console for Sitecore")]
 [assembly: AssemblyConfiguration("")]
@@ -35,4 +37,3 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
 [assembly: Guid("b61fbb56-aad3-4906-8d45-2ca883c101ec")]
-

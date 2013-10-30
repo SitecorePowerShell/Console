@@ -10,7 +10,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public string ToHtml()
         {
             var output = new StringBuilder(10240);
-            foreach (OutputLine outputLine in this)
+            foreach (var outputLine in this)
             {
                 outputLine.GetHtmlLine(output);
             }
@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public override string ToString()
         {
             var output = new StringBuilder(10240);
-            foreach (OutputLine outputLine in this)
+            foreach (var outputLine in this)
             {
                 outputLine.GetPlainTextLine(output);
             }
@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public string ToJsTerminalString()
         {
             var output = new StringBuilder(10240);
-            foreach (OutputLine outputLine in this)
+            foreach (var outputLine in this)
             {
                 outputLine.GetTerminalLine(output);
             }

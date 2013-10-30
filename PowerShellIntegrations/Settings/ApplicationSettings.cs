@@ -45,8 +45,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
         {
             return applicationName +
                    (personalizedSettings
-                        ? "/" + CurrentDomain + "/" + CurrentUserName
-                        : "/All Users");
+                       ? "/" + CurrentDomain + "/" + CurrentUserName
+                       : "/All Users");
         }
 
         public string AppSettingsPath
@@ -64,7 +64,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
             get { return AppSettingsPath + IseSettingsItemAllUsers; }
         }
 
-        private static readonly char[] invalidChars = { '\\', '/', ':', '"', '<', '>', '|', '[', ']', '.' };
+        private static readonly char[] invalidChars = {'\\', '/', ':', '"', '<', '>', '|', '[', ']', '.'};
 
         private static string CurrentUserName
         {
@@ -108,7 +108,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 
         public static ApplicationSettings GetInstance(string applicationName, bool personalizedSettings)
         {
-            string settingsPath = GetSettingsName(applicationName,personalizedSettings);
+            string settingsPath = GetSettingsName(applicationName, personalizedSettings);
             ApplicationSettings instance = null;
             lock (instances)
             {
@@ -146,7 +146,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
                 }
                 Item folderTemplateItem = currentDb.GetItem(FolderTemplatePath);
                 Item currentDomainItem = currentDb.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
-                                                                  folderTemplateItem);
+                    folderTemplateItem);
                 Item defaultItem = currentDb.GetItem(appSettingsPath + IseSettingsItemAllUsers);
                 currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
             }
@@ -160,14 +160,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
             {
                 configuration.Edit(
                     p =>
-                        {
-                            configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
-                            ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
-                            ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
-                            configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
-                            configuration["ForegroundColor"] = ForegroundColor.ToString();
-                            configuration["BackgroundColor"] = BackgroundColor.ToString();
-                        });
+                    {
+                        configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
+                        ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
+                        ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
+                        configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
+                        configuration["ForegroundColor"] = ForegroundColor.ToString();
+                        configuration["BackgroundColor"] = BackgroundColor.ToString();
+                    });
             }
         }
 

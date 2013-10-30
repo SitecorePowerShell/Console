@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.SecurityModel;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
@@ -51,7 +48,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             HttpContext.Current.Session[resultSig] = this;
             if (!Modal)
             {
-                UrlString urlString = new UrlString();
+                var urlString = new UrlString();
                 urlString.Add("sid", resultSig);
                 Item appItem =
                     Database.GetDatabase("core").GetItem("/sitecore/content/Applications/PowerShell/PowerShellListView");
@@ -59,7 +56,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             }
             else
             {
-                UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerList"));
+                var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerList"));
                 urlString.Add("sid", resultSig);
                 SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
             }

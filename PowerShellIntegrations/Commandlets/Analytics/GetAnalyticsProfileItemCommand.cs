@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
     [Cmdlet("Get", "AnalyticsProfileItem")]
-    [OutputType(new[] { typeof(Item) })]
+    [OutputType(new[] {typeof (Item)})]
     public class GetAnalyticsProfileItemCommand : DatabaseContextBaseCommand
     {
         public const string MarketingCenterProfiles = "/sitecore/system/Marketing Center/Profiles";
@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
         protected override void ProcessRecord(IEnumerable<Database> databases)
         {
             var profiles = new List<Item>();
-            foreach (Database database in databases)
+            foreach (var database in databases)
             {
                 Item profilesHub = database.SelectItems(MarketingCenterProfiles).FirstOrDefault();
                 if (profilesHub != null)

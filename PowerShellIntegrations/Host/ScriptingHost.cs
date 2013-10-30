@@ -16,15 +16,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
     /// </summary>
     internal class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
-
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
         private readonly Guid myId = Guid.NewGuid();
+
         private readonly Stack<Runspace> pushedRunspaces;
         private readonly RunspaceConfiguration runspaceConfiguration;
         private Runspace runspace;
- 
+
 
         /// <summary>
         ///     The culture information of the thread that created
@@ -196,10 +196,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         /// </summary>
         public bool IsRunspacePushed
         {
-            get
-            {
-                return 0 < pushedRunspaces.Count;
-            }
+            get { return 0 < pushedRunspaces.Count; }
         }
 
         /// <summary>

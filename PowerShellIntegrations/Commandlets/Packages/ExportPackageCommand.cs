@@ -1,8 +1,8 @@
 ﻿using System.Management.Automation;
-using Sitecore.IO;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;
 using Sitecore.Install.Zip;
+using Sitecore.IO;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
@@ -52,30 +52,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
             {
                 PerformInstallAction(
                     () =>
+                    {
+                        if (IncludeProject.IsPresent)
                         {
-                            if (IncludeProject.IsPresent)
-                            {
-                                Project.SaveProject = true;
-                            }
+                            Project.SaveProject = true;
+                        }
 
-                            if (fileName == null)
-                            {
-                                //name of the zip file when not defined
-                                fileName = string.Format(
-                                    "{0}-PS-{1}.zip", Project.Metadata.PackageName, Project.Metadata.Version);
-                            }
+                        if (fileName == null)
+                        {
+                            //name of the zip file when not defined
+                            fileName = string.Format(
+                                "{0}-PS-{1}.zip", Project.Metadata.PackageName, Project.Metadata.Version);
+                        }
 
-                            if (!System.IO.Path.IsPathRooted(fileName))
-                            {
-                                fileName = FullPackagePath(fileName);
-                            }
+                        if (!System.IO.Path.IsPathRooted(fileName))
+                        {
+                            fileName = FullPackagePath(fileName);
+                        }
 
-                            using (var writer = new PackageWriter(fileName))
-                            {
-                                writer.Initialize(Installer.CreateInstallationContext());
-                                PackageGenerator.GeneratePackage(Project, writer);
-                            }
-                        });
+                        using (var writer = new PackageWriter(fileName))
+                        {
+                            writer.Initialize(Installer.CreateInstallationContext());
+                            PackageGenerator.GeneratePackage(Project, writer);
+                        }
+                    });
             }
         }
     }

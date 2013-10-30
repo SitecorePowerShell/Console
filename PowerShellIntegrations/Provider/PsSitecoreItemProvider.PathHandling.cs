@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 {
     public partial class PsSitecoreItemProvider
     {
-        private static readonly char[] delimiters = new[] {'\\', '/', '`'};
+        private static readonly char[] delimiters = {'\\', '/', '`'};
 
         private Item GetItemForPath(string path)
         {
@@ -71,8 +71,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                         "Error Executing ConvertPath(string path='{0}', string filter='{1}', ref string updatedPath='{2}', ref string updatedFilter='{3}')",
-                         path, filter, updatedPath, updatedFilter);
+                    "Error Executing ConvertPath(string path='{0}', string filter='{1}', ref string updatedPath='{2}', ref string updatedFilter='{3}')",
+                    path, filter, updatedPath, updatedFilter);
                 throw;
             }
         }
@@ -84,9 +84,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             string name = GetLeafFromPath(path).Trim('*');
             if (parent.Contains("-") || parent.Contains(" "))
             {
-                string[] segments = parent.Split(new char[]{'/'},StringSplitOptions.RemoveEmptyEntries);
-                StringBuilder escapedPath = new StringBuilder(path.Length+segments.Length*2+4);
-                for (int i = 0; i < segments.Length;i++)
+                string[] segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+                var escapedPath = new StringBuilder(path.Length + segments.Length*2 + 4);
+                for (int i = 0; i < segments.Length; i++)
                 {
                     escapedPath.AppendFormat("/#{0}#", segments[i]);
                 }
@@ -94,10 +94,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             }
             Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
                 string.Format("/sitecore{0}/*[startswith(@@Name, '{1}')] ",
-                parent,name));
+                    parent, name));
             var results = items.Select(
-            item => string.Format("{0}:{1}",
-                item.Database.Name,item.Paths.Path.Substring(9).Replace('/','\\'))).ToArray();
+                item => string.Format("{0}:{1}",
+                    item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'))).ToArray();
             return results;
         }
 

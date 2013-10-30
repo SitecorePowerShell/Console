@@ -6,7 +6,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
     [Serializable]
     public class ToggleContextMenu : ToggleContentEditorIntegrationBase
     {
- 
         public override CommandState QueryState(CommandContext context)
         {
             if (PowerShellUiUserOptions.ShowContextMenuScripts)

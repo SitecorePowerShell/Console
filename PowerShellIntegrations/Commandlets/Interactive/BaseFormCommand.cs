@@ -14,7 +14,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public int Height { get; set; }
 
-        protected string WidthString { get { return Width.ToString(CultureInfo.InvariantCulture); } }
-        protected string HeightString { get { return Height.ToString(CultureInfo.InvariantCulture); } }
+        protected string WidthString
+        {
+            get { return Width.ToString(CultureInfo.InvariantCulture); }
+        }
+
+        protected string HeightString
+        {
+            get { return Height.ToString(CultureInfo.InvariantCulture); }
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     var media = MediaManager.GetMedia(item);
                     FileNameLabel.Text = item.Name + "." + item["Extension"];
                     long size;
-                    SizeLabel.Text = Int64.TryParse(item["size"],out size) ? ToFileSize(size) : "unknown";
+                    SizeLabel.Text = Int64.TryParse(item["size"], out size) ? ToFileSize(size) : "unknown";
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             string caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
             Context.ClientPage.Title = caption;
-            Assert.ArgumentNotNull((object)e, "e");
+            Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te"));
             Hidden.Value = "cancelled";
@@ -78,30 +78,27 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 return (size).ToString("F0") + " bytes";
             }
-            else if (size < Math.Pow(1024, 2))
+            if (size < Math.Pow(1024, 2))
             {
-                return (size / 1024).ToString("F0") + " KB";
+                return (size/1024).ToString("F0") + " KB";
             }
-            else if (size < Math.Pow(1024, 3))
+            if (size < Math.Pow(1024, 3))
             {
-                return (size / Math.Pow(1024, 2)).ToString("F0") + " MB";
+                return (size/Math.Pow(1024, 2)).ToString("F0") + " MB";
             }
-            else if (size < Math.Pow(1024, 4))
+            if (size < Math.Pow(1024, 4))
             {
-                return (size / Math.Pow(1024, 3)).ToString("F0") + " GB";
+                return (size/Math.Pow(1024, 3)).ToString("F0") + " GB";
             }
-            else if (size < Math.Pow(1024, 5))
+            if (size < Math.Pow(1024, 5))
             {
-                return (size / Math.Pow(1024, 4)).ToString("F0") + " TB";
+                return (size/Math.Pow(1024, 4)).ToString("F0") + " TB";
             }
-            else if (size < Math.Pow(1024, 6))
+            if (size < Math.Pow(1024, 6))
             {
-                return (size / Math.Pow(1024, 5)).ToString("F0") + " PB";
+                return (size/Math.Pow(1024, 5)).ToString("F0") + " PB";
             }
-            else
-            {
-                return (size / Math.Pow(1024, 6)).ToString("F0") + " EB";
-            }
+            return (size/Math.Pow(1024, 6)).ToString("F0") + " EB";
         }
 
         /// <summary>
@@ -127,7 +124,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     UrlString str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    Log.Audit(this, "Download file: {0}", new string[] {str.ToString()});
+                    Log.Audit(this, "Download file: {0}", new[] {str.ToString()});
                 }
                 else
                 {
@@ -139,8 +136,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 SheerResponse.Download(FileName);
                 Hidden.Value = "downloaded";
             }
-            
         }
-
     }
 }

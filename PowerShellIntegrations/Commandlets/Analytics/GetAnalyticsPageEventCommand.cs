@@ -4,7 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsPageEvent")]
-    [OutputType(new[] { typeof(PageEvents) })]
+    [OutputType(new[] {typeof (PageEvents)})]
     public class GetAnalyticsPageEventCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

@@ -29,11 +29,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 string key = "btn_" + i;
                 var button = new Button
-                    {
-                        ID = key,
-                        Header = HttpContext.Current.Request.QueryString[key],
-                        Click = string.Format("button:click(value={0})", key)
-                    };
+                {
+                    ID = key,
+                    Header = HttpContext.Current.Request.QueryString[key],
+                    Click = string.Format("button:click(value={0})", key)
+                };
                 Buttons.Controls.Add(button);
                 i++;
             }

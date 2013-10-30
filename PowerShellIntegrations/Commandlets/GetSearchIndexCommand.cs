@@ -6,7 +6,7 @@ using Sitecore.Search;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "SearchIndex")]
-    [OutputType(new[] { typeof(Index) })]
+    [OutputType(new[] {typeof (Index)})]
     public class GetSearchIndexCommand : BaseCommand
     {
         private static SearchConfiguration _configuration;
@@ -17,7 +17,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 
         private static SearchConfiguration SearchConfig
         {
-            get {
+            get
+            {
                 return _configuration ??
                        (_configuration = Factory.CreateObject("search/configuration", true) as SearchConfiguration);
             }
@@ -27,14 +28,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         {
             if (String.IsNullOrEmpty(Name))
             {
-                foreach (string index in SearchConfig.Indexes.Keys)
+                foreach (var index in SearchConfig.Indexes.Keys)
                 {
                     WriteObject(SearchManager.GetIndex(index), true);
                 }
             }
             else
             {
-                foreach (string index in WildcardFilter(Name, SearchConfig.Indexes.Keys, name => name))
+                foreach (var index in WildcardFilter(Name, SearchConfig.Indexes.Keys, name => name))
                 {
                     WriteObject(SearchManager.GetIndex(index), true);
                 }
