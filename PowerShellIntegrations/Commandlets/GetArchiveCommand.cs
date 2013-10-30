@@ -7,7 +7,7 @@ using Sitecore.Data.Archiving;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "Archive")]
-    [OutputType(new[] {typeof (Archive)})]
+    [OutputType(new[] { typeof(Archive) })]
     public class GetArchiveCommand : DatabaseContextBaseCommand
     {
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
@@ -18,14 +18,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         {
             if (String.IsNullOrEmpty(Name))
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
                     WriteObject(ArchiveManager.GetArchives(database), true);
                 }
             }
             else
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
                     WildcardWrite(Name, ArchiveManager.GetArchives(database), archive => archive.Name);
                 }

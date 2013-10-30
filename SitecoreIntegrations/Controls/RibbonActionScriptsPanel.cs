@@ -7,6 +7,7 @@ using Sitecore.Globalization;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
+using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 
@@ -21,7 +22,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             {
                 Item scriptLibrary =
                     Factory.GetDatabase("master")
-                        .GetItem(ScriptLibrary.Path + "Internal/List View/Ribbon/" + typeName);
+                        .GetItem(ScriptLibrary.Path+"Internal/List View/Ribbon/"+typeName);
                 if (scriptLibrary != null)
                 {
                     foreach (Item scriptItem in scriptLibrary.Children)
@@ -40,7 +41,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 }
             }
         }
-
         public static bool EvaluateRules(string strRules, Item item)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
@@ -56,5 +56,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
+
     }
 }

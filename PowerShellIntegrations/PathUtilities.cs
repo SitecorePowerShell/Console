@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                 string itemPath = drivepath[1];
                 item = GetItem(drive, itemPath);
             }
-            else if (path.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            else if (path.StartsWith("/sitecore",StringComparison.OrdinalIgnoreCase))
             {
                 item = GetItem(currentDb, path);
             }

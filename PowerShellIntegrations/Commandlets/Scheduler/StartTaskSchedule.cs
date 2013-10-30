@@ -5,19 +5,16 @@ using Sitecore.Tasks;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
 {
     [Cmdlet("Start", "TaskSchedule")]
-    [OutputType(new[] {typeof (ScheduleItem)})]
+    [OutputType(new[] { typeof(ScheduleItem) })]
     public class StartTaskSchedule : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromSchedule",
-            Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromSchedule", Mandatory = true)]
         public ScheduleItem Schedule { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromItem",
-            Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromItem", Mandatory = true)]
         public Item Item { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromPath",
-            Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromPath", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 

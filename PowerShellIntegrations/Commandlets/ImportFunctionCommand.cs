@@ -1,6 +1,11 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Sitecore;
 using Sitecore.Data.Items;
@@ -8,7 +13,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Import", "Function")]
-    [OutputType(new[] {typeof (object)})]
+    [OutputType(new[] { typeof(object) })]
     public class ImportFunctionCommand : BaseShellCommand
     {
         [Parameter(Mandatory = true, Position = 0)]

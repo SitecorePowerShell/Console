@@ -4,7 +4,7 @@ using Sitecore.Install;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "Package")]
-    [OutputType(new[] {typeof (PackageProject)})]
+    [OutputType(new[] { typeof(PackageProject) })]
     public class NewPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -14,10 +14,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         {
             PerformInstallAction(
                 () =>
-                {
-                    var project = new PackageProject {Name = Name, Metadata = {PackageName = Name}};
-                    WriteObject(project, false);
-                });
+                    {
+                        var project = new PackageProject {Name = Name, Metadata = {PackageName = Name}};
+                        WriteObject(project, false);
+                    });
         }
     }
 }

@@ -6,7 +6,7 @@ using Sitecore.Workflows.Simple;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
     [Cmdlet("Get", "ItemWorkflowEvent")]
-    [OutputType(new[] {typeof (WorkflowEvent)})]
+    [OutputType(new[] { typeof(WorkflowEvent) })]
     public class GetItemWorkflowEventCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 
             WorkflowEvent[] workflowHistory =
                 ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.GetHistory(Item);
-            foreach (var workflowEvent in workflowHistory)
+            foreach (WorkflowEvent workflowEvent in workflowHistory)
             {
                 WriteObject(workflowEvent);
             }

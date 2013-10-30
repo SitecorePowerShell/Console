@@ -6,7 +6,7 @@ using Sitecore.Security.Accounts;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "User", DefaultParameterSetName = "From Name")]
-    [OutputType(new[] {typeof (User)})]
+    [OutputType(new[] { typeof(User) })]
     public class GetUserCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "From Name")]

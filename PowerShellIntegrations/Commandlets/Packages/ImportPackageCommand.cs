@@ -32,26 +32,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 
             PerformInstallAction(
                 () =>
-                {
-                    if (IncludeProject.IsPresent)
                     {
-                        Project.SaveProject = true;
-                    }
+                        if (IncludeProject.IsPresent)
+                        {
+                            Project.SaveProject = true;
+                        }
 
-                    if (!System.IO.Path.IsPathRooted(fileName))
-                    {
-                        fileName = FullPackagePath(fileName);
-                    }
+                        if (!System.IO.Path.IsPathRooted(fileName))
+                        {
+                            fileName = FullPackagePath(fileName);
+                        }
 
-                    IProcessingContext context = new SimpleProcessingContext();
-                    IItemInstallerEvents events =
-                        new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
-                    context.AddAspect(events);
-                    IFileInstallerEvents events1 = new DefaultFileInstallerEvents(true);
-                    context.AddAspect(events1);
-                    var installer = new Installer();
-                    installer.InstallPackage(fileName, context);
-                });
+                        IProcessingContext context = new SimpleProcessingContext();
+                        IItemInstallerEvents events =
+                            new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
+                        context.AddAspect(events);
+                        IFileInstallerEvents events1 = new DefaultFileInstallerEvents(true);
+                        context.AddAspect(events1);
+                        var installer = new Installer();
+                        installer.InstallPackage(fileName, context);
+                    });
         }
     }
 }

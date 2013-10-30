@@ -4,7 +4,7 @@ using System.Management.Automation;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsOs")]
-    [OutputType(new[] {typeof (OS)})]
+    [OutputType(new[] { typeof(OS) })]
     public class GetAnalyticsOSCommand : AnalyticsBaseCommand
     {
         protected override void ProcessRecord()

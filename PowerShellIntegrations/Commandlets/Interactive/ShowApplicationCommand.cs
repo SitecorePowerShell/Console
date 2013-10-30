@@ -1,6 +1,9 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+using Sitecore.Jobs.AsyncUI;
+using Sitecore.Web;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
@@ -14,9 +17,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public string Url { get; set; }
 */
-
         [Parameter(Position = 1)]
-        public Hashtable Parameter { get; set; }
+        public Hashtable Parameter{ get; set; }
 
         [Parameter]
         public string Icon { get; set; }
@@ -30,14 +32,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         protected override void ProcessRecord()
         {
             LogErrors(() =>
-            {
-                var message =
-                    new ShowApplicationMessage(Application, Title, Icon, WidthString, HeightString, Modal.IsPresent,
-                        Parameter);
+                {
+                        var message =
+                            new ShowApplicationMessage(Application, Title, Icon, WidthString, HeightString, Modal.IsPresent, Parameter);
 
-                PutMessage(message);
-                FlushMessages();
-            });
+                        PutMessage(message);
+                    FlushMessages();
+                });
         }
     }
 }

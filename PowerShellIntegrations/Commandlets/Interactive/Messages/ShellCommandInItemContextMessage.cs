@@ -12,9 +12,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessage
     {
-        private readonly string itemUri;
-        private readonly string itemDb;
-        private readonly string command;
+        private string itemUri;
+        private string itemDb;
+        private string command;
         private Handle jobHandle;
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 context = new CommandContext();
             }
-            context.Parameters.Add(Message.Parse(null, command).Arguments);
+            context.Parameters.Add(Message.Parse(null,command).Arguments);
             Command shellCommand = CommandManager.GetCommand(command);
             if (shellCommand == null)
                 return;

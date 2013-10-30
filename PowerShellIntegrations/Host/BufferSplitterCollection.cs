@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private readonly OutputLineType type;
         private readonly int width;
         private string value;
-        private readonly bool terminated;
+        private bool terminated;
 
         public BufferSplitterCollection(OutputLineType type, string value, PSHostRawUserInterface host, bool terminated)
         {
@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public BufferSplitterCollection(OutputLineType type, string value, int width, ConsoleColor foregroundColor,
-            ConsoleColor backgroundColor, bool terminated)
+                              ConsoleColor backgroundColor, bool terminated)
         {
             this.type = type;
             this.value = value;

@@ -4,7 +4,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Wrap", "Item")]
-    [OutputType(new[] {typeof (Item)})]
+    [OutputType(new[] { typeof(Item) })]
     public class WrapItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

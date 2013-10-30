@@ -8,15 +8,13 @@ using Sitecore.Tasks;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
 {
     [Cmdlet(VerbsCommon.Get, "TaskSchedule", DefaultParameterSetName = "From Path")]
-    [OutputType(new[] {typeof (ScheduleItem)})]
+    [OutputType(new[] { typeof(ScheduleItem) })]
     public class GetTaskSchedule : DatabaseContextBaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item",
-            Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item", Mandatory = true)]
         public Item Item { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Path",
-            Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Path", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
@@ -24,29 +22,29 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
         {
             if (Item != null)
             {
-                var schedule = new ScheduleItem(Item);
+                ScheduleItem schedule = new ScheduleItem(Item);
                 WriteObject(schedule);
             }
             else if (Path != null)
             {
                 var curItem = PathUtilities.GetItem(Path, CurrentDrive, CurrentPath);
-                var schedule = new ScheduleItem(curItem);
+                ScheduleItem schedule = new ScheduleItem(curItem);
                 WriteObject(schedule);
             }
             else
             {
                 base.ProcessRecord();
             }
+
         }
 
         protected override void ProcessRecord(IEnumerable<Database> databases)
         {
             if (string.IsNullOrEmpty(Name))
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
-                    var taskItems =
-                        database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']");
+                    var taskItems = database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']");
                     foreach (var taskItem in taskItems)
                     {
                         WriteObject(new ScheduleItem(taskItem));
@@ -55,11 +53,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
             }
             else
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
                     var taskItems =
-                        database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']")
-                            .Select(item => new ScheduleItem(item));
+                        database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']").Select(item => new ScheduleItem(item));
                     WildcardWrite(Name, taskItems, task => task.Name);
                 }
             }

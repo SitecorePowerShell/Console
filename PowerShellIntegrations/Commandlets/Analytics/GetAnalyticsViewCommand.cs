@@ -6,7 +6,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
     [Cmdlet("Get", "AnalyticsView")]
-    [OutputType(new[] {typeof (Pages)})]
+    [OutputType(new[] { typeof(Pages) })]
     public class GetAnalyticsViewCommand : AnalyticsBaseCommand
     {
         [Parameter(ValueFromPipeline = true)]
@@ -17,14 +17,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
             if (Item != null)
             {
                 Guid itemId = Item.ID.ToGuid();
-                foreach (var page in Context.Pages.Where(p => p.ItemId == itemId))
+                foreach (Pages page in Context.Pages.Where(p => p.ItemId == itemId))
                 {
                     WriteObject(page);
                 }
             }
             else
             {
-                foreach (var page in Context.Pages)
+                foreach (Pages page in Context.Pages)
                 {
                     WriteObject(page);
                 }

@@ -8,21 +8,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
 #pragma warning disable 612, 618
     [Cmdlet("Get", "Index")]
-    [OutputType(new[] {typeof (Index)})]
+    [OutputType(new[] { typeof(Index) })]
     public class GetIndexCommand : DatabaseContextBaseCommand
     {
         protected override void ProcessRecord(IEnumerable<Database> databases)
         {
             if (String.IsNullOrEmpty(Name))
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
                     WriteObject(database.Indexes, true);
                 }
             }
             else
             {
-                foreach (var database in databases)
+                foreach (Database database in databases)
                 {
                     var indices = new List<Index>(database.Indexes.Count);
                     for (int i = 0; i < database.Indexes.Count; i++)

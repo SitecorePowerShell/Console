@@ -29,10 +29,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         /// <summary>
         ///     A reference to the PSHost implementation.
         /// </summary>
-        public OutputBuffer Output
-        {
-            get { return rawUi.Output; }
-        }
+        public OutputBuffer Output { get { return rawUi.Output; }}
 
         public override PSHostRawUserInterface RawUI
         {
@@ -69,9 +66,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI.BufferSize.Width,
-                foregroundColor,
-                backgroundColor, false);
+            var splitter = new BufferSplitterCollection(OutputLineType.Output, value, RawUI.BufferSize.Width, foregroundColor,
+                                              backgroundColor, false);
             Output.AddRange(splitter);
         }
 
@@ -83,9 +79,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void WriteErrorLine(string value)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width,
-                ConsoleColor.Red,
-                ConsoleColor.Black, true);
+            var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width, ConsoleColor.Red,
+                                              ConsoleColor.Black, true);
             Output.HasErrors = true;
             Output.AddRange(splitter);
         }
@@ -98,7 +93,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            Message message = Message.Parse(this, "ise:updateprogress");
+            Message message = Message.Parse(this,"ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString());
             message.Arguments.Add("CurrentOperation", record.CurrentOperation);
@@ -127,12 +122,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public override void WriteWarningLine(string message)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Warning, message, RawUI.BufferSize.Width,
-                ConsoleColor.Yellow, ConsoleColor.Black, true);
+                                              ConsoleColor.Yellow, ConsoleColor.Black, true);
             Output.AddRange(splitter);
         }
 
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
-            Collection<FieldDescription> descriptions)
+                                                            Collection<FieldDescription> descriptions)
         {
             if (!Context.IsBackgroundThread)
             {
@@ -148,20 +143,20 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public override PSCredential PromptForCredential(string caption, string message, string userName,
-            string targetName)
+                                                         string targetName)
         {
             throw new NotImplementedException();
         }
 
         public override PSCredential PromptForCredential(string caption, string message, string userName,
-            string targetName, PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options)
+                                                         string targetName, PSCredentialTypes allowedCredentialTypes,
+                                                         PSCredentialUIOptions options)
         {
             throw new NotImplementedException();
         }
 
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices,
-            int defaultChoice)
+                                            int defaultChoice)
         {
             if (Context.Job == null)
             {
@@ -170,12 +165,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             var parameters =
                 new Hashtable(choices.ToDictionary(p => "btn_" + choices.IndexOf(p),
-                    p => WebUtil.SafeEncode(p.Label.Replace("&", ""))))
-                {
-                    {"te", message},
-                    {"cp", caption},
-                    {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
-                };
+                                                   p => WebUtil.SafeEncode(p.Label.Replace("&", ""))))
+                    {
+                        {"te", message},
+                        {"cp", caption},
+                        {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
+                    };
             Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
 
             string dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice", "800", "300");

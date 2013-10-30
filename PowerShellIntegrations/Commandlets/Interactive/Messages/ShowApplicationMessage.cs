@@ -1,10 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Express;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.SecurityModel;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
+using Sitecore.Threading;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages
@@ -21,8 +29,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public bool Modal { get; set; }
 
 
-        public ShowApplicationMessage(string application, string title, string icon, string width, string height,
-            bool modal, Hashtable parameters)
+        public ShowApplicationMessage(string application, string title, string icon, string width, string height, bool modal, Hashtable parameters)
         {
             Title = title;
             Width = width;
@@ -38,16 +45,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         {
             if (!Modal)
             {
-                var urlString = new UrlString();
+                UrlString urlString = new UrlString();
                 AddParameters(urlString);
                 Item appItem =
-                    Database.GetDatabase("core").GetItem("/sitecore/content/Applications/" + AppName);
-                Windows.RunApplication(appItem, Icon ?? appItem["Icon"], Title ?? appItem["Display name"],
-                    urlString.Query);
+                    Database.GetDatabase("core").GetItem("/sitecore/content/Applications/"+AppName);
+                Windows.RunApplication(appItem, Icon ?? appItem["Icon"], Title ?? appItem["Display name"], urlString.Query);
             }
             else
             {
-                var urlString = new UrlString("/sitecore/shell/sitecore/content/Applications/" + AppName + ".aspx");
+                UrlString urlString = new UrlString("/sitecore/shell/sitecore/content/Applications/"+AppName+".aspx");
                 AddParameters(urlString);
                 SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
             }

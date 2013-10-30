@@ -4,22 +4,23 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore.Data.Items;
+using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Read", "Variable")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(new[] { typeof(string) })]
     public class ReadVariableCommand : BaseFormCommand
     {
         [Parameter]
-        public object[] Parameters { get; set; }
+        public object[] Parameters{ get; set; }
 
         [Parameter]
         public string Description { get; set; }
 
         [Parameter]
         public string CancelButtonName { get; set; }
-
+        
         [Parameter]
         public string OkButtonName { get; set; }
 
@@ -28,17 +29,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             Width = 500;
             Height = 300;
         }
-
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
-                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
-                    OkButtonName, CancelButtonName);
+                var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description, OkButtonName, CancelButtonName);
 
                 foreach (Hashtable result in Parameters)
                 {
-                    var name = result["Name"] as string;
+                    string name = result["Name"] as string;
 
                     PSVariable variable = null;
                     if (!string.IsNullOrEmpty(name))
@@ -48,8 +47,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                     if (result["Variable"] != null)
                     {
-                        variable = (PSVariable) ((PSObject) result["Variable"]).BaseObject;
-                        result.Add("Name", variable.Name);
+                        variable = (PSVariable)((PSObject)result["Variable"]).BaseObject;
+                        result.Add("Name",variable.Name);
                         name = variable.Name;
                     }
 
@@ -70,7 +69,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                                 {
                                     while (p is PSObject)
                                     {
-                                        p = ((PSObject) p).ImmediateBaseObject;
+                                        p = ((PSObject)p).ImmediateBaseObject;
                                     }
                                     return p;
                                 }).ToList();
@@ -88,7 +87,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                             result.Add("Description", variable.Description);
                         }
                     }
-
+                    
                     if (result["Value"] == null)
                     {
                         if (result.ContainsKey("Value"))
@@ -103,7 +102,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 }
 
                 PutMessage(message);
-                var results = (object[]) GetResult(message);
+                var results = (object[])GetResult(message);
                 WriteObject(results != null ? "ok" : "cancel");
                 if (results != null)
                 {
@@ -120,7 +119,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                                 (resultValue as List<Item>).Select(p => ItemShellExtensions.GetPsObject(SessionState, p))
                                     .ToArray();
                         }
-                        SessionState.PSVariable.Set((string) result["Name"], resultValue);
+                        SessionState.PSVariable.Set((string)result["Name"], resultValue);
                     }
                 }
             });

@@ -15,14 +15,14 @@ using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 {
-    [CmdletProvider("PsSitecoreItemProvider",
-        ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
+    [CmdletProvider("PsSitecoreItemProvider", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-ChildItem")]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-Item")]
     [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "New-Item")]
-    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Copy-Item")]
+    [OutputType(new[] { typeof(Item) }, ProviderCmdlet = "Copy-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
+
         private ProviderInfo providerInfo;
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing ConvertPath(string path='{0}', string recurse='{1}')",
-                    path, recurse);
+                         "Error while executing ConvertPath(string path='{0}', string recurse='{1}')",
+                         path, recurse);
                 throw;
             }
         }
@@ -83,7 +83,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing GetChildItems(string path='{0}', string recurse='{1}')", path, recurse);
-                var wildcard = new WildcardPattern(Filter ?? "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
+                WildcardPattern wildcard = new WildcardPattern(Filter ?? "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
                 string language;
                 int version;
                 GetVersionAndLanguageParams(out version, out language);
@@ -92,14 +92,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing GetChildItems(string path='{0}', string recurse='{1}')",
-                    path, recurse);
+                         "Error while executing GetChildItems(string path='{0}', string recurse='{1}')",
+                         path, recurse);
                 throw;
             }
         }
 
         protected void GetChildItemsHelper(string path, bool recurse, WildcardPattern wildcard, string language,
-            int version)
+                                           int version)
 
         {
             path = path.Replace("\\", "/");
@@ -148,7 +148,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing GetChildNames(string path='{0}', string returnContainers='{1}')", path,
-                    returnContainers);
+                        returnContainers);
                 path = path.Replace("\\", "/");
                 if (path.Contains("../"))
                 {
@@ -182,8 +182,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing GetChildNames(string path='{0}', string returnContainers='{1}')",
-                    path, returnContainers);
+                         "Error while executing GetChildNames(string path='{0}', string returnContainers='{1}')",
+                         path, returnContainers);
                 throw;
             }
         }
@@ -215,7 +215,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 {
                     string query = dic[QueryParam].Value.ToString();
                     Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
-                    foreach (var currentItem in items)
+                    foreach (Item currentItem in items)
                     {
                         WriteMatchingItem(language, version, currentItem);
                     }
@@ -262,7 +262,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             }
             else
             {
-                WriteMatchingItemEx(language, version, item);
+                WriteMatchingItemEx(language,version,item);
             }
         }
 
@@ -272,16 +272,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             if (language != null || version != Version.Latest.Number)
             {
                 WildcardPattern pattern = GetWildcardPattern(language);
-
+                
                 Item[] allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
 
-                foreach (var matchingItem in allVersions.Where(
+                foreach (Item matchingItem in allVersions.Where(
                     (curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
                                 (version == Int32.MaxValue ||
                                  (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
                                  (version == curItem.Version.Number)
-                                    )
-                        )))
+                                )
+                    )))
                 {
                     WriteItem(matchingItem);
                 }
@@ -305,7 +305,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing CopyItem(string path='{0}', string destination='{1}', bool recurse={2}", path,
-                    destination, recurse);
+                        destination, recurse);
                 Item sourceItem = GetItemForPath(path);
 
                 if (sourceItem == null)
@@ -335,8 +335,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing CopyItem(string '{0}', string '{1}', bool {2}", path,
-                    destination, recurse);
+                         "Error while executing CopyItem(string '{0}', string '{1}', bool {2}", path,
+                         destination, recurse);
                 throw;
             }
         }
@@ -346,7 +346,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing MoveItem(string path='{0}', string destination='{1}')",
-                    path, destination);
+                        path, destination);
                 Item sourceItem = GetItemForPath(path);
 
                 if (sourceItem == null)
@@ -385,8 +385,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing MoveItem(string path='{0}', string destination='{1}')",
-                    path, destination);
+                         "Error while executing MoveItem(string path='{0}', string destination='{1}')",
+                         path, destination);
                 throw;
             }
         }
@@ -396,7 +396,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing RenameItem(string path='{0}', string newName='{1}')",
-                    path, newName);
+                        path, newName);
                 Item item = GetItemForPath(path);
                 if (item != null)
                 {
@@ -408,8 +408,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing RenameItem(string path='{0}', string newName='{1}')",
-                    path, newName);
+                         "Error while executing RenameItem(string path='{0}', string newName='{1}')",
+                         path, newName);
                 throw;
             }
         }

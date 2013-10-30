@@ -1,7 +1,5 @@
 ﻿using System.Management.Automation;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Install.Configuration;
 using Sitecore.Install.Items;
 using Sitecore.Install.Utils;
@@ -9,7 +7,7 @@ using Sitecore.Install.Utils;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("New", "ExplicitItemSource")]
-    [OutputType(new[] {typeof (ExplicitItemSource)})]
+    [OutputType(new[] { typeof(ExplicitItemSource) })]
     public class NewExplicitItemSourceCommand : BasePackageCommand
     {
         private ExplicitItemSource source;
@@ -23,7 +21,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         [Parameter(Position = 1)]
         public SwitchParameter SkipVersions { get; set; }
 
-        [Parameter]
+        [Parameter()]
         public InstallMode InstallMode { get; set; }
 
         [Parameter]
@@ -32,15 +30,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         protected override void BeginProcessing()
         {
             source = new ExplicitItemSource {Name = Name, SkipVersions = SkipVersions.IsPresent};
-            source.Converter.Transforms.Add(
-                new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+            source.Converter.Transforms.Add(new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
         }
 
         protected override void ProcessRecord()
         {
-            source.Entries.Add(
-                new ItemReference(Item.Database.Name, Item.Paths.Path, Item.ID, Language.Invariant, Version.Latest)
-                    .ToString());
+            source.Entries.Add(new ItemReference(Item.Database.Name,Item.Paths.Path, Item.ID,Sitecore.Globalization.Language.Invariant,Sitecore.Data.Version.Latest).ToString());
         }
 
         protected override void EndProcessing()

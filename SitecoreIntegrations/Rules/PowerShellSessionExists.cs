@@ -21,5 +21,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Rules
 
         // Properties
         public string PersistentSessionId { get; set; }
+
     }
+
 }

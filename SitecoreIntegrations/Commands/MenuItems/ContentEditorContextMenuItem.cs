@@ -8,7 +8,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
     {
         public override string ScriptLibraryPath
         {
-            get { return ScriptLibrary.Path + "Content Editor/Context Menu"; }
+            get
+            {
+                return ScriptLibrary.Path+"Content Editor/Context Menu";
+            }
         }
 
         public override Control[] GetSubmenuItems(CommandContext context)

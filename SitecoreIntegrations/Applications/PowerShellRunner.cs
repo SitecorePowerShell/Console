@@ -8,6 +8,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Jobs;
@@ -18,6 +19,8 @@ using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Button = Sitecore.Web.UI.HtmlControls.Button;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
@@ -78,7 +81,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     CurrentItem = db.GetItem(new ID(itemId));
                 }
             }
-            Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
+            Settings = ApplicationSettings.GetInstance(ApplicationNames.Context,false);
             PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
             HeaderText.Text = ScriptItem.DisplayName;
             if (Monitor == null)
@@ -116,15 +119,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
             string contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}",
-                scriptSession.Settings.HostWidth,
-                scriptSession.Settings.Prescript);
+                                                 scriptSession.Settings.HostWidth,
+                                                 scriptSession.Settings.Prescript);
 
             var parameters = new object[]
-            {
-                scriptSession,
-                contextScript,
-                ScriptItem[ScriptItemFieldNames.Script]
-            };
+                {
+                    scriptSession,
+                    contextScript,
+                    ScriptItem[ScriptItemFieldNames.Script]
+                };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
@@ -173,7 +176,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     var output = new StringBuilder(10240);
                     if (scriptSession.Output != null)
                     {
-                        foreach (var outputLine in scriptSession.Output)
+                        foreach (OutputLine outputLine in scriptSession.Output)
                         {
                             outputLine.GetHtmlLine(output);
                         }
@@ -194,7 +197,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
             var job = JobManager.GetJob(Monitor.JobHandle);
-            var result = (RunnerOutput) job.Status.Result;
+            var result = (RunnerOutput)job.Status.Result;
             var printResults = result.Output ?? "Script finished - no results to display.";
             if (!string.IsNullOrEmpty(result.Errors))
             {
@@ -209,7 +212,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            var scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
+            ScriptSession scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
 
 
@@ -231,14 +234,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void AbortClick()
         {
             var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
-            currentSession.Abort();
+            currentSession.Abort();            
         }
 
         protected virtual void ViewResults()
         {
             string resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Result.Value;
-            var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
+            UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
             urlString.Add("sid", resultSig);
             var response = SheerResponse.ShowModalDialog(urlString.ToString(), "800", "600");
             SheerResponse.CloseWindow();
@@ -272,6 +275,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else
             {
+                
                 if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
                 {
                     someValue = CurrentProgressValue.Text = args.Parameters["PercentComplete"];
@@ -305,7 +309,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Error.AssertObject(message, "message");
             base.HandleMessage(message);
             var context = new CommandContext(CurrentItem);
-            foreach (var key in message.Arguments.AllKeys)
+            foreach (string key in message.Arguments.AllKeys)
             {
                 context.Parameters.Add(key, message.Arguments[key]);
             }

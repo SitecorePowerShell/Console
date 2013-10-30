@@ -15,16 +15,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
     {
         protected static bool IsScripted(string dataSource)
         {
+            
             return dataSource != null &&
                    (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) > -1 ||
                     dataSource.IndexOf(ScriptLibrary.Path,
-                        StringComparison.OrdinalIgnoreCase) > -1);
+                                       StringComparison.OrdinalIgnoreCase) > -1);
         }
 
         protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
         {
             string unusedLocations = string.Empty;
-            foreach (var location in new ListString(sources))
+            foreach (string location in new ListString(sources))
             {
                 if (IsScripted(location))
                 {
@@ -41,7 +42,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
 
         protected static IEnumerable<Item> RunEnumeration(string scriptSource, Item item)
         {
-            Assert.ArgumentNotNull(scriptSource, "scriptSource");
+            Assert.ArgumentNotNull(scriptSource,"scriptSource");
             Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
             Item scriptItem = item.Database.GetItem(scriptSource);

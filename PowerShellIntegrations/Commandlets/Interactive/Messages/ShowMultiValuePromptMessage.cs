@@ -3,6 +3,7 @@ using System.Web;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Syndication;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -11,6 +12,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
     [Serializable]
     public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
     {
+
         public object[] Parameters { get; private set; }
         public string Width { get; private set; }
         public string Height { get; private set; }
@@ -23,8 +25,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public MessageQueue MessageQueue { get; private set; }
         public object Result { get; private set; }
 
-        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName)
+        public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title, string description, string okButtonName, string cancelButtonName)
         {
             MessageQueue = new MessageQueue();
             if (JobContext.IsJob)
@@ -49,7 +50,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         {
             string resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Parameters;
-            var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
+            UrlString urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
             if (!string.IsNullOrEmpty(Title))
             {
@@ -107,7 +108,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 {
                     Result = null;
                 }
-
+                
 
                 string strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
                 if (!String.IsNullOrEmpty(strJobId))
@@ -125,5 +126,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 }
             }
         }
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
@@ -45,13 +46,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
         {
             var result = new Collection<PSDriveInfo>();
 
-            foreach (var database in Factory.GetDatabases())
+            foreach (Database database in Factory.GetDatabases())
             {
                 var drive = new PSDriveInfo(database.Name,
-                    providerInfo,
-                    database.Name + ":", //"\\sitecore\\",
-                    String.Format("Sitecore '{0}' database.", database.Name),
-                    PSCredential.Empty);
+                                            providerInfo,
+                                            database.Name + ":", //"\\sitecore\\",
+                                            String.Format("Sitecore '{0}' database.", database.Name),
+                                            PSCredential.Empty);
                 result.Add(drive);
             }
 
@@ -61,8 +62,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
         internal static void AppendToRunSpace(RunspaceConfiguration runspaceConfiguration)
         {
             runspaceConfiguration.Providers.Append(new ProviderConfigurationEntry("CmsItemProvider",
-                typeof (PsSitecoreItemProvider),
-                String.Empty));
+                                                                                  typeof (PsSitecoreItemProvider),
+                                                                                  String.Empty));
         }
     }
 }

@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
+using System;
+using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Publish", "Item")]
-    [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
+    [OutputType(new Type[] {}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
     public class PublishItemCommand : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline")]
+
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item from Pipeline")]
         public Item Item { get; set; }
 
         [Parameter(ParameterSetName = "Item from Path")]
@@ -76,7 +78,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 
                 if (Target != null)
                 {
-                    foreach (var target in Target)
+                    foreach (string target in Target)
                     {
                         PublishToTarget(item, target);
                     }
@@ -98,7 +100,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 }
                 else
                 {
-                    var publishedLangs = new List<string>();
+                    List<string> publishedLangs = new List<string>();
                     foreach (var langItem in item.Versions.GetVersions(true).Reverse())
                     {
                         if (!publishedLangs.Contains(langItem.Language.Name))
@@ -111,7 +113,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             }
             else
             {
-                foreach (var siteLanguage in from siteLanguage in item.Database.GetLanguages()
+                foreach (Language siteLanguage in from siteLanguage in item.Database.GetLanguages()
                     from wildcard in languageWildcardPatterns
                     where wildcard.IsMatch(siteLanguage.Name)
                     select siteLanguage)
@@ -128,15 +130,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 PublishMode = PublishMode.Smart;
             }
 
-            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'",
+            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'", 
                 item.Name, language, item.Version, target));
-            WriteDebug(String.Format("[Debug] Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'",
+            WriteDebug(String.Format("[Debug] Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'", 
                 item.Name, language, item.Version, target));
             Database webDb = Factory.GetDatabase(target);
             var options = new PublishOptions(Factory.GetDatabase("master"), webDb, PublishMode, language, DateTime.Now)
-            {
-                Deep = Recurse.IsPresent
-            };
+                {
+                    Deep = Recurse.IsPresent
+                };
             PublishItemPipeline.Run(item.ID, options);
         }
     }

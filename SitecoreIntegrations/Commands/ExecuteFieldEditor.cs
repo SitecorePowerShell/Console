@@ -51,14 +51,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
 
                 Template template = TemplateManager.GetTemplate(context.Items[0]);
                 CommandState result = template.InheritsFrom(requiredTemplate)
-                    ? base.QueryState(context)
-                    : CommandState.Disabled;
+                                          ? base.QueryState(context)
+                                          : CommandState.Disabled;
                 return result;
             }
 
             return context.Items.Length != 1 || context.Parameters["ScriptRunning"] == "1"
-                ? CommandState.Disabled
-                : CommandState.Enabled;
+                       ? CommandState.Disabled
+                       : CommandState.Enabled;
         }
 
 
@@ -66,10 +66,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
         {
             EnsureContext(args);
             var options = new PageEditFieldEditorOptions(form, BuildListWithFieldsToShow())
-            {
-                Title = SettingsItem[Header],
-                Icon = SettingsItem[Icon]
-            };
+                {
+                    Title = SettingsItem[Header],
+                    Icon = SettingsItem[Icon]
+                };
             options.Parameters["contentitem"] = CurrentItem.Uri.ToString();
             options.PreserveSections = args.Parameters[PreserveSectionsParameter] == "1";
             options.DialogTitle = SettingsItem[Header];
@@ -93,7 +93,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             var fieldList = new List<FieldDescriptor>();
             var fieldString = new ListString(SettingsItem[FieldName]);
 
-            foreach (var fieldName in new ListString(fieldString))
+            foreach (string fieldName in new ListString(fieldString))
             {
                 // add all non "standard fields"
                 if (fieldName == "*")
@@ -109,7 +109,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                     if (field != null)
                     {
                         ID fieldId = field.ID;
-                        foreach (var fieldDescriptor in fieldList)
+                        foreach (FieldDescriptor fieldDescriptor in fieldList)
                         {
                             if (fieldDescriptor.FieldID == fieldId)
                             {
@@ -158,12 +158,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             if (!CanExecute(context))
                 return;
             Context.ClientPage.Start(this, "StartFieldEditor", new ClientPipelineArgs(context.Parameters)
-            {
-                Parameters =
                 {
-                    {"uri", context.Items[0].Uri.ToString()}
-                }
-            });
+                    Parameters =
+                        {
+                            {"uri", context.Items[0].Uri.ToString()}
+                        }
+                });
         }
 
         /// <summary>
@@ -181,11 +181,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
             if (page == null)
                 return;
             NameValueCollection form = page.Request.Form;
-
+            
             if (!args.IsPostBack)
             {
                 SheerResponse.ShowModalDialog(GetOptions(args, form).ToUrlString().ToString(), "720", "520",
-                    string.Empty, true);
+                                              string.Empty, true);
                 args.WaitForPostBack();
             }
             else
@@ -196,12 +196,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                 PageEditFieldEditorOptions results = PageEditFieldEditorOptions.Parse(args.Result);
 
                 CurrentItem.Edit(options =>
-                {
-                    foreach (var field in results.Fields)
                     {
-                        CurrentItem.Fields[field.FieldID].Value = field.Value;
-                    }
-                });
+                        foreach (FieldDescriptor field in results.Fields)
+                        {
+                            CurrentItem.Fields[field.FieldID].Value = field.Value;
+                        }
+                    });
 
 /*
                 Context.ClientPage.ServerProperties["ItemID"] = CurrentItem.ID.ToString();

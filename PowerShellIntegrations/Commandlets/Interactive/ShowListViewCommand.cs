@@ -85,7 +85,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     Id = cumulativeData.Count
                 };
 
-                foreach (var psPropertyInfo in result[0].Properties)
+                foreach (PSPropertyInfo psPropertyInfo in result[0].Properties)
                 {
                     slvDataObject.Display.Add(psPropertyInfo.Name, (psPropertyInfo.Value ?? string.Empty).ToString());
                 }

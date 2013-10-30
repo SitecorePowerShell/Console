@@ -4,7 +4,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     [Cmdlet("Get", "ItemTemplate")]
-    [OutputType(new[] {typeof (TemplateItem)})]
+    [OutputType(new[] { typeof(TemplateItem) })]
     public class GetItemTemplateCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]

@@ -38,7 +38,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal Description;
         protected GridPanel InfoPanel;
         protected ThemedImage InfoIcon;
-
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -71,12 +70,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new JobMonitor {ID = "Monitor"};
+                    Monitor = new JobMonitor { ID = "Monitor" };
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = (JobMonitor) Context.ClientPage.FindControl("Monitor");
+                    Monitor = (JobMonitor)Context.ClientPage.FindControl("Monitor");
                 }
             }
 
@@ -129,7 +128,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (ListViewer.GetSelectedItems().Length <= 0) return;
             var clickedId = Int32.Parse(ListViewer.GetSelectedItems()[0].Value);
             var originalData = ListViewer.Data.Data[clickedId].Original;
-            if (originalData is Item)
+            if(originalData is Item)
             {
                 var clickedItem = originalData as Item;
                 var urlParams = new UrlString();
@@ -172,7 +171,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 case ("pslvnav:next"):
                     ChangePage(ListViewer.CurrentPage + 1);
                     return;
-                case ("export:results"):
+                case("export:results"):
                     ExportResults(message);
                     return;
                 case ("listview:action"):
@@ -183,7 +182,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     break;
             }
             var context = new CommandContext(item);
-            foreach (var key in message.Arguments.AllKeys)
+            foreach (string key in message.Arguments.AllKeys)
             {
                 context.Parameters.Add(key, message.Arguments[key]);
             }
@@ -195,7 +194,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             Dispatcher.Dispatch(message, context);
         }
-
+        
         private void ExportResults(Message message)
         {
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
@@ -227,14 +226,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             int count = ListViewer.FilteredCount;
             int pageSize = ListViewer.Data.PageSize;
-            int pageCount = count/pageSize + ((count%pageSize > 0) ? 1 : 0);
-            newPage = Math.Min(Math.Max(1, newPage), pageCount);
+            int pageCount = count/pageSize + ((count%pageSize > 0) ? 1 : 0);            
+            newPage = Math.Min(Math.Max(1, newPage),pageCount);
             ListViewer.CurrentPage = newPage;
             ItemCount.Text = count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
             PageCount.Text = (pageCount).ToString(CultureInfo.InvariantCulture);
-            SheerResponse.Eval(string.Format("updateStatusBarCounters({0},{1},{2});", ItemCount.Text, CurrentPage.Text,
-                PageCount.Text));
+            SheerResponse.Eval(string.Format("updateStatusBarCounters({0},{1},{2});", ItemCount.Text, CurrentPage.Text, PageCount.Text));
             ListViewer.Refresh();
         }
 
@@ -243,7 +241,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             UpdateRibbon();
         }
-
+        
         /// <summary>
         ///     Updates the ribbon.
         /// </summary>
@@ -266,9 +264,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         public CommandContext GetCommandContext()
         {
-            var itemNotNull = Client.CoreDatabase.GetItem("{98EF2F7D-C17A-4A53-83A8-0EA2C0517AD6}");
-                // /sitecore/content/Applications/PowerShell/PowerShellGridView/Ribbon
-            var context = new CommandContext {RibbonSourceUri = itemNotNull.Uri};
+            var itemNotNull = Client.CoreDatabase.GetItem("{98EF2F7D-C17A-4A53-83A8-0EA2C0517AD6}"); // /sitecore/content/Applications/PowerShell/PowerShellGridView/Ribbon
+            var context = new CommandContext { RibbonSourceUri = itemNotNull.Uri };
             return context;
         }
 
@@ -293,11 +290,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var parameters = new object[]
             {
                 scriptSession,
-                script
+                script,
             };
 
-            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,
-                string.IsNullOrEmpty(scriptItem[ScriptItemFieldNames.PersistentSessionId]));
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, string.IsNullOrEmpty(scriptItem[ScriptItemFieldNames.PersistentSessionId]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
         }
@@ -321,5 +317,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 Log.Error(scriptSession.GetExceptionString(exc), exc);
             }
         }
+
+
     }
 }

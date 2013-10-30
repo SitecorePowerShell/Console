@@ -3,8 +3,8 @@ using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Web;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -25,5 +25,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Result.Text = HttpContext.Current.Session[sid] as string ?? string.Empty;
             HttpContext.Current.Session.Remove(sid);
         }
+
     }
 }

@@ -18,11 +18,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     {
         protected bool IsCurrentDriveSitecore
         {
-            get
-            {
-                return SessionState.Drive.Current.Provider.ImplementingType == typeof (PsSitecoreItemProvider) ||
-                       SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof (PsSitecoreItemProvider));
-            }
+            get { return SessionState.Drive.Current.Provider.ImplementingType == typeof(PsSitecoreItemProvider) || SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof(PsSitecoreItemProvider)); }
         }
 
         protected ProviderInfo Provider
@@ -81,7 +77,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
         }
 
         protected static IEnumerable<T> WildcardFilter<T>(string filter, IEnumerable<T> items,
-            Func<T, string> propertyName)
+                                                          Func<T, string> propertyName)
         {
             WildcardPattern wildcardPattern = GetWildcardPattern(filter);
             return items.Where(item => wildcardPattern.IsMatch(propertyName(item)));
@@ -120,13 +116,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 Log.Error("Error while executing '{0}' command", ex, this);
                 throw;
             }
-        }
 
+        }
         protected void WriteItem(Item item)
         {
             // add the properties defined by the page type
             PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
             WriteObject(psobj);
         }
+
     }
 }

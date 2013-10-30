@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
     {
         private const string EventHandlerLibraryPath =
             ScriptLibrary.Path + "Event Handlers/";
-
+        
         public void OnEvent(object sender, EventArgs args)
         {
             var eventArgs = args as SitecoreEventArgs;
@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
             {
                 return;
             }
-            var item = eventArgs.Parameters[0] as Item;
+            Item item = eventArgs.Parameters[0] as Item;
             string eventName = eventArgs.EventName.Replace(':', '/');
 
             Database database = item != null ? item.Database ?? Context.ContentDatabase : Context.ContentDatabase;
@@ -33,6 +33,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
             }
             using (var session = new ScriptSession(ApplicationNames.Default))
             {
+
                 foreach (Item scriptItem in libraryItem.Children)
                 {
                     if (item != null)

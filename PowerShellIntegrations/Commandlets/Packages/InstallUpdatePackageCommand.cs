@@ -13,7 +13,7 @@ using Sitecore.Update.Utils;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
     [Cmdlet("Install", "UpdatePackage")]
-    [OutputType(new[] {typeof (ContingencyEntry)})]
+    [OutputType(new[] { typeof(ContingencyEntry) })]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -43,9 +43,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 
                     bool hasPostAction;
                     string historyPath;
-                    var entries = new List<ContingencyEntry>();
-                    entries = installer.InstallPackage(Path, InstallMode, log, entries, out hasPostAction,
-                        out historyPath);
+                    List<ContingencyEntry> entries = new List<ContingencyEntry>();
+                    entries = installer.InstallPackage(Path, InstallMode, log,entries, out hasPostAction, out historyPath);
                     installer.ExecutePostInstallationInstructions(Path, historyPath, InstallMode, view, log, ref entries);
                     foreach (var entry in entries)
                     {

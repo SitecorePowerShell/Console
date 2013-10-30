@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     // create the PSObject to copy properties into and that we will return
                     var result = new PSObject();
 
-                    foreach (var name in providerSpecificPickList)
+                    foreach (string name in providerSpecificPickList)
                     {
                         // Copy all the properties from the original object into ’result’
                         PSPropertyInfo prop = psobj.Properties[name];
@@ -37,12 +37,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                         else
                         {
                             WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’", name,
-                                path));
+                                                       path));
                         }
                         result.Properties.Add(new PSNoteProperty(name, value));
                     }
 
-                    foreach (var name in providerSpecificPickList)
+                    foreach (string name in providerSpecificPickList)
                     {
                         Field field = item.Fields[name];
                         if (field != null)
@@ -57,8 +57,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             catch (Exception ex)
             {
                 LogError(ex,
-                    "Error while executing GetProperty(string path='{0}', Collection<string> providerSpecificPickList)",
-                    path);
+                         "Error while executing GetProperty(string path='{0}', Collection<string> providerSpecificPickList)",
+                         path);
                 throw;
             }
         }
@@ -94,7 +94,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                             result.Properties[name].Value = value;
                         }
                         WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’", name,
-                            path));
+                                                   path));
                     }
                 }
             }
@@ -113,23 +113,23 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             try
             {
                 LogInfo("Executing ClearProperty(string path='{0}', string propertyToClear='{1}')",
-                    path,
-                    propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
+                        path,
+                        propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
                 Item item = GetItemForPath(path);
                 item.Edit(args =>
-                {
-                    foreach (var property in propertyToClear)
                     {
-                        item.Fields[property].Reset();
-                    }
-                });
+                        foreach (string property in propertyToClear)
+                        {
+                            item.Fields[property].Reset();
+                        }
+                    });
             }
 
             catch (Exception ex)
             {
                 LogError(ex, "Error while executing ClearProperty(string path='{0}', string propertyToClear='{1}')",
-                    path,
-                    propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
+                         path,
+                         propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
                 throw;
             }
         }

@@ -38,11 +38,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
             {
                 string profileCardPath =
                     string.Format(GetAnalyticsProfileCardsCommand.ProfileCardsHubTemplate + "/{1}", ProfileName,
-                        ProfileCardName);
+                                  ProfileCardName);
                 WriteVerbose(string.Format("Profile card path: [{0}]", profileCardPath));
                 Item profileCard = Item.Database.SelectItems(profileCardPath).FirstOrDefault();
                 WriteVerbose(string.Format("Profile card [{0}] for profile [{1}] => [{2}]", ProfileCardName, ProfileName,
-                    profileCard));
+                                           profileCard));
                 if (profileCard != null)
                 {
                     string profileCardValue = profileCard["Profile Card Value"];
