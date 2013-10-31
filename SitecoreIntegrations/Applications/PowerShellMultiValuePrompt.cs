@@ -342,9 +342,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                 }
                             }
                         }
-                        GetEditorValue(control, results);
                     }
                 }
+                GetEditorValue(control, results);
             }
             return results.ToArray();
         }
