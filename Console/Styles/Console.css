@@ -431,9 +431,6 @@ a.ps-link {
 .ui-autocomplete {
     border-top-width: 0;
     padding: 0 1px;
-    /*padding-left: 0;*/
-    /*border-top-left-radius: 0;*/
-    /*border-top-right-radius: 0;*/
 }
 
 .ui-menu-item a {
