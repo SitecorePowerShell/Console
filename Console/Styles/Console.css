@@ -55,6 +55,25 @@ html {
     /* padding: 0px !important; */
     margin: 0 !important;
     padding: 3px 0 2px 3px !important;
+    position: relative;
+}
+
+#ScriptResult {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+}
+
+#Content > tbody > tr > td {
+    vertical-align:top;
+    height: 100%;
+}
+
+#ResultsSplitter + tr > td {
+    height: 100%;
 }
 
 #Result pre { margin: 4px 2px !important; }
