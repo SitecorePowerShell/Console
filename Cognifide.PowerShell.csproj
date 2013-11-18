@@ -140,6 +140,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertFromCliXmlCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertToCliXmlCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">

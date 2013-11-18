@@ -52,18 +52,41 @@ namespace Cognifide.PowerShell.Console.Services
                                 (current, next) => current + next)
                     });
                 }
-                foreach (var variable in returnVariables.Split('|'))
-                {
-                    result.Add(new NameValue
+                result.AddRange(
+                    returnVariables.Split('|').Select(variable => new NameValue
                     {
                         Name = variable,
                         Value = (scriptSession.GetVariable(variable) ?? string.Empty).ToString()
-                    });
-                }
+                    }));
                 return result.ToArray();
             }
         }
 
+        [WebMethod]
+        public string ExecuteScriptBlock(string userName, string password, string script)
+        {
+            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+            {
+                if (!userName.Contains("\\"))
+                {
+                    userName = "sitecore\\" + userName;
+                }
+                bool loggedIn = AuthenticationManager.Login(userName, password, false);
+                if (!loggedIn)
+                {
+                    throw new AuthenticationException("Unrecognized user or password mismatch.");
+                }
+            }
+
+            using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
+            {
+                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
+                scriptSession.ExecuteScriptPart(script + "| ConvertTo-CliXml");
+
+                return scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
+                                (current, next) => current + next);
+            }
+        }
         public class NameValue
         {
             public string Name { get; set; }
