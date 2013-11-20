@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3276
+content-length: 3333
 
 function Get-LockedChildItem {
     <#
@@ -62,9 +62,8 @@ function Get-LockedChildItem {
     )
     
     filter Locked {
-        param(
-            [Sitecore.Data.Locking.ItemLocking]$Locking
-        )
+        
+        $skip = $false
         
         if($_.Locking -and $_.Locking.IsLocked()) {
             $lockField = [Sitecore.Data.Fields.LockField]$_.Fields[[Sitecore.FieldIDs]::Lock]
@@ -72,8 +71,8 @@ function Get-LockedChildItem {
                 $owner = $lockField.Owner
                 if($LockedBy) {
                     if($owner -ne $LockedBy) {
-                        Write-Verbose "Skipping locked item with different owner."
-                        continue
+                        Write-Verbose "Skipping locked item $($_.Paths.Path) with different owner."
+                        $skip = $true
                     }
                 }
                 
@@ -82,21 +81,22 @@ function Get-LockedChildItem {
                     if($matched -and $matched.LastRequest.Add($IdleTime) -gt [datetime]::Now) {
                         $user = [Sitecore.Security.Accounts.User]::FromName($owner, $false)
                         if($user -and $user.IsAdministrator) {
-                            Write-Verbose "Skipping locked item owned by administrator."
-                            continue
+                            Write-Verbose "Skipping locked item $($_.Paths.Path) owned by administrator."
+                            $skip = $true
                         }
                     }
                 } 
                 
-                if($Unlock) {
-                    Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
-                    $_.Editing.BeginEdit() | Out-Null
-                    $_.Locking.Unlock() | Out-Null
-                    $_.Editing.EndEdit() | Out-Null
-                }
+                if(!$skip) {
+                    if($Unlock) {
+                        Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
+                        $_.Editing.BeginEdit() | Out-Null
+                        $_.Locking.Unlock() | Out-Null
+                        $_.Editing.EndEdit() | Out-Null
+                    }
                 
-                $_
-            
+                    $_
+                }
             }
         }
     }
@@ -106,7 +106,7 @@ function Get-LockedChildItem {
 ----version----
 language: en
 version: 1
-revision: 3002fe3a-f952-4f41-8d9e-0b03f8742b4a
+revision: b29c125a-c13d-4ce4-971b-378439b4f6a1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -121,14 +121,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3002fe3a-f952-4f41-8d9e-0b03f8742b4a
+b29c125a-c13d-4ce4-971b-378439b4f6a1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131118T221713:635204098335030490
+20131119T231220:635204995408131463
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
