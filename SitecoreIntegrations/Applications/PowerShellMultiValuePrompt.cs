@@ -11,6 +11,7 @@ using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Shell.Applications.ContentEditor;
+using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -163,7 +164,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return dateTimePicker;
             }
 
-            if (!string.IsNullOrEmpty(editor) && (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1))
+            if (!string.IsNullOrEmpty(editor) && 
+                (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1 || 
+                (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 Item item = null;
                 List<Item> items = null;
@@ -182,19 +185,34 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
 
                 string dbName = item == null ? "master" : item.Database.Name;
-
-                var treeList = new TreeList
+                if (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Value = strValue,
-                    AllowMultipleSelection = true,
-                    DatabaseName = dbName,
-                    Database = dbName,
-                    Source = variable["Source"] as string ?? "/sitecore",
-                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
-                };
-                treeList.Class += " treePicker";
-                return treeList;
+                    Multilist multiList = new Multilist
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Value = strValue,
+                        Database = dbName,
+                        ItemID = "{11111111-1111-1111-1111-111111111111}",
+                        Source = variable["Source"] as string ?? "/sitecore",
+                    };
+                    multiList.Class += "  treePicker";
+                    return multiList;
+                }
+                else
+                {
+                    var treeList = new TreeList
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Value = strValue,
+                        AllowMultipleSelection = true,
+                        DatabaseName = dbName,
+                        Database = dbName,
+                        Source = variable["Source"] as string ?? "/sitecore",
+                        DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
+                    };
+                    treeList.Class += " treePicker";
+                    return treeList;
+                }
             }
             if (type == typeof (Item) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
@@ -397,6 +415,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     string[] ids = strIds.Split('|');
                     Database db = Database.GetDatabase(treeList.DatabaseName);
                     List<Item> items = ids.Select(p => db.GetItem(p)).ToList();
+                    result.Add("Value", items);
+                }
+                else if (control is Multilist)
+                {
+                    var multilist = control as Multilist;
+                    string strIds = multilist.GetValue();
+                    string[] ids = strIds.Split('|');
+                    List<Item> items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
                     result.Add("Value", items);
                 }
                 else if (control is Edit || control is Memo)

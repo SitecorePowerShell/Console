@@ -79,3 +79,11 @@
     padding: 8px;
     width: 100%;
 }
+
+.scContentControl.treePicker td{
+    padding: 2px 0 2px 0;
+}
+
+.scContentControl.treePicker{
+    padding: 4px 2px 4px 8px;
+}
