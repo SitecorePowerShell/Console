@@ -31,15 +31,16 @@
           <ThemedImage Src="powershell/24x24/powershell.png" Width="32" Height="32" Margin="0px 8px 0px 0px"/>
 
         </GridPanel>
-        <Space GridPanel.Class="scTopEdge"/>
-        <Space GridPanel.Class="scBottomEdge"/>
+
+        <Border class="scBottomEdge"/>
+        <Border class="scTopEdge"/>
 
         <GridPanel ID="ValuePanel" GridPanel.Class="EntryGrid" GridPanel.ID="EntryGrid" Columns="1" Cellpadding="2px">
           <Tabstrip ID="Tabstrip" Visible="false"></Tabstrip>
         </GridPanel>
 
-        <Space GridPanel.Class="scBottomEdge"/>
-        <Space GridPanel.Class="scTopEdge"/>
+        <Border class="scBottomEdge"/>
+        <Border class="scTopEdge"/>
 
         <Border Height="25" Align="right" GridPanel.Height="36" GridPanel.Style="background:#e9e9e9; white-space:nowrap" ID="BottomPanel">
           <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
