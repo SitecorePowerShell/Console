@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.SitecoreIntegrations.Serialization;
 using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;
+using Sitecore.Data.Serialization.Presets;
 using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
@@ -15,6 +17,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public Item Item { get; set; }
+
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public IncludeEntry Entry { get; set; }
 
         [Parameter]
         [Alias("FullName", "FileName")]
@@ -37,7 +42,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 
         protected override void ProcessRecord()
         {
-            Serialize(Item, Path, Id, Recurse.IsPresent, Target, Languages, CurrentProviderLocation("CmsItemProvider"));
+            if (Entry != null)
+            {
+                Serialize(Entry);
+            }
+            else
+            {
+                Serialize(Item, Path, Id, Recurse.IsPresent, Target, Languages, CurrentProviderLocation("CmsItemProvider"));
+            }
         }
 
         public void Serialize(Item item, string path, string id, bool recursive, string target,
@@ -117,6 +129,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
                     SerializeToTargetLanguage(child, target, language, true);
                 }
             }
+        }
+
+        public void Serialize(IncludeEntry entry)
+        {
+            PresetWorker worker = new PresetWorker(entry);
+            worker.Serialize();
         }
     }
 }

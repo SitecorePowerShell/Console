@@ -121,7 +121,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands
                     continue;
                 }
 
-                if (CurrentItem.Fields[fieldName].Definition != null)
+                if (CurrentItem.Fields[fieldName] != null)
                 {
                     fieldList.Add(new FieldDescriptor(CurrentItem, fieldName));
                 }

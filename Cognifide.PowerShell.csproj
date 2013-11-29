@@ -144,6 +144,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertToCliXmlCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Serialization\GetPresetCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -302,6 +303,9 @@
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Rules\PowerShellSessionExists.cs" />
+    <Compile Include="SitecoreIntegrations\Serialization\PresetFactory.cs" />
+    <Compile Include="SitecoreIntegrations\Serialization\PresetWorker.cs" />
+    <Compile Include="SitecoreIntegrations\Serialization\SingleEntry.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="SitecoreIntegrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
