@@ -13,14 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2223
+content-length: 3035
 
 <# 
   Sitecore PowerShell Remoting.
 
   Sample Usage:
   Set-SitecoreSessionConfiguration 'http://localhost' 'admin' 'b'
-  Execute-RemoteSitecoreScript { get-item master:\content\ } 
+  Execute-RemoteSitecoreScript { get-item master:\content\ } @{name = "value"}
 #>
 
 function Set-SitecoreSessionConfiguration {
@@ -38,8 +38,8 @@ function Set-SitecoreSessionConfiguration {
         [ValidateNotNullOrEmpty()]
         [string]$Password
     )
-    $URI = $SitecoreHost+"/Console/Services/RemoteAutomation.asmx";
-    $GLOBAL:SpeRemoteProxy = New-WebServiceProxy -Uri $URI -Class SitecorePS -Namespace webservice
+    $URI = $SitecoreHost + "/Console/Services/RemoteAutomation.asmx";
+    $GLOBAL:SpeRemoteProxy = New-WebServiceProxy -Uri $URI
     $GLOBAL:SpeRemoteUser = $User;
     $GLOBAL:SpeRemotePassword = $Password;
 }
@@ -47,36 +47,54 @@ function Set-SitecoreSessionConfiguration {
 function Execute-RemoteSitecoreScript {
     [CmdletBinding()]
     param(
-
-        [Parameter(Position=3, Mandatory=$true, ValueFromPipeline=$true)]
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
         [ValidateNotNullOrEmpty()]
-        [ScriptBlock]$Command
+        [ScriptBlock]$Command,
+        
+        [Parameter(Position=1, Mandatory=$true, ValueFromPipeline=$true)]
+		[ValidateNotNullOrEmpty()]
+        [Hashtable]$Params
     )
-        $reply = $GLOBAL:SpeRemoteProxy.ExecuteScriptBlock($GLOBAL:SpeRemoteUser,$GLOBAL:SpeRemotePassword,$Command);
-        $xmlString = $reply -replace "\n", "" -replace "\r",""
-        $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Deserializer")
-        $ctor = $type.getconstructor("instance,nonpublic", $null, @([xml.xmlreader]), $null)
-        $sr = new-object System.IO.StringReader $xmlString
-        $xr = new-object System.Xml.XmlTextReader $sr
-        $deserializer = $ctor.invoke($xr)
-        $done = $type.getmethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
-        $xmlstring | Out-File -FilePath C:\temp\result.xml
-        while (!$done.invoke($deserializer, @()))
-        {
-            try {
-                $type.InvokeMember("Deserialize", "InvokeMethod,NonPublic,Instance", $null, $deserializer, [object[]]@())
-            } catch [Exception] {
-                write-warning "Error while de-serializing string: $($error[0])"
-                break;
-            }
+	
+	$sb = New-Object System.Text.StringBuilder
+	$settings = New-Object System.Xml.XmlWriterSettings -Property @{CloseOutput = $true; Encoding = [System.Text.Encoding]::UTF8; Indent = $false; OmitXmlDeclaration = $true}
+    $xw = [System.Xml.XmlWriter]::Create($sb, $settings)
+    $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Serializer")
+    $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlWriter]), $null)
+    $serializer = $ctor.invoke($xw)
+	$method = $type.GetMethod("Serialize", "invokemethod,nonpublic,instance", $null, @([object]), @())
+    $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
+    $method.Invoke($serializer, @($Params));
+	$done.Invoke($serializer, @());
+    $cliXmlArgs = $sb.ToString();
+	$xw.Close()
+
+    $reply = $GLOBAL:SpeRemoteProxy.ExecuteScriptBlock($GLOBAL:SpeRemoteUser, $GLOBAL:SpeRemotePassword, $Command, $cliXmlArgs);
+	
+ 	$xmlString = $reply -replace "\n", "" -replace "\r",""
+    $sr = New-Object System.IO.StringReader $xmlString
+    $xr = New-Object System.Xml.XmlTextReader $sr
+    $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Deserializer")
+    $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlReader]), $null)
+    $deserializer = $ctor.Invoke($xr)
+	$method = $type.GetMethod("Deserialize", "nonpublic,instance", $null, @(), @())
+    $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
+    while (!$done.Invoke($deserializer, @()))
+    {
+        try {
+			$method.Invoke($deserializer, @())
+        } catch [Exception] {
+            write-warning "Error while de-serializing string: $($error[0])"
+            break;
         }
-		$xr.Close()
-		$sr.Dispose()
+    }
+	$xr.Close()
+	$sr.Dispose()
 }
 ----version----
 language: en
 version: 1
-revision: 6e708e22-0c51-4dd0-b2a0-753d67e31411
+revision: 7d1027db-2991-4b4d-9580-d644f91fa689
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -91,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6e708e22-0c51-4dd0-b2a0-753d67e31411
+7d1027db-2991-4b4d-9580-d644f91fa689
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131118T135750:635203798701342500
+20131212T153609:635224593699150391
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

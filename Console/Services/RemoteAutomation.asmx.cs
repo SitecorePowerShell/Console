@@ -63,7 +63,7 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
         [WebMethod]
-        public string ExecuteScriptBlock(string userName, string password, string script)
+        public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
@@ -80,13 +80,16 @@ namespace Cognifide.PowerShell.Console.Services
 
             using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
             {
+                scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
+                scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs");
                 scriptSession.ExecuteScriptPart(script + "| ConvertTo-CliXml");
 
                 return scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
                                 (current, next) => current + next);
             }
         }
+
         public class NameValue
         {
             public string Name { get; set; }
