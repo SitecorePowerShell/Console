@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using Sitecore.Caching;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Get", "Cache")]
     [OutputType(new[] {typeof (Cache)})]

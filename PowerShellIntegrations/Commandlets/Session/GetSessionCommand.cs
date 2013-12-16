@@ -2,7 +2,7 @@
 using Sitecore.Data.Indexing;
 using Sitecore.Web.Authentication;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Get", "Session")]
     [OutputType(new[] {typeof (Index)})]

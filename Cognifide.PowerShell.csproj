@@ -122,9 +122,11 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\ExecuteScriptCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetSessionCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\ImportFunctionCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetLayoutCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\ExecuteScriptCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetSessionCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\ImportFunctionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\IMessageWithResult.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\ShowApplicationMessage.cs" />
@@ -178,16 +180,16 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitsCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Analytics\SetAnalyticsProfileCardCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\DatabaseContextBaseCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetArchiveCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetCacheCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetDatabaseCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetIndexCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetItemByUriCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetItemTemplateCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetSearchIndexCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetUserAgent.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\GetUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\DatabaseContextBaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetArchiveCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetCacheCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetDatabaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetIndexCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemByUriCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemTemplateCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetSearchIndexCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetUserAgent.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseShellCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\DownloadFileCommand.cs" />
@@ -199,8 +201,8 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowInputCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowModalDialogCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowYesNoCancelCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\LoginUserCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\LogoutUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\LoginUserCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\LogoutUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\BasePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\ExportPackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\GetPackageCommand.cs" />
@@ -210,15 +212,15 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewFileSourceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewItemSourceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewPackageCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\PublishItemCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\RestartApplicationCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\PublishItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\RestartApplicationCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\DeserializeItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\SerializeItemCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\SetHostPropertyCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\SetHostPropertyCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Workflows\ExecuteWorkflowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Workflows\GetItemWorkflowEventCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Workflows\NewItemWorkflowEventCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\WrapItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\WrapItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\WriteLogCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\BufferSplitterCollection.cs" />
     <Compile Include="PowerShellIntegrations\Host\CommandCompletion.cs" />
@@ -447,6 +449,7 @@
     <Content Include="Console\Services\RemoteScriptCall.ashx" />
     <None Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <CallTarget Targets="DeployToWeb" Condition="$(SitecorePath) != ''" />

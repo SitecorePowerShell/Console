@@ -3,7 +3,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Set", "HostProperty")]
     public class SetHostPropertyCommand : BaseCommand

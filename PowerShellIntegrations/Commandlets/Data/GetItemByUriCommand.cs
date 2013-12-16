@@ -4,7 +4,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("Get", "ItemByUri")]
     [OutputType(new[] {typeof (Item)})]

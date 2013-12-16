@@ -4,7 +4,7 @@ using System.Management.Automation;
 using Sitecore.Data;
 using Sitecore.Data.Indexing;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
 #pragma warning disable 612, 618
     [Cmdlet("Get", "Index")]

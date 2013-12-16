@@ -164,9 +164,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return dateTimePicker;
             }
 
-            if (!string.IsNullOrEmpty(editor) && 
-                (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1 || 
-                (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)))
+            if (!string.IsNullOrEmpty(editor) &&
+                (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1 ||
+                 (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1) ||
+                 (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 Item item = null;
                 List<Item> items = null;
@@ -198,21 +199,33 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     multiList.Class += "  treePicker";
                     return multiList;
                 }
-                else
+
+                if (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    var treeList = new TreeList
+                    LookupEx lookup = new LookupEx
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                        Value = strValue,
-                        AllowMultipleSelection = true,
-                        DatabaseName = dbName,
                         Database = dbName,
+                        ItemID = (item != null ? item.ID.ToString() : "{11111111-1111-1111-1111-111111111111}"),
                         Source = variable["Source"] as string ?? "/sitecore",
-                        DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
+                        ItemLanguage = Sitecore.Context.Language.Name,
+                        Value = (item != null ? item.ID.ToString() : "{11111111-1111-1111-1111-111111111111}")
                     };
-                    treeList.Class += " treePicker";
-                    return treeList;
+                    lookup.Class += " textEdit";
+                    return lookup;
                 }
+                var treeList = new TreeList
+                {
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                    Value = strValue,
+                    AllowMultipleSelection = true,
+                    DatabaseName = dbName,
+                    Database = dbName,
+                    Source = variable["Source"] as string ?? "/sitecore",
+                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
+                };
+                treeList.Class += " treePicker";
+                return treeList;
             }
             if (type == typeof (Item) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
@@ -344,24 +357,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             foreach (Sitecore.Web.UI.HtmlControls.Control control in ValuePanel.Controls)
             {
                 if (control is Tabstrip)
-                {
                     foreach (WebControl tab in  control.Controls)
-                    {
                         if (tab is Tab)
-                        {
                             foreach (WebControl panel in tab.Controls)
-                            {
                                 if (panel is GridPanel)
-                                {
                                     foreach (Sitecore.Web.UI.HtmlControls.Control editor in panel.Controls)
                                     {
                                         GetEditorValue(editor, results);
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
                 GetEditorValue(control, results);
             }
             return results.ToArray();
@@ -424,6 +427,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     string[] ids = strIds.Split('|');
                     List<Item> items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
                     result.Add("Value", items);
+                }
+                else if (control is LookupEx)
+                {
+                    var lookup = control as LookupEx;
+                    result.Add("Value",
+                        !string.IsNullOrEmpty(lookup.Value)
+                            ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
+                            : null);
                 }
                 else if (control is Edit || control is Memo)
                 {

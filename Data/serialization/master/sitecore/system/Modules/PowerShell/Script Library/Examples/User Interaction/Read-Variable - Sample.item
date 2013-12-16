@@ -13,10 +13,12 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3235
+content-length: 4372
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
+$items2 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
+$items3 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
 $parent = get-item . |% { $_.Parent } 
 $result = Read-Variable -Parameters `
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
@@ -26,16 +28,23 @@ $result = Read-Variable -Parameters `
     @{ Name = "number"; Value=110; Title="I need this number too"; Tooltip="Tooltip for number"; Tab="Simple"}, 
     @{ Name = "fraction"; Value=1.1; Title="I just a bit over 1 of this"; Tooltip="Tooltip for float"; Tab="Simple"}, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"}, 
+    @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"}, 
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tab="Items"}, 
     @{ Name = "items"; Title="Bunch of Templates"; 
         Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
         editor="treelist"; Tab="Items"}, 
-    @{ Variable = get-variable "Parent"; Tab="Items" }, 
+    @{ Name = "items2"; Title="Bunch of Templates"; 
+        Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        editor="multilist"; Tab="More Items"}, 
+    @{ Name = "items3"; Title="Pick One Template"; 
+        Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+        editor="droplist"; Tab="More Items"}, 
+    @{ Variable = get-variable "Parent"; Tab="More Items" }, 
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"}, 
-    @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"} `
+    @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
+    @{ Name = "userOrRole"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"} `
     -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
     -Title "Initialise various variable types (with tabs)" -Width 500 -Height 500 -OkButtonName "Proceed" -CancelButtonName "Abort" 
-
 if($result -ne "ok")
 {
     Exit
@@ -48,10 +57,11 @@ $result = Read-Variable -Parameters `
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
     -Description "This Dialog shows less editors, it doesn't need tabs as there is less of the edited variables" `
-    -Title "Initialise various variable types (without tabs)" -Width 500 -Height 430 -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    -Title "Initialise various variable types (without tabs)" -Width 500 -Height 480 -OkButtonName "Proceed" -CancelButtonName "Abort" 
 
 "Variables from dialog:"
 '$from:      ' + $from
+'$fromDate:  ' + $fromDate
 '$item:      ' + $item.Paths.Path
 '$parent:    ' + $parent.Paths.Path
 '$silent:    ' + $silent
@@ -61,13 +71,18 @@ $result = Read-Variable -Parameters `
 '$number:    ' + $number
 '$user:      ' + $user
 '$role:      ' + $role
+'$userOrRole:' + $userOrRole
 '$fraction:  ' + $fraction
 '$items: '
 $items
+'$items2: '
+$items2
+'$items3: '
+$items3
 ----version----
 language: en
 version: 1
-revision: 60b07f21-6d34-4052-b94f-ae26fc913cb7
+revision: b9adde4b-6fd6-4fb9-844b-47b77fed998d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -82,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-60b07f21-6d34-4052-b94f-ae26fc913cb7
+b9adde4b-6fd6-4fb9-844b-47b77fed998d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131029T232355:635186858355729609
+20131215T200028:635227344288010390
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

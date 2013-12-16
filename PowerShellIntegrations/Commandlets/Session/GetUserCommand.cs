@@ -3,7 +3,7 @@ using System.Management.Automation;
 using Sitecore;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Get", "User", DefaultParameterSetName = "From Name")]
     [OutputType(new[] {typeof (User)})]

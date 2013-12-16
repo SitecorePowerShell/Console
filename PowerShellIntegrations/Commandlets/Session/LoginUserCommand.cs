@@ -7,7 +7,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel.License;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Login", "User")]
     public class LoginUserCommand : BaseCommand

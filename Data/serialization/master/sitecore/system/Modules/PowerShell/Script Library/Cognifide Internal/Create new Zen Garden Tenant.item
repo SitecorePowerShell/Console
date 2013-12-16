@@ -13,17 +13,20 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4376
+content-length: 5059
 
 Write-Progress -Activity "Asking for parameters"
+$validThemes = get-item "master:/media library/themes/Balsamiq v2"
 $result = Read-Variable -Parameters `
-    @{ Name = "tenantName"; Value="New tenant"; Title="Tenant Name"}, `
-    @{ Name = "marketName"; Value="int"; Title="Market Name"}, `
-    @{ Name = "removeExistingTenant"; Value=$false; Title="Remove current tenant/market & theme if exists"}, `
-    @{ Name = "hostName"; Value="newtenant"; Title="Host name"}, `
-    @{ Name = "createNewTheme"; Value=$true; Title="Create new theme"} `
+    @{ Name = "tenantName"; Value="New tenant"; Title="Tenant Name"; Tab="General"}, `
+    @{ Name = "marketName"; Value="int"; Title="Market Name"; Tab="General"}, `
+    @{ Name = "removeExistingTenant"; Value=$false; Title="Remove current tenant/market & theme if exists"; Tab="General"}, `
+    @{ Name = "hostName"; Value="newtenant"; Title="Host name"; Tab="General"}, `
+    @{ Name = "createNewTheme"; Value=$true; Title="Create new theme"; Tab="Theme"}, `
+    @{ Name = "validThemes"; Source="DataSource=/sitecore/media library/themes&DatabaseName=master&IncludeTemplatesForDisplay=ThemeTemplate&IncludeTemplatesForSelection=ThemeTemplate&ExcludeItemsForDisplay=/sitecore/media library/themes";
+        editor="treelist"; Title="themes usable by this market"; Tab="Theme" } `
     -Description "This script will create a new fully functional tenant within your Zen Garden enabled Sitecore instance." `
-    -Title "Create a new Zen Garden tenant" -Width 500 -Height 420 `
+    -Title "Create a new Zen Garden tenant" -Width 500 -Height 480 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
 if($result -ne "ok")
@@ -110,10 +113,18 @@ if($createNewTheme)
     $theme = Get-Item "master:\media library\themes\$seoTenantName"
     $theme."__Display name" = $tenantName
     $designs.ZenGardenTheme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=$($theme.ID)"
+    $validThemes = $validThemes + $theme
 } else {
     # Set default theme to Balsamiq
     $designs.ZenGardenTheme = "{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}=%7b5BC33F0E-A0F8-434E-9808-E32C6BABF76E%7d"
 }
+
+# Assign valid themes to the tenant
+$themeIds = ""
+foreach($validTheme in $validThemes){
+    $themeIds = $themeIds + "|" + $validTheme.ID
+}
+$settings.Themes = $themeIds.Trim('|');
 
 $mediaPath = New-Item -Path 'master:\media library' -Name $tenantName -ItemType "System/Media/Media folder"
 
@@ -122,7 +133,7 @@ Write-Host "Done! Don't forget to publish the templates, theme and the tenant!"
 ----version----
 language: en
 version: 1
-revision: 28f50109-afe5-4f29-9960-e011536cb8c4
+revision: fd60dba0-8a1e-458f-9420-6b1551a9d9bb
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -137,14 +148,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-28f50109-afe5-4f29-9960-e011536cb8c4
+fd60dba0-8a1e-458f-9420-6b1551a9d9bb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130928T025621:635159337814584609
+20131119T133209:635204647296093125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

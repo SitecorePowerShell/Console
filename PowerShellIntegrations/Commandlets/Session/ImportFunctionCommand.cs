@@ -5,7 +5,7 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Sitecore;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
     [Cmdlet("Import", "Function")]
     [OutputType(new[] {typeof (object)})]

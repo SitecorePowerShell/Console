@@ -117,7 +117,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         if (resultValue is List<Item>)
                         {
                             resultValue =
-                                (resultValue as List<Item>).Select(p => ItemShellExtensions.GetPsObject(SessionState, p))
+                                (resultValue as List<Item>).Where(p => p != null)
+                                    .Select(p => ItemShellExtensions.GetPsObject(SessionState, p))
                                     .ToArray();
                         }
                         SessionState.PSVariable.Set((string) result["Name"], resultValue);

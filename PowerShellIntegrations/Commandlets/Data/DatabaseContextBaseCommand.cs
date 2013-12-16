@@ -3,7 +3,7 @@ using System.Management.Automation;
 using Sitecore.Configuration;
 using Sitecore.Data;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     public abstract class DatabaseContextBaseCommand : BaseCommand
     {

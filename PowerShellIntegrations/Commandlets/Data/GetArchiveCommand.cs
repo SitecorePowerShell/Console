@@ -4,7 +4,7 @@ using System.Management.Automation;
 using Sitecore.Data;
 using Sitecore.Data.Archiving;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("Get", "Archive")]
     [OutputType(new[] {typeof (Archive)})]
