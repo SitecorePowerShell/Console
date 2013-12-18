@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1177
+content-length: 1301
 
 # What field types and in what numbers do you use in your solution?
 #
@@ -32,8 +32,11 @@ if($result -ne "ok")
     Close-Window
     Exit
 }
-get-childitem $item.ProviderPath -recurse | `
-  where-object { $_.TemplateName -eq "Template Field" } |  `
+
+# We need to change location to a Sitecore database do that PowerShell can recognize -Query as a valid parameter
+cd "$($item.Database.Name):\"
+
+get-item . -query "fast:$($item.Paths.Path)//*[@@templatename=`"Template Field`"]" | 
   group-object Type | `
   sort count -descending |
         Show-ListView -Property @{Name="Field Type"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.Count}} `
@@ -51,7 +54,7 @@ Control/32x32/multi_controls_b.png
 ----version----
 language: en
 version: 1
-revision: b10fc202-bb49-4b3c-8cb9-7e5bcb5220d7
+revision: be850eef-b268-411a-8ac0-ef073aae836e
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -73,14 +76,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b10fc202-bb49-4b3c-8cb9-7e5bcb5220d7
+be850eef-b268-411a-8ac0-ef073aae836e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130912T011851:635145455315663516
+20131218T175140:635229859003278125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
