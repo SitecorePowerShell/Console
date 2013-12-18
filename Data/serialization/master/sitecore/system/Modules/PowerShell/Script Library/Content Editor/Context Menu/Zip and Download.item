@@ -26,7 +26,7 @@ content-length: 276
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1894
+content-length: 1893
 
 function ZipItems( $zipArchive, $sourcedir )
 {
@@ -44,7 +44,7 @@ function ZipItems( $zipArchive, $sourcedir )
       $mediaItem = New-Object "Sitecore.Data.Items.MediaItem" $item;
       $mediaStream = $mediaItem.GetMediaStream();
       $fileName = Resolve-Path -Path $item.ProviderPath -Relative
-      $fileName = "$fileName.$($item.Extension)" -replace "\\","/" -replace "./", "/"
+      $fileName = "$fileName.$($item.Extension)".Replace("\","/").Replace("./","/");
       "Added: $fileName"
       Write-Progress -Activity "Zipping Files " -CurrentOperation "Adding $fileName" -Status "$i out of $($items.Length)" -PercentComplete ($i *100 / $items.Length)
       $partUri = New-Object System.Uri($fileName, [System.UriKind]::Relative)
@@ -89,7 +89,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: e9807de1-29dc-4cc8-9b8f-84ddcca15df7
+revision: c86e8f70-1256-48de-b7c2-5d56d2362546
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -104,14 +104,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e9807de1-29dc-4cc8-9b8f-84ddcca15df7
+c86e8f70-1256-48de-b7c2-5d56d2362546
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130818T003220:635123827407575390
+20131218T165412:635229824527379687
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
