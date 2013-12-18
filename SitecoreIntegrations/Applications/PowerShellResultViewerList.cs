@@ -214,7 +214,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         var label = string.Empty;
                         if (p is Hashtable)
                         {
-                            label = ((string) (p as Hashtable)["Label"]).ToLower(CultureInfo.InvariantCulture);
+                            Hashtable h = p as Hashtable;
+                            if(h.ContainsKey("Name"))
+                            {
+                                if (!h.ContainsKey("Label"))
+                                {
+                                    h.Add("Label",h["Name"]);
+                                }
+                            }
+                            label = h["Label"].ToString().ToLower(CultureInfo.InvariantCulture);
                         }
                         else
                         {
