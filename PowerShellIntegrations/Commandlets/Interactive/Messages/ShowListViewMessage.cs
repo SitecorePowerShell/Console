@@ -25,10 +25,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string InfoTitle { get; private set; }
         public string InfoDescription { get; private set; }
         public object[] Property { get; private set; }
-
+        public string SessionId { get; private set; }
+        public object ActionData { get; private set; }
 
         public ShowListViewMessage(List<ShowListViewCommand.SvlDataObject> data, int pageSize, string title, string icon,
-            string width, string height, bool modal, string infoTitle, string infoDescription, object[] property)
+            string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId, object actionData, object[] property)
         {
             Data = data;
             Title = title;
@@ -39,7 +40,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             Modal = modal;
             InfoTitle = infoTitle;
             InfoDescription = infoDescription;
+            SessionId = sessionId;
             Property = property;
+            ActionData = actionData;
         }
 
         public void Execute()

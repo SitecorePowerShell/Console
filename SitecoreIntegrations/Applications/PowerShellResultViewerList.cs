@@ -209,6 +209,19 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 List<object> results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
                 session.SetVariable("resultSet", results);
                 string formatProperty = ListViewer.Data.Property
+                    .Where(p =>
+                    {
+                        var label = string.Empty;
+                        if (p is Hashtable)
+                        {
+                            label = ((string) (p as Hashtable)["Label"]).ToLower(CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            label = p.ToString().ToLower(CultureInfo.InvariantCulture);
+                        }
+                        return label != "icon" && label != "__icon";
+                    })
                     .Select(p =>
                     {
                         if (p is Hashtable)
@@ -219,6 +232,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         return "@{Label=\"" + p + "\";Expression={$_." + p + "}},";
                     }).Aggregate((a, b) => a + b).TrimEnd(',');
                 session.SetVariable("formatProperty", formatProperty);
+                session.SetVariable("title", ListViewer.Data.Title);
+                session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
+                session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
+                session.SetVariable("actionData", ListViewer.Data.ActionData);
                 string result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }

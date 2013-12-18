@@ -502,8 +502,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
             var currentSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
-            currentSession.Abort();
-            currentSession.Dispose();
+            if (currentSession != null)
+            {
+                currentSession.Abort();
+                currentSession.Dispose();
+            }
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
             UpdateRibbon();

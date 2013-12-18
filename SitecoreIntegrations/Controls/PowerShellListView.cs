@@ -42,6 +42,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             set { SetViewStateInt("FilteredCount", value); }
         }
 
+        public string SessionId
+        {
+            get { return GetViewStateString("SessionId"); }
+            set { SetViewStateString("SessionId", value); }
+        }
+
         public ShowListViewMessage Data
         {
             get { return (ShowListViewMessage) HttpContext.Current.Session[ContextId]; }
@@ -95,6 +101,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 : Data.Data.OrderByDescending(item => item.Display[columnName], ListViewComparer.Instance);
             Data.Data = sorted.ToList();
             Refresh();
+        }
+
+        /// <summary>
+        ///     Raises the load event.
+        /// </summary>
+        /// <param name="e">
+        ///     The <see cref="T:System.EventArgs" /> instance containing the event data.
+        /// </param>
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (Sitecore.Context.ClientPage.IsEvent)
+                return;
+            Sitecore.Context.ClientPage.ClientResponse.Timer("keepAlive", 1000);
+
         }
 
         public override void Refresh()

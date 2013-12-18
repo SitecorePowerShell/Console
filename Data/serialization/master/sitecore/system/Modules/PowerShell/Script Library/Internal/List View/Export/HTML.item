@@ -13,14 +13,23 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 323
+content-length: 1179
 
 $dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $csvFile  = "$dataFolder\report-$datetime.htm"
-
+$head = '<style>'+
+    'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
+    'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
+    'p {width:100%;font-family: "Proxima Nova Regular", "Helvetica Neue", Calibri, "Droid Sans", Helvetica, Arial, sans-serif; font-size: 18px}'+
+    'table {font-size:12px; border-collapse:collapse; border:1px solid #69c; margin:20px;}'+
+    'th{font-weight:normal; font-size:14px; color:#039; border-bottom:1px dashed #69c; padding:12px 17px;}'+
+    'td{color:#668;padding:7px 17px;}'+
+    'tbody tr:hover td{color:#339;background:#d0dafd;}'+
+    '</style>'
+$body = "<h1>$infoTitle</h1><p>$infoDescription</p>"
 $format = & ([scriptblock]::Create($formatProperty))        
-[psCustomObject]$resultSet | Select-Object -Property $format | ConvertTo-Html | Out-File $csvFile
+[psCustomObject]$resultSet | Select-Object -Property $format | ConvertTo-Html -head $head -body $body -Title $title | % { [System.Web.HttpUtility]::HtmlDecode($_) } | Out-File $csvFile
 $csvFile
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -32,7 +41,7 @@ WordProcessing/32x32/imp_exp_html.png
 ----version----
 language: en
 version: 1
-revision: 19295795-495d-4304-b417-a8800dbdd629
+revision: cebeb0d6-5e9a-4681-bf69-42c8a8c1af77
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-19295795-495d-4304-b417-a8800dbdd629
+cebeb0d6-5e9a-4681-bf69-42c8a8c1af77
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130922T222846:635154857267704453
+20131218T113927:635229635678668906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

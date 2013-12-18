@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
+using System.Web.Script.Services;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
@@ -33,6 +35,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         [Parameter]
         public SwitchParameter Modal { get; set; }
+
+        [Parameter]
+        public object ActionData { get; set; }
+
+        //[Parameter]
+        public SwitchParameter ActionsInSession { get; set; }
 
         protected override void BeginProcessing()
         {
@@ -103,8 +111,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 if (Data != null)
                 {
                     PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results",
-                        Icon,
-                        WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, Property));
+                        Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, 
+                        ActionsInSession ? (Host as ScriptingHost).SessionId : "",
+                        ActionData, Property));
                     FlushMessages();
                 }
                 SessionState.PSVariable.Remove("$ScPsSlvProperties");

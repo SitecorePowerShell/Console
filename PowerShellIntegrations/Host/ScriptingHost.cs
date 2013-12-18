@@ -41,6 +41,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Thread.CurrentThread.CurrentUICulture;
 
         private readonly ScriptingHostUserInterface ui;
+        private string sessionId;
 
         /// <summary>
         ///     Initializes a new instance of the MyHost class. Keep
@@ -89,6 +90,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public override Guid InstanceId
         {
             get { return myId; }
+        }
+
+        /// <summary>
+        ///     This implementation always returns the GUID allocated at
+        ///     instantiation time.
+        /// </summary>
+        public string SessionId
+        {
+            get { return sessionId; }
+            internal set { sessionId = value; }
         }
 
         /// <summary>

@@ -35,7 +35,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private Pipeline pipeline;
         public static Version PsVersion { get; private set; }
 
-        public string ID { get; internal set; }
+        public string ID
+        {
+            get { return host.SessionId; }
+            internal set { host.SessionId = value; }
+        }
 
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
