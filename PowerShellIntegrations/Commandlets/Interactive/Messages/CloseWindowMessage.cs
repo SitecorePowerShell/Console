@@ -1,6 +1,8 @@
 ﻿using System;
+using Cognifide.PowerShell.SitecoreIntegrations.Applications;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Shell.Framework;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages
 {
@@ -12,7 +14,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         /// </summary>
         protected override void ShowUI()
         {
-            Context.ClientPage.ClientResponse.CloseWindow();
+            if (!(Context.ClientPage.CodeBeside is PowerShellIse))
+            {
+                Context.ClientPage.ClientResponse.CloseWindow();
+                Windows.Close();
+            }
         }
     }
 }
