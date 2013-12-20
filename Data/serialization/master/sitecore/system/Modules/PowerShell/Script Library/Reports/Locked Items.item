@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1885
+content-length: 1878
 
 $item = Get-Item -Path master:\content\
 
@@ -42,7 +42,7 @@ if($user) {
     $owner = $user.Replace("\","\\")
     $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -match "owner=""$owner""" }
 } else{
-    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock }
+    $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -and (-not ($_.__Lock -match "<r />"))}
 }
 
 if($since.Year -ne 1) {
@@ -71,7 +71,7 @@ Applications/32x32/document_lock.png
 ----version----
 language: en
 version: 1
-revision: 0f62aeea-1585-4bd8-93a3-22eae6304519
+revision: 13a95b30-8745-4740-bc4b-c20890421539
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -86,14 +86,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0f62aeea-1585-4bd8-93a3-22eae6304519
+13a95b30-8745-4740-bc4b-c20890421539
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131006T135628:635166645885671484
+20131219T004613:635230107732389375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
