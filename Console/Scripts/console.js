@@ -30,7 +30,15 @@ extend(cognifide, 'powershell');
 
     var tabCompletions = null;
 
-    function guidGenerator() {
+    function getParam(name) {
+        if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+            return decodeURIComponent(name[1]);
+    }
+    function getSessionId() {
+        var id = getParam("id");
+        if (id !== undefined) {
+            return id;
+        }
         var s4 = function() {
             return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
         };
@@ -171,7 +179,7 @@ extend(cognifide, 'powershell');
         });
     }
 
-    var guid = guidGenerator();
+    var guid = getSessionId();
 
     $(function() {
 
