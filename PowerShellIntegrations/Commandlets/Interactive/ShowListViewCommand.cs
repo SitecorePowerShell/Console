@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public object ActionData { get; set; }
 
-        //[Parameter]
+        [Parameter]
         public SwitchParameter ActionsInSession { get; set; }
 
         protected override void BeginProcessing()

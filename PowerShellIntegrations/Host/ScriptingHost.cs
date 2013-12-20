@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
@@ -8,14 +9,9 @@ using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
-    /// <summary>
-    ///     This is a sample implementation of the PSHost abstract class for
-    ///     console applications. Not all members are implemented. Those that
-    ///     are not implemented throw a NotImplementedException exception or
-    ///     return nothing.
-    /// </summary>
-    internal class ScriptingHost : PSHost, IHostSupportsInteractiveSession
+    public class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
+
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
@@ -24,7 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private readonly Stack<Runspace> pushedRunspaces;
         private readonly RunspaceConfiguration runspaceConfiguration;
         private Runspace runspace;
-
+        private readonly ScriptingHostPrivateData privateData;
 
         /// <summary>
         ///     The culture information of the thread that created
@@ -53,6 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             this.runspaceConfiguration = runspaceConfiguration;
             ui = new ScriptingHostUserInterface(settings);
             pushedRunspaces = new Stack<Runspace>();
+            privateData = new ScriptingHostPrivateData(this);
         }
 
         /// <summary>
@@ -102,6 +99,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             internal set { sessionId = value; }
         }
 
+        
         /// <summary>
         ///     Return a string that contains the name of the host implementation.
         ///     Keep in mind that this string may be used by script writers to
@@ -137,6 +135,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public override Version Version
         {
             get { return GetType().Assembly.GetName().Version; }
+        }
+
+        public override PSObject PrivateData
+        {
+            get { return new PSObject(privateData); }
         }
 
         /// <summary>

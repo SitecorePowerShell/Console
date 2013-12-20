@@ -147,6 +147,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\GetPresetCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetScriptSession.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -229,6 +230,7 @@
     <Compile Include="PowerShellIntegrations\Host\OutputLine.cs" />
     <Compile Include="PowerShellIntegrations\Host\OutputLineType.cs" />
     <Compile Include="PowerShellIntegrations\Host\ScriptingHost.cs" />
+    <Compile Include="PowerShellIntegrations\Host\ScriptingHostPrivateData.cs" />
     <Compile Include="PowerShellIntegrations\Host\ScriptingHostRawUserInterface.cs" />
     <Compile Include="PowerShellIntegrations\Host\ScriptingHostUserInterface.cs" />
     <Compile Include="PowerShellIntegrations\Host\ScriptSession.cs" />

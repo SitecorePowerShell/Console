@@ -303,8 +303,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
 
-            ScriptSession scriptSession =
-                ScriptSessionManager.GetSession(scriptItem[ScriptItemFieldNames.PersistentSessionId]);
+            string sessionId = string.IsNullOrEmpty(ListViewer.SessionId)
+                ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
+                : ListViewer.SessionId;
+            ScriptSession scriptSession = ScriptSessionManager.GetSession(sessionId);
 
             String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
@@ -316,6 +318,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }).ToList();
             scriptSession.SetVariable("resultSet", results);
             scriptSession.SetVariable("formatProperty", ListViewer.Data.Property);
+            scriptSession.SetVariable("actionData", ListViewer.Data.ActionData);
 
             var parameters = new object[]
             {
@@ -324,7 +327,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,
-                string.IsNullOrEmpty(scriptItem[ScriptItemFieldNames.PersistentSessionId]));
+                string.IsNullOrEmpty(sessionId));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
         }
