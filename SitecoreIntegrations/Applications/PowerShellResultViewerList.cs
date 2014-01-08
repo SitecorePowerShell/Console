@@ -303,9 +303,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
 
-            string sessionId = string.IsNullOrEmpty(ListViewer.SessionId)
+            string sessionId = string.IsNullOrEmpty(ListViewer.Data.SessionId)
                 ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
-                : ListViewer.SessionId;
+                : ListViewer.Data.SessionId;
             ScriptSession scriptSession = ScriptSessionManager.GetSession(sessionId);
 
             String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
@@ -314,7 +314,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             List<object> results = ListViewer.SelectedItems.Select(p =>
             {
                 int id = Int32.Parse(p.Value);
-                return ListViewer.Data.Data[id].Original;
+                return ListViewer.Data.Data.Where(d => d.Id == id).Select(d => d.Original).First();
             }).ToList();
             scriptSession.SetVariable("resultSet", results);
             scriptSession.SetVariable("formatProperty", ListViewer.Data.Property);
