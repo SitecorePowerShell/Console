@@ -112,7 +112,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 {
                     PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription, 
-                        ActionsInSession ? (Host as ScriptingHost).SessionId : "",
+                        ActionsInSession ? (Host.PrivateData.BaseObject as ScriptingHostPrivateData).SessionId : "",
                         ActionData, Property));
                     FlushMessages();
                 }
