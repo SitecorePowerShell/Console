@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
                 var id =(Host.PrivateData.BaseObject as ScriptingHostPrivateData).SessionId;
                 if (!string.IsNullOrEmpty(id))
                 {
-                    WriteObject(ScriptSessionManager.GetAll().Where(s => id.Equals(s.ID, StringComparison.OrdinalIgnoreCase)));
+                    WriteObject(ScriptSessionManager.GetAll().Where(s => id.Equals(s.ID, StringComparison.OrdinalIgnoreCase)),true);
                 }
             }
             else if (!string.IsNullOrEmpty(Id))

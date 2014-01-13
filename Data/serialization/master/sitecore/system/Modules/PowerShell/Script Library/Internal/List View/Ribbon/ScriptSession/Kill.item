@@ -29,11 +29,15 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 58
+content-length: 159
 
+Send-SheerMessage -Name "pslv:update"
 foreach($session in $resultSet){
+    $allData = $allData | ?{ $_.Original.Id -ne $session.Id}
     $session.Dispose();
 }
+
+
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -44,7 +48,7 @@ People/16x16/skull.png
 ----version----
 language: en
 version: 1
-revision: c4c2ca15-d3fa-4d7e-a65a-d7cc48b98bc6
+revision: 8ff78a2d-bbae-4b96-a2a7-b148dc187ae2
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -59,14 +63,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c4c2ca15-d3fa-4d7e-a65a-d7cc48b98bc6
+8ff78a2d-bbae-4b96-a2a7-b148dc187ae2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131218T002726:635229232467665312
+20140110T150236:635249629564173281
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

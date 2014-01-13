@@ -30,9 +30,18 @@
             </Border>
           </GridPanel>
         </Border>
+        <Border Id="LvProgressOverlay" Visible="false">
+          <Border>
+            <p>
+              <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+            </p>
+          </Border>
+        </Border>
+
         <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
           <PowerShellListView ID="ListViewer" Width="100%" Height="100%" Background="white" Multiselect="true" runat="server"></PowerShellListView>
         </GridPanel>
+
         <Border ID="StatusBar">
           <Border class="status-bar-panel status-bar-left">
             Results: <Literal ID="ItemCount" Text=""/>

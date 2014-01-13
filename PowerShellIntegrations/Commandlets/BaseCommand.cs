@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Web;
+using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -48,6 +49,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                     "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.");
             }
         }
+
+        protected ScriptingHostPrivateData HostData { get { return (Host.PrivateData.BaseObject as ScriptingHostPrivateData); } }
 
         protected string CurrentPath
         {

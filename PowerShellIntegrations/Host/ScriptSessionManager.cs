@@ -46,9 +46,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
         {
             // sessions with no persistent ID, are just created new every time
-            if (string.IsNullOrEmpty(persistentId))
+            bool autoDispose = string.IsNullOrEmpty(persistentId);
+            if(autoDispose)
             {
-                return new ScriptSession(applicanceType, personalizedSettings);
+                persistentId = Guid.NewGuid().ToString();
+                //return new ScriptSession(applicanceType, personalizedSettings);
             }
 
             lock (sessions)
@@ -60,6 +62,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
                 var session = new ScriptSession(applicanceType, personalizedSettings);
                 session.ID = persistentId;
+                session.AutoDispose = autoDispose;
                 HttpRuntime.Cache[sessionIdPrefix + persistentId] = session;
                 sessions.Add(persistentId);
                 session.ID = persistentId;

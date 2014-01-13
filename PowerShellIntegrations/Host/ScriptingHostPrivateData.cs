@@ -13,7 +13,15 @@
         {
             ScriptingHost = host;
         }
+
         public ScriptingHost ScriptingHost { private set; get; }
         public string SessionId { get { return ScriptingHost.SessionId; } }
+        public bool AutoDispose { get { return ScriptingHost.AutoDispose; } }
+
+        public bool CloseRunner
+        {
+            get { return ScriptingHost.CloseRunner; }
+            internal set { ScriptingHost.CloseRunner = value; }
+        }
     }
 }

@@ -403,12 +403,33 @@ a.ps-link {
     width: 50%;
 }
 
+#LvProgressOverlay {
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+#LvProgressOverlay #progressbar {
+    margin-top: 8px;
+    width:100%
+}
 #OperationProgress {
     padding-right: 30px;
     padding-left: 40px;
     margin: auto;
     margin-top: 30px;
     width: 90%;
+}
+
+#lvProgressbar {
+    background-color: #E6E6E6;
+    border: #CCCCCC 1px solid;
+    margin-top: 4px;
+}
+
+#lvProgressbar div {
+    border: 1px solid #8CCC98/*{borderColorHighlight}*/;
+    background: #06B025;
+    height: 20px;
 }
 
 #progressbar {

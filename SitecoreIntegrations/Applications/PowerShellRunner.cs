@@ -189,6 +189,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     JobContext.Flush();
                 }
             }
+            finally
+            {
+                if (scriptSession.CloseRunner)
+                {
+                    scriptSession.Dispose();
+                }
+            }
         }
 
         [HandleMessage("psr:updateresults", true)]
@@ -218,6 +225,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             string scriptDb = WebUtil.GetQueryString("scriptDb");
             ScriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
             PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
+            if (scriptSession.CloseRunner)
+            {
+                scriptSession.CloseRunner = false;
+                Context.ClientPage.ClientResponse.CloseWindow();
+            }
             if (string.IsNullOrEmpty(PersistentId))
             {
                 scriptSession.Dispose();

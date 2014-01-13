@@ -33,7 +33,20 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private bool disposed;
         private bool initialized;
         private Pipeline pipeline;
+
         public static Version PsVersion { get; private set; }
+
+        public bool AutoDispose
+        {
+            get { return host.AutoDispose; }
+            internal set { host.AutoDispose = value; }
+        }
+
+        public bool CloseRunner
+        {
+            get { return host.CloseRunner; }
+            internal set { host.CloseRunner = value; }
+        }
 
         public string ID
         {
@@ -94,15 +107,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public ApplicationSettings Settings { get; private set; }
 
-        public OutputBuffer Output
-        {
-            get { return host.Output; }
-        }
+        public OutputBuffer Output { get { return host.Output; } }
 
-        public string CurrentLocation
-        {
-            get { return runspace.SessionStateProxy.Path.CurrentLocation.Path; }
-        }
+        public string CurrentLocation { get { return runspace.SessionStateProxy.Path.CurrentLocation.Path; } }
 
         public string ApplianceType { get; set; }
 

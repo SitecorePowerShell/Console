@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Management.Automation;
+using System.Text;
 using System.Web;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
@@ -39,6 +42,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal Description;
         protected GridPanel InfoPanel;
         protected ThemedImage InfoIcon;
+        protected Border LvProgressOverlay;
+        protected Literal Progress;
 
         public string ParentFrameName
         {
@@ -52,11 +57,60 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         /// <value>
         ///     The item ID.
         /// </value>
-        public static string ScriptItemId
+        public string ScriptItemId
         {
             get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemID"]); }
             set { Context.ClientPage.ServerProperties["ItemID"] = value; }
         }
+
+        
+        /// <summary>
+        ///     Gets or sets the item ID.
+        /// </summary>
+        /// <value>
+        ///     The item ID.
+        /// </value>
+        public string ScriptSessionId
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptSessionId"]); }
+            set { Context.ClientPage.ServerProperties["ScriptSessionId"] = value; }
+        }
+
+        [HandleMessage("ise:updateprogress", true)]
+        protected virtual void UpdateProgress(ClientPipelineArgs args)
+        {
+            LvProgressOverlay.Visible = true;
+            var sb = new StringBuilder();
+            sb.AppendFormat("<div>{0}</div>", args.Parameters["Activity"]);
+            sb.AppendFormat("<div>");
+            if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+            {
+                sb.AppendFormat("{0}, ", args.Parameters["StatusDescription"]);
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
+            {
+                int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                if (secondsRemaining > -1)
+                    sb.AppendFormat("<strong>{0:c} </strong> remaining, ", new TimeSpan(0, 0, secondsRemaining));
+            }
+
+            if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
+            {
+                sb.AppendFormat("{0}", args.Parameters["CurrentOperation"]);
+            }
+
+            sb.AppendFormat(".</div>");
+            if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
+            {
+                int percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                if (percentComplete > -1)
+                    sb.AppendFormat("<div id='lvProgressbar'><div style='width:{0}%'></div></div>", percentComplete);
+            }
+
+           Progress.Text = sb.ToString();
+        }
+
 
         /// <summary>
         ///     Raises the load event.
@@ -81,6 +135,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
             }
 
+            Monitor.JobFinished += MonitorJobFinished;
+            Monitor.JobDisappeared += MonitorJobFinished;
+
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -88,8 +145,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             ListViewer.ContextId = sid;
             ListViewer.Refresh();
             ChangePage(ListViewer.CurrentPage);
-            Monitor.JobFinished += MonitorJobFinished;
-            Monitor.JobDisappeared += MonitorJobFinished;
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
             string infoTitle = ListViewer.Data.InfoTitle;
@@ -114,14 +169,29 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         private void MonitorJobFinished(object sender, EventArgs e)
         {
-            UpdateRibbon();
+            LvProgressOverlay.Visible = false;
+
+            var session = ScriptSessionManager.GetSession(ScriptSessionId);
+            if (session.CloseRunner)
+            {
+                session.CloseRunner = false;
+                Windows.Close();
+            }
+            else
+            {
+                UpdateList(ScriptSessionId);
+                UpdateRibbon();
+            }
+            if (session.AutoDispose)
+            {
+                ScriptSessionManager.RemoveSession(session);
+            }
         }
 
         [HandleMessage("pslv:filter")]
         public void Filter()
         {
             ListViewer.Filter = Context.ClientPage.Request.Params["Input_Filter"];
-            ListViewer.Refresh();
             ChangePage(1);
         }
 
@@ -155,6 +225,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             switch (message.Name)
             {
+                case ("pslv:update"):
+                    UpdateList(message.Arguments["ScriptSession.Id"]);
+                    return;
                 case ("pslv:filter"):
                     Filter();
                     message.CancelBubble = true;
@@ -197,6 +270,35 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Dispatcher.Dispatch(message, context);
         }
 
+        public void UpdateList(string sessionId)
+        {
+            var session = ScriptSessionManager.GetSession(sessionId);
+            var varValue = GetBaseObject(session.GetVariable("allData"));
+            var newData = new List<ShowListViewCommand.DataObject>();
+            if (varValue is IEnumerable)
+            {
+                foreach (var val in varValue as IEnumerable)
+                {
+                    object newVal = GetBaseObject(val);
+                    if (newVal is ShowListViewCommand.DataObject)
+                    {
+                        newData.Add(newVal as ShowListViewCommand.DataObject);
+                    }
+                }
+            }
+            ListViewer.Data.Data = newData;
+            ListViewer.Refresh();
+        }
+
+        private object GetBaseObject(object psObject)
+        {
+            while (psObject is PSObject)
+            {
+                psObject = ((PSObject) psObject).ImmediateBaseObject;
+            }
+            return psObject;
+        }
+
         private void ExportResults(Message message)
         {
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
@@ -206,40 +308,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
-                List<object> results = ListViewer.GetFilteredItems().Select(p => p.Original).ToList();
+                List<object> results = ListViewer.FilteredItems.Select(p => p.Original).ToList();
                 session.SetVariable("resultSet", results);
-                string formatProperty = ListViewer.Data.Property
-                    .Where(p =>
-                    {
-                        var label = string.Empty;
-                        if (p is Hashtable)
-                        {
-                            Hashtable h = p as Hashtable;
-                            if(h.ContainsKey("Name"))
-                            {
-                                if (!h.ContainsKey("Label"))
-                                {
-                                    h.Add("Label",h["Name"]);
-                                }
-                            }
-                            label = h["Label"].ToString().ToLower(CultureInfo.InvariantCulture);
-                        }
-                        else
-                        {
-                            label = p.ToString().ToLower(CultureInfo.InvariantCulture);
-                        }
-                        return label != "icon" && label != "__icon";
-                    })
-                    .Select(p =>
-                    {
-                        if (p is Hashtable)
-                        {
-                            var v = p as Hashtable;
-                            return "@{Label=\"" + v["Label"] + "\";Expression={" + v["Expression"] + "}},";
-                        }
-                        return "@{Label=\"" + p + "\";Expression={$_." + p + "}},";
-                    }).Aggregate((a, b) => a + b).TrimEnd(',');
-                session.SetVariable("formatProperty", formatProperty);
+                session.SetVariable("formatProperty", ListViewer.Data.FormatProperty);
                 session.SetVariable("title", ListViewer.Data.Title);
                 session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
                 session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
@@ -251,14 +322,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         private void ChangePage(int newPage)
         {
-            int count = ListViewer.FilteredCount;
-            int pageSize = ListViewer.Data.PageSize;
-            int pageCount = count/pageSize + ((count%pageSize > 0) ? 1 : 0);
-            newPage = Math.Min(Math.Max(1, newPage), pageCount);
             ListViewer.CurrentPage = newPage;
-            ItemCount.Text = count.ToString(CultureInfo.InvariantCulture);
+            ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
-            PageCount.Text = (pageCount).ToString(CultureInfo.InvariantCulture);
+            PageCount.Text = (ListViewer.PageCount).ToString(CultureInfo.InvariantCulture);
             SheerResponse.Eval(string.Format("updateStatusBarCounters({0},{1},{2});", ItemCount.Text, CurrentPage.Text,
                 PageCount.Text));
             ListViewer.Refresh();
@@ -302,7 +369,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
-
             string sessionId = string.IsNullOrEmpty(ListViewer.Data.SessionId)
                 ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
                 : ListViewer.Data.SessionId;
@@ -317,8 +383,11 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 return ListViewer.Data.Data.Where(d => d.Id == id).Select(d => d.Original).First();
             }).ToList();
             scriptSession.SetVariable("resultSet", results);
-            scriptSession.SetVariable("formatProperty", ListViewer.Data.Property);
+            scriptSession.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
+            scriptSession.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
             scriptSession.SetVariable("actionData", ListViewer.Data.ActionData);
+            scriptSession.SetVariable("allData", ListViewer.Data.Data);
+            ScriptSessionId = scriptSession.ID;
 
             var parameters = new object[]
             {
@@ -326,8 +395,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 script
             };
 
-            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,
-                string.IsNullOrEmpty(sessionId));
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,false);
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
         }

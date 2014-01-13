@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
 {
     public class ShowApplicationMessage : IMessage
     {
-        public List<ShowListViewCommand.SvlDataObject> Data { get; set; }
+        public List<BaseListViewCommand.DataObject> Data { get; set; }
         public Hashtable Parameters { get; set; }
         public string AppName { get; private set; }
         public string Title { get; set; }

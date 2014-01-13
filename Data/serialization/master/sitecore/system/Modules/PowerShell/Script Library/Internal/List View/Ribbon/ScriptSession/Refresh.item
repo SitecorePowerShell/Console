@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {7760775F-0CE7-4A01-A4E5-1AB9103FFFD3}
+id: {E069898E-AF58-4ABD-AD68-C277BD54509A}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Toolbox/PowerShell Background Session Manager
-parent: {344414EA-DBD4-488A-BDBC-BD9685C66E39}
-name: PowerShell Background Session Manager
+path: /sitecore/system/Modules/PowerShell/Script Library/Internal/List View/Ribbon/ScriptSession/Refresh
+parent: {A29C833B-50C6-439D-B65F-8B894A37E824}
+name: Refresh
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,36 +13,40 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 655
+content-length: 546
 
 $sessions = Get-ScriptSession
 $current = Get-ScriptSession -Current
 if ($sessions.Count -gt 1) { 
     $sessions | ? { $current.ID -ne $_.ID } |
-    Show-ListView -Property `
+    Update-ListView <#-Property `
         @{Label="Icon"; Expression={"powershell/32x32/powershell.png" } }, 
         ID, 
         @{Label="Application"; Expression={$_.ApplianceType} }, 
         @{Label="Current Location"; Expression={$_.CurrentLocation} }, 
-        @{Label="Type"; Expression={$_.GetType()} } `
-        -Title "PowerShell Background Session Manager" `
-        -Icon "Software/32x32/console.png"
+        @{Label="Type"; Expression={$_.GetType()} }#>
 } else {
     Show-Alert "There are no PowerShell sessions running in the background."
 }
-Close-Window
+
+----field----
+field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
+name: PersistentSessionId
+key: persistentsessionid
+content-length: 0
+
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 26
+content-length: 30
 
-Software/32x32/console.png
+Applications/32x32/refresh.png
 ----version----
 language: en
 version: 1
-revision: 5e0eaf4e-4e88-45f0-8018-2081bef93057
+revision: be5b5835-b811-460e-807b-9dca2ee07340
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -50,21 +54,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20131216T120030
+20140109T164223
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-5e0eaf4e-4e88-45f0-8018-2081bef93057
+be5b5835-b811-460e-807b-9dca2ee07340
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140110T145500:635249625001517031
+20140113T123012:635252130120187500
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

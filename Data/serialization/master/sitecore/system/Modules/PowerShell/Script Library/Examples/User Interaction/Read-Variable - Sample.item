@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4372
+content-length: 4380
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -42,7 +42,7 @@ $result = Read-Variable -Parameters `
     @{ Variable = get-variable "Parent"; Tab="More Items" }, 
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"}, 
     @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
-    @{ Name = "userOrRole"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"} `
+    @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"} `
     -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
     -Title "Initialise various variable types (with tabs)" -Width 500 -Height 500 -OkButtonName "Proceed" -CancelButtonName "Abort" 
 if($result -ne "ok")
@@ -82,7 +82,7 @@ $items3
 ----version----
 language: en
 version: 1
-revision: b9adde4b-6fd6-4fb9-844b-47b77fed998d
+revision: 2c7050f7-6d94-4f46-9458-f5ecadd94556
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b9adde4b-6fd6-4fb9-844b-47b77fed998d
+2c7050f7-6d94-4f46-9458-f5ecadd94556
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131215T200028:635227344288010390
+20140108T102340:635247734208814218
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

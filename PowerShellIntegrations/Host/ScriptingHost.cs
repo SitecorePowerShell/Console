@@ -37,7 +37,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Thread.CurrentThread.CurrentUICulture;
 
         private readonly ScriptingHostUserInterface ui;
-        private string sessionId;
 
         /// <summary>
         ///     Initializes a new instance of the MyHost class. Keep
@@ -50,6 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             ui = new ScriptingHostUserInterface(settings);
             pushedRunspaces = new Stack<Runspace>();
             privateData = new ScriptingHostPrivateData(this);
+            CloseRunner = false;
         }
 
         /// <summary>
@@ -93,12 +93,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         ///     This implementation always returns the GUID allocated at
         ///     instantiation time.
         /// </summary>
-        public string SessionId
+        public string SessionId { get; internal set; }
+
+        private bool closeRunner = false;
+
+        public bool CloseRunner
         {
-            get { return sessionId; }
-            internal set { sessionId = value; }
+            get { return closeRunner; }
+            internal set { closeRunner = value; }
         }
 
+        /// <summary>
+        ///     This implementation always returns the GUID allocated at
+        ///     instantiation time.
+        /// </summary>
+        public bool AutoDispose { get; internal set; }
         
         /// <summary>
         ///     Return a string that contains the name of the host implementation.

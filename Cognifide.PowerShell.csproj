@@ -122,6 +122,9 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\SendSheerMessageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseListViewCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Interactive\UpdateListViewCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetLayoutCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Session\ExecuteScriptCommand.cs" />

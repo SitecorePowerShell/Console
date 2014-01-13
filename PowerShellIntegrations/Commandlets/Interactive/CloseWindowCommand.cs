@@ -8,7 +8,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     {
         protected override void ProcessRecord()
         {
-            PutMessage(new CloseWindowMessage());
+            //PutMessage(new CloseWindowMessage());
+            HostData.CloseRunner = true;
         }
     }
 }

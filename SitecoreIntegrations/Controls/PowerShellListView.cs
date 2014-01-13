@@ -14,6 +14,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
 {
     public class PowerShellListView : Listview
     {
+        private List<BaseListViewCommand.DataObject> filteredItems;
         public int CurrentPage
         {
             get
@@ -21,25 +22,37 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 int value = GetViewStateInt("CurrentPage");
                 return value < 1 ? 1 : value;
             }
-            set { SetViewStateInt("CurrentPage", value); }
+            set
+            {
+                int count = FilteredItems.Count;
+                int pageCount = count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
+                value = Math.Min(Math.Max(1, value), pageCount);
+                SetViewStateInt("CurrentPage", value);
+            }
         }
 
+        public int PageCount
+        {
+            get
+            {
+                int count = FilteredItems.Count;
+                return count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
+            }
+        }
         public string Filter
         {
             get { return GetViewStateString("Filter"); }
-            set { SetViewStateString("Filter", value); }
+            set
+            {
+                SetViewStateString("Filter", value);
+                filteredItems = null;
+            }
         }
 
         public string ContextId
         {
             get { return GetViewStateString("ContextId"); }
             set { SetViewStateString("ContextId", value); }
-        }
-
-        public int FilteredCount
-        {
-            get { return GetViewStateInt("FilteredCount"); }
-            set { SetViewStateInt("FilteredCount", value); }
         }
 
         public string SessionId
@@ -96,7 +109,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 SortAscending = true;
             }
 
-            IOrderedEnumerable<ShowListViewCommand.SvlDataObject> sorted = SortAscending
+            IOrderedEnumerable<ShowListViewCommand.DataObject> sorted = SortAscending
                 ? Data.Data.OrderBy(item => item.Display[columnName], ListViewComparer.Instance)
                 : Data.Data.OrderByDescending(item => item.Display[columnName], ListViewComparer.Instance);
             Data.Data = sorted.ToList();
@@ -136,10 +149,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             int offset = (CurrentPage - 1)*pageSize;
             var columnNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            List<ShowListViewCommand.SvlDataObject> filteredEnum = GetFilteredItems();
-
-            FilteredCount = filteredEnum.Count();
-            foreach (var result in filteredEnum.Skip(offset).Take(pageSize))
+            foreach (var result in FilteredItems.Skip(offset).Take(pageSize))
             {
                 var lvi = new ListviewItem();
                 Dictionary<string, string>.KeyCollection keys = result.Display.Keys;
@@ -174,15 +184,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             Sitecore.Context.ClientPage.ClientResponse.SetOuterHtml(ID, this);
         }
 
-        public List<ShowListViewCommand.SvlDataObject> GetFilteredItems()
+        public List<BaseListViewCommand.DataObject> FilteredItems
         {
-            string filter = Filter;
-            bool unfiltered = string.IsNullOrEmpty(filter);
-            List<ShowListViewCommand.SvlDataObject> filteredEnum = unfiltered
-                ? Data.Data
-                : Data.Data.FindAll(p => p.Display.Values.Any(
-                    value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
-            return filteredEnum;
+            get
+            {
+                if (filteredItems == null)
+                {
+                    string filter = Filter;
+                    filteredItems = string.IsNullOrEmpty(filter)
+                        ? Data.Data
+                        : Data.Data.FindAll(p => p.Display.Values.Any(
+                            value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
+                }
+                return filteredItems;
+            }
         }
     }
 }
