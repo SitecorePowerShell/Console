@@ -2,9 +2,9 @@
 version: 1
 id: {D6A80D77-F782-4CD4-B465-FFF0615F4C16}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Internal/List View/Ribbon/ScriptSession/Open in Terminal
+path: /sitecore/system/Modules/PowerShell/Script Library/Internal/List View/Ribbon/ScriptSession/Open
 parent: {A29C833B-50C6-439D-B65F-8B894A37E824}
-name: Open in Terminal
+name: Open
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script

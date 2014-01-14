@@ -11,7 +11,8 @@ using Sitecore.Security.Authentication;
 namespace Cognifide.PowerShell.Console.Services
 {
     /// <summary>
-    ///     Summary description for Handler1
+    /// The handler allows for execution of scripts stored within Script Library
+    /// it also allows those scripts to be parametrized.
     /// </summary>
     public class RemoteScriptCall : IHttpHandler
     {

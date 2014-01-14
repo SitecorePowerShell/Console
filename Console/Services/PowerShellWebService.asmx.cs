@@ -21,7 +21,10 @@ using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 namespace Cognifide.PowerShell.Console.Services
 {
     /// <summary>
-    ///     Summary description for PowerShellWebService
+    /// Summary description for PowerShellWebService
+    /// The service is used by Terminal/Console app and the Sitecore Rocks Visual Studio console 
+    /// for all of their operations. It's also used by ISE for code completions.
+    ///     
     /// </summary>
     [WebService(Namespace = "http://cognifide.powershell.com")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]

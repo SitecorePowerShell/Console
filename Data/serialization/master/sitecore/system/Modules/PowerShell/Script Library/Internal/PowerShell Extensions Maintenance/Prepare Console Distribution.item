@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6556
+content-length: 6688
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -76,9 +76,9 @@ $source = Get-Item 'master:\system\Modules\PowerShell\Rules' |  New-ItemSource -
 $package.Sources.Add($source);
 
 # Script Library
-$source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Master Script Library" -InstallMode Overwrite -MergeMode Merge
+$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name.StartsWith("(Test)")) } | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Overwrite -MergeMode Merge
 $package.Sources.Add($source);
-$source = Get-Item 'core:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
+$source = Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name.StartsWith("(Test)")) } | New-ExplicitItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
 $package.Sources.Add($source);
 
 # Prepare settings - cleanup
@@ -139,7 +139,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 670b3637-b073-4a21-8134-05b2ed27a734
+revision: 05dac558-9cf4-41d9-b98f-be1754133a70
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -154,14 +154,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-670b3637-b073-4a21-8134-05b2ed27a734
+05dac558-9cf4-41d9-b98f-be1754133a70
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131027T150849:635184833296370938
+20140114T120025:635252976256578672
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
