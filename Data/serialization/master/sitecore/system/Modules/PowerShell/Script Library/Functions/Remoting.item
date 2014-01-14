@@ -2,9 +2,9 @@
 version: 1
 id: {23F746EC-809E-4D33-9055-F33CBA1225CA}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Functions/Execute-RemoteSitecoreScript
+path: /sitecore/system/Modules/PowerShell/Script Library/Functions/Remoting
 parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
-name: Execute-RemoteSitecoreScript
+name: Remoting
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,17 +13,21 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3035
+content-length: 3934
 
 <# 
   Sitecore PowerShell Remoting.
 
-  Sample Usage:
-  Set-SitecoreSessionConfiguration 'http://localhost' 'admin' 'b'
-  Execute-RemoteSitecoreScript { get-item master:\content\ } @{name = "value"}
+  Sample Execute Script Block on a Sitecore Server:
+    Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
+    Invoke-SitecoreScript { get-item master:\content\ } @{name = "value"}
+
+  Sample upload local C:\image.png to a Sitecore Server to "/sitecore/ media library/Path/an_image.png" path:
+    Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
+    Get-Item C:\image.png | Upload-SitecoreFile -remotePath "Path\an_image.png"
 #>
 
-function Set-SitecoreSessionConfiguration {
+function Set-SitecoreConfiguration {
     [CmdletBinding()]
     param(
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
@@ -44,7 +48,7 @@ function Set-SitecoreSessionConfiguration {
     $GLOBAL:SpeRemotePassword = $Password;
 }
 
-function Execute-RemoteSitecoreScript {
+function Invoke-SitecoreScript {
     [CmdletBinding()]
     param(
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
@@ -91,10 +95,33 @@ function Execute-RemoteSitecoreScript {
 	$xr.Close()
 	$sr.Dispose()
 }
+
+function Upload-SitecoreFile {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$File,
+        
+        [Parameter(Position=1)]
+		[ValidateNotNullOrEmpty()]
+        [String]$RemotePath,
+
+        [Parameter(Position=2)]
+        [String]$Database = "master",
+
+        [Parameter(Position=3)]
+        [String]$Language = "en"
+    )
+	
+    $bytes = [System.IO.File]::ReadAllBytes($file);
+    $reply = $GLOBAL:SpeRemoteProxy.UploadFile($GLOBAL:SpeRemoteUser, $GLOBAL:SpeRemotePassword, $RemotePath, $bytes, $Database, $Language);
+}
+
 ----version----
 language: en
 version: 1
-revision: 7d1027db-2991-4b4d-9580-d644f91fa689
+revision: 61fd5d05-a7f3-4f77-b2c4-c065b799d05f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -109,14 +136,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7d1027db-2991-4b4d-9580-d644f91fa689
+61fd5d05-a7f3-4f77-b2c4-c065b799d05f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131212T153609:635224593699150391
+20140114T121114:635252982743688047
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
