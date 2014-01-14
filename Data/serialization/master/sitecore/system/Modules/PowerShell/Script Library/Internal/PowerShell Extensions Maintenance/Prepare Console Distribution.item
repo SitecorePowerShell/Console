@@ -13,14 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6688
+content-length: 6753
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
 $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
 $package.Metadata.Publisher = "Cognifide Limited";
-$package.Metadata.Version = "2.5";
+$package.Metadata.Version = "2.6";
 $package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
 The "PowerShell Console" available from the "Sitecore"
 menu and the "PowerShell ISE" available from the 
@@ -30,6 +30,8 @@ PowerShell ISE comes with a sample script and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
+- 2.6 (14 January 2014)
+  Release Notes: http://bit.ly/ScPs26Iss
 - 2.5 (28 October 2013)
   Release Notes: http://bit.ly/ScPs25Iss
 - 2.4 (23 September 2013)
@@ -139,7 +141,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 05dac558-9cf4-41d9-b98f-be1754133a70
+revision: 1ca865ef-4112-497d-9e68-f42bf758a05e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -154,14 +156,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-05dac558-9cf4-41d9-b98f-be1754133a70
+1ca865ef-4112-497d-9e68-f42bf758a05e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140114T120025:635252976256578672
+20140114T125702:635253010227027891
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
