@@ -309,6 +309,7 @@
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ScriptLibraryMenuItemBase.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellScript.cs" />
+    <Compile Include="SitecoreIntegrations\Rules\PowerShellSessionExistsWithVariable.cs" />
     <Compile Include="SitecoreIntegrations\Rules\PowerShellSessionExists.cs" />
     <Compile Include="SitecoreIntegrations\Serialization\PresetFactory.cs" />
     <Compile Include="SitecoreIntegrations\Serialization\PresetWorker.cs" />

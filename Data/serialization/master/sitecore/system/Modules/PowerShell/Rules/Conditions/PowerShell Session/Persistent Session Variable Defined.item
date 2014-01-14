@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}
+id: {6DE31839-7C3D-4260-AA13-EBF30170FE28}
 database: master
-path: /sitecore/system/Modules/PowerShell/Rules/Conditions/PowerShell Session/Persisten Session Initiated
+path: /sitecore/system/Modules/PowerShell/Rules/Conditions/PowerShell Session/Persistent Session Variable Defined
 parent: {AFA2E88F-BF7A-4491-BBDA-9964DBE15DBA}
-name: Persisten Session Initiated
+name: Persistent Session Variable Defined
 master: {00000000-0000-0000-0000-000000000000}
 template: {F0D16EEE-3A05-4E43-A082-795A32B873C0}
 templatekey: Condition
@@ -13,9 +13,9 @@ templatekey: Condition
 field: {AB51C8B2-F0E1-4471-9AAE-CC080D774923}
 name: Type
 key: type
-content-length: 92
+content-length: 104
 
-Cognifide.PowerShell.SitecoreIntegrations.Rules.PowerShellSessionExists,Cognifide.PowerShell
+Cognifide.PowerShell.SitecoreIntegrations.Rules.PowerShellSessionExistsWithVariable,Cognifide.PowerShell
 ----version----
 language: da
 version: 1
@@ -141,15 +141,22 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 05571e38-132d-4374-b121-ea357563e821
+revision: ae125727-dc23-46a9-9a8b-b362afaeb44c
 
 ----field----
 field: {AF321234-4EB9-4EF5-9197-65903351939C}
 name: Text
 key: text
-content-length: 90
+content-length: 158
 
-where [persistentsessionid,,,specific] persistent PowerShell session was already initiated
+where [persistentsessionid,,,specific] persistent PowerShell session was already initiated and has the [VariableName,,,specific] variable defined and not null
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 0
+
+
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -177,14 +184,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-05571e38-132d-4374-b121-ea357563e821
+ae125727-dc23-46a9-9a8b-b362afaeb44c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130818T015305:635123875856055157
+20140114T114215:635252965356393125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
