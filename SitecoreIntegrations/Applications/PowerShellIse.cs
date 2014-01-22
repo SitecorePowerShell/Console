@@ -248,12 +248,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
             {
                 Item openedScript = mruItems.FirstOrDefault(mruItem => mruItem["Message"].Contains(id)) ??
-                                    mruMenu.Add(name, new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
+                                    mruMenu.Add(Guid.NewGuid().ToString("n"), new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
                 openedScript.Edit(args =>
                 {
                     openedScript["Message"] = string.Format("ise:mruopen(id={0},db={1})", id, db);
                     openedScript["Icon"] = icon;
                     openedScript["Display name"] = name;
+                    openedScript["__Display name"] = name;
                     openedScript[FieldIDs.Sortorder] = "0";
                 });
 
