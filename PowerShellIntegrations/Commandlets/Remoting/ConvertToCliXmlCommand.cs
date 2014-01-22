@@ -58,7 +58,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Remoting
         {
             done.Invoke(serializer, new object[]{});
             WriteObject(builder.ToString());
-            File.WriteAllText(@"C:\temp\serialized.xml", builder.ToString()); 
+            //File.WriteAllText(@"C:\temp\serialized.xml", builder.ToString()); 
             xmlWriter.Close();
         }
     }
