@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Web;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
@@ -59,7 +60,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 foreach (string key in Parameters.Keys)
                 {
-                    urlString.Add(key, Parameters[key].ToString());
+
+                    urlString.Add(key, HttpUtility.UrlPathEncode(Parameters[key].ToString()));
                 }
             }
         }

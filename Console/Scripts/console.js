@@ -32,7 +32,7 @@ extend(cognifide, 'powershell');
 
     function getParam(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
-            return decodeURIComponent(name[1]);
+            return decodeURIComponent(decodeURIComponent(name[1]));
     }
     function getSessionId() {
         var id = getParam("id");
