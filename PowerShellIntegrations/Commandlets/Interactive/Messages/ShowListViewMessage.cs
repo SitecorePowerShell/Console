@@ -28,6 +28,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string InfoTitle { get; private set; }
         public string InfoDescription { get; private set; }
         public Hashtable[] Property { get; private set; }
+        public string ViewName { get; set; }
+
 
         public string FormatProperty
         {
@@ -59,8 +61,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string SessionId { get; private set; }
         public object ActionData { get; private set; }
 
-        public ShowListViewMessage(List<ShowListViewCommand.DataObject> data, int pageSize, string title, string icon,
-            string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId, object actionData, object[] property)
+        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, 
+            string icon, string width, string height, bool modal, string infoTitle, 
+            string infoDescription, string sessionId, object actionData, object[] property, string viewName)
         {
             Data = data;
             Title = title;
@@ -73,7 +76,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             InfoDescription = infoDescription;
             SessionId = sessionId;
             ActionData = actionData;
-
+            ViewName = viewName;
             Property = property
                 .Select(p =>
                 {

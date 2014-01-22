@@ -13,30 +13,35 @@ templatekey: PowerShell Script
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 52
+content-length: 11
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
 key: enablerule
-content-length: 52
+content-length: 11
 
-<?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 159
+content-length: 329
 
-Send-SheerMessage -Name "pslv:update"
 foreach($session in $resultSet){
-    $allData = $allData | ?{ $_.Original.Id -ne $session.Id}
     $session.Dispose();
 }
 
+$sessions = Get-ScriptSession
+$current = Get-ScriptSession -Current
+if ($sessions.Count -gt 1) { 
+    $sessions | ? { $current.ID -ne $_.ID } |
+    Update-ListView
+} else {
+    Show-Alert "There are no PowerShell sessions running in the background."
+    Close-Window
+}
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -48,7 +53,7 @@ People/16x16/skull.png
 ----version----
 language: en
 version: 1
-revision: 8ff78a2d-bbae-4b96-a2a7-b148dc187ae2
+revision: c01a3436-2ab5-4d45-aa2a-79682214a56f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -63,14 +68,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8ff78a2d-bbae-4b96-a2a7-b148dc187ae2
+c01a3436-2ab5-4d45-aa2a-79682214a56f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140110T150236:635249629564173281
+20140122T175547:635260101473533046
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -352,6 +352,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             if (ListViewer.Data.Data.Count > 0)
             {
                 ribbon.CommandContext.Parameters.Add("type", ListViewer.Data.Data[0].Original.GetType().Name);
+                ribbon.CommandContext.Parameters.Add("viewName", ListViewer.Data.ViewName);
                 ribbon.CommandContext.CustomData = ListViewer.Data.Data[0].Original;
             }
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);

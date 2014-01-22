@@ -32,6 +32,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         public object ActionData { get; set; }
 
         [Parameter]
+        public string ViewName { get; set; }
+
+        [Parameter]
         public SwitchParameter ActionsInSession { get; set; }
 
         protected override void EndProcessing()
@@ -45,7 +48,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
-                        ActionData, Property));
+                        ActionData, Property, ViewName));
                     FlushMessages();
                 }
             });
