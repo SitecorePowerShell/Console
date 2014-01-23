@@ -7,9 +7,8 @@ using System.Security.Authentication;
 using System.Web.Services;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Resources.Media;
@@ -102,19 +101,22 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 Login(userName, password);
 
+                string dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
+                if (!dirName.StartsWith(Constants.MediaLibraryPath))
+                {
+                    dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                }
+
                 var mco = new MediaCreatorOptions();
                 mco.Database = Factory.GetDatabase(database);
                 mco.Language = Language.Parse(language);
                 mco.Versioned = Settings.Media.UploadAsVersionableByDefault;
-                var path = Path.GetDirectoryName(filePath.Replace('\\', '/'));
-                var name = Path.GetFileNameWithoutExtension(filePath);
-                mco.Destination = string.Format("/sitecore/media library/{0}/{1}", path, name);
-                mco.FileBased = Settings.Media.UploadAsFiles;
+                mco.Destination = string.Format("{0}/{1}", dirName, Path.GetFileNameWithoutExtension(filePath));
 
                 var mc = new MediaCreator();
                 using (MemoryStream stream = new MemoryStream(fileContent))
                 {
-                    var newItem = mc.CreateFromStream(stream, Path.GetFileName(filePath), mco);
+                    mc.CreateFromStream(stream, Path.GetFileName(filePath), mco);
                 }
             }
             catch (Exception ex)
