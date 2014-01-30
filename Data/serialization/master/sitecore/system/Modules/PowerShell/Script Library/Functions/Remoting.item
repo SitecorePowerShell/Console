@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3934
+content-length: 4954
 
 <# 
   Sitecore PowerShell Remoting.
@@ -25,6 +25,13 @@ content-length: 3934
   Sample upload local C:\image.png to a Sitecore Server to "/sitecore/ media library/Path/an_image.png" path:
     Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
     Get-Item C:\image.png | Upload-SitecoreFile -remotePath "Path\an_image.png"
+    
+  Sample upload remote "/sitecore/ media library/Path/an_image.png" from local C:\image.png:
+    Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
+    Upload-SitecoreFile -remotePath "Path\an_image" -File C:\image.jpg
+
+Naturally update the host name, credentials and parameters with the ones meeting your use case.
+    
 #>
 
 function Set-SitecoreConfiguration {
@@ -118,10 +125,34 @@ function Upload-SitecoreFile {
     $reply = $GLOBAL:SpeRemoteProxy.UploadFile($GLOBAL:SpeRemoteUser, $GLOBAL:SpeRemotePassword, $RemotePath, $bytes, $Database, $Language);
 }
 
+function Download-SitecoreFile {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$File,
+        
+        [Parameter(Position=1)]
+		[ValidateNotNullOrEmpty()]
+        [String]$RemotePath,
+
+        [Parameter(Position=2)]
+        [String]$Database = "master",
+
+        [Parameter(Position=3)]
+        [String]$Language = "en"
+    )
+	
+    $bytes = [System.IO.File]::ReadAllBytes($file);
+    $bytes = $GLOBAL:SpeRemoteProxy.DownloadFile($GLOBAL:SpeRemoteUser, $GLOBAL:SpeRemotePassword, $RemotePath, $Database, $Language);
+    [System.IO.File]::WriteAllBytes($File, $bytes);
+    
+}
+
 ----version----
 language: en
 version: 1
-revision: 61fd5d05-a7f3-4f77-b2c4-c065b799d05f
+revision: dbcb4717-c529-4c80-8d06-a679b6e3bab1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -136,14 +167,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-61fd5d05-a7f3-4f77-b2c4-c065b799d05f
+dbcb4717-c529-4c80-8d06-a679b6e3bab1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140114T121114:635252982743688047
+20140130T132705:635266852250849453
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

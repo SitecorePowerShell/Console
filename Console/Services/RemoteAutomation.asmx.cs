@@ -9,6 +9,7 @@ using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Resources.Media;
@@ -125,6 +126,35 @@ namespace Cognifide.PowerShell.Console.Services
                 return false;
             }
             return true;
+        }
+
+        [WebMethod]
+        public byte[] DownloadFile(string userName, string password, string filePath, string database, string language)
+        {
+            try
+            {
+                Login(userName, password);
+
+                string dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
+                if (!dirName.StartsWith(Constants.MediaLibraryPath))
+                {
+                    dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                }
+                var itemname = dirName + "/" + Path.GetFileNameWithoutExtension(filePath);
+                var db = Factory.GetDatabase(database);
+                var item = (MediaItem)db.GetItem(itemname);
+                using (var stream = item.GetMediaStream())
+                {
+                    var result = new byte[stream.Length];
+                    stream.Read(result, 0, (int)stream.Length);
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error during uploading file using PowerShell web service", ex);
+                return new byte[0];
+            }
         }
 
         public class NameValue
