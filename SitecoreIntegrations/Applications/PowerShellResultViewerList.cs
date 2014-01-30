@@ -79,36 +79,41 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         [HandleMessage("ise:updateprogress", true)]
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
-            LvProgressOverlay.Visible = true;
+            bool showProgress =
+                !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
+            LvProgressOverlay.Visible = showProgress;
             var sb = new StringBuilder();
-            sb.AppendFormat("<div>{0}</div>", args.Parameters["Activity"]);
-            sb.AppendFormat("<div>");
-            if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+            if (showProgress)
             {
-                sb.AppendFormat("{0}, ", args.Parameters["StatusDescription"]);
-            }
 
-            if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
-            {
-                int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
-                if (secondsRemaining > -1)
-                    sb.AppendFormat("<strong>{0:c} </strong> remaining, ", new TimeSpan(0, 0, secondsRemaining));
-            }
+                sb.AppendFormat("<div>{0}</div>", args.Parameters["Activity"]);
+                sb.AppendFormat("<div>");
+                if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+                {
+                    sb.AppendFormat("{0}, ", args.Parameters["StatusDescription"]);
+                }
 
-            if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
-            {
-                sb.AppendFormat("{0}", args.Parameters["CurrentOperation"]);
-            }
+                if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
+                {
+                    int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                    if (secondsRemaining > -1)
+                        sb.AppendFormat("<strong>{0:c} </strong> remaining, ", new TimeSpan(0, 0, secondsRemaining));
+                }
 
-            sb.AppendFormat(".</div>");
-            if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
-            {
-                int percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
-                if (percentComplete > -1)
-                    sb.AppendFormat("<div id='lvProgressbar'><div style='width:{0}%'></div></div>", percentComplete);
-            }
+                if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
+                {
+                    sb.AppendFormat("{0}", args.Parameters["CurrentOperation"]);
+                }
 
-           Progress.Text = sb.ToString();
+                sb.AppendFormat(".</div>");
+                if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
+                {
+                    int percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                    if (percentComplete > -1)
+                        sb.AppendFormat("<div id='lvProgressbar'><div style='width:{0}%'></div></div>", percentComplete);
+                }
+            }
+            Progress.Text = sb.ToString();
         }
 
 
@@ -169,7 +174,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         private void MonitorJobFinished(object sender, EventArgs e)
         {
-            LvProgressOverlay.Visible = false;
 
             var session = ScriptSessionManager.GetSession(ScriptSessionId);
             if (session.CloseRunner)
@@ -398,6 +402,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,false);
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
+            LvProgressOverlay.Visible = false;
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
         }
 

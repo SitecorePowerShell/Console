@@ -44,7 +44,7 @@
 
         <Border Height="25" Align="right" GridPanel.Height="36" GridPanel.Style="background:#e9e9e9; white-space:nowrap" ID="BottomPanel">
           <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
-          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2013 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2014 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <Button ID="OKButton" Class="scButton" Click="OkClick" Header="OK"/>
           <Button ID="CancelButton" Class="scButton" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
         </Border>

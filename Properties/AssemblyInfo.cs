@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cognifide")]
 [assembly: AssemblyProduct("Cognifide PowerShell Console for Sitecore")]
-[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2013")]
+[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
