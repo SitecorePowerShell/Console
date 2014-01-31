@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6753
+content-length: 6393
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -30,7 +30,7 @@ PowerShell ISE comes with a sample script and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
-- 2.6 (14 January 2014)
+- 2.6 (31 January 2014)
   Release Notes: http://bit.ly/ScPs26Iss
 - 2.5 (28 October 2013)
   Release Notes: http://bit.ly/ScPs25Iss
@@ -56,9 +56,9 @@ http://blog.najmanowicz.com/
 http://michaellwest.blogspot.com/'
 
 # Item templates
-$source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite -MergeMode Append
+$source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item 'core:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Core Item Templates' -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Core Item Templates' -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Module Root
@@ -68,56 +68,56 @@ $source = Get-Item 'core:\system\Modules\PowerShell' | New-ExplicitItemSource -N
 $package.Sources.Add($source);
 
 # Colors
-$source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Module Root" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Module Root" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Rules Engine Rules
-$source = Get-Item 'master:\system\Modules\PowerShell\Rules' |  New-ItemSource -Name "Rules Engine" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'master:\system\Modules\PowerShell\Rules' |  New-ItemSource -Name "Rules Engine" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
 # Script Library
-$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name.StartsWith("(Test)")) } | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
-$source = Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name.StartsWith("(Test)")) } | New-ExplicitItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:\system\Modules\PowerShell\Script Library' | New-ItemSource -Name "Core Script Library" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
 # Prepare settings - cleanup
 $settingsToCleanup = get-childitem sitecore -Path master:\system\Modules\PowerShell\Settings\ -recurse | remove-item -recurse
 
 # Settings
-$source = Get-Item master:\system\Modules\PowerShell\Settings | New-ItemSource -Name "Core Script Library" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item master:\system\Modules\PowerShell\Settings | New-ItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
 # Applications
-$source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Application Layouts
-$source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Start Menu
-$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite -MergeMode Merge
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Content Editor Context Menu integration
-$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/'  -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Overwrite -MergeMode Merge
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/'  -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
-$source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
 # Content Editor Ribbon integration
-$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #1" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #1" -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #2" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #2" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Task Integration
-$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Skip
 $package.Sources.Add($source);
 
 # Files
@@ -141,7 +141,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 1ca865ef-4112-497d-9e68-f42bf758a05e
+revision: 8b9eed6a-a916-48aa-beac-28ddee889a3e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -156,14 +156,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1ca865ef-4112-497d-9e68-f42bf758a05e
+8b9eed6a-a916-48aa-beac-28ddee889a3e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140114T125702:635253010227027891
+20140131T171617:635267853774524844
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
