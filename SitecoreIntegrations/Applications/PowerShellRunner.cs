@@ -190,7 +190,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             finally
             {
-                if (scriptSession.CloseRunner)
+                if (scriptSession.CloseRunner && scriptSession.AutoDispose)
                 {
                     scriptSession.Dispose();
                 }
