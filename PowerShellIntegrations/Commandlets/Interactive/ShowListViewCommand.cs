@@ -49,7 +49,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
                         ActionData, Property, ViewName));
-                    FlushMessages();
                 }
             });
         }

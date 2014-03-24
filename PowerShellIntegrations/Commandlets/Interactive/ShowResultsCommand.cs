@@ -38,7 +38,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString);
 
                         PutMessage(message);
-                        FlushMessages();
                     }
                 }
                 else if (Parameters != null)

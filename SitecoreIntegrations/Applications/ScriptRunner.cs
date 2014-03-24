@@ -38,11 +38,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 Method(Parameters);
             }
-            catch (ThreadAbortException)
+            catch (ThreadAbortException e)
             {
+                Log.Error("Script was aborted", e, this);
                 if (!Environment.HasShutdownStarted)
+                {
                     Thread.ResetAbort();
-                Log.Info("Script was aborted", this);
+                }
                 JobContext.PostMessage("ise:updateresult");
                 JobContext.Flush();
             }

@@ -155,22 +155,21 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 scriptSession.ExecuteScriptPart(script);
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     Context.Job.Status.Result = new RunnerOutput
                     {
                         Errors = string.Empty,
                         Output = scriptSession.Output.ToHtml(),
                         HasErrors = scriptSession.Output.HasErrors
                     };
-                    object jobMessageResult = JobContext.SendMessage("psr:updateresults");
+                    JobContext.PostMessage("psr:updateresults");
                     JobContext.Flush();
                 }
             }
             catch (Exception exc)
             {
+                Sitecore.Diagnostics.Log.Error("Exception while running script", exc, this);
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     var output = new StringBuilder(10240);
                     if (scriptSession.Output != null)
                     {
