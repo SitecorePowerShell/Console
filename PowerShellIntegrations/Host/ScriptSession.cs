@@ -54,6 +54,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             internal set { host.SessionId = value; }
         }
 
+        public string Key { get; internal set; }
+
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
         }
@@ -331,9 +333,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 {
                     // Dispose managed resources.
                     Close();
-                    if (!string.IsNullOrEmpty(ID))
+                    if (!string.IsNullOrEmpty(Key))
                     {
-                        ScriptSessionManager.RemoveSession(ID);
+                        ScriptSessionManager.RemoveSession(Key);
                     }
                 }
 
