@@ -202,8 +202,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Job job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
-            string printResults = result.Output ?? "Script finished - no results to display.";
-            if (!string.IsNullOrEmpty(result.Errors))
+            string printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
+            if (result != null && !string.IsNullOrEmpty(result.Errors))
             {
                 printResults += string.Format("<pre style='background:red;'>{0}</pre>", result.Errors);
             }
