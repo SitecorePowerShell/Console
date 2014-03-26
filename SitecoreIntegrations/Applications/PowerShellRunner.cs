@@ -210,9 +210,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
             PsProgressStatus.Text = "<span class='status'> </span><br/>";
-            SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
-                (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
-                result.HasErrors.ToString().ToLowerInvariant()));
+            if (result != null)
+            {
+                SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
+                    (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
+                    result.HasErrors.ToString().ToLowerInvariant()));
+            }
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
