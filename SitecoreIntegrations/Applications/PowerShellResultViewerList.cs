@@ -45,6 +45,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Border LvProgressOverlay;
         protected Literal Progress;
 
+        protected bool ScriptRunning { get; set; }
+
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -357,6 +359,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 ribbon.CommandContext.Parameters.Add("type", ListViewer.Data.Data[0].Original.GetType().Name);
                 ribbon.CommandContext.Parameters.Add("viewName", ListViewer.Data.ViewName);
+                ribbon.CommandContext.Parameters.Add("ScriptRunning", ScriptRunning ? "1" : "0");
                 ribbon.CommandContext.CustomData = ListViewer.Data.Data[0].Original;
             }
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
@@ -372,6 +375,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
         private void ListViewAction(Message message)
         {
+            ScriptRunning = true;
+            UpdateRibbon();
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
             string sessionId = string.IsNullOrEmpty(ListViewer.Data.SessionId)

@@ -27,7 +27,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"), Translate.Text(scriptItem.DisplayName),
                     scriptItem["__Icon"], string.Empty,
                     string.Format("export:results(scriptDb={0},scriptID={1})", scriptItem.Database.Name, scriptItem.ID),
-                    EvaluateRules(scriptItem["EnableRule"]), false);
+                    EvaluateRules(scriptItem["EnableRule"]) && context.Parameters["ScriptRunning"] == "0",
+                    false);
             }
         }
 

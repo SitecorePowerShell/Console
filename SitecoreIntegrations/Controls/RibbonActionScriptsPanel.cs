@@ -38,7 +38,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                             scriptItem["__Icon"], string.Empty,
                             string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                                 scriptItem.ID),
-                            EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item, viewName), false);
+                            EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item, viewName) &&
+                                context.Parameters["ScriptRunning"] == "0", 
+                            false);
                     }
                 }
             }
