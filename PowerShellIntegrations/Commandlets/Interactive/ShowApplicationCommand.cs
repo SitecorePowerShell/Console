@@ -36,7 +36,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         Parameter);
 
                 PutMessage(message);
-                FlushMessages();
             });
         }
     }

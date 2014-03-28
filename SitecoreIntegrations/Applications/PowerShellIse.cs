@@ -479,7 +479,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 var output = new StringBuilder(10240);
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
                     JobContext.PostMessage("ise:updateresults");
                     JobContext.Flush();
@@ -489,7 +488,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     Context.Job.Status.Result =
                         string.Format("<pre style='background:red;'>{0}</pre>",
                             scriptSession.GetExceptionString(exc));

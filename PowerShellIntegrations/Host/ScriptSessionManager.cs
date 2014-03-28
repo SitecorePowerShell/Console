@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Web;
+using System.Text;
 using System.Web;
 using System.Web.Caching;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
@@ -14,6 +14,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private static readonly HashSet<string> sessions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         private const string sessionIdPrefix = "$scriptSession$";
+        private const string expirationSetting = "Cognifide.PowerShell.PersistentSessionExpirationMinutes";
 
         public static ScriptSession GetSession(string persistentId)
         {
@@ -21,26 +22,33 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         }
 
         public static bool SessionExists(string persistentId)
-        {            
-            return sessions.Contains(persistentId) && HttpRuntime.Cache[sessionIdPrefix + persistentId] != null;
+        {
+            var sessionKey = GetSessionKey(persistentId);
+            return sessions.Contains(sessionKey) && HttpRuntime.Cache[sessionKey] != null;
         }
 
-        public static void RemoveSession(string persistentId)
+        public static void RemoveSession(string key)
         {
             lock (sessions)
             {
-                sessions.Remove(persistentId);
-                ScriptSession session = HttpRuntime.Cache.Remove(sessionIdPrefix + persistentId) as ScriptSession;
-                if (session != null)
+                if (sessions.Contains(key))
                 {
-                    session.Dispose();
+                    sessions.Remove(key);
+                }
+                if (HttpRuntime.Cache[key] != null)
+                {
+                    var session = HttpRuntime.Cache.Remove(key) as ScriptSession;
+                    if (session != null)
+                    {
+                        session.Dispose();
+                    }
                 }
             }
         }
 
         public static void RemoveSession(ScriptSession session)
         {
-            RemoveSession(session.ID);
+            RemoveSession(session.Key);
         }
 
         public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
@@ -50,57 +58,75 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             if(autoDispose)
             {
                 persistentId = Guid.NewGuid().ToString();
-                //return new ScriptSession(applicanceType, personalizedSettings);
             }
 
+            var sessionKey = GetSessionKey(persistentId);
             lock (sessions)
             {
                 if (SessionExists(persistentId))
                 {
-                    return HttpRuntime.Cache[sessionIdPrefix + persistentId] as ScriptSession;
+                    return HttpRuntime.Cache[sessionKey] as ScriptSession;
                 }
 
                 var session = new ScriptSession(applicanceType, personalizedSettings);
                 session.ID = persistentId;
                 session.AutoDispose = autoDispose;
-                HttpRuntime.Cache[sessionIdPrefix + persistentId] = session;
-                sessions.Add(persistentId);
+                var expiration = Sitecore.Configuration.Settings.GetIntSetting(expirationSetting, 30);
+                HttpRuntime.Cache.Add(sessionKey, session, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, expiration, 0), CacheItemPriority.Normal, CacheItemRemoved);
+                sessions.Add(sessionKey);
                 session.ID = persistentId;
+                session.Key = sessionKey;
                 session.Initialize();
                 session.ExecuteScriptPart(session.Settings.Prescript);
                 return session;
             }
         }
 
+        private static void CacheItemRemoved(string sessionKey, Object value, CacheItemRemovedReason reason)
+        {
+            RemoveSession(sessionKey);
+        }
+
         public static void Clear()
         {
-            //copy dictionary to release lock quickly
             lock (sessions)
             {
-                sessions.Clear();
                 foreach (string key in sessions)
                 {
-                    if (key.StartsWith(sessionIdPrefix))
+                    var sessionKey = GetSessionKey(key);
+                    var session = HttpRuntime.Cache.Remove(sessionKey) as ScriptSession;
+                    if (session != null)
                     {
-                        var session = HttpRuntime.Cache[key] as ScriptSession;
-                        if (session != null)
-                        {
-                            session.Dispose();
-                        }
+                        session.Dispose();
                     }
                 }
+                sessions.Clear();
             }
         }
 
         public static List<ScriptSession> GetAll()
         {
-            //copy dictionary to release lock quickly
             lock (sessions)
             {
-                return sessions.Select(key => HttpRuntime.Cache[sessionIdPrefix + key] as ScriptSession)
+                return sessions.Select(sessionKey => HttpRuntime.Cache[sessionKey] as ScriptSession)
                     .Where(s => s != null)
                     .ToList();
             }
         }
+
+        private static string GetSessionKey(string persistentId)
+        {
+            var key = new StringBuilder();
+            key.Append(sessionIdPrefix);
+            key.Append("|");
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+            {
+                key.Append(HttpContext.Current.Session.SessionID);
+                key.Append("|");
+            }
+            key.Append(persistentId);
+            return key.ToString();
+        }
+
     }
 }

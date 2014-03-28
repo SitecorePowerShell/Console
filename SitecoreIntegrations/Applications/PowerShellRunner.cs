@@ -155,22 +155,21 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 scriptSession.ExecuteScriptPart(script);
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     Context.Job.Status.Result = new RunnerOutput
                     {
                         Errors = string.Empty,
                         Output = scriptSession.Output.ToHtml(),
                         HasErrors = scriptSession.Output.HasErrors
                     };
-                    object jobMessageResult = JobContext.SendMessage("psr:updateresults");
+                    JobContext.PostMessage("psr:updateresults");
                     JobContext.Flush();
                 }
             }
             catch (Exception exc)
             {
+                Sitecore.Diagnostics.Log.Error("Exception while running script", exc, this);
                 if (Context.Job != null)
                 {
-                    JobContext.Flush();
                     var output = new StringBuilder(10240);
                     if (scriptSession.Output != null)
                     {
@@ -191,7 +190,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             finally
             {
-                if (scriptSession.CloseRunner)
+                if (scriptSession.CloseRunner && scriptSession.AutoDispose)
                 {
                     scriptSession.Dispose();
                 }
@@ -203,17 +202,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             Job job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
-            string printResults = result.Output ?? "Script finished - no results to display.";
-            if (!string.IsNullOrEmpty(result.Errors))
+            string printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
+            if (result != null && !string.IsNullOrEmpty(result.Errors))
             {
                 printResults += string.Format("<pre style='background:red;'>{0}</pre>", result.Errors);
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
             PsProgressStatus.Text = "<span class='status'> </span><br/>";
-            SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
-                (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
-                result.HasErrors.ToString().ToLowerInvariant()));
+            if (result != null)
+            {
+                SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
+                    (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
+                    result.HasErrors.ToString().ToLowerInvariant()));
+            }
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;

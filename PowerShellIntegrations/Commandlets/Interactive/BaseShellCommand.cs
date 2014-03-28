@@ -36,13 +36,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             }
             return message.MessageQueue.GetResult();
         }
-
-        protected void FlushMessages()
-        {
-            if (JobContext.IsJob)
-            {
-                JobContext.Flush();
-            }
-        }
     }
 }
