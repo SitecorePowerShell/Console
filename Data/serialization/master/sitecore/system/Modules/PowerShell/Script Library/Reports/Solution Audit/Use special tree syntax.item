@@ -2,9 +2,9 @@
 version: 1
 id: {7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Use the special syntax to restrict the results on Treelists DropTrees and TreelistEx
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Use special tree syntax
 parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
-name: Use the special syntax to restrict the results on Treelists DropTrees and TreelistEx
+name: Use special tree syntax
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script

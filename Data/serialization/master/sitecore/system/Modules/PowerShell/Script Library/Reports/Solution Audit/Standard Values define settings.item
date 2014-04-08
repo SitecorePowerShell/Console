@@ -2,9 +2,9 @@
 version: 1
 id: {A008E2A4-625F-40A8-B476-AC798EEEB0A4}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/_Standard Values should define specific settings to a template
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Standard Values define settings
 parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
-name: _Standard Values should define specific settings to a template
+name: Standard Values define settings
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script

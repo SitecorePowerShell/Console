@@ -2,9 +2,9 @@
 version: 1
 id: {410774B5-4162-43A1-8A0C-53CEFFB81638}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Limit the number of versions of any item to the fewest possible
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Limit number of versions
 parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
-name: Limit the number of versions of any item to the fewest possible
+name: Limit number of versions
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -67,8 +67,15 @@ Software/32x32/branch.png
 ----version----
 language: en
 version: 1
-revision: e22a0ae6-5ecb-4d6d-8ac6-f2f51c68ef7e
+revision: 1f8369e8-dd36-4259-8df6-53d57733d7fd
 
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 63
+
+Limit the number of versions of any item to the fewest possible
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -82,14 +89,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e22a0ae6-5ecb-4d6d-8ac6-f2f51c68ef7e
+1f8369e8-dd36-4259-8df6-53d57733d7fd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130914T154354:635147702347569765
+20140222T093702:635286586227297969
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

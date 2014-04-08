@@ -2,9 +2,9 @@
 version: 1
 id: {8ECC55A1-B9D9-418F-9ECC-0D25BC59121F}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Break inheritance rather than explicitly deny access rights
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Break inheritance - do not deny
 parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
-name: Break inheritance rather than explicitly deny access rights
+name: Break inheritance - do not deny
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -65,8 +65,15 @@ Applications/32x32/document_forbidden.png
 ----version----
 language: en
 version: 1
-revision: f1005944-54f4-4ff5-bafc-35ae4f5abd71
+revision: 532144b5-46a5-4563-9128-4b44ad787735
 
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 59
+
+Break inheritance rather than explicitly deny access rights
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -80,14 +87,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f1005944-54f4-4ff5-bafc-35ae4f5abd71
+532144b5-46a5-4563-9128-4b44ad787735
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130911T234826:635145401064579531
+20140222T093751:635286586718997188
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

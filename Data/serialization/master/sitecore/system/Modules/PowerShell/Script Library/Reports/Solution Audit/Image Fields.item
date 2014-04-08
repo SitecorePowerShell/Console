@@ -2,9 +2,9 @@
 version: 1
 id: {DE79022D-391F-4EE5-AF89-22AA6A6FE311}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Image Fields - define the source field to show the point in the media library that is relevant to the item being created
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Solution Audit/Image Fields
 parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
-name: Image Fields - define the source field to show the point in the media library that is relevant to the item being created
+name: Image Fields
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -64,8 +64,15 @@ Imaging/32x32/shapes.png
 ----version----
 language: en
 version: 1
-revision: edbb34cf-0ecb-4322-b738-63f206221757
+revision: 733e2638-39da-416b-a9a0-c24c35941459
 
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 120
+
+Image Fields - define the source field to show the point in the media library that is relevant to the item being created
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -79,14 +86,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-edbb34cf-0ecb-4322-b738-63f206221757
+733e2638-39da-416b-a9a0-c24c35941459
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130913T142204:635146789243444844
+20140222T093420:635286584603450313
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
