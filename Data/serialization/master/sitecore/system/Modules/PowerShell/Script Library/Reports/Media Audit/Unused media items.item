@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1190
+content-length: 1296
 
 <#
     .SYNOPSIS
@@ -41,25 +41,39 @@ function Get-MediaItemWithNoReference {
     }
 }
 
-$props = @{
-    InfoTitle = "Unused media items"
-    InfoDescription = "Lists all media items that are not linked to other items."
-    PageSize = 25
-}
+$items = Get-MediaItemWithNoReference
 
-Get-MediaItemWithNoReference |
-    Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
-        @{Label="Updated"; Expression={$_.__Updated} },
-        @{Label="Updated by"; Expression={$_."__Updated by"} },
-        @{Label="Created"; Expression={$_.__Created} },
-        @{Label="Created by"; Expression={$_."__Created by"} },
-        @{Label="Path"; Expression={$_.ItemPath} }
-        
+if($items.Count -eq 0){
+    Show-Alert "There are no unused media items"
+}
+else
+{
+    $props = @{
+        InfoTitle = "Unused media items"
+        InfoDescription = "Lists all media items that are not linked from other items."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} }
+}
 Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Network/16x16/link_delete.png
 ----version----
 language: en
 version: 1
-revision: 50374a20-576d-45ce-9593-f27bb9eb8e2e
+revision: 7daab7ef-03fb-4c56-b619-5b143b29c932
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -74,14 +88,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-50374a20-576d-45ce-9593-f27bb9eb8e2e
+7daab7ef-03fb-4c56-b619-5b143b29c932
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140405T014330:635322590103664822
+20140408T092829:635325461091932500
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

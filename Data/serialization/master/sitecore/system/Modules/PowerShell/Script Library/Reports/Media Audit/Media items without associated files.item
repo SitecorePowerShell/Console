@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1564
+content-length: 1689
 
 <#
     .SYNOPSIS
@@ -48,27 +48,41 @@ function Get-MediaItemFileBasedLost {
     }
 }
 
-$props = @{
-    InfoTitle = "Media items without associated files"
-    InfoDescription = "Lists all file system based media items which associated files on the file system no longer exists."
-    PageSize = 25
-}
+$items = Get-MediaItemFileBasedLost
 
-Get-MediaItemFileBasedLost |
-    Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
-        @{Label="Updated"; Expression={$_.__Updated} },
-        @{Label="Updated by"; Expression={$_."__Updated by"} },
-        @{Label="Created"; Expression={$_.__Created} },
-        @{Label="Created by"; Expression={$_."__Created by"} },
-        @{Label="Path"; Expression={$_.ItemPath} },
-        @{Label="File Path"; Expression={$_."File Path"} }
-        
+if($items.Count -eq 0){
+    Show-Alert "There are no media items without associated files"
+}
+else
+{
+    $props = @{
+        InfoTitle = "Media items without associated files"
+        InfoDescription = "Lists all file system based media items which associated files on the file system no longer exists."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} },
+            @{Label="File Path"; Expression={$_."File Path"} }
+}        
 Close-Window
 
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 37
+
+Applications/16x16/harddisk_error.png
 ----version----
 language: en
 version: 1
-revision: 479395f8-de89-4f22-a7a7-ecdc2854582e
+revision: 52f4826f-41d5-4c81-8187-18da3c394ea8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -83,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-479395f8-de89-4f22-a7a7-ecdc2854582e
+52f4826f-41d5-4c81-8187-18da3c394ea8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140407T195703:635324974234275588
+20140408T091806:635325454862498906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
