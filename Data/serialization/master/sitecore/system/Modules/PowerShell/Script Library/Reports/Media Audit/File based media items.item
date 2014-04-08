@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1324
+content-length: 1371
 
 <#
     .SYNOPSIS
@@ -42,11 +42,9 @@ function Get-MediaItemFileBased {
 
 $items = Get-MediaItemFileBased
 
-if($items.Count -eq 0){
+if($items.Count -eq 0) {
     Show-Alert "There are no file based media items"
-}
-else
-{
+} else {
     $props = @{
         InfoTitle = "File based media items"
         InfoDescription = "Lists all media items that are file system based."
@@ -74,7 +72,7 @@ Applications/16x16/harddisk_information.png
 ----version----
 language: en
 version: 1
-revision: 42d4a4fc-b9cc-4bf0-9ddf-594dff212a51
+revision: ce805685-c3ce-48f3-b4a6-319e3b6237a6
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -89,14 +87,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-42d4a4fc-b9cc-4bf0-9ddf-594dff212a51
+ce805685-c3ce-48f3-b4a6-319e3b6237a6
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140408T090019:635325444196250468
+20140408T090820:635325449006505082
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

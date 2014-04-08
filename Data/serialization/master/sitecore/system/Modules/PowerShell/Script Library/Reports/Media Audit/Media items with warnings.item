@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1354
+content-length: 1402
 
 <#
     .SYNOPSIS
@@ -45,11 +45,9 @@ function Get-MediaItemWithError {
 
 $items = Get-MediaItemWithError
 
-if($items.Count -eq 0){
+if($items.Count -eq 0) {
     Show-Alert "There are no media items with warnings"
-}
-else
-{
+} else {
     $props = @{
         InfoTitle = "Media items with warnings"
         InfoDescription = "Lists all media items that have validation warnings or errors."
@@ -75,7 +73,7 @@ Applications/16x16/folder_warning.png
 ----version----
 language: en
 version: 1
-revision: c9251f80-3495-4df5-b433-a109ea7665a7
+revision: 4345be51-caa3-405b-8772-a71b6609f855
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -90,14 +88,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c9251f80-3495-4df5-b433-a109ea7665a7
+4345be51-caa3-405b-8772-a71b6609f855
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140408T091835:635325455155496953
+20140408T090855:635325449353682816
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
