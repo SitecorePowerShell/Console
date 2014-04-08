@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 655
+content-length: 606
 
 $sessions = Get-ScriptSession
 $current = Get-ScriptSession -Current
@@ -21,10 +21,9 @@ if ($sessions.Count -gt 1) {
     $sessions | ? { $current.ID -ne $_.ID } |
     Show-ListView -Property `
         @{Label="Icon"; Expression={"powershell/32x32/powershell.png" } }, 
-        ID, 
         @{Label="Application"; Expression={$_.ApplianceType} }, 
         @{Label="Current Location"; Expression={$_.CurrentLocation} }, 
-        @{Label="Type"; Expression={$_.GetType()} } `
+        ID, Key `
         -Title "PowerShell Background Session Manager" `
         -Icon "Software/32x32/console.png"
 } else {
@@ -42,7 +41,7 @@ Software/32x32/console.png
 ----version----
 language: en
 version: 1
-revision: a3ccce49-e936-4c06-9bf7-cdcde4866abd
+revision: 2ac912d0-7a35-4c97-a514-e4151cba9f54
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -57,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a3ccce49-e936-4c06-9bf7-cdcde4866abd
+2ac912d0-7a35-4c97-a514-e4151cba9f54
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140122T175231:635260099517146328
+20140328T125128:635316078888046406
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

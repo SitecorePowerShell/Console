@@ -29,11 +29,11 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2480
+content-length: 3174
 
 # Script configuration
 # --------------------
- 
+
 $createAt = gi "master:/content/Home/"
 $itemTemplate = gi "master:/templates/Sample/Sample Item"
 
@@ -62,22 +62,46 @@ $itemTemplate = $itemTemplate.Paths.Path
 # Script starts here 
 # ------------------                   
  
+#function to create valid item name
+function CreateValidItemName([string]$itemName) {
+  if (![Sitecore.Data.Items.ItemUtil]::IsItemNameValid($itemName)) {
+    for ($i = 1; $i -lt $itemName.Length + 1; $i++) {
+      if (![Sitecore.Data.Items.ItemUtil]::IsItemNameValid($itemName.Substring(0, $i))) {
+        $itemName = $itemName.Substring(0, $i - 1) + $itemName.Substring($i)
+        $i--;
+      }
+    }
+  }
+  return $itemName.ToString()
+}
+ 
 # function to create items (creates parent recursively if needed)
 function CreateItem ([string]$itemName) {
   $fullPath = "$createAt\$itemName"
   $parentPath = Split-Path $itemName -parent
+  $itemName = Split-Path $itemName -leaf
+  
+  $itemValidName = CreateValidItemName($itemName)
+  
   if(-not (Test-Path "$createAt\$parentPath")){
     if($parentPath.Length -gt 2){
-      CreateItem $parentPath
+      $parentItem = CreateItem $parentPath
     }
+  } else {
+      $parentItem = Get-item "$createAt\$parentPath"
   }
+  
+  $parentPath = $parentItem.Paths.FullPath
+  
   if(-not (Test-Path "$fullPath")){
-    "Creating $fullPath"
-    $item = New-Item -ItemType $itemTemplate -Name $itemName -Path $createAt
+    write-host "Creating $fullPath"
+    $item = New-Item -ItemType $itemTemplate -Name $itemValidName -Path $parentPath
     $item."__Display name" = $itemName -split '[\\/]' | `
       Select -last 1 | `
       ForEach-Object { $_ -replace "-", " " }
   }
+  
+  $item
 }
  
 # Get the sitemap
@@ -113,7 +137,7 @@ Network/16x16/web.png
 ----version----
 language: en
 version: 1
-revision: caedd0b1-2684-4d4a-a823-e48b69982835
+revision: 009ba782-ff4e-4b9d-8d99-66ff55f433f0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -128,14 +152,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-caedd0b1-2684-4d4a-a823-e48b69982835
+009ba782-ff4e-4b9d-8d99-66ff55f433f0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131016T014931:635174849713565000
+20140302T093022:635293494227388046
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
