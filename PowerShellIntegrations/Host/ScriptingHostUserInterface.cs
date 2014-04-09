@@ -177,8 +177,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
                 };
             Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
+            int lineWidth = choices.Count*75 + 120;
+            int strLineWidth = lineWidth/8;
+            int lineHeight = 0;
+            foreach (string line in message.Split('\n'))
+            {
+                lineHeight += 1 + line.Length/strLineWidth;
+            }
+            lineHeight = lineHeight*14 + 40;
+            string dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
+                lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 
-            string dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice", "800", "300");
             if (!string.IsNullOrEmpty(dialogResult))
             {
                 return int.Parse(dialogResult.Substring(4));

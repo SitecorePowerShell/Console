@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             base.OnLoad(e);
             if (Context.ClientPage.IsEvent)
                 return;
-            Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te"));
+            Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te")).Replace("\n", "<br/>");
             string caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
             //string defaultChoice = WebUtil.GetQueryString("dc");
             int i = 0;
