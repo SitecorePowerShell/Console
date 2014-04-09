@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
@@ -40,13 +41,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 if (item != null)
                 {
                     CheckOperationAllowed("remove", item.Access.CanDelete(), item.Uri.ToString());
-                    if (IsDynamicParamSet(PermanentlyParam))
+                    if (ShouldProcess(item.Paths.Path))
                     {
-                        item.Delete();
-                    }
-                    else
-                    {
-                        item.Recycle();
+                        if (IsDynamicParamSet(PermanentlyParam))
+                        {
+                            item.Delete();
+                        }
+                        else
+                        {
+                            item.Recycle();
+                        }
                     }
                 }
             }
@@ -329,9 +333,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                 }
 
-                var id = new ID(Guid.NewGuid());
-                Item itemCopy = sourceItem.CopyTo(destinationItem, leafName, id, recurse);
-                WriteItem(itemCopy);
+                if (ShouldProcess(sourceItem.Paths.Path, "Copy to '" + destinationItem.Paths.Path + "/" + leafName+"'"))
+                {
+                    var id = new ID(Guid.NewGuid());
+                    Item itemCopy = sourceItem.CopyTo(destinationItem, leafName, id, recurse);
+                    WriteItem(itemCopy);
+                }
             }
             catch (Exception ex)
             {
@@ -375,12 +382,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                 }
 
-                sourceItem.MoveTo(destinationItem);
-
-                if (sourceItem.Name != leafName)
+                if (ShouldProcess(sourceItem.Paths.Path, "Move to '" + destinationItem.Paths.Path + "/"+leafName))
                 {
-                    sourceItem.Edit(
-                        args => { sourceItem.Name = leafName; });
+                    sourceItem.MoveTo(destinationItem);
+
+                    if (sourceItem.Name != leafName)
+                    {
+                        sourceItem.Edit(
+                            args => { sourceItem.Name = leafName; });
+                    }
                 }
             }
             catch (Exception ex)
@@ -402,8 +412,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 if (item != null)
                 {
                     CheckOperationAllowed("rename", item.Access.CanRename(), item.Uri.ToString());
-                    item.Edit(
-                        args => { item.Name = newName; });
+                    if (ShouldProcess(item.Paths.Path, "Rename to '" +newName + "'"))
+                    {
+                        item.Edit(
+                            args => { item.Name = newName; });
+                    }
                 }
             }
             catch (Exception ex)
@@ -436,6 +449,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
                 Item srcItem = GetItemForPath("/" + itemTypeName);
 
+                if(srcItem == null)
+                {
+                    throw new ObjectNotFoundException(
+                        string.Format("Template '{0}' does not exist or wrong path provided.",
+                            itemTypeName));
+                }
                 Item parentItem = GetItemForPath(GetParentFromPath(path));
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
@@ -444,39 +463,42 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     parentItem = dic[ParentParam].Value as Item;
                 }
 
-                Item createdItem = null;
-                if (srcItem.TemplateName == "Template")
+                if (ShouldProcess(GetParentFromPath(path), "Create item '" + GetLeafFromPath(path) + "' of type '" + itemTypeName + "'"))
                 {
-                    createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
-                }
-                else if (srcItem.TemplateName == "Branch")
-                {
-                    createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
-                }
-
-                if (dic != null && dic[LanguageParam].IsSet)
-                {
-                    string forcedLanguage = dic[LanguageParam].Value.ToString();
-                    Language language = LanguageManager.GetLanguage(forcedLanguage);
-                    // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
-                    // switching language with LanguageSwitcher didn't work
-                    // Thanks Kern!
-                    createdItem.Versions.RemoveAll(true);
-                    createdItem = createdItem.Database.GetItem(createdItem.ID, language);
-                    createdItem = createdItem.Versions.AddVersion();
-                }
-                // start default workflow on the created item if necessary
-                if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
-                {
-                    IWorkflow defaultWorkflow =
-                        createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[FieldIDs.DefaultWorkflow]);
-                    if (null != defaultWorkflow)
+                    Item createdItem = null;
+                    if (srcItem.TemplateName == "Template")
                     {
-                        defaultWorkflow.Start(createdItem);
+                        createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
                     }
-                }
+                    else if (srcItem.TemplateName == "Branch")
+                    {
+                        createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
+                    }
 
-                WriteItem(createdItem);
+                    if (dic != null && dic[LanguageParam].IsSet)
+                    {
+                        string forcedLanguage = dic[LanguageParam].Value.ToString();
+                        Language language = LanguageManager.GetLanguage(forcedLanguage);
+                        // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
+                        // switching language with LanguageSwitcher didn't work
+                        // Thanks Kern!
+                        createdItem.Versions.RemoveAll(true);
+                        createdItem = createdItem.Database.GetItem(createdItem.ID, language);
+                        createdItem = createdItem.Versions.AddVersion();
+                    }
+                    // start default workflow on the created item if necessary
+                    if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
+                    {
+                        IWorkflow defaultWorkflow =
+                            createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[FieldIDs.DefaultWorkflow]);
+                        if (null != defaultWorkflow)
+                        {
+                            defaultWorkflow.Start(createdItem);
+                        }
+                    }
+
+                    WriteItem(createdItem);
+                }
             }
             catch (Exception ex)
             {
