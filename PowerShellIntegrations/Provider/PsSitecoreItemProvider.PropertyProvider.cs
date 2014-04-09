@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 if (item != null)
                 {
                     // create PSObject from the FileSystemInfo instance
-                    PSObject psobj = PSObject.AsPSObject(item);
+                    PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
 
                     // create the PSObject to copy properties into and that we will return
                     var result = new PSObject();
@@ -63,38 +63,39 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             }
         }
 
-        public void SetProperty(string path, PSObject propertyValue)
+        public void SetProperty(string path, PSObject propertyToSet)
         {
             try
             {
-                LogInfo("Executing SetProperty(string path='{0}', PSObject propertyValue='{1}')", path, propertyValue);
+                if (propertyToSet == null)
+                {
+                    throw new ArgumentNullException("Property not defined");
+                }
+
+                LogInfo("Executing SetProperty(string path='{0}', PSObject propertyToSet='{1}')", path, propertyToSet);
                 Item item = GetItemForPath(path);
                 if (item != null)
                 {
-                    string name = propertyValue.Members["Name"].ToString();
-                    // create PSObject from the FileSystemInfo instance
-                    PSObject psobj = PSObject.AsPSObject(item);
-
-                    // create the PSObject to copy properties into and that we will return
-                    var result = new PSObject();
-
-                    // Copy all the properties from the original object into ’result’
-                    PSPropertyInfo prop = psobj.Properties[name];
-                    object value = null;
-
-                    if (prop != null)
+                    foreach (PSMemberInfo property in propertyToSet.Properties)
                     {
-                        prop.Value = value;
-                    }
-                    else
-                    {
-                        Field pageProp = item.Fields[name];
-                        if (pageProp != null)
+
+                        if (ShouldProcess(path,
+                            "Setting property '" + property.Name +"' to '" + property.Value +"'"))
                         {
-                            result.Properties[name].Value = value;
+                            item.Fields.ReadAll();
+                            if (item.Fields != null && item.Fields[property.Name] != null)
+                            {
+                                item.Editing.BeginEdit();
+                                item[property.Name] = property.Value.ToString();
+                                item.Editing.EndEdit();
+                            }
+                            else
+                            {
+                                WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’",
+                                    property.Name,
+                                    path));
+                            }
                         }
-                        WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’", name,
-                            path));
                     }
                 }
             }
@@ -120,7 +121,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 {
                     foreach (var property in propertyToClear)
                     {
-                        item.Fields[property].Reset();
+                        if (ShouldProcess(path,
+                            "Restoring property '" + property + "' to default set on Standard Values"))
+                        {
+                            item.Fields[property].Reset();
+                        }
                     }
                 });
             }
