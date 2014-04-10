@@ -100,13 +100,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             Message message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
-            message.Arguments.Add("ActivityId", record.ActivityId.ToString());
+            message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("CurrentOperation", record.CurrentOperation);
             message.Arguments.Add("StatusDescription", record.StatusDescription);
-            message.Arguments.Add("ParentActivityId", record.ParentActivityId.ToString());
-            message.Arguments.Add("PercentComplete", record.PercentComplete.ToString());
+            message.Arguments.Add("ParentActivityId", record.ParentActivityId.ToString(CultureInfo.InvariantCulture));
+            message.Arguments.Add("PercentComplete", record.PercentComplete.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("RecordType", record.RecordType.ToString());
-            message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString());
+            message.Arguments.Add("SecondsRemaining", record.SecondsRemaining.ToString(CultureInfo.InvariantCulture));
             var sheerMessage = new SendMessageMessage(message, false);
             if (JobContext.IsJob)
             {
