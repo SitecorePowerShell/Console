@@ -26,7 +26,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
     public class PowerShellRunner : BaseForm, IPowerShellRunner
     {
-        private string someValue;
         public SpeJobMonitor Monitor { get; private set; }
         protected Scrollbox All;
         protected Literal Result;
@@ -36,13 +35,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal PreviousProgressValue;
         protected Literal CurrentProgressValue;
         protected Button Cancel;
+        protected ThemedImage Icon;
 
         public string Script { get; set; }
         public ApplicationSettings Settings { get; set; }
         public bool NonInteractive { get; set; }
 
-        protected Item ScriptItem { get; set; }
-        protected Item CurrentItem { get; set; }
+        //protected Item CurrentItem { get; set; }
 
         protected Literal BackgroundColor;
         protected Literal ForegroundColor;
@@ -52,58 +51,98 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Button OkButton;
         protected Button AbortButton;
 
-        public string PersistentId { get; set; }
+        public string PersistentId
+        {
+            get { return StringUtil.GetString(ServerProperties["PersistentId"]); }
+            set { ServerProperties["PersistentId"] = value; }
+        }
+
+        public string ScriptContent
+        {
+            get { return StringUtil.GetString(ServerProperties["ScriptContent"]); }
+            set { ServerProperties["ScriptContent"] = value; }
+        }
+
+        public string ItemId
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemId"]); }
+            set { ServerProperties["ItemId"] = value; }
+        }
+
+        public string ItemDb
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemDb"]); }
+            set { ServerProperties["ItemDb"] = value; }
+        }
+
+        public string ItemLang
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemLang"]); }
+            set { ServerProperties["ItemLang"] = value; }
+        }
+
+        public string ItemVer
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemVer"]); }
+            set { ServerProperties["ItemVer"] = value; }
+        }
+
+        protected Item CurrentItem
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ItemId) || string.IsNullOrEmpty(ItemDb)) return null;
+                var db = Factory.GetDatabase(ItemDb);
+                return !string.IsNullOrEmpty(ItemLang)
+                    ? db.GetItem(new ID(ItemId), Language.Parse(ItemLang), Version.Parse(ItemVer))
+                    : db.GetItem(new ID(ItemId));
+            }
+        }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            string itemId = WebUtil.GetQueryString("id");
-            string itemDb = WebUtil.GetQueryString("db");
-            string itemLang = WebUtil.GetQueryString("lang");
-            string itemVer = WebUtil.GetQueryString("ver");
-
-            string scriptId = WebUtil.GetQueryString("scriptId");
-            string scriptDb = WebUtil.GetQueryString("scriptDb");
-
-            ScriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
-            ScriptItem.Fields.ReadAll();
-            if (!string.IsNullOrEmpty(itemId) && !string.IsNullOrEmpty(itemDb))
-            {
-                Database db = Factory.GetDatabase(itemDb);
-                if (!string.IsNullOrEmpty(itemLang))
-                {
-                    CurrentItem = db.GetItem(new ID(itemId), Language.Parse(itemLang), Version.Parse(itemVer));
-                }
-                else
-                {
-                    CurrentItem = db.GetItem(new ID(itemId));
-                }
-            }
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
-            PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
-            HeaderText.Text = ScriptItem.DisplayName;
-            if (Monitor == null)
+            
+            if (!Context.ClientPage.IsEvent)
             {
-                if (!Context.ClientPage.IsEvent)
+                ItemId = WebUtil.GetQueryString("id");
+                ItemDb = WebUtil.GetQueryString("db");
+                ItemLang = WebUtil.GetQueryString("lang");
+                ItemVer = WebUtil.GetQueryString("ver");
+
+                string scriptId = WebUtil.GetQueryString("scriptId");
+                string scriptDb = WebUtil.GetQueryString("scriptDb");
+
+                Item scriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
+                scriptItem.Fields.ReadAll();
+                Icon.Src = scriptItem.Appearance.Icon;
+
+                PersistentId = scriptItem[ScriptItemFieldNames.PersistentSessionId];
+                ScriptContent = scriptItem[ScriptItemFieldNames.Script];
+                HeaderText.Text = scriptItem.DisplayName;
+
+                if (Monitor == null)
                 {
                     Monitor = new SpeJobMonitor {ID = "Monitor"};
                     Context.ClientPage.Controls.Add(Monitor);
                 }
-                else
+            }
+            else
+            {
+                if (Monitor == null)
                 {
                     Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
                 }
-            }
 
-            if (Context.ClientPage.IsEvent &&
-                Context.ClientPage.ClientRequest.Parameters == "taskmonitor:check" &&
-                PreviousProgressValue.Text != CurrentProgressValue.Text)
-            {
-                int percentComplete = Int32.Parse(CurrentProgressValue.Text);
-                SheerResponse.Eval(
-                    string.Format(@"updateProgress('#progressbar',{0});", percentComplete));
-                PreviousProgressValue.Text = CurrentProgressValue.Text;
+                if (Context.ClientPage.ClientRequest.Parameters == "taskmonitor:check" &&
+                    PreviousProgressValue.Text != CurrentProgressValue.Text)
+                {
+                    int percentComplete = Int32.Parse(CurrentProgressValue.Text);
+                    SheerResponse.Eval(
+                        string.Format(@"updateProgress('#progressbar',{0});", percentComplete));
+                    PreviousProgressValue.Text = CurrentProgressValue.Text;
+                }
             }
         }
 
@@ -125,7 +164,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 scriptSession,
                 contextScript,
-                ScriptItem[ScriptItemFieldNames.Script]
+                ScriptContent
             };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
@@ -168,7 +207,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             catch (Exception exc)
             {
-                Sitecore.Diagnostics.Log.Error("Exception while running script", exc, this);
+                Log.Error("Exception while running script", exc, this);
                 if (Context.Job != null)
                 {
                     var output = new StringBuilder(10240);
@@ -223,11 +262,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
 
-
-            string scriptId = WebUtil.GetQueryString("scriptId");
-            string scriptDb = WebUtil.GetQueryString("scriptDb");
-            ScriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
-            PersistentId = ScriptItem[ScriptItemFieldNames.PersistentSessionId];
             if (scriptSession.CloseRunner)
             {
                 scriptSession.CloseRunner = false;
@@ -247,7 +281,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected virtual void AbortClick()
         {
             var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
-            currentSession.Abort();
+            if (currentSession != null) currentSession.Abort();
         }
 
         protected virtual void ViewResults()
@@ -256,7 +290,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             HttpContext.Current.Session[resultSig] = Result.Value;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
             urlString.Add("sid", resultSig);
-            ClientCommand response = SheerResponse.ShowModalDialog(urlString.ToString(), "800", "600");
+            SheerResponse.ShowModalDialog(urlString.ToString(), "800", "600");
             SheerResponse.CloseWindow();
         }
 
@@ -290,7 +324,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
                 {
-                    someValue = CurrentProgressValue.Text = args.Parameters["PercentComplete"];
+                    CurrentProgressValue.Text = args.Parameters["PercentComplete"];
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
