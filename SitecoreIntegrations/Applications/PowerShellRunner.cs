@@ -4,6 +4,7 @@ using System.Text;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -23,10 +24,10 @@ using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellRunner : BaseForm
+    public class PowerShellRunner : BaseForm, IPowerShellRunner
     {
         private string someValue;
-        protected JobMonitor Monitor;
+        public SpeJobMonitor Monitor { get; private set; }
         protected Scrollbox All;
         protected Literal Result;
         protected Scrollbox Promo;
@@ -86,12 +87,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new JobMonitor {ID = "Monitor"};
+                    Monitor = new SpeJobMonitor {ID = "Monitor"};
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = Context.ClientPage.FindControl("Monitor") as JobMonitor;
+                    Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
                 }
             }
 

@@ -251,6 +251,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\IPowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerList.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellMultiValuePrompt.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerText.cs" />
@@ -284,10 +285,12 @@
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextTerminal.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\CompleteMessage.cs" />
     <Compile Include="SitecoreIntegrations\Controls\RibbonActionScriptsPanel.cs" />
     <Compile Include="SitecoreIntegrations\Controls\ListViewComparer.cs" />
     <Compile Include="SitecoreIntegrations\Controls\PowerShellListView.cs" />
     <Compile Include="SitecoreIntegrations\Controls\RibbonExportScriptsPanel.cs" />
+    <Compile Include="SitecoreIntegrations\Controls\SpeJobMonitor.cs" />
     <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
     <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />

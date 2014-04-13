@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Web;
+using Cognifide.PowerShell.SitecoreIntegrations.Applications;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -47,6 +49,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         protected virtual void ShowUI()
         {
             string resultSig = Guid.NewGuid().ToString();
+            if (Context.ClientPage.CodeBeside is IPowerShellRunner)
+            {
+                (Context.ClientPage.CodeBeside as IPowerShellRunner).Monitor.Active = false;
+            }
+
             HttpContext.Current.Session[resultSig] = Parameters;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
@@ -119,6 +126,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                 else
                 {
                     MessageQueue.PutResult(Result);
+                }
+
+                if (Context.ClientPage.CodeBeside is IPowerShellRunner)
+                {
+                    (Context.ClientPage.CodeBeside as IPowerShellRunner).Monitor.Active = true;
                 }
             }
         }

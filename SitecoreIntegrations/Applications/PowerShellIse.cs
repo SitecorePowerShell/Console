@@ -5,6 +5,7 @@ using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
@@ -24,14 +25,14 @@ using Action = Sitecore.Web.UI.HtmlControls.Action;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellIse : BaseForm, IHasCommandContext
+    public class PowerShellIse : BaseForm, IHasCommandContext, IPowerShellRunner
     {
         protected DataContext DataContext;
         protected TreePicker DataSource;
         protected Combobox Databases;
         protected Memo Editor;
         protected Action HasFile;
-        protected JobMonitor Monitor;
+        public SpeJobMonitor Monitor { get; private set; }
         protected Scrollbox Result;
         protected Border RibbonPanel;
         protected Border ProgressOverlay;
@@ -106,12 +107,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new JobMonitor {ID = "Monitor"};
+                    Monitor = new SpeJobMonitor {ID = "Monitor"};
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = (JobMonitor) Context.ClientPage.FindControl("Monitor");
+                    Monitor = (SpeJobMonitor) Context.ClientPage.FindControl("Monitor");
                 }
             }
 

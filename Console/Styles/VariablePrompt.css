@@ -1,6 +1,7 @@
 ﻿#Copyright {
     float: left;
-    margin-left: 6px;
+    margin-left: 10px;
+    margin-top: 8px;
 }
 
 .qtip { max-width: 355px; }
@@ -86,4 +87,151 @@
 
 .scContentControl.treePicker{
     padding: 4px 2px 4px 8px;
+    height: 220px;
+}
+
+.psVarPromptHeaderIcon{
+    margin: 6px 16px 4px 0px !important;
+}
+
+.scWizardTitle {
+    margin-top: 4px;
+}
+
+
+
+/* 6.6 Backwards compatibility - copied from 7.2 styles */
+
+.scWizardHeader {
+	font-weight: bold;
+	color: windowtext;
+	background: window;
+}
+.scWizardTitle {
+	font-weight: bold;
+	color: windowtext;
+	padding: 4 4 4 8;
+}
+.scWizardText {
+	color: windowtext;
+	margin-left: 32px;
+	padding-bottom: 4px;
+	font-weight: normal;
+}
+
+.scWizardHeader {
+  color: windowtext;
+  background: window;
+  min-height: 64px;
+}
+
+.ie8 .scWizardHeader, .ie9 .scWizardHeader {
+  height: 64px;
+  overflow: hidden;
+}
+
+.scWizardHeader > img {
+  float: right;
+  margin-top: 10px;
+  margin-right: 5px;
+}
+
+.scWizardTitle {
+  font-weight: bold;
+  color: windowtext;
+  padding: 4px 4px 4px 8px;
+}
+.scWizardText {
+  color: windowtext;
+  margin-left: 32px;
+  padding-bottom: 4px;
+}
+.scWizardWelcomeTitle {
+  font: bold 12pt verdana;
+  padding-bottom: 16px;
+}
+
+.scWizardSmallIcon {
+  position:absolute;
+  top:8px;
+  left:102px;
+  width:58px;
+  height: 58px;
+  border: 2px solid white;
+}
+
+.scWizardSmallIcon > img {
+  width: 48px;
+  height: 48px;
+}
+
+.scWizardLargeIcon {
+  overflow: hidden;
+  -moz-opacity: 0.2;
+  opacity: 0.2;
+  filter: progid:DXImageTransform.Microsoft.BasicImage(opacity=0.20, grayscale=1);
+  clip: rect(0 128px 128px 0);
+  width: 128px;
+  height: 128px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.scWizardLargeIcon > img {
+  width: 196px;
+  height: 196px;
+}
+
+.scWizardButtons {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  height:40px;
+  text-align:right;
+  background:#e9e9e9;
+  white-space: nowrap;
+}
+
+.scWizardButtons > .scButton {
+  margin-top: 10px;
+}
+
+.scWizardPageContainer {
+  position: absolute;
+  top: 0;
+  bottom: 40px;
+  width: 100%;
+  background:#e9e9e9;
+}
+
+.scWizardFormPadding {
+  padding: 8px;
+  background:#e9e9e9;
+  overflow: auto;
+}
+
+.scWizardFirstPageLeftPanel, .scWizardLastPageLeftPanel {
+  width:164px;
+  position:absolute;
+  height: 100%;
+  background:#123960;
+  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#123960', EndColorStr='#405E7A');
+}
+
+.scWizardFirstPageContent, .scWizardLastPageContent {
+  margin-left:164px;
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  background: white;
+}
+
+.ie8 .scWizardFormContentForOldIE, .ie9 .scWizardFormContentForOldIE {
+  position: absolute;
+  top: 66px;
+  bottom: 0;
+  width: 100%;
 }

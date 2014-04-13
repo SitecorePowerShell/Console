@@ -48,6 +48,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
+
+            HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             string sid = WebUtil.GetQueryString("sid");
             var variables = (object[]) HttpContext.Current.Session[sid];
             HttpContext.Current.Session.Remove(sid);

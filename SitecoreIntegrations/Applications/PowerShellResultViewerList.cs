@@ -27,9 +27,9 @@ using Image = Sitecore.Web.UI.HtmlControls.Image;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class PowerShellResultViewerList : BaseForm, IHasCommandContext
+    public class PowerShellResultViewerList : BaseForm, IHasCommandContext, IPowerShellRunner
     {
-        protected JobMonitor Monitor;
+        public SpeJobMonitor Monitor { get; private set; }
         protected Border RibbonPanel;
         protected Border StatusBar;
         protected Literal StatusTip;
@@ -133,12 +133,12 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 if (!Context.ClientPage.IsEvent)
                 {
-                    Monitor = new JobMonitor {ID = "Monitor"};
+                    Monitor = new SpeJobMonitor {ID = "Monitor"};
                     Context.ClientPage.Controls.Add(Monitor);
                 }
                 else
                 {
-                    Monitor = (JobMonitor) Context.ClientPage.FindControl("Monitor");
+                    Monitor = (SpeJobMonitor) Context.ClientPage.FindControl("Monitor");
                 }
             }
 

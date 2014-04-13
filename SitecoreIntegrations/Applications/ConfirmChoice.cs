@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected override void OnLoad(EventArgs e)
         {
             Assert.ArgumentNotNull(e, "e");
-            base.OnLoad(e);
+            base.OnLoad(e); 
             if (Context.ClientPage.IsEvent)
                 return;
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te")).Replace("\n", "<br/>");

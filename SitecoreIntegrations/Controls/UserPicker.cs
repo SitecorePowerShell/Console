@@ -14,6 +14,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             Viewer = new Edit();
             Viewer.ReadOnly = true;
             Viewer.Class = "scUserPickerEdit textEdit clrString";
+            Viewer.ID = GetUniqueID("edit_");
             PickButton = new Button();
             PickButton.Header = "...";
             PickButton.Class = "scUserPickerButton";
@@ -45,7 +46,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
                 Viewer.Value = Viewer.Value.TrimEnd(',', ' ');
                 result = result.Trim('|');
                 base.Value = result;
-                SheerResponse.SetAttribute(Viewer.ID, "value", value);
+                SheerResponse.SetAttribute(Viewer.ID, "value", Viewer.Value);
             }
         }
 

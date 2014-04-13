@@ -2,8 +2,8 @@
 version: 1
 id: {783CAF2B-E77A-486C-AFD0-B33558CAC066}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Find site domain conflicts
-parent: {08DF6F93-D7D9-4D1C-9905-278282F8BE70}
+path: /sitecore/system/Modules/PowerShell/Script Library/Reports/Configuration Audit/Find site domain conflicts
+parent: {0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}
 name: Find site domain conflicts
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
@@ -80,7 +80,7 @@ Applications/32x32/help_earth.png
 ----version----
 language: en
 version: 1
-revision: ed06e3a0-364f-4616-9851-38dc65f3f600
+revision: b0470da3-829d-4b75-a0be-8930dcf0b4aa
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +95,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ed06e3a0-364f-4616-9851-38dc65f3f600
+b0470da3-829d-4b75-a0be-8930dcf0b4aa
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131218T122827:635229665078532187
+20140413T133050:635329926503062968
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

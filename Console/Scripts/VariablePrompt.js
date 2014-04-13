@@ -27,11 +27,11 @@
 });
 
 function ResizeDialogControls() {
-    var chromeHeight = 	$ise(".scWizardHeader").height() +$ise("#BottomPanel").height() + 36;
+    var chromeHeight = $ise(".scWizardHeader").height() +$ise(".scWizardButtons").height() + 20;
     var windowW = $ise(window).width();
     var windowH = $ise(window).height();
     var tabsWidth = (windowW - 26) + "px";
-    var controlWidth = (windowW - 24 - tabsOffset) + "px";
+    var controlWidth = (windowW - 34 - tabsOffset) + "px";
     var windowWidth = (windowW - 14) + "px";
     var tabsHeight = (windowH - chromeHeight) + "px";
     console.log("windowW:"+windowW + "; windowH:"+windowH+"; controlWidth:"+controlWidth+"; windowWidth:"+windowWidth+"; tabsHeight:"+tabsHeight+ "; chromeHeight:"+chromeHeight);
@@ -44,4 +44,4 @@ function ResizeDialogControls() {
         controlWidth = (windowW- $ise(".scUserPickerButton")[0].offsetWidth - 36 - tabsOffset) + "px";
         $ise(".scUserPickerEdit").css({ width: controlWidth });
     }
-};
+}
