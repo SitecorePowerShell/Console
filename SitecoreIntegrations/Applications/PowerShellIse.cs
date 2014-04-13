@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Memo Editor;
         protected Action HasFile;
         public SpeJobMonitor Monitor { get; private set; }
-        protected Scrollbox Result;
+        protected Border Result;
         protected Border RibbonPanel;
         protected Border ProgressOverlay;
         protected Border ScriptResult;
@@ -448,6 +448,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Context.ClientPage.ClientResponse.SetInnerHtml(
                 "ScriptResult",
                 string.Format(
+                    "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
                     "<div align='Center' style='padding:32px 0px 32px 0px'>Please wait, {0}</br>" +
                     "<img src='../../../../../Console/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
                     ExecutionMessages.PleaseWaitMessages[
@@ -455,6 +456,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
             HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+            SheerResponse.Eval("cognifide.powershell.restoreResults();");
 
             if (Settings.SaveLastScript)
             {
@@ -518,7 +520,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
             HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
             Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",
-                result ?? "Script finished - no results to display.");
+                "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
+                (result ?? "Script finished - no results to display."));
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
 

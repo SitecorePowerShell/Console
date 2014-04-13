@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6393
+content-length: 6388
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -30,7 +30,7 @@ PowerShell ISE comes with a sample script and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
-- 2.6 (31 January 2014)
+- 2.6 (April 2014)
   Release Notes: http://bit.ly/ScPs26Iss
 - 2.5 (28 October 2013)
   Release Notes: http://bit.ly/ScPs25Iss
@@ -141,7 +141,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 8b9eed6a-a916-48aa-beac-28ddee889a3e
+revision: dade973c-d09f-494b-851d-0fe69f505731
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -156,14 +156,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8b9eed6a-a916-48aa-beac-28ddee889a3e
+dade973c-d09f-494b-851d-0fe69f505731
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140131T171617:635267853774524844
+20140410T101114:635327214743533203
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

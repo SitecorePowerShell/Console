@@ -8,6 +8,7 @@
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/ListView.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
@@ -18,7 +19,6 @@
       <Script src="/Console/Scripts/jquery-ui.js"></Script>
       <Script src="/Console/Scripts/listview.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
-
       <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
         <Border ID="RibbonPanel" />
         <Border class="scEditorWarningPanel">

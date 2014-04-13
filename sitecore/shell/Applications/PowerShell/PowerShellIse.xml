@@ -46,10 +46,10 @@
               </GridPanel>
             </GridPanel>
             <HSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
-            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Style="padding-bottom:2px">
-              <Scrollbox ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results" GridPanel.Style="padding:0px">
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow" GridPanel.Style="padding-bottom:2px">
+              <Border ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results" GridPanel.Style="padding:0px">
                 <Border ID="EnterScriptInfo" Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
-                  <Literal Text="Enter a a script in the Script field and Execute." />
+                  <Literal Text="Enter a script in the Script field and Execute." />
                 </Border>
                 <Border Id="ProgressOverlay" Visible="false">
                   <Border class="ui-state-highlight ui-corner-all">
@@ -59,8 +59,9 @@
                   </Border>
                 </Border>
                 <Border ID="ScriptResult">
+                  <Border ID="ResultsClose">x</Border>
                 </Border>
-              </Scrollbox>
+              </Border>
             </GridPanel>
           </GridPanel>
         </GridPanel>

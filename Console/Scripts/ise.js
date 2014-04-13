@@ -152,6 +152,18 @@ extend(cognifide, 'powershell');
             codeeditor.resize();
         };
 
+        cognifide.powershell.restoreResults = function () {
+            $("#ResultsSplitter").show();
+            $("#ResultsRow").show();
+            codeeditor.resize();
+        };
+
+        cognifide.powershell.closeResults = function () {
+            $("#ResultsSplitter").hide();
+            $("#ResultsRow").hide("slow", function () { codeeditor.resize(); /* do something cool here? */ });
+        };
+
+
         cognifide.powershell.getAutocompletionPrefix = function (text) {
             var data;
                 getPowerShellResponse({ "guid": guid, "command": text }, "GetAutoCompletionPrefix",
@@ -215,6 +227,11 @@ extend(cognifide, 'powershell');
                 $("#StatusTip").html(tip);
             }).animate({ backgroundColor: "#fff" });
 
+        });
+
+        $("#ResultsClose").click(function () {
+	    $("#ResultsSplitter").hide();
+            $("#ResultsRow").hide( "slow", function() { codeeditor.resize(); /* do something cool here? */ } );
         });
 
         function _getCommandHelp(str) {
