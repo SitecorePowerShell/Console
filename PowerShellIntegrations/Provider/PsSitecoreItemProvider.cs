@@ -230,7 +230,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 {
                     string Id = dic[IdParam].Value.ToString();
                     Item itemById = Factory.GetDatabase(PSDriveInfo.Name).GetItem(new ID(Id));
-                    WriteMatchingItem(language, version, itemById);
+                    if (itemById != null)
+                    {
+                        WriteMatchingItem(language, version, itemById);
+                    }
                     return;
                 }
 
@@ -333,7 +336,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                 }
 
-                if (ShouldProcess(sourceItem.Paths.Path, "Copy to '" + destinationItem.Paths.Path + "/" + leafName+"'"))
+                if (ShouldProcess(sourceItem.Paths.Path, "Copy to '" + destinationItem.Paths.Path + "/" + leafName + "'"))
                 {
                     var id = new ID(Guid.NewGuid());
                     Item itemCopy = sourceItem.CopyTo(destinationItem, leafName, id, recurse);
@@ -382,7 +385,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                 }
 
-                if (ShouldProcess(sourceItem.Paths.Path, "Move to '" + destinationItem.Paths.Path + "/"+leafName))
+                if (ShouldProcess(sourceItem.Paths.Path, "Move to '" + destinationItem.Paths.Path + "/" + leafName))
                 {
                     sourceItem.MoveTo(destinationItem);
 
@@ -412,7 +415,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 if (item != null)
                 {
                     CheckOperationAllowed("rename", item.Access.CanRename(), item.Uri.ToString());
-                    if (ShouldProcess(item.Paths.Path, "Rename to '" +newName + "'"))
+                    if (ShouldProcess(item.Paths.Path, "Rename to '" + newName + "'"))
                     {
                         item.Edit(
                             args => { item.Name = newName; });
@@ -449,7 +452,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
                 Item srcItem = GetItemForPath("/" + itemTypeName);
 
-                if(srcItem == null)
+                if (srcItem == null)
                 {
                     throw new ObjectNotFoundException(
                         string.Format("Template '{0}' does not exist or wrong path provided.",
@@ -463,7 +466,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     parentItem = dic[ParentParam].Value as Item;
                 }
 
-                if (ShouldProcess(GetParentFromPath(path), "Create item '" + GetLeafFromPath(path) + "' of type '" + itemTypeName + "'"))
+                if (ShouldProcess(GetParentFromPath(path),
+                    "Create item '" + GetLeafFromPath(path) + "' of type '" + itemTypeName + "'"))
                 {
                     Item createdItem = null;
                     if (srcItem.TemplateName == "Template")

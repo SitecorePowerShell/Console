@@ -8,7 +8,7 @@ using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 {
-    public partial class PsSitecoreItemProvider
+    public partial class PsSitecoreItemProvider : IDynamicParameters
     {
         private const string FailSilentlyParam = "FailSilently";
         private const string QueryParam = "Query";
@@ -183,6 +183,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             paramAdded |= AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (Item), ParentParam, ref dic, true);
             return paramAdded ? dic : null;
+        }
+
+        public object GetDynamicParameters()
+        {
+            return null;
         }
     }
 }
