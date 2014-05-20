@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {AAD4F23D-9743-4C80-A8EB-8406A6C0512A}
+id: {0C430EA2-AB92-4BEF-9982-C559CF3E4DC2}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/(Test) Variable Test
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Edit Task Schedule
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
-name: (Test) Variable Test
+name: Edit Task Schedule
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,12 +13,12 @@ templatekey: PowerShell Script
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 287
+content-length: 280
 
 <ruleset>
-  <rule uid="{3A2BF2AA-DAF4-49A6-ABEA-478C7E61D261}">
+  <rule uid="{3CAF5CCF-B38D-42B2-807F-76358DAC8EB0}">
     <conditions>
-      <condition id="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" uid="F93AB76721574C359BF707471FEA7250" persistentsessionid="variable test" VariableName="testVar" />
+      <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="E6364050CD5349E6ABEEC89AAA1F504D" templateid="{70244923-FA84-477C-8CBD-62F39642C42B}" />
     </conditions>
   </rule>
 </ruleset>
@@ -26,20 +26,27 @@ content-length: 287
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 18
+content-length: 109
 
-Show-Alert "works"
+Import-Function -Name "Edit-TaskSchedule"
+
+$schedule = get-item .
+
+Edit-TaskSchedule $schedule
+
+Close-Window
+
 ----field----
-field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
-name: PersistentSessionId
-key: persistentsessionid
-content-length: 13
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 26
 
-variable test
+People/16x16/clock_run.png
 ----version----
 language: en
 version: 1
-revision: 0d59a3f0-2745-452c-8a3e-02d6438f4c55
+revision: ff993557-7195-4587-84d4-add0bddbe627
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,21 +54,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20140114T114311
+20140520T001200
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-0d59a3f0-2745-452c-8a3e-02d6438f4c55
+ff993557-7195-4587-84d4-add0bddbe627
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140114T114353:635252966330084532
+20140520T020008:635361480088556171
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
