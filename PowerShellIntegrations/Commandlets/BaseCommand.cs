@@ -11,6 +11,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
@@ -103,6 +104,28 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 {
                     path = path.Replace('\\', '/');
                     item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
+                }
+                else
+                {
+                    throw new ObjectNotFoundException("Cannot find item to perform the operation on.");
+                }
+            }
+            return item;
+        }
+
+        protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language)
+        {
+            if (item == null)
+            {
+                if (!String.IsNullOrEmpty(id))
+                {
+                    Database currentDb = Factory.GetDatabase(CurrentDrive);
+                    item = currentDb.GetItem(new ID(id)).Versions.GetLatestVersion(language);
+                }
+                else if (!String.IsNullOrEmpty(path))
+                {
+                    path = path.Replace('\\', '/');
+                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath).Versions.GetLatestVersion(language);
                 }
                 else
                 {
