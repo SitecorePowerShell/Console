@@ -55,11 +55,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         [Parameter]
         public string[] IgnoredFields { get; set; }
 
-        private static HashSet<string> ignoredFields =
+        private static readonly HashSet<string> configIgnoredFields =
             new HashSet<string>(Factory.GetStringSet("powershell/translation/ignoredFields/field"));
+
+        private HashSet<string> ignoredFields;
 
         protected override void BeginProcessing()
         {
+            ignoredFields = new HashSet<string>(configIgnoredFields);
+            if (IgnoredFields != null)
+            {
+                foreach (var ignoredField in IgnoredFields)
+                {
+                    ignoredFields.Add(ignoredField);                    
+                }
+            }
         }
 
         protected override void ProcessRecord()
@@ -129,9 +139,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             {
                 return false;
             }
-            return (!ignoredFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase) &&
-                    !IgnoredFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase) &&
-                    (allowCopyShared || !field.Shared));
+            return !ignoredFields.Contains(field.Name, StringComparer.OrdinalIgnoreCase) &&
+                   (allowCopyShared || !field.Shared);
         }
     }
 }
