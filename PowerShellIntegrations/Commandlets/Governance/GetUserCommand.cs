@@ -18,21 +18,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
     [OutputType(new[] { typeof(User) })]
     public class GetUserCommand : BaseCommand
     {       
-
+        [Alias("Name")]
         [Parameter(ParameterSetName = "User from name", ValueFromPipeline = true, Mandatory = true)]
-        public string Name { get; set; }
-
-        [Parameter(ParameterSetName = "User from name")]
-        public string Domain { get; set; }
+        public string Identity { get; set; }
 
         [Parameter(ParameterSetName = "Current user", Mandatory = true)]
         public SwitchParameter Current { get; set; }
 
         [Parameter(ParameterSetName = "User from name")]
         public SwitchParameter Authenticated { get; set; }
-
-        [Parameter(ParameterSetName = "User from name")]
-        public SwitchParameter FailSilently { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -42,23 +36,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
             }
             else
             {
-                string name = Name;
-                if (!Name.Contains(@"\"))
+                string name = Identity;
+                if (!name.Contains(@"\"))
                 {
-                    if (string.IsNullOrEmpty(Domain))
-                    {
-                        Domain = "sitecore";
-                    }
-                    name = Domain + @"\" + Name;
+                    name = @"sitecore\" + name;
                 }
+
                 if (name.Contains('?') || name.Contains('*'))
+                {
                     WildcardWrite(name, UserManager.GetUsers(), user => user.GetDomainName() + @"\" + user.Name);
+                    return;
+                }
 
                 if (User.Exists(name))
                     WriteObject(User.FromName(name, Authenticated));
-                else if (!FailSilently)
+                else
                 {
-                    throw new ObjectNotFoundException("User '" + name + "' could not be found");
+                    WriteError(new ErrorRecord(new ObjectNotFoundException("User '" + name + "' could not be found"),
+                        "user not found", ErrorCategory.ObjectNotFound, null));
                 }
             }
         }
