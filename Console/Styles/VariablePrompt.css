@@ -26,10 +26,16 @@
 .varTitle {
     margin-top: 8px;
     display: block;
+    font-weight: bold;
 }
 
 .scTabPage .varTitle {
     margin: 8px 0 4px 2px;
+    display: block;
+}
+
+.scTabPage .varHint {
+    margin: 2px 0 4px 2px;
     display: block;
 }
 
@@ -97,7 +103,6 @@
 .scWizardTitle {
     margin-top: 4px;
 }
-
 
 
 /* 6.6 Backwards compatibility - copied from 7.2 styles */
@@ -235,3 +240,16 @@
   bottom: 0;
   width: 100%;
 }
+
+.scContentControlChecklist {
+    border: solid 1px ButtonShadow;
+}
+
+.scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker, .scRadioGroup {
+    border: ButtonShadow solid 1px;
+}
+
+fieldset label {
+  font: 8pt tahoma;
+}
+

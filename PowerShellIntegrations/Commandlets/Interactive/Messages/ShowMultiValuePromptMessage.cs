@@ -20,13 +20,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string Description { get; private set; }
         public string CancelButtonName { get; private set; }
         public string OkButtonName { get; private set; }
+        public bool ShowHints { get; set; }
 
         private Handle jobHandle;
         public MessageQueue MessageQueue { get; private set; }
         public object Result { get; private set; }
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName)
+            string description, string okButtonName, string cancelButtonName, bool showHints)
         {
             MessageQueue = new MessageQueue();
             if (JobContext.IsJob)
@@ -40,7 +41,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             OkButtonName = okButtonName ?? string.Empty;
             CancelButtonName = cancelButtonName ?? string.Empty;
             Description = description ?? string.Empty;
+            ShowHints = showHints;
         }
+
 
 
         /// <summary>
@@ -73,6 +76,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 urlString.Add("cb", CancelButtonName);
             }
+            urlString.Add("sh", ShowHints ? "1" : "0");
             SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 

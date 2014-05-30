@@ -31,6 +31,7 @@ function ResizeDialogControls() {
     var windowW = $ise(window).width();
     var windowH = $ise(window).height();
     var tabsWidth = (windowW - 26) + "px";
+    var tabsPage = (windowW - 60) + "px";
     var controlWidth = (windowW - 34 - tabsOffset) + "px";
     var windowWidth = (windowW - 14) + "px";
     var tabsHeight = (windowH - chromeHeight) + "px";
@@ -39,9 +40,11 @@ function ResizeDialogControls() {
     $ise("#ValuePanel").css({ width: windowWidth });
     $ise("#Tabstrip").css({ height: tabsHeight, width: tabsWidth});
     $ise(".treePicker").css({ width: controlWidth });
+    $ise(".scContentControlChecklist").css({ width: (windowW - 58 - tabsOffset) + "px" });
+    $ise(".scRadioGroup").css({ width: (windowW - 58 - tabsOffset) + "px" });
     $ise(".textEdit").css({ width: controlWidth });        
     if ($ise(".scUserPickerButton").length > 0) {
-        controlWidth = (windowW- $ise(".scUserPickerButton")[0].offsetWidth - 36 - tabsOffset) + "px";
+        controlWidth = (windowW - $ise(".scUserPickerButton").outerWidth() - 40 - tabsOffset) + "px";
         $ise(".scUserPickerEdit").css({ width: controlWidth });
     }
 }

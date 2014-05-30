@@ -10,14 +10,15 @@ using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Form.Web.UI.Controls;
 using Sitecore.Shell.Applications.ContentEditor;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
+using Checklist = Sitecore.Shell.Applications.ContentEditor.Checklist;
 using Control = System.Web.UI.Control;
 using DateTime = System.DateTime;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
@@ -40,6 +41,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Button OKButton;
         protected Button CancelButton;
         protected Tabstrip Tabstrip;
+        protected bool ShowHints;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -55,6 +57,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             HttpContext.Current.Session.Remove(sid);
 
             string title = WebUtil.GetQueryString("te");
+            ShowHints = WebUtil.GetQueryString("sh") == "1";
 
             if (!string.IsNullOrEmpty(title))
             {
@@ -98,12 +101,19 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 string tabName = (variable["Tab"] as string) ?? "Other";
                 var name = variable["Title"] as string;
+                var hint = variable["Tooltip"] as string;
                 WebControl container = GetContainer(tabs, tabName);
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
-                    var label = new Literal {Text = name + ":"};
+                    var label = new Literal {Text = name};
                     label.Class = "varTitle";
                     container.Controls.Add(label);
+                    if (ShowHints && !string.IsNullOrEmpty(hint))
+                    {
+                        label = new Literal {Text = hint};
+                        label.Class = "varHint";
+                        container.Controls.Add(label);
+                    }
                 }
                 Control input = GetVariableEditor(variable);
                 container.Controls.Add(input);
@@ -301,9 +311,77 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else if (variable["Options"] != null)
             {
-                edit = new Combobox();
-                string[] options = ((string) variable["Options"]).Split('|');
+
+                string[] options = ((string)variable["Options"]).Split('|');
                 int i = 0;
+
+                if (!string.IsNullOrEmpty(editor))
+                {
+                    if (editor.IndexOf("radio", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        var radioList = new Groupbox()
+                        {
+                            ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                            Header = (string) variable["Title"],
+                            Class = "scRadioGroup"
+                        };
+
+                        i = 0;
+                        while (i < options.Length)
+                        {
+                            var optionName = options[i++];
+                            var optionValue = options[i++];
+                            var item = new Radiobutton
+                            {
+                                Header = optionName,
+                                Value = optionValue,
+                                ID = (radioList.ID + i),
+                                Name = radioList.ID,
+                                Checked = optionValue == value.ToString()
+                            };
+                            radioList.Controls.Add(item);
+                            radioList.Controls.Add(new Literal("<br/>"));
+                        }
+
+                        return radioList;
+                    }
+
+                    if (editor.IndexOf("check", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        var checkList = new Checklist()
+                        {
+                            ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                            //Header = (string)variable["Title"],                    
+                            HeaderStyle = "margin-top:20px; display:inline-block;",
+                            ItemID = "{11111111-1111-1111-1111-111111111111}"
+                        };
+
+                        i = 0;
+                        string[] values = value.ToString().Split('|');
+
+                        while (i < options.Length)
+                        {
+                            var optionName = options[i++];
+                            var optionValue = options[i++];
+                            var item = new ChecklistItem
+                            {
+                                ID = (checkList.ID + i),
+                                Header = optionName,
+                                Value = optionValue,
+                                Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
+                            };
+                            checkList.Controls.Add(item);
+                        }
+
+                        checkList.TrackModified = false;
+                        checkList.Disabled = false;
+                        checkList.Height = new Unit("100%");
+                        return checkList;
+                    }
+                }
+
+                edit = new Combobox();
+                i = 0;
                 while (i < options.Length)
                 {
                     var item = new ListItem
@@ -437,6 +515,39 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         !string.IsNullOrEmpty(lookup.Value)
                             ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
                             : null);
+                }
+                else if (control is Checklist)
+                {
+                    var checkList = control as Checklist;
+                    string values = string.Empty;
+                    foreach (Control item in checkList.Controls)
+                    {
+                        if (item is ChecklistItem)
+                        {
+                            var checkItem = item as ChecklistItem;
+                            if (checkItem.Checked)
+                            {
+                                values += checkItem.Value + "|";
+                            }
+                        }
+                    }
+                    result.Add("Value", values.Trim('|'));
+                }
+                else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
+                {
+                    foreach (var item in control.Controls)
+                    {
+                        if (item is Radiobutton)
+                        {
+                            var radioItem = item as Radiobutton;
+                            if (radioItem.Checked)
+                            {
+                                result.Add("Value", radioItem.Value);
+                                break;
+                            }
+
+                        }
+                    }
                 }
                 else if (control is Edit || control is Memo)
                 {

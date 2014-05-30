@@ -23,6 +23,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public string OkButtonName { get; set; }
 
+        [Parameter]
+        public SwitchParameter ShowHints { get; set; }
+
         public ReadVariableCommand()
         {
             Width = 500;
@@ -34,7 +37,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             LogErrors(() =>
             {
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
-                    OkButtonName, CancelButtonName);
+                    OkButtonName, CancelButtonName, ShowHints);
 
                 foreach (Hashtable result in Parameters)
                 {
