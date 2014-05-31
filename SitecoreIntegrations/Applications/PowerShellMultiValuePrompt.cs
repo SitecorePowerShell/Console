@@ -10,7 +10,6 @@ using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Form.Web.UI.Controls;
 using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;

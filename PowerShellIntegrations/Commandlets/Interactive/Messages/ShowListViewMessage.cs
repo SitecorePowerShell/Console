@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
@@ -61,8 +60,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
         public string SessionId { get; private set; }
         public object ActionData { get; private set; }
 
-        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, 
-            string icon, string width, string height, bool modal, string infoTitle, 
+        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title,
+            string icon, string width, string height, bool modal, string infoTitle,
             string infoDescription, string sessionId, object actionData, object[] property, string viewName)
         {
             Data = data;
@@ -84,7 +83,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                     var expression = string.Empty;
                     if (p is Hashtable)
                     {
-                        Hashtable h = p as Hashtable;
+                        var h = p as Hashtable;
                         if (h.ContainsKey("Name"))
                         {
                             if (!h.ContainsKey("Label"))
@@ -98,11 +97,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                     else
                     {
                         label = p.ToString();
-                        expression = "$_."+p.ToString();
+                        expression = "$_." + p.ToString();
                     }
                     var result = new Hashtable(2);
-                    result.Add("Label",label);
-                    result.Add("Expression",expression);
+                    result.Add("Label", label);
+                    result.Add("Expression", expression);
                     return result;
                 }).ToArray();
         }

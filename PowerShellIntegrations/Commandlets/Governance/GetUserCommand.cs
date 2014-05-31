@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data.Fields;
-using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
-using Sitecore.Globalization;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     [Cmdlet(VerbsCommon.Get, "User", DefaultParameterSetName = "User from name")]
-    [OutputType(new[] { typeof(User) })]
+    [OutputType(new[] {typeof (User)})]
     public class GetUserCommand : BaseCommand
-    {       
+    {
         [Alias("Name")]
         [Parameter(ParameterSetName = "User from name", ValueFromPipeline = true, Mandatory = true)]
         public string Identity { get; set; }

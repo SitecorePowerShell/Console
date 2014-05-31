@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data.Fields;
+﻿using System.Management.Automation;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
 using Sitecore.Globalization;
-using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     public class GovernanceBaseCommand : BaseCommand
-    {       
-
+    {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline")]
         public Item Item { get; set; }
@@ -32,7 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 
         [Parameter]
         public SwitchParameter FailSilently { get; set; }
-        
+
         [Parameter]
         public SwitchParameter Recurse { get; set; }
 
@@ -40,6 +31,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
         {
             return FindItemFromParameters(Item, Path, Id, Language);
         }
-
     }
 }

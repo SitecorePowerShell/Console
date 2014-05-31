@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data.Fields;
-using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
-using Sitecore.Globalization;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     public class GovernanceUserBaseCommand : GovernanceBaseCommand
-    {       
-
+    {
         [Parameter]
         public User User { get; set; }
 

@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Management.Automation;
-using System.Web.Script.Services;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Sitecore.CodeDom.Scripts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
@@ -69,7 +64,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                     ? "$ScPsSlvPipelineObject | select-object -Property " +
                       SessionState.PSVariable.Get("formatPropertyStr").Value
                     : "$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties";
-                
+
                 ScriptBlock scriptBlock = InvokeCommand.NewScriptBlock(script);
                 Collection<PSObject> result = InvokeCommand.InvokeScript(SessionState, scriptBlock);
 
@@ -81,7 +76,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         varValue = ((PSObject) varValue).ImmediateBaseObject;
                     }
 
-                    var slvDataObject = new DataObject()
+                    var slvDataObject = new DataObject
                     {
                         Original = varValue,
                         Id = cumulativeData.Count

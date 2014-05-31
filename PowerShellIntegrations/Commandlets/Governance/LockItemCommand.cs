@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
 using Sitecore.Exceptions;
-using Sitecore.Globalization;
-using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     [Cmdlet(VerbsCommon.Lock, "Item")]
-    [OutputType(new[] { typeof(bool) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
+        )]
     public class LockItemCommand : GovernanceUserBaseCommand
     {
-
         [Parameter]
         public SwitchParameter Overwrite { get; set; }
 
@@ -50,8 +42,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
                         WriteObject(false);
                         return;
                     }
-                        throw new SecurityException("Cannot modify item '" + item.Name +
-                                                    "' because of insufficient privileges.");                    
+                    throw new SecurityException("Cannot modify item '" + item.Name +
+                                                "' because of insufficient privileges.");
                 }
 
                 if (item.Locking.IsLocked())
@@ -68,12 +60,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
                         return;
                     }
                     throw new InvalidOperationException("Cannot lock item '" + item.Name +
-                                                            "' because it is already locked.");
+                                                        "' because it is already locked.");
                 }
 
                 WriteObject(item.Locking.Lock());
             });
         }
-
     }
 }

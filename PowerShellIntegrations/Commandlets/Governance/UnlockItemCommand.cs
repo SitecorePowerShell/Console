@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data.Fields;
+﻿using System.Management.Automation;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
 using Sitecore.Exceptions;
-using Sitecore.Globalization;
-using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     [Cmdlet(VerbsCommon.Unlock, "Item")]
-    [OutputType(new[] { typeof(bool) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
+        )]
     public class UnlockItemCommand : GovernanceUserBaseCommand
-    {       
-
+    {
         protected override void ProcessRecord()
         {
             Item sourceItem = GetProcessedRecord();
@@ -51,7 +42,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
                         }
                         throw new SecurityException("Cannot modify item '" + item.Name +
                                                     "' because of insufficient privileges.");
-
                     }
                     WriteObject(item.Locking.Unlock());
                     return;
@@ -60,6 +50,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
                 WriteObject(true);
             });
         }
-
     }
 }

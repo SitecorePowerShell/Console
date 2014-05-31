@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     {
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]
         public string Name { get; set; }
-        
+
         public SwitchParameter GetResult { get; set; }
 
         protected override void ProcessRecord()

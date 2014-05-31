@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {

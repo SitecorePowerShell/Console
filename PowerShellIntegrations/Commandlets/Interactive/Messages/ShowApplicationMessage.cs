@@ -60,7 +60,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             {
                 foreach (string key in Parameters.Keys)
                 {
-
                     urlString.Add(key, HttpUtility.UrlPathEncode(Parameters[key].ToString()));
                 }
             }

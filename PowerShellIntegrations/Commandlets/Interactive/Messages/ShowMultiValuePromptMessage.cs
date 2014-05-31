@@ -4,7 +4,6 @@ using Cognifide.PowerShell.SitecoreIntegrations.Applications;
 using Sitecore;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -43,7 +42,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
             Description = description ?? string.Empty;
             ShowHints = showHints;
         }
-
 
 
         /// <summary>
