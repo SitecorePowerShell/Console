@@ -74,12 +74,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
 
             RunspaceConfiguration conf = RunspaceConfiguration.Create();
-            InitialSessionState initState = InitialSessionState.CreateDefault();
-            initState.ThreadOptions = PSThreadOptions.UseCurrentThread;
-            initState.ApartmentState = ApartmentState.STA;
             host = new ScriptingHost(Settings, conf);
             runspace = host.Runspace;
-
 
             conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
             if (Settings.UseTypeInfo)
