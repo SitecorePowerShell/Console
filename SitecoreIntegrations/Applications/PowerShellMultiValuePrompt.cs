@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
+using Sitecore.Analytics.Reports.Filters;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -310,9 +313,32 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else if (variable["Options"] != null)
             {
-
-                string[] options = ((string)variable["Options"]).Split('|');
-                int i = 0;
+                OrderedDictionary options = new OrderedDictionary();
+                if (variable["Options"] is OrderedDictionary)
+                {
+                    options = variable["Options"] as OrderedDictionary;
+                }
+                else if (variable["Options"] is string)
+                {
+                    string[] strOptions = ((string) variable["Options"]).Split('|');
+                    int i = 0;
+                    while (i < strOptions.Length)
+                    {
+                        options.Add(strOptions[i++], strOptions[i++]);
+                    }
+                }
+                else if (variable["Options"] is Hashtable)
+                {
+                    var hashOptions = variable["Options"] as Hashtable;
+                    foreach (var key in hashOptions.Keys)
+                    {
+                        options.Add(key, hashOptions[key]);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Checklist options format unrecognized.");
+                }
 
                 if (!string.IsNullOrEmpty(editor))
                 {
@@ -325,16 +351,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                             Class = "scRadioGroup"
                         };
 
-                        i = 0;
-                        while (i < options.Length)
+                        foreach (var option in options.Keys)
                         {
-                            var optionName = options[i++];
-                            var optionValue = options[i++];
+                            var optionName = option.ToString();
+                            var optionValue = options[optionName].ToString();
                             var item = new Radiobutton
                             {
                                 Header = optionName,
                                 Value = optionValue,
-                                ID = (radioList.ID + i),
+                                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(radioList.ID),
                                 Name = radioList.ID,
                                 Checked = optionValue == value.ToString()
                             };
@@ -355,16 +380,27 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                             ItemID = "{11111111-1111-1111-1111-111111111111}"
                         };
 
-                        i = 0;
-                        string[] values = value.ToString().Split('|');
-
-                        while (i < options.Length)
+                        var values = new string[0];
+                        if (value is string)
                         {
-                            var optionName = options[i++];
-                            var optionValue = options[i++];
+                            values = value.ToString().Split('|');
+                        }
+                        else if (value is IEnumerable)
+                        {
+                            var valueList = new List<string>();
+                            foreach (var s in value as IEnumerable)
+                            {
+                                valueList.Add(s.ToString());
+                            }
+                            values = valueList.ToArray();
+                        }
+                        foreach (var option in options.Keys)
+                        {
+                            var optionName = option.ToString();
+                            var optionValue = options[optionName].ToString();
                             var item = new ChecklistItem
                             {
-                                ID = (checkList.ID + i),
+                                ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(checkList.ID),
                                 Header = optionName,
                                 Value = optionValue,
                                 Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
@@ -380,13 +416,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 }
 
                 edit = new Combobox();
-                i = 0;
-                while (i < options.Length)
+                foreach (var option in options.Keys)
                 {
+                    var optionName = option.ToString();
+                    var optionValue = options[optionName].ToString();
                     var item = new ListItem
                     {
-                        Header = options[i++],
-                        Value = options[i++],
+                        Header = optionName,
+                        Value = optionValue,
                     };
                     edit.Controls.Add(item);
                 }
