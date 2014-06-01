@@ -43,10 +43,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 
                 if (functions.Length > 1)
                 {
-                    throw new AmbiguousMatchException(
+                    WriteError(new ErrorRecord(new AmbiguousMatchException(
                         string.Format(
                             "Ambiguous function name '{0}'detected, please narrow your search by specifying library.",
-                            Name));
+                            Name)),"sitecore_ambiguous_name",ErrorCategory.InvalidData, null));
                 }
 
                 script = functions[0]["script"];

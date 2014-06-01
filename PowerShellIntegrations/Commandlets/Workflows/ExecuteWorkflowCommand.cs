@@ -32,14 +32,22 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
             IWorkflowProvider workflowProvider = Item.Database.WorkflowProvider;
             if (workflowProvider == null)
             {
-                throw new WorkflowException("Workflow provider could not be obtained for database: " +
-                                            Item.Database.Name);
+                WriteError(
+                    new ErrorRecord(new WorkflowException("Workflow provider could not be obtained for database: " +
+                                                          Item.Database.Name),
+                        "sitecore_workflow_provider_missing",
+                        ErrorCategory.ObjectNotFound, null));
+                return;
             }
 
             IWorkflow workflow = workflowProvider.GetWorkflow(Item);
             if (workflow == null)
             {
-                throw new WorkflowException("Workflow missing or item not in workflow: " + Item.ID);
+                WriteError(new ErrorRecord(
+                    new WorkflowException("Workflow missing or item not in workflow: " + Item.ID),
+                    "sitecore_workflow_missing",
+                    ErrorCategory.ObjectNotFound, null));
+                return;
             }
 
             try
@@ -47,7 +55,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
                 WorkflowCommand command = workflow.GetCommands(Item).FirstOrDefault(c => c.DisplayName == CommandName);
                 if (command == null)
                 {
-                    throw new WorkflowException("Command not present or no execution rights: " + CommandName);
+                    WriteError(new ErrorRecord(
+                        new WorkflowException("Command not present or no execution rights: " + CommandName),
+                        "sitecore_workflow_command_missing",
+                        ErrorCategory.ObjectNotFound, null));
+                    return;
                 }
 
                 WorkflowResult workflowResult = workflow.Execute(command.CommandID, Item, Comments, false, new object[0]);
@@ -58,12 +70,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
                     {
                         message = "IWorkflow.Execute() failed for unknown reason.";
                     }
-                    throw new WorkflowException(message);
+                    WriteError(new ErrorRecord(
+                        new WorkflowException(message),
+                        "sitecore_workflow_execution_error",
+                        ErrorCategory.OperationStopped, null));
                 }
             }
             catch (WorkflowStateMissingException)
             {
-                throw new WorkflowStateMissingException("Item workflow state does not specify the next step.");
+                WriteError(new ErrorRecord(
+                    new WorkflowStateMissingException("Item workflow state does not specify the next step."),
+                    "sitecore_workflow_execution_error",
+                    ErrorCategory.OperationStopped, null));
             }
         }
     }

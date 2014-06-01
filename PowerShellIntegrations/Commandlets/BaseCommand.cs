@@ -46,8 +46,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 {
                     return Factory.GetDatabase(CurrentDrive);
                 }
-                throw new InvalidPowerShellStateException(
-                    "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.");
+                WriteError(new ErrorRecord(
+                    new InvalidPowerShellStateException(
+                        "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.")
+                    , "location_not_in_sitecore_database", ErrorCategory.DeviceError, null));
+                return null;
             }
         }
 
@@ -107,7 +110,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 }
                 else
                 {
-                    throw new ObjectNotFoundException("Cannot find item to perform the operation on.");
+                    WriteError(new ErrorRecord(
+                        new ObjectNotFoundException("Cannot find item to perform the operation on."),
+                        "sitecore_item_not_found", ErrorCategory.ObjectNotFound, null
+                        ));
                 }
             }
             return item;
@@ -129,7 +135,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 }
                 else
                 {
-                    throw new ObjectNotFoundException("Cannot find item to perform the operation on.");
+                    WriteError(new ErrorRecord(
+                        new ObjectNotFoundException("Cannot find item to perform the operation on."),
+                        "sitecore_item_not_found", ErrorCategory.ObjectNotFound, null
+                        ));
                 }
             }
             return item;
@@ -144,7 +153,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             catch (Exception ex)
             {
                 Log.Error("Error while executing '{0}' command", ex, this);
-                throw;
+                WriteError(new ErrorRecord(ex,"loggable_error",ErrorCategory.NotSpecified, null));
             }
         }
 

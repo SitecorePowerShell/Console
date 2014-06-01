@@ -71,7 +71,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             {
                 if (!item.Database.Name.Equals("master", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new PSInvalidOperationException("Only items from the 'master' database can be published!");
+                    WriteError(new ErrorRecord(new PSInvalidOperationException("Only items from the 'master' database can be published!"),
+                        "sitecore_publishing_source_is_not_master_db",ErrorCategory.InvalidData, null));
                 }
 
                 if (Target != null)

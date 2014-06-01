@@ -35,7 +35,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 
             if (string.IsNullOrEmpty(Name))
             {
-                throw new InvalidPowerShellStateException("Name parameter is mandatory.");
+                WriteError(new ErrorRecord(new InvalidPowerShellStateException("Name parameter is mandatory."),
+                    "sitecore_name_parameter_missing",ErrorCategory.InvalidData, null));
             }
             WriteObject(profileCards);
         }

@@ -13,7 +13,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
     public class LoginUserCommand : BaseCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
-        public string UserName { get; set; }
+        [Alias("UserName")]
+        public string Identity { get; set; }
 
         [Parameter(Position = 1, Mandatory = true)]
         public string Password { get; set; }
@@ -25,50 +26,36 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
         {
             RecoverHttpContext();
 
-            if (!UserName.Contains("\\"))
+            if (!Identity.Contains("\\"))
             {
-                UserName = "sitecore\\" + UserName;
+                Identity = "sitecore\\" + Identity;
             }
             if (Context.IsLoggedIn)
             {
-                if (Context.User.Name.Equals(UserName, StringComparison.OrdinalIgnoreCase))
+                if (Context.User.Name.Equals(Identity, StringComparison.OrdinalIgnoreCase))
                     return;
                 Context.Logout();
             }
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
             {
-                throw new LicenseException("A required license is missing");
+                WriteError(new ErrorRecord(new LicenseException("A required license is missing"),
+                    "sitecore_license_missing", ErrorCategory.ResourceUnavailable, null));
             }
-            Assert.IsTrue(Membership.ValidateUser(UserName, Password), "Unknown username or password.");
-            User user = User.FromName(UserName, true);
-/*
+            if (!Membership.ValidateUser(Identity, Password))
+            {
+                WriteError(new ErrorRecord(new LicenseException("Unknown username or password."),
+                    "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
+            }
+            User user = User.FromName(Identity, true);
+            /*
             if (!user.IsAdministrator && !user.IsInRole(Role.FromName("sitecore\\Sitecore Client Developing")))
-                throw new Exception("User is not an Administrator or a member of the sitecore\\Sitecore Client Developing role");
-*/
+                WriteError(new ErrorRecord(new LicenseException("User is not an Administrator or a member of the sitecore\\Sitecore Client Developing role"),
+                                "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
+            else
+            */
             UserSwitcher.Enter(user);
 
             SessionState.PSVariable.Set("me", HttpContext.Current.User.Identity.Name);
-
-/*            bool loggedIn = Sitecore.Security.Authentication.AuthenticationManager.Login(
-        Login1.UserName, Login1.Password);
-            if (!loggedIn)
-            {
-                e.Authenticated = Sitecore.Security.Authentication.AuthenticationManager.Login(
-                    "sitecore\\" + Login1.UserName, Login1.Password, Login1.RememberMeSet);
-            }
-
-            /*
-            if (Sitecore.Security.Accounts.User.Exists(domainUser))
-            {
-                Sitecore.Security.Accounts.User user =
-                  Sitecore.Security.Accounts.User.FromName(domainUser, false);
-                Sitecore.Security.Accounts.User.Current
-                using (new Sitecore.Security.Accounts.UserSwitcher(user))
-                {
-                    //TODO: code to invoke as user 
-                }
-            } 
-             */
         }
     }
 }

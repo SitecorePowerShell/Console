@@ -54,7 +54,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 
                 if (curItem == null)
                 {
-                    throw new ItemNotFoundException(string.Format("Script '{0}' not found.", Path));
+                    WriteError(new ErrorRecord(new ItemNotFoundException(string.Format("Script '{0}' not found.", Path)),
+                        "sitecore_script_missing", ErrorCategory.ObjectNotFound, null));
                 }
                 script = curItem["script"];
             }

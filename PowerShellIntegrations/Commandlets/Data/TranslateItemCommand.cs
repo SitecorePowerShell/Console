@@ -129,7 +129,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             catch (Exception exception)
             {
                 targetItem.Editing.CancelEdit();
-                throw;
+                WriteError(new ErrorRecord(exception,"sitecore_item_translation_field_copy_error",ErrorCategory.NotSpecified, null));
             }
         }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Management.Automation;
+using Microsoft.PowerShell.Commands;
 using Sitecore;
 using Sitecore.Data.Engines;
 using Sitecore.Data.Proxies;
@@ -33,14 +35,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
             return Path.Combine(PackageProjectPath, packageFileName);
         }
 
-        protected static void PerformInstallAction(Action action)
+        protected void PerformInstallAction(Action action)
         {
             if (!Directory.Exists(PackagePath))
-                throw new ClientAlertException(
-                    string.Format(
-                        Translate.Text(
-                            "Cannot access path '{0}'. Please check PackagePath setting in the web.config file."),
-                        PackagePath));
+
+            {
+                WriteError(new ErrorRecord(
+                    new ClientAlertException(
+                        string.Format(
+                            Translate.Text(
+                                "Cannot access path '{0}'. Please check PackagePath setting in the web.config file."),
+                            PackagePath)), "sitecore_package_folder_does_not_exist", ErrorCategory.ObjectNotFound, null));
+                return;
+            }
             if (action != null)
             {
                 using (new SecurityDisabler())

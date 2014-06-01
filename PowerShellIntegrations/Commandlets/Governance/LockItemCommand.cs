@@ -37,30 +37,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
             {
                 if (!item.Access.CanWrite())
                 {
-                    if (FailSilently)
-                    {
-                        WriteObject(false);
-                        return;
-                    }
-                    throw new SecurityException("Cannot modify item '" + item.Name +
-                                                "' because of insufficient privileges.");
+                    WriteError(new ErrorRecord(new SecurityException("Cannot modify item '" + item.Name +
+                                                                     "' because of insufficient privileges."),
+                        "cannot_lock_item_privileges", ErrorCategory.PermissionDenied, item));
                 }
 
                 if (item.Locking.IsLocked())
                 {
+                    // item already locked by the lock requesting user
+                    if (string.Equals(item.Locking.GetOwner(),User.Name,StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        WriteObject(true);
+                        return;
+                    }
+
+                    // item requested to be re-locked by the user
                     if (Overwrite)
                     {
                         item.Locking.Unlock();
                         WriteObject(item.Locking.Lock());
                         return;
                     }
-                    if (FailSilently)
-                    {
-                        WriteObject(false);
-                        return;
-                    }
-                    throw new InvalidOperationException("Cannot lock item '" + item.Name +
-                                                        "' because it is already locked.");
+                    WriteError(new ErrorRecord(new InvalidOperationException("Cannot lock item '" + item.Name +
+                                                                             "' because it is already locked."),
+                        "cannot_lock_item_locked", ErrorCategory.ResourceBusy, item));
                 }
 
                 WriteObject(item.Locking.Lock());

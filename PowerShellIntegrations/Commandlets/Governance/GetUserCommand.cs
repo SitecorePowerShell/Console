@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 
                 if (name.Contains('?') || name.Contains('*'))
                 {
-                    WildcardWrite(name, UserManager.GetUsers(), user => user.GetDomainName() + @"\" + user.Name);
+                    WildcardWrite(name, UserManager.GetUsers(), user => user.Name);
                     return;
                 }
 

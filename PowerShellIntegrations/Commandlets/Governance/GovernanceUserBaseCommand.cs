@@ -23,8 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
         {
             using (new SecurityStateSwitcher(SecurityState.Enabled))
             {
-                if (string.Equals(User.Name, Context.User.LocalName, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(User.Domain.Name, Context.User.Domain.Name, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(User.Name, Sitecore.Context.User.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     action();
                 }

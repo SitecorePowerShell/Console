@@ -22,9 +22,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
         public Language Language { get; set; }
 
         [Parameter]
-        public SwitchParameter FailSilently { get; set; }
-
-        [Parameter]
         public SwitchParameter Recurse { get; set; }
 
         protected Item GetProcessedRecord()

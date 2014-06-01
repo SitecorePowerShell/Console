@@ -75,7 +75,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             }
             else
             {
-                throw new InvalidOperationException("No item has been specified to the Serialize-Item cmdlet.");
+                WriteError(
+                    new ErrorRecord(
+                        new InvalidOperationException("No item has been specified to the Serialize-Item cmdlet."),
+                        "sitecore_no_item_provided", ErrorCategory.InvalidData, null));
             }
         }
 

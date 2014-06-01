@@ -35,13 +35,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
                 {
                     if (!item.Access.CanWrite())
                     {
-                        if (FailSilently)
-                        {
-                            WriteObject(false);
-                            return;
-                        }
-                        throw new SecurityException("Cannot modify item '" + item.Name +
-                                                    "' because of insufficient privileges.");
+                        WriteError(new ErrorRecord(
+                            new SecurityException(
+                                "Cannot modify item '" + item.Name + "' because of insufficient privileges."),
+                            "cannot_lock_item_privileges", ErrorCategory.PermissionDenied, item));
                     }
                     WriteObject(item.Locking.Unlock());
                     return;

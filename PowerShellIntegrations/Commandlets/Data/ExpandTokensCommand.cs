@@ -26,7 +26,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             catch (Exception ex)
             {
                 Item.Editing.CancelEdit();
-                throw ex;
+                WriteError(new ErrorRecord(ex,"sitecore_token_expander_error",ErrorCategory.NotSpecified, Item));
             }
 
             WriteItem(Item);
