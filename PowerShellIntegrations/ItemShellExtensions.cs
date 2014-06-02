@@ -82,16 +82,50 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                 item.Edit(
                     args =>
                     {
-                        if (value[0] is DateTime)
+                        object newValue = BaseObject(value[0]);
+                        if (newValue is DateTime)
                         {
-                            item[propertyName] = ((DateTime) value[0]).ToString("yyyyMMddTHHmmss");
+                            item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
+                        }
+                        else if (newValue is Item &&
+                                 string.Equals(item.Fields[propertyName].Type, "image",
+                                     StringComparison.OrdinalIgnoreCase))
+                        {
+                            item[propertyName] = newValue.ToString();
+                            var media = new MediaItem(newValue as Item);
+                            ImageField imageField = item.Fields[propertyName];
+
+                            if (imageField.MediaID != media.ID)
+                            {
+                                imageField.Clear();
+                                imageField.Src = Sitecore.Resources.Media.MediaManager.GetMediaUrl(media);
+                                imageField.MediaID = media.ID;
+                                imageField.MediaPath = media.MediaPath;
+                                if (!String.IsNullOrEmpty(media.Alt))
+                                {
+                                    imageField.Alt = media.Alt;
+                                }
+                                else
+                                {
+                                    imageField.Alt = media.DisplayName;
+                                }
+                            }
                         }
                         else
                         {
-                            item[propertyName] = value[0].ToString();
+                            item[propertyName] = newValue.ToString();
                         }
                     });
             }
+        }
+
+        public static object BaseObject(object obj)
+        {
+            while ((obj is PSObject))
+            {
+                obj = (obj as PSObject).ImmediateBaseObject;
+            }
+            return obj;
         }
     }
 }

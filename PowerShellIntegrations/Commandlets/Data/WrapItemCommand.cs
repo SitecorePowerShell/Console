@@ -14,8 +14,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         {
             if (Item != null)
             {
-                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, Item);
-                WriteObject(psobj, false);
+                WriteItem(Item);
             }
         }
     }
