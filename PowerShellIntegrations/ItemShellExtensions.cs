@@ -4,6 +4,8 @@ using System.Management.Automation;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Links;
+using Sitecore.Resources.Media;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations
 {
@@ -87,8 +89,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                         {
                             item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
                         }
-                        else if (newValue is Item &&
-                                 string.Equals(item.Fields[propertyName].Type, "image",
+                        else if (
+                            newValue is Item &&
+                                 string.Equals(item.Fields[propertyName].TypeKey, "image",
                                      StringComparison.OrdinalIgnoreCase))
                         {
                             item[propertyName] = newValue.ToString();
@@ -98,7 +101,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                             if (imageField.MediaID != media.ID)
                             {
                                 imageField.Clear();
-                                imageField.Src = Sitecore.Resources.Media.MediaManager.GetMediaUrl(media);
+                                imageField.Src = MediaManager.GetMediaUrl(media);
                                 imageField.MediaID = media.ID;
                                 imageField.MediaPath = media.MediaPath;
                                 if (!String.IsNullOrEmpty(media.Alt))
@@ -111,6 +114,30 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                                 }
                             }
                         }
+                        else if (newValue is Item &&
+                                 string.Equals(item.Fields[propertyName].TypeKey, "general link",
+                                     StringComparison.OrdinalIgnoreCase))
+                        {
+                            Item newLink = newValue as Item;
+                            item[propertyName] = newValue.ToString();
+                            LinkField linkField = item.Fields[propertyName];
+                            if (MediaManager.HasMediaContent(newLink))
+                            {
+                                linkField.Clear();
+                                linkField.LinkType = "media";
+                                linkField.Url = newLink.Paths.MediaPath;
+                                linkField.TargetID = newLink.ID;
+                            }
+                            else
+                            {
+                                linkField.Clear();
+                                linkField.LinkType = "internal";                                
+                                //UrlOptions urlOptions = LinkManager.GetDefaultUrlOptions();
+                                //urlOptions.AlwaysIncludeServerUrl = false;
+                                linkField.Url = newLink.Paths.ContentPath;
+                                linkField.TargetID = newLink.ID;
+                            }
+                        }                            
                         else
                         {
                             item[propertyName] = newValue.ToString();
