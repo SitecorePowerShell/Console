@@ -132,8 +132,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                             {
                                 linkField.Clear();
                                 linkField.LinkType = "internal";                                
-                                //UrlOptions urlOptions = LinkManager.GetDefaultUrlOptions();
-                                //urlOptions.AlwaysIncludeServerUrl = false;
                                 linkField.Url = newLink.Paths.ContentPath;
                                 linkField.TargetID = newLink.ID;
                             }

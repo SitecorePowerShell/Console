@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
-using Sitecore.Analytics.Reports.Filters;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -555,19 +553,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 else if (control is Checklist)
                 {
                     var checkList = control as Checklist;
-                    string values = string.Empty;
-                    foreach (Control item in checkList.Controls)
-                    {
-                        if (item is ChecklistItem)
-                        {
-                            var checkItem = item as ChecklistItem;
-                            if (checkItem.Checked)
-                            {
-                                values += checkItem.Value + "|";
-                            }
-                        }
-                    }
-                    result.Add("Value", values.Trim('|'));
+                    string[] values =
+                        checkList.Controls.Cast<Control>()
+                            .Where(item => (item is ChecklistItem))
+                            .Cast<ChecklistItem>()
+                            .Where(checkItem => checkItem.Checked)
+                            .Select(checkItem => checkItem.Value)
+                            .ToArray();
+                    result.Add("Value", values);
                 }
                 else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
                 {
