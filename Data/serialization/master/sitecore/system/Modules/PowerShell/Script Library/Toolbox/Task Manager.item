@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 793
+content-length: 796
 
 Import-Function "Edit-TaskSchedule"
 
@@ -40,7 +40,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
         @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
         @{Label="From"; Expression={ Parse-TaskSchedule $_ "from"} },
         @{Label="To"; Expression={ Parse-TaskSchedule $_ "to"} },
-        @{Label="On Week Days"; Expression={ Parse-TaskSchedule $_ "weekdays" } },
+        @{Label="On Week Days"; Expression={ Parse-TaskSchedule $_ "strWeekdays" } },
         @{Label="Run Every"; Expression={ Parse-TaskSchedule $_ "interval" } } `
         -Title "Task Manager"
         
@@ -55,7 +55,7 @@ People/16x16/stopwatch_run.png
 ----version----
 language: en
 version: 1
-revision: 9ef4f1ec-a058-44c6-b804-ebba513493cf
+revision: 8122da51-e74f-49bb-baa8-6f386c309a46
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -70,14 +70,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9ef4f1ec-a058-44c6-b804-ebba513493cf
+8122da51-e74f-49bb-baa8-6f386c309a46
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140520T015929:635361479697052265
+20140603T170802:635374120829885312
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
