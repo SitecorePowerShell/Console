@@ -13,15 +13,37 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4926
+content-length: 5740
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
 $items2 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
 $items3 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
 $parent = get-item . |% { $_.Parent } 
-$checklistItems = "4|16"
-$radioListItems = "3"
+$checklistItems =  @(4,16)
+$radioListItems = 3
+
+if($PSVersionTable.PsVersion.Major -gt 2){
+    # this will only work on PowerShell in version over 2.0
+    $options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
+    $selection = [ordered]@{One=1;Two=2;"Three (selected)"=3;Four=4};
+}
+else{
+    #If your PowerShell version is lower than 3 you need to use the following syntax:
+    $options = New-Object System.Collections.Specialized.OrderedDictionary
+    $options.Add("Monday", 1)
+    $options.Add("Wednesday", 2)
+    $options.Add("Wednesday (Selected)", 4)
+    $options.Add("Thursday", 8)
+    $options.Add("Friday (Selected)", 16)
+    $options.Add("Saturday", 32)
+    $options.Add("Sunday", 64)
+    $selection = New-Object System.Collections.Specialized.OrderedDictionary
+    $selection.Add("One",1);
+    $selection.Add("Two",2);
+    $selection.Add("Three (selected)",3)
+    $selection.Add("Four",4);
+}
 
 $result = Read-Variable -Parameters `
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
@@ -29,9 +51,9 @@ $result = Read-Variable -Parameters `
     @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"}, 
     @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"}, 
     @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"}, 
-    @{ Name = "anOption"; Value="2"; Title="An Option"; Options="One|1|Two|2|Three|3"; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
-    @{ Name = "checklistItems"; Title="Multiple options"; Options="Monday|1|Tuesday|2|Wednesday (selected)|4|Thursday|8|Friday (selected)|16|Saturday|32|Sunday|64"; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
-    @{ Name = "radioListItems"; Title="Radio selection"; Options="One|1|Two|2|Three (selected)|3|Four|4"; Tab="Options"; Editor="radio" }, 
+    @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
+    @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
+    @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio" }, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"}, 
     @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"}, 
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tab="Items"}, 
@@ -92,7 +114,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: 205aaf84-ae75-4340-a5b2-7a53c9f297a4
+revision: 5c72c187-d93a-4d4e-943a-cbf9b2b8b1d5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -107,14 +129,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-205aaf84-ae75-4340-a5b2-7a53c9f297a4
+5c72c187-d93a-4d4e-943a-cbf9b2b8b1d5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140530T113641:635370466015515234
+20140603T165603:635374113639035703
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

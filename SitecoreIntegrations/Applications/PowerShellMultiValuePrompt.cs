@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -101,7 +102,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             {
                 string tabName = (variable["Tab"] as string) ?? "Other";
                 var name = variable["Title"] as string;
-                var hint = variable["Tooltip"] as string;
+                var hint = (variable["Tip"] as string) ?? (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
                 WebControl container = GetContainer(tabs, tabName);
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
@@ -311,12 +312,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else if (variable["Options"] != null)
             {
+                object psOptions = BaseObject(variable["Options"]);
                 OrderedDictionary options = new OrderedDictionary();
-                if (variable["Options"] is OrderedDictionary)
+                if (psOptions is OrderedDictionary)
                 {
-                    options = variable["Options"] as OrderedDictionary;
+                    options = psOptions as OrderedDictionary;
                 }
-                else if (variable["Options"] is string)
+                else if (psOptions is string)
                 {
                     string[] strOptions = ((string) variable["Options"]).Split('|');
                     int i = 0;
@@ -325,7 +327,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                         options.Add(strOptions[i++], strOptions[i++]);
                     }
                 }
-                else if (variable["Options"] is Hashtable)
+                else if (psOptions is Hashtable)
                 {
                     var hashOptions = variable["Options"] as Hashtable;
                     foreach (var key in hashOptions.Keys)
@@ -391,6 +393,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                 valueList.Add(s.ToString());
                             }
                             values = valueList.ToArray();
+                        }
+                        else
+                        {
+                            values = new[]{ value.ToString() };
                         }
                         foreach (var option in options.Keys)
                         {
@@ -641,5 +647,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             SheerResponse.CloseWindow();
         }
+
+        public static object BaseObject(object obj)
+        {
+            while ((obj is PSObject))
+            {
+                obj = (obj as PSObject).ImmediateBaseObject;
+            }
+            return obj;
+        }
+
     }
 }
