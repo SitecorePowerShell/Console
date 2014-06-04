@@ -3,6 +3,11 @@
     overflow-y: auto;
 }
 
+form {
+    position: relative;
+    z-index: 0;
+}
+
 html {
     height: 100%;
     width: 100%;

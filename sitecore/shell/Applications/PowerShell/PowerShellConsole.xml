@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellConsole>
+    <FormPage>
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellConsole,Cognifide.PowerShell" />
+      <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/jquery.terminal.css" DeviceDependant="true" runat="server" />
+      <Script type="text/javascript" src="/Console/Scripts/jquery-1.10.2.min.js"> </Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <!--Script type="text/javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </Script-->
+      <Script type="text/javascript" src="/Console/Scripts/jquery.terminal.js"> </Script>
+      <Script type="text/javascript" src="/Console/Scripts/split.js"> </Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
+      <!--[if lt IE 9]>
+            <script type="text/javascript" language="javascript" src="/Console/Scripts/json2.js"> </script>
+        <![endif]-->
+
+      <Script type="text/javascript" src="/Console/Scripts/console.js"> </Script>
+      <Literal ID="Options"/>
+      <a href="#" class="tip_no_hints">No hints found</a>
+      <div id="terminal"></div>
+      <div id="working">
+        <img src="/Console/Assets/working.gif" alt="Working" />
+      </div>
+    </FormPage>
+  </PowerShellConsole>
+</control>

@@ -1536,7 +1536,7 @@
                             return '<a target="_blank" href="' + link + '">' + link + '</a>' +
                                 (comma ? '.' : '');
                         }).replace(email_regex, '<a href="mailto:$1">$1</a>')
-                            .replace(guid_re, "<a href=\"/sitecore/shell/sitecore/content/Applications/Content%20Editor.aspx?id=$1&fo=$1\" target=\"_blank\">$1</a>");
+                           .replace(guid_re, "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id=$1)')\" href=\"#\">$1</a>");
                     } else {
                         return string;
                     }

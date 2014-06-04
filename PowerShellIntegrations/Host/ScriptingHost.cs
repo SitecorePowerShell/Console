@@ -95,13 +95,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         /// </summary>
         public string SessionId { get; internal set; }
 
-        private bool closeRunner = false;
-
-        public bool CloseRunner
-        {
-            get { return closeRunner; }
-            internal set { closeRunner = value; }
-        }
+        public bool CloseRunner { get; internal set; }
 
         /// <summary>
         ///     This implementation always returns the GUID allocated at

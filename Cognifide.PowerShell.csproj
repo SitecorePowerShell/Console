@@ -256,6 +256,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
+    <Compile Include="SitecoreIntegrations\Applications\PowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Applications\IPowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellResultViewerList.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellMultiValuePrompt.cs" />
@@ -267,13 +268,6 @@
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ScriptRunner.cs" />
-    <Compile Include="Console\Layouts\PowerShellTerminal.aspx.cs">
-      <DependentUpon>PowerShellTerminal.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Console\Layouts\PowerShellTerminal.aspx.designer.cs">
-      <DependentUpon>PowerShellTerminal.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Console\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -362,9 +356,6 @@
     <Content Include="Console\Assets\ind-highlight.png" />
     <Content Include="Console\Assets\question.png" />
     <Content Include="Console\Assets\refresh.png" />
-    <Content Include="Console\Layouts\PowerShellTerminal.aspx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
     <Content Include="Console\Scripts\ace\ace.js" />
     <Content Include="Console\Scripts\ace\emmet-core\emmet.js" />
     <Content Include="Console\Scripts\ace\ext-elastic_tabstops_lite.js" />
@@ -419,6 +410,7 @@
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellConsole.xml" />
     <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerList.xml">
       <SubType>Designer</SubType>
     </Content>
