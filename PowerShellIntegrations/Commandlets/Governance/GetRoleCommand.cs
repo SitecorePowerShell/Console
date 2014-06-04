@@ -12,12 +12,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
     [OutputType(new[] {typeof (User)})]
     public class GetRoleCommand : BaseCommand
     {
+        [Alias("Name")]
         [Parameter(ValueFromPipeline = true, Mandatory = true, Position = 0)]
-        public string Name { get; set; }
+        public string Identity { get; set; }
 
         protected override void ProcessRecord()
         {
-            string name = Name;
+            string name = Identity;
 
             if (string.IsNullOrEmpty(name))
             {
