@@ -8,7 +8,7 @@ using Sitecore.Shell.Applications.Security.RoleManager;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
-    [Cmdlet(VerbsCommon.Get, "Role", DefaultParameterSetName = "User from name")]
+    [Cmdlet(VerbsCommon.Get, "Role")]
     [OutputType(new[] {typeof (User)})]
     public class GetRoleCommand : BaseCommand
     {
