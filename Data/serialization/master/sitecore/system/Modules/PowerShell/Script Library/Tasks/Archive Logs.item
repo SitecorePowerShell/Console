@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1493
+content-length: 1442
 
 <#
     .SYNOPSIS
@@ -33,12 +33,12 @@ Import-Function -Name "Compress-Archive"
 # The archive filename will closely resemble the format of the default logfile names.
 $archiveName = "logs.$([datetime]::Now.ToString("yyyy-MM-dd.HHmmss"))"
 $archiveDirectory = "$($SitecoreDataFolder)\archived\"
-$logDirectory = "$($SitecoreDataFolder)logs\"
+$logDirectory = "$SitecoreLogFolder\"
 
 # The filter includes log files older than 14 days based on LastWriteTime.
 $filter = {
-    $date = [datetime]::Today.AddDays(-14)
-    $_.LastWriteTime -lt $date
+    $dtme = [datetime]::Today.AddDays(-14)
+    $_.LastWriteTime -lt $dtme
 }
 
 # Get all the log files that match the filter criteria. After zipping up remove the log files.
@@ -50,8 +50,8 @@ if($logs) {
 
 # The filter includes archive files older than 30 days based on LastWriteTime.
 $filter = {
-    $date = [datetime]::Today.AddDays(-30)
-    $_.LastWriteTime -lt $date
+    $dtme = [datetime]::Today.AddDays(-30)
+    $_.LastWriteTime -lt $dtme
 }
 
 # Get all the archived files that match the filter criteria. Remove the old archives.
@@ -62,7 +62,7 @@ if($archives) {
 ----version----
 language: en
 version: 1
-revision: fc3f3cd5-baa6-420b-ad5b-336c4d81a9ba
+revision: 219a15ee-1250-42fc-b864-b7898fa160cc
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -77,14 +77,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fc3f3cd5-baa6-420b-ad5b-336c4d81a9ba
+219a15ee-1250-42fc-b864-b7898fa160cc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140517T152848:635359373289053050
+20140604T025627:635374473874239453
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
