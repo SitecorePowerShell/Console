@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\Data\TranslateItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetRoleCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GovernanceUserBaseCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\UnlockItemCommand.cs" />

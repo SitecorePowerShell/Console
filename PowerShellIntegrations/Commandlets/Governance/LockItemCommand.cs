@@ -19,19 +19,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
             ProcessItem(sourceItem);
         }
 
-        private void ProcessItem(Item item)
-        {
-            LockItem(item);
-            if (Recurse)
-            {
-                foreach (Item child in item.Children)
-                {
-                    ProcessItem(child);
-                }
-            }
-        }
-
-        private void LockItem(Item item)
+        protected override void ProcessItem(Item item)
         {
             SwitchUser(() =>
             {

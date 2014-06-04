@@ -5,29 +5,11 @@ using Sitecore.Exceptions;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     [Cmdlet(VerbsCommon.Unlock, "Item")]
-    [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
-        )]
+    [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class UnlockItemCommand : GovernanceUserBaseCommand
     {
-        protected override void ProcessRecord()
-        {
-            Item sourceItem = GetProcessedRecord();
-            ProcessItem(sourceItem);
-        }
 
-        private void ProcessItem(Item item)
-        {
-            LockItem(item);
-            if (Recurse)
-            {
-                foreach (Item child in item.Children)
-                {
-                    ProcessItem(child);
-                }
-            }
-        }
-
-        private void LockItem(Item item)
+        protected override void ProcessItem(Item item)
         {
             SwitchUser(() =>
             {

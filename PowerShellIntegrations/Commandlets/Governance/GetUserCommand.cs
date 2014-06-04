@@ -3,6 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using Sitecore;
 using Sitecore.Security.Accounts;
+using Sitecore.Shell.Applications.Security.RoleManager;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
@@ -11,8 +12,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
     public class GetUserCommand : BaseCommand
     {
         [Alias("Name")]
-        [Parameter(ParameterSetName = "User from name", ValueFromPipeline = true, Mandatory = true)]
+        [Parameter(ParameterSetName = "User from name", ValueFromPipeline = true,Mandatory = true, Position = 0)]
         public string Identity { get; set; }
+
+        [Parameter(ParameterSetName = "User from name")]
+        public Role Role { get; set; }
 
         [Parameter(ParameterSetName = "Current user", Mandatory = true)]
         public SwitchParameter Current { get; set; }
@@ -29,15 +33,22 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
             else
             {
                 string name = Identity;
-                if (!name.Contains(@"\"))
+
+                if (name.Contains('?') || name.Contains('*') || string.IsNullOrEmpty(name))
                 {
-                    name = @"sitecore\" + name;
+                    var users = WildcardFilter(name, UserManager.GetUsers(), user => user.Name);
+                    if (Role != null)
+                    {
+                        users = users.Where(user => user.IsInRole(Role));
+                    }
+
+                    WriteObject(users,true);
+                    return;
                 }
 
-                if (name.Contains('?') || name.Contains('*'))
+                if (!name.Contains(@"\") && !string.IsNullOrEmpty(name))
                 {
-                    WildcardWrite(name, UserManager.GetUsers(), user => user.Name);
-                    return;
+                    name = @"sitecore\" + name;
                 }
 
                 if (User.Exists(name))
