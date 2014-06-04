@@ -121,8 +121,11 @@
     <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferenceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferrerCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\TranslateItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
+    <Compile Include="PowerShellIntegrations\ItemEqualityComparer.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetRoleCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GovernanceUserBaseCommand.cs" />
