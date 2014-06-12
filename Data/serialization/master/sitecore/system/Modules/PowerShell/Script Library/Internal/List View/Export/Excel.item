@@ -13,15 +13,17 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 323
+content-length: 350
+
+Import-Function -Name Export-Xlsx
 
 $dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
-$csvFile  = "$dataFolder\report-$datetime.xls"
+$file  = "$dataFolder\report-$datetime.xlsx"
 
 $format = & ([scriptblock]::Create($formatProperty))        
-[psCustomObject]$resultSet | Select-Object -Property $format | ConvertTo-Html | Out-File $csvFile
-$csvFile
+[psCustomObject]$resultSet | Select-Object -Property $format | Export-Xlsx -Path $file
+$file
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -32,7 +34,7 @@ WordProcessing/32x32/imp_exp_excel.png
 ----version----
 language: en
 version: 1
-revision: 5037a63c-0b33-4869-8b90-d7f2153ccafe
+revision: d3758ffa-f2a9-4628-95ab-0bfa31df9c85
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +49,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5037a63c-0b33-4869-8b90-d7f2153ccafe
+d3758ffa-f2a9-4628-95ab-0bfa31df9c85
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130922T222806:635154856869794297
+20140611T212637:635381187975789467
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
