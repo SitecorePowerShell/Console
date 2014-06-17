@@ -2,7 +2,7 @@
 
 #Databases { border: solid 1px ButtonShadow; }
 
-#ResultsClose {
+#HelpClose, #ResultsClose {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -38,15 +38,31 @@
 	text-shadow:1px 1px 0px #ffffff;
 	float: right;
 	margin: 1px 1px 0 0; 
-
 }
-#ResultsClose:hover {
+
+#HelpClose:hover, #ResultsClose:hover {
 	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
 	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
 	background-color:#dfdfdf;
 }
+
 #ResultsClose:active {
 	position:relative;
 	top:1px;
+}
+
+#HelpClose {
+    top: 2px;
+    right: 20px;
+	position:absolute;
+	font-size:18px;    
+	height:22px;
+	line-height:22px;
+	width:22px;
+}
+
+#HelpClose:active {
+	top:4px;
+	right:21px;
 }

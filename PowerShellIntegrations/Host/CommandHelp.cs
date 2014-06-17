@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     Database.GetDatabase("master")
                         .GetItem(ScriptLibrary.Path + "Internal/Context Help/Command Help");
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
-                var sb = new StringBuilder();
+                var sb = new StringBuilder("<div id=\"HelpClose\">x</div>");
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)
                 {
                     return new[]

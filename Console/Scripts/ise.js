@@ -36,6 +36,10 @@ extend(cognifide, 'powershell');
             ('WebForm_AutoFocus' in this) && WebForm_AutoFocus && WebForm_AutoFocus('Editor');
         }
 
+        $("body").on("click", "#HelpClose", function () {
+            $("#ajax-dialog").dialog("close");
+        });
+
         setTimeout(setFocusOnConsole, 1000);
 
         var guid = "ECBC33D9-A623-4A97-888B-375B627B4189";
@@ -187,6 +191,9 @@ extend(cognifide, 'powershell');
                 hide: "slow"
             });
             $('#ajax-dialog').scrollTop("0");
+            $("#HelpClose").click(function () {
+                $("#HelpClose").hide("slow", function () { $("#HelpClose").remove(); });
+            });
             return false;
         };
 
