@@ -89,53 +89,53 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                         {
                             item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
                         }
-                        else if (
-                            newValue is Item &&
-                                 string.Equals(item.Fields[propertyName].TypeKey, "image",
-                                     StringComparison.OrdinalIgnoreCase))
+                        else if (newValue is Item)
                         {
-                            item[propertyName] = newValue.ToString();
-                            var media = new MediaItem(newValue as Item);
-                            ImageField imageField = item.Fields[propertyName];
-
-                            if (imageField.MediaID != media.ID)
+                            if (string.Equals(item.Fields[propertyName].TypeKey, "image",
+                                StringComparison.OrdinalIgnoreCase))
                             {
-                                imageField.Clear();
-                                imageField.Src = MediaManager.GetMediaUrl(media);
-                                imageField.MediaID = media.ID;
-                                imageField.MediaPath = media.MediaPath;
-                                if (!String.IsNullOrEmpty(media.Alt))
+                                var media = new MediaItem(newValue as Item);
+                                ImageField imageField = item.Fields[propertyName];
+
+                                if (imageField.MediaID != media.ID)
                                 {
-                                    imageField.Alt = media.Alt;
+                                    imageField.Clear();
+                                    imageField.MediaID = media.ID;
+                                    if (!String.IsNullOrEmpty(media.Alt))
+                                    {
+                                        imageField.Alt = media.Alt;
+                                    }
+                                    else
+                                    {
+                                        imageField.Alt = media.DisplayName;
+                                    }
+                                }
+                            }
+                            else if (string.Equals(item.Fields[propertyName].TypeKey, "general link",
+                                StringComparison.OrdinalIgnoreCase))
+                            {
+                                Item newLink = newValue as Item;
+                                LinkField linkField = item.Fields[propertyName];
+                                if (MediaManager.HasMediaContent(newLink))
+                                {
+                                    linkField.Clear();
+                                    linkField.LinkType = "media";
+                                    linkField.Url = newLink.Paths.MediaPath;
+                                    linkField.TargetID = newLink.ID;
                                 }
                                 else
                                 {
-                                    imageField.Alt = media.DisplayName;
+                                    linkField.Clear();
+                                    linkField.LinkType = "internal";
+                                    linkField.Url = newLink.Paths.ContentPath;
+                                    linkField.TargetID = newLink.ID;
                                 }
-                            }
-                        }
-                        else if (newValue is Item &&
-                                 string.Equals(item.Fields[propertyName].TypeKey, "general link",
-                                     StringComparison.OrdinalIgnoreCase))
-                        {
-                            Item newLink = newValue as Item;
-                            item[propertyName] = newValue.ToString();
-                            LinkField linkField = item.Fields[propertyName];
-                            if (MediaManager.HasMediaContent(newLink))
-                            {
-                                linkField.Clear();
-                                linkField.LinkType = "media";
-                                linkField.Url = newLink.Paths.MediaPath;
-                                linkField.TargetID = newLink.ID;
                             }
                             else
                             {
-                                linkField.Clear();
-                                linkField.LinkType = "internal";                                
-                                linkField.Url = newLink.Paths.ContentPath;
-                                linkField.TargetID = newLink.ID;
+                                item[propertyName] = (newValue as Item).ID.ToString();
                             }
-                        }                            
+                        }
                         else
                         {
                             item[propertyName] = newValue.ToString();
