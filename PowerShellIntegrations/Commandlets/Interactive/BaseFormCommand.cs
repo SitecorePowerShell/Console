@@ -14,6 +14,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter]
         public int Height { get; set; }
 
+        public BaseFormCommand()
+        {
+            Width = 800;
+            Height = 600;
+        }
         protected string WidthString
         {
             get { return Width.ToString(CultureInfo.InvariantCulture); }
