@@ -8,34 +8,49 @@ using Sitecore.Data.Serialization.Presets;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 {
     [Cmdlet("Deserialize", "Item")]
+    [OutputType(new[] { typeof(void)}, ParameterSetName = new[] { "Database", "Item", "Preset", "Path" })]
     public class DeserializeItemCommand : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Database")]
         public Database Database { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item")]
         public Item Item { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public IncludeEntry Entry { get; set; }
+        [Alias("Entry")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Preset")]
+        public IncludeEntry Preset { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
         [Alias("FullName")]
         public string Path { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Item")]
         public SwitchParameter Recurse { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Preset")]
+        [Parameter(ParameterSetName = "Item")]
+        [Parameter(ParameterSetName = "Database")]
         public string Root { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Item")]
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "Preset")]
         public SwitchParameter UseNewId { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Item")]
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "Preset")]
         public SwitchParameter DisableEvents { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Item")]
+        [Parameter(ParameterSetName = "Database")]
+        [Parameter(ParameterSetName = "Preset")]
         public SwitchParameter ForceUpdate { get; set; }
 
         protected override void ProcessRecord()
@@ -48,9 +63,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             {
                 Deserialize(Item);
             }
-            else if (Entry != null)
+            else if (Preset != null)
             {
-                Deserialize(Entry);
+                Deserialize(Preset);
             }
             else if (Path != null)
             {
@@ -100,9 +115,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
         {
             var options = new LoadOptions
             {
-                UseNewID = UseNewId.IsPresent,
-                DisableEvents = DisableEvents.IsPresent,
-                ForceUpdate = ForceUpdate.IsPresent,
+                UseNewID = UseNewId,
+                DisableEvents = DisableEvents,
+                ForceUpdate = ForceUpdate
             };
 
             if (Root != null)
