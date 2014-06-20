@@ -19,7 +19,6 @@ using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
-using Checklist = Sitecore.Shell.Applications.ContentEditor.Checklist;
 using Control = System.Web.UI.Control;
 using DateTime = System.DateTime;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
@@ -372,14 +371,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
                     if (editor.IndexOf("check", StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        var checkList = new Checklist()
+                        var checkList = new PSCheckList()
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                             //Header = (string)variable["Title"],                    
                             HeaderStyle = "margin-top:20px; display:inline-block;",
                             ItemID = "{11111111-1111-1111-1111-111111111111}"
                         };
-
+                        checkList.SetItemLanguage(Sitecore.Context.Language.Name);
                         var values = new string[0];
                         if (value is string)
                         {
@@ -556,9 +555,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                             ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
                             : null);
                 }
-                else if (control is Checklist)
+                else if (control is PSCheckList)
                 {
-                    var checkList = control as Checklist;
+                    var checkList = control as PSCheckList;
                     string[] values =
                         checkList.Controls.Cast<Control>()
                             .Where(item => (item is ChecklistItem))
