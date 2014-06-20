@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3656
+content-length: 3701
 
 function Parse-TaskSchedule{
         [CmdletBinding()]
@@ -97,8 +97,8 @@ function Edit-TaskSchedule{
         @{ Name = "to"; Title="Stops running at"; Editor="date time"; Tip="Select the date the task should end being run."}, 
         @{ Name = "weekdays"; Title="Days to run"; Options=$weekDayOptions; Editor="checklist"; Tip="Select the days of the week the task should run."},
         @{ Name = "interval"; Title="Interval <span style='font-family: courier new,monospace;'>(Days.Hours:Minutes:Seconds.Miliseconds)</span>"; Tip="Specify how often the task should be launched"} `
-        -Description "Specify schedule for the task you are editing. You can edit the date/time task becomes active and when it should stop running, what days it will run on and how often." `
-        -Title "Task Schedule" -Width 500 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints 
+        -Description "Specify schedule for task '$($scheduleItem.DisplayName)'. You can edit the date/time task becomes active and when it should stop running, what days it will run on and how often." `
+        -Title "Schedule for task: $($scheduleItem.DisplayName)" -Width 500 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints 
 
     if($result -eq "ok")
     {
@@ -109,7 +109,7 @@ function Edit-TaskSchedule{
 ----version----
 language: en
 version: 1
-revision: 2f97b61a-b28a-4e58-a7a3-dc47e6194306
+revision: 8a659169-c5a6-4c3e-a51a-4bc232768c46
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -124,14 +124,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2f97b61a-b28a-4e58-a7a3-dc47e6194306
+8a659169-c5a6-4c3e-a51a-4bc232768c46
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140603T170338:635374118180354062
+20140620T155034:635388762344244219
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
