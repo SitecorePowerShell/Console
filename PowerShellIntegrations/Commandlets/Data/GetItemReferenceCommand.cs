@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         [Parameter(ParameterSetName = "Item from ID")]
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline", Position = 0)]
-        public SwitchParameter GetItems { get; set; }
+        public SwitchParameter ItemLink { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -41,20 +41,20 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             var linkDb = Sitecore.Globals.LinkDatabase;
             if (linkDb.GetReferenceCount(linkedItem) > 0)
             {
-                if (GetItems)
+                if (ItemLink)
+                {
+                    linkDb
+                        .GetReferences(linkedItem)
+                        .ToList()
+                        .ForEach(WriteObject);
+                }
+                else
                 {
                     linkDb.GetReferences(linkedItem)
                         .Select(link => link.GetSourceItem())
                         .Distinct(ItemEqualityComparer.Instance)
                         .ToList()
                         .ForEach(WriteItem);
-                }
-                else
-                {
-                    linkDb
-                        .GetReferences(linkedItem)
-                        .ToList()
-                        .ForEach(WriteObject);
                 }
             }
         }
