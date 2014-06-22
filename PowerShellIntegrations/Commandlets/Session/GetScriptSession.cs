@@ -22,10 +22,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
         {
             if (Current.IsPresent)
             {
-                var id =(Host.PrivateData.BaseObject as ScriptingHostPrivateData).SessionId;
-                if (!string.IsNullOrEmpty(id))
+                var scriptingHostPrivateData = Host.PrivateData.BaseObject() as ScriptingHostPrivateData;
+                if (scriptingHostPrivateData != null)
                 {
-                    WriteObject(ScriptSessionManager.GetAll().Where(s => id.Equals(s.ID, StringComparison.OrdinalIgnoreCase)),true);
+                    var id =scriptingHostPrivateData.SessionId;
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        WriteObject(ScriptSessionManager.GetAll().Where(s => id.Equals(s.ID, StringComparison.OrdinalIgnoreCase)),true);
+                    }
                 }
             }
             else if (!string.IsNullOrEmpty(Id))

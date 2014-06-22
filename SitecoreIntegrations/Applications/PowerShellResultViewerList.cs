@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
@@ -279,30 +280,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         public void UpdateList(string sessionId)
         {
             var session = ScriptSessionManager.GetSession(sessionId);
-            var varValue = GetBaseObject(session.GetVariable("allData"));
-            var newData = new List<ShowListViewCommand.DataObject>();
-            if (varValue is IEnumerable)
-            {
-                foreach (var val in varValue as IEnumerable)
-                {
-                    object newVal = GetBaseObject(val);
-                    if (newVal is ShowListViewCommand.DataObject)
-                    {
-                        newData.Add(newVal as ShowListViewCommand.DataObject);
-                    }
-                }
-            }
-            ListViewer.Data.Data = newData;
+            var varValue = session.GetVariable("allData").BaseObject();
+            ListViewer.Data.Data = varValue.BaseList<ShowListViewCommand.DataObject>();
             ListViewer.Refresh();
-        }
-
-        private object GetBaseObject(object psObject)
-        {
-            while (psObject is PSObject)
-            {
-                psObject = ((PSObject) psObject).ImmediateBaseObject;
-            }
-            return psObject;
         }
 
         private void ExportResults(Message message)

@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Controls;
@@ -311,7 +312,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
             else if (variable["Options"] != null)
             {
-                object psOptions = BaseObject(variable["Options"]);
+                object psOptions = variable["Options"].BaseObject();
                 OrderedDictionary options = new OrderedDictionary();
                 if (psOptions is OrderedDictionary)
                 {
@@ -646,15 +647,5 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             SheerResponse.CloseWindow();
         }
-
-        public static object BaseObject(object obj)
-        {
-            while ((obj is PSObject))
-            {
-                obj = (obj as PSObject).ImmediateBaseObject;
-            }
-            return obj;
-        }
-
     }
 }

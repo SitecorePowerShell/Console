@@ -262,7 +262,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             //Output = host.Output;
             if (marshallResults)
-                return execResults.Select(p => p.BaseObject).ToList();
+                return execResults.Select(p => p.BaseObject()).ToList();
             return execResults.Cast<object>().ToList();
         }
 

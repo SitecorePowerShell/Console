@@ -70,11 +70,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
                 if (result.Count() > 0)
                 {
-                    object varValue = Data;
-                    while (varValue is PSObject)
-                    {
-                        varValue = ((PSObject) varValue).ImmediateBaseObject;
-                    }
+                    object varValue = Data.BaseObject();
 
                     var slvDataObject = new DataObject
                     {

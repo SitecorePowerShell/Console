@@ -250,6 +250,7 @@
     <Compile Include="PowerShellIntegrations\ItemExtensions.cs" />
     <Compile Include="PowerShellIntegrations\ItemShellExtensions.cs" />
     <Compile Include="PowerShellIntegrations\PathUtilities.cs" />
+    <Compile Include="PowerShellIntegrations\PowerShellExtensions.cs" />
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.cs" />
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.DynamicParameters.cs" />
     <Compile Include="PowerShellIntegrations\Provider\PsSitecoreItemProvider.Maintenance.cs" />

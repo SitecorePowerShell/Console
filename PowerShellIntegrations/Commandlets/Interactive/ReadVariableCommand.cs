@@ -61,22 +61,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                         object varValue = result["Value"];
                         if (varValue == null)
                         {
-                            varValue = variable.Value;
-                            while (varValue is PSObject)
-                            {
-                                varValue = ((PSObject) varValue).ImmediateBaseObject;
-                            }
+                            varValue = variable.Value.BaseObject();
 
                             if (varValue is IEnumerable<object>)
                             {
-                                varValue = (varValue as IEnumerable<object>).Select(p =>
-                                {
-                                    while (p is PSObject)
-                                    {
-                                        p = ((PSObject) p).ImmediateBaseObject;
-                                    }
-                                    return p;
-                                }).ToList();
+                                varValue = (varValue as IEnumerable<object>).Select(p => p.BaseObject()).ToList();
                             }
                             result.Add("Value", varValue);
                         }

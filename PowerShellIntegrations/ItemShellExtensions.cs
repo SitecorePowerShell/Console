@@ -78,13 +78,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
 
         public static void Modify(PSObject powerShellItem, string propertyName, object[] value)
         {
-            var item = powerShellItem.ImmediateBaseObject as Item;
+            var item = powerShellItem.BaseObject as Item;
             if (item != null)
             {
                 item.Edit(
                     args =>
                     {
-                        object newValue = BaseObject(value[0]);
+                        object newValue = value[0].BaseObject();
                         if (newValue is DateTime)
                         {
                             item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
@@ -116,20 +116,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                             {
                                 Item newLink = newValue as Item;
                                 LinkField linkField = item.Fields[propertyName];
+                                linkField.Clear();
                                 if (MediaManager.HasMediaContent(newLink))
                                 {
-                                    linkField.Clear();
                                     linkField.LinkType = "media";
                                     linkField.Url = newLink.Paths.MediaPath;
-                                    linkField.TargetID = newLink.ID;
                                 }
                                 else
                                 {
-                                    linkField.Clear();
                                     linkField.LinkType = "internal";
                                     linkField.Url = newLink.Paths.ContentPath;
-                                    linkField.TargetID = newLink.ID;
                                 }
+                                linkField.TargetID = newLink.ID;
                             }
                             else
                             {
@@ -142,15 +140,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                         }
                     });
             }
-        }
-
-        public static object BaseObject(object obj)
-        {
-            while ((obj is PSObject))
-            {
-                obj = (obj as PSObject).ImmediateBaseObject;
-            }
-            return obj;
         }
     }
 }
