@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
     [OutputType(new[] {typeof (DeviceItem)}, ParameterSetName = new[] { "By Name", "Default" })]
     public class GetDeviceCommand : BaseCommand
     {
-        [Parameter(Position = 0, Mandatory = true,ParameterSetName = "By Name")]
+        [Parameter(Position = 0, ParameterSetName = "By Name")]
         public string Name { get; set; }
 
         [Parameter(Position = 0, Mandatory = true,ParameterSetName = "Default")]
@@ -31,6 +31,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             }
             else
             {
+                if (string.IsNullOrEmpty(Name))
+                {
+                    Name = "*";
+                }
                 WildcardWrite(Name, CurrentDatabase.Resources.Devices.GetAll(), device => device.Name);                
             }
         }
