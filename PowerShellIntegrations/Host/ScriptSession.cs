@@ -136,53 +136,53 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             lock (this)
             {
-                if (!initialized || reinitialize)
-                {
-                    initialized = true;
-                    runspace.SessionStateProxy.SetVariable("AppPath", HttpRuntime.AppDomainAppPath);
-                    runspace.SessionStateProxy.SetVariable("AppVPath", HttpRuntime.AppDomainAppVirtualPath);
-                    runspace.SessionStateProxy.SetVariable("tempPath", Environment.GetEnvironmentVariable("temp"));
-                    runspace.SessionStateProxy.SetVariable("tmpPath", Environment.GetEnvironmentVariable("tmp"));
-                    runspace.SessionStateProxy.SetVariable("me", User.Current.Name);
-                    runspace.SessionStateProxy.SetVariable("HttpContext", HttpContext.Current);
-                    if (HttpContext.Current != null)
-                    {
-                        runspace.SessionStateProxy.SetVariable("request", HttpContext.Current.Request);
-                        runspace.SessionStateProxy.SetVariable("response", HttpContext.Current.Response);
-                    }
-                    runspace.SessionStateProxy.SetVariable("ClientData", Context.ClientData);
-                    runspace.SessionStateProxy.SetVariable("SitecoreDataFolder",
-                        Sitecore.Configuration.Settings.DataFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreDebugFolder",
-                        Sitecore.Configuration.Settings.DebugFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreIndexFolder",
-                        Sitecore.Configuration.Settings.IndexFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreLayoutFolder",
-                        Sitecore.Configuration.Settings.LayoutFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreLogFolder",
-                        Sitecore.Configuration.Settings.LogFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder",
-                        Sitecore.Configuration.Settings.MediaFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecorePackageFolder",
-                        Sitecore.Configuration.Settings.PackagePath);
-                    runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder",
-                        Sitecore.Configuration.Settings.SerializationFolder);
-                    runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",
-                        Sitecore.Configuration.Settings.TempFolderPath);
+                if (initialized && !reinitialize) return;
 
-                    try
-                    {
-                        runspace.SessionStateProxy.SetVariable("ClientPage", Context.ClientPage);
-                    }
-                    catch
-                    {
-                    }
-                    runspace.SessionStateProxy.SetVariable("HostSettings", Settings);
-                    runspace.SessionStateProxy.SetVariable("ScriptSession", this);
-                    if (PsVersion == null)
-                    {
-                        PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
-                    }
+                initialized = true;
+                runspace.SessionStateProxy.SetVariable("AppPath", HttpRuntime.AppDomainAppPath);
+                runspace.SessionStateProxy.SetVariable("AppVPath", HttpRuntime.AppDomainAppVirtualPath);
+                runspace.SessionStateProxy.SetVariable("tempPath", Environment.GetEnvironmentVariable("temp"));
+                runspace.SessionStateProxy.SetVariable("tmpPath", Environment.GetEnvironmentVariable("tmp"));
+                runspace.SessionStateProxy.SetVariable("me", User.Current.Name);
+                runspace.SessionStateProxy.SetVariable("HttpContext", HttpContext.Current);
+                if (HttpContext.Current != null)
+                {
+                    runspace.SessionStateProxy.SetVariable("request", HttpContext.Current.Request);
+                    runspace.SessionStateProxy.SetVariable("response", HttpContext.Current.Response);
+                }
+                runspace.SessionStateProxy.SetVariable("ClientData", Context.ClientData);
+                runspace.SessionStateProxy.SetVariable("SitecoreDataFolder",
+                    Sitecore.Configuration.Settings.DataFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreDebugFolder",
+                    Sitecore.Configuration.Settings.DebugFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreIndexFolder",
+                    Sitecore.Configuration.Settings.IndexFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreLayoutFolder",
+                    Sitecore.Configuration.Settings.LayoutFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreLogFolder",
+                    Sitecore.Configuration.Settings.LogFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder",
+                    Sitecore.Configuration.Settings.MediaFolder);
+                runspace.SessionStateProxy.SetVariable("SitecorePackageFolder",
+                    Sitecore.Configuration.Settings.PackagePath);
+                runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder",
+                    Sitecore.Configuration.Settings.SerializationFolder);
+                runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",
+                    Sitecore.Configuration.Settings.TempFolderPath);
+
+                try
+                {
+                    runspace.SessionStateProxy.SetVariable("ClientPage", Context.ClientPage);
+                }
+                catch
+                {
+                    Log.Warn("Unable to set the ClientPage variable.", this);
+                }
+                runspace.SessionStateProxy.SetVariable("HostSettings", Settings);
+                runspace.SessionStateProxy.SetVariable("ScriptSession", this);
+                if (PsVersion == null)
+                {
+                    PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
             }
         }
@@ -258,12 +258,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             pipeline.StateChanged += PipelineStateChanged;
 
             // execute the commands in the pipeline now
-            Collection<PSObject> execResults = pipeline.Invoke();
+            var execResults = pipeline.Invoke();
 
             //Output = host.Output;
-            if (marshallResults)
-                return execResults.Select(p => p.BaseObject()).ToList();
-            return execResults.Cast<object>().ToList();
+            return marshallResults ? execResults.Select(p => p.BaseObject).ToList() : execResults.Cast<object>().ToList();
         }
 
         private void PipelineStateChanged(object sender, PipelineStateEventArgs e)
@@ -272,7 +270,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public string GetExceptionString(Exception exc)
         {
-            string exception = String.Empty;
+            var exception = String.Empty;
             exception += String.Format(
                 HtmlExceptionFormatString,
                 LineEndformat,
@@ -289,7 +287,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public string GetExceptionConsoleString(Exception exc)
         {
-            string exception = String.Empty;
+            var exception = String.Empty;
             exception += String.Format(
                 ConsoleExceptionFormatString,
                 exc.Message,
@@ -350,7 +348,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public void SetItemLocationContext(Item item)
         {
             SetContextItem(item);
-            string contextScript = GetDataContextSwitch(item);
+            var contextScript = GetDataContextSwitch(item);
             ExecuteScriptPart(contextScript);
         }
     }

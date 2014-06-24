@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -54,7 +53,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
                 throw new AccessDeniedException("A required license is missing");
             Assert.IsTrue(Membership.ValidateUser(userName, password), "Unknown username or password.");
-            User user = Sitecore.Security.Accounts.User.FromName(userName, true);
+            var user = Sitecore.Security.Accounts.User.FromName(userName, true);
             UserSwitcher.Enter(user);
         }
 
@@ -90,11 +89,11 @@ namespace Cognifide.PowerShell.Console.Services
                     new {result = "Session recycled.", prompt = "PS >"});
             }
 
-            ScriptSession session = GetScriptSession(guid);
+            var session = GetScriptSession(guid);
             try
             {
-                string handle = ID.NewID.ToString();
-                var jobOptions = new JobOptions(GetJobID(guid, handle), "PowerShell", "shell", this, "RunJob",
+                var handle = ID.NewID.ToString();
+                var jobOptions = new JobOptions(GetJobId(guid, handle), "PowerShell", "shell", this, "RunJob",
                     new object[] {session, command})
                 {
                     AfterLife = new TimeSpan(0, 10, 0),
@@ -134,7 +133,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             catch (Exception ex)
             {
-                Job job = Sitecore.Context.Job;
+                var job = Sitecore.Context.Job;
                 if (job != null)
                 {
                     job.Status.Failed = true;
@@ -156,9 +155,9 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var serializer = new JavaScriptSerializer();
 
-            ScriptSession session = GetScriptSession(guid);
+            var session = GetScriptSession(guid);
             var result = new Result();
-            Job scriptJob = JobManager.GetJob(GetJobID(guid, handle));
+            var scriptJob = JobManager.GetJob(GetJobId(guid, handle));
             if (scriptJob == null)
             {
                 result.status = StatusError;
@@ -177,16 +176,16 @@ namespace Cognifide.PowerShell.Console.Services
             if (scriptJob.Status.Failed)
             {
                 result.status = StatusError;
-                string message = string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray());
+                var message = string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray());
                 result.result = "[[;#f00;#000]" + (message.Length > 0 ? message : "Command failed") + "]";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
                 return serializer.Serialize(result);
             }
             result.status = StatusComplete;
-            int lines = 0;
-            int buffer = WebServiceSettings.SerializationSizeBuffer;
-            bool partial = false;
+            var lines = 0;
+            var buffer = WebServiceSettings.SerializationSizeBuffer;
+            var partial = false;
             var temp = new StringBuilder();
             var output = new StringBuilder();
             foreach (var outputLine in session.Output)
@@ -213,7 +212,7 @@ namespace Cognifide.PowerShell.Console.Services
                 session.Output.Clear();
             }
             HttpContext.Current.Response.ContentType = "application/json";
-            string serializedResult = serializer.Serialize(result);
+            var serializedResult = serializer.Serialize(result);
             return serializedResult;
         }
 
@@ -230,7 +229,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object CompleteAceCommand(string guid, string command)
         {
             var serializer = new JavaScriptSerializer();
-            string result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
+            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
         }
 
@@ -239,7 +238,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object CompleteCommand(string guid, string command)
         {
             var serializer = new JavaScriptSerializer();
-            string result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
+            var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
             return result;
         }
 
@@ -248,15 +247,15 @@ namespace Cognifide.PowerShell.Console.Services
         public object GetAutoCompletionPrefix(string guid, string command)
         {
             var serializer = new JavaScriptSerializer();
-            ScriptSession session = GetScriptSession(guid);
-            string result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
+            var session = GetScriptSession(guid);
+            var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
             return result;
         }
 
         public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
         {
-            ScriptSession session = GetScriptSession(guid);
-            IEnumerable<string> result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
+            var session = GetScriptSession(guid);
+            var result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
             return result.ToArray();
         }
 
@@ -266,19 +265,19 @@ namespace Cognifide.PowerShell.Console.Services
         public object GetHelpForCommand(string guid, string command)
         {
             var serializer = new JavaScriptSerializer();
-            string result = serializer.Serialize(GetHelpOutputs(guid, command));
+            var result = serializer.Serialize(GetHelpOutputs(guid, command));
             return result;
         }
 
         public static string[] GetHelpOutputs(string guid, string command)
         {
-            ScriptSession session = GetScriptSession(guid);
-            IEnumerable<string> result = CommandHelp.GetHelp(session, command);
+            var session = GetScriptSession(guid);
+            var result = CommandHelp.GetHelp(session, command);
             return result.ToArray();
         }
 
 
-        protected string GetJobID(string sessionGuid, string handle)
+        protected string GetJobId(string sessionGuid, string handle)
         {
             return "PowerShell-" + sessionGuid + "-" + handle;
         }
@@ -286,13 +285,13 @@ namespace Cognifide.PowerShell.Console.Services
         private static void RecycleSession(string guid)
         {
             var session = HttpContext.Current.Session[guid] as ScriptSession;
-            if (session != null)
-            {
-                HttpContext.Current.Session.Remove(guid);
-                session.Dispose();
-            }
+            if (session == null) return;
+
+            HttpContext.Current.Session.Remove(guid);
+            session.Dispose();
         }
 
+        // TODO: Using the default JavaScript Serializer prevents us from being able to use PascalCasing.
         public class Result
         {
             public string handle;

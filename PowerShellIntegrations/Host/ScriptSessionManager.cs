@@ -5,7 +5,6 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
-using Sitecore.Shell.Framework.Commands.TemplateBuilder;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -35,13 +34,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 {
                     sessions.Remove(key);
                 }
-                if (HttpRuntime.Cache[key] != null)
+                if (HttpRuntime.Cache[key] == null) return;
+
+                var session = HttpRuntime.Cache.Remove(key) as ScriptSession;
+                if (session != null)
                 {
-                    var session = HttpRuntime.Cache.Remove(key) as ScriptSession;
-                    if (session != null)
-                    {
-                        session.Dispose();
-                    }
+                    session.Dispose();
                 }
             }
         }
@@ -54,8 +52,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
         {
             // sessions with no persistent ID, are just created new every time
-            bool autoDispose = string.IsNullOrEmpty(persistentId);
-            if(autoDispose)
+            var autoDispose = string.IsNullOrEmpty(persistentId);
+            if (autoDispose)
             {
                 persistentId = Guid.NewGuid().ToString();
             }
@@ -68,11 +66,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                     return HttpRuntime.Cache[sessionKey] as ScriptSession;
                 }
 
-                var session = new ScriptSession(applicanceType, personalizedSettings);
-                session.ID = persistentId;
-                session.AutoDispose = autoDispose;
+                var session = new ScriptSession(applicanceType, personalizedSettings)
+                {
+                    ID = persistentId,
+                    AutoDispose = autoDispose
+                };
                 var expiration = Sitecore.Configuration.Settings.GetIntSetting(expirationSetting, 30);
-                HttpRuntime.Cache.Add(sessionKey, session, null, Cache.NoAbsoluteExpiration, new TimeSpan(0, expiration, 0), CacheItemPriority.Normal, CacheItemRemoved);
+                HttpRuntime.Cache.Add(sessionKey, session, null, Cache.NoAbsoluteExpiration,
+                    new TimeSpan(0, expiration, 0), CacheItemPriority.Normal, CacheItemRemoved);
                 sessions.Add(sessionKey);
                 session.ID = persistentId;
                 session.Key = sessionKey;
@@ -91,7 +92,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         {
             lock (sessions)
             {
-                foreach (string key in sessions)
+                foreach (var key in sessions)
                 {
                     var sessionKey = GetSessionKey(key);
                     var session = HttpRuntime.Cache.Remove(sessionKey) as ScriptSession;
@@ -127,6 +128,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             key.Append(persistentId);
             return key.ToString();
         }
-
     }
 }
