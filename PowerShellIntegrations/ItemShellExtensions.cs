@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
@@ -85,19 +86,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                     args =>
                     {                        
                         object newValue = value[0].BaseObject();
-                        var field = FieldTypeManager.GetField(item.Fields[propertyName]);
+                        CustomField field = FieldTypeManager.GetField(item.Fields[propertyName]);
 
-                        if (newValue is DateTime)
+                        if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
                         {
-                            item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
+                            newValue = (newValue as object[]).Select(p => p.BaseObject()).Where(p => p is Item).Cast<Item>().ToList();
                         }
-                        else if (newValue is Item)
+                        if (newValue is Item)
                         {
-                            if (string.Equals(item.Fields[propertyName].TypeKey, "image",
-                                StringComparison.OrdinalIgnoreCase))
+                            newValue = new List<Item> {newValue as Item};
+                        }
+
+                        if (newValue is List<Item>)
+                        {
+                            var items = newValue as List<Item>;
+                            var lastItem = items.Last();
+                            if (field is ImageField)
                             {
-                                var media = new MediaItem(newValue as Item);
-                                ImageField imageField = item.Fields[propertyName];
+                                var media = new MediaItem(lastItem);
+                                var imageField = field as ImageField;
 
                                 if (imageField.MediaID != media.ID)
                                 {
@@ -106,28 +113,70 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                                     imageField.Alt = !String.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
                                 }
                             }
-                            else if (string.Equals(item.Fields[propertyName].TypeKey, "general link",
-                                StringComparison.OrdinalIgnoreCase))
+                            else if (field is LinkField)
                             {
-                                var newLink = newValue as Item;
-                                LinkField linkField = item.Fields[propertyName];
+                                LinkField linkField = field as LinkField;
                                 linkField.Clear();
-                                if (MediaManager.HasMediaContent(newLink))
+
+                                if (MediaManager.HasMediaContent(lastItem))
                                 {
                                     linkField.LinkType = "media";
-                                    linkField.Url = newLink.Paths.MediaPath;
+                                    linkField.Url = lastItem.Paths.MediaPath;
                                 }
                                 else
                                 {
                                     linkField.LinkType = "internal";
-                                    linkField.Url = newLink.Paths.ContentPath;
+                                    linkField.Url = lastItem.Paths.ContentPath;
                                 }
-                                linkField.TargetID = newLink.ID;
+                                linkField.TargetID = lastItem.ID;
                             }
-                            else
+                            else if (field is LinkField)
                             {
-                                item[propertyName] = (newValue as Item).ID.ToString();
+                                LinkField linkField = field as LinkField;
+                                linkField.Clear();
+
+                                if (MediaManager.HasMediaContent(lastItem))
+                                {
+                                    linkField.LinkType = "media";
+                                    linkField.Url = lastItem.Paths.MediaPath;
+                                }
+                                else
+                                {
+                                    linkField.LinkType = "internal";
+                                    linkField.Url = lastItem.Paths.ContentPath;
+                                }
+                                linkField.TargetID = lastItem.ID;
                             }
+                            else if (field is MultilistField)
+                            {
+                                MultilistField linkField = field as MultilistField;
+                                linkField.Value = string.Empty;
+                                foreach (var linkedItem in items)
+                                    linkField.Add(linkedItem.ID.ToString());
+                            }
+                            else if (field is FileField)
+                            {
+                                var linkField = field as FileField;
+
+                                if (MediaManager.HasMediaContent(lastItem))
+                                {
+                                    linkField.Clear();
+                                    linkField.MediaID = lastItem.ID;
+                                    linkField.Src = MediaManager.GetMediaUrl(lastItem);
+                                }
+                            }
+                            else if (field is ValueLookupField)
+                            {
+                                field.Value = lastItem.Name;
+                            }
+                            else // LookupField, GroupedDroplinkField, ReferenceField, Other
+                            {
+                                field.Value = lastItem.ID.ToString();
+                            }
+                        }
+                        else if (newValue is DateTime)
+                        {
+                            item[propertyName] = ((DateTime)newValue).ToString("yyyyMMddTHHmmss");
                         }
                         else
                         {
