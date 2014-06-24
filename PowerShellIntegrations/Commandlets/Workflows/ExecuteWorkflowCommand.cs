@@ -7,17 +7,8 @@ using Sitecore.Workflows;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
     [Cmdlet("Execute", "Workflow")]
-    public class ExecuteWorkflowCommand : BaseCommand
+    public class ExecuteWorkflowCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public Item Item { get; set; }
-
-        [Parameter(Position = 0)]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter]
-        public string Id { get; set; }
 
         [Parameter]
         public string CommandName { get; set; }
@@ -25,26 +16,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
         [Parameter]
         public string Comments { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item = FindItemFromParameters(Item, Path, Id);
-
-            IWorkflowProvider workflowProvider = Item.Database.WorkflowProvider;
+            IWorkflowProvider workflowProvider = item.Database.WorkflowProvider;
             if (workflowProvider == null)
             {
                 WriteError(
                     new ErrorRecord(new WorkflowException("Workflow provider could not be obtained for database: " +
-                                                          Item.Database.Name),
+                                                          item.Database.Name),
                         "sitecore_workflow_provider_missing",
                         ErrorCategory.ObjectNotFound, null));
                 return;
             }
 
-            IWorkflow workflow = workflowProvider.GetWorkflow(Item);
+            IWorkflow workflow = workflowProvider.GetWorkflow(item);
             if (workflow == null)
             {
                 WriteError(new ErrorRecord(
-                    new WorkflowException("Workflow missing or item not in workflow: " + Item.ID),
+                    new WorkflowException("Workflow missing or item not in workflow: " + item.ID),
                     "sitecore_workflow_missing",
                     ErrorCategory.ObjectNotFound, null));
                 return;
@@ -52,7 +41,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 
             try
             {
-                WorkflowCommand command = workflow.GetCommands(Item).FirstOrDefault(c => c.DisplayName == CommandName);
+                WorkflowCommand command = workflow.GetCommands(item).FirstOrDefault(c => c.DisplayName == CommandName);
                 if (command == null)
                 {
                     WriteError(new ErrorRecord(
@@ -62,7 +51,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
                     return;
                 }
 
-                WorkflowResult workflowResult = workflow.Execute(command.CommandID, Item, Comments, false, new object[0]);
+                WorkflowResult workflowResult = workflow.Execute(command.CommandID, item, Comments, false, new object[0]);
                 if (!workflowResult.Succeeded)
                 {
                     string message = workflowResult.Message;
