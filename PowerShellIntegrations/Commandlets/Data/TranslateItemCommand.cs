@@ -16,7 +16,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("Translate", "Item")]
     [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class TranslateItemCommand : BaseCommand
+    public class TranslateItemCommand : BaseItemCommand
     {
         public enum ActionIfExists
         {
@@ -24,21 +24,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             Append,
             OverwriteLatest
         }
-
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline")]
-        public Item Item { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID")]
-        public string Id { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Parameter(ParameterSetName = "Item from ID")]
-        public Language Language { get; set; }
 
         [Parameter]
         public SwitchParameter Recurse { get; set; }
@@ -72,26 +57,20 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             }
         }
 
-        protected override void ProcessRecord()
-        {
-            Item sourceItem = FindItemFromParameters(Item, Path, Id, Language);
-            TranslateItem(sourceItem);
-        }
-
-        private void TranslateItem(Item sourceItem)
+        protected override void ProcessItem(Item item)
         {
             foreach (string targetLanguage in TargetLanguage)
             {
-                Item latestVersion = sourceItem.Versions.GetLatestVersion(LanguageManager.GetLanguage(targetLanguage));
+                Item latestVersion = item.Versions.GetLatestVersion(LanguageManager.GetLanguage(targetLanguage));
                 if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
                 {
-                    CopyFields(sourceItem, latestVersion, false);
+                    CopyFields(item, latestVersion, false);
                 }
                 if (Recurse)
                 {
-                    foreach (Item childItem in sourceItem.Children)
+                    foreach (Item childItem in item.Children)
                     {
-                        TranslateItem(childItem);
+                        ProcessItem(childItem);
                     }
                 }
             }

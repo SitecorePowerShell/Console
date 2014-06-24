@@ -12,32 +12,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemReference")]
     [OutputType(new[] { typeof(Item), typeof(ItemLink) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class GetItemReferenceCommand : BaseCommand
+    public class GetItemReferenceCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline", Position = 0)]
-        public Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID")]
-        public string Id { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Parameter(ParameterSetName = "Item from ID")]
-        public Language Language { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Parameter(ParameterSetName = "Item from ID")]
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline", Position = 0)]
         public SwitchParameter ItemLink { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item linkedItem)
         {
-            Item linkedItem = FindItemFromParameters(Item, Path, Id, Language);
             var linkDb = Sitecore.Globals.LinkDatabase;
             if (linkDb.GetReferenceCount(linkedItem) > 0)
             {

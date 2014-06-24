@@ -6,28 +6,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
 {
     [Cmdlet(VerbsCommon.Unlock, "Item")]
     [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class UnlockItemCommand : GovernanceUserBaseCommand
+    public class UnlockItemCommand : BaseGovernanceCommand
     {
 
-        protected override void ProcessItem(Item item)
+        protected override void ProcessItemInUserContext(Item item)
         {
-            SwitchUser(() =>
+            if (item.Locking.IsLocked())
             {
-                if (item.Locking.IsLocked())
+                if (!item.Access.CanWrite())
                 {
-                    if (!item.Access.CanWrite())
-                    {
-                        WriteError(new ErrorRecord(
-                            new SecurityException(
-                                "Cannot modify item '" + item.Name + "' because of insufficient privileges."),
-                            "cannot_lock_item_privileges", ErrorCategory.PermissionDenied, item));
-                    }
-                    WriteObject(item.Locking.Unlock());
-                    return;
+                    WriteError(new ErrorRecord(
+                        new SecurityException(
+                            "Cannot modify item '" + item.Name + "' because of insufficient privileges."),
+                        "cannot_lock_item_privileges", ErrorCategory.PermissionDenied, item));
                 }
+                WriteObject(item.Locking.Unlock());
+                return;
+            }
 
-                WriteObject(true);
-            });
+            WriteObject(true);
         }
+
     }
 }

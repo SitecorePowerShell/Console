@@ -12,39 +12,21 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
-    [Cmdlet("Get", "Rendering")]
+    [Cmdlet(VerbsCommon.Get, "Rendering")]
     [OutputType(new[] {typeof (RenderingReference)}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class GetRenderingCommand : BaseCommand
+    public class GetRenderingCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true, ParameterSetName = "Item from Pipeline")]
-        public Item Item { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path", Mandatory = true)]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
-        public string Id { get; set; }
+        [Parameter]
+        public DeviceItem Device { get; set; }
 
         [Parameter]
-        public string Device { get; set; }
+        public string Placeholder { get; set; }
 
-        [Parameter]
-        public string PlaceholderPath { get; set; }
-
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item = FindItemFromParameters(Item, Path, Id);
             LayoutDefinition layout =
               LayoutDefinition.Parse(Item[Sitecore.FieldIDs.LayoutField]);
-/*
-            var device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => string.Equals(d.Name, Device, StringComparison.OrdinalIgnoreCase));
-            if (device == null)
-            {
-                device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault );
-            }
-            WriteObject(Item.Visualization.GetRenderings(device, false));
-*/
+            //todo: actually implement this :)
         }
     }
 }

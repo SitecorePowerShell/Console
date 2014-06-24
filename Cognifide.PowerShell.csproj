@@ -121,16 +121,19 @@
     <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
+    <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferenceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferrerCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\TranslateItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\AddRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetDeviceCommand.cs" />
     <Compile Include="PowerShellIntegrations\ItemEqualityComparer.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetRoleCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetUserCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\GovernanceUserBaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Governance\BaseGovernanceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\UnlockItemCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\GovernanceBaseCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\BaseItemRecursiveCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Governance\LockItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\SendSheerMessageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseListViewCommand.cs" />

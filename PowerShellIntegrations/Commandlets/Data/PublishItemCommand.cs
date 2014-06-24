@@ -13,19 +13,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("Publish", "Item")]
     [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class PublishItemCommand : BaseCommand
+    public class PublishItemCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline")]
-        public Item Item { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID")]
-        public string Id { get; set; }
-
         [Parameter]
         public SwitchParameter Recurse { get; set; }
 
@@ -34,92 +23,34 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         public string[] Target { get; set; }
 
         [Parameter]
-        [Alias("Languages")]
-        public string[] Language { get; set; }
-
-        [Parameter]
         public PublishMode PublishMode { get; set; }
 
-        private List<WildcardPattern> languageWildcardPatterns { get; set; }
-
-        protected override void BeginProcessing()
+        protected override void ProcessItem(Item item)
         {
-            if (Language == null || !Language.Any())
+            if (!item.Database.Name.Equals("master", StringComparison.OrdinalIgnoreCase))
             {
-                languageWildcardPatterns = new List<WildcardPattern>();
+                WriteError(
+                    new ErrorRecord(
+                        new PSInvalidOperationException("Only items from the 'master' database can be published!"),
+                        "sitecore_publishing_source_is_not_master_db", ErrorCategory.InvalidData, null));
+            }
+
+            if (Target != null)
+            {
+                foreach (var target in Target)
+                {
+                    PublishToTarget(item, target);
+                }
             }
             else
             {
-                languageWildcardPatterns =
-                    Language.Select(
-                        language =>
-                            new WildcardPattern(language, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
-                        .ToList();
-            }
-        }
-
-        protected override void ProcessRecord()
-        {
-            Publish(Item, Path, Id);
-        }
-
-        private void Publish(Item item, string path, string id)
-        {
-            item = FindItemFromParameters(item, path, id);
-
-            if (item != null)
-            {
-                if (!item.Database.Name.Equals("master", StringComparison.OrdinalIgnoreCase))
-                {
-                    WriteError(new ErrorRecord(new PSInvalidOperationException("Only items from the 'master' database can be published!"),
-                        "sitecore_publishing_source_is_not_master_db",ErrorCategory.InvalidData, null));
-                }
-
-                if (Target != null)
-                {
-                    foreach (var target in Target)
-                    {
-                        PublishToTarget(item, target);
-                    }
-                }
-                else
-                {
-                    PublishToTarget(item, "web");
-                }
+                PublishToTarget(item, "web");
             }
         }
 
         private void PublishToTarget(Item item, string target)
         {
-            if (languageWildcardPatterns.Count == 0)
-            {
-                if (Item != null)
-                {
-                    PublishToTargetLanguage(item, target, item.Language);
-                }
-                else
-                {
-                    var publishedLangs = new List<string>();
-                    foreach (var langItem in item.Versions.GetVersions(true).Reverse())
-                    {
-                        if (!publishedLangs.Contains(langItem.Language.Name))
-                        {
-                            publishedLangs.Add(langItem.Language.Name);
-                            PublishToTargetLanguage(langItem, target, langItem.Language);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (var siteLanguage in from siteLanguage in item.Database.GetLanguages()
-                    from wildcard in languageWildcardPatterns
-                    where wildcard.IsMatch(siteLanguage.Name)
-                    select siteLanguage)
-                {
-                    PublishToTargetLanguage(item, target, siteLanguage);
-                }
-            }
+            PublishToTargetLanguage(item, target, item.Language);
         }
 
         private void PublishToTargetLanguage(Item item, string target, Language language)

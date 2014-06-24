@@ -83,8 +83,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
             {
                 item.Edit(
                     args =>
-                    {
+                    {                        
                         object newValue = value[0].BaseObject();
+                        var field = FieldTypeManager.GetField(item.Fields[propertyName]);
+
                         if (newValue is DateTime)
                         {
                             item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
@@ -101,20 +103,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                                 {
                                     imageField.Clear();
                                     imageField.MediaID = media.ID;
-                                    if (!String.IsNullOrEmpty(media.Alt))
-                                    {
-                                        imageField.Alt = media.Alt;
-                                    }
-                                    else
-                                    {
-                                        imageField.Alt = media.DisplayName;
-                                    }
+                                    imageField.Alt = !String.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
                                 }
                             }
                             else if (string.Equals(item.Fields[propertyName].TypeKey, "general link",
                                 StringComparison.OrdinalIgnoreCase))
                             {
-                                Item newLink = newValue as Item;
+                                var newLink = newValue as Item;
                                 LinkField linkField = item.Fields[propertyName];
                                 linkField.Clear();
                                 if (MediaManager.HasMediaContent(newLink))

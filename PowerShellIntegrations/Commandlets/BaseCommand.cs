@@ -119,19 +119,39 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             return item;
         }
 
-        protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language)
+        protected virtual Database FindDatabaseFromParameters(Item item, string path, Database database)
+        {
+            if (item == null)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return database ?? CurrentDatabase;
+                }
+
+                int driveSeparator = path.IndexOf(':');
+                if (driveSeparator > 0)
+                {
+                    string driveName = path.Substring(0, driveSeparator);
+                    return Factory.GetDatabase(driveName);
+                }
+                return CurrentDatabase;
+            }
+            return item.Database;
+        }
+
+        protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language, Database database)
         {
             if (item == null)
             {
                 if (!String.IsNullOrEmpty(id))
                 {
-                    Database currentDb = Factory.GetDatabase(CurrentDrive);
-                    item = currentDb.GetItem(new ID(id)).Versions.GetLatestVersion(language);
+                    Database currentDb = database ?? CurrentDatabase;
+                    item = currentDb.GetItem(new ID(id));
                 }
                 else if (!String.IsNullOrEmpty(path))
                 {
                     path = path.Replace('\\', '/');
-                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath).Versions.GetLatestVersion(language);
+                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
                 }
                 else
                 {
@@ -139,6 +159,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                         new ObjectNotFoundException("Cannot find item to perform the operation on."),
                         "sitecore_item_not_found", ErrorCategory.ObjectNotFound, null
                         ));
+                }
+                if (item != null)
+                {
+                    item = language != null ? item.Versions.GetLatestVersion(language) : item.Versions.GetLatestVersion();
                 }
             }
             return item;
