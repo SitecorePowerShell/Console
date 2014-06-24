@@ -130,23 +130,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                                 }
                                 linkField.TargetID = lastItem.ID;
                             }
-                            else if (field is LinkField)
-                            {
-                                LinkField linkField = field as LinkField;
-                                linkField.Clear();
-
-                                if (MediaManager.HasMediaContent(lastItem))
-                                {
-                                    linkField.LinkType = "media";
-                                    linkField.Url = lastItem.Paths.MediaPath;
-                                }
-                                else
-                                {
-                                    linkField.LinkType = "internal";
-                                    linkField.Url = lastItem.Paths.ContentPath;
-                                }
-                                linkField.TargetID = lastItem.ID;
-                            }
                             else if (field is MultilistField)
                             {
                                 MultilistField linkField = field as MultilistField;
