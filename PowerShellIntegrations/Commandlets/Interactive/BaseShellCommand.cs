@@ -9,14 +9,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     {
         protected override void BeginProcessing()
         {
-            LogErrors(() =>
-            {
-                if (JobContext.IsJob)
-                    Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
-            });
+            LogErrors(EnsureSiteContext);
         }
 
-        public void PutMessage(IMessage message)
+        public static void EnsureSiteContext()
+        {
+            if (JobContext.IsJob)
+                Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
+        }
+
+        public static void PutMessage(IMessage message)
         {
             if (JobContext.IsJob)
             {
@@ -28,7 +30,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
             }
         }
 
-        public object GetResult(IMessageWithResult message)
+        public static object GetResult(IMessageWithResult message)
         {
             if (JobContext.IsJob)
             {

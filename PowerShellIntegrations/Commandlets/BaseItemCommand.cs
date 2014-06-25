@@ -14,22 +14,22 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline")]
-        public Item Item { get; set; }
+        public virtual Item Item { get; set; }
 
         [Parameter(ParameterSetName = "Item from Path")]
         [Alias("FullName", "FileName")]
-        public string Path { get; set; }
+        public virtual string Path { get; set; }
 
         [Parameter(ParameterSetName = "Item from ID")]
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
 
         [Parameter(ParameterSetName = "Item from ID")]
-        public Database Database { get; set; }
+        public virtual Database Database { get; set; }
 
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path")]
         [Parameter(ParameterSetName = "Item from ID")]
-        public string[] Language { get; set; }
+        public virtual string[] Language { get; set; }
 
         protected List<WildcardPattern> LanguageWildcardPatterns { get; private set; }
 
