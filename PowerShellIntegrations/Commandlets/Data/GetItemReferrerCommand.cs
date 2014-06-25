@@ -9,7 +9,7 @@ using Sitecore.Links;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
-    [Cmdlet("Get", "ItemReferrer")]
+    [Cmdlet(VerbsCommon.Get, "ItemReferrer")]
     [OutputType(new[] {typeof (Item)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
         )]
     public class GetItemReferrerCommand : BaseItemCommand

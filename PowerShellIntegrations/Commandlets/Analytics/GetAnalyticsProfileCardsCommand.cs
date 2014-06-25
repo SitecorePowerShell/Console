@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     cause in listing all profile cards.
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
-    [Cmdlet("Get", "AnalyticsProfileCards")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsProfileCards")]
     [OutputType(new[] {typeof (Item)})]
     public class GetAnalyticsProfileCardsCommand : DatabaseContextBaseCommand
     {

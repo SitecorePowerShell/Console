@@ -4,7 +4,7 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet("Send", "SheerMessage")]
+    [Cmdlet(VerbsCommunications.Send, "SheerMessage")]
     public class SendSheerMessageCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]

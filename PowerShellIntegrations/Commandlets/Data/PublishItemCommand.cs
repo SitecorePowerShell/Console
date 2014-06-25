@@ -11,7 +11,7 @@ using Sitecore.Publishing.Pipelines.PublishItem;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
-    [Cmdlet("Publish", "Item")]
+    [Cmdlet(VerbsData.Publish, "Item")]
     [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class PublishItemCommand : BaseItemCommand
     {

@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     Cmdlet. Assigns profile cards basing on their names to provided item. Can be used in pipe.
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
-    [Cmdlet("Set", "AnalyticsProfileCard")]
+    [Cmdlet(VerbsCommon.Set, "AnalyticsProfileCard")]
     public class SetAnalyticsProfileCardCommand : DatabaseContextBaseCommand
     {
         /// <summary>

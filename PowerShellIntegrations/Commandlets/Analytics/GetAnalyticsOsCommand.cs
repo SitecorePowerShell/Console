@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsOs")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsOs")]
     [OutputType(new[] {typeof (OS)})]
     public class GetAnalyticsOSCommand : AnalyticsBaseCommand
     {

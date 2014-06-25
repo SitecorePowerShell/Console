@@ -3,7 +3,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
-    [Cmdlet("Get", "ItemTemplate")]
+    [Cmdlet(VerbsCommon.Get, "ItemTemplate")]
     [OutputType(new[] {typeof (TemplateItem)})]
     public class GetItemTemplateCommand : BaseCommand
     {

@@ -4,7 +4,7 @@ using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
-    [Cmdlet("Get", "Session")]
+    [Cmdlet(VerbsCommon.Get, "Session")]
     [OutputType(new[] {typeof (Index)})]
     public class GetSessionCommand : BaseCommand
     {

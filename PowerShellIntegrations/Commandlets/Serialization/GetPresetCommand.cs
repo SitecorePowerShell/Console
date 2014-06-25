@@ -8,7 +8,7 @@ using Sitecore.Data.Serialization.Presets;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 {
-    [Cmdlet("Get", "Preset")]
+    [Cmdlet(VerbsCommon.Get, "Preset")]
     [OutputType(new[] { typeof(IncludeEntry) })]
     public class GetPresetCommand : BaseCommand
     {

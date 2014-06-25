@@ -7,7 +7,7 @@ using Sitecore.Install.Utils;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Import", "Package")]
+    [Cmdlet(VerbsData.Import, "Package")]
     public class ImportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]

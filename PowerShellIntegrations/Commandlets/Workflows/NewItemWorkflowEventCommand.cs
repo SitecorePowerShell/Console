@@ -6,7 +6,7 @@ using Sitecore.Workflows.Simple;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
-    [Cmdlet("New", "ItemWorkflowEvent")]
+    [Cmdlet(VerbsCommon.New, "ItemWorkflowEvent")]
     public class NewItemWorkflowEventCommand : BaseItemCommand
     {
         [Parameter]

@@ -2,7 +2,7 @@
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet("Update", "ListView")]
+    [Cmdlet(VerbsData.Update, "ListView")]
     [OutputType(new[] {typeof (string)})]
     public class UpdateListViewCommand : BaseListViewCommand
     {

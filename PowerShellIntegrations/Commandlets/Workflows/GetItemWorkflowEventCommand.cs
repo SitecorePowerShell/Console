@@ -5,7 +5,7 @@ using Sitecore.Workflows.Simple;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
-    [Cmdlet("Get", "ItemWorkflowEvent")]
+    [Cmdlet(VerbsCommon.Get, "ItemWorkflowEvent")]
     [OutputType(new[] {typeof (WorkflowEvent)})]
     public class GetItemWorkflowEventCommand : BaseItemCommand
     {

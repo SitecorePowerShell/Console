@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
     ///     Cmdlet. Gets analytics profiles by name. Supports wildcards. By default profiles are taken from all databases.
     ///     <author>Szymon Kuzniak (szymon.kuzniak@cognifide.com)</author>
     /// </summary>
-    [Cmdlet("Get", "AnalyticsProfileItem")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsProfileItem")]
     [OutputType(new[] {typeof (Item)})]
     public class GetAnalyticsProfileItemCommand : DatabaseContextBaseCommand
     {

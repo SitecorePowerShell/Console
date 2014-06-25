@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsKeyword")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsKeyword")]
     [OutputType(new[] {typeof (Keywords)})]
     public class GetAnalyticsKeywordCommand : AnalyticsBaseCommand
     {

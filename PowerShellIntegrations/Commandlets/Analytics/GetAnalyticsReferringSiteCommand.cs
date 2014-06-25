@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsReferringSites")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsReferringSites")]
     [OutputType(new[] {typeof (ReferringSites)})]
     public class GetAnalyticsReferringSiteCommand : AnalyticsBaseCommand
     {

@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Remoting
 {
-    [Cmdlet("ConvertFrom", "CliXml", SupportsShouldProcess = false)]
+    [Cmdlet(VerbsData.ConvertFrom, "CliXml", SupportsShouldProcess = false)]
     public class ConvertFromCliXmlCommand : PSCmdlet
     {
         private MethodInfo method;

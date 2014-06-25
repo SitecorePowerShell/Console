@@ -6,7 +6,7 @@ using Sitecore.IO;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("New", "ExplicitFileSource")]
+    [Cmdlet(VerbsCommon.New, "ExplicitFileSource")]
     [OutputType(new[] {typeof (ExplicitFileSource)})]
     public class NewExplicitFileSourceCommand : BasePackageCommand
     {

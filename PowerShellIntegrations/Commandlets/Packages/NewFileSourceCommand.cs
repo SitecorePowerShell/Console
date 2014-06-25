@@ -4,7 +4,7 @@ using Sitecore.Install.Filters;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("New", "FileSource")]
+    [Cmdlet(VerbsCommon.New, "FileSource")]
     [OutputType(new[] {typeof (FileSource)})]
     public class NewFileSourceCommand : BasePackageCommand
     {

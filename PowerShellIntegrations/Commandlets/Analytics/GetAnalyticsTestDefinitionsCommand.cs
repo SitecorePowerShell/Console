@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsTestDefinition")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsTestDefinition")]
     [OutputType(new[] {typeof (TestDefinitions)})]
     public class GetAnalyticsTestDefinitionsCommand : AnalyticsBaseCommand
     {

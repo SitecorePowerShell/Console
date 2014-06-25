@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsBrowser")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsBrowser")]
     [OutputType(new[] {typeof (Browsers)})]
     public class GetAnalyticsBrowserCommand : AnalyticsBaseCommand
     {

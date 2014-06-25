@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet("Get", "AnalyticsScreen")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsScreen")]
     [OutputType(new[] {typeof (Screens)})]
     public class GetAnalyticsScreensCommand : AnalyticsBaseCommand
     {

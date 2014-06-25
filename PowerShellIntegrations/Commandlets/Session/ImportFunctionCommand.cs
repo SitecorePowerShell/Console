@@ -7,7 +7,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
-    [Cmdlet("Import", "Function")]
+    [Cmdlet(VerbsData.Import, "Function")]
     [OutputType(new[] {typeof (object)})]
     public class ImportFunctionCommand : BaseShellCommand
     {

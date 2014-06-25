@@ -6,7 +6,7 @@ using Sitecore.IO;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Export", "Package")]
+    [Cmdlet(VerbsData.Export, "Package")]
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]

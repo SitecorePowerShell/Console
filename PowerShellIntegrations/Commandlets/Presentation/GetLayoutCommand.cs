@@ -13,7 +13,7 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
-    //[Cmdlet("Get", "Layout")]
+    //[Cmdlet(VerbsCommon.Get, "Layout")]
     [OutputType(new[] {typeof (RenderingReference)}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
     public class GetLayoutCommand : BaseItemCommand
     {

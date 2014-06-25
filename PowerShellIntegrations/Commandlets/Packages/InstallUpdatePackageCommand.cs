@@ -12,7 +12,7 @@ using Sitecore.Update.Utils;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Install", "UpdatePackage")]
+    [Cmdlet(VerbsLifecycle.Install, "UpdatePackage")]
     [OutputType(new[] {typeof (ContingencyEntry)})]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {

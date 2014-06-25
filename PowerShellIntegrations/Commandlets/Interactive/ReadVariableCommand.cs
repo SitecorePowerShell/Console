@@ -7,7 +7,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
-    [Cmdlet("Read", "Variable")]
+    [Cmdlet(VerbsCommunications.Read, "Variable")]
     [OutputType(new[] {typeof (string)})]
     public class ReadVariableCommand : BaseFormCommand
     {

@@ -5,7 +5,7 @@ using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
-    [Cmdlet("Set", "HostProperty")]
+    [Cmdlet(VerbsCommon.Set, "HostProperty")]
     public class SetHostPropertyCommand : BaseCommand
     {
         [Parameter]

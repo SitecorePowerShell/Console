@@ -6,7 +6,7 @@ using Sitecore.IO;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
 {
-    [Cmdlet("Get", "Package")]
+    [Cmdlet(VerbsCommon.Get, "Package")]
     [OutputType(new[] {typeof (PackageProject)})]
     public class GetPackageCommand : BasePackageCommand
     {
