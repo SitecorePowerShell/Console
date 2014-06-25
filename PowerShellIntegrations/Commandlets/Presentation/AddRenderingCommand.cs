@@ -14,6 +14,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class AddRenderingCommand : BaseItemCommand
     {
+        private int index = -1;
+
         [Parameter]
         public DeviceItem Device { get; set; }
 
@@ -50,13 +52,22 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         [Parameter]
         public SwitchParameter VaryByUser { get; set; }
 
+        [Parameter]
+        public int Index
+        {
+            get { return index; }
+            set { index = value; }
+        }
+
         protected override void ProcessItem(Item item)
         {
             LayoutDefinition layout = LayoutDefinition.Parse(Item[FieldIDs.LayoutField]);
+            
             if (Device == null)
             {
                 Device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault);
             }
+
             if (Device == null)
             {
                 WriteError(
@@ -96,7 +107,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             //todo: add support for multivariate tests
             //rendering.MultiVariateTest
 
-            device.AddRendering(rendering);
+            if (Index > -1)
+            {
+                device.Insert(index, rendering);
+            }
+            else
+            {
+                device.AddRendering(rendering);
+            }
 
             item.Edit(p =>
             {
