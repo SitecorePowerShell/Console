@@ -7,31 +7,20 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
     [Cmdlet("Get", "ItemWorkflowEvent")]
     [OutputType(new[] {typeof (WorkflowEvent)})]
-    public class GetItemWorkflowEventCommand : BaseCommand
+    public class GetItemWorkflowEventCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public Item Item { get; set; }
-
-        [Parameter]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter]
-        public string Id { get; set; }
-
         [Parameter]
         public string UserName { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item = FindItemFromParameters(Item, Path, Id);
-
-            WorkflowEvent[] workflowHistory =
-                ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.GetHistory(Item);
-            foreach (var workflowEvent in workflowHistory)
+            if (string.IsNullOrEmpty(UserName))
             {
-                WriteObject(workflowEvent);
+                UserName = "*";
             }
+            WorkflowEvent[] workflowHistory =
+                ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item);
+            WildcardWrite(UserName, workflowHistory, workflowEvent => workflowEvent.User);
         }
     }
 }

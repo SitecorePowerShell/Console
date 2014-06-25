@@ -7,18 +7,8 @@ using Sitecore.Workflows.Simple;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
 {
     [Cmdlet("New", "ItemWorkflowEvent")]
-    public class NewItemWorkflowEventCommand : BaseCommand
+    public class NewItemWorkflowEventCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public Item Item { get; set; }
-
-        [Parameter]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter]
-        public string Id { get; set; }
-
         [Parameter]
         public string OldState { get; set; }
 
@@ -28,16 +18,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
         [Parameter]
         public string Text { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item = FindItemFromParameters(Item, Path, Id);
 
             WorkflowEvent lastEvent =
-                ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.GetHistory(Item)
+                ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item)
                     .OrderBy(p => p.Date)
                     .Last();
             ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.AddHistory(
-                Item,
+                item,
                 string.IsNullOrEmpty(OldState) ? lastEvent.NewState : OldState,
                 string.IsNullOrEmpty(NewState) ? lastEvent.NewState : NewState,
                 Text

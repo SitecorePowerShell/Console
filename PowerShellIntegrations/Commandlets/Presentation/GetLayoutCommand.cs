@@ -15,31 +15,15 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
     //[Cmdlet("Get", "Layout")]
     [OutputType(new[] {typeof (RenderingReference)}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class GetLayoutCommand : BaseCommand
+    public class GetLayoutCommand : BaseItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true, ParameterSetName = "Item from Pipeline")]
-        public Item Item { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path", Mandatory = true)]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
-        public string Id { get; set; }
-
         [Parameter]
-        public string Device { get; set; }
+        public DeviceItem Device { get; set; }
 
-        [Parameter]
-        public string PlaceholderPath { get; set; }
-
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item = FindItemFromParameters(Item, Path, Id);
+            var layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
 
-            var layout = LayoutDefinition.Parse(Item[FieldIDs.LayoutField]);
-
-            
             for (int i = 0; i < layout.Devices.Count; i++)
             {
                 DeviceDefinition device = layout.Devices[i] as DeviceDefinition;
