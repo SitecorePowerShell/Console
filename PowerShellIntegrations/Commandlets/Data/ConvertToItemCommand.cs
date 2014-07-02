@@ -6,7 +6,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("ConvertTo", "Item")]
     [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class ConvertToItem : BaseItemCommand
+    public class ConvertToItemCommand : BaseItemCommand
     {
         protected override void ProcessItem(Item item)
         {
