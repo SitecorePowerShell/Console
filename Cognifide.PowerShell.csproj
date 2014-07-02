@@ -122,8 +122,11 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\ConvertToItem.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemClone.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferenceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferrerCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\NewItemClone.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\TranslateItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowFieldEditorCommand.cs" />
