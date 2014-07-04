@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Management.Automation;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
+namespace Cognifide.PowerShell.Security
 {
     public abstract class BaseGovernanceCommand : BaseItemRecursiveCommand
     {

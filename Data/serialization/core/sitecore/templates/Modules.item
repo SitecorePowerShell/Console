@@ -1,18 +1,18 @@
 ----item----
 version: 1
-id: {D7C22826-9D04-476E-BDBE-780988899A9E}
+id: {DDAC6EEB-631F-487D-B2EC-001D8710A232}
 database: core
-path: /sitecore/templates/Modules/PowerShell Console
-parent: {DDAC6EEB-631F-487D-B2EC-001D8710A232}
-name: PowerShell Console
+path: /sitecore/templates/Modules
+parent: {3C1715FE-6A13-4FCF-845F-DE308BA9741D}
+name: Modules
 master: {00000000-0000-0000-0000-000000000000}
-template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
-templatekey: Folder
+template: {239F9CF4-E5A0-44E0-B342-0F32CD4C6D8B}
+templatekey: Node
 
 ----version----
 language: en
 version: 1
-revision: f52089ed-bad7-44d9-a830-68e2e84bef3f
+revision: 55579c39-9ade-49b2-bb05-c48970005f25
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -27,7 +27,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20121129T131017
+20140517T144600
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -41,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f52089ed-bad7-44d9-a830-68e2e84bef3f
+55579c39-9ade-49b2-bb05-c48970005f25
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121129T131017:634897914172756719
+20140517T144600:635359347602597698
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -1,13 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Runtime.CompilerServices;
-using Microsoft.PowerShell.Commands;
-using Sitecore.Shell.Applications.WebEdit.Commands;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations
 {
-    static internal class PowerShellExtensions
+    internal static class PowerShellExtensions
     {
         public static object BaseObject(this object obj)
         {
@@ -20,12 +17,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
 
         public static List<T> BaseList<T>(this object enumarable) where T : class
         {
-            List<T> newList = new List<T>();
+            var newList = new List<T>();
             if (enumarable is IEnumerable)
             {
                 foreach (var val in enumarable as IEnumerable)
                 {
-                    object newVal = val.BaseObject();
+                    var newVal = val.BaseObject();
                     if (newVal is T)
                     {
                         newList.Add(newVal as T);
