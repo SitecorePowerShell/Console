@@ -3,7 +3,7 @@ using System.Management.Automation;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Governance
+namespace Cognifide.PowerShell.Security
 {
     [Cmdlet(VerbsCommon.Lock, "Item")]
     [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]

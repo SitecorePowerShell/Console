@@ -21,7 +21,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cognifide.PowerShell</RootNamespace>
     <AssemblyName>Cognifide.PowerShell</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Nonshipping>true</Nonshipping>
     <FileUpgradeFlags>
@@ -56,6 +56,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -65,6 +66,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.PowerShell.Commands.Utility, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -73,9 +75,11 @@
     </Reference>
     <Reference Include="Sitecore.Analytics">
       <HintPath>$(SitecorePath)\bin\Sitecore.Analytics.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Client">
       <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Forms.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -84,38 +88,34 @@
     <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Logging, Version=1.2.0.30715, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Sitecore.Update, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\Sitecore.Update.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
@@ -130,19 +130,30 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\AddRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetDeviceCommand.cs" />
     <Compile Include="PowerShellIntegrations\ItemEqualityComparer.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetRoleCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\GetUserCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\BaseGovernanceCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\UnlockItemCommand.cs" />
+    <Compile Include="Security\AccountIdentity.cs" />
+    <Compile Include="Security\AddRoleMemberCommand.cs" />
+    <Compile Include="Security\DisableUserCommand.cs" />
+    <Compile Include="Security\EnableUserCommand.cs" />
+    <Compile Include="Security\GetRoleCommand.cs" />
+    <Compile Include="Security\GetRoleMemberCommand.cs" />
+    <Compile Include="Security\GetUserCommand.cs" />
+    <Compile Include="Security\BaseGovernanceCommand.cs" />
+    <Compile Include="Security\NewUserCommand.cs" />
+    <Compile Include="Security\RemoveRoleMemberCommand.cs" />
+    <Compile Include="Security\RemoveSessionCommand.cs" />
+    <Compile Include="Security\RemoveUserCommand.cs" />
+    <Compile Include="Security\SetUserPasswordCommand.cs" />
+    <Compile Include="Security\SetUserCommand.cs" />
+    <Compile Include="Security\UnlockItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemRecursiveCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Governance\LockItemCommand.cs" />
+    <Compile Include="Security\LockItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\SendSheerMessageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\BaseListViewCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\UpdateListViewCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetLayoutCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Session\ExecuteScriptCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Session\GetSessionCommand.cs" />
+    <Compile Include="Security\GetSessionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Session\ImportFunctionCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\Messages\IMessageWithResult.cs" />
@@ -218,8 +229,8 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowInputCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowModalDialogCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowYesNoCancelCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Session\LoginUserCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Session\LogoutUserCommand.cs" />
+    <Compile Include="Security\LoginUserCommand.cs" />
+    <Compile Include="Security\LogoutUserCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\BasePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\ExportPackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\GetPackageCommand.cs" />
@@ -264,6 +275,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationNames.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
+    <Compile Include="Security\UnlockUserCommand.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
     <Compile Include="SitecoreIntegrations\Applications\FieldEditor.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellConsole.cs" />
