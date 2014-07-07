@@ -66,7 +66,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             ProcessItemLanguages(sourceItem);
         }
 
-        private void ProcessItemLanguages(Item item)
+        protected virtual void ProcessItemLanguages(Item item)
         {
             if (Language == null)
             {

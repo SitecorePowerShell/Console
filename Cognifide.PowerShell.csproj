@@ -123,14 +123,20 @@
     </Compile>
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ConvertToItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\RemoveItemLanguageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\NewItemLanguageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemCloneCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferenceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemReferrerCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\NewItemCloneCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Data\TranslateItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ExpandTokensCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowFieldEditorCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\AddRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\BaseLayoutCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\BaseRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\SetRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\RemoveRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\NewRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetDeviceCommand.cs" />
     <Compile Include="PowerShellIntegrations\ItemEqualityComparer.cs" />
     <Compile Include="Security\AccountIdentity.cs" />
