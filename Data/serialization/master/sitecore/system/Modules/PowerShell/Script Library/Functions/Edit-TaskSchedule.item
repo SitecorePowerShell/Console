@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3701
+content-length: 4292
 
 function Parse-TaskSchedule{
         [CmdletBinding()]
@@ -27,7 +27,16 @@ function Parse-TaskSchedule{
     $ScSchedule = $scheduleItem.Schedule.Split('|'); 
     switch($column){
       from { [Sitecore.DateUtil]::IsoDateToDateTime($ScSchedule[0]); break;}
-      to { [Sitecore.DateUtil]::IsoDateToDateTime($ScSchedule[1]); break;}
+      to {
+              $fieldValue = $ScSchedule[1];
+              if([string]::IsNullOrEmpty($fieldValue)){
+                  [DateTime]::MaxValue;
+              }
+              else{
+                  [Sitecore.DateUtil]::IsoDateToDateTime($fieldValue);
+              } 
+              break;
+          }
       weekdays {   
         $weekDays = @(1,2,4,8,16,32,64);
         [int]$scDays = $ScSchedule[2]
@@ -66,8 +75,20 @@ function Format-TaskSchedule{
         [ValidateNotNullOrEmpty()]
         [string]$interval
     )
+    
+    if (($from -eq [DateTime]0) -or ($from -eq [DateTime]::MaxValue) -or ($from -eq [DateTime]::MinValue)){
+        $fromStr = ""
+    } else {
+        $fromStr = $([Sitecore.DateUtil]::ToIsoDate($from))
+    }
+    
+    if (($from -eq [DateTime]0) -or ($from -eq [DateTime]::MaxValue) -or ($from -eq [DateTime]::MinValue)){
+        $toStr = ""
+    } else {
+        $toStr = $([Sitecore.DateUtil]::ToIsoDate($to))
+    }
     [int]$scDays = ($days | Measure-Object -Sum).Sum;
-    return "$([Sitecore.DateUtil]::ToIsoDate($from))|$([Sitecore.DateUtil]::ToIsoDate($to))|$scDays|$interval"
+    return "$fromStr|$toStr|$scDays|$interval"
 }
 
 function Edit-TaskSchedule{
@@ -109,7 +130,7 @@ function Edit-TaskSchedule{
 ----version----
 language: en
 version: 1
-revision: 8a659169-c5a6-4c3e-a51a-4bc232768c46
+revision: 07ec7ab4-d231-4af0-96e9-5e66c4213500
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -124,14 +145,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8a659169-c5a6-4c3e-a51a-4bc232768c46
+07ec7ab4-d231-4af0-96e9-5e66c4213500
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140620T155034:635388762344244219
+20140707T125002:635403342020655468
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
