@@ -344,5 +344,53 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>Sitecore.Security.Domains.Domain</Name>
+      <ViewSelectedBy>
+        <TypeName>Sitecore.Security.Domains.Domain</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>AccountPrefix</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>EnsureAnonymousUser</Label>
+            <Width>22</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>LocallyManaged</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AccountPrefix</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>EnsureAnonymousUser</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>LocallyManaged</PropertyName>
+              </TableColumnItem>              
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>

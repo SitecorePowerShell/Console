@@ -12,8 +12,24 @@
 
             Local Name
                 Example: admin
+            
             Fully Qualified Name
                 Example: sitecore\admin
+
+    .PARAMETER Email
+        Specifies the Sitecore user email address. The value is validated for a properly formatted address.
+
+    .PARAMETER StartUrl
+        Specifies the url to navigate to once the user is logged in. The values are validated with a pretermined set.
+
+    .PARAMETER Enabled
+        Specifies whether the Sitecore user should be enabled.
+
+    .PARAMETER IsAdministrator
+        Specifies whether the Sitecore user should be classified as an Administrator. Parameter only available to Administrators.
+
+    .PARAMETER CustomProperties
+        Specifies a hashtable of custom properties to assign to the Sitecore user profile.
     
     .INPUTS
         System.String
@@ -32,7 +48,7 @@
         http://michaellwest.blogspot.com
 
     .EXAMPLE
-        PS master:\> Set-User -Email michaellwest@gmail.com
+        PS master:\> Set-User -Identity michael -Email michaellwest@gmail.com
 
     .EXAMPLE
         PS master:\> "michael","adam","mike" | Set-User -Enable $false
@@ -45,5 +61,12 @@
         PS master:\>(Get-User michael).Profile.GetCustomProperty("Date")
         
         7/3/2014 4:40:02 PM
+
+    .EXAMPLE
+        PS master:\> Set-User -Identity michael -IsAdministrator -CustomProperties @{"HireDate"="03/17/2010"}
+        PS master:\>$user = Get-User -Identity michael
+        PS master:\>$user.Profile.GetCustomProperty("HireDate")
+        
+        03/17/2010
 
 #>

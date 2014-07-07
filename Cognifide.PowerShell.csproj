@@ -121,6 +121,7 @@
     <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ConvertToItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemCloneCommand.cs" />
@@ -137,11 +138,14 @@
     <Compile Include="Security\AddRoleMemberCommand.cs" />
     <Compile Include="Security\DisableUserCommand.cs" />
     <Compile Include="Security\EnableUserCommand.cs" />
+    <Compile Include="Security\GetDomainCommand.cs" />
     <Compile Include="Security\GetRoleCommand.cs" />
     <Compile Include="Security\GetRoleMemberCommand.cs" />
     <Compile Include="Security\GetUserCommand.cs" />
     <Compile Include="Security\BaseGovernanceCommand.cs" />
+    <Compile Include="Security\NewDomainCommand.cs" />
     <Compile Include="Security\NewUserCommand.cs" />
+    <Compile Include="Security\RemoveDomainCommand.cs" />
     <Compile Include="Security\RemoveRoleMemberCommand.cs" />
     <Compile Include="Security\RemoveSessionCommand.cs" />
     <Compile Include="Security\RemoveUserCommand.cs" />

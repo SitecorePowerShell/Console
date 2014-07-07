@@ -14,8 +14,8 @@ namespace Cognifide.PowerShell.Security
             var account = name;
             if (name.Contains(@"\"))
             {
-                domain = StringUtil.GetPrefix(name, '\'');
-                account = StringUtil.GetPostfix(name, '\'');
+                domain = StringUtil.GetPrefix(name, '\\');
+                account = StringUtil.GetPostfix(name, '\\');
             }
 
             Domain = domain;

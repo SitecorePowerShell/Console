@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Security
         public string NewPassword { get; set; }
 
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = "Set password", ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "Set password", Mandatory = true)]
         public string OldPassword { get; set; }
 
         [Parameter(ParameterSetName = "Reset password", Mandatory = true)]
