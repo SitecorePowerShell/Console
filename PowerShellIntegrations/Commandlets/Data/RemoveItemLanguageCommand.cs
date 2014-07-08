@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
             {
                 if (LanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
                 {
-                    langItem.Versions.RemoveVersion();
+                    langItem.Versions.RemoveAll(false);
                 }
             }
             if (Recurse)
