@@ -24,29 +24,39 @@ namespace Cognifide.PowerShell.Security
 
             if (Role.Exists(name))
             {
-                var role = Role.FromName(name);
+                var targetRole = Role.FromName(name);
 
                 foreach (var member in Members)
                 {
-                    // TODO: Add nested roles too.
-                    if (!User.Exists(member.Name))
+                    if (User.Exists(member.Name))
+                    {
+                        var user = User.FromName(member.Name, false);
+                        if (user.IsInRole(targetRole)) continue;
+
+                        var profile = UserRoles.FromUser(user);
+                        profile.Add(targetRole);
+                    }
+                    else if (Role.Exists(member.Name))
+                    {
+                        var role = Role.FromName(member.Name);
+                        if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                        {
+                            RolesInRolesManager.AddRoleToRole(role, targetRole);
+                        }
+                    }
+                    else
                     {
                         var error = String.Format("Cannot find an account with identity '{0}'.", member);
-                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, member));
-                        continue;
+                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                            ErrorCategory.ObjectNotFound, member));
                     }
-
-                    var user = User.FromName(member.Name, false);
-                    if (user.IsInRole(role)) continue;
-
-                    var profile = UserRoles.FromUser(user);
-                    profile.Add(role);
                 }
             }
             else
             {
                 var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, Identity));
+                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
+                    Identity));
             }
         }
     }

@@ -24,16 +24,32 @@ namespace Cognifide.PowerShell.Security
 
             if (Role.Exists(name))
             {
-                var role = Role.FromName(name);
+                var targetRole = Role.FromName(name);
 
                 foreach (var member in Members)
                 {
-                    // TODO: Remove roles nested roles too.
-                    if (!User.Exists(member.Name)) continue;
+                    if (User.Exists(member.Name))
+                    {
+                        var user = User.FromName(member.Name, false);
+                        if (user.IsInRole(targetRole)) continue;
 
-                    var user = User.FromName(member.Name, false);
-                    var profile = UserRoles.FromUser(user);
-                    profile.Remove(role);
+                        var profile = UserRoles.FromUser(user);
+                        profile.Remove(targetRole);
+                    }
+                    else if (Role.Exists(member.Name))
+                    {
+                        var role = Role.FromName(member.Name);
+                        if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                        {
+                            RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
+                        }
+                    }
+                    else
+                    {
+                        var error = String.Format("Cannot find an account with identity '{0}'.", member);
+                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                            ErrorCategory.ObjectNotFound, member));
+                    }
                 }
             }
             else
