@@ -1,15 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+﻿using System.Management.Automation;
 using Sitecore;
 using Sitecore.Data.Items;
-using Sitecore.Form.Core.Renderings.Controls;
-using Sitecore.Form.Web.UI.Controls;
 using Sitecore.Layouts;
-using Sitecore.Text;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
@@ -31,7 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
         protected override void ProcessItem(Item item)
         {
-            LayoutDefinition layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
+            var layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
             DeviceDefinition device;
             RenderingDefinition rendering;
 
@@ -39,14 +31,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             {
                 foreach (RenderingDefinition aRendering in aDevice.Renderings)
                 {
-                    if (aRendering.UniqueId == Instance.UniqueId)
-                    {
-                        device = aDevice;
-                        rendering = aRendering;                        
-                        goto Renderingfound;
-                        // Yes I used goto, cry me a river!
-                        // http://xkcd.com/292/
-                   }
+                    if (aRendering.UniqueId != Instance.UniqueId) continue;
+
+                    device = aDevice;
+                    rendering = aRendering;
+                    goto Renderingfound;
+                    // Yes I used goto, cry me a river!
+                    // http://xkcd.com/292/
                 }
             }
 
@@ -76,10 +67,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
             item.Edit(p =>
             {
-                string outputXml = layout.ToXml();
+                var outputXml = layout.ToXml();
                 Item["__Renderings"] = outputXml;
             });
         }
-
     }
 }
