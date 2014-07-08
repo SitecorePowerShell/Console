@@ -1,0 +1,85 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using Sitecore;
+using Sitecore.Data.Items;
+using Sitecore.Form.Core.Renderings.Controls;
+using Sitecore.Form.Web.UI.Controls;
+using Sitecore.Layouts;
+using Sitecore.Text;
+
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
+{
+    [Cmdlet(VerbsCommon.Set, "Rendering")]
+    public class SetRenderingCommand : BaseItemCommand
+    {
+        private int index = -1;
+
+        [Parameter(Mandatory = true)]
+        [Alias("Rendering")]
+        public RenderingDefinition Instance { get; set; }
+
+        [Parameter]
+        public int Index
+        {
+            get { return index; }
+            set { index = value; }
+        }
+
+        protected override void ProcessItem(Item item)
+        {
+            LayoutDefinition layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
+            DeviceDefinition device;
+            RenderingDefinition rendering;
+
+            foreach (DeviceDefinition aDevice in layout.Devices)
+            {
+                foreach (RenderingDefinition aRendering in aDevice.Renderings)
+                {
+                    if (aRendering.UniqueId == Instance.UniqueId)
+                    {
+                        device = aDevice;
+                        rendering = aRendering;                        
+                        goto Renderingfound;
+                        // Yes I used goto, cry me a river!
+                        // http://xkcd.com/292/
+                   }
+                }
+            }
+
+            return;
+
+            Renderingfound: //goto label
+            rendering.ItemID = Instance.ItemID;
+            rendering.Placeholder = Instance.Placeholder;
+            rendering.Datasource = Instance.Datasource;
+            rendering.Cachable = Instance.Cachable;
+            rendering.VaryByData = Instance.VaryByData;
+            rendering.VaryByDevice = Instance.VaryByDevice;
+            rendering.VaryByLogin = Instance.VaryByLogin;
+            rendering.VaryByParameters = Instance.VaryByParameters;
+            rendering.VaryByQueryString = Instance.VaryByQueryString;
+            rendering.VaryByUser = Instance.VaryByUser;
+            rendering.Parameters = Instance.Parameters;
+            rendering.MultiVariateTest = Instance.MultiVariateTest;
+            rendering.Rules = Instance.Rules;
+            rendering.Conditions = Instance.Conditions;
+
+            if (Index > -1)
+            {
+                device.Renderings.Remove(rendering);
+                device.Insert(index, rendering);
+            }
+
+            item.Edit(p =>
+            {
+                string outputXml = layout.ToXml();
+                Item["__Renderings"] = outputXml;
+            });
+        }
+
+    }
+}
