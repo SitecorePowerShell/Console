@@ -1,23 +1,23 @@
 ﻿using System.Collections;
 using System.Management.Automation;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore.Diagnostics;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
+namespace Cognifide.PowerShell.Utility
 {
     [Cmdlet(VerbsCommunications.Write, "Log")]
     public class WriteLogCommand : BaseCommand
     {
-        private object separator = " ";
+        public WriteLogCommand()
+        {
+            Separator = " ";
+        }
 
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         public object Object { get; set; }
 
         [Parameter]
-        public object Separator
-        {
-            get { return separator; }
-            set { separator = value; }
-        }
+        public object Separator { get; set; }
 
         [Parameter]
         public LogNotificationLevel Log { get; set; }
@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 IEnumerable enumerable;
                 if ((enumerable = o as IEnumerable) != null)
                 {
-                    bool flag = false;
+                    var flag = false;
                     foreach (var o1 in enumerable)
                     {
                         if (flag && Separator != null)
@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                 }
                 else
                 {
-                    string str2 = o.ToString();
+                    var str2 = o.ToString();
                     if (str2.Length <= 0) return;
                     LogString(str2);
                 }

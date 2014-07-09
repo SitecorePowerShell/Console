@@ -262,7 +262,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Workflows\GetItemWorkflowEventCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Workflows\NewItemWorkflowEventCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\WrapItemCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\WriteLogCommand.cs" />
+    <Compile Include="Utility\WriteLogCommand.cs" />
     <Compile Include="PowerShellIntegrations\Host\BufferSplitterCollection.cs" />
     <Compile Include="PowerShellIntegrations\Host\CommandCompletion.cs" />
     <Compile Include="PowerShellIntegrations\Host\CommandHelp.cs" />
