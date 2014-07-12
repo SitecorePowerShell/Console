@@ -25,8 +25,7 @@ namespace Cognifide.PowerShell.Security
             {
                 if (!Force)
                 {
-                    var users =
-                        UserManager.GetUsers().Where(u => u.Domain.Name.Is(Name));
+                    var users = UserManager.GetUsers().Where(u => u.Domain.Name.Is(Name));
                     if (users.Any(u => u.LocalName.Is("Anonymous")))
                     {
                         var error = String.Format("Cannot remove a domain with name '{0}' because it contains users.", Name);
@@ -40,8 +39,7 @@ namespace Cognifide.PowerShell.Security
             else
             {
                 var error = String.Format("Cannot find a domain with name '{0}'.", Name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                    Name));
+                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, Name));
             }
         }
     }
