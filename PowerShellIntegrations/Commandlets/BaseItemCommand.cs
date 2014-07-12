@@ -2,11 +2,8 @@
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
-using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
@@ -51,7 +48,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 
         protected override void ProcessRecord()
         {
-            Item sourceItem = FindItemFromParameters(Item, Path, Id, null, Database);
+            var sourceItem = FindItemFromParameters(Item, Path, Id, null, Database);
 
             if (sourceItem == null)
             {

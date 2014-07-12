@@ -122,6 +122,7 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\BaseEditItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ConvertToItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\RemoveItemLanguageCommand.cs" />
@@ -151,10 +152,12 @@
     <Compile Include="Security\BaseGovernanceCommand.cs" />
     <Compile Include="Security\NewDomainCommand.cs" />
     <Compile Include="Security\NewUserCommand.cs" />
+    <Compile Include="Security\ProtectItemCommand.cs" />
     <Compile Include="Security\RemoveDomainCommand.cs" />
     <Compile Include="Security\RemoveRoleMemberCommand.cs" />
     <Compile Include="Security\RemoveSessionCommand.cs" />
     <Compile Include="Security\RemoveUserCommand.cs" />
+    <Compile Include="Extensions\CmdletExtensions.cs" />
     <Compile Include="Security\SetUserPasswordCommand.cs" />
     <Compile Include="Security\SetUserCommand.cs" />
     <Compile Include="Security\UnlockItemCommand.cs" />
@@ -289,6 +292,7 @@
     <Compile Include="PowerShellIntegrations\Settings\ApplicationSettings.cs" />
     <Compile Include="PowerShellIntegrations\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="Security\UnlockUserCommand.cs" />
+    <Compile Include="Security\UnprotectItemCommand.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ConfirmChoice.cs" />
     <Compile Include="SitecoreIntegrations\Applications\FieldEditor.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellConsole.cs" />

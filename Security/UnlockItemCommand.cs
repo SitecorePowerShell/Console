@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Extensions;
 using Sitecore.Data.Items;
-using Sitecore.Exceptions;
 
 namespace Cognifide.PowerShell.Security
 {
@@ -8,24 +8,17 @@ namespace Cognifide.PowerShell.Security
     [OutputType(new[] {typeof (bool)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class UnlockItemCommand : BaseGovernanceCommand
     {
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
 
         protected override void ProcessItemInUserContext(Item item)
         {
-            if (item.Locking.IsLocked())
-            {
-                if (!item.Access.CanWrite())
-                {
-                    WriteError(new ErrorRecord(
-                        new SecurityException(
-                            "Cannot modify item '" + item.Name + "' because of insufficient privileges."),
-                        "cannot_lock_item_privileges", ErrorCategory.PermissionDenied, item));
-                }
-                WriteObject(item.Locking.Unlock());
-                return;
-            }
+            if (!this.CanWrite(item)) { return; }
+            if (!this.CanChangeLock(item)) { return; }
 
-            WriteObject(true);
+            item.Locking.Unlock();
+
+            if (PassThru) { WriteObject(item); }
         }
-
     }
 }

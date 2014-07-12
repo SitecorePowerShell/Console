@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using System.Web.Security;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore.Security.Accounts;
 
@@ -29,13 +28,9 @@ namespace Cognifide.PowerShell.Security
 
         protected override void ProcessRecord()
         {
-            var name = Identity.Name;
+            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
 
-            if (!User.Exists(name))
-            {
-                var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, Identity));
-            }
+            var name = Identity.Name;
 
             var oldpassword = OldPassword;
 

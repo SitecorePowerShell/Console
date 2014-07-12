@@ -1,5 +1,5 @@
-﻿using System;
-using System.Management.Automation;
+﻿using System.Management.Automation;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore;
 using Sitecore.Data.Items;
@@ -8,7 +8,7 @@ using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Security
 {
-    public abstract class BaseGovernanceCommand : BaseItemRecursiveCommand
+    public abstract class BaseGovernanceCommand : BaseItemCommand
     {
         [Parameter]
         public User User { get; set; }
@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Security
         {
             using (new SecurityStateSwitcher(SecurityState.Enabled))
             {
-                if (string.Equals(User.Name, Sitecore.Context.User.Name, StringComparison.OrdinalIgnoreCase))
+                if (User.Name.Is(Context.User.Name))
                 {
                     ProcessItemInUserContext(item);
                 }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Data;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore;
 using Sitecore.Security.Accounts;
@@ -33,17 +32,9 @@ namespace Cognifide.PowerShell.Security
             }
             else
             {
-                var name = Identity.Name;
+                if (!this.CanFindAccount(Identity, AccountType.Role)) { return; }
 
-                if (Role.Exists(name))
-                {
-                    WriteObject(Role.FromName(name));
-                }
-                else
-                {
-                    var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, Identity));
-                }
+                WriteObject(Role.FromName(Identity.Name));
             }
         }
     }

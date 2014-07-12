@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -84,14 +84,9 @@ namespace Cognifide.PowerShell.Security
 
         protected override void ProcessRecord()
         {
-            var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
+            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
 
-            if (!User.Exists(name))
-            {
-                var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                    Identity));
-            }
+            var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
             var user = User.FromName(name, true);
 
@@ -221,7 +216,7 @@ namespace Cognifide.PowerShell.Security
             if (TryGetDynamicParameter(name, out parameter))
             {
                 isPresent = parameter.IsSet;
-                value = (SwitchParameter)parameter.Value;
+                value = (SwitchParameter) parameter.Value;
                 return true;
             }
 
