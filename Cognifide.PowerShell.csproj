@@ -256,7 +256,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewFileSourceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewItemSourceCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\NewPackageCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Data\PublishItemCommand.cs" />
+    <Compile Include="Management\PublishItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Session\RestartApplicationCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\DeserializeItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\SerializeItemCommand.cs" />

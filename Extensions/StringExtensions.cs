@@ -8,5 +8,10 @@ namespace Cognifide.PowerShell.Extensions
         {
             return String.Compare(value, compare, StringComparison.CurrentCultureIgnoreCase) == 0;
         }
+
+        public static bool IsNot(this string value, string compare)
+        {
+            return !Is(value, compare);
+        }
     }
 }

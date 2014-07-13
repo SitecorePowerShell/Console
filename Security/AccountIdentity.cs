@@ -1,6 +1,7 @@
 ﻿using System;
 using Sitecore;
 using Sitecore.Diagnostics;
+using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Security
 {
@@ -21,6 +22,15 @@ namespace Cognifide.PowerShell.Security
             Domain = domain;
             Account = account;
             Name = domain + @"\" + account;
+        }
+
+        public AccountIdentity(Account account)
+        {
+            Assert.ArgumentNotNull(account, "account");
+
+            Domain = account.Domain.Name;
+            Account = account.LocalName;
+            Name = account.Name;
         }
 
         public string Name { get; private set; }

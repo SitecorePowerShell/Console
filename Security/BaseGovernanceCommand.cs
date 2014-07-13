@@ -10,14 +10,15 @@ namespace Cognifide.PowerShell.Security
 {
     public abstract class BaseGovernanceCommand : BaseItemCommand
     {
+        [Alias("User")]
         [Parameter]
-        public User User { get; set; }
+        public AccountIdentity Identity { get; set; }
 
         protected override void BeginProcessing()
         {
-            if (User == null)
+            if (Identity == null)
             {
-                User = Context.User;
+                Identity = new AccountIdentity(Context.User);
             }
         }
 
@@ -25,13 +26,13 @@ namespace Cognifide.PowerShell.Security
         {
             using (new SecurityStateSwitcher(SecurityState.Enabled))
             {
-                if (User.Name.Is(Context.User.Name))
+                if (Identity.Name.Is(Context.User.Name))
                 {
                     ProcessItemInUserContext(item);
                 }
                 else
                 {
-                    using (new UserSwitcher(User))
+                    using (new UserSwitcher(Identity.Name, false))
                     {
                         ProcessItemInUserContext(item);
                     }

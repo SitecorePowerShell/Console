@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
+namespace Cognifide.PowerShell.Management
 {
     [Cmdlet(VerbsData.Publish, "Item")]
     [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
@@ -27,45 +27,42 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 
         protected override void ProcessItem(Item item)
         {
-            if (!item.Database.Name.Equals("master", StringComparison.OrdinalIgnoreCase))
+            if (item.Database.Name.IsNot("master"))
             {
-                WriteError(
-                    new ErrorRecord(
-                        new PSInvalidOperationException("Only items from the 'master' database can be published!"),
-                        "sitecore_publishing_source_is_not_master_db", ErrorCategory.InvalidData, null));
+                var error = String.Format("Item '{0}' cannot be published. Only items from the 'master' database can be published!", item.Name);
+                WriteError(new ErrorRecord(new PSInvalidOperationException(error), error, ErrorCategory.InvalidData, null));
+                return;
             }
+
+            var source = Factory.GetDatabase("master");
 
             if (Target != null)
             {
-                foreach (var target in Target)
+                var targets = Target.Distinct(StringComparer.CurrentCultureIgnoreCase).ToList();
+                foreach (var target in targets.Select(Factory.GetDatabase))
                 {
-                    PublishToTarget(item, target);
+                    PublishToTarget(item, source, target);
                 }
             }
             else
             {
-                PublishToTarget(item, "web");
+                PublishToTarget(item, source, Factory.GetDatabase("web"));
             }
         }
 
-        private void PublishToTarget(Item item, string target)
-        {
-            PublishToTargetLanguage(item, target, item.Language);
-        }
-
-        private void PublishToTargetLanguage(Item item, string target, Language language)
+        private void PublishToTarget(Item item, Database source, Database target)
         {
             if (PublishMode == PublishMode.Unknown)
             {
                 PublishMode = PublishMode.Smart;
             }
+            
+            var language = item.Language;
 
             WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'",
-                item.Name, language, item.Version, target));
-            WriteDebug(String.Format("[Debug] Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'",
-                item.Name, language, item.Version, target));
-            Database webDb = Factory.GetDatabase(target);
-            var options = new PublishOptions(Factory.GetDatabase("master"), webDb, PublishMode, language, DateTime.Now)
+                item.Name, language, item.Version, target.Name));
+
+            var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
             {
                 Deep = Recurse.IsPresent
             };
