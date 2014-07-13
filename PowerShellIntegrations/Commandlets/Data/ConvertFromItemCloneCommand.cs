@@ -4,9 +4,9 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
-    [Cmdlet("ConvertTo", "Item")]
+    [Cmdlet("ConvertFrom", "ItemClone")]
     [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class ConvertToItemCommand : BaseItemCommand
+    public class ConvertFromItemCloneCommand : BaseItemCommand
     {
         protected override void ProcessItem(Item item)
         {
@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
                 return;
             }
 
-            CloneItem clone = new CloneItem(item);
+            var clone = new CloneItem(item);
             WriteItem(clone.Unclone());
         }
     }
