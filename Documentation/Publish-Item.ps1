@@ -1,12 +1,32 @@
 ﻿<#
     .SYNOPSIS
-        Publishes the Sitecore item.
+        Publishes a Sitecore item.
 
     .DESCRIPTION
-        The Publish-Item cmdlet publishes the Sitecore item and optionally subitems.
+        The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
 
     .PARAMETER Target
-        Specifies the publishing targets. The default target database is "master".
+        Specifies the publishing targets. The default target database is "web".
+
+    .PARAMETER Recurse
+        Specifies that subitems should also get published with the root item.
+	
+	.PARAMETER PublishMode
+		Specified the Publish mode. Valid values are: 
+		- Full
+		- Incremental
+		- SingleItem
+		- Smart
+
+	.PARAMETER Path
+		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
+
+	.PARAMETER Id
+		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+
+	.PARAMETER Language
+		Language of the item that should be published. Supports globbing/wildcards.
+		Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
 
     .INPUTS
         Sitecore.Data.Items.Item
@@ -15,14 +35,17 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Michael West, Adam Najmanowicz
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Publish-Item -Path master:\content\home -Target Internet
+        PS master:\> Publish-Item -Path master:\content\home -Target Internet		
 
     .EXAMPLE
         PS master:\> Get-Item -Path master:\content\home | Publish-Item -Recurse -PublishMode Incremental
+
+    .EXAMPLE
+        PS master:\> Get-Item -Path master:\content\home | Publish-Item -Recurse -Language "en*"
 #>
