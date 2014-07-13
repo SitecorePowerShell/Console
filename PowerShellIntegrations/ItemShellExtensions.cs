@@ -77,15 +77,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
             return psobj;
         }
 
-        public static void Modify(PSObject powerShellItem, string propertyName, object[] value)
+        public static void Modify(Item item, string propertyName, object[] value)
         {
-            var item = powerShellItem.BaseObject as Item;
+            ModifyProperty(item, propertyName, value[0].BaseObject());
+        }
+
+        public static void ModifyProperty(Item item, string propertyName, object value)
+        {
             if (item != null)
             {
                 item.Edit(
                     args =>
-                    {                        
-                        object newValue = value[0].BaseObject();
+                    {                                                
+                        object newValue = value.BaseObject();
                         CustomField field = FieldTypeManager.GetField(item.Fields[propertyName]);
 
                         if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
@@ -137,6 +141,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                                 foreach (var linkedItem in items)
                                     linkField.Add(linkedItem.ID.ToString());
                             }
+
                             else if (field is FileField)
                             {
                                 var linkField = field as FileField;

@@ -85,9 +85,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                             item.Fields.ReadAll();
                             if (item.Fields != null && item.Fields[property.Name] != null)
                             {
-                                item.Editing.BeginEdit();
-                                item[property.Name] = property.Value.ToString();
-                                item.Editing.EndEdit();
+                                ItemShellExtensions.ModifyProperty(item, property.Name, property.Value);
                             }
                             else
                             {
@@ -95,6 +93,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                                     property.Name,
                                     path));
                             }
+                            WriteItem(item);
                         }
                     }
                 }
