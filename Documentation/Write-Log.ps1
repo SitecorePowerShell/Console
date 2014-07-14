@@ -22,10 +22,10 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
         PS master:\> Write-Log "Information."
