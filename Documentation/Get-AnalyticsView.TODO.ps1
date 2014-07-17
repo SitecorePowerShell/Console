@@ -5,17 +5,15 @@
     .DESCRIPTION
         Get-AnalyticsView.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
-
+    .PARAMETER Item
+        The item to be processed.    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics.Pages
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsView -Path master:\content\home
-#>
+# >

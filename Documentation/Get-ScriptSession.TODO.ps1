@@ -5,17 +5,18 @@
     .DESCRIPTION
         Get-ScriptSession.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Id
+        Id of the item to be processed - can work with Language parameter to narrow the publication scope.
 
+    .PARAMETER Current
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-ScriptSession -Path master:\content\home
-#>
+# >

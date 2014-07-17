@@ -5,12 +5,13 @@
     .DESCRIPTION
         Execute-ShellCommand.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Name
+        TODO: Provide description for this parameter
 
+    .PARAMETER Item
+        The item to be processed.    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
@@ -25,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Execute-ShellCommand -Path master:\content\home
-#>
+# >

@@ -5,17 +5,24 @@
     .DESCRIPTION
         New-FileSource.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Name
+        TODO: Provide description for this parameter
 
+    .PARAMETER Root
+        TODO: Provide description for this parameter
+
+    .PARAMETER IncludeFilter
+        TODO: Provide description for this parameter
+
+    .PARAMETER ExcludeFilter
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        Sitecore.Install.Files.FileSource
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> New-FileSource -Path master:\content\home
-#>
+# >

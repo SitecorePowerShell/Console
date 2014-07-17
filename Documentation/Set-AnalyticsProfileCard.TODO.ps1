@@ -5,17 +5,27 @@
     .DESCRIPTION
         Set-AnalyticsProfileCard.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER ProfileName
+        TODO: Provide description for this parameter
 
+    .PARAMETER ProfileCardName
+        TODO: Provide description for this parameter
+
+    .PARAMETER Item
+        The item to be processed.
+
+    .PARAMETER Database
+        Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
+
+    .PARAMETER Name
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Set-AnalyticsProfileCard -Path master:\content\home
-#>
+# >

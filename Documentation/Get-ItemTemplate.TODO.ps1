@@ -5,17 +5,18 @@
     .DESCRIPTION
         Get-ItemTemplate.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Item
+        The item to be processed.
 
+    .PARAMETER Recurse
+        Process the item and all of its children.    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        Sitecore.Data.Items.TemplateItem
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemTemplate -Path master:\content\home
-#>
+# >

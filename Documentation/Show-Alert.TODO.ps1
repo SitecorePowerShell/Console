@@ -5,17 +5,15 @@
     .DESCRIPTION
         Show-Alert.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
-
+    .PARAMETER Title
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Show-Alert -Path master:\content\home
-#>
+# >

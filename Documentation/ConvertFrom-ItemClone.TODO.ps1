@@ -1,13 +1,10 @@
 <#
     .SYNOPSIS
-        Get-ItemWorkflowEvent.
+        ConvertFrom-ItemClone.
 
     .DESCRIPTION
-        Get-ItemWorkflowEvent.
+        ConvertFrom-ItemClone.
 
-
-    .PARAMETER UserName
-        TODO: Provide description for this parameter
 
     .PARAMETER Item
         The item to be processed.
@@ -28,7 +25,7 @@
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Workflows.WorkflowEvent
+        Sitecore.Data.Items.Item
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -37,5 +34,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Get-ItemWorkflowEvent -Path master:\content\home
+        PS master:\> ConvertFrom-ItemClone -Path master:\content\home
 # >

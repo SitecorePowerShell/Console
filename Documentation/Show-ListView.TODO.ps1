@@ -5,17 +5,51 @@
     .DESCRIPTION
         Show-ListView.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER PageSize
+        TODO: Provide description for this parameter
 
+    .PARAMETER Icon
+        TODO: Provide description for this parameter
+
+    .PARAMETER InfoTitle
+        TODO: Provide description for this parameter
+
+    .PARAMETER InfoDescription
+        TODO: Provide description for this parameter
+
+    .PARAMETER Modal
+        TODO: Provide description for this parameter
+
+    .PARAMETER ActionData
+        TODO: Provide description for this parameter
+
+    .PARAMETER ViewName
+        TODO: Provide description for this parameter
+
+    .PARAMETER ActionsInSession
+        TODO: Provide description for this parameter
+
+    .PARAMETER Data
+        TODO: Provide description for this parameter
+
+    .PARAMETER Property
+        TODO: Provide description for this parameter
+
+    .PARAMETER Title
+        TODO: Provide description for this parameter
+
+    .PARAMETER Width
+        TODO: Provide description for this parameter
+
+    .PARAMETER Height
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        System.String
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +59,4 @@
 
     .EXAMPLE
         PS master:\> Show-ListView -Path master:\content\home
-#>
+# >

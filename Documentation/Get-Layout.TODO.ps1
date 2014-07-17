@@ -1,12 +1,12 @@
 <#
     .SYNOPSIS
-        Get-ItemWorkflowEvent.
+        Get-Layout.
 
     .DESCRIPTION
-        Get-ItemWorkflowEvent.
+        Get-Layout.
 
 
-    .PARAMETER UserName
+    .PARAMETER Device
         TODO: Provide description for this parameter
 
     .PARAMETER Item
@@ -28,7 +28,7 @@
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Workflows.WorkflowEvent
+        Sitecore.Layouts.RenderingReference
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -37,5 +37,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Get-ItemWorkflowEvent -Path master:\content\home
+        PS master:\> Get-Layout -Path master:\content\home
 # >

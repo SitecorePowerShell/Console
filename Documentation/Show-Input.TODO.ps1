@@ -5,17 +5,27 @@
     .DESCRIPTION
         Show-Input.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Prompt
+        TODO: Provide description for this parameter
 
+    .PARAMETER DefaultValue
+        TODO: Provide description for this parameter
+
+    .PARAMETER Validation
+        TODO: Provide description for this parameter
+
+    .PARAMETER ErrorMessage
+        TODO: Provide description for this parameter
+
+    .PARAMETER MaxLength
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        System.String
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Show-Input -Path master:\content\home
-#>
+# >

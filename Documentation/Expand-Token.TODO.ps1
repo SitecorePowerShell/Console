@@ -5,12 +5,10 @@
     .DESCRIPTION
         Expand-Token.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
-
+    .PARAMETER Item
+        The item to be processed.    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
@@ -25,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Expand-Token -Path master:\content\home
-#>
+# >

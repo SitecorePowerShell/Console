@@ -1,12 +1,18 @@
 <#
     .SYNOPSIS
-        Get-ItemWorkflowEvent.
+        Get-ItemField.
 
     .DESCRIPTION
-        Get-ItemWorkflowEvent.
+        Get-ItemField.
 
 
-    .PARAMETER UserName
+    .PARAMETER NoStandardFields
+        TODO: Provide description for this parameter
+
+    .PARAMETER ReturnType
+        TODO: Provide description for this parameter
+
+    .PARAMETER Name
         TODO: Provide description for this parameter
 
     .PARAMETER Item
@@ -28,7 +34,7 @@
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Workflows.WorkflowEvent
+        Sitecore.Data.Items.Item
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -37,5 +43,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Get-ItemWorkflowEvent -Path master:\content\home
+        PS master:\> Get-ItemField -Path master:\content\home
 # >

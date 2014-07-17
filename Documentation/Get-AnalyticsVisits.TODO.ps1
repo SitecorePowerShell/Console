@@ -5,17 +5,24 @@
     .DESCRIPTION
         Get-AnalyticsVisits.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Visit
+        TODO: Provide description for this parameter
 
+    .PARAMETER Visitor
+        TODO: Provide description for this parameter
+
+    .PARAMETER Browser
+        TODO: Provide description for this parameter
+
+    .PARAMETER ReferringSite
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics.Visits
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsVisits -Path master:\content\home
-#>
+# >

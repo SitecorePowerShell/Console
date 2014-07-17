@@ -5,17 +5,18 @@
     .DESCRIPTION
         Login-User.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER Identity
+        User name including domain. If no domain is specified - 'sitecore' will be used as the default value
 
+    .PARAMETER Password
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Login-User -Path master:\content\home
-#>
+# >

@@ -5,17 +5,33 @@
     .DESCRIPTION
         Download-File.
 
-	.PARAMETER Path
-		Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
-	.PARAMETER Id
-		Id of the item that should be published - can work with Language parameter to narrow the publication scope.
+    .PARAMETER FullName
+        TODO: Provide description for this parameter
 
+    .PARAMETER Message
+        TODO: Provide description for this parameter
+
+    .PARAMETER Item
+        The item to be processed.
+
+    .PARAMETER NoDialog
+        TODO: Provide description for this parameter
+
+    .PARAMETER Title
+        TODO: Provide description for this parameter
+
+    .PARAMETER Width
+        TODO: Provide description for this parameter
+
+    .PARAMETER Height
+        TODO: Provide description for this parameter    
+    
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
+        System.String
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -25,4 +41,4 @@
 
     .EXAMPLE
         PS master:\> Download-File -Path master:\content\home
-#>
+# >

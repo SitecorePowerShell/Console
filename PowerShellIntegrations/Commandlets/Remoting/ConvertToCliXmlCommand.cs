@@ -12,6 +12,7 @@ using System.Xml;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Remoting
 {
     [Cmdlet(VerbsData.ConvertTo, "CliXml", SupportsShouldProcess = false)]
+    [OutputType(typeof(string))]
     public class ConvertToCliXmlCommand : PSCmdlet
     {
         private object serializer;
