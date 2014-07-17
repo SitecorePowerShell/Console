@@ -44,4 +44,4 @@
 
     .EXAMPLE
         PS master:\> New-ItemWorkflowEvent -Path master:\content\home
-# >
+#>

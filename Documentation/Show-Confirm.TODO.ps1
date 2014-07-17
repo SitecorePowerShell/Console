@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Show-Confirm -Path master:\content\home
-# >
+#>

@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsBrowser -Path master:\content\home
-# >
+#>

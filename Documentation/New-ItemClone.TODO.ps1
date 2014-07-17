@@ -44,4 +44,4 @@
 
     .EXAMPLE
         PS master:\> New-ItemClone -Path master:\content\home
-# >
+#>

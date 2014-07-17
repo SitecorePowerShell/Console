@@ -32,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> Get-TaskSchedule -Path master:\content\home
-# >
+#>

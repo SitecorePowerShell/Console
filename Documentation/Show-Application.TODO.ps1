@@ -44,4 +44,4 @@
 
     .EXAMPLE
         PS master:\> Show-Application -Path master:\content\home
-# >
+#>

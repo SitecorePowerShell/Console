@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-Preset -Path master:\content\home
-# >
+#>

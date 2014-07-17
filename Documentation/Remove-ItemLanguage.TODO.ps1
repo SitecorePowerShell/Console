@@ -38,4 +38,4 @@
 
     .EXAMPLE
         PS master:\> Remove-ItemLanguage -Path master:\content\home
-# >
+#>

@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsScreen -Path master:\content\home
-# >
+#>

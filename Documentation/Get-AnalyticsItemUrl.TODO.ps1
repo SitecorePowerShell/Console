@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsItemUrl -Path master:\content\home
-# >
+#>

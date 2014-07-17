@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-Archive -Path master:\content\home
-# >
+#>

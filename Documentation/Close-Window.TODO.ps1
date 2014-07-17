@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Close-Window -Path master:\content\home
-# >
+#>

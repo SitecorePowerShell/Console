@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Logout-User -Path master:\content\home
-# >
+#>

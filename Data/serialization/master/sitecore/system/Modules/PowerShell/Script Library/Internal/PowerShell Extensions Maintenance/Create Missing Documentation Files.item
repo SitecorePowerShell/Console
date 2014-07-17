@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2488
+content-length: 2487
 
 $DocumentationFolder = "C:\Projects\sitecorepowershell\Trunk\Documentation"
 
@@ -89,7 +89,7 @@ foreach($parameter in $parameters){
 
     .EXAMPLE
         PS master:\> $_ -Path master:\content\home
-# >
+#>
 "@
 
     $fileName = "$DocumentationFolder\$_.TODO.ps1" 
@@ -104,7 +104,7 @@ foreach($parameter in $parameters){
 ----version----
 language: en
 version: 1
-revision: 454072d3-bd90-4a62-8574-dec2bb4e4a88
+revision: 42fbf7af-ad96-4dc6-be16-8be2c9104e8c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -119,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-454072d3-bd90-4a62-8574-dec2bb4e4a88
+42fbf7af-ad96-4dc6-be16-8be2c9104e8c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140718T002240:635412397600273594
+20140718T004028:635412408280947422
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

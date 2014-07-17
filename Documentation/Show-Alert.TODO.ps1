@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Show-Alert -Path master:\content\home
-# >
+#>

@@ -32,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> New-FileSource -Path master:\content\home
-# >
+#>

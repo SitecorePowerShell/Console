@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-Device -Path master:\content\home
-# >
+#>

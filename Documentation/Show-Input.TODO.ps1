@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Show-Input -Path master:\content\home
-# >
+#>

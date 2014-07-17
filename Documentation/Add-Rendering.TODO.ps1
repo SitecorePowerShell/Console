@@ -53,4 +53,4 @@
 
     .EXAMPLE
         PS master:\> Add-Rendering -Path master:\content\home
-# >
+#>

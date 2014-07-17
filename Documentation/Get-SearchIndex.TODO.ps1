@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-SearchIndex -Path master:\content\home
-# >
+#>

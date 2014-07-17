@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsTrafficType -Path master:\content\home
-# >
+#>

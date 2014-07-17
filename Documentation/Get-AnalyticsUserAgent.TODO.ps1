@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsUserAgent -Path master:\content\home
-# >
+#>

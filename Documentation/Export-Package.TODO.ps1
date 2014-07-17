@@ -32,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> Export-Package -Path master:\content\home
-# >
+#>

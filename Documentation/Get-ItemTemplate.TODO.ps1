@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemTemplate -Path master:\content\home
-# >
+#>

@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Wrap-Item -Path master:\content\home
-# >
+#>

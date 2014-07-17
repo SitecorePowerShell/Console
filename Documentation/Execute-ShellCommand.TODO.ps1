@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Execute-ShellCommand -Path master:\content\home
-# >
+#>

@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsGeoIP -Path master:\content\home
-# >
+#>

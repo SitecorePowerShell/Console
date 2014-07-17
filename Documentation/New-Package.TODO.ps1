@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> New-Package -Path master:\content\home
-# >
+#>

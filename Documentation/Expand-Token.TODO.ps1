@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Expand-Token -Path master:\content\home
-# >
+#>

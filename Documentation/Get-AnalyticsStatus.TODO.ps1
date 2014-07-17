@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsStatus -Path master:\content\home
-# >
+#>

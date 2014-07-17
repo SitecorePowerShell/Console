@@ -29,4 +29,4 @@
 
     .EXAMPLE
         PS master:\> Show-YesNoCancel -Path master:\content\home
-# >
+#>

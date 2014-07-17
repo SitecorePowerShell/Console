@@ -44,4 +44,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemField -Path master:\content\home
-# >
+#>

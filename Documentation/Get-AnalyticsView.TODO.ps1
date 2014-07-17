@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsView -Path master:\content\home
-# >
+#>

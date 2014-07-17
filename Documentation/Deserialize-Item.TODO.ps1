@@ -47,4 +47,4 @@
 
     .EXAMPLE
         PS master:\> Deserialize-Item -Path master:\content\home
-# >
+#>

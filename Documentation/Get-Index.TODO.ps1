@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-Index -Path master:\content\home
-# >
+#>

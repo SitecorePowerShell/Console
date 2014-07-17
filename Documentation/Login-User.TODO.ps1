@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Login-User -Path master:\content\home
-# >
+#>

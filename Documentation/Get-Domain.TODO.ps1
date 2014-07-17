@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-Domain -Path master:\content\home
-# >
+#>

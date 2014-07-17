@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> ConvertFrom-CliXml -Path master:\content\home
-# >
+#>

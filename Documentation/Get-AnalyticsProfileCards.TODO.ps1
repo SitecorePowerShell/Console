@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsProfileCards -Path master:\content\home
-# >
+#>

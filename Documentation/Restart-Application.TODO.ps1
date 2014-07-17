@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Restart-Application -Path master:\content\home
-# >
+#>

@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemClone -Path master:\content\home
-# >
+#>

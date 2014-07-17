@@ -29,4 +29,4 @@
 
     .EXAMPLE
         PS master:\> New-Domain -Path master:\content\home
-# >
+#>

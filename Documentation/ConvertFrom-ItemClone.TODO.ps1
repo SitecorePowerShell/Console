@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> ConvertFrom-ItemClone -Path master:\content\home
-# >
+#>

@@ -41,4 +41,4 @@
 
     .EXAMPLE
         PS master:\> Set-Rendering -Path master:\content\home
-# >
+#>

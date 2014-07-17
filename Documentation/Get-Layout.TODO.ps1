@@ -38,4 +38,4 @@
 
     .EXAMPLE
         PS master:\> Get-Layout -Path master:\content\home
-# >
+#>

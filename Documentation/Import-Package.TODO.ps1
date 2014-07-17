@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Import-Package -Path master:\content\home
-# >
+#>

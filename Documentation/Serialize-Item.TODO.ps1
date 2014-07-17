@@ -41,4 +41,4 @@
 
     .EXAMPLE
         PS master:\> Serialize-Item -Path master:\content\home
-# >
+#>

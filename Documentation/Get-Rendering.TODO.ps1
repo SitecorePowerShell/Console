@@ -59,4 +59,4 @@
 
     .EXAMPLE
         PS master:\> Get-Rendering -Path master:\content\home
-# >
+#>

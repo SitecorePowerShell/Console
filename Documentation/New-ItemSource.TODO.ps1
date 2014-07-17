@@ -41,4 +41,4 @@
 
     .EXAMPLE
         PS master:\> New-ItemSource -Path master:\content\home
-# >
+#>

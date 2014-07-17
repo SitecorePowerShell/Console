@@ -32,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> Set-HostProperty -Path master:\content\home
-# >
+#>

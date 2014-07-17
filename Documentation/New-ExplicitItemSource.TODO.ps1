@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> New-ExplicitItemSource -Path master:\content\home
-# >
+#>

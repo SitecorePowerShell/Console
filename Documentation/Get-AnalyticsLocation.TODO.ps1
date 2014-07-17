@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsLocation -Path master:\content\home
-# >
+#>

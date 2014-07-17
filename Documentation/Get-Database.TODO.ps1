@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-Database -Path master:\content\home
-# >
+#>

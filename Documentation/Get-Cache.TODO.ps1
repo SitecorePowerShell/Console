@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-Cache -Path master:\content\home
-# >
+#>

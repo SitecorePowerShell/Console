@@ -59,4 +59,4 @@
 
     .EXAMPLE
         PS master:\> Remove-Rendering -Path master:\content\home
-# >
+#>

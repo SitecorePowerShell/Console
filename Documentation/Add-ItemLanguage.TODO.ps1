@@ -50,4 +50,4 @@
 
     .EXAMPLE
         PS master:\> Add-ItemLanguage -Path master:\content\home
-# >
+#>

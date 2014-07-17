@@ -38,4 +38,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemReferrer -Path master:\content\home
-# >
+#>

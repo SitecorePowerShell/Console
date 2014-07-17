@@ -36,4 +36,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemReference -Path master:\content\home
-# >
+#>

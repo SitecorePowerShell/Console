@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsKeyword -Path master:\content\home
-# >
+#>

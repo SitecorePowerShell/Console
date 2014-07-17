@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Send-SheerMessage -Path master:\content\home
-# >
+#>

@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsPageEvent -Path master:\content\home
-# >
+#>

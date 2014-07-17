@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Import-Function -Path master:\content\home
-# >
+#>

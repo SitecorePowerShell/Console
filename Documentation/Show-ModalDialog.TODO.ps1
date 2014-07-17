@@ -38,4 +38,4 @@
 
     .EXAMPLE
         PS master:\> Show-ModalDialog -Path master:\content\home
-# >
+#>

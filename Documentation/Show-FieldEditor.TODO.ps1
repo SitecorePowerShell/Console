@@ -56,4 +56,4 @@
 
     .EXAMPLE
         PS master:\> Show-FieldEditor -Path master:\content\home
-# >
+#>

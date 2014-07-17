@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> New-ExplicitFileSource -Path master:\content\home
-# >
+#>

@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-ScriptSession -Path master:\content\home
-# >
+#>

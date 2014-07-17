@@ -35,4 +35,4 @@
 
     .EXAMPLE
         PS master:\> Set-AnalyticsProfileCard -Path master:\content\home
-# >
+#>

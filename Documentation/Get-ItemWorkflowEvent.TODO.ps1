@@ -38,4 +38,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemWorkflowEvent -Path master:\content\home
-# >
+#>

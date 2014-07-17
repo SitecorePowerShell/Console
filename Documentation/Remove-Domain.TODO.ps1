@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Remove-Domain -Path master:\content\home
-# >
+#>

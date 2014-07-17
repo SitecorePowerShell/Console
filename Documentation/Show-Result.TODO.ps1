@@ -41,4 +41,4 @@
 
     .EXAMPLE
         PS master:\> Show-Result -Path master:\content\home
-# >
+#>

@@ -32,4 +32,4 @@
 
     .EXAMPLE
         PS master:\> Install-UpdatePackage -Path master:\content\home
-# >
+#>

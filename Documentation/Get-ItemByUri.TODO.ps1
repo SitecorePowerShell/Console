@@ -23,4 +23,4 @@
 
     .EXAMPLE
         PS master:\> Get-ItemByUri -Path master:\content\home
-# >
+#>

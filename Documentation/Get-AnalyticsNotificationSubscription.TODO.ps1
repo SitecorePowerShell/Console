@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsNotificationSubscription -Path master:\content\home
-# >
+#>

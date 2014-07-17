@@ -20,4 +20,4 @@
 
     .EXAMPLE
         PS master:\> Get-UserAgent -Path master:\content\home
-# >
+#>

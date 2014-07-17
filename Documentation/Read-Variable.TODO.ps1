@@ -44,4 +44,4 @@
 
     .EXAMPLE
         PS master:\> Read-Variable -Path master:\content\home
-# >
+#>

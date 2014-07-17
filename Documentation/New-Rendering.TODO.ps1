@@ -65,4 +65,4 @@
 
     .EXAMPLE
         PS master:\> New-Rendering -Path master:\content\home
-# >
+#>

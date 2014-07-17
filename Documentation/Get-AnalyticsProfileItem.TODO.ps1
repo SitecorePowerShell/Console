@@ -26,4 +26,4 @@
 
     .EXAMPLE
         PS master:\> Get-AnalyticsProfileItem -Path master:\content\home
-# >
+#>
