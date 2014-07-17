@@ -124,6 +124,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseEditItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Data\GetItemFieldCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\ConvertFromItemCloneCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\RemoveItemLanguageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\AddItemLanguageCommand.cs" />
