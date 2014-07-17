@@ -1,37 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Management.Automation;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
-using Sitecore.Sites;
-using Sitecore.Workflows;
-using Sitecore.Workflows.Simple;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
-    //[Cmdlet(VerbsCommon.Get, "Layout")]
-    [OutputType(new[] {typeof (RenderingReference)}, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [Cmdlet(VerbsCommon.Get, "Layout")]
+    [OutputType(new[] {typeof (RenderingReference)},
+        ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetLayoutCommand : BaseItemCommand
     {
         [Parameter]
         public DeviceItem Device { get; set; }
 
+        protected override void BeginProcessing()
+        {
+            // do not process languages - layouts are shared across them
+            Language = null;
+        }
+
         protected override void ProcessItem(Item item)
         {
-            var layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
+            LayoutDefinition layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
 
-            for (int i = 0; i < layout.Devices.Count; i++)
+            if (layout.Devices == null)
             {
-                DeviceDefinition device = layout.Devices[i] as DeviceDefinition;
-/*
-                RenderingReference refs = new RenderingReference();
-                RenderingItem item = new RenderingItem();
-*/
-                WriteObject(device, false);
+                return;
+            }
+
+            foreach (DeviceDefinition device in layout.Devices)
+            {
+                if (Device == null || string.Equals(device.ID, Device.ID.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    Item layoutItem = item.Database.GetItem(device.Layout);
+                    WriteItem(layoutItem);
+                    if (Device != null)
+                    {
+                        return;
+                    }
+                }
+            }
+            if (Device != null)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new ObjectNotFoundException(
+                            string.Format("Item \"{0}\" has no layout defined for device \"{1}\"", item.Name,
+                                Device.Name)), "sitecore_layout_for_device_not_found", ErrorCategory.ObjectNotFound,
+                        Device));
             }
         }
     }

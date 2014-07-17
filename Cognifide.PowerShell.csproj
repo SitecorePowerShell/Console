@@ -136,6 +136,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\AddRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\BaseLayoutCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\BaseRenderingCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\SetLayoutCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\SetRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\RemoveRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\NewRenderingCommand.cs" />
