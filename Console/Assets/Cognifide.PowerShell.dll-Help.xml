@@ -357,7 +357,9 @@
       <command:name>Remove-ItemLanguage</command:name>
       <gl:group>ItemLanguage</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Removes Language from a single item or a branch of items
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -367,7 +369,11 @@
       <dev:version>2.6.1.29563</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Removes Language version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
+Language  parameter supports globbing so you can delete whole language groups using wildcards.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -426,7 +432,9 @@
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Recurse</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Deleted language versions from the item and all of its children.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -440,7 +448,11 @@
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Language(s) that should be deleted form the provided item(s).
+A single language or a list of languages can be defined using the parameter. 
+Language parameter supports globbing so you can delete whole language groups using wildcards.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
         <dev:type>
@@ -454,7 +466,9 @@
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to be processed.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -468,7 +482,9 @@
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the item to be processed - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -482,7 +498,9 @@
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Id of the item to be processed - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -496,7 +514,9 @@
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database containing the item to be processed - can work with Language parameter to narrow the publication scope.    
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
         <dev:type>
@@ -508,16 +528,52 @@
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code># Remove Polish and Spanish language from /sitecore/content/home item in the master database
+PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "pl-pl", "es-es"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code># Remove all english based languages defined in /sitecore/content/home item and all of its children in the master database
+PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" -Recurse
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
