@@ -23,10 +23,16 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Get-RoleMember
+
+    .LINK
+        Remove-RoleMember
 
     .EXAMPLE
         PS master:\> Add-RoleMember -Identity developer -Members "michael","adam","mike"

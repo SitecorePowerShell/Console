@@ -42,10 +42,22 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Get-User
+
+    .LINK
+        New-User
+
+    .LINK
+        Remove-User
+
+    .LINK
+        Unlock-User
 
     .EXAMPLE
         PS master:\> Set-User -Identity michael -Email michaellwest@gmail.com

@@ -1,31 +1,37 @@
 <#
     .SYNOPSIS
-        New-Domain.
+        Creates a new domain with the specified name.
 
     .DESCRIPTION
-        New-Domain.
+        The New-Domain cmdlet creates a domain if it does not exist.
 
 
     .PARAMETER Name
-        TODO: Provide description for this parameter
+        The name of the domain.
 
     .PARAMETER LocallyManaged
         TODO: Provide description for this parameter
 
     .PARAMETER PassThru
-        TODO: Provide description for this parameter    
+        Specifies the new domain should be passed into the pipeline.   
     
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        
+        None.
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
         https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Get-Domain
+
+    .LINK
+        Remove-Domain
 
     .EXAMPLE
         PS master:\> New-Domain -Path master:\content\home

@@ -26,10 +26,13 @@
         Returns one or more user sessions.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Remove-Session
 
     .EXAMPLE
         PS master:\> Get-Session

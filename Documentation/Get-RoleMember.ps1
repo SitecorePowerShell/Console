@@ -27,10 +27,19 @@
         Returns one or more roles.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Get-Role
+
+    .LINK
+        Remove-RoleMember
+
+    .LINK
+        Add-RoleMember
 
     .EXAMPLE
         PS master:\> Get-RoleMember -Identity developer

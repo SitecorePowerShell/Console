@@ -1,22 +1,22 @@
 <#
     .SYNOPSIS
-        Remove-Domain.
+        Removes the specified domain.
 
     .DESCRIPTION
-        Remove-Domain.
+        The Remove-Domain cmdlet removes the specified domain.
 
 
     .PARAMETER Name
-        TODO: Provide description for this parameter
+        The name of the domain.
 
     .PARAMETER Force
-        TODO: Provide description for this parameter    
+        Indicates that the domain should be removed although it contains users in that domain.
     
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        
+        None.
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West

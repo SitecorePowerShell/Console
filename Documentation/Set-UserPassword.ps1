@@ -26,10 +26,16 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Get-User
+
+    .LINK
+        Set-User
 
     .EXAMPLE
         PS master:\> Set-UserPassword -Identity michael -NewPassword pass123 -OldPassword b

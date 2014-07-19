@@ -12,7 +12,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -214,6 +214,7 @@
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -227,7 +228,7 @@
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -351,6 +352,7 @@
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -366,7 +368,7 @@
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes Language version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
@@ -378,6 +380,21 @@ Language  parameter supports globbing so you can delete whole language groups us
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-ItemLanguage</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Recurse</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-ItemLanguage</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID" position="named">
@@ -406,21 +423,6 @@ Language  parameter supports globbing so you can delete whole language groups us
         <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Recurse</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-ItemLanguage</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -574,6 +576,12 @@ PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" 
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -589,7 +597,7 @@ PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" 
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a version of the item in a new language based on a language version already existing. 
@@ -911,6 +919,12 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -924,7 +938,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1048,6 +1062,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -1061,7 +1076,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1185,6 +1200,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -1198,7 +1214,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1206,6 +1222,25 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReferrer</maml:name>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>ItemLink</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReferrer</maml:name>
         <command:parameter required="false" parameterSetName="Item from Pipeline" position="1">
@@ -1232,28 +1267,9 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReferrer</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>ItemLink</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>ItemLink</maml:name>
         <maml:description>
           <maml:para />
@@ -1348,6 +1364,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -1361,7 +1378,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1563,6 +1580,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -1576,7 +1594,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1618,6 +1636,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -1631,7 +1650,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2018,6 +2037,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -2031,7 +2051,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2311,6 +2331,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -2324,7 +2345,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2526,6 +2547,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -2539,7 +2561,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2715,6 +2737,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -2728,7 +2751,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2736,6 +2759,37 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>DataSource</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Rendering</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Index</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>PlaceHolder</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Parameter</maml:name>
+          <command:parameterValue required="true">Hashtable</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
@@ -2768,27 +2822,31 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>DataSource</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Rendering</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>PlaceHolder</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
@@ -2837,31 +2895,35 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>DataSource</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Rendering</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>PlaceHolder</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
@@ -2887,45 +2949,6 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
           <maml:name>UniqueId</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>DataSource</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Rendering</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Index</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>PlaceHolder</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Parameter</maml:name>
-          <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -3150,6 +3173,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -3163,7 +3187,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3547,6 +3571,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -3560,7 +3585,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Device</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3623,6 +3648,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -3638,7 +3664,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-RoleMember cmdlet gets a role and assigns users as members of the Sitecore role.
@@ -3723,7 +3749,7 @@ Represents the identity of a role.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -3738,6 +3764,20 @@ Represents the identity of a role.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -3753,7 +3793,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Disable-User cmdlet gets a user and disables the account in Sitecore.
@@ -3872,6 +3912,12 @@ One or more user instances.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>http://michaellwest.blogspot.com</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -3887,7 +3933,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Enable-User cmdlet gets a user and enables the account in Sitecore.
@@ -4006,23 +4052,34 @@ One or more user instances.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>http://michaellwest.blogspot.com</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Get-Domain</command:name>
       <gl:group>Domain</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Gets all available domains or the specified domain.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Get-Domain cmdlet returns all the domains or the specified domain.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -4039,7 +4096,9 @@ One or more user instances.
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the domain    
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -4051,16 +4110,56 @@ One or more user instances.
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Domain -Path master:\content\home
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-Domain</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Domain</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -4076,7 +4175,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
@@ -4178,7 +4277,7 @@ Represents the identity of a role.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -4220,6 +4319,16 @@ sitecore\Developer                       sitecore     False
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -4235,7 +4344,7 @@ sitecore\Developer                       sitecore     False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
@@ -4247,6 +4356,21 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-RoleMember</maml:name>
+        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
+          <maml:name>Identity</maml:name>
+          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
+          <maml:name>UsersOnly</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Recursive</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
         <command:parameter required="true" parameterSetName="ComputersOnly" position="1">
@@ -4267,21 +4391,6 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
         <command:parameter required="true" parameterSetName="Id" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Recursive</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
-          <maml:name>Identity</maml:name>
-          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
-          <maml:name>UsersOnly</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recursive</maml:name>
@@ -4378,7 +4487,7 @@ Represents the identity of a role.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -4416,6 +4525,24 @@ Name        : sitecore\Developer
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Role</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Add-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -4431,7 +4558,7 @@ Name        : sitecore\Developer
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
@@ -4572,7 +4699,7 @@ Represents the identity of a user.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -4616,23 +4743,50 @@ sitecore\michael         sitecore     False           False
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unlock-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-Domain</command:name>
       <gl:group>Domain</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates a new domain with the specified name.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The New-Domain cmdlet creates a domain if it does not exist.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -4657,7 +4811,9 @@ sitecore\michael         sitecore     False           False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the domain.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -4671,7 +4827,9 @@ sitecore\michael         sitecore     False           False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>LocallyManaged</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>TODO: Provide description for this parameter
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -4685,7 +4843,9 @@ sitecore\michael         sitecore     False           False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>PassThru</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies the new domain should be passed into the pipeline.   
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -4697,16 +4857,56 @@ sitecore\michael         sitecore     False           False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; New-Domain -Path master:\content\home
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Domain</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-Domain</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -4722,7 +4922,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-User cmdlet creates a new user in Sitecore.
@@ -4917,7 +5117,7 @@ Represents the identity of a role.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -4949,6 +5149,28 @@ sitecore\michael2        sitecore     False           False
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unlock-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -4964,7 +5186,7 @@ sitecore\michael2        sitecore     False           False
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Protect-Item cmdlet protects the item.
@@ -5154,7 +5376,7 @@ sitecore\michael2        sitecore     False           False
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -5180,23 +5402,42 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unprotect-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Remove-Domain</command:name>
       <gl:group>Domain</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Removes the specified domain.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Remove-Domain cmdlet removes the specified domain.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -5217,7 +5458,9 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the domain.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -5231,7 +5474,9 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Force</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Indicates that the domain should be removed although it contains users in that domain.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -5243,16 +5488,48 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Remove-Domain -Path master:\content\home
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -5268,7 +5545,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-RoleMember cmdlet gets a role and removes members of the Sitecore role.
@@ -5353,7 +5630,7 @@ Represents the identity of a role.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -5368,6 +5645,20 @@ Represents the identity of a role.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Add-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-RoleMember</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -5383,7 +5674,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Session cmdlet removes user sessions in Sitecore.
@@ -5466,7 +5757,7 @@ Accepts a user session.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -5488,6 +5779,16 @@ Accepts a user session.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Session</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -5503,7 +5804,7 @@ Accepts a user session.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-User cmdlet removes a user from Sitecore.
@@ -5597,7 +5898,7 @@ Represents the instance of a user.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -5626,6 +5927,28 @@ Represents the instance of a user.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unlock-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -5641,7 +5964,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-UserPassword cmdlet resets or changes a user password.
@@ -5655,13 +5978,13 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-UserPassword</maml:name>
-        <command:parameter required="true" parameterSetName="Reset password" position="1">
+        <command:parameter required="true" parameterSetName="Set password" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Reset password" position="named">
-          <maml:name>Reset</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Set password" position="named">
+          <maml:name>OldPassword</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>NewPassword</maml:name>
@@ -5670,13 +5993,13 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-UserPassword</maml:name>
-        <command:parameter required="true" parameterSetName="Set password" position="1">
+        <command:parameter required="true" parameterSetName="Reset password" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Set password" position="named">
-          <maml:name>OldPassword</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Reset password" position="named">
+          <maml:name>Reset</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>NewPassword</maml:name>
@@ -5779,7 +6102,7 @@ Represents the instance of a user.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -5801,6 +6124,20 @@ Represents the instance of a user.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -5816,7 +6153,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-User cmdlet sets a user profile properties in Sitecore.
@@ -6073,7 +6410,7 @@ Represents the instance of a user.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -6123,6 +6460,28 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unlock-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6138,7 +6497,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-Item cmdlet unlocks the item.
@@ -6328,7 +6687,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -6354,6 +6713,20 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Lock-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6369,7 +6742,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Lock-Item cmdlet unlocks the item.
@@ -6559,7 +6932,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -6585,6 +6958,20 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Unlock-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6598,7 +6985,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6640,6 +7027,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6653,7 +7041,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6767,6 +7155,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6780,7 +7169,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6930,6 +7319,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -6943,7 +7333,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6951,6 +7341,37 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Get-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>DataSource</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Rendering</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Index</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>PlaceHolder</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+          <maml:name>Parameter</maml:name>
+          <command:parameterValue required="true">Hashtable</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
@@ -6983,27 +7404,31 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>DataSource</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Rendering</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>PlaceHolder</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
@@ -7052,31 +7477,35 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>DataSource</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Rendering</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>PlaceHolder</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
@@ -7102,45 +7531,6 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
           <maml:name>UniqueId</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>DataSource</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Rendering</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Index</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>PlaceHolder</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
-          <maml:name>Parameter</maml:name>
-          <command:parameterValue required="true">Hashtable</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -7365,6 +7755,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7378,7 +7769,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Script</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7406,13 +7797,6 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Execute-Script</maml:name>
-        <command:parameter required="true" parameterSetName="From Full Path" position="1">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Execute-Script</maml:name>
         <command:parameter required="true" parameterSetName="From Content Database Library" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -7420,6 +7804,13 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <command:parameter required="false" parameterSetName="From Content Database Library" position="named">
           <maml:name>ContentDatabase</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Execute-Script</maml:name>
+        <command:parameter required="true" parameterSetName="From Full Path" position="1">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -7491,6 +7882,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7506,7 +7898,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Session cmdlet gets user sessions in Sitecore.
@@ -7594,7 +7986,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -7636,6 +8028,16 @@ Created                LastRequest            SessionID                  UserNam
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-Session</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7649,7 +8051,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7709,6 +8111,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7722,7 +8125,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7741,6 +8144,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7754,7 +8158,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7922,6 +8326,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -7935,7 +8340,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8103,6 +8508,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8116,7 +8522,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8374,6 +8780,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8387,7 +8794,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8567,6 +8974,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8580,7 +8988,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8676,6 +9084,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8689,7 +9098,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8731,6 +9140,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8744,7 +9154,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8786,6 +9196,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8799,7 +9210,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8883,6 +9294,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8896,7 +9308,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8998,6 +9410,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9011,7 +9424,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9053,6 +9466,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9066,7 +9480,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9126,6 +9540,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9139,7 +9554,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomation</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9158,6 +9573,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9171,7 +9587,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomationState</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9190,6 +9606,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9203,7 +9620,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsBrowser</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9222,6 +9639,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9235,7 +9653,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsCampaign</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9254,6 +9672,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9267,7 +9686,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsGeoIP</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9286,6 +9705,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9299,7 +9719,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsItemUrl</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9318,6 +9738,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9331,7 +9752,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsKeyword</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9350,6 +9771,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9363,7 +9785,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsLocation</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9423,6 +9845,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9436,7 +9859,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsNotificationSubscription</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9455,6 +9878,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9468,7 +9892,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsOs</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9487,6 +9911,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9500,7 +9925,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPage</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9519,6 +9944,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9532,7 +9958,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEvent</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9551,6 +9977,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9564,7 +9991,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEventDefinitions</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9583,6 +10010,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9596,7 +10024,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileCards</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9656,6 +10084,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9669,7 +10098,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfile</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9688,6 +10117,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9701,7 +10131,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileItem</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9761,6 +10191,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9774,7 +10205,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsReferringSites</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9793,6 +10224,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9806,7 +10238,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsScreen</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9825,6 +10257,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9838,7 +10271,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsStatus</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9857,6 +10290,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9870,7 +10304,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTestDefinition</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9889,6 +10323,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9902,7 +10337,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTrafficType</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9921,6 +10356,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9934,7 +10370,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsUserAgent</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9953,6 +10389,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -9966,7 +10403,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsView</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10008,6 +10445,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10021,7 +10459,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>VisitorClassification</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10040,6 +10478,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10053,7 +10492,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitor</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10072,6 +10511,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10085,7 +10525,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitorTag</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10104,6 +10544,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10117,7 +10558,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisits</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10213,6 +10654,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10226,7 +10668,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>AnalyticsProfileCard</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10340,6 +10782,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10353,7 +10796,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10413,6 +10856,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10426,7 +10870,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10468,6 +10912,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10481,7 +10926,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10541,6 +10986,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10554,7 +11000,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Index</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10614,6 +11060,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10627,7 +11074,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemByUri</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10669,6 +11116,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10682,7 +11130,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10742,6 +11190,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10755,7 +11204,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10797,6 +11246,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10810,7 +11260,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10829,6 +11279,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -10842,7 +11293,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Download</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11015,6 +11466,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11028,7 +11480,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>ShellCommand</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11088,6 +11540,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11101,7 +11554,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11143,6 +11596,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11156,7 +11610,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11198,6 +11652,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11211,7 +11666,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11325,6 +11780,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11338,7 +11794,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11470,6 +11926,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11483,7 +11940,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11561,6 +12018,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11574,7 +12032,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11634,6 +12092,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11647,7 +12106,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11666,6 +12125,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11679,7 +12139,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11775,6 +12235,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11788,7 +12249,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11830,6 +12291,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11843,7 +12305,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11957,6 +12419,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11970,7 +12433,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12030,6 +12493,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12043,7 +12507,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12157,6 +12621,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12170,7 +12635,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12266,6 +12731,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12279,7 +12745,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12429,6 +12895,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12442,7 +12909,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12484,6 +12951,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12499,7 +12967,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
@@ -12760,6 +13228,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12773,7 +13247,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12792,6 +13266,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12805,7 +13280,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Deserialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13052,6 +13527,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13065,7 +13541,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Serialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13215,6 +13691,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13228,7 +13705,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13324,6 +13801,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13337,7 +13815,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Workflow</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13513,6 +13991,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13526,7 +14005,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13676,6 +14155,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13689,7 +14169,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13891,6 +14371,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13904,7 +14385,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Wrap</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13946,6 +14427,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:alert>
     </maml:alertSet>
     <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13961,7 +14443,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
@@ -14075,6 +14557,12 @@ Represents the identity of a role.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -14090,7 +14578,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
@@ -14187,7 +14675,7 @@ One or more user instances.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -14209,6 +14697,28 @@ One or more user instances.
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Set-User</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -14224,7 +14734,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.29563</dev:version>
+      <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unprotect-Item cmdlet protects the item.
@@ -14414,7 +14924,7 @@ One or more user instances.
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Michael West
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
 
 </maml:para>
       </maml:alert>
@@ -14440,5 +14950,19 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
         <dev:remarks />
       </command:example>
     </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Protect-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
 </helpItems>

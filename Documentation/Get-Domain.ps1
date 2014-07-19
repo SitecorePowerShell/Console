@@ -1,13 +1,13 @@
 <#
     .SYNOPSIS
-        Get-Domain.
+        Gets all available domains or the specified domain.
 
     .DESCRIPTION
-        Get-Domain.
+        The Get-Domain cmdlet returns all the domains or the specified domain.
 
 
     .PARAMETER Name
-        TODO: Provide description for this parameter    
+        The name of the domain    
     
     .INPUTS
         Sitecore.Data.Items.Item
@@ -20,6 +20,12 @@
 
     .LINK
         https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Remove-Domain
+
+    .LINK
+        New-Domain
 
     .EXAMPLE
         PS master:\> Get-Domain -Path master:\content\home

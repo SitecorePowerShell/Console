@@ -12,10 +12,16 @@
         None.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Lock-Item
+
+    .LINK
+        Get-Item
 
     .EXAMPLE
         PS master:\> Unlock-Item -Path master:\content\home

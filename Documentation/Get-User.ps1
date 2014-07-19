@@ -39,10 +39,22 @@
         Returns one or more users.
 
     .NOTES
-        Michael West
+        Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        http://michaellwest.blogspot.com
+        https://github.com/SitecorePowerShell/Console/
+
+    .LINK
+        Set-User
+
+    .LINK
+        New-User
+
+    .LINK
+        Remove-User
+
+    .LINK
+        Unlock-User
 
     .EXAMPLE
         PS master:\> Get-User -Identity admin
