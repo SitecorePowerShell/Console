@@ -18,7 +18,8 @@ using Sitecore.Shell.Framework.Commands;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemField")]
-    [OutputType(new[] {typeof (Item)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
+    [OutputType(new[] {typeof (Item), typeof (TemplateField), typeof (string), typeof (Item)},
+        ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetItemFieldCommand : BaseItemCommand
     {
         public enum ReturnValue
@@ -30,7 +31,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         }
 
         [Parameter]
-        public SwitchParameter NoStandardFields { get; set; }
+        public SwitchParameter IncludeStandardFields { get; set; }
 
         [Parameter]
         public ReturnValue ReturnType { get; set; }
@@ -80,7 +81,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
                     }
 
                 }
-                if (NoStandardFields && template.ContainsField(field.ID))
+                if (!IncludeStandardFields && template.ContainsField(field.ID))
                 {
                     continue;
                 }

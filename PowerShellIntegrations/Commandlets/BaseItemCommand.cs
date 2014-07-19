@@ -10,14 +10,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
     public abstract class BaseItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline")]
+            ParameterSetName = "Item from Pipeline", Mandatory = true)]
         public virtual Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path")]
+        [Parameter(ParameterSetName = "Item from Path", Mandatory=true)]
         [Alias("FullName", "FileName")]
         public virtual string Path { get; set; }
 
-        [Parameter(ParameterSetName = "Item from ID")]
+        [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
         public virtual string Id { get; set; }
 
         [Parameter(ParameterSetName = "Item from ID")]

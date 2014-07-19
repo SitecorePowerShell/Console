@@ -12,7 +12,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -22,12 +22,12 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemField</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>NoStandardFields</maml:name>
+          <maml:name>IncludeStandardFields</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -41,7 +41,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemField</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -50,7 +50,7 @@
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>NoStandardFields</maml:name>
+          <maml:name>IncludeStandardFields</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -64,7 +64,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemField</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -77,7 +77,7 @@
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>NoStandardFields</maml:name>
+          <maml:name>IncludeStandardFields</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -92,7 +92,7 @@
     </command:syntax>
     <command:parameters>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>NoStandardFields</maml:name>
+        <maml:name>IncludeStandardFields</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
@@ -133,12 +133,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -147,12 +147,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -161,12 +161,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -227,7 +227,7 @@
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -237,14 +237,14 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>ConvertFrom-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>ConvertFrom-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -255,7 +255,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>ConvertFrom-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -270,12 +270,12 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -284,12 +284,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -298,12 +298,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -364,7 +364,7 @@
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -378,7 +378,7 @@
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -397,7 +397,7 @@
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -412,7 +412,7 @@
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -451,12 +451,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -465,12 +465,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -479,12 +479,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -531,7 +531,7 @@
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -541,7 +541,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Add-ItemLanguage</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -568,7 +568,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-ItemLanguage</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -599,7 +599,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-ItemLanguage</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -704,12 +704,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -718,12 +718,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -732,12 +732,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -798,7 +798,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -808,14 +808,14 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -826,7 +826,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -841,12 +841,12 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -855,12 +855,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -869,12 +869,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -935,7 +935,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -945,14 +945,14 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -963,7 +963,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -978,12 +978,12 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -992,12 +992,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1006,12 +1006,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1072,7 +1072,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1086,7 +1086,7 @@
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -1097,7 +1097,7 @@
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -1112,7 +1112,7 @@
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -1141,12 +1141,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -1155,12 +1155,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1169,12 +1169,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1235,7 +1235,7 @@
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1245,7 +1245,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>New-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -1264,7 +1264,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -1287,7 +1287,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-ItemClone</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -1356,12 +1356,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -1370,12 +1370,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1384,12 +1384,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -1450,7 +1450,7 @@
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1505,7 +1505,7 @@
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1905,7 +1905,7 @@
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -1915,7 +1915,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Add-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -1946,7 +1946,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -1981,7 +1981,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2104,12 +2104,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -2118,12 +2118,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2132,12 +2132,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2198,7 +2198,7 @@
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2208,7 +2208,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -2227,7 +2227,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2250,7 +2250,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2319,12 +2319,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -2333,12 +2333,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2347,12 +2347,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2413,7 +2413,7 @@
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -2423,7 +2423,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -2438,7 +2438,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2457,7 +2457,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2508,12 +2508,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -2522,12 +2522,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2536,12 +2536,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2602,7 +2602,7 @@
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3037,7 +3037,7 @@
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3047,7 +3047,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>New-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -3094,7 +3094,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -3145,7 +3145,7 @@
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -3340,12 +3340,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -3354,12 +3354,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -3368,12 +3368,12 @@
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -3434,7 +3434,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Device</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3512,7 +3512,7 @@
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-RoleMember cmdlet gets a role and assigns users as members of the Sitecore role.
@@ -3627,7 +3627,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Disable-User cmdlet gets a user and disables the account in Sitecore.
@@ -3761,7 +3761,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Enable-User cmdlet gets a user and enables the account in Sitecore.
@@ -3893,7 +3893,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -3950,7 +3950,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
@@ -4109,7 +4109,7 @@ sitecore\Developer                       sitecore     False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
@@ -4305,7 +4305,7 @@ Name        : sitecore\Developer
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
@@ -4503,7 +4503,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -4596,7 +4596,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-User cmdlet creates a new user in Sitecore.
@@ -4838,7 +4838,7 @@ sitecore\michael2        sitecore     False           False
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Protect-Item cmdlet protects the item.
@@ -4850,7 +4850,7 @@ sitecore\michael2        sitecore     False           False
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Protect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -4865,7 +4865,7 @@ sitecore\michael2        sitecore     False           False
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Protect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -4884,7 +4884,7 @@ sitecore\michael2        sitecore     False           False
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Protect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -4935,12 +4935,12 @@ sitecore\michael2        sitecore     False           False
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -4949,12 +4949,12 @@ sitecore\michael2        sitecore     False           False
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -4963,12 +4963,12 @@ sitecore\michael2        sitecore     False           False
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -5067,7 +5067,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -5142,7 +5142,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-RoleMember cmdlet gets a role and removes members of the Sitecore role.
@@ -5257,7 +5257,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Session cmdlet removes user sessions in Sitecore.
@@ -5377,7 +5377,7 @@ Accepts a user session.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-User cmdlet removes a user from Sitecore.
@@ -5515,7 +5515,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-UserPassword cmdlet resets or changes a user password.
@@ -5690,7 +5690,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-User cmdlet sets a user profile properties in Sitecore.
@@ -6012,7 +6012,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-Item cmdlet unlocks the item.
@@ -6024,7 +6024,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Unlock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -6039,7 +6039,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Unlock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6058,7 +6058,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Unlock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6109,12 +6109,12 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -6123,12 +6123,12 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6137,12 +6137,12 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6243,7 +6243,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Lock-Item cmdlet unlocks the item.
@@ -6255,7 +6255,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Lock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -6270,7 +6270,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Lock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6289,7 +6289,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Lock-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6340,12 +6340,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -6354,12 +6354,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6368,12 +6368,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6472,7 +6472,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6527,7 +6527,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6654,7 +6654,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -6664,7 +6664,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -6675,7 +6675,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6690,7 +6690,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Layout</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -6723,12 +6723,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -6737,12 +6737,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6751,12 +6751,12 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -6817,7 +6817,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7252,7 +7252,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Script</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7380,7 +7380,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Session cmdlet gets user sessions in Sitecore.
@@ -7523,7 +7523,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7596,7 +7596,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7628,7 +7628,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7809,7 +7809,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -7990,7 +7990,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8261,7 +8261,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8454,7 +8454,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8563,7 +8563,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8618,7 +8618,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8673,7 +8673,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8770,7 +8770,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8885,7 +8885,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8940,7 +8940,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9013,7 +9013,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomation</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9045,7 +9045,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomationState</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9077,7 +9077,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsBrowser</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9109,7 +9109,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsCampaign</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9141,7 +9141,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsGeoIP</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9173,7 +9173,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsItemUrl</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9205,7 +9205,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsKeyword</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9237,7 +9237,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsLocation</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9310,7 +9310,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsNotificationSubscription</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9342,7 +9342,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsOs</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9374,7 +9374,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPage</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9406,7 +9406,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEvent</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9438,7 +9438,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEventDefinitions</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9470,7 +9470,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileCards</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9543,7 +9543,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfile</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9575,7 +9575,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileItem</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9648,7 +9648,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsReferringSites</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9680,7 +9680,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsScreen</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9712,7 +9712,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsStatus</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9744,7 +9744,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTestDefinition</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9776,7 +9776,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTrafficType</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9808,7 +9808,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsUserAgent</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9840,7 +9840,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsView</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9895,7 +9895,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>VisitorClassification</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9927,7 +9927,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitor</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9959,7 +9959,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitorTag</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -9991,7 +9991,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisits</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10100,7 +10100,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>AnalyticsProfileCard</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10227,7 +10227,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10300,7 +10300,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10355,7 +10355,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10428,7 +10428,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Index</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10501,7 +10501,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemByUri</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10556,7 +10556,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10629,7 +10629,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10684,7 +10684,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10716,7 +10716,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Download</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10902,7 +10902,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>ShellCommand</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10975,7 +10975,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11030,7 +11030,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11085,7 +11085,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11212,7 +11212,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11357,7 +11357,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11448,7 +11448,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11521,7 +11521,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11553,7 +11553,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11662,7 +11662,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11717,7 +11717,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11844,7 +11844,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11917,7 +11917,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12044,7 +12044,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12153,7 +12153,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12316,7 +12316,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12373,7 +12373,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
@@ -12385,7 +12385,7 @@ Created                LastRequest            SessionID                  UserNam
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -12404,7 +12404,7 @@ Created                LastRequest            SessionID                  UserNam
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -12427,7 +12427,7 @@ Created                LastRequest            SessionID                  UserNam
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -12506,12 +12506,12 @@ Created                LastRequest            SessionID                  UserNam
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -12520,14 +12520,14 @@ Created                LastRequest            SessionID                  UserNam
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para>Path to the item that should be published - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -12536,14 +12536,14 @@ Created                LastRequest            SessionID                  UserNam
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para>Id of the item that should be published - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -12647,7 +12647,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12679,7 +12679,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Deserialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12939,7 +12939,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Serialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13102,7 +13102,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13211,7 +13211,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Workflow</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13221,7 +13221,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Execute-Workflow</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -13236,7 +13236,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Execute-Workflow</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13255,7 +13255,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Execute-Workflow</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13306,12 +13306,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -13320,12 +13320,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13334,12 +13334,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13400,7 +13400,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13410,7 +13410,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -13421,7 +13421,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13436,7 +13436,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13469,12 +13469,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -13483,12 +13483,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13497,12 +13497,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13563,7 +13563,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13573,7 +13573,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
     <command:syntax>
       <command:syntaxItem>
         <maml:name>New-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -13592,7 +13592,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13615,7 +13615,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -13684,12 +13684,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -13698,12 +13698,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13712,12 +13712,12 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -13778,7 +13778,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Wrap</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -13835,7 +13835,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
@@ -13964,7 +13964,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
@@ -14098,7 +14098,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1.41939</dev:version>
+      <dev:version>2.6.1.29436</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unprotect-Item cmdlet protects the item.
@@ -14110,7 +14110,7 @@ One or more user instances.
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Unprotect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -14125,7 +14125,7 @@ One or more user instances.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Unprotect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -14144,7 +14144,7 @@ One or more user instances.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Unprotect-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -14195,12 +14195,12 @@ One or more user instances.
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -14209,12 +14209,12 @@ One or more user instances.
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -14223,12 +14223,12 @@ One or more user instances.
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
           <maml:para />
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
