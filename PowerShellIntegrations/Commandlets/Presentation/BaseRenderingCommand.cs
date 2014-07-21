@@ -38,15 +38,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
         public override Database Database { get; set; }
 
-        [Alias("Languages")]
-        [Parameter(ParameterSetName = "Rendering by filter, Item from Path")]
-        [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
-        [Parameter(ParameterSetName = "Rendering by instance, Item from Path")]
-        [Parameter(ParameterSetName = "Rendering by instance, Item from ID")]
-        [Parameter(ParameterSetName = "Rendering by unique ID, Item from Path")]
-        [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
-        public override string[] Language { get; set; }
-
         [Parameter(ParameterSetName = "Rendering by filter, Item from Pipeline")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from Path")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
@@ -108,6 +99,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             {
                 return;
             }
+
             var renderings = device.Renderings.Cast<RenderingDefinition>();
 
             if (Instance != null)

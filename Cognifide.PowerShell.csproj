@@ -141,7 +141,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\SetRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\RemoveRenderingCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Presentation\NewRenderingCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetDeviceCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Presentation\GetLayoutDeviceCommand.cs" />
     <Compile Include="PowerShellIntegrations\ItemEqualityComparer.cs" />
     <Compile Include="Security\AccountIdentity.cs" />
     <Compile Include="Security\AddRoleMemberCommand.cs" />

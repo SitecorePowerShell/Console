@@ -1,13 +1,16 @@
 <#
     .SYNOPSIS
-        Get-Layout.
+        Sets item layout for a device.
 
     .DESCRIPTION
-        Get-Layout.
+        Sets item layout for a specific device provided
 
 
     .PARAMETER Device
-        TODO: Provide description for this parameter
+        Device for which to set layout.
+
+    .PARAMETER Layout
+        Sitecore item defining the layout.
 
     .PARAMETER Item
         The item to be processed.
@@ -20,15 +23,11 @@
 
     .PARAMETER Database
         Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
-
-    .PARAMETER Language
-        If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.    
     
     .INPUTS
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Layouts.RenderingReference
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -36,6 +35,27 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        Add-Rendering
+
+    .LINK
+        New-Rendering
+
+    .LINK
+        Set-Rendering
+
+    .LINK
+        Get-Rendering
+
+    .LINK
+        Get-LayoutDevice
+
+    .LINK
+        Remove-Rendering
+
+    .LINK
+        Get-Layout
+
     .EXAMPLE
-        PS master:\> Get-Layout -Path master:\content\home
+        PS master:\> Set-Layout -Path master:\content\home
 #>

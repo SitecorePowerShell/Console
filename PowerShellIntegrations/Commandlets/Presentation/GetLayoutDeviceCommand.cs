@@ -13,9 +13,9 @@ using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Get, "Device")]
+    [Cmdlet(VerbsCommon.Get, "LayoutDevice")]
     [OutputType(new[] {typeof (DeviceItem)}, ParameterSetName = new[] { "By Name", "Default" })]
-    public class GetDeviceCommand : BaseCommand
+    public class GetLayoutDeviceCommand : BaseCommand
     {
         [Parameter(Position = 0, ParameterSetName = "By Name")]
         public string Name { get; set; }

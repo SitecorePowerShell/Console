@@ -1,5 +1,6 @@
 ﻿using System.Management.Automation;
 using Sitecore;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 
@@ -14,6 +15,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         [Alias("Rendering")]
         public RenderingDefinition Instance { get; set; }
 
+        // override to hide as rengedings are not language sensitive
+        public override string[] Language { get; set; }
+
         [Parameter]
         public int Index
         {
@@ -23,7 +27,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
         protected override void ProcessItem(Item item)
         {
-            var layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
+            LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+            if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+            {
+                return;
+            }
+
+            LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
+
             DeviceDefinition device;
             RenderingDefinition rendering;
 

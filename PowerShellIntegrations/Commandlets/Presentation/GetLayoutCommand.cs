@@ -3,6 +3,7 @@ using System.Data;
 using System.Management.Automation;
 using Sitecore;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 
@@ -16,6 +17,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         [Parameter]
         public DeviceItem Device { get; set; }
 
+        // override to hide as rengedings are not language sensitive
+        public override string[] Language { get; set; }
+
         protected override void BeginProcessing()
         {
             // do not process languages - layouts are shared across them
@@ -24,7 +28,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
         protected override void ProcessItem(Item item)
         {
-            LayoutDefinition layout = LayoutDefinition.Parse(item[FieldIDs.LayoutField]);
+            LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+            if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+            {
+                return;
+            }
+
+            LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
 
             if (layout.Devices == null)
             {

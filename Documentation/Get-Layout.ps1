@@ -1,19 +1,13 @@
 <#
     .SYNOPSIS
-        Set-Layout.
+        Retrieves Layout of an item.
 
     .DESCRIPTION
-        Set-Layout.
-
+        Returns a Layout set on an item for a specific device.
 
     .PARAMETER Device
-        TODO: Provide description for this parameter
-
-    .PARAMETER Layout
-        TODO: Provide description for this parameter
-
-    .PARAMETER Force
-        TODO: Provide description for this parameter
+        Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
+        If Device is specified but no layout is specified the commandlet will return an error that can be silenced
 
     .PARAMETER Item
         The item to be processed.
@@ -27,9 +21,6 @@
     .PARAMETER Database
         Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
 
-    .PARAMETER Language
-        If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.    
-    
     .INPUTS
         Sitecore.Data.Items.Item
     
@@ -42,6 +33,28 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        Add-Rendering
+
+    .LINK
+        New-Rendering
+
+    .LINK
+        Set-Rendering
+
+    .LINK
+        Get-Rendering
+
+    .LINK
+        Get-LayoutDevice
+
+    .LINK
+        Remove-Rendering
+
+    .LINK
+        Set-Layout
+
+
     .EXAMPLE
-        PS master:\> Set-Layout -Path master:\content\home
+        PS master:\> Get-Layout -Path master:\content\home
 #>
