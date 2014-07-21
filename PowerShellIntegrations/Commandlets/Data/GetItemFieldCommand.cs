@@ -26,8 +26,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         {
             Name,
             Field,
-            TemplateField,
-            TemplateFieldItem
+            TemplateField
         }
 
         [Parameter]
@@ -93,9 +92,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
                         break;
                     case (ReturnValue.TemplateField):
                         WriteObject(field.GetTemplateField());
-                        break;
-                    case (ReturnValue.TemplateFieldItem):
-                        WriteItem(field.Database.GetItem(field.ID));
                         break;
                     default:
                         WriteObject(field.Name);

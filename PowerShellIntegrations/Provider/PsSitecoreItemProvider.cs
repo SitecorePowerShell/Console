@@ -11,6 +11,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
+using Sitecore.Data.Templates;
 using Sitecore.Globalization;
 using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
@@ -236,6 +237,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     }
                     return;
                 }
+
 
                 Item item = GetItemForPath(path);
                 if (item != null)
