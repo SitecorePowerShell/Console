@@ -7814,7 +7814,7 @@ If Device is specified but no layout is specified the commandlet will return an 
       <command:name>Get-Rendering</command:name>
       <gl:group>Rendering</gl:group>
       <maml:description>
-        <maml:para>Get-Rendering.
+        <maml:para>Returns RenderingDefinition from an item based on provided filtering parameters.
 
 </maml:para>
       </maml:description>
@@ -7826,8 +7826,7 @@ If Device is specified but no layout is specified the commandlet will return an 
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para>Get-Rendering.
-
+      <maml:para>Returns RenderingDefinition from an item based on provided filtering parameters.
 
 </maml:para>
       <maml:para />
