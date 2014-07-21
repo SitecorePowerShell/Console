@@ -581,6 +581,14 @@ PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" 
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Add-ItemLanguage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-Item</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
     </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -922,6 +930,14 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
     <maml:relatedLinks>
       <maml:navigationLink>
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Remove-ItemLanguage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Item</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>

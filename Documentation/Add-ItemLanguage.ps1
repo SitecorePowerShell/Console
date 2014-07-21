@@ -54,6 +54,12 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        Remove-ItemLanguage
+
+    .LINK
+        New-Item
+
     .EXAMPLE
         # Translate the Home Item from English to US and Polish leaving the "Title" field blank. If a version exists don't do anything
         PS master:\> Add-ItemLanguage -Path "master:\content\home" -Language "en" -TargetLanguage "pl-pl", "en-us" -IfExist Skip -IgnoredFields "Title"

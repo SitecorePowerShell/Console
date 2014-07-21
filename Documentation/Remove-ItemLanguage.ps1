@@ -38,6 +38,12 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        Add-ItemLanguage
+
+    .LINK
+        Remove-Item
+
     .EXAMPLE
         # Remove Polish and Spanish language from /sitecore/content/home item in the master database
         PS master:\> Remove-ItemLanguage -Path master:\content\home -Language "pl-pl", "es-es"
