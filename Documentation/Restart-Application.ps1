@@ -1,13 +1,11 @@
 <#
     .SYNOPSIS
-        Close-Window.
+        Restarts the Sitecore Application pool.
 
     .DESCRIPTION
-        Close-Window.
-    
+        Restarts the Sitecore Application pool.    
     
     .INPUTS
-        Sitecore.Data.Items.Item
     
     .OUTPUTS
         
@@ -19,5 +17,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Close-Window -Path master:\content\home
+        PS master:\> Restart-Application
 #>
