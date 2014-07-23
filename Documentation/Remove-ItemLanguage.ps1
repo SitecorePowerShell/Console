@@ -15,6 +15,13 @@
         A single language or a list of languages can be defined using the parameter. 
 	Language parameter supports globbing so you can delete whole language groups using wildcards.
 
+    .PARAMETER ExcludeLanguage
+        Language(s) that should NOT be deleted form the provided item(s).
+        A single language or a list of languages can be defined using the parameter. 
+        Language parameter supports globbing so you can delete whole language groups using wildcards.
+        
+        If Language parameter is not is not specified but ExcludeLanguage is provided, the default value of "*" is assumed for Language parameter.
+
     .PARAMETER Item
         The item to be processed.
 
@@ -52,4 +59,7 @@
         # Remove all english based languages defined in /sitecore/content/home item and all of its children in the master database
         PS master:\> Remove-ItemLanguage -Path master:\content\home -Language "en-*" -Recurse
 
+    .EXAMPLE
+        # Remove all languages except those that are "en" based defined in /sitecore/content/home item and all of its children in the master database
+        PS master:\> Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage "en*" -Recurse
 #>

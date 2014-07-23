@@ -19,7 +19,6 @@
 
     .PARAMETER DataSource
         Data source filter - supports wildcards.
-
     .PARAMETER Rendering
         Item representing the sublayout/rendering. If matching the rendering will be returned.
 
