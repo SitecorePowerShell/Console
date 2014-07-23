@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Layouts;
-using Sitecore.Sites;
-using Sitecore.Workflows;
-using Sitecore.Workflows.Simple;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
@@ -17,7 +8,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
     [OutputType(new[] {typeof (DeviceItem)}, ParameterSetName = new[] { "By Name", "Default" })]
     public class GetLayoutDeviceCommand : BaseCommand
     {
-        [Parameter(Position = 0, ParameterSetName = "By Name")]
+        [Parameter(Position = 0, ParameterSetName = "By Name", Mandatory = true)]
         public string Name { get; set; }
 
         [Parameter(Position = 0, Mandatory = true,ParameterSetName = "Default")]
