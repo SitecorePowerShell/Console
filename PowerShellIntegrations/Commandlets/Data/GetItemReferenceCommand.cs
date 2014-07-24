@@ -15,6 +15,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
     public class GetItemReferenceCommand : BaseItemCommand
     {
 
+        [Parameter(ParameterSetName = "Item from Path")]
+        [Parameter(ParameterSetName = "Item from ID")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "Item from Pipeline", Position = 0)]
         public SwitchParameter ItemLink { get; set; }
 
         protected override void ProcessItem(Item linkedItem)
