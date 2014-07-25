@@ -29,6 +29,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter(ParameterSetName = "Download File")]
         public SwitchParameter NoDialog { get; set; }
 
+        public DownloadFileCommand()
+        {
+            Width = 600;
+            Height = 140;
+        }
 
         protected override void ProcessRecord()
         {

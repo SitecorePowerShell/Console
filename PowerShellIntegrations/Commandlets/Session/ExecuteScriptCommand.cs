@@ -25,12 +25,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
-        [Parameter(ParameterSetName = ParameterSetNameFromContentDatabase)]
-        public SwitchParameter ContentDatabase { get; set; }
-
-        [Parameter(ParameterSetName = ParameterSetNameFromCurrentLocation, Mandatory = true)]
-        public SwitchParameter Location { get; set; }
-
         // Methods
         protected override void ProcessRecord()
         {

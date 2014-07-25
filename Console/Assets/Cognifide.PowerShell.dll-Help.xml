@@ -449,25 +449,6 @@ Language  parameter supports globbing so you can delete whole language groups us
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-ItemLanguage</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>ExcludeLanguage</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Recurse</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-ItemLanguage</maml:name>
         <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
@@ -479,6 +460,25 @@ Language  parameter supports globbing so you can delete whole language groups us
         <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Recurse</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-ItemLanguage</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>ExcludeLanguage</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -1190,13 +1190,6 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReference</maml:name>
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
@@ -1204,6 +1197,13 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReference</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -1234,6 +1234,21 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReference</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -1249,21 +1264,6 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1506,6 +1506,21 @@ TargetPath         : /sitecore/content/Home
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReferrer</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReferrer</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -1521,21 +1536,6 @@ TargetPath         : /sitecore/content/Home
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReferrer</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1984,7 +1984,9 @@ TargetPath         : /sitecore/content/Home
       <command:name>Expand-Token</command:name>
       <gl:group>Token</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Expands tokens on items.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -1994,7 +1996,9 @@ TargetPath         : /sitecore/content/Home
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Expands tokens like $name in fields on items.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -2011,7 +2015,9 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to be processed.    
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -2023,17 +2029,56 @@ TargetPath         : /sitecore/content/Home
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Item master:\content\home | Expand-Token
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://sitecorejunkie.com/2014/05/27/launch-powershell-scripts-in-the-item-context-menu-using-sitecore-powershell-extensions/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://sitecorejunkie.com/2014/06/02/make-bulk-item-updates-using-sitecore-powershell-extensions/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -2115,37 +2160,6 @@ TargetPath         : /sitecore/content/Home
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Show-FieldEditor</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>PreserveSections</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>FieldName</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Title</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Width</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Height</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Show-FieldEditor</maml:name>
         <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -2175,6 +2189,37 @@ TargetPath         : /sitecore/content/Home
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
+          <maml:name>Height</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Show-FieldEditor</maml:name>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>PreserveSections</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>FieldName</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>Title</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>Width</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
           <maml:name>Height</maml:name>
           <command:parameterValue required="true">Int32</command:parameterValue>
         </command:parameter>
@@ -3334,13 +3379,13 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
+          <maml:name>Instance</maml:name>
+          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -3349,13 +3394,13 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
-          <maml:name>Instance</maml:name>
-          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -3426,6 +3471,21 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -3441,11 +3501,15 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
           <maml:name>UniqueId</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -3483,25 +3547,6 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
         <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -8216,13 +8261,13 @@ If Device is specified but no layout is specified the commandlet will return an 
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
+          <maml:name>Instance</maml:name>
+          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -8231,13 +8276,13 @@ If Device is specified but no layout is specified the commandlet will return an 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Pipeline" position="named">
-          <maml:name>Instance</maml:name>
-          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Pipeline" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -8308,6 +8353,21 @@ If Device is specified but no layout is specified the commandlet will return an 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -8323,11 +8383,15 @@ If Device is specified but no layout is specified the commandlet will return an 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
           <maml:name>UniqueId</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -8365,25 +8429,6 @@ If Device is specified but no layout is specified the commandlet will return an 
         <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -8680,7 +8725,9 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       <command:name>Execute-Script</command:name>
       <gl:group>Script</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Executes a script from Sitecore PowerShell Extensions Script Library.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -8690,7 +8737,10 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Executes a script from Sitecore PowerShell Extensions Script Library.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -8700,17 +8750,6 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
         <command:parameter required="true" parameterSetName="From Item" position="1">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Execute-Script</maml:name>
-        <command:parameter required="true" parameterSetName="From Current Database Library" position="1">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="From Current Database Library" position="named">
-          <maml:name>Location</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -8726,9 +8765,12 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="From Content Database Library" position="named">
-          <maml:name>ContentDatabase</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Execute-Script</maml:name>
+        <command:parameter required="true" parameterSetName="From Current Database Library" position="1">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -8736,7 +8778,9 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The script item to be executed.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -8750,7 +8794,13 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the script item to be executed.
+Path can be absolute or Relavie to Script library root.	e.g. the following two commands are equivalent:
+
+PS master:\&gt; Execute-Script 'master:\system\Modules\PowerShell\Script Library\Examples\Script Testing\Long Running Script with Progress Demo'
+PS master:\&gt; Execute-Script 'Examples\Script Testing\Long Running Script with Progress Demo'
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -8761,46 +8811,49 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>ContentDatabase</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>Location</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="true" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Execute-Script 'Examples\Script Testing\Long Running Script with Progress Demo'
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -11866,7 +11919,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <command:name>Get-Archive</command:name>
       <gl:group>Archive</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Returns Sitecore database archives.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -11876,7 +11931,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Returns Sitecore archives in context of a particular database.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -11897,7 +11954,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the archive to retrieve.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -11911,7 +11970,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database for which the archives should be retrieved.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
         <dev:type>
@@ -11923,24 +11984,62 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Database
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Database
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Archive -Database "master"
+
+Name                                        Items
+----                                        -----
+archive                                         0
+recyclebin                                   1950
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Get-Cache</command:name>
       <gl:group>Cache</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Retrieves a Sitecore cache.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -11950,7 +12049,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Retrieves a Sitecore cache.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -11967,7 +12068,9 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the cache to retrieve. Supports wildcards.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -11979,17 +12082,57 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Cache -Name master*
+
+Name                                     Enabled       Count       Size   Max Size Default  Scavengable
+                                                                                   Priority
+----                                     -------       -----       ----   -------- -------- -----------
+master[blobIDs]                          True              0          0     512000   Normal       False
+master[blobIDs]                          True              0          0     512000   Normal       False
+master[blobIDs]                          True              0          0     512000   Normal       False
+master[itempaths]                        True            292     108228   10485760   Normal       False
+master[standardValues]                   True             57      38610     512000   Normal       False
+master[paths]                            True            108      13608     512000   Normal       False
+master[items]                            True           1010    5080300   10485760   Normal       False
+master[data]                             True           3427    7420654   20971520   Normal       False
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12140,7 +12283,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:name>Get-Index</command:name>
       <gl:group>Index</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Returns Sitecore database indices.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -12150,7 +12295,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Returns Sitecore indices in context of a particular database.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -12171,7 +12318,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database for which the indices should be retrieved.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
         <dev:type>
@@ -12185,7 +12334,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the index to retrieve.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -12197,17 +12348,48 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Database
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Database
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Index -Database "master"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -12433,7 +12615,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:name>Download-File</command:name>
       <gl:group>File</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Allows users to download files from server and file items from media library.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -12443,7 +12627,11 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Executing this commandlet with file path on the server provides script users with means to download a file to their computer.
+Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
+If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -12507,7 +12695,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>FullName</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the file to be downloaded. The file has to exist in the Data folder. Files from outside the Data folder are not downloadable.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -12521,7 +12711,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Message</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Message to show the user in the download dialog.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -12535,7 +12727,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to be downloaded.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -12549,7 +12743,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>NoDialog</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>If this parameter is used the Dialog will not be shown but instead the file download will begin immediately.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -12563,7 +12759,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Title</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Download dialog title.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -12577,7 +12775,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Width</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Download dialog width.        
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -12591,7 +12791,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Height</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Download dialog height.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -12603,17 +12805,58 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>#Download File from server disk drive
+PS master:\&gt; Download-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>#Download item from media library
+PS master:\&gt; Get-Item "master:/media library/Showcase/cognifide_logo" | Download-File -Message "Cognifide Logo"
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -13730,14 +13973,6 @@ $package.Sources.Add($source);
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="2">
-          <maml:name>Project</maml:name>
-          <command:parameterValue required="true">PackageProject</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>IncludeProject</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>InstallMode</maml:name>
           <command:parameterValue required="true">Undefined | Overwrite | Merge | Skip | SideBySide</command:parameterValue>
@@ -13759,34 +13994,6 @@ $package.Sources.Add($source);
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
-        <maml:name>Project</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">PackageProject</command:parameterValue>
-        <dev:type>
-          <maml:name>PackageProject</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>IncludeProject</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-        <dev:type>
-          <maml:name>SwitchParameter</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
