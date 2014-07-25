@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
                 }
 
-                if (Context.ClientPage.ClientRequest.Parameters == "taskmonitor:check" &&
+                if (Context.ClientPage.ClientRequest.Parameters == "pstaskmonitor:check" &&
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
                     int percentComplete = Int32.Parse(CurrentProgressValue.Text);
