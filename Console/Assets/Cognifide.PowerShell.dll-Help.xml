@@ -13181,7 +13181,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:name>Export-Package</command:name>
       <gl:group>Package</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Exports Sitecore installation package project.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13191,7 +13193,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Exports Sitecore installation package project as either zip containing all items and files or .xml with project definition.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13220,7 +13225,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path the project should be saved under.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13234,7 +13241,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
         <maml:name>Project</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Project object created ealier with the New-Package. or Loaded with Get-Package.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">PackageProject</command:parameterValue>
         <dev:type>
@@ -13248,7 +13257,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Zip</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specify this parameter to exposrt package with all its assets in a zip file.
+If this parameter is missing only Xml file with the package project definition will be saved.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -13262,7 +13274,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>IncludeProject</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specify this parameter if exporting the zip file and when you want it to contain the project definitnion xml file in it.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -13274,24 +13288,119 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Install.PackageProject
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Install.PackageProject
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content/home item to it and 
+       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add contnet/home to the package
+$source = Get-Item 'master:\content\home' | New-ItemSource -Name 'Home Page' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Get-Package</command:name>
       <gl:group>Package</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Loads package from the package definition (xml file).
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13301,7 +13410,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Loads package from the package definition (xml file). Package definitions can be created by PowerShell scripts by using Export-Package commandlet (without the -Zip parameter)
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13318,7 +13430,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the package file. If the path is not absolute the path needs to be relative to the Sitecore Package path defined in the "PackagePath" setting and later exposed in the Sitecore.Shell.Applications.Install.PackageProjectPath
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13330,24 +13444,93 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Package -Path master:\content\home
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Import-Package</command:name>
       <gl:group>Package</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Imports sitecore installation package.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13357,7 +13540,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Imports sitecore installation package with the ability to provide default responses for merge and overwrite actions.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13390,7 +13576,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the package file.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13458,24 +13646,93 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Import-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-ExplicitFileSource</command:name>
       <gl:group>ExplicitFileSource</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates new File source that can be added to a Sitecore package.        
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13485,7 +13742,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13506,7 +13765,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the file source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13520,7 +13781,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
         <maml:name>File</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the file to be included. this can be automatically discovered if a stream of files is piped to the commandlet.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">FileSystemInfo</command:parameterValue>
         <dev:type>
@@ -13532,24 +13795,115 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content of the Console folder (except the source files) under the site folder
+       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add content of the Console folder (except the source files) located in the site folder to the package
+       $source = Get-ChildItem -exclude *.cs -Path "$AppPath\Console" -Recurse -File | New-ExplicitFileSource -Name "Console Assets"
+       $package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-ExplicitItemSource</command:name>
       <gl:group>ExplicitItemSource</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates new Explicit Item Source that can be added to a Sitecore package.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13559,7 +13913,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates new Item source that can be added to a Sitecore package. This source only includes items explicitly added to it and not their children.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13592,7 +13949,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to be added to the source. If used in pipeline after e.g. Get-Item the source is created once all items are piped into it.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -13606,7 +13965,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the item source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13620,7 +13981,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="2" variableLength="false">
         <maml:name>SkipVersions</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Add this parameter if you want to skip versions of the item from being included in the source and only include the version provided.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -13634,7 +13997,14 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>InstallMode</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies what installer should do if the item already exists. Possible values:
+       - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
+   	- Overwrite - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one.
+   	- Merge - merge with existing item. How the item will be merged is defined with MergeMode parameter
+- Skip - All versions remains unchanged. Other languages remains unchanged. All children remains unchanged.
+   	- SideBySide - all new item will be created.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">InstallMode</command:parameterValue>
         <dev:type>
@@ -13648,7 +14018,13 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>MergeMode</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies what installer should do if the item already exists and InstallMode is specified as Merge. Possible values:
+       - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
+       - Clear - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one. Other language versions (those which are not in the package) are removed but only for items which are in the package. All child items which are not in the package keep other language versions. All child items which are in the package are changed.
+       - Append - All versions of the new item are added on top of versions of the previous item. This option allows for further manual merge because all history is preserved, so user can see what was changed. Other languages remains unchanged. All child items which are not in the package keep other language versions. All child items which are in the package are changed.
+       - Merge - All versions with the same number in both packages are replaced with versions from installed package. All versions which are in the package but not in the target are added. All versions which are not in the package but are in the target remains unchanged. This option also preserves history, however it might overwrite some of the changes. Other languages remains unchanged. All child items which are in the package are changed.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">MergeMode</command:parameterValue>
         <dev:type>
@@ -13660,24 +14036,119 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content/home item and all of its children to it and 
+       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add content/home and all of its children to the package
+$source = Get-Item 'master:\content\home' | New-ExplicitItemSource -Name 'Home Page' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-FileSource</command:name>
       <gl:group>FileSource</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates new File source that can be added to a Sitecore package.        
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13687,7 +14158,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13716,7 +14189,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the file source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13730,7 +14205,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="2" variableLength="false">
         <maml:name>Root</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Root folder to include in the package
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13744,7 +14221,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="3" variableLength="false">
         <maml:name>IncludeFilter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Filter that defines which files will be included.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13758,7 +14237,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="4" variableLength="false">
         <maml:name>ExcludeFilter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Filter that defines which files will NOT be included.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13770,24 +14251,115 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content of the Console folder under the site folder
+       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add content of the Console folder in the site folder to the package
+       $source = New-FileSource -Name "Console Assets" -Root "$AppPath\Console"
+       $package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-ItemSource</command:name>
       <gl:group>ItemSource</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates new Item source that can be added to a Sitecore package.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13797,7 +14369,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13838,7 +14412,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to be added as the root of the source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -13852,7 +14428,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the item source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13866,7 +14444,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="2" variableLength="false">
         <maml:name>SkipVersions</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Add this parameter if you want to skip versions of the item from being included in the source and only include the version provided.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -13880,7 +14460,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="true (ByPropertyName)" position="3" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database containing the item to be added - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13894,7 +14476,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="4" variableLength="false">
         <maml:name>Root</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>You can provide the Root as sitecore native path instead of specifying it through. Do not include Item in such case as Item will take priority over Root.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13908,7 +14492,14 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>InstallMode</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies what installer should do if the item already exists. Possible values:
+       - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
+   	- Overwrite - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one.
+   	- Merge - merge with existing item. How the item will be merged is defined with MergeMode parameter
+- Skip - All versions remains unchanged. Other languages remains unchanged. All children remains unchanged.
+   	- SideBySide - all new item will be created.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">InstallMode</command:parameterValue>
         <dev:type>
@@ -13922,7 +14513,13 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>MergeMode</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies what installer should do if the item already exists and InstallMode is specified as Merge. Possible values:
+       - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
+       - Clear - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one. Other language versions (those which are not in the package) are removed but only for items which are in the package. All child items which are not in the package keep other language versions. All child items which are in the package are changed.
+       - Append - All versions of the new item are added on top of versions of the previous item. This option allows for further manual merge because all history is preserved, so user can see what was changed. Other languages remains unchanged. All child items which are not in the package keep other language versions. All child items which are in the package are changed.
+       - Merge - All versions with the same number in both packages are replaced with versions from installed package. All versions which are in the package but not in the target are added. All versions which are not in the package but are in the target remains unchanged. This option also preserves history, however it might overwrite some of the changes. Other languages remains unchanged. All child items which are in the package are changed.
+   
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">MergeMode</command:parameterValue>
         <dev:type>
@@ -13934,24 +14531,119 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content/home item to it and 
+       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add contnet/home to the package
+$source = Get-Item 'master:\content\home' | New-ItemSource -Name 'Home Page' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-Package</command:name>
       <gl:group>Package</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates a new Sitecore install package object.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -13961,7 +14653,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates a new Sitecore install package object that allows for further addition of items and files &amp; further export to file.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -13978,7 +14673,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Package name
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -13990,17 +14687,107 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># Following example creates a new package, adds content/home item to it and 
+       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
+
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+# Add contnet/home to the package
+$source = Get-Item 'master:\content\home' | New-ItemSource -Name 'Home Page' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Export-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Import-Package</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitFileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ExplicitItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-FileSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemSource</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Install-UpdatePackage</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>

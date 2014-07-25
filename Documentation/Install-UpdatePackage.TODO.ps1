@@ -28,6 +28,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Export-Package
+
+    .LINK
+        Import-Package
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

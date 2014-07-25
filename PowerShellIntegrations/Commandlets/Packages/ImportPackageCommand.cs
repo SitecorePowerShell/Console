@@ -14,12 +14,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
-        [Parameter(Position = 1, ValueFromPipeline = true)]
-        public PackageProject Project { get; set; }
-
-        [Parameter]
-        public SwitchParameter IncludeProject { get; set; }
-
         [Parameter(HelpMessage = "Undefined, Overwrite, Merge, Skip, SideBySide")]
         public InstallMode InstallMode { get; set; }
 
@@ -33,11 +27,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
             PerformInstallAction(
                 () =>
                 {
-                    if (IncludeProject.IsPresent)
-                    {
-                        Project.SaveProject = true;
-                    }
-
                     if (!System.IO.Path.IsPathRooted(fileName))
                     {
                         fileName = FullPackagePath(fileName);
