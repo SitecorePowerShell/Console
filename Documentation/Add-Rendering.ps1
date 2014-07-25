@@ -9,7 +9,7 @@
         Rendering definition to be added to the item
 
     .PARAMETER Parameter
-        Rendering Parameters to be overriden on the Rendering that is being inserted.
+        Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used.
 
     .PARAMETER PlaceHolder
         Placeholder path the Rendering should be added to - if not specified the value provided in rendering definition specified in the Instance parameter will be used.

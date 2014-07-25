@@ -2623,7 +2623,7 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Parameter</maml:name>
         <maml:description>
-          <maml:para>Rendering Parameters to be overriden on the Rendering that is being inserted.
+          <maml:para>Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used.
 
 </maml:para>
         </maml:description>

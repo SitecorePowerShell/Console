@@ -8,6 +8,15 @@
     .PARAMETER Instance
         Instance of the Rendering to be updated.
 
+    .PARAMETER Parameter
+        Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used.
+
+    .PARAMETER PlaceHolder
+        Placeholder path the Rendering should be added to - if not specified the value provided in rendering definition specified in the Instance parameter will be used.
+
+    .PARAMETER DataSource
+        Data source of the Rendering - if not specified the value provided in rendering definition specified in the Instance parameter will be used.
+
     .PARAMETER Index
         If provided the rendering will be moved to the specified index.
 

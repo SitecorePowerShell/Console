@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Data;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Sitecore.Text;
@@ -25,7 +23,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         public string PlaceHolder { get; set; }
 
         [Parameter]
-        public Item DataSource { get; set; }
+        public string DataSource { get; set; }
 
         [Parameter]
         public int Index
@@ -39,8 +37,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             var rendering = new RenderingDefinition
             {
                 ItemID = Instance.ItemID,
-                Placeholder = PlaceHolder,
-                Datasource = DataSource != null ? DataSource.ID.ToString() : Instance.Datasource,
+                Placeholder = PlaceHolder ?? Instance.Placeholder,
+                Datasource = DataSource ?? Instance.Datasource,
                 Cachable = Instance.Cachable,
                 VaryByData = Instance.VaryByData,
                 VaryByDevice = Instance.VaryByDevice,
@@ -81,7 +79,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
             item.Edit(p =>
             {
-                string outputXml = layout.ToXml();
+                var outputXml = layout.ToXml();
                 Item["__Renderings"] = outputXml;
             });
         }

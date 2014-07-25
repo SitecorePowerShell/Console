@@ -1,8 +1,11 @@
-﻿using System.Management.Automation;
+﻿using System.Collections;
+using System.Linq;
 using Sitecore;
+using System.Management.Automation;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
+using Sitecore.Text;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
@@ -15,8 +18,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
         [Alias("Rendering")]
         public RenderingDefinition Instance { get; set; }
 
-        // override to hide as rengedings are not language sensitive
-        public override string[] Language { get; set; }
+        [Parameter]
+        public Hashtable Parameter { get; set; }
+
+        [Parameter(Mandatory = true)]
+        public string PlaceHolder { get; set; }
+
+        [Parameter]
+        public string DataSource { get; set; }
 
         [Parameter]
         public int Index
@@ -24,6 +33,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             get { return index; }
             set { index = value; }
         }
+
+        // override to hide as rengedings are not language sensitive
+        public override string[] Language { get; set; }
 
         protected override void ProcessItem(Item item)
         {
@@ -56,8 +68,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 
             Renderingfound: //goto label
             rendering.ItemID = Instance.ItemID;
-            rendering.Placeholder = Instance.Placeholder;
-            rendering.Datasource = Instance.Datasource;
+            rendering.Placeholder = PlaceHolder ?? Instance.Placeholder ?? rendering.Placeholder;
+            rendering.Datasource =
+                !string.IsNullOrEmpty(DataSource)
+                    ? DataSource
+                    : Instance.Datasource;
             rendering.Cachable = Instance.Cachable;
             rendering.VaryByData = Instance.VaryByData;
             rendering.VaryByDevice = Instance.VaryByDevice;
@@ -69,6 +84,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             rendering.MultiVariateTest = Instance.MultiVariateTest;
             rendering.Rules = Instance.Rules;
             rendering.Conditions = Instance.Conditions;
+
+            if (Parameter != null)
+            {
+                var parameters = new UrlString(rendering.Parameters ?? string.Empty);
+                foreach (string name in Parameter.Keys)
+                    if (parameters.Parameters.AllKeys.Contains(name))
+                    {
+                        parameters.Parameters[name] = Parameter[name].ToString();
+                    }
+                    else
+                    {
+                        parameters.Add(name, Parameter[name].ToString());
+                    }
+                rendering.Parameters = parameters.ToString();
+            }
 
             if (Index > -1)
             {
