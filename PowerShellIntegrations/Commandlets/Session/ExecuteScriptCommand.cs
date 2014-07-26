@@ -29,7 +29,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
         protected override void ProcessRecord()
         {
             string script = string.Empty;
-            Item.State
             if (Item != null)
             {
                 script = Item["script"];
