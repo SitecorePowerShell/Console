@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Messages;
 using Sitecore;
@@ -19,19 +20,35 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     })]
     public class ShowFieldEditorCommand : BaseItemCommand
     {
+        [Parameter]
+        [Alias("FieldName")]
+        public string[] Name { get; set; }
+
+        [Parameter]
+        public string Title { get; set; }
+
+        [Parameter]
+        public int Width { get; set; }
+
+        [Parameter]
+        public int Height { get; set; }
+
+        [Parameter]
+        public SwitchParameter IncludeStandardFields { get; set; }
+
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline, Preserve Sections")]
+            ParameterSetName = "Item from Pipeline, Preserve Sections", Mandatory = true)]
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline, Named Section")]
+            ParameterSetName = "Item from Pipeline, Named Section", Mandatory = true)]
         public override Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Named Section")]
+        [Parameter(ParameterSetName = "Item from Path, Preserve Sections", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from Path, Named Section", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public override string Path { get; set; }
 
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Named Section")]
+        [Parameter(ParameterSetName = "Item from ID, Preserve Sections", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from ID, Named Section", Mandatory = true)]
         public override string Id { get; set; }
 
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
@@ -43,12 +60,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from Path, Named Section")]
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public virtual string[] Language { get; set; }
+        public override string[] Language { get; set; }
 
 
-        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
+        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from Path, Preserve Sections", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from ID, Preserve Sections", Mandatory = true)]
         public SwitchParameter PreserveSections { get; set; }
 
         [Parameter(ParameterSetName = "Item from Pipeline, Named Section")]
@@ -61,47 +78,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
         public string SectionIcon { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Pipeline, Named Section")]
-        [Parameter(ParameterSetName = "Item from Path, Named Section")]
-        [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public string[] FieldName { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Pipeline, Named Section")]
-        [Parameter(ParameterSetName = "Item from Path, Named Section")]
-        [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public string Title { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Pipeline, Named Section")]
-        [Parameter(ParameterSetName = "Item from Path, Named Section")]
-        [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public int Width { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
-        [Parameter(ParameterSetName = "Item from Pipeline, Named Section")]
-        [Parameter(ParameterSetName = "Item from Path, Named Section")]
-        [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public int Height { get; set; }
 
         public ShowFieldEditorCommand()
         {
             Width = 800;
             Height = 600;
-        }
-
-        protected override void BeginProcessing()
-        {
-            LogErrors(() => BaseShellCommand.EnsureSiteContext());
         }
 
         protected override void ProcessItem(Item item)
@@ -111,21 +92,23 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
                 if (Context.Job != null)
                 {
                     var fields = "*";
-                    if (FieldName != null && FieldName.Length > 0)
-                        fields = FieldName.Aggregate((current, next) => current + "|" + next);
-                    var icon = string.IsNullOrEmpty(SectionIcon) ? Item.Appearance.Icon : SectionIcon;
-                    var sectionTitle = string.IsNullOrEmpty(SectionTitle) ? Item.Name : SectionTitle;
-                    var message = new ShellCommandInItemContextMessage(Item,
-                        "powershell:fieldeditor(title=" + (string.IsNullOrEmpty(Title) ? Item.Name : Title) +
+                    if (Name != null && Name.Length > 0)
+                        fields = Name.Aggregate((current, next) => current + "|" + next);
+                    var icon = string.IsNullOrEmpty(SectionIcon) ? item.Appearance.Icon : SectionIcon;
+                    var sectionTitle = string.IsNullOrEmpty(SectionTitle) ? item.Name : SectionTitle;
+                    var message = new ShellCommandInItemContextMessage(item,
+                        "powershell:fieldeditor(title=" + (string.IsNullOrEmpty(Title) ? item.Name : Title) +
                         ",preservesections=" + (PreserveSections ? "1" : "0") +
                         ",fields=" + fields +
                         ",icon=" + icon +
                         ",section=" + sectionTitle +
                         ",width=" + Width +
                         ",height=" + Height +
+                        ",isf=" + (IncludeStandardFields ? "1" : "0") +
                         ")");
-                    BaseShellCommand.PutMessage(message);
-                    var result = BaseShellCommand.GetResult(message).ToString();
+                    
+                    PutMessage(message);
+                    var result = GetResult(message).ToString();
                     WriteObject(result);
                 }
             });
