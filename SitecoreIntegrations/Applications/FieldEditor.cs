@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Management.Automation;
 using System.Web;
 using System.Web.UI;
 using Cognifide.PowerShell.PowerShellIntegrations;
@@ -16,6 +18,7 @@ using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using Job = Sitecore.Jobs.Job;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
@@ -25,9 +28,13 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         private const string UriParameter = "uri";
         private const string PathParameter = "path";
         private const string PreserveSectionsParameter = "preservesections";
+        private const string IncludeStandardFieldsParameter = "isf";
         private const string CurrentItemIsNull = "Current item is null";
 
         protected Item CurrentItem { get; set; }
+        protected List<WildcardPattern> IncludePatterns { get; private set; }
+        protected List<WildcardPattern> ExcludePatterns { get; private set; }
+        protected bool IncludeStandardFields { get; set; }
 
         protected virtual PageEditFieldEditorOptions GetOptions(ClientPipelineArgs args, NameValueCollection form)
         {
@@ -48,61 +55,63 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             string path = args.Parameters[PathParameter];
             Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
-
             CurrentItem = string.IsNullOrEmpty(path) ? currentItem : Client.ContentDatabase.GetItem(path);
             Assert.IsNotNull(CurrentItem, CurrentItemIsNull);
+            IncludeStandardFields = args.Parameters[IncludeStandardFieldsParameter] == "1";
         }
 
         private IEnumerable<FieldDescriptor> BuildListWithFieldsToShow(string fieldString)
         {
             var fieldList = new List<FieldDescriptor>();
+            var fieldNames = new ListString(fieldString).ToArray();
 
-            foreach (var fieldName in new ListString(fieldString))
+            if (fieldNames.Any())
             {
-                // add all non "standard fields"
-                if (fieldName == "*")
-                {
-                    GetNonStandardFields(fieldList);
-                    continue;
-                }
-
-                // remove fields that are prefixed with a "-" sign
-                if (fieldName.IndexOf('-') == 0)
-                {
-                    Field field = CurrentItem.Fields[fieldName.Substring(1, fieldName.Length - 1)];
-                    if (field != null)
-                    {
-                        ID fieldId = field.ID;
-                        foreach (var fieldDescriptor in fieldList)
-                        {
-                            if (fieldDescriptor.FieldID == fieldId)
-                            {
-                                fieldList.Remove(fieldDescriptor);
-                                break;
-                            }
-                        }
-                    }
-                    continue;
-                }
-
-                if (CurrentItem.Fields[fieldName] != null)
-                {
-                    fieldList.Add(new FieldDescriptor(CurrentItem, fieldName));
-                }
+                IncludePatterns =
+                    fieldNames
+                        .Where(name => !name.StartsWith("-"))
+                        .Select(
+                            name =>
+                                new WildcardPattern(name, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
+                        .ToList();
+                ExcludePatterns =
+                    fieldNames
+                        .Where(name => name.StartsWith("-"))
+                        .Select(
+                            name =>
+                                new WildcardPattern(name.Substring(1), WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
+                        .ToList();
             }
-            return fieldList;
-        }
 
-        private void GetNonStandardFields(List<FieldDescriptor> fieldList)
-        {
             CurrentItem.Fields.ReadAll();
+            Template template =
+                TemplateManager.GetTemplate(Sitecore.Configuration.Settings.DefaultBaseTemplate,
+                    CurrentItem.Database);
+
             foreach (Field field in CurrentItem.Fields)
             {
-                if (field.GetTemplateField().Template.BaseIDs.Length > 0)
+                //if not including standard field and it's standard, skip it.
+                if (!IncludeStandardFields && template.ContainsField(field.ID))
+                {
+                    continue;
+                }
+
+                var name = field.Name;
+                bool wildcardMatch = IncludePatterns.Any(pattern => pattern.IsMatch(name));
+                if (!wildcardMatch)
+                {
+                    continue;
+                }
+                if (ExcludePatterns.Any(pattern => pattern.IsMatch(name)))
+                {
+                    wildcardMatch = false;
+                }
+                if (wildcardMatch)
                 {
                     fieldList.Add(new FieldDescriptor(CurrentItem, field.Name));
                 }
             }
+            return fieldList;
         }
 
         public virtual bool CanExecute(CommandContext context)
