@@ -31,6 +31,22 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Show-Alert
+    .LINK
+        Show-Application
+    .LINK
+        Show-Confirm
+    .LINK
+        Show-FieldEditor
+    .LINK
+        Show-ListView
+    .LINK
+        Show-ModalDialog
+    .LINK
+        Show-Result
+    .LINK
+        Show-YesNoCancel
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

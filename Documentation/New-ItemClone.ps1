@@ -37,11 +37,22 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Get-ItemClone
+
+    .LINK
+        ConvertFrom-ItemClone
+
+    .LINK
+        New-Item
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .LINK
         https://github.com/SitecorePowerShell/Console/issues/218
 
     .EXAMPLE
-        PS master:\> New-ItemClone -Path master:\content\home
+        # Clone /sitecore/content/home/ under /sitecore/content/new-target/ with the "New Home" name.
+	PS master:\> $newTarget = Get-Item master:\content\new-target\
+        PS master:\> New-ItemClone -Path master:\content\home -Destination $newTarget -Name "New Home"
 #>

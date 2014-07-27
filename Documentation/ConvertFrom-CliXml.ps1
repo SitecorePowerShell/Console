@@ -35,6 +35,9 @@
     .LINK
         Import-CliXml
 
+    .LINK
+        https://github.com/SitecorePowerShell/Console/issues/218
+
     .EXAMPLE
         PS master:\> #Convert original item to xml
         PS master:\> $myCliXmlItem = Get-Item -Path master:\content\home | ConvertTo-CliXml 

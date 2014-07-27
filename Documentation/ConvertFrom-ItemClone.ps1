@@ -28,6 +28,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        New-ItemClone
+
+    .LINK
+        Get-ItemClone
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

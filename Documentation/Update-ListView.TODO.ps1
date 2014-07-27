@@ -31,6 +31,8 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Show-ListView
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
