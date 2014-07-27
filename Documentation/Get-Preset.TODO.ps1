@@ -19,6 +19,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Serialize-Item
+
+    .LINK
+        Deserialize-Item
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

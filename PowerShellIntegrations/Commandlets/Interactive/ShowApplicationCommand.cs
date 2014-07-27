@@ -10,11 +10,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         [Parameter(Mandatory = true, Position = 0)]
         public string Application { get; set; }
 
-/*
-        [Parameter]
-        public string Url { get; set; }
-*/
-
         [Parameter(Position = 1)]
         public Hashtable Parameter { get; set; }
 
@@ -23,9 +18,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         [Parameter]
         public SwitchParameter Modal { get; set; }
-
-        [Parameter(ValueFromPipeline = true)]
-        public object Data { get; set; }
 
         protected override void ProcessRecord()
         {
