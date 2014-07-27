@@ -18,7 +18,7 @@ using Sitecore.Shell.Framework.Commands;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemField")]
-    [OutputType(new[] {typeof (Item), typeof (TemplateField), typeof (string), typeof (Item)},
+    [OutputType(new[] {typeof (TemplateField), typeof (string), typeof (Field)},
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetItemFieldCommand : BaseItemCommand
     {
@@ -36,6 +36,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         public ReturnValue ReturnType { get; set; }
 
         [Parameter]
+        [Alias("FieldName")]
         public string[] Name { get; set; }
 
         protected List<WildcardPattern> NameWildcardPatterns { get; private set; }
