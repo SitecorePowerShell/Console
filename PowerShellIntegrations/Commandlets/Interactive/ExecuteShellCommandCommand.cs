@@ -7,26 +7,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 {
     [Cmdlet("Execute", "ShellCommand")]
     [OutputType(new[] {typeof (Item)})]
-    public class ExecuteShellCommandCommand : BaseShellCommand
+    public class ExecuteShellCommandCommand : BaseItemCommand
     {
-        /*[ValidatePattern(@"[\*\?\[\]\-0-9a-zA-Z_]+\:[\*\?\[\]\-0-9a-zA-Z_]+")]*/
-
         [Parameter(Position = 0, Mandatory = true)]
         public string Name { get; set; }
 
-        [Parameter(ValueFromPipeline = true, Position = 1)]
-        public Item Item { get; set; }
-
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
             LogErrors(() =>
             {
                 if (Context.Job != null)
                 {
-                    PutMessage(new ShellCommandInItemContextMessage(Item, Name));
-                    if (Item != null)
+                    PutMessage(new ShellCommandInItemContextMessage(item, Name));
+                    if (item != null)
                     {
-                        WriteItem(Item);
+                        WriteItem(item);
                     }
                 }
             });
