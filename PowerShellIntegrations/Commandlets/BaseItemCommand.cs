@@ -2,12 +2,13 @@
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    public abstract class BaseItemCommand : BaseCommand
+    public abstract class BaseItemCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline", Mandatory = true)]
@@ -44,6 +45,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                             new WildcardPattern(language, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
                         .ToList();
             }
+            base.BeginProcessing();
         }
 
         protected override void ProcessRecord()
