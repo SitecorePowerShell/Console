@@ -39,5 +39,5 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             }
             return new[] {"No Command in line found - cannot provide help in this context."};
         }
-   }
+    }
 }
