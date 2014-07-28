@@ -5,6 +5,7 @@ using System.Management.Automation;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Data.Templates;
+using Sitecore.Shell.Applications.Security.EditManagedDomains;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
@@ -18,6 +19,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
         private const string StartWorkflowParam = "StartWorkflow";
         private const string PermanentlyParam = "Permanently";
         private const string IdParam = "ID";
+        private const string UriParam = "Uri";
         private const string ParentParam = "Parent";
         private const string AmbiguousPathsParam = "AmbiguousPaths";
 
@@ -38,17 +40,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
         protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic)
         {
-            return AddDynamicParameter(type, name, ref dic, false);
+            return AddDynamicParameter(type, name, ref dic, false, false, string.Empty);
         }
 
         protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic,
             bool valueFromPipeline)
         {
-            return AddDynamicParameter(type, name, ref dic, valueFromPipeline, false);
+            return AddDynamicParameter(type, name, ref dic, valueFromPipeline, false, string.Empty);
         }
 
         protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic,
             bool valueFromPipeline, bool valueFromPipelineByPropertyName)
+        {
+            return AddDynamicParameter(type, name, ref dic, valueFromPipeline, valueFromPipelineByPropertyName,
+                string.Empty);
+        }
+
+        protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic,
+            bool valueFromPipeline, bool valueFromPipelineByPropertyName, string ParamSetName)
         {
             bool paramAdded = false;
 
@@ -60,12 +69,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                     ValueFromPipeline = valueFromPipeline,
                     ValueFromPipelineByPropertyName = valueFromPipelineByPropertyName,
                 };
+                if (!string.IsNullOrEmpty(ParamSetName))
+                {
+                    attrib.ParameterSetName = ParamSetName;
+                }
 
                 var param = new RuntimeDefinedParameter
                 {
                     IsSet = false,
                     Name = name,
-                    ParameterType = type
+                    ParameterType = type,
                 };
                 param.Attributes.Add(attrib);
 
@@ -156,9 +169,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
 
             bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, true);
-            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic,false,false, "Sitecore Item by Query");
+            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, true, "Sitecore Item by Id");
+            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true, "Sitecore Item by Uri");
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
 
             return paramAdded ? dic : null;
         }

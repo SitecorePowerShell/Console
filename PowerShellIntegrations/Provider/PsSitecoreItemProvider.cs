@@ -217,6 +217,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 GetVersionAndLanguageParams(out version, out language);
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+                if (dic != null && dic.ContainsKey(UriParam) && dic[UriParam].IsSet)
+                {
+                    string uri = dic[UriParam].Value.ToString();
+                    ItemUri itemUri = ItemUri.Parse(uri);
+                    Item uriItem = Factory.GetDatabase(itemUri.DatabaseName).GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
+                    WriteItem(uriItem);
+                    return;
+                } 
                 if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
                 {
                     string query = dic[QueryParam].Value.ToString();

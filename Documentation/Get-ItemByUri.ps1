@@ -1,16 +1,14 @@
 <#
     .SYNOPSIS
-        Get-ItemByUri.
+        This commandlet has been obsoleted - use "Get-Item -Uri" instead.
 
     .DESCRIPTION
-        Get-ItemByUri.
+        This commandlet has been obsoleted - use "Get-Item -Uri" instead.
 
 
     .PARAMETER ItemUri
-        TODO: Provide description for this parameter    
     
     .INPUTS
-        Sitecore.Data.Items.Item
     
     .OUTPUTS
         Sitecore.Data.Items.Item
@@ -22,5 +20,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Get-ItemByUri -Path master:\content\home
+        PS master:\> Get-Item -Path master: -Uri "sitecore://master/{658017A8-F2D9-45C2-B89E-1B55A9FCFEE2}?lang=en&ver=1"
 #>

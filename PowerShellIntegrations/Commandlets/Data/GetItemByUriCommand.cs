@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -11,17 +12,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
     public class GetItemByUriCommand : BaseCommand
     {
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
+        [Parameter()]
         public string ItemUri { get; set; }
 
         protected override void ProcessRecord()
         {
-            if (!string.IsNullOrEmpty(ItemUri))
-            {
-                ItemUri uri = Sitecore.Data.ItemUri.Parse(ItemUri);
-                Item item = Factory.GetDatabase(uri.DatabaseName).GetItem(uri.ItemID, uri.Language, uri.Version);
-                WriteItem(item);
-            }
+            WriteError(new ErrorRecord(new Exception("This commandlet have been deprecated. Use Get-Item master:\\ -Uri \"sitecore://{database}/{ID}?lang=_lang_&ver=_ver_\" instead."), "sitecore_commandlet_deprecated", ErrorCategory.NotImplemented, null));            
         }
     }
 }
