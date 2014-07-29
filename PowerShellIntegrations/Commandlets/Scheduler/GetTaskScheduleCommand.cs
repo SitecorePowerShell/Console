@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
         {
             if (!TemplateManager.GetTemplate(item).DescendsFromOrEquals(Sitecore.TemplateIDs.Schedule))
             {
-                WriteError(new ErrorRecord(new InvalidTypeException("Item is not of type or redived from type 'Schedule'"), "sitecore_template_is_not_schedule", ErrorCategory.InvalidType, item));
+                WriteError(new ErrorRecord(new InvalidTypeException("Item is not of template or rerived from template 'Schedule'"), "sitecore_template_is_not_schedule", ErrorCategory.InvalidType, item));
                 return false;
             }
             return true;
