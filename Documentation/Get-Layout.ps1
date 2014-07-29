@@ -25,7 +25,7 @@
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        Sitecore.Layouts.RenderingReference
+        Sitecore.Data.Items.Item
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West

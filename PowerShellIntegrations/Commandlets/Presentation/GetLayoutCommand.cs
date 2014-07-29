@@ -10,8 +10,7 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "Layout")]
-    [OutputType(new[] {typeof (RenderingReference)},
-        ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
+    [OutputType(new[] {typeof (Item)})]
     public class GetLayoutCommand : BaseItemCommand
     {
         [Parameter]
