@@ -1,5 +1,7 @@
 ﻿using System.Management.Automation;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
+using Sitecore.Exceptions;
 using Sitecore.Tasks;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
@@ -26,6 +28,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
             ScheduleItem schedule = null;
             if (Item != null)
             {
+                if (!CheckItemTypeMatch(Item))
+                {
+                    return;
+                }
                 schedule = new ScheduleItem(Item);
             }
 
@@ -37,6 +43,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
             if (Path != null)
             {
                 Item curItem = PathUtilities.GetItem(Path, CurrentDrive, CurrentPath);
+                if (!CheckItemTypeMatch(curItem))
+                {
+                    return;
+                }
                 schedule = new ScheduleItem(curItem);
             }
 
@@ -46,5 +56,17 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
             }
             WriteObject(schedule);
         }
+
+        private bool CheckItemTypeMatch(Item item)
+        {
+            if (!TemplateManager.GetTemplate(item).DescendsFromOrEquals(Sitecore.TemplateIDs.Schedule))
+            {
+                WriteError(new ErrorRecord(new InvalidTypeException("Item is not of type or redived from type 'Schedule'"), "sitecore_template_is_not_schedule", ErrorCategory.InvalidType, item));
+                return false;
+            }
+            return true;
+        }
+
+
     }
 }

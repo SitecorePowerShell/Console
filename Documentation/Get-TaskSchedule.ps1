@@ -28,6 +28,9 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Start-TaskSchedule
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

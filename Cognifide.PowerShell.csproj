@@ -190,8 +190,8 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertFromCliXmlCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertToCliXmlCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskSchedule.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskSchedule.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskScheduleCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\GetTaskScheduleCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Serialization\GetPresetCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Session\GetScriptSession.cs" />
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
