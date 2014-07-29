@@ -176,7 +176,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (scriptJob.Status.Failed)
             {
                 result.status = StatusError;
-                var message = string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray());
+                var message = string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray()).Replace("[", "&#91;").Replace("]", "&#93;");
                 result.result = "[[;#f00;#000]" + (message.Length > 0 ? message : "Command failed") + "]";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
