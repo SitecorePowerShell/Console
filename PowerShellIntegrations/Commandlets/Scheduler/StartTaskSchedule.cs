@@ -6,7 +6,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
 {
     [Cmdlet("Start", "TaskSchedule")]
     [OutputType(new[] {typeof (ScheduleItem)})]
-    public class StartTaskSchedule : BaseCommand
+    public class StartTaskScheduleCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "FromSchedule",
             Mandatory = true)]

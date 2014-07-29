@@ -7,11 +7,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     public abstract class DatabaseContextBaseCommand : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, Position = 1, ParameterSetName = "DatabaseName")]
+        [Parameter(ValueFromPipeline = true, Position = 1, ParameterSetName = "From Database and Name")]
         public virtual Database Database { get; set; }
 
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
-        [Parameter(Position = 0, ParameterSetName = "DatabaseName")]
+        [Parameter(Position = 0, ParameterSetName = "From Database and Name")]
         public virtual string Name { get; set; }
 
         protected override void ProcessRecord()

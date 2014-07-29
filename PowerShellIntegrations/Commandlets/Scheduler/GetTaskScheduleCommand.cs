@@ -4,13 +4,17 @@ using System.Management.Automation;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
+using Sitecore.Data.Templates;
+using Sitecore.Exceptions;
+using Sitecore.Pipelines.Save;
 using Sitecore.Tasks;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
 {
-    [Cmdlet(VerbsCommon.Get, "TaskSchedule", DefaultParameterSetName = "From Path")]
+    [Cmdlet(VerbsCommon.Get, "TaskSchedule", DefaultParameterSetName = "From Database and Name")]
     [OutputType(new[] {typeof (ScheduleItem)})]
-    public class GetTaskSchedule : DatabaseContextBaseCommand
+    public class GetTaskScheduleCommand : DatabaseContextBaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item",
             Mandatory = true)]
@@ -25,19 +29,35 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Scheduler
         {
             if (Item != null)
             {
-                var schedule = new ScheduleItem(Item);
-                WriteObject(schedule);
+                if (CheckItemTypeMatch(Item))
+                {
+                    var schedule = new ScheduleItem(Item);
+                    WriteObject(schedule);
+                }
             }
             else if (Path != null)
             {
                 Item curItem = PathUtilities.GetItem(Path, CurrentDrive, CurrentPath);
-                var schedule = new ScheduleItem(curItem);
-                WriteObject(schedule);
+                if (CheckItemTypeMatch(curItem))
+                {
+                    var schedule = new ScheduleItem(curItem);
+                    WriteObject(schedule);
+                }
             }
             else
             {
                 base.ProcessRecord();
             }
+        }
+
+        private bool CheckItemTypeMatch(Item item)
+        {
+            if (!TemplateManager.GetTemplate(item).DescendsFromOrEquals(Sitecore.TemplateIDs.Schedule))
+            {
+                WriteError(new ErrorRecord(new InvalidTypeException("Item is not of type or redived from type 'Schedule'"), "sitecore_template_is_not_schedule", ErrorCategory.InvalidType, item));
+                return false;
+            }
+            return true;
         }
 
         protected override void ProcessRecord(IEnumerable<Database> databases)

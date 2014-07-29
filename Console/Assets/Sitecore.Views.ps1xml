@@ -392,5 +392,93 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>Sitecore.Tasks.ScheduleItem</Name>
+      <ViewSelectedBy>
+        <TypeName>Sitecore.Tasks.ScheduleItem</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>32</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Database</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Active</Label>
+            <Width>8</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Auto Remove</Label>
+            <Width>12</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Is Due</Label>
+            <Width>8</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Expired</Label>
+            <Width>8</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Completed</Label>
+            <Width>12</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Last Run</Label>
+            <Width>22</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Next Run</Label>
+            <Width>22</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Database</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Active</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AutoRemove</PropertyName>
+              </TableColumnItem>              
+              <TableColumnItem>
+                <PropertyName>IsDue</PropertyName>
+              </TableColumnItem>              
+              <TableColumnItem>
+                <PropertyName>Expired</PropertyName>
+              </TableColumnItem>              
+              <TableColumnItem>
+                <PropertyName>IsCompleted</PropertyName>
+              </TableColumnItem>              
+              <TableColumnItem>
+                <PropertyName>LastRun</PropertyName>
+              </TableColumnItem>              
+              <TableColumnItem>
+                <PropertyName>NextRun</PropertyName>
+              </TableColumnItem>              
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>
