@@ -10,7 +10,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Set, "Rendering")]
-    public class SetRenderingCommand : BaseItemCommand
+    public class SetRenderingCommand : BaseLanguageAgnosticItemCommand
     {
         private int index = -1;
 
@@ -33,9 +33,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
             get { return index; }
             set { index = value; }
         }
-
-        // override to hide as rengedings are not language sensitive
-        public override string[] Language { get; set; }
 
         protected override void ProcessItem(Item item)
         {

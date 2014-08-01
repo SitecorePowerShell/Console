@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
     [Cmdlet(VerbsCommon.New, "Rendering")]
     [OutputType(new[] {typeof (RenderingDefinition)},
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class NewRenderingCommand : BaseItemCommand
+    public class NewRenderingCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]
         public Hashtable Parameter { get; set; }

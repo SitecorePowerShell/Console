@@ -5,14 +5,17 @@ using Cognifide.PowerShell.PowerShellIntegrations.Host;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
 {
-    [Cmdlet("Get", "ScriptSession")]
+    [Cmdlet("Get", "ScriptSession",DefaultParameterSetName = "All")]
     public class GetScriptSession : BaseCommand
     {
-        [Parameter]
+        [Parameter(ParameterSetName = "By ID", Mandatory = true)]
         public string Id { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Current session", Mandatory = true)]
         public SwitchParameter Current { get; set; }
+
+        [Parameter(ParameterSetName = "By Type", Mandatory = true)]
+        public string[] Type { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -33,9 +36,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
             {
                 WriteObject(ScriptSessionManager.GetSession(Id));
             }
+            else if (Type != null && Type.Length > 0)
+            {
+                foreach (var type in Type)
+                {
+                    WildcardWrite(type, ScriptSessionManager.GetAll(), session => session.ApplianceType);
+                }
+            }
             else
             {
-                WriteObject(ScriptSessionManager.GetAll());
+                WriteObject(ScriptSessionManager.GetAll(), true);
             }
         }
     }

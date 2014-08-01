@@ -8,13 +8,10 @@ using Sitecore.Layouts;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
-    public abstract class BaseLayoutCommand : BaseItemCommand
+    public abstract class BaseLayoutCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]
         public virtual DeviceItem Device { get; set; }
-
-        // override to hide as rengedings are not language sensitive
-        public override string[] Language { get; set; }
 
         protected override void ProcessItem(Item item)
         {

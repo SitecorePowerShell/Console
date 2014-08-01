@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Analytics
 {
-    [Cmdlet(VerbsCommon.Get, "VisitorClassification")]
+    [Cmdlet(VerbsCommon.Get, "AnalyticsVisitorClassification")]
     [OutputType(new[] {typeof (VisitorClassifications)})]
     public class GetAnalyticsVisitorClassificationsCommand : AnalyticsBaseCommand
     {

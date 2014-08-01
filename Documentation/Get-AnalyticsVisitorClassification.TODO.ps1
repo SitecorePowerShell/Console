@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Get-VisitorClassification.
+        Get-AnalyticsVisitorClassification.
 
     .DESCRIPTION
-        Get-VisitorClassification.
+        Get-AnalyticsVisitorClassification.
     
     
     .INPUTS
@@ -19,5 +19,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Get-VisitorClassification -Path master:\content\home
+        PS master:\> Get-AnalyticsVisitorClassification -Path master:\content\home
 #>

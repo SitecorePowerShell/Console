@@ -32,30 +32,6 @@
           </PropertySet>
         </Members>
       </MemberSet>
-    <!--ScriptProperty>
-      <Name>ItemPath</Name>
-      <GetScriptBlock>
-        $this.Paths.Path
-      </GetScriptBlock>
-    </ScriptProperty>
-    <ScriptProperty>
-      <Name>FullPath</Name>
-      <GetScriptBlock>
-        $this.Paths.FullPath
-      </GetScriptBlock>
-    </ScriptProperty>
-      <ScriptProperty>
-      <Name>MediaPath</Name>
-      <GetScriptBlock>
-        $this.Paths.MediaPath
-      </GetScriptBlock>
-    </ScriptProperty>
-    <ScriptProperty>
-      <Name>ContentPath</Name>
-      <GetScriptBlock>
-        $this.Paths.ContentPath
-      </GetScriptBlock>
-    </ScriptProperty -->
     </Members>
   </Type>
 </Types>

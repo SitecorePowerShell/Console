@@ -480,5 +480,53 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>ScriptSession</Name>
+      <ViewSelectedBy>
+        <TypeName>Cognifide.PowerShell.PowerShellIntegrations.Host.ScriptSession</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Type</Label>
+            <Width>12</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Key</Label>
+            <Width>80</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Location</Label>
+            <Width>40</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Auto Disposed</Label>
+            <Width>14</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>ApplianceType</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Key</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>CurrentLocation</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>AutoDispose</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>

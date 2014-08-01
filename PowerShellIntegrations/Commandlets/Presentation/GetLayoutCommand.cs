@@ -11,19 +11,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "Layout")]
     [OutputType(new[] {typeof (Item)})]
-    public class GetLayoutCommand : BaseItemCommand
+    public class GetLayoutCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]
         public DeviceItem Device { get; set; }
-
-        // override to hide as rengedings are not language sensitive
-        public override string[] Language { get; set; }
-
-        protected override void BeginProcessing()
-        {
-            // do not process languages - layouts are shared across them
-            Language = null;
-        }
 
         protected override void ProcessItem(Item item)
         {

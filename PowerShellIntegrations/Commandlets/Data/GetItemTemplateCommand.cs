@@ -7,13 +7,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemTemplate")]
     [OutputType(new[] {typeof (TemplateItem)})]
-    public class GetItemTemplateCommand : BaseItemCommand
+    public class GetItemTemplateCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]
         public SwitchParameter Recurse { get; set; }
-
-        //hide language as it does not impact the output list in any way.
-        public override string[] Language { get; set; }
 
         protected override void ProcessItem(Item item)
         {

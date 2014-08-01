@@ -6,7 +6,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 {
     [Cmdlet("New", "ItemClone")]
     [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
-    public class NewItemCloneCommand : BaseItemCommand
+    public class NewItemCloneCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter(Mandatory=true)]
         public Item Destination { get; set; }

@@ -2,31 +2,16 @@
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
-    public abstract class BaseItemCommand : BaseShellCommand
+    public abstract class BaseItemCommand : BaseLanguageAgnosticItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline", Mandatory = true)]
-        public virtual Item Item { get; set; }
-
-        [Parameter(ParameterSetName = "Item from Path", Mandatory=true)]
-        [Alias("FullName", "FileName")]
-        public virtual string Path { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
-        public virtual string Id { get; set; }
-
-        [Parameter(ParameterSetName = "Item from ID")]
-        public virtual Database Database { get; set; }
-
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path")]
         [Parameter(ParameterSetName = "Item from ID")]
+        [Parameter(ParameterSetName = "Item from Pipeline")]
         public virtual string[] Language { get; set; }
 
         protected List<WildcardPattern> LanguageWildcardPatterns { get; private set; }
@@ -78,10 +63,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
                     ProcessItem(langItem);
                 }
             }
-
         }
-
-        protected abstract void ProcessItem(Item item);
 
         protected List<Item> LatestVersionInFilteredLanguages(Item item)
         {

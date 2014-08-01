@@ -28,19 +28,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
 
             var allPresets = presetsNode.Cast<XmlNode>().ToList();
 
-            Dictionary<string, XmlNode> presets = new Dictionary<string, XmlNode>();
             if (Name != null && Name.Length > 0)
             {
-                List<XmlNode> matchingPresets = new List<XmlNode>();
-                foreach (var name in Name)
-                {
-                    matchingPresets.AddRange(WildcardFilter(name, allPresets, p => p.Name));
-                }
-                foreach (var preset in matchingPresets.Where(preset => !presets.ContainsKey(preset.Name)))
-                {
-                    presets.Add(preset.Name, preset);
-                }
-                WriteObject(presets.Values.SelectMany(CreatePreset), true);
+                var matchingPresets = WildcardFilterMany(Name, allPresets, p => p.Name).ToList();
+                WriteObject(matchingPresets.SelectMany(CreatePreset), true);
             }
             else
             {

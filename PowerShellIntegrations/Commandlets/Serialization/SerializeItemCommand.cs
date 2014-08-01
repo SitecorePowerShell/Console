@@ -38,7 +38,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
         public string Target { get; set; }
 
         //[Parameter]
-        public string[] Languages { get; set; }
+        [Alias("Languages")]
+        public string[] Language { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -48,7 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Serialization
             }
             else
             {
-                Serialize(Item, Path, Id, Recurse.IsPresent, Target, Languages, CurrentProviderLocation("CmsItemProvider"));
+                Serialize(Item, Path, Id, Recurse.IsPresent, Target, Language, CurrentProviderLocation("CmsItemProvider"));
             }
         }
 

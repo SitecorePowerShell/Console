@@ -94,6 +94,21 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             return items.Where(item => wildcardPattern.IsMatch(propertyName(item)));
         }
 
+        protected static IEnumerable<T> WildcardFilterMany<T>(string[] filters, IEnumerable<T> items,
+            Func<T, string> propertyName)
+        {
+            var matchingItems = new Dictionary<string, T>();
+            var itemsList = items.ToList();
+            foreach (var filter in filters)
+            {
+                foreach (T matchingItem in WildcardFilter(filter, itemsList, propertyName))
+                {
+                    matchingItems[propertyName(matchingItem)] = matchingItem;
+                }
+            }
+            return matchingItems.Values;
+        }
+
         protected virtual Item FindItemFromParameters(Item item, string path, string id)
         {
             if (item == null)

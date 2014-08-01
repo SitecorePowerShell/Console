@@ -8,7 +8,7 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Set, "Layout")]
-    public class SetLayoutCommand : BaseItemCommand
+    public class SetLayoutCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter(Mandatory = true)]
         public DeviceItem Device { get; set; }
