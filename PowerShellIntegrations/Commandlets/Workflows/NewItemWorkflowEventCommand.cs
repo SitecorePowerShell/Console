@@ -24,13 +24,19 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
             WorkflowEvent lastEvent =
                 ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item)
                     .OrderBy(p => p.Date)
-                    .Last();
-            ((WorkflowProvider) Item.Database.WorkflowProvider).HistoryStore.AddHistory(
-                item,
-                string.IsNullOrEmpty(OldState) ? lastEvent.NewState : OldState,
-                string.IsNullOrEmpty(NewState) ? lastEvent.NewState : NewState,
-                Text
-                );
+                    .LastOrDefault();
+            if (string.IsNullOrEmpty(OldState))
+            {
+                OldState = lastEvent != null ? lastEvent.NewState : string.Empty;
+            }
+
+            if (string.IsNullOrEmpty(NewState))
+            {
+                NewState = lastEvent != null ? lastEvent.NewState : string.Empty;
+            }
+
+            ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.AddHistory(
+                item, OldState, NewState, Text);
         }
     }
 }
