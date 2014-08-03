@@ -10000,7 +10000,9 @@ Show-Application `
       <command:name>Show-ListView</command:name>
       <gl:group>ListView</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Sends output to an interactive table in a separate window.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -10010,7 +10012,15 @@ Show-Application `
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Show-ListView cmdlet sends the output from a command to a grid view window where the output is displayed in an interactive table.
+Because this cmdlet requires a user interface, it does not work in a non-interactive scenarios like within web service calls.
+You can use the following features of the table to examine your data:
+-- Sort. To sort the data, click a column header. Click again to toggle from ascending to descending order.
+-- Quick Filter. Use the "Filter" box at the top of the window to search the text in the table. You can search for text in a particular column, search for literals, and search for multiple words.
+-- Execute actions on selected items. To execute action on the data from Show-ListView, Ctrl+click the items you want to be included in the action and press the desired action in the "Actions" chunk in the ribbon.
+-- Export contents of the view in XML, CSV, Json, HTML or Excel file and download that onto the user's computer. The downloaded results will take into account current filter and order of the items.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -10075,7 +10085,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>PageSize</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Number of results shown per page.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -10089,7 +10101,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Icon</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Icon of the result window. (Shows in the top/left corner and on the Sitecore taskbar).
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -10103,7 +10117,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>InfoTitle</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Title on the panel that appears below the ribbon in the results window.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -10117,7 +10133,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>InfoDescription</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Description that appears on the panel below the ribbon in the results window.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -10131,7 +10149,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Modal</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>If this parameter is provided Results will show in a new window (in Sitecore 6.x up till Sitecore 7.1) or in a modal overlay (Sitecore 7.2+)
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -10145,7 +10165,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>ActionData</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Additional data what will be passed to the view. All actions that are executed from that view window will have that data accessible to them as $actionData variable.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -10159,7 +10181,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>ViewName</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>View signature name - this can be used by action commandlets to determine whether to show an action or not using the Show/Enable rules.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -10173,7 +10197,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>ActionsInSession</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>If this parameter is specified actions will be executed in the same session as the one in which the commandlet is executed. 
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -10187,7 +10213,9 @@ Show-Application `
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
         <maml:name>Data</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Data to be displayed in the view.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -10201,7 +10229,13 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Property</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.        
+
+The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
+-- Name (or Label) &lt;string&gt;
+-- Expression &lt;string&gt; or &lt;script block&gt;
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="true">Object[]</command:parameterValue>
         <dev:type>
@@ -10215,7 +10249,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Title</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Title of the results window.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -10229,7 +10265,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Width</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Width of the results window.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -10243,7 +10281,9 @@ Show-Application `
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Height</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Height of the results window.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -10255,17 +10295,113 @@ Show-Application `
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>System.Management.Automation.PSObject
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>System.Management.Automation.PSObject
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code># This command formats information about Sitecore items in a table. The Get-ChildItem cmdlet gets objects representing the items. 
+# The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
+PS master:\&gt; Get-Item -path master:\* | Show-ListView -Property Name, DisplayName, ProviderPath, TemplateName, Language
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code># This command formats information about Sitecore items in a table. The Get-ItemReferrer cmdlet gets all references of the "Sample Item" template. 
+# The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
+# The Properties are not displaying straight properties but use the Name/Expression scheme to provide a nicely named values that 
+# like in the case of languages which are aggregarde form the "Languages" property.
+PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' | 
+                 Show-ListView -Property `
+                     @{Label="Name"; Expression={$_.DisplayName} }, 
+                     @{Label="Path"; Expression={$_.Paths.Path} }, 
+                     @{Label="Languages"; Expression={$_.Languages | % { $_.Name + ", "} } }
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Update-ListView</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Out-GridView</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Format-Table</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Alert</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Application</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Confirm</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-FieldEditor</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Input</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-ModalDialog</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Result</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-YesNoCancel</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://michaellwest.blogspot.com/2014/04/sitecore-code-editor-14-preview.html</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
