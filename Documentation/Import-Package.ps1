@@ -64,6 +64,9 @@
     .LINK
         https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae
 
+    .LINK
+        https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7
+
     .EXAMPLE
         PS master:\> Import-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge
 #>

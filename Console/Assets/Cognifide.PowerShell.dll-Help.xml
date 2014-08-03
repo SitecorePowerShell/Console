@@ -10975,6 +10975,10 @@ Check Bounced Messages           master          True     False        False    
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=N3xgZcU9FqQ&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=9</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
     </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -11178,6 +11182,10 @@ Check DSN Messages               master          True     False        False    
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=N3xgZcU9FqQ&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=9</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -15535,6 +15543,10 @@ $package.Sources.Add($source);
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
     </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -15699,6 +15711,10 @@ $package.Sources.Add($source);
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -15870,6 +15886,10 @@ $package.Sources.Add($source);
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -16117,6 +16137,10 @@ $package.Sources.Add($source);
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
     </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -16326,6 +16350,10 @@ $package.Sources.Add($source);
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -16612,6 +16640,10 @@ $package.Sources.Add($source);
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
     </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
@@ -16763,6 +16795,10 @@ $package.Sources.Add($source);
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
     </maml:relatedLinks>
@@ -17455,6 +17491,10 @@ Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\ar
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -17713,6 +17753,10 @@ Serialize-Item -Path "master:\content" -Target "c:\tmp"
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://www.youtube.com/watch?v=60BGRDNONo0&amp;list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&amp;index=7</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>

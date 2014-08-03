@@ -31,6 +31,9 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9
+
     .EXAMPLE
         PS master:\> Start-TaskSchedule -Path "master:/system/Tasks/Schedules/Email Campaign/Clean Message History"
         

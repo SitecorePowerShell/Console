@@ -77,6 +77,9 @@
     .LINK
         https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae
 
+    .LINK
+        https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7
+
     .EXAMPLE
 	# Following example creates a new package, adds content/home item to it and 
         # saves it in the Sitecore Package folder+ gives you an option to download the saved package.

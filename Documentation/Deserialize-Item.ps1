@@ -61,6 +61,9 @@
         http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/
 
     .LINK
+        https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7
+
+    .LINK
         https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f
 
     .LINK

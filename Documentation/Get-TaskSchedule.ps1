@@ -33,6 +33,9 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9
+
     .EXAMPLE
         PS master:\> Get-TaskSchedule
         Name                             Database        Active   Auto Remove  Is Due   Expired  Completed    Last Run               Next Run
