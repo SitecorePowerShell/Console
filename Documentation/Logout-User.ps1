@@ -1,13 +1,12 @@
 <#
     .SYNOPSIS
-        Logout-User.
+        Logs the current user out.
 
     .DESCRIPTION
-        Logout-User.
+        Logs the current user out.
     
     
     .INPUTS
-        Sitecore.Data.Items.Item
     
     .OUTPUTS
         
@@ -19,5 +18,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Logout-User -Path master:\content\home
+        PS master:\> Logout-User
 #>

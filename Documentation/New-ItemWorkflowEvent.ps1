@@ -40,6 +40,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Get-ItemWorkflowEvent
+
+    .LINK
+        Execute-Workflow
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

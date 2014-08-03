@@ -9374,7 +9374,9 @@ Created                LastRequest            SessionID                  UserNam
       <command:name>Import-Function</command:name>
       <gl:group>Function</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Imports a function script from the script library's "Functions" folder.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -9384,7 +9386,10 @@ Created                LastRequest            SessionID                  UserNam
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Imports a function script from the script library's "Functions" folder.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -9405,7 +9410,9 @@ Created                LastRequest            SessionID                  UserNam
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the script in the "Functions" library or one of its sub-libraries.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -9419,7 +9426,9 @@ Created                LastRequest            SessionID                  UserNam
       <command:parameter required="false" globbing="false" pipelineInput="false" position="2" variableLength="false">
         <maml:name>Library</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the library withing the "Functions" library. Provide this name to disambiguate a script from other scripts of the same name that might exist in multiple sub-librarties of the Functions library.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -9431,17 +9440,50 @@ Created                LastRequest            SessionID                  UserNam
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code># The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" commandlet 
+       # that was imported as a result of the execution of the following line
+       PS master:\&gt; Import-Function -Name Resolve-Error
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -14978,7 +15020,9 @@ cancel
       <command:name>Login-User</command:name>
       <gl:group>User</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Logs a user in and performs further script instructions in the context of the user.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -14988,7 +15032,10 @@ cancel
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Logs a user in and performs further script instructions in the context of the user.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -15009,7 +15056,9 @@ cancel
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>User name including domain. If no domain is specified - 'sitecore' will be used as the default value
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">GenericIdentity</command:parameterValue>
         <dev:type>
@@ -15023,7 +15072,9 @@ cancel
       <command:parameter required="true" globbing="false" pipelineInput="false" position="2" variableLength="false">
         <maml:name>Password</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Password for the account provided using the -Identity parameter.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -15035,24 +15086,53 @@ cancel
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Login-User -Identity "sitecore\admin" -Password "b"
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Logout-User</command:name>
       <gl:group>User</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Logs the current user out.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -15062,23 +15142,53 @@ cancel
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Logs the current user out.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Logout-User
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -18041,7 +18151,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:name>Get-ItemWorkflowEvent</command:name>
       <gl:group>ItemWorkflowEvent</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Retrieves entries from the history store notifying of workflow state change of a specific item.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -18051,7 +18163,10 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <dev:version>2.6.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Retrieves entries from the history store notifying of workflow state change of a specific item.
+
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -18067,7 +18182,7 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>UserName</maml:name>
+          <maml:name>Identity</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
@@ -18082,7 +18197,7 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>UserName</maml:name>
+          <maml:name>Identity</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
@@ -18101,16 +18216,18 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
           <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>UserName</maml:name>
+          <maml:name>Identity</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>UserName</maml:name>
+        <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>User that has been associated with the enteries. Wildcards are supported.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -18124,7 +18241,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.    
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="true">String[]</command:parameterValue>
         <dev:type>
@@ -18138,7 +18257,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The item to have its history items returned.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
@@ -18152,7 +18273,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the item to have its history items returned - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -18166,7 +18289,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Id of the item have its history items returned - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -18180,7 +18305,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database containing the item to have its history items returned - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
         <dev:type>
@@ -18192,17 +18319,67 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-ItemWorkflowEvent -Path master:\content\home
+Date     : 2014-07-27 14:23:33
+NewState : {190B1C84-F1BE-47ED-AA41-F42193D9C8FC}
+OldState : {46DA5376-10DC-4B66-B464-AFDAA29DE84F}
+Text     : Automated
+User     : sitecore\admin
+
+Date     : 2014-08-01 15:43:29
+NewState : {190B1C84-F1BE-47ED-AA41-F42193D9C8FC}
+OldState : {190B1C84-F1BE-47ED-AA41-F42193D9C8FC}
+Text     : Just leaving a note
+User     : sitecore\admin
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>New-ItemWorkflowEvent</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Execute-Workflow</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -18470,6 +18647,14 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       </command:example>
     </command:examples>
     <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Get-ItemWorkflowEvent</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Execute-Workflow</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
         <maml:uri />

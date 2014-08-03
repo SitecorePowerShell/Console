@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Security;
 using Sitecore.Data.Items;
 using Sitecore.Workflows;
 using Sitecore.Workflows.Simple;
@@ -10,17 +11,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Workflows
     public class GetItemWorkflowEventCommand : BaseItemCommand
     {
         [Parameter]
-        public string UserName { get; set; }
+        [Alias(new[] { "UserName", "User" })]
+        public string Identity { get; set; }
 
         protected override void ProcessItem(Item item)
         {
-            if (string.IsNullOrEmpty(UserName))
+            if (string.IsNullOrEmpty(Identity))
             {
-                UserName = "*";
+                Identity = "*";
             }
             WorkflowEvent[] workflowHistory =
                 ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item);
-            WildcardWrite(UserName, workflowHistory, workflowEvent => workflowEvent.User);
+            WildcardWrite(Identity, workflowHistory, workflowEvent => workflowEvent.User);
         }
     }
 }
