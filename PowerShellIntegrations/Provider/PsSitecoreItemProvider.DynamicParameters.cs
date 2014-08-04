@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Management.Automation;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Data.Templates;
@@ -19,6 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
         private const string StartWorkflowParam = "StartWorkflow";
         private const string PermanentlyParam = "Permanently";
         private const string IdParam = "ID";
+        private const string DatabaseParam = "Database";
         private const string UriParam = "Uri";
         private const string ParentParam = "Parent";
         private const string AmbiguousPathsParam = "AmbiguousPaths";
@@ -170,7 +172,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
             bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic,false,false, "Sitecore Item by Query");
-            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, true, "Sitecore Item by Id");
+            paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(Database), DatabaseParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true, "Sitecore Item by Uri");
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
 

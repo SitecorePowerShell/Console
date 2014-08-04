@@ -238,7 +238,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Provider
                 if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
                 {
                     string Id = dic[IdParam].Value.ToString();
-                    Item itemById = Factory.GetDatabase(PSDriveInfo.Name).GetItem(new ID(Id));
+                    Database database;
+                    if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
+                    {
+                        database = (Database) dic[DatabaseParam].Value;
+                    }
+                    else
+                    {
+                        database = Factory.GetDatabase(PSDriveInfo.Name);
+                    }
+                    Item itemById = database.GetItem(new ID(Id));
                     if (itemById != null)
                     {
                         WriteMatchingItem(language, version, itemById);
