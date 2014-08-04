@@ -6,13 +6,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
     public class BaseFormCommand : BaseShellCommand
     {
         [Parameter]
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
 
         [Parameter]
-        public int Width { get; set; }
+        public virtual int Width { get; set; }
 
         [Parameter]
-        public int Height { get; set; }
+        public virtual int Height { get; set; }
 
         public BaseFormCommand()
         {
