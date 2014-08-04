@@ -14,7 +14,7 @@
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves item fields as either names or fields or template fields.
@@ -368,7 +368,7 @@ __Preview                           __Preview                          Appearanc
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Converts item from clone to fully independent item.
@@ -536,7 +536,7 @@ __Preview                           __Preview                          Appearanc
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes Language version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
@@ -548,6 +548,25 @@ Language  parameter supports globbing so you can delete whole language groups us
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-ItemLanguage</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>ExcludeLanguage</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Recurse</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-ItemLanguage</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID" position="named">
@@ -584,25 +603,6 @@ Language  parameter supports globbing so you can delete whole language groups us
         <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Recurse</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-ItemLanguage</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>ExcludeLanguage</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -812,7 +812,7 @@ PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage 
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a version of the item in a new language based on a language version already existing. 
@@ -1167,7 +1167,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Gets all clones of item provided.
@@ -1343,7 +1343,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns all items that the item specified with the commandlet parameters links to. if -ItemLink parameter is used the Commandlet will return links rather than items.
@@ -1356,13 +1356,6 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReference</maml:name>
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
@@ -1370,6 +1363,13 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReference</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -1400,6 +1400,21 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReference</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -1415,21 +1430,6 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1615,7 +1615,7 @@ TargetPath         : /sitecore/content/Home
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns all items that link to the item specified with the commandlet parameters. if -ItemLink parameter is used the Commandlet will return links rather than items.
@@ -1628,6 +1628,13 @@ TargetPath         : /sitecore/content/Home
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemReferrer</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReferrer</maml:name>
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
@@ -1635,13 +1642,6 @@ TargetPath         : /sitecore/content/Home
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReferrer</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -1672,6 +1672,21 @@ TargetPath         : /sitecore/content/Home
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReferrer</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReferrer</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -1687,21 +1702,6 @@ TargetPath         : /sitecore/content/Home
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReferrer</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1889,7 +1889,7 @@ TargetPath         : /sitecore/content/Home
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new item clone based on the item provided.
@@ -2151,7 +2151,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Expands tokens like $name in fields on items.
@@ -2252,7 +2252,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Field editor for a provided item allows for editing all or selected list of fields.
@@ -2332,6 +2332,45 @@ Otherwise "cancel" will be returned.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Show-FieldEditor</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path, Named Section" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
+          <maml:name>SectionTitle</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
+          <maml:name>SectionIcon</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Title</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Width</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Height</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IncludeStandardFields</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Show-FieldEditor</maml:name>
         <command:parameter required="true" parameterSetName="Item from Path, Preserve Sections" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -2367,21 +2406,21 @@ Otherwise "cancel" will be returned.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Show-FieldEditor</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path, Named Section" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
-          <maml:name>SectionTitle</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Named Section" position="named">
-          <maml:name>SectionIcon</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>PreserveSections</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Name</maml:name>
@@ -2425,45 +2464,6 @@ Otherwise "cancel" will be returned.
         <command:parameter required="false" parameterSetName="Item from ID, Named Section" position="named">
           <maml:name>SectionIcon</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Name</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Title</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Width</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Height</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>IncludeStandardFields</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Show-FieldEditor</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>PreserveSections</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Name</maml:name>
@@ -2802,7 +2802,7 @@ PS master:\&gt; Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -In
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds rendering to a chosen device for the presentation of an item.
@@ -3162,7 +3162,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets item layout for a specific device provided
@@ -3406,7 +3406,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering.
@@ -3736,7 +3736,7 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner.
@@ -3905,25 +3905,6 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-Rendering</maml:name>
         <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -3935,6 +3916,25 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Instance</maml:name>
           <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-Rendering</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -4238,7 +4238,7 @@ PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*"
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new rendering definition that can later be added to an item. Most parameters can later be overriden when calling Add-Rendering.
@@ -4711,7 +4711,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>LayoutDevice</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns Sitecore Layout device associated with a name or a default instance layout device/
@@ -4873,7 +4873,7 @@ PS master:\&gt; Get-LayoutDevice *
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-RoleMember cmdlet gets a role and assigns users as members of the Sitecore role.
@@ -5002,7 +5002,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Disable-User cmdlet gets a user and disables the account in Sitecore.
@@ -5142,7 +5142,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Enable-User cmdlet gets a user and enables the account in Sitecore.
@@ -5282,7 +5282,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Domain cmdlet returns all the domains or the specified domain.
@@ -5384,7 +5384,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
@@ -5553,7 +5553,7 @@ sitecore\Developer                       sitecore     False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
@@ -5567,12 +5567,12 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
+        <command:parameter required="true" parameterSetName="ComputersOnly" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
-          <maml:name>UsersOnly</maml:name>
+        <command:parameter required="false" parameterSetName="ComputersOnly" position="named">
+          <maml:name>RolesOnly</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -5582,12 +5582,12 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="ComputersOnly" position="1">
+        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="ComputersOnly" position="named">
-          <maml:name>RolesOnly</maml:name>
+        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
+          <maml:name>UsersOnly</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -5767,7 +5767,7 @@ Name        : sitecore\Developer
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
@@ -5989,7 +5989,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-Domain cmdlet creates a domain if it does not exist.
@@ -6131,7 +6131,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-User cmdlet creates a new user in Sitecore.
@@ -6395,7 +6395,7 @@ sitecore\michael2        sitecore     False           False
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Protect-Item cmdlet protects the item.
@@ -6644,7 +6644,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Domain cmdlet removes the specified domain.
@@ -6758,7 +6758,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-RoleMember cmdlet gets a role and removes members of the Sitecore role.
@@ -6887,7 +6887,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Session cmdlet removes user sessions in Sitecore.
@@ -7017,7 +7017,7 @@ Accepts a user session.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-User cmdlet removes a user from Sitecore.
@@ -7177,7 +7177,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-UserPassword cmdlet resets or changes a user password.
@@ -7366,7 +7366,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-User cmdlet sets a user profile properties in Sitecore.
@@ -7710,7 +7710,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-Item cmdlet unlocks the item.
@@ -7959,7 +7959,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Lock-Item cmdlet unlocks the item.
@@ -8206,7 +8206,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -8255,17 +8255,24 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       <command:name>Update-ListView</command:name>
       <gl:group>ListView</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Updates List View (created by Show-ListView) data.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>This commandlet updates the data displayed by List View that called the script the commandlet is part of.
+Calling this commandlet makes sense only when it's being used in script exposed as Action on the Show-ListView window.
+For example the main script might be listing all logged in users. And than the "Kick" action might be closing sessions for selected rows and refreshing the List view to take into account that the sessions are no longer connected.
+Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView commandlet will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2014 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -8280,25 +8287,15 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           <maml:name>Property</maml:name>
           <command:parameterValue required="true">Object[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Title</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Width</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Height</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
         <maml:name>Data</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Data that you want to be sent to the list view for display.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -8312,7 +8309,9 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Property</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>If this parameter is specified - it allows for modifying the columns shown in the list view, otherwise the columns stay the same as in the original view.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="true">Object[]</command:parameterValue>
         <dev:type>
@@ -8323,60 +8322,83 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>Title</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>Width</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
-        <dev:type>
-          <maml:name>Int32</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>Height</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">Int32</command:parameterValue>
-        <dev:type>
-          <maml:name>Int32</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para>Sitecore.Data.Items.Item
+
+</maml:para>
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>#This example consists of 2 scripts - a report that shows a list view and the second one that updates the list view from an action.
+
+# THE INITIAL SCRIPT showing the list of tasks in a list view
+# This script does not yet make use of Update-ListView but tests the state for actions to be performed
+
+Import-Function "Edit-TaskSchedule"
+
+# Get all the items recursively where the TemplateName equals "Schedule".
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } |
+    Show-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
+        @{Label="Last Run"; Expression={ $_."Last Run" } },
+        @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
+        @{Label="From"; Expression={ Parse-TaskSchedule $_ "from"} },
+        @{Label="To"; Expression={ Parse-TaskSchedule $_ "to"} },
+        @{Label="On Week Days"; Expression={ Parse-TaskSchedule $_ "strWeekdays" } },
+        @{Label="Run Every"; Expression={ Parse-TaskSchedule $_ "interval" } } `
+        -Title "Task Manager"        
+Close-Window
+
+
+
+# NOW THE PROPER ACTION SCRIPT
+
+# The Execute task action that (at the very end) updates the list with the latest tasks data
+foreach($sheduleItem in $resultSet)
+{
+    $shedule = New-Object  -TypeName "Sitecore.Tasks.ScheduleItem" -ArgumentList $sheduleItem 
+    $shedule.Execute();
+}
+Import-Function "Edit-TaskSchedule"
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } | Update-ListView
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Show-ListView</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -8392,7 +8414,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns a Layout set on an item for a specific device.
@@ -8608,7 +8630,7 @@ If Device is specified but no layout is specified the commandlet will return an 
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns RenderingDefinition from an item based on provided filtering parameters.
@@ -8777,25 +8799,6 @@ If Device is specified but no layout is specified the commandlet will return an 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-Rendering</maml:name>
         <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -8807,6 +8810,25 @@ If Device is specified but no layout is specified the commandlet will return an 
         <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Instance</maml:name>
           <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-Rendering</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from ID" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -9093,7 +9115,7 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Script</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a script from Sitecore PowerShell Extensions Script Library.
@@ -9120,14 +9142,14 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Execute-Script</maml:name>
-        <command:parameter required="true" parameterSetName="From Current Database Library" position="1">
+        <command:parameter required="true" parameterSetName="From Content Database Library" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Execute-Script</maml:name>
-        <command:parameter required="true" parameterSetName="From Content Database Library" position="1">
+        <command:parameter required="true" parameterSetName="From Current Database Library" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -9228,7 +9250,7 @@ PS master:\&gt; Execute-Script 'Examples\Script Testing\Long Running Script with
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Session cmdlet gets user sessions in Sitecore.
@@ -9383,7 +9405,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Imports a function script from the script library's "Functions" folder.
@@ -9499,7 +9521,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Ensures the runner proces window is closed after the script finishes execution.    
@@ -9563,7 +9585,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Sheer application, allows for passing additional parameters, launching it on desktop in cooperative or in Modal mode.
@@ -9825,7 +9847,7 @@ Show-Application `
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10009,7 +10031,7 @@ Show-Application `
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Show-ListView cmdlet sends the output from a command to a grid view window where the output is displayed in an interactive table.
@@ -10415,7 +10437,7 @@ PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10609,7 +10631,7 @@ PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -10721,7 +10743,7 @@ PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
@@ -10844,7 +10866,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertTo-CliXml cmdlet returns an XML-based representation of an object or objects provided as InputObject parameter. You can then use the ConvertFrom-CliXml cmdlet to re-create the saved object based on the contents of that XML.
@@ -10965,7 +10987,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a task schedule either passed from Get-Schedule, based on Item or Schedule path.
@@ -11131,7 +11153,7 @@ Check Bounced Messages           master          True     False        False    
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns task schedule item, based on name/database filter, path or simply converting a Sitecore item.
@@ -11340,7 +11362,7 @@ Check DSN Messages               master          True     False        False    
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns a serialization preset for use with Serialize-Item.
@@ -11457,7 +11479,7 @@ AssetsOptimiser master   /sitecore/system/Modules/Optimiser
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns the list of PowerShell Extension Sessions running in background.
@@ -11606,7 +11628,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomation</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11639,7 +11661,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsAutomationState</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11672,7 +11694,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsBrowser</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11705,7 +11727,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsCampaign</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11738,7 +11760,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsGeoIP</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11771,7 +11793,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsItemUrl</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11804,7 +11826,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsKeyword</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11837,7 +11859,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsLocation</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11911,7 +11933,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsNotificationSubscription</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11944,7 +11966,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsOs</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -11977,7 +11999,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPage</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12010,7 +12032,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEvent</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12043,7 +12065,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsPageEventDefinitions</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12076,7 +12098,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileCards</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12150,7 +12172,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfile</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12183,7 +12205,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsProfileItem</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12257,7 +12279,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsReferringSites</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12290,7 +12312,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsScreen</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12323,7 +12345,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsStatus</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12356,7 +12378,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTestDefinition</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12389,7 +12411,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsTrafficType</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12422,7 +12444,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsUserAgent</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12455,7 +12477,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsView</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12511,7 +12533,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitorClassification</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12544,7 +12566,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitor</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12577,7 +12599,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisitorTag</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12610,7 +12632,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>AnalyticsVisits</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12720,7 +12742,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>AnalyticsProfileCard</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para />
@@ -12850,7 +12872,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns Sitecore archives in context of a particular database.
@@ -12968,7 +12990,7 @@ recyclebin                                   1950
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves a Sitecore cache.
@@ -13070,7 +13092,7 @@ master[data]                             True           3427    7420654   209715
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves Sitecore Database object based on name or item passed to it.
@@ -13214,7 +13236,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Index</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns Sitecore indices in context of a particular database.
@@ -13327,7 +13349,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemByUri</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>This commandlet has been obsoleted - use "Get-Item -Uri" instead.
@@ -13415,7 +13437,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves item template and its base templates.
@@ -13649,7 +13671,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns sitecore Search indices.
@@ -13744,7 +13766,7 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button)    
@@ -13810,7 +13832,7 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
       </maml:copyright>
       <command:verb>Download</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executing this commandlet with file path on the server provides script users with means to download a file to their computer.
@@ -14058,7 +14080,7 @@ PS master:\&gt; Get-Item "master:/media library/Showcase/cognifide_logo" | Downl
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>ShellCommand</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
@@ -14290,7 +14312,7 @@ PS master:\&gt; Get-Item master:/content/home | Execute-ShellCommand "contentedi
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Pauses the script and shows an alert specified in the -Title to the user. Once user clicks the OK button - script execution resumes.
@@ -14412,7 +14434,7 @@ PS master:\&gt; Get-Item master:/content/home | Execute-ShellCommand "contentedi
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows a user a confirmation request message box.
@@ -14537,7 +14559,7 @@ yes
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows prompt message box asking user to provide a text string.
@@ -14761,7 +14783,7 @@ Show-Input "Please provide 5 characters at most" -MaxLength 5
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution.
@@ -15001,7 +15023,7 @@ Show-Input "Please provide 5 characters at most" -MaxLength 5
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Yes/No/Cancel dialog to the user and returns user choice as a string value.
@@ -15173,7 +15195,7 @@ cancel
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs a user in and performs further script instructions in the context of the user.
@@ -15283,7 +15305,7 @@ cancel
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs the current user out.
@@ -15348,7 +15370,7 @@ cancel
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Exports Sitecore installation package project as either zip containing all items and files or .xml with project definition.
@@ -15565,7 +15587,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Loads package from the package definition (xml file). Package definitions can be created by PowerShell scripts by using Export-Package commandlet (without the -Zip parameter)
@@ -15699,7 +15721,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Imports sitecore installation package with the ability to provide default responses for merge and overwrite actions.
@@ -15869,7 +15891,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -16044,7 +16066,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. This source only includes items explicitly added to it and not their children.
@@ -16293,7 +16315,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -16508,7 +16530,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
@@ -16796,7 +16818,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new Sitecore install package object that allows for further addition of items and files &amp; further export to file.
@@ -16953,7 +16975,7 @@ $package.Sources.Add($source);
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
@@ -17239,7 +17261,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Restarts the Sitecore Application pool.    
@@ -17303,7 +17325,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Deserialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Deserialization of items with Sitecore Powershell Extensions uses Deserialize-Item command. The simplest syntax requires 2 parameters:
@@ -17662,7 +17684,7 @@ Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\ar
       </maml:copyright>
       <command:verb>Serialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Serializes sitecore item to server disk drive.
@@ -17927,7 +17949,7 @@ Serialize-Item -Path "master:\content" -Target "c:\tmp"
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets the current host property and perssits them for the future if used with -Persist parameter.
@@ -18087,7 +18109,7 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       </maml:copyright>
       <command:verb>Execute</command:verb>
       <command:noun>Workflow</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised.
@@ -18340,7 +18362,7 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves entries from the history store notifying of workflow state change of a specific item.
@@ -18575,7 +18597,7 @@ User     : sitecore\admin
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new entry in the history store notifying of workflow state change.
@@ -18855,7 +18877,7 @@ User     : sitecore\admin
       </maml:copyright>
       <command:verb>Wrap</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
@@ -18951,7 +18973,7 @@ PS master:\&gt; $item.MyCustomeTextField = "New Text"
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
@@ -19086,7 +19108,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
@@ -19242,7 +19264,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>2.6.1</dev:version>
+      <dev:version>2.7.0</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unprotect-Item cmdlet protects the item.
