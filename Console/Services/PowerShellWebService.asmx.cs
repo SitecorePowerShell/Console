@@ -119,6 +119,14 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object KeepAlive(string guid)
+        {
+            var sessionExists = ScriptSessionManager.SessionExists(guid);
+            return sessionExists ? "alive" : "session-not-found";
+        }
+
         private static ScriptSession GetScriptSession(string guid)
         {
             return ScriptSessionManager.GetSession(guid, ApplicationNames.AjaxConsole, false);

@@ -21,14 +21,24 @@ extend(cognifide, 'powershell');
 (function($, window, cognifide, undefined) {
     var defaults = {
         initialPoll: 100,
-        maxPoll: 5000
-    };
+        maxPoll: 5000,
+        keepAliveInterval: 60000, // 60 * 1000 - every minute
+        keepAliveCheck: 2000 // 2 * 1000 - every 2 seconds
+};
+
     var settings = defaults;
     cognifide.powershell.setOptions = function(options) {
         $.extend(settings, options);
     };
 
     var tabCompletions = null;
+    var lastUpdate = 0;
+
+    var checkInterval = setInterval(function(){
+        if (new Date().getTime() - lastUpdate > settings.keepAliveInterval) {
+            getPowerShellResponse({ "guid": guid }, "KeepAlive");
+        }
+    }, settings.keepAliveCheck);
 
     function getParam(name) {
         if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
@@ -61,6 +71,7 @@ extend(cognifide, 'powershell');
 
     function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
         var datastring = JSON.stringify(callData);
+        lastUpdate = new Date().getTime();
         var ajax =
             $.ajax({
                 type: "POST",
