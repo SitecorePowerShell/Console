@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7469
+content-length: 7603
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -21,9 +21,9 @@ content-length: 7469
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
-$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
 $package.Metadata.Publisher = "Cognifide Limited";
-$package.Metadata.Version = "2.7";
+$package.Metadata.Version = "2.7.1";
 $package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
 The "PowerShell Console" available from the "Sitecore"
 menu and the "PowerShell ISE" available from the 
@@ -33,6 +33,8 @@ PowerShell ISE comes with a sample script and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
+- 2.7.1 (September 2014)
+  Release Notes: http://bit.ly/ScPs271Iss
 - 2.7 (August 2014)
   Release Notes: http://bit.ly/ScPs27Iss
 - 2.6 (April 2014)
@@ -53,12 +55,13 @@ http://bit.ly/ScPsIss
 
 Thank you for using Sitecore PowerShell Extensions.
 
-Copyright (c) 2010-2013 Adam Najmanowicz - Cognifide
-Copyright (c) 2013 Michael West
+Copyright (c) 2010-2014 Adam Najmanowicz - Cognifide
+Copyright (c) 2014 Michael West
 
 http://www.cognifide.com/
 http://blog.najmanowicz.com/
-http://michaellwest.blogspot.com/'
+http://michaellwest.blogspot.com/
+http://sitecorejunkie.com/category/powershell/'
 
 # Item templates
 $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
@@ -154,7 +157,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 2e6c96a8-9b81-4b39-ada7-b12d02c31157
+revision: 300ea266-720d-45e2-8ca0-a2625f3ec912
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -169,14 +172,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2e6c96a8-9b81-4b39-ada7-b12d02c31157
+300ea266-720d-45e2-8ca0-a2625f3ec912
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140804T141436:635427584768682813
+20140921T175555:635469189559150234
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
