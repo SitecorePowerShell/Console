@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using Sitecore.Configuration;
@@ -47,6 +48,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
 
         protected override void BeginProcessing()
         {
+            base.BeginProcessing();
             ignoredFields = new HashSet<string>(configIgnoredFields);
             if (IgnoredFields != null)
             {
@@ -61,16 +63,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Data
         {
             foreach (string targetLanguage in TargetLanguage)
             {
-                Item latestVersion = item.Versions.GetLatestVersion(LanguageManager.GetLanguage(targetLanguage));
-                if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
+                var lang = LanguageManager.GetLanguage(targetLanguage);
+                if (lang == null)
                 {
-                    CopyFields(item, latestVersion, false);
+                    var error = String.Format("Cannot find target language '{0}' or it is not enabled.", targetLanguage);
+                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
+                        item));
                 }
-                if (Recurse)
+                else
                 {
-                    foreach (Item childItem in item.Children)
+                    Item latestVersion = item.Versions.GetLatestVersion(lang);
+                    if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
                     {
-                        ProcessItem(childItem);
+                        CopyFields(item, latestVersion, false);
+                    }
+                    if (Recurse)
+                    {
+                        foreach (Item childItem in item.Children)
+                        {
+                            ProcessItem(childItem);
+                        }
                     }
                 }
             }
