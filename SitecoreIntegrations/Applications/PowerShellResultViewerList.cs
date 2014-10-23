@@ -206,7 +206,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         {
             if (ListViewer.GetSelectedItems().Length <= 0) return;
             int clickedId = Int32.Parse(ListViewer.GetSelectedItems()[0].Value);
-            object originalData = ListViewer.Data.Data[clickedId].Original;
+            object originalData = ListViewer.Data.Data.Where(p => p.Id == clickedId).FirstOrDefault().Original;
             if (originalData is Item)
             {
                 var clickedItem = originalData as Item;
