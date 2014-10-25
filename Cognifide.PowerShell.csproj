@@ -122,6 +122,10 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Pipelines\LoggedIn\LoggedInScript.cs" />
+    <Compile Include="Pipelines\LoggingIn\LoggingInScript.cs" />
+    <Compile Include="Pipelines\Logout\LogoutScript.cs" />
+    <Compile Include="Pipelines\PipelineProcessor.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseEditItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseItemCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseLanguageAgnosticItemCommand.cs" />
