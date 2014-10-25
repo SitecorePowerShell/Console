@@ -5567,11 +5567,11 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="ComputersOnly" position="1">
+        <command:parameter required="true" parameterSetName="RolesOnly" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="ComputersOnly" position="named">
+        <command:parameter required="false" parameterSetName="RolesOnly" position="named">
           <maml:name>RolesOnly</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
