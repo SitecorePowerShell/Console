@@ -63,7 +63,6 @@ namespace Cognifide.PowerShell.Extensions
                 command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, account));
                 return false;
             }
-
             if (accountType == AccountType.User && !User.Exists(name))
             {
                 command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, account));

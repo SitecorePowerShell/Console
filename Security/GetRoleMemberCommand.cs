@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Security
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "UsersOnly", ValueFromPipeline = true, Mandatory = true, Position = 0)]
-        [Parameter(ParameterSetName = "ComputersOnly", ValueFromPipeline = true, Mandatory = true, Position = 0)]
+        [Parameter(ParameterSetName = "RolesOnly", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public AccountIdentity Identity { get; set; }
 
@@ -22,12 +22,12 @@ namespace Cognifide.PowerShell.Security
         [Parameter(ParameterSetName = "UsersOnly")]
         public SwitchParameter UsersOnly { get; set; }
 
-        [Parameter(ParameterSetName = "ComputersOnly")]
+        [Parameter(ParameterSetName = "RolesOnly")]
         public SwitchParameter RolesOnly { get; set; }
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+            if (!this.CanFindAccount(Identity, AccountType.Role)) { return; }
 
             var role = Role.FromName(Identity.Name);
             switch (ParameterSetName)
@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.Security
                 case "UsersOnly":
                     WriteObject(RolesInRolesManager.GetUsersInRole(role, Recursive));
                     break;
-                case "ComputersOnly":
+                case "RolesOnly":
                     WriteObject(RolesInRolesManager.GetRolesInRole(role, Recursive));
                     break;
             }
