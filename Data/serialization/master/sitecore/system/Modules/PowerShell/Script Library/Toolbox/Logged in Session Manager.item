@@ -13,9 +13,9 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 378
+content-length: 362
 
-Get-Session -User sitecore* |
+Get-Session |
     Show-ListView -Property @{Label="User"; Expression={ $_.UserName} },
         @{Label="Logged In"; Expression={ $_.Created } },
         @{Label="Last Activity"; Expression={ $_.LastRequest} },
@@ -32,7 +32,7 @@ People/16x16/users_into.png
 ----version----
 language: en
 version: 1
-revision: 39abea33-ab5a-4e08-809c-9c0426343efb
+revision: 2d969cc0-4ecd-450e-a1ed-b06c60ffeb3b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-39abea33-ab5a-4e08-809c-9c0426343efb
+2d969cc0-4ecd-450e-a1ed-b06c60ffeb3b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131006T133257:635166631773533134
+20141025T175658:635498566184993810
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
