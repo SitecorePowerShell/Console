@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 537
+content-length: 546
 
 <#
     .SYNOPSIS
@@ -23,11 +23,11 @@ content-length: 537
         Michael West
 #>
 
-$timeout = New-TimeSpan -Minutes 30
+$inactiveTimeout = New-TimeSpan -Minutes 30
 foreach($session in Get-Session) {
     $span = ([datetime]::Now - $session.LastRequest)
-    if($span -gt $timeout){
-        Write-Log "Kicking user $($session.UserName) after exceeding the idle time of $([math]::($timeout.TotalMinutes)) minutes. Current idle time is $([math]::Round($span.TotalMinutes)) minutes."
+    if($span -gt $inactiveTimeout){
+        Write-Log "Kicking user $($session.UserName) after exceeding the idle time of $([math]::($inactiveTimeout.TotalMinutes)) minutes. Current idle time is $([math]::Round($span.TotalMinutes)) minutes."
         $session | Remove-Session
     }
 }
@@ -41,7 +41,7 @@ People/32x32/clock.png
 ----version----
 language: en
 version: 1
-revision: eaef36a7-b4b7-4c2f-a218-f53e5763094c
+revision: 4a77039e-dd34-4026-b318-3c5710b3637f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -56,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-eaef36a7-b4b7-4c2f-a218-f53e5763094c
+4a77039e-dd34-4026-b318-3c5710b3637f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141017T233239:635491855596485826
+20141028T004032:635500536327455625
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
