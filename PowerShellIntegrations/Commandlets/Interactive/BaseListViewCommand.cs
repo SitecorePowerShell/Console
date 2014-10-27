@@ -20,7 +20,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
         {
             if (Property == null && SessionState.PSVariable.Get("formatProperty") != null)
             {
-                //Property = SessionState.PSVariable.Get("formatProperty").Value as object[];
                 SessionState.PSVariable.Set("ScPsSlvProperties", SessionState.PSVariable.Get("formatPropertyStr").Value);
             }
             else if (Property != null)

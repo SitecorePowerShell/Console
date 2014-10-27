@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive.Me
                         var label = p["Label"].ToString().ToLower();
                         return label != "icon" && label != "__icon";
                     })
-                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
+                    .Select(p => p["Label"] +",")
                     .Aggregate((a, b) => a + b)
                     .TrimEnd(',');
             }

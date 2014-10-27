@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         protected override void EndProcessing()
         {
-            LogErrors(() => SessionState.PSVariable.Set("allData", cumulativeData));
+            LogErrors(() => SessionState.PSVariable.Set("allDataInternal", cumulativeData));
             base.EndProcessing();
         }
     }

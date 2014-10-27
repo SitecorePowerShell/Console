@@ -29,11 +29,11 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 314
+content-length: 317
 
 # Run Sheer application in a modal window
 
-foreach($item in $resultSet){
+foreach($item in $selectedData){
 # Run Sheer application on Desktop
 Show-Application `
     -Application "Content Editor" `
@@ -49,7 +49,7 @@ Control/16x16/treeview.png
 ----version----
 language: en
 version: 1
-revision: f48d6083-9cb2-47b0-8d23-c285a8ab8cbf
+revision: ef8ae5d5-4812-4cf8-93c0-b013a0f32ad0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -64,14 +64,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f48d6083-9cb2-47b0-8d23-c285a8ab8cbf
+ef8ae5d5-4812-4cf8-93c0-b013a0f32ad0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130915T215324:635148788048408203
+20141027T184016:635500320168430234
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

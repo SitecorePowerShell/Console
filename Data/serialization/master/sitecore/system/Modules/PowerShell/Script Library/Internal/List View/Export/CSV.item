@@ -13,14 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 324
+content-length: 318
 
 $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $file  = "$dataFolder\report-$datetime.csv"
 
-$format = & ([scriptblock]::Create($formatProperty))        
-[psCustomObject]$resultSet | Select-Object -Property $format | Export-Csv $file -NoTypeInformation
+$format = & ([scriptblock]::Create($exportProperty))        
+[psCustomObject]$exportSet | Select-Object -Property $format | Export-Csv $file -NoTypeInformation
 $file
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -32,7 +32,7 @@ Control/32x32/listview_b.png
 ----version----
 language: en
 version: 1
-revision: cea264ce-75f6-4dfb-ae06-7a5d581faa3f
+revision: 0d0bb5b3-0628-475b-965a-b026a3f0e9d9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-cea264ce-75f6-4dfb-ae06-7a5d581faa3f
+0d0bb5b3-0628-475b-965a-b026a3f0e9d9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140611T212650:635381188109357816
+20141027T181106:635500302666359922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

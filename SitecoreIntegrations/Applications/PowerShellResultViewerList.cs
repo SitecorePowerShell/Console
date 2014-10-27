@@ -280,7 +280,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         public void UpdateList(string sessionId)
         {
             var session = ScriptSessionManager.GetSession(sessionId);
-            var varValue = session.GetVariable("allData").BaseObject();
+            var varValue = session.GetVariable("allDataInternal").BaseObject();
             ListViewer.Data.Data = varValue.BaseList<ShowListViewCommand.DataObject>();
             ListViewer.Refresh();
         }
@@ -294,16 +294,49 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
-                List<object> results = ListViewer.FilteredItems.Select(p => p.Original).ToList();
-                session.SetVariable("resultSet", results);
-                session.SetVariable("formatProperty", ListViewer.Data.FormatProperty);
-                session.SetVariable("title", ListViewer.Data.Title);
-                session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
-                session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
-                session.SetVariable("actionData", ListViewer.Data.ActionData);
+                SetVariables(session);
                 string result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }
+        }
+
+        private void SetVariables(ScriptSession session)
+        {
+            //visible objects in string form for export
+            List<PSObject> export = ListViewer.FilteredItems.Select(p =>
+            {
+                var psobj = new PSObject();
+                foreach (var property in p.Display)
+                {
+                    psobj.Properties.Add(new PSNoteProperty(property.Key, property.Value));
+                }
+                return psobj;
+            }).ToList();
+
+            //selected original objects
+            List<object> results = ListViewer.SelectedItems.Select(p =>
+            {
+                int id = Int32.Parse(p.Value);
+                return ListViewer.Data.Data.Where(d => d.Id == id).Select(d => d.Original).First();
+            }).ToList();
+
+            session.SetVariable("filteredData", ListViewer.FilteredItems.Select(p => p.Original).ToList());
+            session.SetVariable("resultSet", results);
+            session.SetVariable("selectedData", results);
+            session.SetVariable("exportData", export);
+            session.SetVariable("allData", ListViewer.Data.Data.Select(p=> p.Original).ToList());
+            session.SetVariable("allDataInternal", ListViewer.Data.Data);
+            session.SetVariable("actionData", ListViewer.Data.ActionData);
+
+            session.SetVariable("title", ListViewer.Data.Title);
+            session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
+            session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
+            session.SetVariable("actionData", ListViewer.Data.ActionData);
+
+            session.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
+            session.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
+            session.SetVariable("exportProperty", ListViewer.Data.ExportProperty);
+
         }
 
         private void ChangePage(int newPage)
@@ -367,16 +400,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                 : string.Empty;
-            List<object> results = ListViewer.SelectedItems.Select(p =>
-            {
-                int id = Int32.Parse(p.Value);
-                return ListViewer.Data.Data.Where(d => d.Id == id).Select(d => d.Original).First();
-            }).ToList();
-            scriptSession.SetVariable("resultSet", results);
-            scriptSession.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
-            scriptSession.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
-            scriptSession.SetVariable("actionData", ListViewer.Data.ActionData);
-            scriptSession.SetVariable("allData", ListViewer.Data.Data);
+            SetVariables(scriptSession);
+
             ScriptSessionId = scriptSession.ID;
 
             var parameters = new object[]

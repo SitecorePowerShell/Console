@@ -13,9 +13,9 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 876
+content-length: 879
 
-foreach($site in $resultSet){
+foreach($site in $selectedData){
     "master:$($site.Properties['rootPath'])$($site.Properties['startItem'])"
     $item = get-item "master:$($site.Properties['rootPath'])$($site.Properties['startItem'])"
     
@@ -41,7 +41,7 @@ Control/16x16/treeview.png
 ----version----
 language: en
 version: 1
-revision: d8b899df-ebc6-4ecd-911b-ad9b98353b4f
+revision: c69baa86-d55b-4e55-a0b7-564d4adb0f74
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -56,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d8b899df-ebc6-4ecd-911b-ad9b98353b4f
+c69baa86-d55b-4e55-a0b7-564d4adb0f74
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131218T011509:635229261093026640
+20141027T184127:635500320878537656
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

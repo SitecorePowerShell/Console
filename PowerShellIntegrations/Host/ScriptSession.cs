@@ -187,6 +187,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             }
         }
 
+        public ScriptBlock GetScriptBlock(string scriptBlock)
+        {
+            return runspace.SessionStateProxy.InvokeCommand.NewScriptBlock(scriptBlock);
+        }
+
         public static string GetDataContextSwitch(Item item)
         {
             return item != null
