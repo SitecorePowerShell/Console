@@ -36,7 +36,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Presentation
                 if (Device == null || string.Equals(device.ID, Device.ID.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     Item layoutItem = item.Database.GetItem(device.Layout);
-                    WriteItem(layoutItem);
+                    PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, layoutItem);
+                    psobj.Properties.Add(new PSNoteProperty("DeviceID", device.ID));
+                    DeviceItem deviceItem = Device ?? (DeviceItem)item.Database.GetItem(device.ID);
+                    psobj.Properties.Add(new PSNoteProperty("Device", deviceItem.Name));
+                    WriteObject(psobj);
                     if (Device != null)
                     {
                         return;
