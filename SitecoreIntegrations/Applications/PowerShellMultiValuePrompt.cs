@@ -173,7 +173,17 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                                (!string.IsNullOrEmpty(editor) &&
                                 editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1),
                 };
-                dateTimePicker.Value = value is DateTime ? DateUtil.ToIsoDate((DateTime) value) : (string) value;
+                if (value is DateTime)
+                {
+                    if ((DateTime) value != DateTime.MinValue && (DateTime) value != DateTime.MaxValue)
+                    {
+                        dateTimePicker.Value = DateUtil.ToIsoDate((DateTime) value);
+                    }
+                }
+                else
+                {
+                    dateTimePicker.Value = (string) value ?? string.Empty;
+                }
                 return dateTimePicker;
             }
 
