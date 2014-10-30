@@ -59,14 +59,26 @@ namespace Cognifide.PowerShell.Management
             
             var language = item.Language;
 
-            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'",
-                item.Name, language, item.Version, target.Name));
+            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'.  (Recurse={4}).",
+                item.Name, language, item.Version, target.Name, Recurse.IsPresent));
 
             var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
             {
-                Deep = Recurse.IsPresent
+                Deep = Recurse.IsPresent,
+                RootItem = item
             };
-            PublishItemPipeline.Run(item.ID, options);
+
+            PublishOptions[] optionsArgs = new PublishOptions[1];
+            optionsArgs[0] = options;
+
+            var handle = PublishManager.Publish(optionsArgs);
+
+            if (handle != null)
+            {
+                var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+
+                WriteVerbose(String.Format("Publish Job submitted, current state={0}.",publishStatus.State.ToString()));
+            }
         }
     }
 }
