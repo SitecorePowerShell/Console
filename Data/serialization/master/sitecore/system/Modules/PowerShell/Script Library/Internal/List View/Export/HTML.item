@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1197
+content-length: 1198
 
 $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
@@ -29,7 +29,7 @@ $head = '<style>'+
     '</style>'
 $body = "<h1>$infoTitle</h1><p>$infoDescription</p>"
 $format = & ([scriptblock]::Create($exportProperty))
-[psCustomObject]$exportSet | Select-Object -Property $format | ConvertTo-Html -head $head -body $body -Title $title | % { [System.Web.HttpUtility]::HtmlDecode($_) } | Out-File $file
+[psCustomObject]$exportData | Select-Object -Property $format | ConvertTo-Html -head $head -body $body -Title $title | % { [System.Web.HttpUtility]::HtmlDecode($_) } | Out-File $file
 $file
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -41,7 +41,7 @@ WordProcessing/32x32/imp_exp_html.png
 ----version----
 language: en
 version: 1
-revision: 6ccae6be-4053-4b4d-ae97-d1edb122b0b0
+revision: a59fb404-6ae3-4b06-b131-ed7f39036f98
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -56,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6ccae6be-4053-4b4d-ae97-d1edb122b0b0
+a59fb404-6ae3-4b06-b131-ed7f39036f98
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141027T180152:635500297128186093
+20141028T011615:635500557756049375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

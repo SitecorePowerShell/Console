@@ -13,14 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 330
+content-length: 331
 
 $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $file  = "$dataFolder\report-$datetime.xml"
 
 $format = & ([scriptblock]::Create($exportProperty))        
-([psCustomObject]$exportSet | Select-Object -Property $format | ConvertTo-Xml -NoTypeInformation).Save($file);
+([psCustomObject]$exportData | Select-Object -Property $format | ConvertTo-Xml -NoTypeInformation).Save($file);
 $file
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -32,7 +32,7 @@ WordProcessing/32x32/imp_exp_xml_h.png
 ----version----
 language: en
 version: 1
-revision: 3c0b319c-d1d7-4c2c-81f3-6faf7e04edf4
+revision: 1f4cbb0c-c323-4dc8-8d2d-662b1bbc96f8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3c0b319c-d1d7-4c2c-81f3-6faf7e04edf4
+1f4cbb0c-c323-4dc8-8d2d-662b1bbc96f8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141027T181714:635500306349914609
+20141028T011629:635500557899193906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
