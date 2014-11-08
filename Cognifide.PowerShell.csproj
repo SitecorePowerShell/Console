@@ -405,12 +405,16 @@
     <Content Include="Console\Assets\refresh.png" />
     <Content Include="Console\Scripts\ace\ace.js" />
     <Content Include="Console\Scripts\ace\emmet-core\emmet.js" />
+    <Content Include="Console\Scripts\ace\ext-beautify.js" />
+    <Content Include="Console\Scripts\ace\ext-chromevox.js" />
     <Content Include="Console\Scripts\ace\ext-elastic_tabstops_lite.js" />
     <Content Include="Console\Scripts\ace\ext-emmet.js" />
+    <Content Include="Console\Scripts\ace\ext-error_marker.js" />
     <Content Include="Console\Scripts\ace\ext-keybinding_menu.js" />
     <Content Include="Console\Scripts\ace\ext-language_tools.js" />
+    <Content Include="Console\Scripts\ace\ext-linking.js" />
     <Content Include="Console\Scripts\ace\ext-modelist.js" />
-    <Content Include="Console\Scripts\ace\ext-options.js" />
+    <Content Include="Console\Scripts\ace\ext-old_ie.js" />
     <Content Include="Console\Scripts\ace\ext-searchbox.js" />
     <Content Include="Console\Scripts\ace\ext-settings_menu.js" />
     <Content Include="Console\Scripts\ace\ext-spellcheck.js" />
