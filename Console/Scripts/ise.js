@@ -140,6 +140,20 @@ extend(cognifide, 'powershell');
                 }
             },
             readOnly: true
+        }, {
+            name: "fontSizeIncrease",
+            bindKey: {win: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+", mac: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+"},
+            exec: function(editor) { 
+                editor.setFontSize(Math.min(editor.getFontSize() + 1, 25)); 
+            },
+            readOnly: true
+        }, {
+            name: "fontSizeDecrease",
+            bindKey: {win: "Ctrl-Alt-Shift--", mac: "Ctrl-Alt-Shift--"},
+            exec: function(editor) { 
+                editor.setFontSize(Math.max(editor.getFontSize() - 1, 12)); 
+            },
+            readOnly: true
         }];
 
         codeeditor.commands.addCommands(codeeeditorcommands);
