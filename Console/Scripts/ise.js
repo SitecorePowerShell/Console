@@ -142,9 +142,9 @@ extend(cognifide, 'powershell');
             readOnly: true
         }, {
             name: "fontSizeIncrease",
-            bindKey: {win: "Ctrl-Alt-Shift-=", mac: "Ctrl-Alt-Shift-="},
+            bindKey: {win: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+", mac: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+"},
             exec: function(editor) { 
-                editor.setFontSize(Math.min(editor.getFontSize() + 1, 20)); 
+                editor.setFontSize(Math.min(editor.getFontSize() + 1, 25)); 
             },
             readOnly: true
         }, {

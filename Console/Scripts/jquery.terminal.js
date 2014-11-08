@@ -2209,15 +2209,15 @@
                     });
 */
                     return false;
-                } else if (e.which === 189 && e.ctrlKey && e.shiftKey && e.altKey) {
+                } else if ((e.which === 189 || e.which === 109) && e.ctrlKey && e.shiftKey && e.altKey) {
                     // Decrease the font size
                      var fontSize = parseInt($("#terminal").css("font-size"));
                      fontSize = Math.max(fontSize -= 1, 12);
                      $("#terminal").css({"font-size": fontSize + "px"});
-                } else if (e.which === 187 && e.ctrlKey && e.shiftKey && e.altKey) {
+                } else if ((e.which === 187 || e.which === 107) && e.ctrlKey && e.shiftKey && e.altKey) {
                     // Increase the font size
                      var fontSize = parseInt($("#terminal").css("font-size"));
-                     fontSize = Math.min(fontSize += 1, 20);
+                     fontSize = Math.min(fontSize += 1, 25);
                      $("#terminal").css({"font-size": fontSize + "px"});
                 } else if (e.which === 86 && e.ctrlKey) { // CTRL+V
                     self.oneTime(1, function() {
