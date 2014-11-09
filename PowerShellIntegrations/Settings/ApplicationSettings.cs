@@ -12,10 +12,52 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 {
     public class ApplicationSettings
     {
-        public const string SettingsDb = "master";
         public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
         public const string IseSettingsItemAllUsers = "All Users";
         public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
+
+        private static string rulesDb = null;
+        private static string settingsDb = null;
+        private static string scriptLibraryDb = null;
+
+        public static string RulesDb {
+            get
+            {
+                GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
+                return rulesDb;
+            }
+        }
+
+        public static string SettingsDb
+        {
+            get
+            {
+                GetDatabaseName(ref settingsDb, "powershell/workingDatabase/settings");
+                return settingsDb;
+            }
+        }
+
+        public static string ScriptLibraryDb
+        {
+            get
+            {
+                GetDatabaseName(ref scriptLibraryDb, "powershell/workingDatabase/scriptLibrary");
+                return scriptLibraryDb;
+            }
+        }
+
+        private static void GetDatabaseName(ref string databaseName, string settingPath)
+        {
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                databaseName = Factory.GetString(settingPath, false);
+                if (string.IsNullOrEmpty(databaseName))
+                {
+                    databaseName = "master";
+                }
+            }
+        }
+
 
         private static readonly Dictionary<string, ApplicationSettings> instances =
             new Dictionary<string, ApplicationSettings>();
@@ -128,26 +170,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 
         private Item GetSettingsDto()
         {
-            Database coreDb = Factory.GetDatabase(SettingsDb);
-            return coreDb.GetItem(CurrentUserSettingsPath) ?? coreDb.GetItem(AllUsersSettingsPath);
+            Database settingsDb = Factory.GetDatabase(SettingsDb);
+            return settingsDb.GetItem(CurrentUserSettingsPath) ?? settingsDb.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
         {
-            Database currentDb = Factory.GetDatabase(SettingsDb);
+            Database settingsDb = Factory.GetDatabase(SettingsDb);
             string appSettingsPath = AppSettingsPath;
-            Item currentUserItem = currentDb.GetItem(CurrentUserSettingsPath);
+            Item currentUserItem = settingsDb.GetItem(CurrentUserSettingsPath);
             if (currentUserItem == null)
             {
-                Item settingsRootItem = currentDb.GetItem(appSettingsPath);
+                Item settingsRootItem = settingsDb.GetItem(appSettingsPath);
                 if (settingsRootItem == null)
                 {
                     return null;
                 }
-                Item folderTemplateItem = currentDb.GetItem(FolderTemplatePath);
-                Item currentDomainItem = currentDb.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
+                Item folderTemplateItem = settingsDb.GetItem(FolderTemplatePath);
+                Item currentDomainItem = settingsDb.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
                     folderTemplateItem);
-                Item defaultItem = currentDb.GetItem(appSettingsPath + IseSettingsItemAllUsers);
+                Item defaultItem = settingsDb.GetItem(appSettingsPath + IseSettingsItemAllUsers);
                 currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
             }
             return currentUserItem;

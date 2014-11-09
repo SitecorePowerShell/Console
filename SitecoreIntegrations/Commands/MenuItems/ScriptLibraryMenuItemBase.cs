@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -56,7 +58,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             var menuItems = new List<Control>();
 
             GetLibraryMenuItems(context.Items[0], menuItems, "core", ScriptLibraryPath);
-            GetLibraryMenuItems(context.Items[0], menuItems, "master", ScriptLibraryPath);
+            GetLibraryMenuItems(context.Items[0], menuItems, ApplicationSettings.ScriptLibraryDb, ScriptLibraryPath);
 
             return menuItems.ToArray();
         }
@@ -73,7 +75,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             }
             foreach (Item scriptItem in parent.Children)
             {
-                if (!EvaluateRules(scriptItem["ShowRule"], contextItem))
+                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], contextItem))
                 {
                     continue;
                 }
@@ -84,7 +86,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
                 };
-                menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], contextItem);
+                menuItem.Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem);
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {
@@ -125,20 +127,5 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             return string.Empty;
         }
 
-        public static bool EvaluateRules(string strRules, Item contextItem)
-        {
-            if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
-            {
-                return true;
-            }
-            // hacking the rules xml
-            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
-            var ruleContext = new RuleContext
-            {
-                Item = contextItem
-            };
-
-            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
-        }
     }
 }

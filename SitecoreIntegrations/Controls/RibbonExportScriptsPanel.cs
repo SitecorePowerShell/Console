@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -16,33 +18,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-            Item parent = Factory.GetDatabase("master").GetItem(ScriptLibrary.Path + "Internal/List View/Export");
+            Item parent = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ScriptLibrary.Path + "Internal/List View/Export");
 
             foreach (Item scriptItem in parent.Children)
             {
-                if (!EvaluateRules(scriptItem["ShowRule"]))
+                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.CustomData as Item))
                 {
                     continue;
                 }
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"), Translate.Text(scriptItem.DisplayName),
                     scriptItem["__Icon"], string.Empty,
                     string.Format("export:results(scriptDb={0},scriptID={1})", scriptItem.Database.Name, scriptItem.ID),
-                    EvaluateRules(scriptItem["EnableRule"]) && context.Parameters["ScriptRunning"] == "0",
+                    RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item) && context.Parameters["ScriptRunning"] == "0",
                     false);
             }
-        }
-
-        public static bool EvaluateRules(string strRules)
-        {
-            if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
-            {
-                return true;
-            }
-            // hacking the rules xml
-            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
-            var ruleContext = new RuleContext();
-
-            return rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
     }
 }

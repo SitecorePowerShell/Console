@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Linq;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -34,8 +35,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Workflows
 
             Item scriptItem = actionItem.Database.GetItem(new ID(actionItem[ScriptItemFieldNames.Script]));
 
-            if (EvaluateRules(actionItem[ScriptItemFieldNames.EnableRule], dataItem) &&
-                EvaluateRules(scriptItem[ScriptItemFieldNames.EnableRule], dataItem))
+            if (RulesUtils.EvaluateRules(actionItem[ScriptItemFieldNames.EnableRule], dataItem) &&
+                RulesUtils.EvaluateRules(scriptItem[ScriptItemFieldNames.EnableRule], dataItem))
             {
                 var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
                 str.Append("id", dataItem.ID.ToString());
@@ -49,22 +50,5 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Workflows
                     "Shell");
             }
         }
-
-        public static bool EvaluateRules(string strRules, Item contextItem)
-        {
-            if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
-            {
-                return true;
-            }
-            // hacking the rules xml
-            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase("master"), strRules);
-            var ruleContext = new RuleContext
-            {
-                Item = contextItem
-            };
-
-            return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
-        }
-
     }
 }

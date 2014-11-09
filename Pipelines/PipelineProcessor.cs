@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.Pipelines
 
             var libraryId = new ID(Configuration["libraryId"]);
 
-            var db = Factory.GetDatabase("master");
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
             var libraryItem = db.GetItem(libraryId);
             if (!libraryItem.HasChildren) return;
 

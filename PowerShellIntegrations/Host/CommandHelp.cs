@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
@@ -21,7 +22,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 string lastToken = lastPsToken.Content;
                 session.SetVariable("helpFor", lastToken);
                 Item scriptItem =
-                    Database.GetDatabase("master")
+                    Database.GetDatabase(ApplicationSettings.ScriptLibraryDb)
                         .GetItem(ScriptLibrary.Path + "Internal/Context Help/Command Help");
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
                 var sb = new StringBuilder("<div id=\"HelpClose\">x</div>");

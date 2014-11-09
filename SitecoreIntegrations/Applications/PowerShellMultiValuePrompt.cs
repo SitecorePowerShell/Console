@@ -10,6 +10,7 @@ using System.Web.UI.WebControls;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -208,7 +209,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
 
-                string dbName = item == null ? "master" : item.Database.Name;
+                string dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
                 if (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     Multilist multiList = new Multilist
