@@ -1,13 +1,10 @@
 ﻿using System.Globalization;
-using System.Linq;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.Utility;
 using Sitecore;
-using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Rules;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Workflows.Simple;
