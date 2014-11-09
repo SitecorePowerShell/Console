@@ -14,7 +14,7 @@ extend(cognifide, 'powershell');
     $(function () {
         var tips = [
                 "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",
-                "By pressing <strong>Ctrl+Enter</strong> you can see help for the command closest to the left of your cursor.",
+                "You can show help by pressing <strong>Ctrl+Enter</strong> for the closest command to the left of the cursor.",
                 "Your script will start in the location/folder picked by the <strong>Content Item</strong> dropdown.",
                 "You can change the color of the results dialog shown to your script users using the <strong>Console</strong> ribbon button.",
                 "If you save your script in the <strong>Content Editor Context Menu</strong> it will automatically show as a context menu option for items that users Right Click in the tree and will start in the location of that item.",
@@ -24,7 +24,12 @@ extend(cognifide, 'powershell');
                 "You can execute your script with the <strong>Ctrl+E</strong> hotkey.",
                 "You can abort a script running in ISE with the <strong>Ctrl+Shift+E</strong> hotkey.",
                 "You can download files from the Website and Data folders using the <strong>Get-File</strong> commandlet.",
-                "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets."
+                "You can show Sitecore dialogs from your scripts using the <strong>Show-*</strong> commandlets.",
+                "You can increase the font size using the <strong>Ctrl+Alt+Shift++</strong> (plus) or <strong>Ctrl+Alt+Shift+=</strong> (equals) hotkey.",
+                "You can decrease the font size using the <strong>Ctrl+Alt+Shift+-</strong> (minus) hotkey.",
+                "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
+                "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
+                "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey."
         ];
 
         window.parent.focus();
