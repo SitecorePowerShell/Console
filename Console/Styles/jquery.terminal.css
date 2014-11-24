@@ -29,7 +29,7 @@
 .terminal .terminal-output div div, .cmd, .terminal .cmd span, .terminal .cmd div {
     background-color: #012456;
     color: #fff;
-    font-family: monospace;
+    font-family: 'Source Code Pro',monospace;
 }
 
 .terminal .cmd span { float: left; }

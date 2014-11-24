@@ -56,6 +56,9 @@ extend(cognifide, 'powershell');
         var codeeditor = ace.edit("CodeEditor");
         codeeditor.setTheme("ace/theme/powershellise");
         codeeditor.session.setMode("ace/mode/powershell");
+        codeeditor.setOptions({
+        	fontFamily: "source code pro"
+        });
         codeeditor.setShowPrintMargin(false);
         codeeditor.session.setValue(editor.val());
         codeeditor.session.on('change', function () {

@@ -9,6 +9,7 @@
       <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/ise.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src='/Console/Styles/fonts.css' DeviceDependant="true" runat="server"/>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellIse,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>

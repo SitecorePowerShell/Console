@@ -3,6 +3,7 @@
   <PowerShellConsole>
     <FormPage>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellConsole,Cognifide.PowerShell" />
+      <Stylesheet Src='/Console/Styles/fonts.css' DeviceDependant="true" runat="server"/>
       <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/jquery.terminal.css" DeviceDependant="true" runat="server" />
       <Script type="text/javascript" src="/Console/Scripts/jquery-1.10.2.min.js"> </Script>
