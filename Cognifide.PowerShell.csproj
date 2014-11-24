@@ -121,6 +121,8 @@
     <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Gutters\GutterStatusRenderer.cs" />
+    <Compile Include="PowerShellIntegrations\Modules\ModuleManager.cs" />
     <Compile Include="Utility\RulesUtils.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Pipelines\LoggedIn\LoggedInScript.cs" />
