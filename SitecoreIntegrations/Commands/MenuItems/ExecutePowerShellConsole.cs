@@ -27,11 +27,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 
         public override CommandState QueryState(CommandContext context)
         {
-            if (!PowerShellUiUserOptions.ShowContextMenuTerminal)
-            {
-                return CommandState.Hidden;
-            }
-
             User user = Context.User;
             if (!user.IsAdministrator &&
                 !user.IsInRole(Role.FromName("sitecore\\Sitecore Client Developing")))

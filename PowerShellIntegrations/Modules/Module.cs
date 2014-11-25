@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.sitecore.shell.ClientBin.Dashboard;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 {
@@ -10,10 +12,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public string Database { get; private set; }
         public string Path { get; private set; }
         public ID ID { get; private set; }
-        public SortedList<string, ID> IntegrationPoints { get; private set; }
+        public SortedList<string, ID> Features { get; private set; }
 
         public string Description { get; private set; }
-        public string Features { get; private set; }
         public string WhatsNew { get; private set; }
         public string History { get; private set; }
         public string Version { get; private set; }
@@ -34,7 +35,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             if (Enabled)
             {
                 Description = moduleItem["Description"];
-                Features = moduleItem["Features"];
                 WhatsNew = moduleItem["WhatsNew"];
                 History = moduleItem["History"];
                 Version = moduleItem["Version"];
@@ -45,7 +45,25 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 License = moduleItem["License"];
                 PublishedBy = moduleItem["PublishedBy"];
                 Category = moduleItem["Category"];
+                Features = new SortedList<string, ID>(IntegrationPoints.Libraries.Count);
+                foreach (var integrationPoint in IntegrationPoints.Libraries)
+                {
+                    Item featureItem = moduleItem.Axes.GetDescendant(integrationPoint.Value);
+                    if (featureItem != null)
+                    {
+                        Features.Add(integrationPoint.Key, featureItem.ID);
+                    }
+                }
             }
+        }
+
+        public Item GetFeatureRoot(string integrationPoint)
+        {
+            if (Features.Keys.Contains(integrationPoint))
+            {
+                return Factory.GetDatabase(Database).GetItem(Features[integrationPoint]);
+            }
+            return null;
         }
     }
 }

@@ -329,11 +329,6 @@
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="SitecoreIntegrations\Commands\AbortQueryState.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ContentEditorContextMenuItem.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\MenuItems\StartMenuScriptLibraryMenuItem.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ToggleContentEditorIntegrationBase.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ToggleContextTerminal.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\ToggleContextMenu.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
     <Compile Include="SitecoreIntegrations\Controls\CompleteMessage.cs" />
     <Compile Include="SitecoreIntegrations\Controls\PSCheckList.cs" />
@@ -343,7 +338,6 @@
     <Compile Include="SitecoreIntegrations\Controls\RibbonExportScriptsPanel.cs" />
     <Compile Include="SitecoreIntegrations\Controls\SpeJobMonitor.cs" />
     <Compile Include="SitecoreIntegrations\Controls\UserPicker.cs" />
-    <Compile Include="SitecoreIntegrations\PowerShellUiUserOptions.cs" />
     <Compile Include="SitecoreIntegrations\Processors\BaseScriptedDataSource.cs" />
     <Compile Include="SitecoreIntegrations\Processors\RewriteUrl.cs" />
     <Compile Include="SitecoreIntegrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
@@ -360,7 +354,7 @@
     <Compile Include="SitecoreIntegrations\Commands\ItemDefinedQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\EditPowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ExecuteFieldEditor.cs" />
-    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ScriptLibraryMenuItemBase.cs" />
+    <Compile Include="SitecoreIntegrations\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\ExecutePowerShellScript.cs" />
     <Compile Include="SitecoreIntegrations\Rules\PowerShellListViewNameMatch.cs" />

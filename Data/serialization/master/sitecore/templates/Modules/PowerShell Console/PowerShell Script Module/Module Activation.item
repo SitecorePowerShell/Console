@@ -1,18 +1,32 @@
 ----item----
 version: 1
-id: {DDAC6EEB-631F-487D-B2EC-001D8710A232}
-database: core
-path: /sitecore/templates/Modules
-parent: {3C1715FE-6A13-4FCF-845F-DE308BA9741D}
-name: Modules
+id: {BF7E97FE-CD06-4893-B69F-A6A16290994F}
+database: master
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/Module Activation
+parent: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
+name: Module Activation
 master: {00000000-0000-0000-0000-000000000000}
-template: {239F9CF4-E5A0-44E0-B342-0F32CD4C6D8B}
-templatekey: Node
+template: {E269FBB5-3750-427A-9149-7AA950B49301}
+templatekey: Template section
 
+----field----
+field: {E2E2B75D-A2F7-4075-BDE2-D13306E9E350}
+name: Collapsed by Default
+key: collapsed by default
+content-length: 1
+
+1
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Control/32x32/message_box.png
 ----version----
 language: en
 version: 1
-revision: 55579c39-9ade-49b2-bb05-c48970005f25
+revision: cf386f77-cee0-417b-a9d3-f9da24ceb21f
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -27,7 +41,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20140517T144600
+20111128T134446
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -41,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-55579c39-9ade-49b2-bb05-c48970005f25
+cf386f77-cee0-417b-a9d3-f9da24ceb21f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140517T144600:635359347602597698
+20141125T030229:635524813495975780
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

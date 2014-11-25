@@ -1,32 +1,25 @@
 ----item----
 version: 1
-id: {A3572733-5062-43E9-A447-54698BC1C637}
+id: {69A36B24-46F9-43FF-A6EC-6C598F8371A0}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library
-parent: {DADC7C07-2606-4F1C-98C6-FB8162E55257}
-name: Script Library
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/__Standard Values
+parent: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
+name: __Standard Values
 master: {00000000-0000-0000-0000-000000000000}
-template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
-templatekey: PowerShell Script Library
+template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
+templatekey: PowerShell Script Module
 
-----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 24
-
-powershell/32x32/ise.png
 ----field----
 field: {1172F251-DAD4-4EFB-A329-0C63500E4F1E}
 name: __Masters
 key: __masters
-content-length: 116
+content-length: 77
 
-{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}|{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}|{6D82FCD8-C379-443C-97A9-C6423C71E7D5}
+{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}|{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 ----version----
 language: en
 version: 1
-revision: b7d7d2bf-f6e4-4e3b-bb26-f9fc02897b32
+revision: ecdc41ae-e56a-497b-b66c-e509c7aaa5ee
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -34,7 +27,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20121128T205245
+20141101T105127
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b7d7d2bf-f6e4-4e3b-bb26-f9fc02897b32
+ecdc41ae-e56a-497b-b66c-e509c7aaa5ee
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141125T020328:635524778085760936
+20141125T020508:635524779081776561
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

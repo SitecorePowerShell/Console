@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.PowerShellIntegrations.Modules;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
@@ -14,11 +16,22 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
 {
     [Serializable]
-    public abstract class ScriptLibraryMenuItemBase : Command
+    public class ScriptLibraryMenuItem : Command
     {
         public override CommandState QueryState(CommandContext context)
         {
-            return PowerShellUiUserOptions.ShowContextMenuScripts ? CommandState.Enabled : CommandState.Hidden;
+            return CommandState.Enabled;
+        }
+
+        public string IntegrationPoint { get; protected set; }
+
+        public void SetupIntegrationPoint(CommandContext context)
+        {
+            Assert.IsNotNull(context, "Context is null.");
+            if (!string.IsNullOrEmpty(context.Parameters["integrationPoint"]))
+            {
+                IntegrationPoint = context.Parameters["integrationPoint"];
+            }
         }
 
         public override void Execute(CommandContext context)
@@ -27,12 +40,25 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             var subMenu = new ContextMenu();
             var menuItems = new List<Control>();
             string menuItemId = context.Parameters["menuItemId"];
+            SetupIntegrationPoint(context);
             Item contextItem = context.Items.Length == 1
                 ? context.Items[0]
                 : string.IsNullOrEmpty(context.Parameters["db"]) || string.IsNullOrEmpty(context.Parameters["id"])
                     ? null
                     : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
-            GetLibraryMenuItems(contextItem, menuItems, context.Parameters["scriptDB"], context.Parameters["scriptPath"]);
+            if (string.IsNullOrEmpty(IntegrationPoint))
+            {
+                Item submenu =
+                    Factory.GetDatabase(context.Parameters["scriptDB"]).GetItem(context.Parameters["scriptPath"]);
+                GetLibraryMenuItems(contextItem, menuItems, submenu);
+            }
+            else
+            {
+                foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoint))
+                {
+                    GetLibraryMenuItems(contextItem, menuItems, root);
+                }
+            }
 
             foreach (var item in menuItems)
             {
@@ -55,20 +81,20 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             if (context.Items.Length != 1)
                 return null;
 
+            SetupIntegrationPoint(context);
+            
             var menuItems = new List<Control>();
 
-            GetLibraryMenuItems(context.Items[0], menuItems, "core", ScriptLibraryPath);
-            GetLibraryMenuItems(context.Items[0], menuItems, ApplicationSettings.ScriptLibraryDb, ScriptLibraryPath);
+            foreach (var root in ModuleManager.GetFeatureRoots("contentEditorContextMenu"))
+            {
+                GetLibraryMenuItems(context.Items[0], menuItems, root);
+            }
 
             return menuItems.ToArray();
         }
 
-        public abstract string ScriptLibraryPath { get; }
-
-        private static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, string scriptDb,
-            string scriptLibPath)
+        private static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)
         {
-            Item parent = Factory.GetDatabase(scriptDb).GetItem(scriptLibPath);
             if (parent == null)
             {
                 return;

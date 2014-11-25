@@ -12,9 +12,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 {
     public static class ModuleManager
     {
-        private static SortedList<string, Module> modules = null;
+        private static List<Module> modules;
 
-        public static SortedList<string, Module> Modules
+        public static List<Module> Modules
         {
             get
             {
@@ -22,21 +22,29 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 {
                     Item masterLibrary = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ScriptLibrary.Path);
                     Item coreLibrary = Factory.GetDatabase("core").GetItem(ScriptLibrary.Path);
-                    modules = new SortedList<string, Module>
+                    modules = new List<Module>
                     {
-                        {ApplicationSettings.ScriptLibraryDb+":root", new Module(masterLibrary,true)},
-                        {"core:root", new Module(coreLibrary,true)}
+                        new Module(masterLibrary,true),
+                        new Module(coreLibrary,true)
                     };
                     foreach (Item item in masterLibrary.GetChildren())
                     {
                         if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
                         {
-                            modules.Add(item.Database.Name+":"+item.Name, new Module(item,false));
+                            modules.Add(new Module(item,false));
                         }
                     }
                 }
                 return modules;
             }
+        }
+
+        public static List<Item> GetFeatureRoots(string featureName)
+        {
+            return
+                Modules.Select(module => module.GetFeatureRoot(featureName))
+                    .Where(featureRoot => featureRoot != null)
+                    .ToList();
         }
     }
 }

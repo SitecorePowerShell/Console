@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.PowerShellIntegrations.Modules;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.Utility;
 using Sitecore.Collections;
@@ -23,26 +24,27 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             string viewName = context.Parameters["viewName"];
             if (!string.IsNullOrEmpty(typeName))
             {
-                Item scriptLibrary =
-                    Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)
-                        .GetItem(ScriptLibrary.Path + "Internal/List View/Ribbon/" + typeName);
-
-                if (scriptLibrary != null)
+                foreach (Item parent in ModuleManager.GetFeatureRoots("listViewRibbon"))
                 {
-                    foreach (Item scriptItem in scriptLibrary.Children)
+                    Item scriptLibrary = parent.Axes.GetDescendant(typeName);
+
+                    if (scriptLibrary != null)
                     {
-                        if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.CustomData as Item, viewName))
+                        foreach (Item scriptItem in scriptLibrary.Children)
                         {
-                            continue;
+                            if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.CustomData as Item, viewName))
+                            {
+                                continue;
+                            }
+                            RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
+                                Translate.Text(scriptItem.DisplayName),
+                                scriptItem["__Icon"], string.Empty,
+                                string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
+                                    scriptItem.ID),
+                                RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item, viewName) &&
+                                context.Parameters["ScriptRunning"] == "0",
+                                false);
                         }
-                        RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
-                            Translate.Text(scriptItem.DisplayName),
-                            scriptItem["__Icon"], string.Empty,
-                            string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
-                                scriptItem.ID),
-                            RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item, viewName) &&
-                                context.Parameters["ScriptRunning"] == "0", 
-                            false);
                     }
                 }
             }

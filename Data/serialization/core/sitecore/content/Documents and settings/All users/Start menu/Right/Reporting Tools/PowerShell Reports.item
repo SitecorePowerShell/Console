@@ -20,9 +20,9 @@ PowerShell/32x32/Script.png
 field: {6BA1018F-9794-4798-963E-601D413B9CA3}
 name: Message
 key: message
-content-length: 163
+content-length: 111
 
-powershell:startmenuaction(scriptDB=master,scriptPath=/sitecore/system/Modules/PowerShell/Script Library/Reports,menuItemId={8803C527-14AF-4750-9F5D-44770AEC7805})
+powershell:startmenuaction(integrationPoint=startMenuReports,menuItemId={8803C527-14AF-4750-9F5D-44770AEC7805})
 ----field----
 field: {F7D48A55-2158-4F02-9356-756654404F73}
 name: __Standard values
@@ -304,7 +304,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 9a010de5-7a90-401b-b3c0-78b522b10c2e
+revision: 541f6cf9-9c86-462d-a7a9-3271c49b2659
 
 ----field----
 field: {326CD362-CB1C-4E81-B5F2-5EFA940351F7}
@@ -389,14 +389,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9a010de5-7a90-401b-b3c0-78b522b10c2e
+541f6cf9-9c86-462d-a7a9-3271c49b2659
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130916T121626:635149305868226797
+20141125T185254:635525383744754218
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
