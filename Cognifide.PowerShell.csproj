@@ -451,7 +451,6 @@
     <Content Include="Console\Styles\Console.css" />
     <Content Include="Console\Styles\ise.css" />
     <Content Include="Console\Styles\ListView.css" />
-    <Content Include="Console\Styles\fonts.css" />
     <Content Include="Console\Styles\VariablePrompt.css" />
     <Content Include="Console\Styles\jquery.qtip.min.css" />
     <Content Include="Console\Styles\jquery.terminal.css" />

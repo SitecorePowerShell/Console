@@ -51,8 +51,8 @@ html {
     width: 99%;
 }
 
-.pre, pre {
-    font-family: 'Source Code Pro',"Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+.pre {
+    font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
     white-space: pre-wrap;
 }
 
