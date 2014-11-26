@@ -36,6 +36,7 @@ namespace Cognifide.PowerShell.Pipelines
 
                         try
                         {
+                            session.SetExecutedScript(scriptItem);
                             session.ExecuteScriptPart(script, false);
                         }
                         catch (Exception ex)

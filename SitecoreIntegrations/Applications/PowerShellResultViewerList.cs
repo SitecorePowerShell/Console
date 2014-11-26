@@ -295,6 +295,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
                 SetVariables(session);
+                session.SetExecutedScript(scriptItem);
                 string result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }
@@ -401,6 +402,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                 : string.Empty;
             SetVariables(scriptSession);
+            scriptSession.SetExecutedScript(scriptItem);
 
             ScriptSessionId = scriptSession.ID;
 

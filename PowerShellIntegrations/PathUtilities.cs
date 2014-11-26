@@ -43,5 +43,14 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
             }
             return item;
         }
+
+        public static string GetItemPsPath(Item item)
+        {
+            if (item == null)
+            {
+                return string.Empty;
+            }
+            return string.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+        }
     }
 }

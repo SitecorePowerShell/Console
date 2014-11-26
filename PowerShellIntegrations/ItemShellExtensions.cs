@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
             {"FullPath", "$this.Paths.FullPath"},
             {"MediaPath", "$this.Paths.MediaPath"},
             {"ContentPath", "$this.Paths.ContentPath"},
-            {"ProviderPath", "\"$($this.Database.Name):$($this.Paths.Path.Substring(9).Replace('/','\\'))\""}
+            {"ProviderPath", "[Cognifide.PowerShell.PowerShellIntegrations.PathUtilities]::GetItemPsPath($this)"}
         };
 
         //internal static PSObject GetPSObject(CmdletProvider provider, Item item)

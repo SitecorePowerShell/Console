@@ -16,9 +16,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
         protected static bool IsScripted(string dataSource)
         {
             return dataSource != null &&
-                   (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) > -1 ||
-                    dataSource.IndexOf(ScriptLibrary.Path,
-                        StringComparison.OrdinalIgnoreCase) > -1);
+                   (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) == 0 &&
+                    dataSource.IndexOf(ScriptLibrary.Path, StringComparison.OrdinalIgnoreCase) > -1);
         }
 
         protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)

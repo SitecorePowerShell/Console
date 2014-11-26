@@ -266,7 +266,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
                     Folder = item.ID.ToString(),
                     Language = item.Language,
-                    Version = item.Version
+                    Version = item.Version,
                 };
                 DataContextPanel.Controls.Add(dataContext);
 
@@ -276,6 +276,14 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Value = item.ID.ToString(),
                     DataContext = dataContext.ID
                 };
+                string source = variable["Source"] as string;
+                if (source != null)
+                {
+                    string root = StringUtil.ExtractParameter("DataSource", source);
+                    string db = StringUtil.ExtractParameter("DataSource", source);
+                    dataContext.Root = string.IsNullOrEmpty(root) ? dataContext.Root : root;
+                    dataContext.Database = string.IsNullOrEmpty(db) ? dataContext.Database : db;
+                }
                 treePicker.Class += " treePicker";
                 return treePicker;
             }

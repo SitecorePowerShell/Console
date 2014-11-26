@@ -75,6 +75,18 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             set { ServerProperties["ItemDb"] = value; }
         }
 
+        public string ScriptId
+        {
+            get { return StringUtil.GetString(ServerProperties["ScriptId"]); }
+            set { ServerProperties["ScriptId"] = value; }
+        }
+
+        public string ScriptDb
+        {
+            get { return StringUtil.GetString(ServerProperties["ScriptDb"]); }
+            set { ServerProperties["ScriptDb"] = value; }
+        }
+
         public string ItemLang
         {
             get { return StringUtil.GetString(ServerProperties["ItemLang"]); }
@@ -111,10 +123,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 ItemLang = WebUtil.GetQueryString("lang");
                 ItemVer = WebUtil.GetQueryString("ver");
 
-                string scriptId = WebUtil.GetQueryString("scriptId");
-                string scriptDb = WebUtil.GetQueryString("scriptDb");
+                ScriptId = WebUtil.GetQueryString("scriptId");
+                ScriptDb = WebUtil.GetQueryString("scriptDb");
 
-                Item scriptItem = Factory.GetDatabase(scriptDb).GetItem(new ID(scriptId));
+                Item scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
                 scriptItem.Fields.ReadAll();
                 Icon.Src = scriptItem.Appearance.Icon;
 
@@ -160,6 +172,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 scriptSession.Settings.HostWidth,
                 scriptSession.Settings.Prescript);
 
+            scriptSession.SetExecutedScript(ScriptDb,ScriptId);
             var parameters = new object[]
             {
                 scriptSession,

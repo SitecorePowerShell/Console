@@ -51,6 +51,8 @@ namespace Cognifide.PowerShell.Console.Services
                 if (item != null)
                     session.SetItemLocationContext(item);
 
+                session.SetExecutedScript(scriptItem);
+
                 context.Response.ContentType = "text/plain";
 
                 foreach (var param in HttpContext.Current.Request.Params.AllKeys)

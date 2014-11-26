@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -9,9 +8,12 @@ using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
+using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
+using Version = System.Version;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -355,6 +357,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
             SetContextItem(item);
             var contextScript = GetDataContextSwitch(item);
             ExecuteScriptPart(contextScript);
+        }
+
+
+        public void SetExecutedScript(string database, string path)
+        {
+            if (!string.IsNullOrEmpty(database) && !string.IsNullOrEmpty(path))
+            {
+                Item scriptItem = Factory.GetDatabase(database).GetItem(new ID(path));
+                SetExecutedScript(scriptItem);
+            }
+        }
+
+        public void SetExecutedScript(Item scriptItem)
+        {
+            if (scriptItem != null)
+            {
+                SetVariable("PSScriptRoot", PathUtilities.GetItemPsPath(scriptItem.Parent));
+                SetVariable("PSCommandPath", PathUtilities.GetItemPsPath(scriptItem));
+                SetVariable("PSScript", scriptItem);
+            }
         }
     }
 }

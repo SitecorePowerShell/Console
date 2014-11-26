@@ -20,8 +20,11 @@ namespace Cognifide.PowerShell.Gutters
             if (!Parameters.ContainsKey("scriptId")) return null;
 
             var scriptId = new ID(Parameters["scriptId"]);
-
-            var db = Factory.GetDatabase("master");
+            var scriptDb = string.IsNullOrEmpty(Parameters["scriptDb"])
+                ? ApplicationSettings.ScriptLibraryDb
+                : Parameters["scriptId"];
+            
+            var db = Factory.GetDatabase(scriptDb);
             var scriptItem = db.GetItem(scriptId);
 
             // If a script is configured but does not exist then return.
@@ -35,7 +38,11 @@ namespace Cognifide.PowerShell.Gutters
                     : String.Empty;
 
                 // We will need the item variable in the script.
-                session.SetVariable("item", item);
+                session.SetContextItem(item);
+                session.SetItemLocationContext(item);
+
+                //let the session know which script is being executed
+                session.SetExecutedScript(scriptItem);
 
                 try
                 {

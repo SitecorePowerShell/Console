@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
                         {
                             session.SetItemLocationContext(item);
                         }
-
+                        session.SetExecutedScript(scriptItem);
                         session.SetVariable("eventArgs", eventArgs);
                         string script = scriptItem["Script"];
                         if (!String.IsNullOrEmpty(script))

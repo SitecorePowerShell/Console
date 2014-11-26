@@ -20,13 +20,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             {
                 if (modules == null)
                 {
+                    modules = new List<Module>();
                     Item masterLibrary = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ScriptLibrary.Path);
-                    Item coreLibrary = Factory.GetDatabase("core").GetItem(ScriptLibrary.Path);
-                    modules = new List<Module>
+                    if (masterLibrary != null)
                     {
-                        new Module(masterLibrary,true),
-                        new Module(coreLibrary,true)
-                    };
+                        modules.Add(new Module(masterLibrary,true));
+                    }
+
+                    Item coreLibrary = Factory.GetDatabase("core").GetItem(ScriptLibrary.Path);
+                    if (coreLibrary  != null)
+                    {
+                        modules.Add(new Module(coreLibrary,true));
+                    }
                     foreach (Item item in masterLibrary.GetChildren())
                     {
                         if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))

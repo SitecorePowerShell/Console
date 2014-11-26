@@ -403,6 +403,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 {
                     scriptSession.ExecuteScriptPart(Settings.Prescript);
                     scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                    scriptSession.SetExecutedScript(Client.ContentDatabase.Name, ScriptItemId);
                     scriptSession.ExecuteScriptPart(Editor.Value);
 
                     if (scriptSession.Output != null)
@@ -435,7 +436,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var scriptSession = new ScriptSession(Settings.ApplicationName);
             scriptSession.SetItemLocationContext(DataContext.CurrentItem);
-
+            scriptSession.SetExecutedScript(Client.ContentDatabase.Name, ScriptItemId);
             var parameters = new object[]
             {
                 scriptSession,
@@ -476,7 +477,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             }
 
             try
-            {
+            {                
                 scriptSession.ExecuteScriptPart(Settings.Prescript);
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 var output = new StringBuilder(10240);
