@@ -24,9 +24,9 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
             string viewName = context.Parameters["viewName"];
             if (!string.IsNullOrEmpty(typeName))
             {
-                foreach (Item parent in ModuleManager.GetFeatureRoots("listViewRibbon"))
+                foreach (Item parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewRibbonFeature))
                 {
-                    Item scriptLibrary = parent.Axes.GetDescendant(typeName);
+                    Item scriptLibrary = parent.Paths.GetSubItem(typeName);
 
                     if (scriptLibrary != null)
                     {

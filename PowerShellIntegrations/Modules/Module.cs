@@ -8,6 +8,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 {
     public class Module
     {
+        public bool AlwaysEnabled { get; private set; }
         public bool Enabled { get; private set; }
         public string Database { get; private set; }
         public string Path { get; private set; }
@@ -28,10 +29,18 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 
         public Module(Item moduleItem, bool alwaysEnabled)
         {
-            Enabled = alwaysEnabled || moduleItem["Enabled"] == "1";
-            Database = moduleItem.Database.Name;
-            Path = moduleItem.Paths.Path;
+            AlwaysEnabled = alwaysEnabled;
             ID = moduleItem.ID;
+            Database = moduleItem.Database.Name;
+            Update(moduleItem);
+        }
+
+
+        private void Update(Item moduleItem)
+        {
+            Path = moduleItem.Paths.Path;
+            Enabled = AlwaysEnabled || moduleItem["Enabled"] == "1";
+            Features = new SortedList<string, ID>(IntegrationPoints.Libraries.Count);
             if (Enabled)
             {
                 Description = moduleItem["Description"];
@@ -45,10 +54,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 License = moduleItem["License"];
                 PublishedBy = moduleItem["PublishedBy"];
                 Category = moduleItem["Category"];
-                Features = new SortedList<string, ID>(IntegrationPoints.Libraries.Count);
                 foreach (var integrationPoint in IntegrationPoints.Libraries)
                 {
-                    Item featureItem = moduleItem.Axes.GetDescendant(integrationPoint.Value);
+                    Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value);
                     if (featureItem != null)
                     {
                         Features.Add(integrationPoint.Key, featureItem.ID);
@@ -64,6 +72,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 return Factory.GetDatabase(Database).GetItem(Features[integrationPoint]);
             }
             return null;
+        }
+
+        public void Invalidate()
+        {
+            Update(Factory.GetDatabase(Database).GetItem(ID));
         }
     }
 }

@@ -85,7 +85,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             
             var menuItems = new List<Control>();
 
-            foreach (var root in ModuleManager.GetFeatureRoots("contentEditorContextMenu"))
+            foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.ContentEditorContextMenuFeature))
             {
                 GetLibraryMenuItems(context.Items[0], menuItems, root);
             }

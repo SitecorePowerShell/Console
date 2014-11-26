@@ -125,6 +125,7 @@
     <Compile Include="PowerShellIntegrations\Modules\IntegrationPoints.cs" />
     <Compile Include="PowerShellIntegrations\Modules\Module.cs" />
     <Compile Include="PowerShellIntegrations\Modules\ModuleManager.cs" />
+    <Compile Include="PowerShellIntegrations\Modules\ModuleMonitor.cs" />
     <Compile Include="Utility\RulesUtils.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Pipelines\LoggedIn\LoggedInScript.cs" />

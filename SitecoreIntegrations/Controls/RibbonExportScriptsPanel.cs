@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Controls
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
 
-            foreach (Item parent in ModuleManager.GetFeatureRoots("listViewExport"))
+            foreach (Item parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature))
             {
                 foreach (Item scriptItem in parent.Children)
                 {

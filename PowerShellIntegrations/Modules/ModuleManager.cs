@@ -41,10 +41,29 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 
         public static List<Item> GetFeatureRoots(string featureName)
         {
-            return
-                Modules.Select(module => module.GetFeatureRoot(featureName))
-                    .Where(featureRoot => featureRoot != null)
-                    .ToList();
+            List<Item> list = new List<Item>();
+            foreach (Module module in Modules)
+            {
+                Item featureRoot = module.GetFeatureRoot(featureName);
+                if (featureRoot != null) list.Add(featureRoot);
+            }
+            return list;
+        }
+
+        public static void Invalidate(Item item)
+        {
+            modules = null;
+/*
+            foreach (var module in Modules)
+            {
+                if (module.Database != item.Database.Name &&
+                    (item.Paths.Path.IndexOf(module.Path, StringComparison.InvariantCultureIgnoreCase) == 0) ||
+                    (item.ID == module.ID))
+                {
+                    module.Invalidate();
+                }
+            }
+*/
         }
     }
 }
