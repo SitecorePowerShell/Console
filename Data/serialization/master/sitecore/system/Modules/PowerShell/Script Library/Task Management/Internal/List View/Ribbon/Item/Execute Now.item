@@ -1,0 +1,77 @@
+----item----
+version: 1
+id: {F738CE8E-F56B-479C-A6D0-5FEB1A94DECC}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Internal/List View/Ribbon/Item/Execute Now
+parent: {4D8AF2C7-1AE4-409E-B0D5-10500DED0FDF}
+name: Execute Now
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 280
+
+<ruleset>
+  <rule uid="{3EA69D97-550F-4B56-829E-E1C0EB3B4198}">
+    <conditions>
+      <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="19F52AC918784F01AF97545F4FA0BC9A" templateid="{70244923-FA84-477C-8CBD-62F39642C42B}" />
+    </conditions>
+  </rule>
+</ruleset>
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 325
+
+foreach($sheduleItem in $selectedData)
+{
+    $shedule = New-Object  -TypeName "Sitecore.Tasks.ScheduleItem" -ArgumentList $sheduleItem 
+    $shedule.Execute();
+}
+Import-Function "Edit-TaskSchedule"
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } | Update-ListView
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+People/16x16/stopwatch_run.png
+----version----
+language: en
+version: 1
+revision: c98cfc64-32bb-43d8-9b04-94c4badc2238
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130916T144700
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+c98cfc64-32bb-43d8-9b04-94c4badc2238
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141126T025512:635525673122156562
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

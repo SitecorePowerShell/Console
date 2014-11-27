@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3110
+content-length: 3111
 
 $scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
 $controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
@@ -71,7 +71,7 @@ Get-Childitem $controlPanelPath | ForEach-Object {
         }
     }
 }
-Close-Window
+#Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -82,7 +82,7 @@ Applications/16x16/preferences.png
 ----version----
 language: en
 version: 1
-revision: 8561f76a-77e2-4533-975e-9e3d291c6f94
+revision: 8a06bd41-fc5f-4e16-adb1-31386f748e17
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8561f76a-77e2-4533-975e-9e3d291c6f94
+8a06bd41-fc5f-4e16-adb1-31386f748e17
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141126T121808:635526010888313593
+20141127T114357:635526854377150547
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

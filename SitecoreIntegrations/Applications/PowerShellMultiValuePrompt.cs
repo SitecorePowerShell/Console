@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;
 using Sitecore;
 using Sitecore.Configuration;
@@ -255,14 +256,22 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var item = (Item) value;
+                string source = variable["Source"] as string;
+                string sourceDB = string.IsNullOrEmpty(source)
+                    ? Sitecore.Context.ContentDatabase.Name
+                    : StringUtil.ExtractParameter("databasename", source);
+                string root = variable["Root"] as string;
+                string sourceRoot = string.IsNullOrEmpty(source)
+                    ? "/sitecore"
+                    : StringUtil.ExtractParameter("DataSource", source);
                 var dataContext = new DataContext
                 {
                     DefaultItem = item.Paths.Path,
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
+                    Parameters = string.IsNullOrEmpty(source) ? "databasename=" + item.Database.Name : source,
                     DataViewName = "Master",
-                    Root = variable["Root"] as string ?? "/sitecore",
-                    Parameters = "databasename=" + item.Database.Name,
-                    Database = item.Database.Name,
+                    Root = string.IsNullOrEmpty(root) ? sourceRoot : root,
+                    Database = item != null ? item.Database.Name : sourceDB,
                     Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
                     Folder = item.ID.ToString(),
                     Language = item.Language,
@@ -276,14 +285,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                     Value = item.ID.ToString(),
                     DataContext = dataContext.ID
                 };
-                string source = variable["Source"] as string;
+/*
                 if (source != null)
                 {
                     string root = StringUtil.ExtractParameter("DataSource", source);
-                    string db = StringUtil.ExtractParameter("DataSource", source);
+                    string db = StringUtil.ExtractParameter("DatabaseName", source);
                     dataContext.Root = string.IsNullOrEmpty(root) ? dataContext.Root : root;
                     dataContext.Database = string.IsNullOrEmpty(db) ? dataContext.Database : db;
                 }
+*/
                 treePicker.Class += " treePicker";
                 return treePicker;
             }

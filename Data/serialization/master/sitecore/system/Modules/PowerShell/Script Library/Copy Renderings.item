@@ -20,9 +20,67 @@ content-length: 1
 field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
 name: Description
 key: description
-content-length: 0
+content-length: 226
 
+Allows for copying renderings from one item to another.
 
+To use the functionality right click on an item in the Content Editor tree and from the Scripts menu use the "Layout" submenu to copy and paste renderings between items.
+----field----
+field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
+name: Version
+key: version
+content-length: 3
+
+1.0
+----field----
+field: {53996CFF-BB46-498C-AE54-5D8C6AA7B6A4}
+name: Author
+key: author
+content-length: 16
+
+Adam Najmanowicz
+----field----
+field: {8DBAF611-51C6-4A44-A0DB-92C3DC6DDAC9}
+name: Url
+key: url
+content-length: 28
+
+http://blog.najmanowicz.com/
+----field----
+field: {BF45C4B6-CC60-4FEC-B6CE-E260C306FECA}
+name: Email
+key: email
+content-length: 20
+
+adam@najmanowicz.com
+----field----
+field: {37CCA7C1-4B3D-4113-8218-BF621C8F8D9A}
+name: Support
+key: support
+content-length: 52
+
+https://github.com/SitecorePowerShell/Console/issues
+----field----
+field: {5337BB18-2B6A-4326-BD7E-E00010BEC356}
+name: License
+key: license
+content-length: 48
+
+MIT License - http://opensource.org/licenses/MIT
+----field----
+field: {E1D6475E-58E6-4A11-8BEA-2E58B6F834F6}
+name: Published by
+key: published by
+content-length: 9
+
+Cognifide
+----field----
+field: {CC3C200C-921A-4CA8-B5F7-FF8F3AA6EBD2}
+name: Category
+key: category
+content-length: 9
+
+Authoring
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -33,7 +91,7 @@ Software/32x32/jar_bean.png
 ----version----
 language: en
 version: 1
-revision: 07a090f5-075f-4382-97d4-b8082446b817
+revision: d4a9c93b-53bd-4bcb-98f7-ed39af68e8c9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +106,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-07a090f5-075f-4382-97d4-b8082446b817
+d4a9c93b-53bd-4bcb-98f7-ed39af68e8c9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141126T020325:635525642053289375
+20141127T125243:635526895634631016
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

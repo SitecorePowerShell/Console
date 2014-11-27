@@ -1,0 +1,87 @@
+----item----
+version: 1
+id: {E68879C2-E532-442D-AD98-A9955F3BBC70}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Toolbox/Task Manager
+parent: {07609222-FB8D-4BB0-B29D-B10252616FF2}
+name: Task Manager
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+name: EnableRule
+key: enablerule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 796
+
+Import-Function "Edit-TaskSchedule"
+
+# Get all the items recursively where the TemplateName equals "Schedule".
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } |
+    Show-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
+        @{Label="Last Run"; Expression={ $_."Last Run" } },
+        @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
+        @{Label="From"; Expression={ Parse-TaskSchedule $_ "from"} },
+        @{Label="To"; Expression={ Parse-TaskSchedule $_ "to"} },
+        @{Label="On Week Days"; Expression={ Parse-TaskSchedule $_ "strWeekdays" } },
+        @{Label="Run Every"; Expression={ Parse-TaskSchedule $_ "interval" } } `
+        -Title "Task Manager"
+        
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+People/16x16/stopwatch_run.png
+----version----
+language: en
+version: 1
+revision: b8cb384e-89d3-453f-b716-6193190d5449
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130916T143800
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+b8cb384e-89d3-453f-b716-6193190d5449
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141126T025348:635525672287478828
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
