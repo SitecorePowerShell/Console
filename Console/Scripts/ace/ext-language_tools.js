@@ -1701,18 +1701,24 @@ ace.define("ace/autocomplete/text_completer",["require","exports","module","ace/
         var wordScores = Object.create(null);
         
         var currentWord = words[prefixPos];
+        if (currentWord.indexOf('$') === 0) {
 
-        words.forEach(function(word, idx) {
-            if (!word || word === currentWord) return;
+            words = words.filter(function(value) {
+                return value.indexOf('$') > -1;
+            });
 
-            var distance = Math.abs(prefixPos - idx);
-            var score = words.length - distance;
-            if (wordScores[word]) {
-                wordScores[word] = Math.max(score, wordScores[word]);
-            } else {
-                wordScores[word] = score;
-            }
-        });
+            words.forEach(function(word, idx) {
+                if (!word || word === currentWord) return;
+
+                var distance = Math.abs(prefixPos - idx);
+                var score = words.length - distance;
+                if (wordScores[word]) {
+                    wordScores[word] = Math.max(score, wordScores[word]);
+                } else {
+                    wordScores[word] = score;
+                }
+            });
+        }
         return wordScores;
     }
 
@@ -1784,7 +1790,7 @@ exports.setCompleters = function(val) {
     completers = val || [];
 };
 exports.addCompleter = function(completer) {
-    completers.push(completer);
+    completers.unshift(completer);
 };
 exports.textCompleter = textCompleter;
 exports.keyWordCompleter = keyWordCompleter;

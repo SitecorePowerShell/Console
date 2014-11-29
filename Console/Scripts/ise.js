@@ -106,7 +106,7 @@ extend(cognifide, 'powershell');
                         return {
                             name: hint[1],
                             value: hint[1],
-                            score: 30,
+                            score: 1000,
                             meta: hint[0],
                             completer: this
                     };

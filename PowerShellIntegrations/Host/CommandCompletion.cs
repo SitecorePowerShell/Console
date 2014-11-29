@@ -3,13 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Sitecore.Configuration;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
     public static class CommandCompletion
     {
         private static int _powerShellVersionMajor;
-
+        private static string[] dbNames = Factory.GetDatabaseNames().ToList().ConvertAll(db => db.ToLower()).ToArray();
 
         public static IEnumerable<string> FindMatches(ScriptSession session, string command, bool aceResponse)
         {
@@ -130,13 +131,26 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 : string.Empty;
             results.AddRange(tabExpandedResults.Select(l =>
             {
-                if (aceResponse)
-                {
-                    return l;
-                }
                 string[] split = l.Split('|');
                 string type = split[0];
                 string content = split[1];
+
+                if (aceResponse)
+                {
+                    switch (type)
+                    {
+                        case ("ProviderItem"):
+                        case ("ProviderContainer"):
+                            content = content.Trim('\'',' ', '&','"');
+                            if (IsSitecoreItem(content))
+                            {
+                                return string.Format("Item|{0}", content.Split('\\').Last());
+                            }
+                            return string.Format("{0}|{1}", type, content.Split('\\').Last());
+                        default:
+                            return l;
+                    }
+                }
                 switch (type)
                 {
                     case ("Variable"):
@@ -153,6 +167,16 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             content.StartsWith("& '") ? content.Substring(2) : content);
                 }
             }));
+        }
+
+        private static bool IsSitecoreItem(string path)
+        {
+            if (!string.IsNullOrEmpty(path) && path.IndexOf(':') > 0)
+            {
+                string db = path.Split(':')[0].ToLower();
+                return dbNames.Contains(db);
+            }
+            return false;
         }
 
         private static string TruncatedCommand(ScriptSession session, string command, out string lastToken)
