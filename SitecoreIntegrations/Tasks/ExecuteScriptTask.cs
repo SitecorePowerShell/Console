@@ -18,7 +18,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Tasks
                     if (!String.IsNullOrEmpty(script))
                     {
                         session.SetExecutedScript(item);
-                        session.SetContextItem(item);
                         session.SetItemLocationContext(item);
                         session.ExecuteScriptPart(script);
                     }

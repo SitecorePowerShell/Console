@@ -4,6 +4,7 @@ using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
 using Sitecore.Security.Accounts;
+using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Security
 {

@@ -1,5 +1,7 @@
 ﻿using System;
+using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.PowerShellIntegrations.Modules;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -15,30 +17,33 @@ namespace Cognifide.PowerShell.Gutters
         // We override the GetIconDescriptor so a script can be called in it's place.
         protected override GutterIconDescriptor GetIconDescriptor(Item item)
         {
-            // The scriptId parameter is configured when we create a new gutter
-            // here /sitecore/content/Applications/Content Editor/Gutters
-            if (!Parameters.ContainsKey("scriptId")) return null;
-
-            var scriptId = new ID(Parameters["scriptId"]);
-            var scriptDb = string.IsNullOrEmpty(Parameters["scriptDb"])
-                ? ApplicationSettings.ScriptLibraryDb
-                : Parameters["scriptId"];
-            
-            var db = Factory.GetDatabase(scriptDb);
-            var scriptItem = db.GetItem(scriptId);
-
-            // If a script is configured but does not exist then return.
-            if (scriptItem == null) return null;
-
-            // Create a new session for running the script.
-            using (var session = new ScriptSession(ApplicationNames.Default))
+            return SpeTimer.Measure("gutter timing", () =>
             {
+
+                // The scriptId parameter is configured when we create a new gutter
+                // here /sitecore/content/Applications/Content Editor/Gutters
+                if (!Parameters.ContainsKey("scriptId")) return null;
+
+                var scriptId = new ID(Parameters["scriptId"]);
+                var scriptDb = string.IsNullOrEmpty(Parameters["scriptDb"])
+                    ? ApplicationSettings.ScriptLibraryDb
+                    : Parameters["scriptId"];
+
+                var db = Factory.GetDatabase(scriptDb);
+                var scriptItem = db.GetItem(scriptId);
+
+                // If a script is configured but does not exist then return.
+                if (scriptItem == null) return null;
+
+                // Create a new session for running the script.
+                var session = ScriptSessionManager.GetSession(scriptItem[ScriptItemFieldNames.PersistentSessionId],
+                    IntegrationPoints.ContentEditorGuttersFeature);
+
                 var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : String.Empty;
 
                 // We will need the item variable in the script.
-                session.SetContextItem(item);
                 session.SetItemLocationContext(item);
 
                 //let the session know which script is being executed
@@ -60,9 +65,8 @@ namespace Cognifide.PowerShell.Gutters
                 {
                     Log.Error(ex.Message, this);
                 }
-            }
-
-            return null;
+                return null;
+            });
         }
     }
 }

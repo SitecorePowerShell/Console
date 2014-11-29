@@ -29,95 +29,111 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3853
+content-length: 4999
 
 $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
-$roots = [Cognifide.PowerShell.PowerShellIntegrations.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::ContentEditorRibbonFeature);
+$roots = Get-SpeModuleFeatureRoot "ContentEditorRibbon"
 
 foreach($root in $roots){
     cd core:\
     $scriptLibPath = "$($root.Database.Name):$($root.Paths.Path)"
 
-    # Add new scripts to Control Panel
+    #Adding missing strips
     Get-Childitem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
-      $stripLibrary = $_;
-      $strip = Get-Item "$stripsPath/$($stripLibrary.Name)"
+      $scriptLibrary = $_;
+      $strip = Get-Item "$stripsPath/$($scriptLibrary.Name)"
       if($strip -eq $null){
-        Write-Host "Adding Strip '$($strip.Name)'." -f Green
-        $strip = New-Item -path "$stripsPath" -Name "$($stripLibrary.Name)" -ItemType "System/Ribbon/Strip"
-        $strip.Header = $stripLibrary.Name
+        Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
+        $strip = New-Item -path "$stripsPath" -Name "$($scriptLibrary.Name)" -ItemType "System/Ribbon/Strip"
+        $strip.Header = $scriptLibrary.Name
       }
     
-      Get-Childitem $stripLibrary.ProviderPath | ForEach-Object {
-        $chunkLibrary = $_
-        $chunk = Get-Item "$stripsPath/$($stripLibrary.Name)/$($chunkLibrary.Name)"
-        if($chunk -eq $null){
-          Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
-          $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
-          $chunk.Header = $chunkLibrary.Name
-        }
+        # Adding missing chunks
+        Get-Childitem $scriptLibrary.ProviderPath | ForEach-Object {
+            $chunkLibrary = $_
+            $chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)"
+            if($chunk -eq $null){
+              Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+            $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
+            $chunk.Header = $chunkLibrary.Name
+            }
     
         if($chunk.TemplateName -eq "Reference") {
             $chunk = Get-Item . -ID $chunk.Reference
-            Write-Host "Translating reference '$stripsPath/$($stripLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)"    
+            Write-Host "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" -ForegroundColor Blue    
         } else {
-            Write-Host "Using chunk directly '$($chunk.ProviderPath)'"
+            Write-Host "Using chunk directly '$($chunk.ProviderPath)'" -ForegroundColor Blue
         }
     
+        #Creating Script references    
         Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
           $script = $_
-          $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)"
-    
-          if($button -eq $null){
-            $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
-            Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
-          } else { 
-            if($button.Click -match "item:executescript"){
-              Write-Host "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'." -f Green
-            } else {
-              Write-Host "Cannot Update Script '$($script.Name)' in Chunk '$($chunk.Name)'. It's not a PowerShell Extensions button" -f Green
-              continue
-            }
+          if($script.TemplateName -eq "PowerShell Script"){
+              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)"
+              if($button -eq $null){
+                $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
+                Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+              } else { 
+                if($button.Click -match "item:executescript"){
+                  Write-Host "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'." -f Green
+                } else {
+                  Write-Host "Cannot Update Script '$($script.Name)' in Chunk '$($chunk.Name)'. It's not a PowerShell Extensions button" -f Green
+                  continue
+                }
+              }
+              $button.__Icon = $script.__Icon; 
+              $button.Icon = $script.__Icon; 
+              $button.Header = $script.Name;
+              $button.__Sortorder = $script.__Sortorder;
+              $button.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
           }
-          $button.__Icon = $script.__Icon; 
-          $button.Icon = $script.__Icon; 
-          $button.Header = $script.Name;
-          $button.__Sortorder = $script.__Sortorder;
-          $button.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
         }
       }
     }
 }
 #Remove non existing scripts from Control Panel
+Write-Host "Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
+Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
 Get-Childitem $stripsPath | ForEach-Object {
-  $strip = $_;
-  Get-Childitem $strip.ProviderPath | ForEach-Object {
-    $chunk = $_;
-    $chunkName = $_.Name;
-    if($chunk.TemplateName -eq "Reference") {
-        $chunk = Get-Item . -ID $chunk.Reference
-    }
-    Get-Childitem $chunk.ProviderPath | ForEach-Object {
-      $button = $_
-      if($button.Click -match "item:executescript"){
-        if(-not (Test-Path "$scriptLibPath/$($strip.Name)/$chunkName/$($button.Name)")){
-          Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists" -f y
-          $button | remove-item
+    $strip = $_;
+    Get-Childitem $strip.ProviderPath | ForEach-Object {
+        $chunk = $_;
+        $chunkName = $_.Name;
+        if($chunk.TemplateName -eq "Reference") {
+            $chunk = Get-Item . -ID $chunk.Reference
         }
-      }
+        Get-Childitem $chunk.ProviderPath | ForEach-Object {
+            $button = $_
+            if($button.Click -match "item:executescript"){
+                $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$button.Click)
+                $scriptDb = $message.Arguments["scriptDb"]
+                $scriptId = $message.Arguments["script"];
+                $script = Get-Item "$($scriptDb):/" -Id $scriptId
+                if($script -eq $null){
+                    Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists" -f y
+                    $button | remove-item
+                } else {
+                    if(!(Get-SpeModule -Item $script).Enabled){
+                        Write-Host "Removing '$($chunk.Name)/$($button.Name)' from Ribbon as the module is no longer active." -ForegroundColor Magenta
+                        $button | remove-item
+                    } else {
+                        #Write-Host "Keeping script '$($chunk.Name)/$($button.Name)'" -ForegroundColor Yellow
+                    }
+                }
+            }
+        }
+        if($chunk.Children.Count -eq 0)
+        {
+            Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+            $chunk | Remove-Item
+        }
     }
-    if($chunk.Children.Count -eq 0)
+    if($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
     {
-        Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
-        $chunk | Remove-Item
+        Write-Host "Removing Strip '$($strip.Name)'" -f y
+        $strip | Remove-Item
     }
-  }
-  if($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
-  {
-    Write-Host "Removing Strip '$($strip.Name)'" -f y
-    $strip | Remove-Item
-  }
 }
 #Close-Window
 ----field----
@@ -130,7 +146,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: a70833be-14c1-49e3-a6c4-e395e34890b0
+revision: cfbcc6f9-42c1-4553-a747-e1ecdfaf66bb
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -145,14 +161,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a70833be-14c1-49e3-a6c4-e395e34890b0
+cfbcc6f9-42c1-4553-a747-e1ecdfaf66bb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141127T114352:635526854325509922
+20141129T155041:635528730415126406
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

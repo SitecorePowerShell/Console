@@ -2,8 +2,8 @@
 version: 1
 id: {DFB9F219-44A0-4E62-A3F9-832DE0BC478C}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Gutters
-parent: {16111A63-6336-4B17-B38E-84E9EDA02709}
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Gutter Example/Content Editor/Gutters
+parent: {FAF08C22-1613-4B28-ACE7-F86C968716D4}
 name: Gutters
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
@@ -12,7 +12,7 @@ templatekey: PowerShell Script Library
 ----version----
 language: en
 version: 1
-revision: 74e510c6-0135-4590-9963-fa705c36753f
+revision: 6c454f44-9ccd-4073-855a-00b6794a051f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -27,14 +27,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-74e510c6-0135-4590-9963-fa705c36753f
+6c454f44-9ccd-4073-855a-00b6794a051f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141030T190436:635502926767973570
+20141129T160215:635528737354022890
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

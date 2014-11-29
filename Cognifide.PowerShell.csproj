@@ -122,6 +122,10 @@
       <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
     </Compile>
     <Compile Include="Gutters\GutterStatusRenderer.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModuleFeature.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModule.cs" />
+    <Compile Include="PowerShellIntegrations\Settings\Templates.cs" />
+    <Compile Include="PowerShellIntegrations\SpeTimer.cs" />
     <Compile Include="PowerShellIntegrations\Modules\IntegrationPoints.cs" />
     <Compile Include="PowerShellIntegrations\Modules\Module.cs" />
     <Compile Include="PowerShellIntegrations\Modules\ModuleManager.cs" />

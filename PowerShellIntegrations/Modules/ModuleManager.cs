@@ -49,6 +49,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             List<Item> list = new List<Item>();
             foreach (Module module in Modules)
             {
+                featureName = featureName.ToLower();
                 Item featureRoot = module.GetFeatureRoot(featureName);
                 if (featureRoot != null) list.Add(featureRoot);
             }
@@ -58,17 +59,37 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public static void Invalidate(Item item)
         {
             modules = null;
-/*
-            foreach (var module in Modules)
+        }
+
+        public static Module GetItemModule(Item item)
+        {
+            if (item.TemplateName.Equals(TemplateNames.ScriptModuleTemplateName, StringComparison.InvariantCulture))
             {
-                if (module.Database != item.Database.Name &&
-                    (item.Paths.Path.IndexOf(module.Path, StringComparison.InvariantCultureIgnoreCase) == 0) ||
-                    (item.ID == module.ID))
-                {
-                    module.Invalidate();
-                }
+                return GetModule(item);
             }
-*/
+
+            if (item.TemplateName.Equals(TemplateNames.ScriptLibraryTemplateName, StringComparison.InvariantCulture))
+            {
+                if (string.Equals(item.Name, "Script Library"))
+                {
+                    return GetModule(item);
+                }
+                return GetItemModule(item.Parent);
+            }
+            if (item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture))
+            {
+                return GetItemModule(item.Parent);
+            }
+            return null;
+        }
+
+        private static Module GetModule(Item item)
+        {
+            return
+                Modules.FirstOrDefault(
+                    module =>
+                        module.ID == item.ID &&
+                        string.Equals(module.Database, item.Database.Name, StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

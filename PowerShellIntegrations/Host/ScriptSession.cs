@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -60,11 +61,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public ScriptSession(string applianceType) : this(applianceType, true)
         {
-        }
-
-        public void SetContextItem(Item item)
-        {
-            SetVariable("SitecoreContextItem", item);
         }
 
         public ScriptSession(string applianceType, bool personalizedSettings)
@@ -230,8 +226,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            pipeline = runspace.CreatePipeline(script);
-            return ExecuteCommand(stringOutput, internalScript, pipeline, marshalResults);
+            return SpeTimer.Measure("script execution", () =>
+            {
+                pipeline = runspace.CreatePipeline(script);
+                return ExecuteCommand(stringOutput, internalScript, pipeline, marshalResults);
+            });
         }
 
         internal List<object> ExecuteCommand(Command command, bool stringOutput, bool internalScript)
@@ -354,7 +353,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 
         public void SetItemLocationContext(Item item)
         {
-            SetContextItem(item);
+            SetVariable("SitecoreContextItem", item);
             var contextScript = GetDataContextSwitch(item);
             ExecuteScriptPart(contextScript);
         }

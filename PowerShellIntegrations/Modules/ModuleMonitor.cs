@@ -12,6 +12,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
     public class ModuleMonitor
     {
         private static ID ModuleTemplateId = new ID("{6D82FCD8-C379-443C-97A9-C6423C71E7D5}");
+        
         protected bool IsPowerShellMonitoredItem(Item item)
         {
             return (item != null) &&

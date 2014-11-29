@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public string Path { get; private set; }
         public ID ID { get; private set; }
         public SortedList<string, ID> Features { get; private set; }
-
+        public string Name { get; private set; }
         public string Description { get; private set; }
         public string WhatsNew { get; private set; }
         public string History { get; private set; }
@@ -41,6 +41,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             Path = moduleItem.Paths.Path;
             Enabled = AlwaysEnabled || moduleItem["Enabled"] == "1";
             Features = new SortedList<string, ID>(IntegrationPoints.Libraries.Count);
+            Name = moduleItem.Name;
             if (Enabled)
             {
                 Description = moduleItem["Description"];
@@ -59,7 +60,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                     Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value);
                     if (featureItem != null)
                     {
-                        Features.Add(integrationPoint.Key, featureItem.ID);
+                        Features.Add(integrationPoint.Key.ToLower(), featureItem.ID);
                     }
                 }
             }

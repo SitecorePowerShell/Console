@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {A84C5676-0E2B-401E-9C65-24DF7B55E6C1}
+id: {9DA79B51-136C-42D1-A110-FF32AAD4B137}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Task Management
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon Example
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Task Management
+name: Content Editor Ribbon Example
 master: {00000000-0000-0000-0000-000000000000}
 template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
 templatekey: PowerShell Script Module
@@ -13,20 +13,20 @@ templatekey: PowerShell Script Module
 field: {218CA464-CB77-4C97-B141-34871ECAE00B}
 name: Enabled
 key: enabled
-content-length: 1
+content-length: 0
 
-1
+
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 27
+content-length: 29
 
-Software/32x32/jar_bean.png
+Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: 37926120-0835-4c8e-b476-ca7b48956cf0
+revision: a046ab3e-9c6f-42c7-83db-d9351ab6b4c8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -34,21 +34,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20141126T025100
+20141127T225700
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-37926120-0835-4c8e-b476-ca7b48956cf0
+a046ab3e-9c6f-42c7-83db-d9351ab6b4c8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141127T225548:635527257481074843
+20141129T160500:635528739008808047
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

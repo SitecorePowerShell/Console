@@ -15,6 +15,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
         private const string sessionIdPrefix = "$scriptSession$";
         private const string expirationSetting = "Cognifide.PowerShell.PersistentSessionExpirationMinutes";
 
+        public static ScriptSession GetSession(string persistentId, string defaultId)
+        {
+            string sessionId = string.IsNullOrEmpty(persistentId) ? defaultId : persistentId;
+            return GetSession(sessionId);            
+        }
+
         public static ScriptSession GetSession(string persistentId)
         {
             return GetSession(persistentId, ApplicationNames.Default, false);
