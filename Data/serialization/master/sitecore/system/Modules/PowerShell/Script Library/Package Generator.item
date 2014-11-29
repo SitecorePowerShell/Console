@@ -1,18 +1,32 @@
 ----item----
 version: 1
-id: {16111A63-6336-4B17-B38E-84E9EDA02709}
+id: {8E4E2BE8-5D9F-4934-9421-0A82F1664D94}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor
+path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Content Editor
+name: Package Generator
 master: {00000000-0000-0000-0000-000000000000}
-template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
-templatekey: PowerShell Script Library
+template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
+templatekey: PowerShell Script Module
 
+----field----
+field: {218CA464-CB77-4C97-B141-34871ECAE00B}
+name: Enabled
+key: enabled
+content-length: 0
+
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 29
+
+Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: cb2db7bb-0d55-4416-8680-4d4bb0565657
+revision: 215fd006-fa65-4cda-ba12-de6bea21024f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -20,21 +34,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20131001T165045
+20141129T162657
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-cb2db7bb-0d55-4416-8680-4d4bb0565657
+215fd006-fa65-4cda-ba12-de6bea21024f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131001T165045:635162430457214141
+20141129T162748:635528752681483828
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

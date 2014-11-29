@@ -1,16 +1,16 @@
 ----item----
 version: 1
-id: {E6F6FCAA-644A-418C-A5F2-19352D66A260}
+id: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Packaging/Start New Package
-parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
-name: Start New Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging
+parent: {2990210E-8E4F-4874-91E8-565017DC55DE}
+name: Packaging
 master: {00000000-0000-0000-0000-000000000000}
-template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
-templatekey: PowerShell Script
+template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
+templatekey: PowerShell Script Library
 
 ----field----
-field: {1C76313E-3C8C-4807-A826-135D10C39299}
+field: {613D128B-7BF2-40F4-84CB-6717408F9806}
 name: ShowRule
 key: showrule
 content-length: 52
@@ -18,7 +18,7 @@ content-length: 52
 <?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
-field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+field: {05EECF47-0BB9-4B85-B926-0BC6DD987EC8}
 name: EnableRule
 key: enablerule
 content-length: 52
@@ -26,44 +26,23 @@ content-length: 52
 <?xml version="1.0" encoding="utf-16"?>
 <ruleset />
 ----field----
-field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
-name: Script
-key: script
-content-length: 212
-
-$package = new-package "Content Package";
-$package.Sources.Clear();
-
-$package.Metadata.Author = "$me";
-$package.Metadata.Publisher = "";
-$package.Metadata.Version = "";
-$package.Metadata.Readme = '';
-Close-Window
-----field----
-field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
-name: PersistentSessionId
-key: persistentsessionid
-content-length: 14
-
-packageBuilder
-----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 24
+content-length: 20
 
-People/16x16/box_new.png
+People/16x16/box.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
 content-length: 3
 
-200
+700
 ----version----
 language: en
 version: 1
-revision: 43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+revision: 2ef9ce28-b239-4f61-93e7-2b29a55437e5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -71,21 +50,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20130919T133600
+20130919T133624
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+2ef9ce28-b239-4f61-93e7-2b29a55437e5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T142424:635151974648433204
+20141129T162732:635528752524901797
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -2,8 +2,8 @@
 version: 1
 id: {E206F3BE-F252-490F-9A3C-531CD5D43C3E}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Create New Tenant
-parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
+path: /sitecore/system/Modules/PowerShell/Script Library/Cognifide Zen Garden/Content Editor/Context Menu/Create New Tenant
+parent: {6EB536D3-149D-43FF-8995-7199AAA87F00}
 name: Create New Tenant
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
@@ -49,7 +49,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 71da9e58-3697-4cc5-a92d-6a672b9c1ec1
+revision: 11da0307-e20c-46fe-86ea-fc936ff6dbbf
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -64,14 +64,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-71da9e58-3697-4cc5-a92d-6a672b9c1ec1
+11da0307-e20c-46fe-86ea-fc936ff6dbbf
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131119T160629:635204739897831406
+20141129T163031:635528754311063906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

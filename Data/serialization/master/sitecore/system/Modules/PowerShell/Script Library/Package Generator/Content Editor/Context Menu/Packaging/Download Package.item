@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {B9B4D349-D805-4743-A5FE-787EFAF52DDD}
+id: {9C3AF32E-8104-465A-9843-56EDC2B024BB}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor/Context Menu/Packaging/Quick Download Branch as Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging/Download Package
 parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
-name: Quick Download Branch as Package
+name: Download Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -21,66 +21,77 @@ content-length: 52
 field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
 name: EnableRule
 key: enablerule
-content-length: 52
+content-length: 306
 
 <?xml version="1.0" encoding="utf-16"?>
-<ruleset />
+<ruleset>
+  <rule uid="{66973F7C-7FE1-4FD3-A3E5-0D54C6A38233}">
+    <conditions>
+      <condition id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" uid="05927678A11C44F3BD2079A376E8CFA1" persistentsessionid="packageBuilder" />
+    </conditions>
+  </rule>
+</ruleset>
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1356
+content-length: 1184
 
-Execute-Script 'master:\system\Modules\PowerShell\Script Library\Functions\Resolve-Error - Shows Last Error Details'
-$item = Get-Item .
-$path = $item.ProviderPath
-$packageName = $item.Name
-$version = $item.Version
-$Author = [Sitecore.Context]::User.Profile.FullName;
-$Publisher = [Sitecore.SecurityModel.License.License]::Licensee
+if($Author -eq $null)
+{
+    $Author = [Sitecore.Context]::User.Profile.FullName;
+}
+if($Publisher -eq $null)
+{
+    $Publisher = [Sitecore.SecurityModel.License.License]::Licensee;
+}
 
 $result = Read-Variable -Parameters `
     @{ Name = "packageName"; Title="Package Name"}, `
-    @{ Name = "Author"}, `
-    @{ Name = "Publisher"}, `
-    @{ Name = "Version"}, `
-    @{ Name = "Readme"; Title="Read me"; Lines=10} `
-    -Description "This Tool allows you to download the item branch as a package quickly." `
-    -Title "Download Branch as package" -Width 600 -Height 600
-Resolve-Error
+    @{ Name = "Author"; Title="Author"}, `
+    @{ Name = "Publisher"; Title="Publisher"}, `
+    @{ Name = "Version"; Title="Version"}, `
+    @{ Name = "Readme"; Title="ReadMe"} `
+    -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
+    -Title "Security for a user" -Width 600 -Height 400 `
+
 if($result -ne "ok")
 {
     Close-Window
     Exit
 }
 
-$package = new-package $packageName
-$package.Sources.Clear();
+$package.Name = $packageName;
+$package.Metadata.PackageName = $packageName;
 $package.Metadata.Author = $Author;
 $package.Metadata.Publisher = $Publisher;
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = $Readme;
 
-$source = Get-Item . | New-ItemSource -Name "$path" -InstallMode Overwrite -MergeMode Merge
-$package.Sources.Add($source);
-
-$packageFileName = "$packageName-$version.zip";
+$packageFileName = "$($package.Name)-$($package.Metadata.Version).zip";
 
 Export-Package -Project $package -Path "$packageFileName" -Zip
 Download-File "$SitecorePackageFolder\$packageFileName"
 Remove-Item "$SitecorePackageFolder\$packageFileName"
 Close-Window
 ----field----
+field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
+name: PersistentSessionId
+key: persistentsessionid
+content-length: 14
+
+packageBuilder
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 27
+content-length: 25
 
-Software/16x16/compress.png
+People/16x16/box_next.png
 ----version----
 language: en
 version: 1
-revision: 7f9f8606-1e4a-40ab-803e-437a406d2f53
+revision: 2036ff09-1d9e-47ee-8369-250b7e2fe512
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -88,21 +99,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20130919T170627
+20130919T141500
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-7f9f8606-1e4a-40ab-803e-437a406d2f53
+2036ff09-1d9e-47ee-8369-250b7e2fe512
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T180007:635152104071343360
+20130919T175158:635152099188745704
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
