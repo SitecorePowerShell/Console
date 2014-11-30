@@ -87,7 +87,20 @@ extend(cognifide, 'powershell');
             });
 
             var keyWordCompleter = {
-                getCompletions: function (editor, session, pos, prefix, callback) {
+                insertMatch: function (editor) {
+                    
+                    var data = editor.completer.popup.getData(editor.completer.popup.getRow());
+                    
+                    var ranges = editor.selection.getAllRanges();
+                    for (var i = 0, range; range = ranges[i]; i++) {
+                        range.start.column -= editor.completer.completions.filterText.length;
+                        editor.session.remove(range);
+                    }
+
+                    editor.execCommand("insertstring", data.value || data);
+
+                },
+                getCompletions: function(editor, session, pos, prefix, callback) {
                     session.$mode.$keywordList = [];
 
                     var range = codeeditor.getSelectionRange();
@@ -100,16 +113,16 @@ extend(cognifide, 'powershell');
                         $.tabCompletions = [""];
                     }
                     var keywords = $.tabCompletions;
-
-                    callback(null, keywords.map(function (word) {
+                    var psCompleter = this;
+                    callback(null, keywords.map(function(word) {
                         var hint = word.split('|');
                         return {
                             name: hint[1],
                             value: hint[1],
                             score: 1000,
                             meta: hint[0],
-                            completer: this
-                    };
+                            completer: psCompleter
+                        };
                     }));
                 }
             };

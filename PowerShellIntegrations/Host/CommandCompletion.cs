@@ -144,9 +144,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                             content = content.Trim('\'',' ', '&','"');
                             if (IsSitecoreItem(content))
                             {
-                                return string.Format("Item|{0}", content.Split('\\').Last());
+                                return string.Format("Item|{0}|{1}", content.Split('\\').Last(), content);
                             }
-                            return string.Format("{0}|{1}", type, content.Split('\\').Last());
+                            return string.Format("{0}|{1}|{2}", type, content.Split('\\').Last(),content);
+                        case ("ParameterName"):
+                                return string.Format("Parameter|{0}", content);
                         default:
                             return l;
                     }
