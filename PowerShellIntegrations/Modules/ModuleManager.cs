@@ -12,6 +12,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 {
     public static class ModuleManager
     {
+        public delegate void InvalidateEventHandler(object sender, EventArgs e);
+
+        public static event InvalidateEventHandler OnInvalidate;
+
         private static List<Module> modules;
 
         public static List<Module> Modules
@@ -59,6 +63,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public static void Invalidate(Item item)
         {
             modules = null;
+            OnInvalidate(null, EventArgs.Empty);
         }
 
         public static Module GetItemModule(Item item)

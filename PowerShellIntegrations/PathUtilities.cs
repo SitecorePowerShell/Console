@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using System.Web.UI.WebControls.WebParts;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -51,6 +53,28 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
                 return string.Empty;
             }
             return string.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+        }
+
+        public static string PreparePathForQuery(string path)
+        {
+            var parts = path.Split('/');
+            var sb = new StringBuilder(path.Length+10);
+            foreach (var part in parts)
+            {
+                if(string.IsNullOrEmpty(part))
+                {
+                    continue;
+                }
+                if (part.IndexOf(' ') > -1 && part.IndexOf('#') != 0)
+                {
+                    sb.AppendFormat("/#{0}#", part);
+                }
+                else
+                {
+                    sb.AppendFormat("/{0}",part);
+                }
+            }
+            return sb.ToString();
         }
     }
 }
