@@ -18,6 +18,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 {
     public class BaseCommand : PSCmdlet
     {
+        private readonly RuntimeDefinedParameterDictionary _parameters;
+
+        public BaseCommand()
+        {
+            _parameters = new RuntimeDefinedParameterDictionary();
+        }
+
         protected bool IsCurrentDriveSitecore
         {
             get
@@ -201,6 +208,84 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
             // add the properties defined by the page type
             PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
             WriteObject(psobj);
+        }
+
+        protected void AddDynamicParameter<T>(string name, params Attribute[] attributes)
+        {
+            // create a parameter of type T.  
+            var parameter = new RuntimeDefinedParameter
+            {
+                Name = name,
+                ParameterType = typeof(T),
+            };
+
+            if (attributes != null)
+            {
+                foreach (var attribute in attributes)
+                {
+                    parameter.Attributes.Add(attribute);
+                }
+            }
+
+            _parameters.Add(name, parameter);
+        }
+
+        protected bool TryGetSwitchParameter(string name, out bool isPresent)
+        {
+            bool value;
+            return TryGetSwitchParameter(name, out isPresent, out value);
+        }
+
+        protected bool TryGetSwitchParameter(string name, out bool isPresent, out bool value)
+        {
+            RuntimeDefinedParameter parameter;
+
+            if (TryGetDynamicParameter(name, out parameter))
+            {
+                isPresent = parameter.IsSet;
+                value = (SwitchParameter)parameter.Value;
+                return true;
+            }
+
+            isPresent = false;
+            value = false;
+            return false;
+        }
+
+        // get a parameter of type T.  
+        protected bool TryGetParameter<T>(string name, out T value)
+        {
+            RuntimeDefinedParameter parameter;
+
+            if (TryGetDynamicParameter(name, out parameter))
+            {
+                value = (T)parameter.Value;
+                return true;
+            }
+
+            value = default(T);
+
+            return false;
+        }
+
+        // try to get a dynamically added parameter  
+        protected bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
+        {
+            if (_parameters.ContainsKey(name))
+            {
+                value = _parameters[name];
+                return true;
+            }
+
+            // need to set this before leaving the method  
+            value = null;
+
+            return false;
+        }
+
+        public object GetDynamicParameters()
+        {
+            return _parameters;
         }
     }
 }

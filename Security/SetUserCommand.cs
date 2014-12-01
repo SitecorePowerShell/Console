@@ -19,8 +19,6 @@ namespace Cognifide.PowerShell.Security
     [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id")]
     public class SetUserCommand : BaseCommand, IDynamicParameters
     {
-        private readonly RuntimeDefinedParameterDictionary _parameters;
-
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
             ParameterSetName = "Id")]
@@ -50,11 +48,10 @@ namespace Cognifide.PowerShell.Security
         [ValidateSet("Default", "ContentEditor", "PageEditor", "Preview", "Desktop")]
         public string StartUrl { get; set; }
 
-        public SetUserCommand()
-        {
-            Enabled = true;
+        private static string[] portraits;
 
-            _parameters = new RuntimeDefinedParameterDictionary();
+        static SetUserCommand()
+        {
             var validValues = new List<string>();
             // Extracted example from Sitecore.Shell.Applications.Security.EditUser.EditUserPage.cs in Sitecore.Client.dll
             foreach (XmlNode xmlNode in Factory.GetConfigNodes("portraits/collection"))
@@ -64,15 +61,31 @@ namespace Cognifide.PowerShell.Security
                     validValues.Add(ImageBuilder.ResizeImageSrc(src, 16, 16).Trim());
                 }
             }
+            portraits = validValues.ToArray();
+        }
+
+        public SetUserCommand()
+        {
+            Enabled = true;
 
             AddDynamicParameter<string>("Portrait", new Attribute[]
             {
-                new ValidateSetAttribute(validValues.ToArray())
+                new ParameterAttribute
+                {
+                    ParameterSetName = ParameterAttribute.AllParameterSets
+                },
+                new ValidateSetAttribute(portraits)
             });
 
             if (User.Current.IsAdministrator)
             {
-                AddDynamicParameter<SwitchParameter>("IsAdministrator");
+                AddDynamicParameter<SwitchParameter>("IsAdministrator", new Attribute[]
+            {
+                new ParameterAttribute
+                {
+                    ParameterSetName = ParameterAttribute.AllParameterSets
+                }
+            });
             }
         }
 
@@ -169,91 +182,6 @@ namespace Cognifide.PowerShell.Security
             member.IsApproved = Enabled;
 
             Membership.UpdateUser(member);
-        }
-
-        public object GetDynamicParameters()
-        {
-            return _parameters;
-        }
-
-        private void AddDynamicParameter<T>(string name, params Attribute[] attributes)
-        {
-            // create a parameter of type T.  
-            var parameter = new RuntimeDefinedParameter
-            {
-                Name = name,
-                ParameterType = typeof (T),
-            };
-
-            // add the [parameter] attribute  
-            var attrib = new ParameterAttribute
-            {
-                ParameterSetName = ParameterAttribute.AllParameterSets
-            };
-
-            parameter.Attributes.Add(attrib);
-            if (attributes != null)
-            {
-                foreach (var attribute in attributes)
-                {
-                    parameter.Attributes.Add(attribute);
-                }
-            }
-
-            _parameters.Add(name, parameter);
-        }
-
-        private bool TryGetSwitchParameter(string name, out bool isPresent)
-        {
-            bool value;
-            return TryGetSwitchParameter(name, out isPresent, out value);
-        }
-
-        private bool TryGetSwitchParameter(string name, out bool isPresent, out bool value)
-        {
-            RuntimeDefinedParameter parameter;
-
-            if (TryGetDynamicParameter(name, out parameter))
-            {
-                isPresent = parameter.IsSet;
-                value = (SwitchParameter) parameter.Value;
-                return true;
-            }
-
-            isPresent = false;
-            value = false;
-            return false;
-        }
-
-        // get a parameter of type T.  
-        private bool TryGetParameter<T>(string name, out T value)
-        {
-            RuntimeDefinedParameter parameter;
-
-            if (TryGetDynamicParameter(name, out parameter))
-            {
-                value = (T) parameter.Value;
-                return true;
-            }
-
-            value = default(T);
-
-            return false;
-        }
-
-        // try to get a dynamically added parameter  
-        private bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
-        {
-            if (_parameters.ContainsKey(name))
-            {
-                value = _parameters[name];
-                return true;
-            }
-
-            // need to set this before leaving the method  
-            value = null;
-
-            return false;
         }
     }
 }
