@@ -63,7 +63,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public static void Invalidate(Item item)
         {
             modules = null;
-            OnInvalidate(null, EventArgs.Empty);
+            if (OnInvalidate != null)
+            {
+                OnInvalidate(null, EventArgs.Empty);
+            }
         }
 
         public static Module GetItemModule(Item item)
