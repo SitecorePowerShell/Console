@@ -1,0 +1,181 @@
+----item----
+version: 1
+id: {B6578E29-5717-4207-9F3D-FFBB9C583F91}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/Integrations/Content Editor Ribbon
+parent: {9BE73650-A188-4802-A68E-E720DB54C5E9}
+name: Content Editor Ribbon
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+name: EnableRule
+key: enablerule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 5201
+
+$stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
+
+$roots = Get-SpeModuleFeatureRoot "ContentEditorRibbon"
+
+Write-Host "Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
+Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts"
+
+foreach($root in $roots){
+    $scriptLibPath = "$($root.Database.Name):$($root.Paths.Path)"
+
+    #Adding missing strips
+    Get-Childitem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
+      $scriptLibrary = $_;
+      $strip = Get-Item "$stripsPath/$($scriptLibrary.Name)"
+      if($strip -eq $null){
+        Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
+        $strip = New-Item -path "$stripsPath" -Name "$($scriptLibrary.Name)" -ItemType "System/Ribbon/Strip"
+        $strip.Header = $scriptLibrary.Name
+      }
+    
+        # Adding missing chunks
+        Get-Childitem $scriptLibrary.ProviderPath | ForEach-Object {
+            $chunkLibrary = $_
+            $chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)"
+            if($chunk -eq $null){
+              Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+            $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
+            $chunk.Header = $chunkLibrary.Name
+            }
+    
+        if($chunk.TemplateName -eq "Reference") {
+            $chunk = Get-Item "core:/" -ID $chunk.Reference
+            Write-Host "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" -ForegroundColor Blue    
+        } else {
+            Write-Host "Using chunk directly '$($chunk.ProviderPath)'" -ForegroundColor Blue
+        }
+    
+        #Creating Script references    
+        Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
+          $script = $_
+          if($script.TemplateName -eq "PowerShell Script"){
+              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)"
+              if($button -eq $null){
+                $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
+                Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+              } else { 
+                if($button.Click -match "item:executescript"){
+                  Write-Host "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'." -f Green
+                } else {
+                  Write-Host "Cannot Update Script '$($script.Name)' in Chunk '$($chunk.Name)'. It's not a PowerShell Extensions button" -f Green
+                  continue
+                }
+              }
+              $button.__Icon = $script.__Icon; 
+              $button.Icon = $script.__Icon; 
+              $button.Header = $script.Name;
+              $button.__Sortorder = $script.__Sortorder;
+              $button.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
+          }
+        }
+      }
+    }
+}
+#Remove non existing scripts from Control Panel
+Write-Host "Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
+Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
+Get-Childitem $stripsPath | ForEach-Object {
+    $strip = $_;
+    Get-Childitem $strip.ProviderPath | ForEach-Object {
+        $chunk = $_;
+        $chunkName = $_.Name;
+        if($chunk.TemplateName -eq "Reference") {
+            $chunk = Get-Item "core:/" -ID $chunk.Reference
+        }
+        Get-Childitem $chunk.ProviderPath | ForEach-Object {
+            $button = $_
+            if($button.Click -match "item:executescript"){
+                $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$button.Click)
+                $scriptDb = $message.Arguments["scriptDb"]
+                $scriptId = $message.Arguments["script"];
+                $script = Get-Item "$($scriptDb):/" -Id $scriptId
+                if($script -eq $null){
+                    Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists" -f y
+                    $button | remove-item
+                } else {
+                    if(!(Get-SpeModule -Item $script).Enabled){
+                        Write-Host "Removing '$($chunk.Name)/$($button.Name)' from Ribbon as the module is no longer active." -ForegroundColor Magenta
+                        $button | remove-item
+                    } else {
+                        #Write-Host "Keeping script '$($chunk.Name)/$($button.Name)'" -ForegroundColor Yellow
+                    }
+                }
+            }
+        }
+
+        if($chunk.Children.Count -eq 0)
+        {
+            Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+            $chunk | Remove-Item
+        }
+    }
+    if($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
+    {
+        Write-Host "Removing Strip '$($strip.Name)'" -f y
+        $strip | Remove-Item
+    }
+}
+#Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 25
+
+Control/16x16/toolbar.png
+----version----
+language: en
+version: 1
+revision: 1a620824-1161-4178-b984-0e9043b370a8
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20131001T173321
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+1a620824-1161-4178-b984-0e9043b370a8
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141129T162246:635528749668554140
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

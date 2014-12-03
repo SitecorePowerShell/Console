@@ -3,9 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+using Cognifide.PowerShell.PowerShellIntegrations.Modules;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Validators.ItemValidators;
 
 namespace Cognifide.PowerShell.PowerShellIntegrations.Host
 {
@@ -21,9 +23,9 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Host
                 session.Output.Clear();
                 string lastToken = lastPsToken.Content;
                 session.SetVariable("helpFor", lastToken);
-                Item scriptItem =
-                    Database.GetDatabase(ApplicationSettings.ScriptLibraryDb)
-                        .GetItem(ScriptLibrary.Path + "Internal/Context Help/Command Help");
+                var platformmodule = ModuleManager.GetModule("Platform");
+                Item scriptItem = Database.GetDatabase(platformmodule.Database)
+                        .GetItem(platformmodule.Path + "/Internal/Context Help/Command Help");
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
                 var sb = new StringBuilder("<div id=\"HelpClose\">x</div>");
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)

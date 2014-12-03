@@ -1,0 +1,44 @@
+----item----
+version: 1
+id: {CFCE30B7-A8BA-4ABE-BC09-F09734576A5B}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration libraries maintenance/Control Panel/Create Libraries
+parent: {F626F4E4-1D08-4197-A515-55EBAB82CE72}
+name: Create Libraries
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----version----
+language: en
+version: 1
+revision: f30a6492-957d-4b68-bf4d-0b6a354c9790
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20141203T011829
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+f30a6492-957d-4b68-bf4d-0b6a354c9790
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141203T011829:635531663090793125
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

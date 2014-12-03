@@ -91,6 +91,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             return null;
         }
 
+        public static Module GetModule(string moduleName)
+        {
+            return
+                Modules.FirstOrDefault(
+                    module => string.Equals(module.Name, moduleName, StringComparison.InvariantCultureIgnoreCase));
+        }
+
         private static Module GetModule(Item item)
         {
             return

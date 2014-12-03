@@ -1,0 +1,125 @@
+----item----
+version: 1
+id: {19E33653-B884-49D0-8E8F-5E29BF5D29B9}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/Integrations/Control Panel
+parent: {9BE73650-A188-4802-A68E-E720DB54C5E9}
+name: Control Panel
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 3986
+
+$scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
+$controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
+$roots = [Cognifide.PowerShell.PowerShellIntegrations.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::ControlPanelFeature);
+
+Write-Host "Creating missing Control Panel entries" -ForegroundColor Cyan
+foreach($root in $roots){
+    $rootPath = "$($root.Database):$($root.Paths.Path)"
+    Write-Host "Processing module '$($root.Parent.Name)'" -ForegroundColor Cyan
+    # Add new scripts to Control Panel
+    Get-Childitem $rootPath | ForEach-Object {
+        Write-Progress -Activity "Control Panel Sync" -CurrentOperation "Creating New Scripts"
+        $section = $_;
+        if($section.TemplateName -eq "PowerShell Script Library"){
+            Get-Childitem $_.ProviderPath | ForEach-Object {
+                $script = $_
+                $cpSection = Get-Item "$controlPanelPath/$($section.Name)"
+                $cpEntry = Get-Item "$controlPanelPath/$($section.Name)/$($script.Name)"
+                Write-Host "Processing Section '$($section.Name)'" -ForegroundColor Yellow
+                if($cpSection -eq $null){
+                    Write-Host "Creating Section $controlPanelPath" -ForegroundColor Green
+                    Get-Item $controlPanelPath | `
+                        New-Item "$($section.Name)" -ItemType "Sitecore Client/Tasks/Task page" | `
+                        ForEach-Object {
+                            $_.Icon = "PowerShell/32x32/PowerShell.png"; 
+                            $_.Header = "$($section.Name)"
+                            Write-Host "Adding Section '$($_.Name)' to Control panel." -ForegroundColor Green
+                            }
+                }
+                if($cpEntry -eq $null){
+                    $cpEntry = New-Item "$controlPanelPath/$($section.Name)/$($script.Name)" -ItemType "Sitecore Client/Tasks/Task option"
+                    Write-Host "Adding Script '$($section.Name)/$($script.Name)' to Control panel." -ForegroundColor Green
+                } else {
+                    Write-Host "Refreshing script '$($section.Name)/$($script.Name)' in Control panel." -ForegroundColor Yellow
+                }
+                $cpEntry.__Icon = $script.__Icon; 
+                $cpEntry.Header = $script.Name;
+                $cpEntry.Click = "item:executescript(id=`$Target,script=$($script.ID),scriptDb=$($script.Database.Name))"
+            }
+        }
+    }
+}    
+    #Remove non existing scripts from Control Panel
+Write-Host "Purging Control Panel entries for non existing scripts and disabled modules" -ForegroundColor Cyan
+Get-Childitem $controlPanelPath | ForEach-Object {
+    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
+    $cpSection = $_;
+    Get-Childitem $_.ProviderPath | ForEach-Object {
+        $cpEntry = $_
+        if($cpEntry.Click -match "item:executescript"){
+            $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$cpEntry.Click)
+            $scriptDb = $message.Arguments["scriptDb"]
+            $scriptId = $message.Arguments["script"];
+            $script = Get-Item "$($scriptDb):/" -Id $scriptId
+            if($script -eq $null){
+                Write-Host "Removing '$($cpSection.Name)/$($cpEntry.Name)' from Control Panel as the script no longer exists."  -ForegroundColor Magenta
+                $cpEntry | remove-item
+            }else {
+                if(!(Get-SpeModule -Item $script).Enabled){
+                    Write-Host "Removing '$($cpSection.Name)/$($cpEntry.Name)' from Control Panel as the module is not active." -ForegroundColor Magenta
+                    $cpEntry | remove-item
+                } else {
+                    #Write-Host "Keeping script '$($cpSection.Name)/$($cpEntry.Name)'" -ForegroundColor Yellow
+                }
+            }
+        }
+    }
+}
+#Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 34
+
+Applications/16x16/preferences.png
+----version----
+language: en
+version: 1
+revision: 78f39d9b-13ca-47a5-b5c5-dda3ba05d2df
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130920T104751
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+78f39d9b-13ca-47a5-b5c5-dda3ba05d2df
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141129T155001:635528730010878359
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 828
+content-length: 837
 
 <#$commands = gci core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\ |% { "$($_.Message)" }
 
@@ -25,7 +25,7 @@ foreach($command in $commands){
 }
 Close-Window#>
 
-$integrations = gci "master:\system\Modules\PowerShell\Script Library\Internal\Integrations" # |% { "$($_.Message)" }
+$integrations = gci "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Integrations" # |% { "$($_.Message)" }
 
 $i = 0;
 foreach($integration in $integrations){
@@ -39,7 +39,7 @@ Close-Window
 ----version----
 language: en
 version: 1
-revision: fd7a6701-8016-4c3d-8ac1-666c0b15c110
+revision: a8388d70-1bf3-4c6f-b54a-3cb18f519479
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -54,14 +54,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fd7a6701-8016-4c3d-8ac1-666c0b15c110
+a8388d70-1bf3-4c6f-b54a-3cb18f519479
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141127T120015:635526864150324375
+20141203T171024:635532234242546485
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -1,0 +1,191 @@
+----item----
+version: 1
+id: {AC05422C-A1B1-41BA-A1FD-4EC7E944DE3B}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/PowerShell Extensions Maintenance/Prepare Console Distribution
+parent: {01BB164C-5E8E-4C9B-941F-E5340BDD520C}
+name: Prepare Console Distribution
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 7669
+
+# Clear test items:
+# Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
+
+$package = new-package "Sitecore PowerShell Extensions";
+$package.Sources.Clear();
+
+$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
+$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Version = "2.7.5";
+$package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
+The "PowerShell Console" available from the "Sitecore"
+menu and the "PowerShell ISE" available from the 
+"Developer Tools" sub-menu.
+
+PowerShell ISE comes with a sample script and
+Script Library for you to experiment with. Enjoy!
+
+Most Recent Releases:
+- 2.7.5 (November 2014)
+  Release Notes: http://bit.ly/ScPs275Iss
+- 2.7.1 (September 2014)
+  Release Notes: http://bit.ly/ScPs271Iss
+- 2.7 (August 2014)
+  Release Notes: http://bit.ly/ScPs27Iss
+- 2.6 (April 2014)
+  Release Notes: http://bit.ly/ScPs26Iss
+- 2.5 (28 October 2013)
+  Release Notes: http://bit.ly/ScPs25Iss
+- 2.4 (23 September 2013)
+  Release Notes: http://bit.ly/ScPs24Iss
+- 2.3.1 (1 September 2013)
+  Release Notes: http://bit.ly/ScPs23Iss
+- 2.2 (30 July 2013)
+  Release Notes: http://bit.ly/ScPs22Iss
+- 2.1 (15 July 2013)
+  Release Notes: http://bit.ly/ScPs21Iss
+
+Please report any problems in our issue tracker:
+http://bit.ly/ScPsIss
+
+Thank you for using Sitecore PowerShell Extensions.
+
+Copyright (c) 2010-2014 Adam Najmanowicz - Cognifide
+Copyright (c) 2014 Michael West
+
+http://www.cognifide.com/
+http://blog.najmanowicz.com/
+http://michaellwest.blogspot.com/
+http://sitecorejunkie.com/category/powershell/'
+
+# Item templates
+$source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+$package.Sources.Add($source);
+$source = Get-Item 'core:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Core Item Templates' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Module Root
+$source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Core Module Root" -InstallMode Merge -MergeMode Merge
+$package.Sources.Add($source);
+
+# Colors
+$source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Module Root" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Rules Engine Rules
+$source = Get-Item 'master:\system\Modules\PowerShell\Rules' |  New-ItemSource -Name "Rules Engine" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+
+# Script Library
+$source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+$source = Get-Item 'core:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Core Script Library" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+$source = Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | New-ExplicitItemSource -Name "Core Script Library Content" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+
+Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+Get-Item 'core:\system\Modules\PowerShell\Script Library' | Serialize-Item -Recurse
+Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+
+# Prepare settings - cleanup
+$settingsToCleanup = get-childitem sitecore -Path master:\system\Modules\PowerShell\Settings\ -recurse | remove-item -recurse
+
+# Settings
+$source = Get-Item master:\system\Modules\PowerShell\Settings | New-ItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+
+# Applications
+$source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Application Layouts
+$source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Start Menu
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Content Editor Context Menu integration
+$source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/'  -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+$source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
+$package.Sources.Add($source);
+
+# Content Editor Ribbon integration
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #1" -InstallMode Overwrite
+$package.Sources.Add($source);
+$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #2" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Task Integration
+$source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
+$package.Sources.Add($source);
+$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Skip
+$package.Sources.Add($source);
+
+# Files
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell.config" | New-ExplicitFileSource -Name "Configuration File"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath\bin\Cognifide.PowerShell.dll" | New-ExplicitFileSource -Name "PowerShell Binary"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath\sitecore/shell/Override/Controls/Splitters/HSplitter.xml" | New-ExplicitFileSource -Name "Splitter Fix"
+$package.Sources.Add($source);
+$source = Get-Item "$AppPath/sitecore/shell/Themes/Standard/PowerShell.zip" | New-ExplicitFileSource -Name "Icons"
+$package.Sources.Add($source);
+$source = Get-ChildItem -exclude *.cs -Path "$AppPath\Console" -Recurse -File | New-ExplicitFileSource -Name "Console Assets"
+$package.Sources.Add($source);
+$source = Get-ChildItem -Path "$AppPath\sitecore\Shell\Applications\Powershell\*" -Recurse -File | New-ExplicitFileSource -Name "Application Files"
+$package.Sources.Add($source);
+
+Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).xml"
+Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+----version----
+language: en
+version: 1
+revision: 2686d695-e0b8-4c83-a240-15d96d1bb173
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130510T150325
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+2686d695-e0b8-4c83-a240-15d96d1bb173
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20141102T193432:635505536728503594
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
