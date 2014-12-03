@@ -23,15 +23,23 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public const string StartMenuReportsFeature = "startMenuReports";
         public const string EventHandlersFeature = "eventHandlers";
 
-        private static SortedList<string,string> libraries = null;
+        public class IntegrationPoint
+        {
+            public string Id;
+            public string Path;
+            public string Name;
+            public string CreationScript;
+        }
+        private static SortedList<string, IntegrationPoint> libraries = null;
 
-        public static SortedList<string, string> Libraries
+
+        public static SortedList<string, IntegrationPoint> Libraries
         {
             get
             {
                 if (libraries == null)
                 {
-                    libraries = new SortedList<string, string>();
+                    libraries = new SortedList<string, IntegrationPoint>();
                     var ipNode = Factory.GetConfigNode("powershell/integrationPoints");
                     if (ipNode == null)
                     {
@@ -42,7 +50,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 
                     foreach (var integrationPoint in allIntegrationPoints)
                     {
-                        libraries.Add(integrationPoint.Name, integrationPoint.InnerText);
+                        libraries.Add(integrationPoint.Name, new IntegrationPoint
+                        {
+                            CreationScript = integrationPoint.Attributes["creationScript"].InnerText,
+                            Name = integrationPoint.Attributes["name"].InnerText,
+                            Id = integrationPoint.Name,
+                            Path = integrationPoint.InnerText
+                        });
                     }
                 }
                 return libraries;

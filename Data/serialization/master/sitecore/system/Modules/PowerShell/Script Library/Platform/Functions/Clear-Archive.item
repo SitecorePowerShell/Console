@@ -1,0 +1,99 @@
+----item----
+version: 1
+id: {AC863D02-67FF-4614-9925-0B455F3F4DF4}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Functions/Clear-Archive
+parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
+name: Clear-Archive
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1472
+
+function Clear-Archive {
+    <#
+        .SYNOPSIS
+            Clears entries from the archive. Defaults to a 30 retention period for the recyclebin.
+            
+        .EXAMPLE
+            Remove all items 30 days or older.
+            
+            PS master:\> Clear-Archive
+        
+        .EXAMPLE
+            Removes all items in the recycle bin.
+            
+            PS master:\> Clear-Archive -Days 0
+            
+            PS master:\> Clear-Archive -Expired [DateTime]::Now
+
+        .NOTES
+            Michael West
+            michaellwest.blogspot.com
+            @MichaelWest101
+            
+    #>
+    [CmdletBinding()]
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string]$Name = "recyclebin",
+        
+        [int]$Days = 30,
+ 
+        [datetime]$expired = [datetime]::Today.AddDays(-1 * [Math]::Abs($Days))
+        
+    )
+
+    Write-Verbose "Removing items on or before $($expired.ToShortDateString())"
+    
+    foreach($archive in Get-Archive -Name $Name) {
+        $entries = $archive.GetEntries(0, $archive.GetEntryCount())
+        foreach($entry in $entries) {
+            if($entry.ArchiveLocalDate -le $expired) { 
+                Write-Log "Removing item: $($entry.Name) {$($entry.ArchivalId)}on date $($entry.ArchiveLocalDate)"
+                $archive.RemoveEntries($entry.ArchivalId) 
+            } else {
+                Write-Verbose "Skipping $($entry.Name) on date $($entry.ArchiveLocalDate)"
+            }
+        }
+    }
+}
+
+----version----
+language: en
+version: 1
+revision: 3078f2fb-7fb2-40c5-98e3-2e1c7f3e6e96
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130721T193550
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+3078f2fb-7fb2-40c5-98e3-2e1c7f3e6e96
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130901T220326:635136698060421406
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -13,39 +13,26 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1924
+content-length: 1625
 
 <#
    The script enumerates events definitions in web.config and creates appropriate folder structure 
    in the PowerShell Module script library to add support for them
 #>
 
-$module = Get-Item "master:/sitecore/system/Modules/PowerShell/Script Library"
+$integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::EventHandlersFeature;
+Import-Function -Name Create-IntegrationPoint
 
-$result = Read-Variable -Parameters `
-    @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
-    -Description "Pick a module that you will be creating your event handlers in. When you press OK all possible event handler script libraries will be created. You can clean up empty ones after with the other script in the same library" `
-    -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
-if($result -ne "ok")
-{
-    Exit
-}
-
-# create folders for scripts and parents for them if not existing
-function CreatePathRecursively([string]$path)
-{
-  $pathExists = Test-Path $path;
-  if(-not $pathExists)
-  { 
-    #Write-Host "Creating $($path)"
-    $parentPath = Split-Path "$($path)" -Parent
-    $parentExists = Test-Path $parentPath
-    if(-not $parentExists -or $parentPath.Length -lt 74)
+if($module -eq $null){
+    $module = Get-Item "master:/sitecore/system/Modules/PowerShell/Script Library"
+    $result = Read-Variable -Parameters `
+        @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
+        -Description "Pick a module that you will be creating your event handlers in. When you press OK all possible event handler script libraries will be created. You can clean up empty ones after with the other script in the same library" `
+        -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+    if($result -ne "ok")
     {
-       CreatePathRecursively "$($parentPath)"
+        Exit
     }
-    New-Item "$($path)" -ItemType "/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library"
-  }
 }
 
 $nodes = [Sitecore.Configuration.Factory]::GetConfigNodes("events/event");
@@ -54,7 +41,7 @@ foreach ($eventnode in $nodes)
 {
     $eventName = [Sitecore.Xml.XmlUtil]::GetAttribute("name", $eventNode);
     $eventName = [System.Threading.Thread]::CurrentThread.CurrentCulture.TextInfo.ToTitleCase($eventName.Replace(":","/"));
-    $EventPath = "$($module.ProviderPath)/Event Handlers/$($eventName)"
+    $EventPath = "$($module.ProviderPath)/$($integrationPoint.Path)/$($eventName)"
     $i++
     Write-Progress -Activity "Creating Event nodes" -PercentComplete ($i*100/$nodes.Count) -CurrentOperation "Creating node $eventName"
     CreatePathRecursively ($EventPath);
@@ -62,7 +49,7 @@ foreach ($eventnode in $nodes)
 ----version----
 language: en
 version: 1
-revision: b22568e3-a7e6-4fa9-8419-57f737652eed
+revision: c7fbafb9-fde4-4b93-8993-6ee860ca22f0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -77,14 +64,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b22568e3-a7e6-4fa9-8419-57f737652eed
+c7fbafb9-fde4-4b93-8993-6ee860ca22f0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141126T191902:635526263426060156
+20141203T021633:635531697937082187
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

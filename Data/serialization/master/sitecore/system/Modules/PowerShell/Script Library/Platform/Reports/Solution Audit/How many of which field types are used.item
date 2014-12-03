@@ -1,0 +1,93 @@
+----item----
+version: 1
+id: {558614B3-03C1-4E7B-86DE-AB5508C990EF}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reports/Solution Audit/How many of which field types are used
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: How many of which field types are used
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1301
+
+# What field types and in what numbers do you use in your solution?
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
+    -Description "This report will analyse the template branch and will tell you which field types are used in which quantities." `
+    -Title "Count field types used by templates. " -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+# We need to change location to a Sitecore database do that PowerShell can recognize -Query as a valid parameter
+cd "$($item.Database.Name):\"
+
+get-item . -query "fast:$($item.Paths.Path)//*[@@templatename=`"Template Field`"]" | 
+  group-object Type | `
+  sort count -descending |
+        Show-ListView -Property @{Name="Field Type"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.Count}} `
+            -Title "Field types used by templates." `
+            -InfoDescription "Field types used by templates under $($item.Paths.Path) branch." 
+Close-Window  
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 34
+
+Control/32x32/multi_controls_b.png
+----version----
+language: en
+version: 1
+revision: be850eef-b268-411a-8ac0-ef073aae836e
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 39
+
+How many of which field types are used?
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20121203T180757
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+be850eef-b268-411a-8ac0-ef073aae836e
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20131218T175140:635229859003278125
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

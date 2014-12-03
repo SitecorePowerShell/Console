@@ -13,25 +13,25 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2229
+content-length: 2288
 
 $contentEditorLibraryName = "Content Editor" 
 $ribbonLibraryName = "Ribbon" 
 $contentEditorLibraryPath = $contentEditorLibraryName
 $ribbonLibraryPath = "$contentEditorLibraryPath\$ribbonLibraryName"
-
 $libraryTemplatePath = "Modules/PowerShell Console/PowerShell Script Library"
-
 $strips = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips'
-$module = get-item "master:\system\Modules\PowerShell\Script Library"
 
-$result = Read-Variable -Parameters `
-    @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
-    -Description "Pick a module that you will be creating your Content Editor ribbon chunk libraries in. When you press OK all supported Content Editor ribbon chunk script libraries will be created in that module. You can clean up empty ones after with the other script in the library you run the script from." `
-    -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
-if($result -ne "ok")
-{
-    Exit
+if($module -eq $null){
+    $module = get-item "master:\system\Modules\PowerShell\Script Library"
+    $result = Read-Variable -Parameters `
+        @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
+        -Description "Pick a module that you will be creating your Content Editor ribbon chunk libraries in. When you press OK all supported Content Editor ribbon chunk script libraries will be created in that module. You can clean up empty ones after with the other script in the library you run the script from." `
+        -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+    if($result -ne "ok")
+    {
+        Exit
+    }
 }
 
 
@@ -69,7 +69,7 @@ foreach($strip in $strips.Children)
 ----version----
 language: en
 version: 1
-revision: ae527d89-12f9-41c5-9695-f3ebc9577c6d
+revision: 325bff04-401b-4c8c-b904-e14286aa0df7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -84,14 +84,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ae527d89-12f9-41c5-9695-f3ebc9577c6d
+325bff04-401b-4c8c-b904-e14286aa0df7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141127T105027:635526822272726719
+20141203T013539:635531673395793125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

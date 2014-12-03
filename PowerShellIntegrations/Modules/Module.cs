@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -57,7 +59,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 Category = moduleItem["Category"];
                 foreach (var integrationPoint in IntegrationPoints.Libraries)
                 {
-                    Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value);
+                    Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value.Path);
                     if (featureItem != null)
                     {
                         Features.Add(integrationPoint.Key.ToLower(), featureItem.ID);
@@ -73,6 +75,24 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 return Factory.GetDatabase(Database).GetItem(Features[integrationPoint]);
             }
             return null;
+        }
+
+        public string GetFeaturePath(string integrationPoint)
+        {
+            if (IntegrationPoints.Libraries.Keys.ToList().Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
+            {
+                return Path + "/" + IntegrationPoints.Libraries[integrationPoint];
+            }
+            return string.Empty;
+        }
+
+        public string GetCreateScript(string integrationPoint)
+        {
+            if (IntegrationPoints.Libraries.Keys.ToList().Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
+            {
+                return Path + "/" + IntegrationPoints.Libraries[integrationPoint];
+            }
+            return string.Empty;
         }
 
         public void Invalidate()

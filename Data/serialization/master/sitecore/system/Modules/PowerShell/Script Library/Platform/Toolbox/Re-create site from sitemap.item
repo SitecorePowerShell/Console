@@ -1,0 +1,169 @@
+----item----
+version: 1
+id: {EB994C17-44B1-4620-9DCF-DF046812F016}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Toolbox/Re-create site from sitemap
+parent: {344414EA-DBD4-488A-BDBC-BD9685C66E39}
+name: Re-create site from sitemap
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {1C76313E-3C8C-4807-A826-135D10C39299}
+name: ShowRule
+key: showrule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+name: EnableRule
+key: enablerule
+content-length: 52
+
+<?xml version="1.0" encoding="utf-16"?>
+<ruleset />
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 3174
+
+# Script configuration
+# --------------------
+
+$createAt = gi "master:/content/Home/"
+$itemTemplate = gi "master:/templates/Sample/Sample Item"
+
+$result = Read-Variable -Parameters `
+    @{ Name = "sitemapUrl"; Value="http://www.cognifide.com/sitemap"; Title="Item to create the site under"; Root="/sitecore/content/"},
+    @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"},
+    @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"},
+    @{ Name = "prefix"; Value="http://www.cognifide.com/"; Title="Prefix to chop off URLs"; },
+    @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";} `
+    -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
+    -Title "Find items with security set for a user instead of role" -Width 600 -Height 400 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+cd $createAt.ProviderPath
+
+$createAt = $createAt.Paths.Path
+$itemTemplate = $itemTemplate.Paths.Path
+
+#                    
+# Script starts here 
+# ------------------                   
+ 
+#function to create valid item name
+function CreateValidItemName([string]$itemName) {
+  if (![Sitecore.Data.Items.ItemUtil]::IsItemNameValid($itemName)) {
+    for ($i = 1; $i -lt $itemName.Length + 1; $i++) {
+      if (![Sitecore.Data.Items.ItemUtil]::IsItemNameValid($itemName.Substring(0, $i))) {
+        $itemName = $itemName.Substring(0, $i - 1) + $itemName.Substring($i)
+        $i--;
+      }
+    }
+  }
+  return $itemName.ToString()
+}
+ 
+# function to create items (creates parent recursively if needed)
+function CreateItem ([string]$itemName) {
+  $fullPath = "$createAt\$itemName"
+  $parentPath = Split-Path $itemName -parent
+  $itemName = Split-Path $itemName -leaf
+  
+  $itemValidName = CreateValidItemName($itemName)
+  
+  if(-not (Test-Path "$createAt\$parentPath")){
+    if($parentPath.Length -gt 2){
+      $parentItem = CreateItem $parentPath
+    }
+  } else {
+      $parentItem = Get-item "$createAt\$parentPath"
+  }
+  
+  $parentPath = $parentItem.Paths.FullPath
+  
+  if(-not (Test-Path "$fullPath")){
+    write-host "Creating $fullPath"
+    $item = New-Item -ItemType $itemTemplate -Name $itemValidName -Path $parentPath
+    $item."__Display name" = $itemName -split '[\\/]' | `
+      Select -last 1 | `
+      ForEach-Object { $_ -replace "-", " " }
+  }
+  
+  $item
+}
+ 
+# Get the sitemap
+[xml]$w = (new-object net.webclient).DownloadString($sitemapUrl);
+ 
+# Get the urls frm the xml
+$locations = $w.urlset.url | `
+             Where-Object {$_.loc -match $prefix} | `
+             Select-Object `
+               loc, `
+               @{Name="Path"; `
+                 Expression = {$_.loc -replace $prefix,"" -replace $postfix,""}}
+ 
+# send url's for creation
+$i = 0;
+$locations | % { 
+    $i++;
+  $name = $_.Path.Trim('/')
+  if(-not (Test-Path "$createAt/$name")){
+    Write-Progress -PercentComplete (($i/$locations.length) * 100) -Activity "Creating Page" -CurrentOperation "$name"
+    CreateItem $name
+  }
+}
+Show-Result -Text
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 21
+
+Network/16x16/web.png
+----version----
+language: en
+version: 1
+revision: 009ba782-ff4e-4b9d-8d99-66ff55f433f0
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130916T104900
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+009ba782-ff4e-4b9d-8d99-66ff55f433f0
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140302T093022:635293494227388046
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
