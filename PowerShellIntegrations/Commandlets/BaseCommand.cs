@@ -205,9 +205,12 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets
 
         protected void WriteItem(Item item)
         {
-            // add the properties defined by the page type
-            PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-            WriteObject(psobj);
+            if (item != null)
+            {
+                // add the properties defined by the page type
+                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+                WriteObject(psobj);
+            }
         }
 
         protected void AddDynamicParameter<T>(string name, params Attribute[] attributes)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Xml;
@@ -23,13 +24,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         public const string StartMenuReportsFeature = "startMenuReports";
         public const string EventHandlersFeature = "eventHandlers";
 
-        public class IntegrationPoint
-        {
-            public string Id;
-            public string Path;
-            public string Name;
-            public string CreationScript;
-        }
         private static SortedList<string, IntegrationPoint> libraries = null;
 
 
@@ -39,7 +33,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             {
                 if (libraries == null)
                 {
-                    libraries = new SortedList<string, IntegrationPoint>();
+                    libraries = new SortedList<string, IntegrationPoint>(StringComparer.OrdinalIgnoreCase);
                     var ipNode = Factory.GetConfigNode("powershell/integrationPoints");
                     if (ipNode == null)
                     {

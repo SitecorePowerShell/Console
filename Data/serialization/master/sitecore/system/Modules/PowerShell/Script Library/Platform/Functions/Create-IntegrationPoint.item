@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1789
+content-length: 1864
 
 # create folders for scripts and parents for them if not existing
 function CreatePathRecursively([string]$path)
@@ -33,7 +33,7 @@ function CreatePathRecursively([string]$path)
 
 function CreateIntegrationPoint([string]$integrationPointId)
 {
-    $integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::Libraries[$integrationPointId]
+    $integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::Libraries[$integrationPointId.ToLower()]
     
     Write-Host "Creating '$($integrationPoint.Name)' integration point libraries..."
     
@@ -47,6 +47,7 @@ function CreateIntegrationPoint([string]$integrationPointId)
         {
             Exit
         }
+        Set-Variable -Name "module" -Value $module -Scope Global
     }
     
     $ipLibraryPath = "$($module.ProviderPath)/$($integrationPoint.Path)"
@@ -56,7 +57,7 @@ function CreateIntegrationPoint([string]$integrationPointId)
 ----version----
 language: en
 version: 1
-revision: 611b90ce-2561-4f72-a3a9-2782caf4280a
+revision: cc2f2cb6-1d2b-4e34-9116-d5cb6556f30f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -71,14 +72,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-611b90ce-2561-4f72-a3a9-2782caf4280a
+cc2f2cb6-1d2b-4e34-9116-d5cb6556f30f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141203T023449:635531708891056797
+20141205T011336:635533388165293906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

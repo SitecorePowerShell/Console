@@ -7,14 +7,22 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Modules
 {
     [Cmdlet(VerbsCommon.Get, "SpeModuleFeatureRoot")]
-    [OutputType(new[] {typeof (Item)}, ParameterSetName = new[] { "By Feature Name" })]
+    [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "By Feature Name", "Module from Pipeline" })]
     public class GetSpeModuleFeatureRoot : BaseCommand, IDynamicParameters
     {
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Module from Pipeline")]
+        public Module Module { get; set; }
 
         protected override void ProcessRecord()
         {
             string feature;
-            if (TryGetParameter("Feature", out feature))
+            bool featureDefined = TryGetParameter("Feature", out feature);
+            if (Module != null)
+            {
+                WriteItem(Module.GetFeatureRoot(feature));
+                return;
+            }
+            if (featureDefined)
             {
                 if (!String.IsNullOrEmpty(feature))
                 {

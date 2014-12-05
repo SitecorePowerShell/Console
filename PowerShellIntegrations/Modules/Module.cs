@@ -42,7 +42,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         {
             Path = moduleItem.Paths.Path;
             Enabled = AlwaysEnabled || moduleItem["Enabled"] == "1";
-            Features = new SortedList<string, ID>(IntegrationPoints.Libraries.Count);
+            Features = new SortedList<string, ID>(StringComparer.OrdinalIgnoreCase);
             Name = moduleItem.Name;
             if (Enabled)
             {
@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                     Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value.Path);
                     if (featureItem != null)
                     {
-                        Features.Add(integrationPoint.Key.ToLower(), featureItem.ID);
+                        Features.Add(integrationPoint.Key, featureItem.ID);
                     }
                 }
             }
@@ -70,27 +70,46 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
 
         public Item GetFeatureRoot(string integrationPoint)
         {
-            if (Features.Keys.Contains(integrationPoint))
+            if (!string.IsNullOrEmpty(integrationPoint))
             {
-                return Factory.GetDatabase(Database).GetItem(Features[integrationPoint]);
+                if (Features.Keys.Contains(integrationPoint))
+                {
+                    return Factory.GetDatabase(Database).GetItem(Features[integrationPoint]);
+                }
             }
             return null;
         }
 
         public string GetFeaturePath(string integrationPoint)
         {
-            if (IntegrationPoints.Libraries.Keys.ToList().Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(integrationPoint))
             {
-                return Path + "/" + IntegrationPoints.Libraries[integrationPoint];
+                if (IntegrationPoints.Libraries.Keys.ToList()
+                    .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
+                {
+                    return Path + "/" + IntegrationPoints.Libraries[integrationPoint].Path;
+                }
             }
             return string.Empty;
         }
 
+        public string GetProviderFeaturePath(string integrationPoint)
+        {
+            if (!string.IsNullOrEmpty(integrationPoint))
+            {
+                if (IntegrationPoints.Libraries.Keys.ToList()
+                    .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
+                {
+                    return string.Format("{0}:{1}/{2}", Database, Path, IntegrationPoints.Libraries[integrationPoint].Path);
+                }
+            }
+            return string.Empty;
+        }
         public string GetCreateScript(string integrationPoint)
         {
             if (IntegrationPoints.Libraries.Keys.ToList().Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
             {
-                return Path + "/" + IntegrationPoints.Libraries[integrationPoint];
+                return Path + "/" + IntegrationPoints.Libraries[integrationPoint].CreationScript;
             }
             return string.Empty;
         }

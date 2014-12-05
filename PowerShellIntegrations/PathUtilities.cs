@@ -52,7 +52,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations
             {
                 return string.Empty;
             }
-            return string.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+            var psPath = string.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+            return psPath;
         }
 
         public static string PreparePathForQuery(string path)

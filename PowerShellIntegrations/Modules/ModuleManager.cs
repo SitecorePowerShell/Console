@@ -53,7 +53,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
             List<Item> list = new List<Item>();
             foreach (Module module in Modules)
             {
-                featureName = featureName.ToLower();
                 Item featureRoot = module.GetFeatureRoot(featureName);
                 if (featureRoot != null) list.Add(featureRoot);
             }

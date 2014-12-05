@@ -13,9 +13,9 @@ templatekey: PowerShell Script Module
 field: {218CA464-CB77-4C97-B141-34871ECAE00B}
 name: Enabled
 key: enabled
-content-length: 0
+content-length: 1
 
-
+1
 ----field----
 field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
 name: Description
@@ -85,13 +85,13 @@ Authoring
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 29
+content-length: 27
 
-Software/32x32/jar_delete.png
+Software/32x32/jar_bean.png
 ----version----
 language: en
 version: 1
-revision: 545cb49f-0af6-4172-bb83-e3cceeba217e
+revision: ef71ed95-550b-4a63-8b74-5771cc11bcae
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -106,14 +106,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-545cb49f-0af6-4172-bb83-e3cceeba217e
+ef71ed95-550b-4a63-8b74-5771cc11bcae
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141129T162810:635528752902685000
+20141204T201444:635533208846797812
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
