@@ -64,8 +64,8 @@ namespace Cognifide.PowerShell.Security
             member.IsApproved = Enabled;
             Membership.UpdateUser(member);
 
-            var user = User.FromName(name, false);
-
+            var user = User.FromName(name, true);
+            
             var profile = user.Profile;
             if (!String.IsNullOrEmpty(FullName))
             {
