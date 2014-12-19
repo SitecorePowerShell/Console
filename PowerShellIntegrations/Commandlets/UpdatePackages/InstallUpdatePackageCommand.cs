@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Management.Automation;
 using System.Xml;
+using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages;
 using log4net;
 using log4net.Config;
 using Sitecore.Update;
@@ -10,7 +11,7 @@ using Sitecore.Update.Installer.Utils;
 using Sitecore.Update.Metadata;
 using Sitecore.Update.Utils;
 
-namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Packages
+namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.UpdatePackages
 {
     [Cmdlet(VerbsLifecycle.Install, "UpdatePackage")]
     [OutputType(new[] {typeof (ContingencyEntry)})]

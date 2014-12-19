@@ -124,6 +124,9 @@
     <Compile Include="Gutters\GutterStatusRenderer.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModuleFeature.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModule.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\UpdatePackages\NewUpdatePackageCommandCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\UpdatePackages\ExportUpdatePackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\UpdatePackages\GetUpdatePackageDiffCommandsCommand.cs" />
     <Compile Include="PowerShellIntegrations\Modules\IntegrationPoint.cs" />
     <Compile Include="PowerShellIntegrations\Settings\TemplateNames.cs" />
     <Compile Include="PowerShellIntegrations\SpeTimer.cs" />
@@ -203,7 +206,7 @@
     <Compile Include="PowerShellIntegrations\Commandlets\Interactive\ShowResultsCommand.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PowerShellIntegrations\Commandlets\Packages\InstallUpdatePackageCommand.cs" />
+    <Compile Include="PowerShellIntegrations\Commandlets\UpdatePackages\InstallUpdatePackageCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertFromCliXmlCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Remoting\ConvertToCliXmlCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Scheduler\StartTaskScheduleCommand.cs" />

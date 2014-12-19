@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.Console.Services
                                  !string.IsNullOrEmpty(password) &&
                                  AuthenticationManager.Login(userName, password, false);
 
+            authenticated = Context.IsLoggedIn;
             Database scriptDb = !authenticated || string.IsNullOrEmpty(scriptDbParam)
                 ? Context.Database
                 : Database.GetDatabase(scriptDbParam);
@@ -47,10 +48,12 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
 
-                Item item = Context.Database.GetRootItem();
-                if (item != null)
-                    session.SetItemLocationContext(item);
-
+                if (Context.Database != null)
+                {
+                    Item item = Context.Database.GetRootItem();
+                    if (item != null)
+                        session.SetItemLocationContext(item);
+                }
                 session.SetExecutedScript(scriptItem);
 
                 context.Response.ContentType = "text/plain";
