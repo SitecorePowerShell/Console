@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.7.5.*")]
-[assembly: AssemblyFileVersion("2.7.5.0")]
-[assembly: AssemblyInformationalVersion("2.7.5.0")]
+[assembly: AssemblyVersion("2.8.0.*")]
+[assembly: AssemblyFileVersion("2.8.0.0")]
+[assembly: AssemblyInformationalVersion("2.8.0.0")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information

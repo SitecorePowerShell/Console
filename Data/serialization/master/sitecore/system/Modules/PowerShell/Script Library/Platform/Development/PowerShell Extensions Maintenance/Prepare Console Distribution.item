@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7669
+content-length: 7730
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -23,7 +23,7 @@ $package.Sources.Clear();
 
 $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
 $package.Metadata.Publisher = "Cognifide Limited";
-$package.Metadata.Version = "2.7.5";
+$package.Metadata.Version = "2.8";
 $package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
 The "PowerShell Console" available from the "Sitecore"
 menu and the "PowerShell ISE" available from the 
@@ -33,6 +33,8 @@ PowerShell ISE comes with a sample script and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
+- 2.8 (December 2014)
+  Release Notes: http://bit.ly/ScPs28Iss
 - 2.7.5 (November 2014)
   Release Notes: http://bit.ly/ScPs275Iss
 - 2.7.1 (September 2014)
@@ -159,7 +161,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 2686d695-e0b8-4c83-a240-15d96d1bb173
+revision: 3f81b905-aeaa-4a7a-9fc5-70eef76f6a6b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -174,14 +176,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2686d695-e0b8-4c83-a240-15d96d1bb173
+3f81b905-aeaa-4a7a-9fc5-70eef76f6a6b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141102T193432:635505536728503594
+20141219T150222:635545981421909687
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
