@@ -8,7 +8,7 @@
 6. Modify the ```Properties\AssemblyInfo.cs``` - to sync with the released version number & rebuild.
 7. Modify the ```Internal/PowerShell Extensions Maintenance/Prepare Console Distribution``` to include the new version release date & the bitly link.
 8. Run the script to build and download the package.
-9. Serialize all changes using the: ```Internal/PowerShell Extensions Maintenance/Serialize Changes```
+9. Serialize all changes using the: ```Platform/Development/Internal/PowerShell Extensions Maintenance/Serialize Changes```
 10. Put the package in the ```Data\packages``` folder
 11. Commit all changes and push to GitHub.
 12. [Draft & Publish a GitHub release](https://github.com/SitecorePowerShell/Console/releases)
