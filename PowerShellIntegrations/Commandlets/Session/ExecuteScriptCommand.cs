@@ -1,6 +1,7 @@
 ﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Data.Items;
 
@@ -39,11 +40,11 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Session
                 if (ParameterSetName == ParameterSetNameFromFullPath ||
                     ParameterSetName == ParameterSetNameFromContentDatabase)
                 {
-                    curItem = PathUtilities.GetItem(Path, Context.ContentDatabase.Name, ScriptLibrary.Path);
+                    curItem = PathUtilities.GetItem(Path, Context.ContentDatabase.Name, ApplicationSettings.ScriptLibraryPath);
                 }
                 if (curItem == null || ParameterSetName == ParameterSetNameFromCurrentLocation)
                 {
-                    curItem = PathUtilities.GetItem(Path, CurrentDatabase.Name, ScriptLibrary.Path);
+                    curItem = PathUtilities.GetItem(Path, CurrentDatabase.Name, ApplicationSettings.ScriptLibraryPath);
                 }
 
                 if (curItem == null)

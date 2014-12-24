@@ -3,47 +3,76 @@
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellMultiValuePrompt>
     <FormPage>
-      <Literal ID="TabOffsetValue"/>
       <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script runat="server" x:placeholder="Scripts">$ise = jQuery.noConflict();</Script>
       <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script src="/Console/Scripts/jquery-ui.js" x:placeholder="Scripts"></Script>
       <Script src="/Console/Scripts/jquery.qtip.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script src="/Console/Scripts/VariablePrompt.js" runat="server" x:placeholder="Scripts"></Script>
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/Console/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
       <Stylesheet Src="/Console/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
-      <meta http-equiv="X-UA-Compatible" content="IE=edge" runat="server" x:placeholder="Scripts"/>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
+      <script>
+        function OnTabSelect() {
+        if (window.Flexie) Flexie.updateInstance();
+        }
+        document.observe("keydown", function(event) {
+        if (event.keyCode == 13) {
+        var ctl = event.target;
+        if (ctl != null) {
+        if (ctl.tagName == "INPUT")  {
+        if (ctl.onsubmit){
+        if(ctl.onsubmit.toString().indexOf("return false;") >= 0) {
+        return;
+        }
+        }
+        }
+        }
 
-      <Border ID="DataContextPanel" Style="display:none;"></Border>
-      <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
-      <Border class="scStretch">
-        <Border class="scWizardPageContainer">
+        var ok = $("OKButton");
 
-          <Border class="scStretch scFlexColumnContainerWithoutFlexie">     
-            <Border class="scWizardHeader">
-              <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" />
-              <Border>
-                <Border Class="scWizardTitle"><Literal Text="Script parameters" ID="DialogHeader"/></Border>
-                <Border Class="scWizardText"><Literal Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/></Border>
-              </Border>
-            </Border>
-            
-            <Border Class="scBottomEdge" />
-            <Border Class="scTopEdge" />
+        if (ok != null) {
+        ok.click();
+        }
+        }
+        if (event.keyCode == 27) {
+        var ok = $("CancelButton");
 
-            <GridPanel ID="ValuePanel" GridPanel.Class="EntryGrid" GridPanel.ID="EntryGrid" Columns="1" Cellpadding="2px">
-              <Tabstrip ID="Tabstrip" Visible="false"></Tabstrip>
-            </GridPanel>
+        if (ok != null) {
+        ok.click();
+        }
+        }
+        });
+      </script>
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <Border>
+            <Border Class="DialogHeader"><Literal Text="Script parameters" ID="DialogHeader"/></Border>
+            <Border Class="DialogHeaderDescription"><Literal Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/></Border>
           </Border>
         </Border>
-        <Border class="scWizardButtons">
-          <Border class="scBottomEdge" />
-          <Border class="scTopEdge" />
+          
+	<Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+            <!--GridPanel ID="ValuePanel" GridPanel.Class="EntryGrid" GridPanel.ID="EntryGrid" Columns="1" Cellpadding="2px"-->
+              <Tabstrip ID="Tabstrip" Visible="false"></Tabstrip>
+            <!--/GridPanel-->
+	  </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
           <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
           <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2014 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
-          <Button ID="OKButton" Class="scButton" Click="OkClick" Header="OK"/>
-          <Button ID="CancelButton" Class="scButton" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+          <div class="footerOkCancel">
+            <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK"/>
+            <Button ID="CancelButton" Class="scButton" KeyCode="27" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+          </div>
+        </div>
+        <Literal ID="TabOffsetValue"/>
+        <Border ID="DataContextPanel" Style="display:none;">
+          <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
         </Border>
       </Border>
     </FormPage>

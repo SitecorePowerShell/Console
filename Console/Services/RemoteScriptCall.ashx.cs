@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (scriptItem == null)
             {
-                scriptItem = scriptDb.GetItem(ScriptLibrary.Path + scriptParam);
+                scriptItem = scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + scriptParam);
             }
 
             if (scriptItem == null || scriptItem.Fields[ScriptItemFieldNames.Script] == null)

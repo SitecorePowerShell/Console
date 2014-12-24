@@ -29,7 +29,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         public SpeJobMonitor Monitor { get; private set; }
         protected Scrollbox All;
         protected Literal Result;
-        protected Scrollbox Promo;
         protected Literal Title;
         protected Literal HeaderText;
         protected Literal PreviousProgressValue;

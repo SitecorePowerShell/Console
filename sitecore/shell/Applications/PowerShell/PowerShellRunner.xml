@@ -19,20 +19,18 @@
       <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
       <Literal ID="CurrentProgressValue" Visible="false" runat="server"/>
       <Literal ID="Result" runat="server" />
-      <Border runat="server" Width="100%">
-        <GridPanel ID="header" runat="server" Columns="2" Width="100%">
-          <Border runat="server" Padding="2px 16px 0px 0px" GridPanel.Width="100%" GridPanel.VAlign="top">
-            <div id="HeaderIconContainer">
+
+      <div class="scStretch">
+        <div class="scWizardPageContainer">
+	<div class="scFormDialogHeader">
+            <div id="HeaderIconContainer" Visible="false">
               <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/powershell.png" Alt="" runat="server" />
             </div>
             <div id="HeaderTextContainer">
               <Literal runat="server" ID="HeaderText" Text="In progress" />
             </div>
-          </Border>
-        </GridPanel>
-      </Border>
-
-      <Image runat="server" ID="HeaderSpacer" Src="/sitecore/images/blank.gif" width="1" alt="" border="0" />
+        </div>
+        </div>
 
       <GridPanel runat="server" Width="100%" Style="table-layout:fixed;" Padding="0px 22px 0px 22px">
         <Border runat="server" GridPanel.VAlign="top" Style="color: #111111">
@@ -51,7 +49,7 @@
         </Border>
 
       </GridPanel>
-      <Scrollbox ID="Promo" class="progressPromoArea" Align="center">
+        <div class="scWizardButtons progressPromoArea" id="Promo" Align="center">
         <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
         <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2014 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
         <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results</a>
@@ -62,13 +60,19 @@
         <Button ID="AbortButton" Click="AbortClick">
           <Literal runat="server" Text="Abort" ID="AbortLiteral"/>
         </Button>
-      </Scrollbox>
+          <Button ID="BackButton" Class="scButton" Click="#" Header="Back"/>
+          <Button ID="NextButton" Class="scButton scButtonPrimary" Click="#" Header="Next"/>
+          <Button ID="CancelButton" Class="scButton" Click="#" Header="Cancel"/>
+        </div>
       <Style ID ="ConsoleStyle">
         .console {
         color: <Literal ID="ForegroundColor" />;
         background-color: <Literal ID="BackgroundColor" />;
         }
       </Style>
+      
+      </div>
+
     </FormPage>
   </PowerShellRunner>
 </control>

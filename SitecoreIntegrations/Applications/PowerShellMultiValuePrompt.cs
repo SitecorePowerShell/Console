@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal DialogDescription;
         protected Literal TabOffsetValue;
         protected Border DataContextPanel;
-        protected GridPanel ValuePanel;
+        protected Scrollbox ValuePanel;
         protected Button OKButton;
         protected Button CancelButton;
         protected Tabstrip Tabstrip;
@@ -142,10 +142,10 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 var tab = new Tab();
                 tab.Header = tabName;
                 tab.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_");
-                tab.Height = new Unit("100%");
+                //tab.Height = new Unit("100%");
                 Tabstrip.Controls.Add(tab);
                 Tabstrip.Width = new Unit("100%");
-                Tabstrip.Height = new Unit("100%");
+                //Tabstrip.Height = new Unit("100%");
                 var panel = new GridPanel();
                 panel.Width = new Unit("100%");
                 panel.CssClass = "ValuePanel";
@@ -305,7 +305,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Header = (string) variable["Title"],
-                    HeaderStyle = "margin-top:20px; display:inline-block;",
+                    HeaderStyle = "display:inline-block;",
                     Checked = (bool) value
                 };
                 checkBox.Class = "varCheckbox";
@@ -443,7 +443,6 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
                         checkList.TrackModified = false;
                         checkList.Disabled = false;
-                        checkList.Height = new Unit("100%");
                         return checkList;
                     }
                 }

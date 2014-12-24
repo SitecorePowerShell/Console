@@ -15,6 +15,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
         public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
         public const string IseSettingsItemAllUsers = "All Users";
         public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
+        public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
 
         private static string rulesDb = null;
         private static string settingsDb = null;
@@ -48,10 +49,10 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
 
         private static void GetDatabaseName(ref string databaseName, string settingPath)
         {
-            if (string.IsNullOrEmpty(databaseName))
+            if (String.IsNullOrEmpty(databaseName))
             {
                 databaseName = Factory.GetString(settingPath, false);
-                if (string.IsNullOrEmpty(databaseName))
+                if (String.IsNullOrEmpty(databaseName))
                 {
                     databaseName = "master";
                 }
@@ -246,8 +247,8 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
             }
             else
             {
-                Prescript = string.Empty;
-                LastScript = string.Empty;
+                Prescript = String.Empty;
+                LastScript = String.Empty;
                 SaveLastScript = false;
                 UseTypeInfo = false;
                 HostWidth = 80;
@@ -256,5 +257,6 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Settings
                 Loaded = true;
             }
         }
+
     }
 }

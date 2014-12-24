@@ -189,8 +189,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 const string text = "Select the script item that you want to open.";
                 const string icon = "powershell/48x48/script.png";
                 const string button = "Open";
-                const string root = ScriptLibrary.Path;
-                const string selected = ScriptLibrary.Path;
+                const string root = ApplicationSettings.ScriptLibraryPath;
+                const string selected = ApplicationSettings.ScriptLibraryPath;
 
                 string str = selected;
                 if (selected.EndsWith("/"))
@@ -240,7 +240,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             string id = scriptItem.ID.ToString();
             string name = scriptItem.Name;
             string icon = scriptItem[FieldIDs.Icon];
-            ScriptName.Value = string.Format("Script: {0}:{1}", db, scriptItem.Paths.Path.Substring(9));
+            ScriptName.Value = string.Format("{1}", db, scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length));
             SheerResponse.SetInnerHtml("ScriptName", ScriptName.Value);
             Item mruMenu = Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
                            Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
@@ -290,7 +290,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
             ScriptResult.Visible = false;
-            SheerResponse.SetInnerHtml("ScriptName", string.Empty);
+            SheerResponse.SetInnerHtml("ScriptName", "Unsaved script.");
             ScriptName.Value = string.Empty;
             UpdateRibbon();
         }
@@ -322,8 +322,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 const string text = "Select the Library that you want to save your script to.";
                 const string icon = "powershell/48x48/script.png";
                 const string button = "Select";
-                const string root = ScriptLibrary.Path;
-                const string selected = ScriptLibrary.Path;
+                const string root = ApplicationSettings.ScriptLibraryPath;
+                const string selected = ApplicationSettings.ScriptLibraryPath;
 
                 string str = selected;
                 if (selected.EndsWith("/"))

@@ -25,13 +25,13 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
                 if (modules == null)
                 {
                     modules = new List<Module>();
-                    Item masterLibrary = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ScriptLibrary.Path);
+                    Item masterLibrary = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ApplicationSettings.ScriptLibraryPath);
                     if (masterLibrary != null)
                     {
                         modules.Add(new Module(masterLibrary,true));
                     }
 
-                    Item coreLibrary = Factory.GetDatabase("core").GetItem(ScriptLibrary.Path);
+                    Item coreLibrary = Factory.GetDatabase("core").GetItem(ApplicationSettings.ScriptLibraryPath);
                     if (coreLibrary  != null)
                     {
                         modules.Add(new Module(coreLibrary,true));

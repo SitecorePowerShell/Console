@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Events;
@@ -16,7 +17,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Modules
         protected bool IsPowerShellMonitoredItem(Item item)
         {
             return (item != null) &&
-                   item.Paths.Path.StartsWith(ScriptLibrary.Path, StringComparison.InvariantCultureIgnoreCase);
+                   item.Paths.Path.StartsWith(ApplicationSettings.ScriptLibraryPath, StringComparison.InvariantCultureIgnoreCase);
         }
 
         internal void OnItemDeleted(object sender, EventArgs args)
