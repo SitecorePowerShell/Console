@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Scrollbox All;
         protected Literal Result;
         protected Literal Title;
-        protected Literal HeaderText;
+        protected Literal DialogHeader;
         protected Literal PreviousProgressValue;
         protected Literal CurrentProgressValue;
         protected Button Cancel;
@@ -131,7 +131,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 
                 PersistentId = scriptItem[ScriptItemFieldNames.PersistentSessionId];
                 ScriptContent = scriptItem[ScriptItemFieldNames.Script];
-                HeaderText.Text = scriptItem.DisplayName;
+                DialogHeader.Text = scriptItem.DisplayName;
 
                 if (Monitor == null)
                 {
@@ -318,9 +318,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             bool showStatus = !string.IsNullOrEmpty(status);
             PsProgressStatus.Visible = showStatus;
             PsProgressStatus.Text = showStatus
-                ? string.Format("<span class='status'><span class='label'>Status:</status> {0}</span><br/>",
-                    status)
-                : "<sp-an class='status'> </span><br/>";
+                ? string.Format("<span class='status'>{0}</span><br/>", status)
+                : "<span class='status'> </span><br/>";
 
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {

@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             str.Append("scriptId", scriptId);
             str.Append("scriptDb", scriptDb);
             Context.ClientPage.ClientResponse.Broadcast(
-                SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
+                SheerResponse.ShowModalDialog(str.ToString(), "400", "260", "PowerShell Script Results", false),
                 "Shell");
         }
 

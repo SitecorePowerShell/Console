@@ -347,3 +347,8 @@ html {
     margin: auto;
     background-image: url("/Console/Assets/unchecked.png");
 }
+
+#HeaderIconContainer {
+  float: left;
+  padding: 4px 10px 0 16px;
+}
