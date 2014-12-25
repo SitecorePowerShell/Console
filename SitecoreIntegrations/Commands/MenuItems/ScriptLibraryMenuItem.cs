@@ -10,6 +10,7 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
@@ -40,6 +41,15 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Commands.MenuItems
             var subMenu = new ContextMenu();
             var menuItems = new List<Control>();
             string menuItemId = context.Parameters["menuItemId"];
+            
+            if (string.IsNullOrEmpty(menuItemId))
+            {
+                // a bit of a hacky way to determine the caller so we can display the menu
+                // in proximity to the triggering control
+                var parameters = new UrlString("?" + Sitecore.Context.Items["SC_FORM"]);
+                menuItemId = parameters.Parameters["__EVENTTARGET"];
+            }
+
             SetupIntegrationPoint(context);
             Item contextItem = context.Items.Length == 1
                 ? context.Items[0]
