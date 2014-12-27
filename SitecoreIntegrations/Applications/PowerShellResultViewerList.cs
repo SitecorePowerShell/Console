@@ -42,7 +42,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
         protected Literal InfoTitle;
         protected Literal Description;
         protected GridPanel InfoPanel;
-        protected ThemedImage InfoIcon;
+        protected Image InfoIcon;
         protected Border LvProgressOverlay;
         protected Literal Progress;
 

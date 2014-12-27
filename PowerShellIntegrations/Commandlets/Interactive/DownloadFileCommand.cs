@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.PowerShellIntegrations.Commandlets.Interactive
 
         public DownloadFileCommand()
         {
-            Width = 600;
+            Width = 700;
             Height = 140;
         }
 

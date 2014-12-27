@@ -7,7 +7,6 @@
       <Stylesheet Src="/Console/Styles/jquery.terminal.css" DeviceDependant="true" runat="server" />
       <Script type="text/javascript" src="/Console/Scripts/jquery-1.10.2.min.js"> </Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <!--Script type="text/javascript" src="/Console/Scripts/jquery.mousewheel-min.js"> </Script-->
       <Script type="text/javascript" src="/Console/Scripts/jquery.terminal.js"> </Script>
       <Script type="text/javascript" src="/Console/Scripts/split.js"> </Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>

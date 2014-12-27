@@ -3,3 +3,18 @@
     position: absolute;
     bottom: 1px;
 }
+
+#Filter label {
+    float: left;
+    margin-top: 8px;
+    margin-right: 8px;
+}
+
+.scListView {
+    position: relative !important;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+}

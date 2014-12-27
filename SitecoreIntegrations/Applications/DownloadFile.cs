@@ -6,15 +6,17 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Resources.Media;
+using Sitecore.Shell.Applications.Links;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
+using Sitecore.Web.UI.Pages;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
 {
-    public class DownloadFile : BaseForm
+    public class DownloadFile : DialogForm
     {
         protected Border Buttons;
         protected Literal Text;
@@ -102,20 +104,16 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
             return (size/Math.Pow(1024, 6)).ToString("F0") + " EB";
         }
 
-        /// <summary>
-        ///     Closes this dialog. Dialog value will be 'no'.
-        /// </summary>
         protected void Close()
         {
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             Context.ClientPage.ClientResponse.CloseWindow();
         }
 
-        /// <summary>
-        ///     Closes this dialog. Dialog value will be 'no'.
-        /// </summary>
-        protected void Download()
+        protected override void OnOK(object sender, EventArgs args)
         {
+            Assert.ArgumentNotNull(sender, "sender");
+            Assert.ArgumentNotNull(args, "args");
             if (!string.IsNullOrEmpty(Id))
             {
                 Item item = Factory.GetDatabase(Db).GetItem(new ID(Id));
@@ -136,6 +134,8 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 SheerResponse.Download(FileName);
                 Hidden.Value = "downloaded";
             }
+            Context.ClientPage.ClientResponse.SetDialogValue("downloaded");
+            //base.OnCancel(sender, args);
         }
     }
 }
