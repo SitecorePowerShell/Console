@@ -96,7 +96,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
@@ -212,35 +211,6 @@
     <Compile Include="PowerShellIntegrations\Host\CognifideSitecorePowerShellSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\AnalyticsBaseCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsAutomationStateCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsBrowserCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsCampaignCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsGeoIpCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsItemUrlCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsKeywordCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsLocationCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsNotificationSubscriptionCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsOsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageEventCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsPageEventDefinitionsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileCardsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsProfileItemCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsReferringSiteCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsScreensCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsStatusCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsTestDefinitionsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsTrafficTypesCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsUserAgentsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsViewCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorClassificationsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitorTagCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\GetAnalyticsVisitsCommand.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\SetAnalyticsProfileCardCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\BaseCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\DatabaseContextBaseCommand.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Data\GetArchiveCommand.cs" />
@@ -349,11 +319,6 @@
     <Compile Include="SitecoreIntegrations\Processors\ScriptedDataSource.cs" />
     <Compile Include="PowerShellIntegrations\Settings\WebServiceSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PowerShellIntegrations\Commandlets\Analytics\SitecoreAnalytics.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SitecoreAnalytics.edmx</DependentUpon>
-    </Compile>
     <Compile Include="SitecoreIntegrations\Commands\RuntimeQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\ItemDefinedQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\MenuItems\EditPowerShellScript.cs" />
@@ -492,7 +457,6 @@
     <Content Include="sitecore\shell\Override\Controls\Splitters\HSplitter.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.config">
       <SubType>Designer</SubType>
     </Content>
@@ -502,10 +466,6 @@
     <None Include="Console\Assets\Sitecore.Types.ps1xml">
       <SubType>Designer</SubType>
     </None>
-    <EntityDeploy Include="PowerShellIntegrations\Commandlets\Analytics\SitecoreAnalytics.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SitecoreAnalytics.Designer.cs</LastGenOutput>
-    </EntityDeploy>
     <Content Include="README.md" />
     <Content Include="Properties\Cognifide.PowerShell.psd1" />
     <Content Include="Console\Services\RemoteScriptCall.ashx" />

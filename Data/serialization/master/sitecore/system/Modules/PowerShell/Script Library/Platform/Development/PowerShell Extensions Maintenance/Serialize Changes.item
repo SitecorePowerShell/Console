@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5192
+content-length: 5389
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -36,7 +36,9 @@ Get-Item 'core:\system\Modules\PowerShell\Console Colors' | Serialize-Item -Recu
 
 # Rules Engine Rules
 Write-Progress -Activity "Serializing Rules Engine Rules" -PercentComplete 45
-Get-Item 'master:\system\Modules\PowerShell\Rules' | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/PowerShell" | Serialize-Item -Recurse
 
 # Script Library
 Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
@@ -98,7 +100,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 8f0b1f44-7a0d-4423-b4b5-7fd15036822e
+revision: 2897a053-1af5-4523-b3d8-57f481ab747e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -113,14 +115,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8f0b1f44-7a0d-4423-b4b5-7fd15036822e
+2897a053-1af5-4523-b3d8-57f481ab747e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T164749:635552956692606172Z
+20141227T170312:635552965921365937Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
-using Microsoft.SqlServer.Server;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Install.Items;
