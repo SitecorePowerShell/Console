@@ -13,9 +13,9 @@ templatekey: Template section
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 31
+content-length: 32
 
-powershell/32x32/powershell.png
+powershell/32x32/powershell8.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -26,7 +26,7 @@ content-length: 2
 ----version----
 language: en
 version: 1
-revision: 69c66825-ef4c-43f9-946f-bfc978975087
+revision: aa262931-1b2e-4efd-8d74-33f4dd2a851b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-69c66825-ef4c-43f9-946f-bfc978975087
+aa262931-1b2e-4efd-8d74-33f4dd2a851b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20131024T165926:635182307661620000
+20141227T175545:635552997454530000Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

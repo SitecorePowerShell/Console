@@ -57,7 +57,7 @@ function CreateIntegrationPoint([string]$integrationPointId)
 ----version----
 language: en
 version: 1
-revision: cc2f2cb6-1d2b-4e34-9116-d5cb6556f30f
+revision: 4141ce49-05c0-4778-9cd2-8b31c1563204
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -72,14 +72,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-cc2f2cb6-1d2b-4e34-9116-d5cb6556f30f
+4141ce49-05c0-4778-9cd2-8b31c1563204
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141205T011336:635533388165293906
+20141227T175204:635552995244686250Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

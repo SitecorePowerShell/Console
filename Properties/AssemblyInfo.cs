@@ -10,9 +10,9 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.8.0.*")]
-[assembly: AssemblyFileVersion("2.8.0.0")]
-[assembly: AssemblyInformationalVersion("2.8.0.0")]
+[assembly: AssemblyVersion("3.0.0.*")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
+[assembly: AssemblyInformationalVersion("3.0.0.0")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cognifide")]
 [assembly: AssemblyProduct("Cognifide PowerShell Console for Sitecore")]
-[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2014")]
+[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]

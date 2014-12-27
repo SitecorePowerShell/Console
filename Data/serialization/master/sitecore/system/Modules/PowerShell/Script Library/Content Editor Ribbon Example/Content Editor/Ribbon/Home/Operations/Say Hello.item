@@ -19,7 +19,7 @@ Show-Alert "Hello from the Sitecore PowerShell Extensions team!"
 ----version----
 language: en
 version: 1
-revision: 2f0d4f23-91ab-4ceb-ad12-1f38d8c658a0
+revision: df98410c-d582-4440-8051-62b7ad9078b1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -34,14 +34,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2f0d4f23-91ab-4ceb-ad12-1f38d8c658a0
+df98410c-d582-4440-8051-62b7ad9078b1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141129T160406:635528738464911562
+20141227T175154:635552995148719453Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

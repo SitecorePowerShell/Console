@@ -174,7 +174,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 5c7b45c3-9be0-400d-881c-f28141d4b7f4
+revision: e38b1278-c4de-4ddf-b59a-9bf2aea56eed
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -189,14 +189,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5c7b45c3-9be0-400d-881c-f28141d4b7f4
+e38b1278-c4de-4ddf-b59a-9bf2aea56eed
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T172300:635552977809705781Z
+20141227T175203:635552995233680390Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

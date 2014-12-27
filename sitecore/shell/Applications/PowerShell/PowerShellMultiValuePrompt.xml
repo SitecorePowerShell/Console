@@ -64,7 +64,7 @@
         </Scrollbox>
         <div Class="scFormDialogFooter">
           <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
-          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2014 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <div class="footerOkCancel">
             <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK"/>
             <Button ID="CancelButton" Class="scButton" KeyCode="27" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;

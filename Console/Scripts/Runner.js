@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
     $('#Copyright').each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
-                text: "Copyright (c) 2010-2014 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
+                text: "Copyright (c) 2010-2015 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
                 title: 'Sitecore PowerShell Extensions'
             },
             position: {

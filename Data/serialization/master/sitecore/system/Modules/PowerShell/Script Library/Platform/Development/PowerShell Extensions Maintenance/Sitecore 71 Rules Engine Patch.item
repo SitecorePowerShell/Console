@@ -80,7 +80,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: d4c4e6f9-e084-4ed0-9bc3-b7490328819f
+revision: 0e03acef-63a1-48ba-b71c-3f85d4e56756
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +95,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d4c4e6f9-e084-4ed0-9bc3-b7490328819f
+0e03acef-63a1-48ba-b71c-3f85d4e56756
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141103T004614:635505723744177422
+20141227T175203:635552995238084687Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

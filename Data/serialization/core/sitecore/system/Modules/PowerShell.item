@@ -13,13 +13,13 @@ templatekey: Folder
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 31
+content-length: 32
 
-powershell/32x32/powershell.png
+powershell/32x32/powershell8.png
 ----version----
 language: en
 version: 1
-revision: f41b82cd-706c-4f1f-a9fc-9fe8e444a809
+revision: ba63d930-609d-41e5-aa55-9af25cc9495d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f41b82cd-706c-4f1f-a9fc-9fe8e444a809
+ba63d930-609d-41e5-aa55-9af25cc9495d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20121128T204735:634897324550796172
+20141227T175619:635552997796160859Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
