@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5740
+content-length: 5858
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -71,15 +71,15 @@ $result = Read-Variable -Parameters `
     @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
     @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights" } `
     -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
-    -Title "Initialise various variable types (with tabs)" -Width 500 -Height 600 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+    -Title "Initialise various variable types (with tabs)" -Width 600 -Height 640 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
 if($result -ne "ok")
 {
     Exit
 }
 
 $result = Read-Variable -Parameters `
-    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Tooltip for singleline"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Text"; lines=3; Tooltip="Tooltip for multiline"}, 
+    @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"}, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
@@ -114,7 +114,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: 5c72c187-d93a-4d4e-943a-cbf9b2b8b1d5
+revision: d1cf41df-58cf-4e6b-819d-ebb580568277
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -129,14 +129,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5c72c187-d93a-4d4e-943a-cbf9b2b8b1d5
+d1cf41df-58cf-4e6b-819d-ebb580568277
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20140603T165603:635374113639035703
+20141224T152526:635550315263716250Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -27,13 +27,13 @@ content-length: 38
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 31
+content-length: 32
 
-powershell/32x32/powershell.png
+powershell/32x32/powershell8.png
 ----version----
 language: en
 version: 1
-revision: 1556eea6-7ca0-4d78-a68d-e58772646cea
+revision: a74e7171-8264-4fc9-8b4c-3e98844b51ba
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1556eea6-7ca0-4d78-a68d-e58772646cea
+a74e7171-8264-4fc9-8b4c-3e98844b51ba
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20111128T135855:634580855357400017
+20141227T155828:635552927084539765Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

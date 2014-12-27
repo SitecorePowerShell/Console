@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4981
+content-length: 5192
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -73,6 +73,7 @@ Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE\' | Serialize-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console\' | Serialize-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
+Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
 
 # Content Editor Context Menu integration
 Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
@@ -97,7 +98,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 0f69c89a-b564-4228-913d-c359dcac6f98
+revision: 8f0b1f44-7a0d-4423-b4b5-7fd15036822e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -112,14 +113,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0f69c89a-b564-4228-913d-c359dcac6f98
+8f0b1f44-7a0d-4423-b4b5-7fd15036822e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141127T124219:635526889391076329
+20141227T164749:635552956692606172Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

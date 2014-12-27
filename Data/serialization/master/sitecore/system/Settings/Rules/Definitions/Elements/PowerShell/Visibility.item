@@ -1,40 +1,33 @@
 ----item----
 version: 1
-id: {6DE31839-7C3D-4260-AA13-EBF30170FE28}
+id: {DF828AF3-8F0C-406D-AE87-61B2340A4833}
 database: master
-path: /sitecore/system/Modules/PowerShell/Rules/Conditions/PowerShell Session/Persistent Session Variable Defined
-parent: {AFA2E88F-BF7A-4491-BBDA-9964DBE15DBA}
-name: Persistent Session Variable Defined
-master: {00000000-0000-0000-0000-000000000000}
-template: {F0D16EEE-3A05-4E43-A082-795A32B873C0}
-templatekey: Condition
+path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Visibility
+parent: {C84F4255-CF8A-455D-9C11-94A774773ABA}
+name: Visibility
+master: {9A72C539-DBF8-4DAD-96D3-A298FC04ADD6}
+template: {AA91A868-02F2-41D3-8B78-1CAD91B4DCAE}
+templatekey: Visibility
 
 ----field----
-field: {AB51C8B2-F0E1-4471-9AAE-CC080D774923}
-name: Type
-key: type
-content-length: 104
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
 
-Cognifide.PowerShell.SitecoreIntegrations.Rules.PowerShellSessionExistsWithVariable,Cognifide.PowerShell
+400
 ----version----
 language: da
 version: 1
-revision: 9e0ad7bd-b558-4b6e-85af-7409e9f711ad
+revision: 4f784448-7c7a-423f-8db6-666a6dbc5817
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 38
-
-Når [fieldname,,,specific] felt er tom
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 14
+content-length: 9
 
-Feltet er tomt
+Synlighed
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -48,7 +41,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T135628:634901397882554152
+20140526T181002:635367246027244543
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -62,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9e0ad7bd-b558-4b6e-85af-7409e9f711ad
+4f784448-7c7a-423f-8db6-666a6dbc5817
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T135628:634901397882866700
+20140526T181002:635367246027244543
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -80,22 +73,15 @@ sitecore\admin
 ----version----
 language: de-DE
 version: 1
-revision: 61e42a75-5187-44d5-ae94-96c3387cd2eb
+revision: 3021e895-7a43-43f5-b64a-ed047cea7c78
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 41
-
-wo [fieldname,,,spezifisch] Feld ist leer
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 11
+content-length: 12
 
-Leeres Feld
+Sichtbarkeit
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -109,7 +95,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T140416:634901402568169700
+20140526T182030:635367252307367756
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -123,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-61e42a75-5187-44d5-ae94-96c3387cd2eb
+3021e895-7a43-43f5-b64a-ed047cea7c78
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T140416:634901402568325949
+20140526T182030:635367252307367756
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -141,21 +127,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: ae125727-dc23-46a9-9a8b-b362afaeb44c
-
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 158
-
-where [persistentsessionid,,,specific] persistent PowerShell session was already initiated and has the [VariableName,,,specific] variable defined and not null
-----field----
-field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
-name: __Display name
-key: __display name
-content-length: 0
-
+revision: 8ce592c2-8a21-433e-9c15-12ec55662d82
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -170,7 +142,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20081209T114531
+20120802T112600
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -184,40 +156,33 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ae125727-dc23-46a9-9a8b-b362afaeb44c
+8ce592c2-8a21-433e-9c15-12ec55662d82
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140114T114215:635252965356393125
+20141102T232559:635505675599797471
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
-content-length: 14
+content-length: 16
 
-sitecore\admin
+sitecore\adamnaj
 ----version----
 language: ja-JP
 version: 1
-revision: f7e53dc5-657f-4213-bd1f-171c9ad63803
+revision: e7c5851c-34e5-41bc-880d-8487dbbea2b6
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 40
-
-条件： （フィールド） [fieldname,,,特定] フィールドが空白の場合
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 7
+content-length: 6
 
-空白フィールド
+表示/非表示
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -231,7 +196,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T141203:634901407237674891
+20140526T183325:635367260055120130
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -245,14 +210,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f7e53dc5-657f-4213-bd1f-171c9ad63803
+e7c5851c-34e5-41bc-880d-8487dbbea2b6
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T141203:634901407237831146
+20140526T183325:635367260055120130
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

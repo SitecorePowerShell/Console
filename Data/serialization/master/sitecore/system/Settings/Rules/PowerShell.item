@@ -1,40 +1,26 @@
 ----item----
 version: 1
-id: {1B499603-87C9-4440-969F-D9568CE1E926}
+id: {93B2B1BA-C3D0-4092-A70C-5660BEC79D40}
 database: master
-path: /sitecore/system/Modules/PowerShell/Rules/Conditions/PowerShell Session/ListView name matching
-parent: {AFA2E88F-BF7A-4491-BBDA-9964DBE15DBA}
-name: ListView name matching
+path: /sitecore/system/Settings/Rules/PowerShell
+parent: {1057C235-C5C0-4EB7-8F77-EA51EB9E20EE}
+name: PowerShell
 master: {00000000-0000-0000-0000-000000000000}
-template: {F0D16EEE-3A05-4E43-A082-795A32B873C0}
-templatekey: Condition
+template: {DDA66314-03F3-4C89-84A9-39DFFB235B06}
+templatekey: Rules Context Folder
 
-----field----
-field: {AB51C8B2-F0E1-4471-9AAE-CC080D774923}
-name: Type
-key: type
-content-length: 96
-
-Cognifide.PowerShell.SitecoreIntegrations.Rules.PowerShellListViewNameMatch,Cognifide.PowerShell
 ----version----
 language: da
 version: 1
-revision: 9e0ad7bd-b558-4b6e-85af-7409e9f711ad
+revision: 76c312f6-3f28-4ab8-9be5-ee77d0d750ec
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 38
-
-Når [fieldname,,,specific] felt er tom
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 14
+content-length: 9
 
-Feltet er tomt
+Bucketing
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -48,7 +34,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T135628:634901397882554152
+20140526T180025:635367240251230183
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -62,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9e0ad7bd-b558-4b6e-85af-7409e9f711ad
+76c312f6-3f28-4ab8-9be5-ee77d0d750ec
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T135628:634901397882866700
+20140526T180025:635367240251230183
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -80,22 +66,15 @@ sitecore\admin
 ----version----
 language: de-DE
 version: 1
-revision: 61e42a75-5187-44d5-ae94-96c3387cd2eb
+revision: e2c764eb-7cfa-41a6-be93-10215a3998f0
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 41
-
-wo [fieldname,,,spezifisch] Feld ist leer
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 11
+content-length: 9
 
-Leeres Feld
+Bucketing
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -109,7 +88,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T140416:634901402568169700
+20140526T181231:635367247518485007
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -123,14 +102,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-61e42a75-5187-44d5-ae94-96c3387cd2eb
+e2c764eb-7cfa-41a6-be93-10215a3998f0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T140416:634901402568325949
+20140526T181231:635367247518485007
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -141,22 +120,8 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 80d4c0f2-cbe6-4b58-8f85-46ceafc29c8f
+revision: ffb684f0-cae9-4610-9561-5a83be4216bd
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 50
-
-where exposed in a [ValidViewName,,,specific] view
-----field----
-field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
-name: __Display name
-key: __display name
-content-length: 22
-
-ListView name matching
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -170,7 +135,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20081209T114500
+20130606T072352
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -184,14 +149,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-80d4c0f2-cbe6-4b58-8f85-46ceafc29c8f
+ffb684f0-cae9-4610-9561-5a83be4216bd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140122T174917:635260097573415859
+20131231T142438:635240966783605176
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -202,22 +167,15 @@ sitecore\admin
 ----version----
 language: ja-JP
 version: 1
-revision: f7e53dc5-657f-4213-bd1f-171c9ad63803
+revision: 67e6e5ef-9db9-4503-ac70-f852398d9b84
 
-----field----
-field: {AF321234-4EB9-4EF5-9197-65903351939C}
-name: Text
-key: text
-content-length: 40
-
-条件： （フィールド） [fieldname,,,特定] フィールドが空白の場合
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 7
+content-length: 4
 
-空白フィールド
+バケット
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -231,7 +189,7 @@ name: __Created
 key: __created
 content-length: 34
 
-20121203T141203:634901407237674891
+20140526T182252:635367253720636421
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -245,14 +203,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f7e53dc5-657f-4213-bd1f-171c9ad63803
+67e6e5ef-9db9-4503-ac70-f852398d9b84
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20121203T141203:634901407237831146
+20140526T182252:635367253720636421
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

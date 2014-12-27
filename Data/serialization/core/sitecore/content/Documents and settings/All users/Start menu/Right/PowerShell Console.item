@@ -20,9 +20,9 @@ content-length: 165
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 31
+content-length: 28
 
-powershell/32x32/powershell.png
+powershell/32x32/console.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -80,7 +80,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 197dbf4c-b06d-412e-a74e-ab87e46b59f4
+revision: aa207128-eb0e-43b5-81b3-e45cfa1de5e2
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -102,14 +102,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-197dbf4c-b06d-412e-a74e-ab87e46b59f4
+aa207128-eb0e-43b5-81b3-e45cfa1de5e2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20121024T122000:634866780008852492
+20141227T161327:635552936075155000Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

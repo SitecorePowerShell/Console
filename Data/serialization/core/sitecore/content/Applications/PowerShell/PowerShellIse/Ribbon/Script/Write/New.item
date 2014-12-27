@@ -13,9 +13,9 @@ templatekey: Large Button
 field: {D47ED548-84D5-4622-9886-5CC164727507}
 name: Icon
 key: icon
-content-length: 41
+content-length: 30
 
-Applications/32x32/document_plain_new.png
+Office/32x32/insert_option.png
 ----field----
 field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
 name: Click
@@ -34,9 +34,9 @@ a78
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 41
+content-length: 30
 
-Applications/32x32/document_plain_new.png
+Office/32x32/insert_option.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -54,7 +54,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: 2e252424-f3be-4daf-8260-b20add7b25fa
+revision: fe2fc7c0-b6a0-4239-a54d-851bae37b09e
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2e252424-f3be-4daf-8260-b20add7b25fa
+fe2fc7c0-b6a0-4239-a54d-851bae37b09e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20130720T184519:635099427198359219
+20141223T190615:635549583753463750Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
