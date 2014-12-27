@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore.Data.Query;
-using Sitecore.Forms.Core.Crm;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 
