@@ -2,9 +2,9 @@
 version: 1
 id: {AE3F218A-2ED4-40AA-A5A0-60BF385AEBDB}
 database: core
-path: /sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports/Fake Report
+path: /sitecore/content/Documents and settings/All users/Start menu/Right/Reporting Tools/PowerShell Reports/PowerShell Fake Report
 parent: {8803C527-14AF-4750-9F5D-44770AEC7805}
-name: Fake Report
+name: PowerShell Fake Report
 master: {00000000-0000-0000-0000-000000000000}
 template: {F58958D2-555B-4F56-946C-589E8866880C}
 templatekey: Start menu action
@@ -304,15 +304,15 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: c4d0601f-02bd-4c8a-a7e7-968fabc198a7
+revision: 9b62ebe1-639d-46ec-b59d-eb9d2168a4fb
 
 ----field----
 field: {326CD362-CB1C-4E81-B5F2-5EFA940351F7}
 name: Display name
 key: display name
-content-length: 18
+content-length: 22
 
-PowerShell Reports
+PowerShell Fake Report
 ----field----
 field: {E7D3348B-8323-42BA-BC9C-48E1F4E994DC}
 name: Tool tip
@@ -389,14 +389,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c4d0601f-02bd-4c8a-a7e7-968fabc198a7
+9b62ebe1-639d-46ec-b59d-eb9d2168a4fb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T162937:635552945773270234Z
+20141227T172013:635552976132518281Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
