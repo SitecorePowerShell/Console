@@ -8,6 +8,7 @@ using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.PowerShellIntegrations.Provider;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;

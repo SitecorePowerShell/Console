@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Web;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Host;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;

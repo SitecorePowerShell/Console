@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
+using Cognifide.PowerShell.Extensions;
 using Cognifide.PowerShell.PowerShellIntegrations;
 using Cognifide.PowerShell.PowerShellIntegrations.Settings;
 using Cognifide.PowerShell.SitecoreIntegrations.Controls;

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations.Commandlets;
+using Cognifide.PowerShell.Commandlets;
 using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Utility

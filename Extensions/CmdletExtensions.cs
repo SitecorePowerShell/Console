@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
-using Cognifide.PowerShell.Security;
+using Cognifide.PowerShell.Commandlets.Security;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;

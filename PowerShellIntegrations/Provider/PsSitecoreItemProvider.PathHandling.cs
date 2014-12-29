@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Cognifide.PowerShell.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 

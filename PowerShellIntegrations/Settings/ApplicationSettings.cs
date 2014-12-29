@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
+using Cognifide.PowerShell.Extensions;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
