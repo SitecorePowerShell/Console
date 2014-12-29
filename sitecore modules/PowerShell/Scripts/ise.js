@@ -1,6 +1,6 @@
 ﻿
 function onExecute() {
-    document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../Console/Assets/working.gif' alt='Working'/&gt;";
+    document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working'/&gt;";
 }
 
 // a convenience function for parsing string namespaces and
@@ -70,7 +70,7 @@ extend(cognifide, 'powershell');
         });
 
         ace.config.loadModule("ace/ext/emmet", function () {
-            ace.require("ace/lib/net").loadScript("/Console/Scripts/ace/emmet-core/emmet.js", function () {
+            ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function () {
                 codeeditor.setOption("enableEmmet", true);
             });
 
@@ -295,7 +295,7 @@ extend(cognifide, 'powershell');
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    url: "/Console/Services/PowerShellWebService.asmx/" + remotefunction,
+                    url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
                     data: datastring,
                     processData: false,
                     cache: false,

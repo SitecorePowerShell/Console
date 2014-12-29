@@ -451,7 +451,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Applications
                 string.Format(
                     "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
                     "<div align='Center' style='padding:32px 0px 32px 0px'>Please wait, {0}</br>" +
-                    "<img src='../../../../../Console/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
+                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
                     ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);

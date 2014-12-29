@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
                     string query = url.Query.TrimStart('?');
                     query += string.Format("{0}script={1}", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath);
                     WebUtil.RewriteUrl(
-                        new UrlString {Path = "/Console/Services/RemoteScriptCall.ashx", Query = query}.ToString());
+                        new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
                 }
                 if (localPath.StartsWith("/-/script/v2"))
                 {
@@ -58,7 +58,7 @@ namespace Cognifide.PowerShell.SitecoreIntegrations.Processors
                     string query = url.Query.TrimStart('?');
                     query += string.Format("{0}script={1}&sc_database={2}", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath, sourceArray[3]);
                     WebUtil.RewriteUrl(
-                        new UrlString { Path = "/Console/Services/RemoteScriptCall.ashx", Query = query }.ToString());
+                        new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
                 }
             }
             catch (Exception exception)

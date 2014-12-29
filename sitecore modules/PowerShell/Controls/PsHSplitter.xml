@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
-  <HSplitter def:inherits="Sitecore.Shell.Controls.Splitters.HSplitterXmlControl,Sitecore.Client">
+  <PsHSplitter def:inherits="Sitecore.Shell.Controls.Splitters.HSplitterXmlControl,Sitecore.Client">
     <Script type="text/JavaScript" language="javascript" src="/sitecore/shell/controls/SitecoreObjects.js"/>
-    <Script type="text/JavaScript" language="javascript" src="/Console/Scripts/PsHSplitter.js"/>
+    <Script type="text/JavaScript" language="javascript" src="/sitecore modules/PowerShell/Scripts/PsHSplitter.js"/>
 
     <Image def:ID="Image" Src="/sitecore/images/blank.gif" Cursor="move" Width="100%" Height="6"/>         
-  </HSplitter>
+  </PsHSplitter>
 </control>

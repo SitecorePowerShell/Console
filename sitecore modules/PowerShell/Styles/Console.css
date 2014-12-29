@@ -339,14 +339,14 @@ html {
     width: 13px;
     height: 13px;
     margin: auto;
-    background-image: url("/Console/Assets/checked.png");
+    background-image: url("/sitecore modules/PowerShell/Assets/checked.png");
 }
 
 .unchecked {
     width: 13px;
     height: 13px;
     margin: auto;
-    background-image: url("/Console/Assets/unchecked.png");
+    background-image: url("/sitecore modules/PowerShell/Assets/unchecked.png");
 }
 
 #HeaderIconContainer {

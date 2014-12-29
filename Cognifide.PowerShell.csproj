@@ -113,9 +113,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Console\Services\RemoteScriptCall.ashx.cs">
-      <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
-    </Compile>
     <Compile Include="Gutters\GutterStatusRenderer.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModuleFeature.cs" />
     <Compile Include="PowerShellIntegrations\Commandlets\Modules\GetSpeModule.cs" />
@@ -129,6 +126,15 @@
     <Compile Include="PowerShellIntegrations\Modules\Module.cs" />
     <Compile Include="PowerShellIntegrations\Modules\ModuleManager.cs" />
     <Compile Include="PowerShellIntegrations\Modules\ModuleMonitor.cs" />
+    <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
+      <DependentUpon>PowerShellWebService.asmx</DependentUpon>
+    </Compile>
+    <Compile Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx.cs">
+      <DependentUpon>RemoteAutomation.asmx</DependentUpon>
+    </Compile>
+    <Compile Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx.cs">
+      <DependentUpon>RemoteScriptCall.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Utility\RulesUtils.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Pipelines\LoggedIn\LoggedInScript.cs" />
@@ -293,14 +299,6 @@
     <Compile Include="SitecoreIntegrations\Applications\PowerShellIse.cs" />
     <Compile Include="SitecoreIntegrations\Applications\PowerShellRunner.cs" />
     <Compile Include="SitecoreIntegrations\Applications\ScriptRunner.cs" />
-    <Compile Include="Console\Services\PowerShellWebService.asmx.cs">
-      <DependentUpon>PowerShellWebService.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Console\Services\RemoteAutomation.asmx.cs">
-      <DependentUpon>RemoteAutomation.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="SitecoreIntegrations\Commands\AbortQueryState.cs" />
     <Compile Include="SitecoreIntegrations\Commands\EditIseSettings.cs" />
@@ -337,10 +335,6 @@
     <Compile Include="SitecoreIntegrations\Workflows\ScriptAction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Console\Assets\stewie.png" />
-    <None Include="Console\Assets\toplogo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -358,74 +352,93 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Console\Assets\Splitter.png" />
-    <None Include="Console\Assets\working.gif" />
-    <Content Include="Console\Assets\bg_left.gif" />
-    <Content Include="Console\Assets\bg_middle.gif" />
-    <Content Include="Console\Assets\bg_right.gif" />
-    <Content Include="Console\Assets\Cognifide.PowerShell.dll-Help.xml" />
-    <Content Include="Console\Assets\fg_left.gif" />
-    <Content Include="Console\Assets\fg_middle.gif" />
-    <Content Include="Console\Assets\fg_right.gif" />
-    <Content Include="Console\Assets\highlight.png" />
-    <Content Include="Console\Assets\ind-highlight.png" />
-    <Content Include="Console\Assets\question.png" />
-    <Content Include="Console\Assets\refresh.png" />
-    <Content Include="Console\Scripts\ace\ace.js" />
-    <Content Include="Console\Scripts\ace\emmet-core\emmet.js" />
-    <Content Include="Console\Scripts\ace\ext-beautify.js" />
-    <Content Include="Console\Scripts\ace\ext-chromevox.js" />
-    <Content Include="Console\Scripts\ace\ext-elastic_tabstops_lite.js" />
-    <Content Include="Console\Scripts\ace\ext-emmet.js" />
-    <Content Include="Console\Scripts\ace\ext-error_marker.js" />
-    <Content Include="Console\Scripts\ace\ext-keybinding_menu.js" />
-    <Content Include="Console\Scripts\ace\ext-language_tools.js" />
-    <Content Include="Console\Scripts\ace\ext-linking.js" />
-    <Content Include="Console\Scripts\ace\ext-modelist.js" />
-    <Content Include="Console\Scripts\ace\ext-old_ie.js" />
-    <Content Include="Console\Scripts\ace\ext-searchbox.js" />
-    <Content Include="Console\Scripts\ace\ext-settings_menu.js" />
-    <Content Include="Console\Scripts\ace\ext-spellcheck.js" />
-    <Content Include="Console\Scripts\ace\ext-split.js" />
-    <Content Include="Console\Scripts\ace\ext-static_highlight.js" />
-    <Content Include="Console\Scripts\ace\ext-statusbar.js" />
-    <Content Include="Console\Scripts\ace\ext-textarea.js" />
-    <Content Include="Console\Scripts\ace\ext-themelist.js" />
-    <Content Include="Console\Scripts\ace\ext-whitespace.js" />
-    <Content Include="Console\Scripts\ace\mode-powershell.js" />
-    <Content Include="Console\Scripts\ace\snippets-powershell.js" />
-    <Content Include="Console\Scripts\ace\snippets\powershell.js" />
-    <Content Include="Console\Scripts\ace\theme-powershellise.js" />
-    <Content Include="Console\Scripts\console.js" />
-    <Content Include="Console\Scripts\listview.js" />
-    <Content Include="Console\Scripts\VariablePrompt.js" />
-    <Content Include="Console\Scripts\ise.js" />
-    <Content Include="Console\Scripts\jquery-1.10.2.min.js" />
-    <Content Include="Console\Scripts\jquery-migrate-1.2.1.min.js" />
-    <Content Include="Console\Scripts\jquery-ui.js" />
-    <Content Include="Console\Scripts\jquery.mousewheel-min.js" />
-    <Content Include="Console\Scripts\jquery.qtip.min.js" />
-    <Content Include="Console\Scripts\jquery.terminal.js" />
-    <Content Include="Console\Scripts\jquery.VistaProgressBar-0.6.js" />
-    <Content Include="Console\Scripts\Runner.js" />
-    <Content Include="Console\Scripts\json2.js" />
-    <Content Include="Console\Scripts\PsHSplitter.js" />
-    <Content Include="Console\Scripts\split.js" />
-    <Content Include="Console\Services\PowerShellWebService.asmx" />
-    <Content Include="Console\Services\RemoteAutomation.asmx" />
-    <Content Include="Console\Styles\Console.css" />
-    <Content Include="Console\Styles\ise.css" />
-    <Content Include="Console\Styles\ListView.css" />
-    <Content Include="Console\Styles\VariablePrompt.css" />
-    <Content Include="Console\Styles\jquery.qtip.min.css" />
-    <Content Include="Console\Styles\jquery.terminal.css" />
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
-    <Content Include="Console\Styles\jquery.ui.all.css" />
-    <Content Include="Console\Styles\jquery.ui.autocomplete.css" />
-    <Content Include="Console\Styles\jquery.ui.base.css" />
-    <Content Include="Console\Styles\jquery.ui.core.css" />
-    <Content Include="Console\Styles\jquery.ui.theme.css" />
-    <Content Include="Console\Styles\Runner.css" />
+    <Content Include="sitecore modules\PowerShell\Assets\bg_left.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\bg_middle.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\coglogo.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml" />
+    <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\fg_middle.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\fg_right.gif" />
+    <Content Include="sitecore modules\PowerShell\Assets\highlight.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\ind-highlight.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\info.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\question.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\refresh.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\stewie.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
+    <Content Include="sitecore modules\PowerShell\Controls\ConfirmChoice.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\DownloadFile.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\GetStringResponse.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellConsole.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellIse.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellMultiValuePrompt.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerList.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerText.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellRunner.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellScriptBrowser.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PsHSplitter.xml" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-beautify.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-chromevox.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-elastic_tabstops_lite.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-emmet.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-error_marker.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-keybinding_menu.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-language_tools.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-linking.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-modelist.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-old_ie.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-searchbox.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-settings_menu.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-spellcheck.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-split.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-static_highlight.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-statusbar.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-textarea.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-themelist.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-whitespace.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\mode-powershell.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets-powershell.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ise.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery-1.10.2.min.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery-migrate-1.2.1.min.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery-ui.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery.mousewheel-min.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.min.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery.terminal.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\jquery.VistaProgressBar-0.6.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\json2.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
+    <Content Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx" />
+    <Content Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx" />
+    <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.all.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.autocomplete.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.base.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.core.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.theme.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
     <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -460,15 +473,12 @@
     <Content Include="App_Config\Include\Cognifide.PowerShell.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Console\Assets\Sitecore.Views.ps1xml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Console\Assets\Sitecore.Types.ps1xml">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="README.md" />
     <Content Include="Properties\Cognifide.PowerShell.psd1" />
-    <Content Include="Console\Services\RemoteScriptCall.ashx" />
+    <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml" />
+    <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml" />
+    <Content Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx" />
+    <Content Include="sitecore modules\PowerShell\Services\web.config" />
     <None Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
   </ItemGroup>
   <ItemGroup />

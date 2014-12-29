@@ -3,15 +3,15 @@
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellMultiValuePrompt>
     <FormPage>
-      <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
-      <Script src="/Console/Scripts/jquery-ui.js"></Script>
-      <Script src="/Console/Scripts/jquery.qtip.min.js"></Script>
-      <Script src="/Console/Scripts/VariablePrompt.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/Console/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
-      <Stylesheet Src="/Console/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
       <script>
         function OnTabSelect() {
@@ -63,7 +63,7 @@
 	  </Scrollbox>
         </Scrollbox>
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
           <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <div class="footerOkCancel">
             <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK"/>

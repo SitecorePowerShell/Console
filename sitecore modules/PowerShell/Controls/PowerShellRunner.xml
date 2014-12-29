@@ -3,16 +3,16 @@
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellRunner>
     <FormPage>
-      <Script Src="/Console/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script Src="/Console/Scripts/jquery-migrate-1.2.1.min.js"></Script>
-      <Script Src="/Console/Scripts/jquery-ui.js"></Script>
-      <Script Src="/Console/Scripts/jquery.qtip.min.js" runat="server"></Script>
-      <Script Src="/Console/Scripts/jquery.VistaProgressBar-0.6.js" runat="server"></Script>
-      <Script Src="/Console/Scripts/Runner.js" runat="server"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js" runat="server"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/jquery.VistaProgressBar-0.6.js" runat="server"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js" runat="server"></Script>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/Console/Styles/jquery.qtip.min.css"/>
-      <Stylesheet Src="/Console/Styles/Runner.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
       <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css"/>
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellRunner,Cognifide.PowerShell" />
       <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
@@ -50,7 +50,7 @@
         </Scrollbox>
 
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
           <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results</a>
           <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results (there were errors)</a>

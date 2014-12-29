@@ -77,7 +77,7 @@ extend(cognifide, 'powershell');
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                url: "/Console/Services/PowerShellWebService.asmx/" + remotefunction,
+                url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
                 data: datastring,
                 processData: false,
                 cache: false,

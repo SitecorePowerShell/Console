@@ -15,10 +15,10 @@
             padding-left: 15px;
         }
       </Stylesheet>
-      <Stylesheet Src="/Console/Styles/Dialogs.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
 
       <GridPanel class="scConfirmationContainer" Columns="2" Width="100%" >
-        <ThemedImage class="scConfirmationIcon" Src="/Console/Assets/Download.png" Width="64" Height="64" Margin="8px 0px 8px 16px" />
+        <ThemedImage class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64" Height="64" Margin="8px 0px 8px 16px" />
         <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
           <Literal ID="Text" />
           <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">

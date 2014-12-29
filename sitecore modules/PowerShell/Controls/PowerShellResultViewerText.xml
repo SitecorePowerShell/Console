@@ -5,8 +5,8 @@
     <FormPage>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
       <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerText,Cognifide.PowerShell" />
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">

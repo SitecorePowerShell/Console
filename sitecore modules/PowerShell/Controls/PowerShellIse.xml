@@ -6,11 +6,11 @@
       <Action ID="HasFile" Disabled="true" />
       <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="Ribbon.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/Console/Styles/Console.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/Console/Styles/ise.css" DeviceDependant="true" />
-      <Script runat="server" src="/Console/Scripts/jquery-1.10.2.min.js"></Script>
-      <Script runat="server" src="/Console/Scripts/jquery-migrate-1.2.1.min.js"></Script>
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/ise.css" DeviceDependant="true" />
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
 
       <script type="text/javascript">if (!window.$sc) $sc = jQuery.noConflict();</script>
@@ -24,10 +24,10 @@
       <Script runat="server" src="/sitecore/shell/Controls/Lib/Scriptaculous/DragDrop.js"></Script>
       <Script runat="server" src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script>
       
-      <Script runat="server" src="/Console/Scripts/json2.js"></Script>
-      <Script runat="server" src="/Console/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
-      <Script runat="server" src="/Console/Scripts/ise.js"></Script>
-      <Script runat="server" src="/Console/Scripts/ace/ace.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
@@ -80,7 +80,7 @@
           Unsaved script.
           </Border>
           <Border class="status-bar-panel status-bar-text">
-            <Image ID="RefreshHint" src="/Console/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
+            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
             <Literal ID="StatusTip">
             </Literal>
           </Border>
