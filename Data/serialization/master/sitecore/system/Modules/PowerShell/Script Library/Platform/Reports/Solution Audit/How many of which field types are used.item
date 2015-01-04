@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1301
+content-length: 1589
 
 # What field types and in what numbers do you use in your solution?
 #
@@ -35,15 +35,17 @@ if($result -ne "ok")
 
 # We need to change location to a Sitecore database do that PowerShell can recognize -Query as a valid parameter
 cd "$($item.Database.Name):\"
+$fields = get-item . -query "fast:$($item.Paths.Path)//*[@@templatename=`"Template Field`"]" | group-object Type
+$total = 0 
+$fields | % { $total += $_.Count } | Out-Null
+$fields | %{ Add-Member -InputObject $_ -MemberType NoteProperty -Name Percent -Value ([math]::Round($_.Count * 100 / $total)) }
 
-get-item . -query "fast:$($item.Paths.Path)//*[@@templatename=`"Template Field`"]" | 
-  group-object Type | `
+$fields | `
   sort count -descending |
-        Show-ListView -Property @{Name="Field Type"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.Count}} `
+        Show-ListView -Property @{Name="Field Type"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.Count}}, @{Name="Percent of usages"; Expression={"$($_.Percent)%"}}`
             -Title "Field types used by templates." `
             -InfoDescription "Field types used by templates under $($item.Paths.Path) branch." 
-Close-Window  
-
+Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -54,7 +56,7 @@ Control/32x32/multi_controls_b.png
 ----version----
 language: en
 version: 1
-revision: be850eef-b268-411a-8ac0-ef073aae836e
+revision: 09dd73ac-5659-45ba-a7bb-6cd22ad27708
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -76,14 +78,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-be850eef-b268-411a-8ac0-ef073aae836e
+09dd73ac-5659-45ba-a7bb-6cd22ad27708
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20131218T175140:635229859003278125
+20150104T231523:635560101233232422Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

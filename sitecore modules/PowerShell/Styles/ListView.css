@@ -18,3 +18,31 @@
     left: 0;
     overflow: auto;
 }
+
+.progressBar {
+    background:#fff;
+    color: #012456;
+    padding:4px 0;
+    width:100%;
+    text-align:center;
+    position:relative;
+    border: 1px solid #ccc;
+}
+
+.progressFill {
+    background:#012456;
+    color:#fff;
+    width:51%;
+    padding:4px 0;
+    position:absolute;
+    left:0;
+    top:0;
+    overflow:hidden;
+}
+
+.progressFillText {
+}
+
+.scListControl > tbody > tr > td:nth-child(1) {  
+    width:8px;
+}

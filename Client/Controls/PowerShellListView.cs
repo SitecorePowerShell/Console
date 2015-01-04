@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
@@ -166,12 +167,25 @@ namespace Cognifide.PowerShell.Client.Controls
                 {
                     columnNames.Add(column);
                     string val = result.Display[column];
-                    lvi.ColumnValues.Add(column,
-                        val == "False"
-                            ? "<div class='unchecked'></div>"
-                            : val == "True"
-                                ? "<div class='checked'></div>"
-                                : val);
+                    switch (val)
+                    {
+                        case("False"):
+                            val = "<div class='unchecked'></div>";
+                            break;
+                        case ("True"):
+                            val = "<div class='checked'></div>";
+                            break;
+                        default:
+                            if (Regex.IsMatch(val, @"^\d+\.?\d*%$", RegexOptions.None))
+                            {
+                                val =
+                                    string.Format(
+                                        "<div class='progressBar'><div class='progressFill' style='width:{0}'><div class='progressFillText'>{0}</div></div>{0}</div>", 
+                                        val);
+                            }
+                            break;
+                    }
+                    lvi.ColumnValues.Add(column, val);
                 }
                 Controls.Add(lvi);
             }

@@ -16,6 +16,15 @@ jQuery(document).ready(function($) {
         }
         ;
     });
+    function barWidth() {
+        var barWidth = $('.progressBar').width();
+        $('.progressFillText').css('width',barWidth);
+    }
+
+    barWidth();
+    window.onresize = function() {
+        barWidth();
+    }
 });
 
 function updateStatusBarCounters(itemCount, currentPage, pageCount) {
