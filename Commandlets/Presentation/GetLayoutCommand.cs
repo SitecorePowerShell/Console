@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
-using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;

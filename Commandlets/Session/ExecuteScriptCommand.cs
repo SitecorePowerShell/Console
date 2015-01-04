@@ -1,9 +1,8 @@
 ﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
-using Cognifide.PowerShell.Utility;
+using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Data.Items;
 

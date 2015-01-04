@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.SitecoreIntegrations.Serialization;
-using Cognifide.PowerShell.Utility;
+using Cognifide.PowerShell.Core.Serialization;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;

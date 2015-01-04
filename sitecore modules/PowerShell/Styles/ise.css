@@ -236,7 +236,7 @@ a.ps-link {
 }
 
 #ResultsSplitter {
-    background: url(/sitecore modules/PowerShell/Assets/Splitter.png) no-repeat center;
+    background: url(/sitecore%20modules/PowerShell/Assets/Splitter.png) no-repeat center;
     padding: 0 4px 0 4px;
 }
 

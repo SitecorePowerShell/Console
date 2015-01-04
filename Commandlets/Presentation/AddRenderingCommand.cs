@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
-using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Sitecore.Text;

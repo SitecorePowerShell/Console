@@ -5,7 +5,7 @@
     <FormDialog ID="Dialog" Icon="Applications/32x32/folder_out.png" Header="Item browser"
                 Text="Select the item that you want to open." OKButton="Open">
 
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellScriptBrowser,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellScriptBrowser,Cognifide.PowerShell" />
 
       <DataContext ID="ScriptDataContext" />
 

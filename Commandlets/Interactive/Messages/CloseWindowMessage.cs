@@ -1,5 +1,5 @@
 ﻿using System;
-using Cognifide.PowerShell.SitecoreIntegrations.Applications;
+using Cognifide.PowerShell.Client.Applications;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;

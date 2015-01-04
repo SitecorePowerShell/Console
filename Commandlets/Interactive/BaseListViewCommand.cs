@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
-using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.Core.Extensions;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {

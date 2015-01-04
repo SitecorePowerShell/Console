@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Host;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {

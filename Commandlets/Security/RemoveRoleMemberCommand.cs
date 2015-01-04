@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security

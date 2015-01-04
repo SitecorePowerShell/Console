@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Web;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Core.Host;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;

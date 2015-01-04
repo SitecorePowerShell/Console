@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 using System.Management.Automation.Host;
-using Cognifide.PowerShell.PowerShellIntegrations.Settings;
+using Cognifide.PowerShell.Core.Settings;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations.Modules;
+using Cognifide.PowerShell.Core.Modules;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Modules

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Security.Accounts;
 

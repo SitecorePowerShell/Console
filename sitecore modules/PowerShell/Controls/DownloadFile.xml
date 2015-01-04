@@ -4,7 +4,7 @@
   <DownloadFile>
     <FormDialog Header="Download" OKButton="Download" CancelButton="false">
       <Edit ID="Hidden" ReadOnly="true" Style="display: none" />
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.DownloadFile,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.DownloadFile,Cognifide.PowerShell" />
 
       <Stylesheet>
         .scConfirmationContainer td:first-child{

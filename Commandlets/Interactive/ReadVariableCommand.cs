@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
-using Cognifide.PowerShell.Extensions;
-using Cognifide.PowerShell.PowerShellIntegrations;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive

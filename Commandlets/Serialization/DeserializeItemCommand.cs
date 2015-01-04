@@ -1,5 +1,5 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.SitecoreIntegrations.Serialization;
+using Cognifide.PowerShell.Core.Serialization;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;

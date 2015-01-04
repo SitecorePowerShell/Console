@@ -3,7 +3,7 @@
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellResultViewerList>
     <FormPage Application="PowerShell/PowerShellListView">
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
       <Action ID="HasFile" Disabled="true" />
 
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />

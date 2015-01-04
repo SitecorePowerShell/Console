@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 

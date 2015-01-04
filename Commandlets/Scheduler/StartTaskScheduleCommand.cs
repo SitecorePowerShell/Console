@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations;
-using Cognifide.PowerShell.Utility;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Exceptions;

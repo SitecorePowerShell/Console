@@ -12,7 +12,7 @@
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
       <script>
         function OnTabSelect() {
         if (window.Flexie) Flexie.updateInstance();

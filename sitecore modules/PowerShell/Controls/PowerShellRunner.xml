@@ -14,7 +14,7 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css"/>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
       <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css"/>
-      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellRunner,Cognifide.PowerShell" />
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellRunner,Cognifide.PowerShell" />
       <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
       <Literal ID="CurrentProgressValue" Visible="false" runat="server"/>
       <Literal ID="Result" runat="server" />

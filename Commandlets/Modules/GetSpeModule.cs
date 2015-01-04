@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
-using Cognifide.PowerShell.PowerShellIntegrations.Modules;
+using Cognifide.PowerShell.Core.Modules;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 

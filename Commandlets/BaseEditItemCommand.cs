@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
-using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets

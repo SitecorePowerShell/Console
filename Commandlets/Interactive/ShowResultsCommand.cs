@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
-using Cognifide.PowerShell.PowerShellIntegrations.Host;
+using Cognifide.PowerShell.Core.Host;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web;
 

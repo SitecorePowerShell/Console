@@ -6,7 +6,7 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
-using Cognifide.PowerShell.Extensions;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Resources;
