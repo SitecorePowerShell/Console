@@ -13,13 +13,13 @@ templatekey: Panel
 field: {C78D9B41-FFEB-402D-93E8-E1270D8BB787}
 name: Type
 key: type
-content-length: 96
+content-length: 82
 
-Cognifide.PowerShell.SitecoreIntegrations.Controls.RibbonExportScriptsPanel,Cognifide.PowerShell
+Cognifide.PowerShell.Client.Controls.RibbonExportScriptsPanel,Cognifide.PowerShell
 ----version----
 language: en
 version: 1
-revision: b7b092fb-3450-40d9-8ad6-75f3c03b8a38
+revision: a5ca4156-cf7c-46f3-96ae-896b5404a301
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -32,9 +32,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20130208T173000
+20130208T163000Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b7b092fb-3450-40d9-8ad6-75f3c03b8a38
+a5ca4156-cf7c-46f3-96ae-896b5404a301
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20130911T150641:635145088013886172
+20150104T202451:635559998915818282Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
