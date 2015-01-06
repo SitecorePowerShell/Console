@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6052
+content-length: 6086
 
 $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
@@ -123,7 +123,7 @@ Get-Childitem $stripsPath | ForEach-Object {
                     $panel | remove-item -Recurse
                     Write-Host "Removing old non-rule-respecting button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon" -f y
                 }
-                elseif($script -eq $null){
+                elseif($script -eq $null -or $script.Name -ne $button.Name){
                     Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon as the script no longer exists" -f y
                     $panel | remove-item -Recurse
                 } else {
@@ -160,7 +160,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: 61ef1946-d0b5-46c7-8e1e-8f97e125093f
+revision: 49dd04c4-058a-4263-95d9-771088c46069
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -175,14 +175,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-61ef1946-d0b5-46c7-8e1e-8f97e125093f
+49dd04c4-058a-4263-95d9-771088c46069
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150106T003154:635561011143473203Z
+20150106T120503:635561427034518125Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

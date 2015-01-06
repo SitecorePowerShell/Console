@@ -30,9 +30,9 @@ namespace Cognifide.PowerShell.Client.Controls
                 {
                     continue;
                 }
-                var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
 
-                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
+                var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
+                if (scriptItem == null || !RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
                 {
                     continue;
                 }
