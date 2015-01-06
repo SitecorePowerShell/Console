@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5201
+content-length: 6052
 
 $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
@@ -72,9 +72,11 @@ foreach($root in $roots){
         Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
           $script = $_
           if($script.TemplateName -eq "PowerShell Script"){
-              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)"
+              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)/$($script.Name)"
               if($button -eq $null){
-                $button = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "/sitecore/templates/System/Ribbon/Large Button"
+                $panel = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "System/Ribbon/Panel"
+                $panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
+                $button = New-Item -path "$($panel.ProviderPath)" -Name "$($script.Name)" -ItemType "System/Ribbon/Large Button"
                 Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
               } else { 
                 if($button.Click -match "item:executescript"){
@@ -107,18 +109,27 @@ Get-Childitem $stripsPath | ForEach-Object {
         }
         Get-Childitem $chunk.ProviderPath | ForEach-Object {
             $button = $_
+            $panel = $_
+            if($panel.TemplateName -eq "Panel"){
+                $button = Get-ChildItem "$($panel.ProviderPath)" | Select-Object -First 1
+            }
             if($button.Click -match "item:executescript"){
                 $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$button.Click)
                 $scriptDb = $message.Arguments["scriptDb"]
                 $scriptId = $message.Arguments["script"];
                 $script = Get-Item "$($scriptDb):/" -Id $scriptId
-                if($script -eq $null){
-                    Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Control Panel as the script no longer exists" -f y
-                    $button | remove-item
+                if($button.ID -eq $panel.Id)
+                {
+                    $panel | remove-item -Recurse
+                    Write-Host "Removing old non-rule-respecting button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon" -f y
+                }
+                elseif($script -eq $null){
+                    Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon as the script no longer exists" -f y
+                    $panel | remove-item -Recurse
                 } else {
                     if(!(Get-SpeModule -Item $script).Enabled){
-                        Write-Host "Removing '$($chunk.Name)/$($button.Name)' from Ribbon as the module is no longer active." -ForegroundColor Magenta
-                        $button | remove-item
+                        Write-Host "Removing '$($chunk.Name)/$($button.Name)' from Content Editor Ribbon as the module is no longer active." -ForegroundColor Magenta
+                        $panel | remove-item -Recurse
                     } else {
                         #Write-Host "Keeping script '$($chunk.Name)/$($button.Name)'" -ForegroundColor Yellow
                     }
@@ -149,7 +160,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: 1a620824-1161-4178-b984-0e9043b370a8
+revision: 61ef1946-d0b5-46c7-8e1e-8f97e125093f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -164,14 +175,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1a620824-1161-4178-b984-0e9043b370a8
+61ef1946-d0b5-46c7-8e1e-8f97e125093f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141129T162246:635528749668554140
+20150106T003154:635561011143473203Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -137,6 +137,7 @@
     <Compile Include="Client\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
+    <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
     <Compile Include="Client\Controls\ListViewComparer.cs" />
     <Compile Include="Client\Controls\PowerShellListView.cs" />
     <Compile Include="Client\Controls\PSCheckList.cs" />
