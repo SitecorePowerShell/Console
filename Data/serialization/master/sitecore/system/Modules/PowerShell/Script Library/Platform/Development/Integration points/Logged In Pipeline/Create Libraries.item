@@ -13,15 +13,15 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 205
+content-length: 189
 
-$integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::PipelineLoggedInFeature;
+$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::PipelineLoggedInFeature;
 Import-Function -Name Create-IntegrationPoint
 CreateIntegrationPoint($integrationPoint)
 ----version----
 language: en
 version: 1
-revision: 2138da0e-7921-47b6-a1a6-d785d076e0d3
+revision: fd01b4e5-1f68-4526-bb25-4b533b743548
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -36,14 +36,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2138da0e-7921-47b6-a1a6-d785d076e0d3
+fd01b4e5-1f68-4526-bb25-4b533b743548
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175201:635552995218377656Z
+20150105T105856:635560523368717344Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

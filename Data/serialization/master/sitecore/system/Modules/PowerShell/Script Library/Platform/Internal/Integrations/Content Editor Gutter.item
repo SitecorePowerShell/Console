@@ -13,10 +13,10 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2802
+content-length: 2875
 
 $gutterPath = "core:/sitecore/content/Applications/Content Editor/Gutters/"
-$gutterHandlerClass = "Cognifide.PowerShell.Gutters.GutterStatusRenderer, Cognifide.PowerShell"
+$gutterHandlerClass = "Cognifide.PowerShell.Integrations.Gutters.GutterStatusRenderer, Cognifide.PowerShell"
 $gutterTemplate = "Sitecore Client/Content editor/Gutter Renderer"
 $roots = Get-SpeModuleFeatureRoot "ContentEditorGutters"
 
@@ -86,7 +86,7 @@ Control/32x32/treeview.png
 ----version----
 language: en
 version: 1
-revision: 0bfd4bc0-5e5d-43d9-98e6-82740cacdd01
+revision: 194910fa-051f-4fb5-b58a-9f366878110f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -101,14 +101,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0bfd4bc0-5e5d-43d9-98e6-82740cacdd01
+194910fa-051f-4fb5-b58a-9f366878110f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141129T160233:635528737535458437
+20150105T110540:635560527406969297Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

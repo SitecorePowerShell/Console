@@ -13,10 +13,10 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 782
+content-length: 781
 
 $libraryTemplatePath = "Modules/PowerShell Console/PowerShell Script Library"
-$integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::ControlPanelFeature;
+$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::ControlPanelFeature;
 $controlPanelPath = "core:/content/Applications/Control Panel"
 Import-Function -Name Create-IntegrationPoint
 CreateIntegrationPoint($integrationPoint)
@@ -36,7 +36,7 @@ foreach($section in $controlPanel.Children)
 ----version----
 language: en
 version: 1
-revision: 3ff4d1de-2572-42ac-b2c6-6d8383b90c1f
+revision: fc619c28-403e-4fe3-a4a4-cbeb45acb501
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -51,14 +51,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3ff4d1de-2572-42ac-b2c6-6d8383b90c1f
+fc619c28-403e-4fe3-a4a4-cbeb45acb501
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175200:635552995207098359Z
+20150105T105703:635560522234283750Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

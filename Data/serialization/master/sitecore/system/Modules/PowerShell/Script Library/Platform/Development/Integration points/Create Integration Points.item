@@ -13,9 +13,9 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2210
+content-length: 2207
 
-$integrationPoints = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::Libraries;
+$integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
 
 $options = New-Object System.Collections.Specialized.OrderedDictionary
@@ -45,14 +45,14 @@ else{
     }
 }
 
-cd "$([Cognifide.PowerShell.PowerShellIntegrations.Settings.ApplicationSettings]::ScriptLibraryDb):\"
+cd "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):\"
 foreach($pointToCreate in $pointsToCreate){
     Execute-Script -Path $integrationPoints[$pointToCreate].CreationScript
 }
 ----version----
 language: en
 version: 1
-revision: d5bd4d0a-4500-4922-b558-8719dad0d51e
+revision: 7f88d025-0d15-4807-8d23-843eae054a0d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -67,14 +67,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d5bd4d0a-4500-4922-b558-8719dad0d51e
+7f88d025-0d15-4807-8d23-843eae054a0d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175202:635552995229266328Z
+20150105T110202:635560525222828672Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
