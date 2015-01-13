@@ -179,7 +179,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             if (item != null && provider != null && o != null)
             {
                 psobj.Properties.Add(new PSScriptProperty(
-                    "OwnerItemId", provider.InvokeCommand.NewScriptBlock(string.Format("{{{0}}}", item.ID))));
+                    "OwnerItemId", provider.InvokeCommand.NewScriptBlock(string.Format("'{{{0}}}'", item.ID))));
                 psobj.Properties.Add(new PSScriptProperty(
                     "OwnerItemPath",
                     provider.InvokeCommand.NewScriptBlock(string.Format("\"{0}:{1}\"", item.Database.Name,
