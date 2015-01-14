@@ -245,6 +245,9 @@
     <Compile Include="Commandlets\Security\UnlockItemCommand.cs" />
     <Compile Include="Commandlets\Security\UnlockUserCommand.cs" />
     <Compile Include="Commandlets\Security\UnprotectItemCommand.cs" />
+    <Compile Include="Commandlets\Serialization\ExportRoleCommand.cs" />
+    <Compile Include="Commandlets\Serialization\ImportUserCommand.cs" />
+    <Compile Include="Commandlets\Serialization\ExportUserCommand.cs" />
     <Compile Include="Commandlets\Serialization\DeserializeItemCommand.cs" />
     <Compile Include="Commandlets\Serialization\GetPresetCommand.cs" />
     <Compile Include="Commandlets\Serialization\SerializeItemCommand.cs" />

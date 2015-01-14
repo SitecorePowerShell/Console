@@ -41,7 +41,7 @@
         Works only with target parameter and decides if folder structure starting from "sitecore\content" should be created, e.g. if you want to serialize articles item in directory c:\tmp\sitecore\content you can use. For example:
         Serialize-Item -Path "master:\content\articles" -ItemPathsAbsolute -Target "c:\tmp"
 
-    .PARAMETER Target
+    .PARAMETER Root
         Directory where the serialized files should be saved, e.g.
         
         Serialize-Item -Path "master:\content" -Target "c:\tmp"

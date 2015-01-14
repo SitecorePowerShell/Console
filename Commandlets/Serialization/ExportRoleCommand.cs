@@ -1,0 +1,103 @@
+﻿using System.Linq;
+using System.Management.Automation;
+using Cognifide.PowerShell.Commandlets.Security;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Serialization;
+using Sitecore;
+using Sitecore.Data.Serialization;
+using Sitecore.Data.Serialization.Presets;
+using Sitecore.Security.Accounts;
+using Sitecore.Security.Serialization;
+
+namespace Cognifide.PowerShell.Commandlets.Serialization
+{
+    [Cmdlet("Export", "Role")]
+    [OutputType(typeof(string))]
+    public class ExportRoleCommand : BaseCommand
+    {
+
+        [Alias("Name")]
+        [Parameter(ParameterSetName = "Id", Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = "Path Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
+        [ValidateNotNullOrEmpty]
+        public AccountIdentity Identity { get; set; }
+
+        [Parameter(ParameterSetName = "Filter", Mandatory = true)]
+        [ValidateNotNullOrEmpty]
+        public string Filter { get; set; }
+
+        [Parameter(ParameterSetName = "Role", Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = "Path Role", Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [ValidateNotNullOrEmpty]
+        public Role Role { get; set; }
+
+        [Parameter(ParameterSetName = "Path Id", Mandatory = true)]
+        [Parameter(ParameterSetName = "Path Role", Mandatory = true)]
+        [Alias("FullName", "FileName")]
+        public string Path { get; set; }
+
+        [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "Role")]
+        [Alias("Target")]
+        public string Root { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            switch (ParameterSetName)
+            {
+                case "Role":
+                case "Path Role":
+                case "Root Role":
+                    SerializeRole(Role);
+                    break;
+                case "Filter":
+                    var filter = Filter;
+                    if (!filter.Contains("?") && !filter.Contains("*")) return;
+
+                    var managedRoles = Context.User.Delegation.GetManagedRoles(true);
+                    var roles = WildcardFilter(filter, managedRoles, role => role.Name);
+                    roles.ToList().ForEach(SerializeRole);
+                    break;
+                default:
+                    if (!this.CanFindAccount(Identity, AccountType.Role)) return; 
+                    SerializeRole(Role.FromName(Identity.Name));
+                    break;
+            }
+        }
+
+        private void SerializeRole(Role role)
+        {
+            if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
+            {
+                var logMessage = string.Format("Serializing user '{0}'", role.Name);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
+                Manager.DumpRole(role.Name);
+                WriteObject(PathUtils.GetFilePath(new RoleReference(role.Name)));
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(Path))
+                {
+                    if (string.IsNullOrEmpty(Root))
+                    {
+                        RoleReference roleReference = new RoleReference(role.Name);
+                        Path = PathUtils.GetFilePath(roleReference);
+                    }
+                    else
+                    {
+                        RoleReference roleReference = new RoleReference(role.Name);
+                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
+                        Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                    }
+                }
+                var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
+                Manager.DumpRole(Path, role);
+                WriteObject(Path);
+            }
+        }
+    }
+}
