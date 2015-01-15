@@ -1,6 +1,7 @@
 <#
     .SYNOPSIS
         Executes Workflow action for an item.
+        This command used to be named Execute-Workflow - a matching alias added for compatibility with older scripts.
 
     .DESCRIPTION
         Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised.
@@ -41,9 +42,9 @@
 
     .EXAMPLE
 	# Submit item to approval, item gotten from path
-        PS master:\> Execute-Workflow -Path master:/content/home -CommandName "Submit" -Comments "Automated"
+        PS master:\> Invoke-Workflow -Path master:/content/home -CommandName "Submit" -Comments "Automated"
 
     .EXAMPLE
 	# Reject item, item gotten from pipeline
-        PS master:\> Get-Item master:/content/home | Execute-Workflow -CommandName "Reject" -Comments "Automated"
+        PS master:\> Get-Item master:/content/home | Invoke-Workflow -CommandName "Reject" -Comments "Automated"
 #>

@@ -6,8 +6,8 @@ using Sitecore.Workflows;
 
 namespace Cognifide.PowerShell.Commandlets.Workflows
 {
-    [Cmdlet("Execute", "Workflow")]
-    public class ExecuteWorkflowCommand : BaseItemCommand
+    [Cmdlet(VerbsLifecycle.Invoke, "Workflow")]
+    public class InvokeWorkflowCommand : BaseItemCommand
     {
 
         [Parameter]

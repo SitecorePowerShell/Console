@@ -13,8 +13,8 @@ using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet("Serialize", "Item")]
-    public class SerializeItemCommand : BaseCommand
+    [Cmdlet(VerbsData.Export, "Item")]
+    public class ExportItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public Item Item { get; set; }
@@ -36,7 +36,8 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         public SwitchParameter ItemPathsAbsolute { get; set; }
 
         [Parameter]
-        public string Target { get; set; }
+        [Alias("Target")]
+        public string Root { get; set; }
 
         //[Parameter]
         [Alias("Languages")]
@@ -50,11 +51,11 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
             else
             {
-                Serialize(Item, Path, Id, Recurse.IsPresent, Target, Language, CurrentProviderLocation("CmsItemProvider"));
+                Serialize(Item, Path, Id, Recurse.IsPresent, Root, Language, CurrentProviderLocation("CmsItemProvider"));
             }
         }
 
-        public void Serialize(Item item, string path, string id, bool recursive, string target,
+        public void Serialize(Item item, string path, string id, bool recursive, string root,
             string[] languages, PathInfo currentPathInfo)
         {
             if (item == null)
@@ -73,7 +74,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
             if (item != null)
             {
-                SerializeToTarget(item, target, recursive, languages);
+                SerializeToTarget(item, root, recursive, languages);
             }
             else
             {
@@ -84,19 +85,19 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
         }
 
-        private void SerializeToTarget(Item item, string target, bool recursive, string[] languages)
+        private void SerializeToTarget(Item item, string root, bool recursive, string[] languages)
         {
-            if (!string.IsNullOrEmpty(target) && ItemPathsAbsolute.IsPresent)
+            if (!string.IsNullOrEmpty(root) && ItemPathsAbsolute.IsPresent)
             {
-                target = target.EndsWith("\\")
-                    ? target + item.Parent.Paths.FullPath.Replace("/", "\\")
-                    : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
+                root = root.EndsWith("\\")
+                    ? root + item.Parent.Paths.FullPath.Replace("/", "\\")
+                    : root + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
             }
 
             if (languages == null)
             {
                 Language language = item.Language;
-                SerializeToTargetLanguage(item, target, language, recursive);
+                SerializeToTargetLanguage(item, root, language, recursive);
             }
             else
             {
@@ -107,7 +108,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                             language =>
                                 siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
                     {
-                        SerializeToTargetLanguage(item, target, siteLanguage, recursive);
+                        SerializeToTargetLanguage(item, root, siteLanguage, recursive);
                     }
                 }
             }

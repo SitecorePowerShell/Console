@@ -1,9 +1,10 @@
 <#
     .SYNOPSIS
-        Imports sitecore installation package.
+        Installs Sitecore package.
+        This command used to be named Import-Package - a matching alias added for compatibility with older scripts.
 
     .DESCRIPTION
-        Imports sitecore installation package with the ability to provide default responses for merge and overwrite actions.
+        Installs Sitecore package with the ability to provide default responses for merge and overwrite actions.
 
 
     .PARAMETER Path
@@ -68,5 +69,5 @@
         https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7
 
     .EXAMPLE
-        PS master:\> Import-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge
+        PS master:\> Install-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge
 #>

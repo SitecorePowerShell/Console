@@ -1,15 +1,15 @@
 <#
     .SYNOPSIS
-        Deserializes sitecore item from server disk drive.
+        Deserializes sitecore item from server disk drive. This command used to be named Deserialize-Item - a matching alias added for compatibility with older scripts.
 
     .DESCRIPTION
-        Deserialization of items with Sitecore Powershell Extensions uses Deserialize-Item command. The simplest syntax requires 2 parameters:
+        Deserialization of items with Sitecore Powershell Extensions uses Import-Item command. The simplest syntax requires 2 parameters:
         -Path - which is a path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
 	-Root - the directory which is the root of serialization. Trailing slash \ character is required, 
 	
 	e.g.:
 	
-	Deserialize-Item -Path "c:\project\data\serialization\master\sitecore\content\articles" -Root "c:\project\data\serialization\"
+	Import-Item -Path "c:\project\data\serialization\master\sitecore\content\articles" -Root "c:\project\data\serialization\"
 
     .PARAMETER Database
         Database to contain the item to be deserialized.
@@ -31,11 +31,11 @@
 
     .PARAMETER UseNewId
         Tells Sitecore if each of the items should be created with a newly generated ID, e.g.
-        Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -usenewid -recurse
+        Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -usenewid -recurse
 
     .PARAMETER DisableEvents
         If set Sitecore will use EventDisabler during deserialization, e.g.:
-        Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project
+        Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project
 
     .PARAMETER ForceUpdate
         Forces item to be updated even if it has not changed.
@@ -52,7 +52,7 @@
         https://github.com/SitecorePowerShell/Console/
 
     .LINK
-        Serialize-Item
+        Export-Item
 
     .LINK
         Get-Preset
@@ -76,10 +76,10 @@
         http://stackoverflow.com/questions/20283438/sitecore-powershell-deserialization-core-db
         
     .EXAMPLE
-        PS master:\> Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\"
+        PS master:\> Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\"
 
     .EXAMPLE
-        PS master:\> Deserialize-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -recurse
+        PS master:\> Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -recurse
 
 
 #>

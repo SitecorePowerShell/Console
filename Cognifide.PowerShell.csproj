@@ -167,13 +167,13 @@
     <Compile Include="Commandlets\Data\NewItemCloneCommand.cs" />
     <Compile Include="Commandlets\Data\PublishItemCommand.cs" />
     <Compile Include="Commandlets\Data\RemoveItemLanguageCommand.cs" />
-    <Compile Include="Commandlets\Data\WrapItemCommand.cs" />
+    <Compile Include="Commandlets\Data\InitializeItemCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseListViewCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseShellCommand.cs" />
     <Compile Include="Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="Commandlets\Interactive\DownloadFileCommand.cs" />
-    <Compile Include="Commandlets\Interactive\ExecuteShellCommandCommand.cs" />
+    <Compile Include="Commandlets\Interactive\InvokeShellCommandCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\DownloadMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\IMessageWithResult.cs" />
@@ -200,7 +200,7 @@
     <Compile Include="Commandlets\Packages\BasePackageCommand.cs" />
     <Compile Include="Commandlets\Packages\ExportPackageCommand.cs" />
     <Compile Include="Commandlets\Packages\GetPackageCommand.cs" />
-    <Compile Include="Commandlets\Packages\ImportPackageCommand.cs" />
+    <Compile Include="Commandlets\Packages\InstallPackageCommand.cs" />
     <Compile Include="Commandlets\Packages\NewExplicitFileSourceCommand.cs" />
     <Compile Include="Commandlets\Packages\NewExplicitItemSourceCommand.cs" />
     <Compile Include="Commandlets\Packages\NewFileSourceCommand.cs" />
@@ -248,10 +248,10 @@
     <Compile Include="Commandlets\Serialization\ExportRoleCommand.cs" />
     <Compile Include="Commandlets\Serialization\ImportUserCommand.cs" />
     <Compile Include="Commandlets\Serialization\ExportUserCommand.cs" />
-    <Compile Include="Commandlets\Serialization\DeserializeItemCommand.cs" />
+    <Compile Include="Commandlets\Serialization\ImportItemCommand.cs" />
     <Compile Include="Commandlets\Serialization\GetPresetCommand.cs" />
-    <Compile Include="Commandlets\Serialization\SerializeItemCommand.cs" />
-    <Compile Include="Commandlets\Session\ExecuteScriptCommand.cs" />
+    <Compile Include="Commandlets\Serialization\ExportItemCommand.cs" />
+    <Compile Include="Commandlets\Session\InvokeScriptCommand.cs" />
     <Compile Include="Commandlets\Session\GetCacheCommand.cs" />
     <Compile Include="Commandlets\Session\GetScriptSession.cs" />
     <Compile Include="Commandlets\Session\GetUserAgent.cs" />
@@ -262,7 +262,7 @@
     <Compile Include="Commandlets\UpdatePackages\GetUpdatePackageDiffCommandsCommand.cs" />
     <Compile Include="Commandlets\UpdatePackages\InstallUpdatePackageCommand.cs" />
     <Compile Include="Commandlets\UpdatePackages\NewUpdatePackageCommandCommand.cs" />
-    <Compile Include="Commandlets\Workflows\ExecuteWorkflowCommand.cs" />
+    <Compile Include="Commandlets\Workflows\InvokeWorkflowCommand.cs" />
     <Compile Include="Commandlets\Workflows\GetItemWorkflowEventCommand.cs" />
     <Compile Include="Commandlets\Workflows\NewItemWorkflowEventCommand.cs" />
     <Compile Include="Core\Extensions\CmdletExtensions.cs" />

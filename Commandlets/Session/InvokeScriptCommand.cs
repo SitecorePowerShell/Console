@@ -8,9 +8,9 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet("Execute", "Script", DefaultParameterSetName = "From Content Database Library")]
+    [Cmdlet(VerbsLifecycle.Invoke, "Script", DefaultParameterSetName = "From Content Database Library")]
     [OutputType(new[] {typeof (object)})]
-    public class ExecuteScriptCommand : BaseShellCommand
+    public class InvokeScriptCommand : BaseShellCommand
     {
         private const string ParameterSetNameFromItem = "From Item";
         private const string ParameterSetNameFromFullPath = "From Full Path";

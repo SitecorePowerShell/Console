@@ -1,6 +1,7 @@
 <#
     .SYNOPSIS
         Executes Sitecore Shell command for an item.
+        This command used to be named Execute-ShellCommand - a matching alias added for compatibility with older scripts.
 
     .DESCRIPTION
         Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
@@ -37,13 +38,13 @@
 
     .EXAMPLE
 	# Launch Publishing Viewer for /sitecore/content/home item.
-        PS master:\> Get-Item master:\content\home\ | Execute-ShellCommand "item:publishingviewer"
+        PS master:\> Get-Item master:\content\home\ | Invoke-ShellCommand "item:publishingviewer"
 
     .EXAMPLE
         # Initiate /sitecore/content/home item duplication.
-        PS master:\> Get-Item master:/content/home | Execute-ShellCommand "item:duplicate"
+        PS master:\> Get-Item master:/content/home | Invoke-ShellCommand "item:duplicate"
 
     .EXAMPLE
         # Show properties of the /sitecore/content/home item.
-        PS master:\> Get-Item master:/content/home | Execute-ShellCommand "contenteditor:properties"
+        PS master:\> Get-Item master:/content/home | Invoke-ShellCommand "contenteditor:properties"
 #>

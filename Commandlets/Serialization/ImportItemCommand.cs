@@ -7,9 +7,9 @@ using Sitecore.Data.Serialization.Presets;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet("Deserialize", "Item")]
+    [Cmdlet(VerbsData.Import, "Item")]
     [OutputType(new[] { typeof(void)}, ParameterSetName = new[] { "Database", "Item", "Preset", "Path" })]
-    public class DeserializeItemCommand : BaseCommand
+    public class ImportItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Database")]
         public Database Database { get; set; }

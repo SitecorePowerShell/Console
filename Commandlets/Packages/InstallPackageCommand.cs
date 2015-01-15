@@ -7,8 +7,8 @@ using Sitecore.Install.Utils;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
-    [Cmdlet(VerbsData.Import, "Package")]
-    public class ImportPackageCommand : BasePackageCommand
+    [Cmdlet(VerbsLifecycle.Install, "Package")]
+    public class InstallPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
         [Alias("FullName", "FileName")]

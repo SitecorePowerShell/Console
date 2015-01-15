@@ -5,9 +5,9 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
-    [Cmdlet("Execute", "ShellCommand")]
+    [Cmdlet(VerbsLifecycle.Invoke, "ShellCommand")]
     [OutputType(new[] {typeof (Item)})]
-    public class ExecuteShellCommandCommand : BaseItemCommand
+    public class InvokeShellCommandCommand : BaseItemCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
         public string Name { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Text;
 using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Core.Provider;
@@ -38,6 +39,17 @@ namespace Cognifide.PowerShell.Core.Host
         private Pipeline pipeline;
 
         public static Version PsVersion { get; private set; }
+
+        public static Dictionary<string, string> RenamedCommandlets = new Dictionary<string, string>
+        {
+            {"Export-Item", "Serialize-Item"},
+            {"Import-Item", "Deserialize-Item"},
+            {"Invoke-Script", "Execute-Script"},
+            {"Invoke-ShellCommand", "Execute-ShellCommand"},
+            {"Invoke-Workflow", "Execute-Workflow"},
+            {"Install-Package","Import-Package"},
+            {"Initialize-Item","Wrap-Item"}
+        };
 
         public bool AutoDispose
         {
@@ -182,6 +194,14 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
+                
+                StringBuilder sb = new StringBuilder(2048);
+                foreach (var rename in RenamedCommandlets)
+                {
+                    sb.AppendFormat("New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n", rename.Key, rename.Value);
+                }
+                ExecuteScriptPart(sb.ToString(), false, true);
+
             }
         }
 
