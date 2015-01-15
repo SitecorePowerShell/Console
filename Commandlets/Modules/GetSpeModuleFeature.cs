@@ -13,20 +13,37 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Module from Pipeline")]
         public Module Module { get; set; }
 
+        [Parameter]
+        public SwitchParameter ReturnPath { get; set; }
+
         protected override void ProcessRecord()
         {
             string feature;
             bool featureDefined = TryGetParameter("Feature", out feature);
             if (Module != null)
             {
-                WriteItem(Module.GetFeatureRoot(feature));
+                if (ReturnPath)
+                {
+                    WriteObject(Module.GetProviderFeaturePath(feature));
+                }
+                else
+                {
+                    WriteItem(Module.GetFeatureRoot(feature));
+                }
                 return;
             }
             if (featureDefined)
             {
                 if (!String.IsNullOrEmpty(feature))
                 {
-                    ModuleManager.GetFeatureRoots(feature).ForEach(WriteItem);
+                    if (ReturnPath)
+                    {
+                        ModuleManager.Modules.ForEach(m => WriteObject(m.GetProviderFeaturePath(feature)));
+                    }
+                    else
+                    {
+                        ModuleManager.GetFeatureRoots(feature).ForEach(WriteItem);
+                    }
                 }
             }
         }

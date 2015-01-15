@@ -8,8 +8,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
 {
     [Cmdlet(VerbsCommon.Get, "SpeModule")]
     [OutputType(new[] {typeof (Module)},
-        ParameterSetName =
-            new[] { "Module from Database", "Module from Pipeline", "Module from Path", "Module from ID", "Module from Name"})]
+        ParameterSetName =new[]{"Module from Database", "Module from Pipeline", "Module from Path", "Module from ID", "Module from Name"})]
     public class GetSpeModule : BaseItemCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
@@ -23,12 +22,13 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter(ParameterSetName = "Module from ID", Mandatory = true)]
         public override string Id { get; set; }
 
-        [Parameter(ParameterSetName = "Module from ID", ValueFromPipeline = true )]
-        [Parameter(ParameterSetName = "Module from Database", ValueFromPipeline = true, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = "Module from ID", ValueFromPipeline = true, Mandatory = true)]
+        [Parameter(ParameterSetName = "Module from Database", ValueFromPipeline = true, Mandatory = true,
+            ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = "Module from Name", ValueFromPipeline = true)]
         public override Database Database { get; set; }
 
-        [Parameter(ParameterSetName = "Module from Name")]
+        [Parameter(ParameterSetName = "Module from Name", Mandatory = true)]
         public string Name { get; set; }
 
         // hide language as it's not relevant here
@@ -37,23 +37,23 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         protected override void ProcessRecord()
         {
             IEnumerable<Module> modules = ModuleManager.Modules;
-            
-            bool databaseDefined = Database != null;
+
+            bool databaseDefined = Database != null && string.IsNullOrEmpty(Id);
             bool nameDefined = !string.IsNullOrEmpty(Name);
-            
+
             if (databaseDefined)
             {
                 modules = WildcardFilter(Database.Name, modules, m => m.Database);
             }
-            
-            if(nameDefined)
+
+            if (nameDefined)
             {
                 modules = WildcardFilter(Name, modules, m => m.Name);
             }
-            
+
             if (databaseDefined || nameDefined)
             {
-                WriteObject(modules,true);
+                WriteObject(modules, true);
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
 
         protected override void ProcessItem(Item item)
         {
-            WriteObject(ModuleManager.GetItemModule(item),false);
+            WriteObject(ModuleManager.GetItemModule(item), false);
         }
     }
 }
