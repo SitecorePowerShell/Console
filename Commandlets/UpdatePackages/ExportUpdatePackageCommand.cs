@@ -11,7 +11,7 @@ using Sitecore.Update.Interfaces;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
-    //[Cmdlet(VerbsData.Export, "UpdatePackage")]
+    [Cmdlet(VerbsData.Export, "UpdatePackage")]
     public class ExportUpdatePackageCommand : BasePackageCommand
     {
         private List<ICommand> commands;

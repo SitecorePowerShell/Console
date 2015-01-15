@@ -36,6 +36,11 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         protected void PerformInstallAction(Action action)
         {
+            PerformInstallAction("shell", action);
+        }
+
+        protected void PerformInstallAction(string siteContext, Action action)
+        {
             if (!Directory.Exists(PackagePath))
 
             {
@@ -55,9 +60,10 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     {
                         using (new SyncOperationContext())
                         {
-                            Context.SetActiveSite("shell");
+                            string site = Context.GetSiteName();
+                            Context.SetActiveSite(siteContext);
                             action();
-                            Context.SetActiveSite("website");
+                            Context.SetActiveSite(site);
                         }
                     }
                 }

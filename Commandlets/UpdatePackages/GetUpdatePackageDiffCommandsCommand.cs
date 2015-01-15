@@ -13,7 +13,7 @@ using Sitecore.Update.Interfaces;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
-    //[Cmdlet(VerbsCommon.Get, "UpdatePackageDiffCommands")]
+    [Cmdlet(VerbsCommon.Get, "UpdatePackageDiffCommands")]
     [OutputType(new[] { typeof(ICommand) })]
     public class GetUpdatePackageDiffCommandsCommand : BasePackageCommand
     {
@@ -29,7 +29,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
             ILog log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
             
-            PerformInstallAction(
+            PerformInstallAction("admin",
                 () =>
                 {
                     var targetManager = Factory.Instance.GetSourceDataManager();
