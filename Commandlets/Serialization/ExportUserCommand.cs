@@ -11,7 +11,7 @@ using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet("Export", "User")]
+    [Cmdlet(VerbsData.Export, "User")]
     public class ExportUserCommand : BaseCommand
     {
 

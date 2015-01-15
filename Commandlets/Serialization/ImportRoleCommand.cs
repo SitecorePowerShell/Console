@@ -3,19 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
-using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Serialization;
-using Sitecore;
 using Sitecore.Data.Serialization;
-using Sitecore.Data.Serialization.Presets;
-using Sitecore.Rules.Conditions.SecurityConditions;
 using Sitecore.Security.Accounts;
-using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Import, "User")]
-    public class ImportUserCommand : BaseCommand
+    [Cmdlet(VerbsData.Import, "Role")]
+    public class ImportRoleCommand : BaseCommand
     {
 
         [Alias("Name")]
@@ -27,9 +21,9 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [ValidateNotNullOrEmpty]
         public string Filter { get; set; }
 
-        [Parameter(ParameterSetName = "User", Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = "Role", Mandatory = true, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
-        public User User { get; set; }
+        public User Role { get; set; }
 
         [Parameter(ParameterSetName = "Path")]
         [Alias("FullName", "FileName")]
@@ -48,8 +42,8 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
             switch (ParameterSetName)
             {
-                case "User":
-                    DeserializeUser(User.Name);
+                case "Role":
+                    DeserializeUser(Role.Name);
                     break;
                 case "Filter":
                     var filter = Filter;
@@ -74,41 +68,41 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             {
                 var identity = new AccountIdentity(userName);
                 var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-                fileName = target + identity.Domain + @"\Users\" + identity.Account + PathUtils.UserExtension;
+                fileName = target + identity.Domain + @"\Roles\" + identity.Account + PathUtils.RoleExtension;
             }
             
             // make sure the path has the proper extension
-            if (!fileName.EndsWith(PathUtils.UserExtension, StringComparison.OrdinalIgnoreCase))
+            if (!fileName.EndsWith(PathUtils.RoleExtension, StringComparison.OrdinalIgnoreCase))
             {
-                fileName += PathUtils.UserExtension;
+                fileName += PathUtils.RoleExtension;
             }
 
             if (fileName.Contains("?") || fileName.Contains("*"))
             {
-                var users = System.IO.Path.GetDirectoryName(fileName);
-                var domainName = System.IO.Path.GetDirectoryName(users);
+                var roles = System.IO.Path.GetDirectoryName(fileName);
+                var domainName = System.IO.Path.GetDirectoryName(roles);
                 var root = System.IO.Path.GetDirectoryName(domainName);
                 foreach (var domain in Directory.EnumerateDirectories(root))
                 {
-                    var files = WildcardFilter(fileName, Directory.EnumerateFiles(domain + @"\Users"), f => f).ToList();
+                    var files = WildcardFilter(fileName, Directory.EnumerateFiles(domain + @"\Roles"), f => f).ToList();
                     foreach (var file in files)
                     {
-                        DeserializeUserFile(userName, file);
+                        DeserializeRoleFile(userName, file);
                     }
                 }
             }
             else
             {
-                DeserializeUserFile(userName, fileName);
+                DeserializeRoleFile(userName, fileName);
             }
         }
 
-        private void DeserializeUserFile(string userName, string file)
+        private void DeserializeRoleFile(string userName, string file)
         {
-            var logMessage = string.Format("Deserializing user '{0}' from '{1}'", userName, file);
+            var logMessage = string.Format("Deserializing role '{0}' from '{1}'", userName, file);
             WriteVerbose(logMessage);
             WriteDebug(logMessage);
-            Manager.LoadUser(file);
+            Manager.LoadRole(file);
         }
     }
 }

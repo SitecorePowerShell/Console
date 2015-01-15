@@ -219,6 +219,7 @@ pip-log.txt
 /Data/*/
 !/Data/packages/
 !/Data/serialization/
+/Data/serialization/security/
 web.Debug.config
 web.Release.config
 web.config
