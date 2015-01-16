@@ -34,17 +34,17 @@
         
         Export-Item -path "master:\content\articles" -recurse
 
-        target - directory where the serialized files should be saved, e.g.
-        Export-Item -path "master:\content" -target "c:\tmp"
+        Root - directory where the serialized files should be saved, e.g.
+        Export-Item -path "master:\content" -Root "c:\tmp"
 
     .PARAMETER ItemPathsAbsolute
-        Works only with target parameter and decides if folder structure starting from "sitecore\content" should be created, e.g. if you want to serialize articles item in directory c:\tmp\sitecore\content you can use. For example:
-        Export-Item -Path "master:\content\articles" -ItemPathsAbsolute -Target "c:\tmp"
+        Works only with Root parameter and decides if folder structure starting from "sitecore\content" should be created, e.g. if you want to serialize articles item in directory c:\tmp\sitecore\content you can use. For example:
+        Export-Item -Path "master:\content\articles" -ItemPathsAbsolute -Root "c:\tmp"
 
     .PARAMETER Root
         Directory where the serialized files should be saved, e.g.
         
-        Export-Item -Path "master:\content" -Target "c:\tmp"
+        Export-Item -Path "master:\content" -Root "c:\tmp"
     
     .INPUTS
         Sitecore.Data.Items.Item

@@ -3,8 +3,7 @@
         Exports (serializes) Sitecore roles to server disk drive.
 
     .DESCRIPTION
-        Export-Role.
-
+        Exports (serializes) Sitecore roles to server disk drive.
 
     .PARAMETER Filter
         Specifies a simple pattern to match Sitecore roles.
@@ -30,10 +29,10 @@
         Specifies the role to be exported
 
     .PARAMETER Path
-        Path to the file the role should be saved to
+        Path to the file the role should be saved to.
 
     .PARAMETER Root
-        TODO: Provide description for this parameter    
+        Specifies the serialization root directory. If this parameter is not specified - the default Sitecore serialization folder will be used (unless you're saving to an explicit location with the -Path parameter).
     
     .INPUTS
         System.String
@@ -46,8 +45,23 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Import-Role
+
+    .LINK
+        Export-User
+
+    .LINK
+        Import-User
+
+    .LINK
+        Export-Item
+
+    .LINK
+        Import-Item
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Export-Role -Path master:\content\home
+        PS master:\> Export-Role -Identity sitecore\Author
 #>
