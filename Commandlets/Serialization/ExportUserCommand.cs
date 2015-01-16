@@ -17,6 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
+        [Parameter(ParameterSetName = "Path Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public AccountIdentity Identity { get; set; }
 
@@ -24,18 +25,25 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [ValidateNotNullOrEmpty]
         public string Filter { get; set; }
 
-        [Parameter(ParameterSetName = "User", Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = "User", Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = "Path User", Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public User User { get; set; }
 
         [Parameter(ParameterSetName = "Current", Mandatory = true)]
+        [Parameter(ParameterSetName = "Path Current", Mandatory = true)]
         public SwitchParameter Current { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Path Id", Mandatory = true)]
+        [Parameter(ParameterSetName = "Path User", Mandatory = true)]
+        [Parameter(ParameterSetName = "Path Current", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Filter")]
+        [Parameter(ParameterSetName = "User")]
+        [Parameter(ParameterSetName = "Current")]
         [Alias("Target")]
         public string Root { get; set; }
 
@@ -44,6 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             switch (ParameterSetName)
             {
                 case "Current":
+                case "Path Current":
                     SerializeUser(Context.User);
                     break;
                 case "User":
@@ -67,20 +76,34 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         private void SerializeUser(User user)
         {
-            var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-
-            var logMessage = string.Format("Serializing user '{0}' to target '{1}'", user.Name, target);
-            WriteVerbose(logMessage);
-            WriteDebug(logMessage);
-
-            if (string.IsNullOrEmpty(target))
+            if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
+                var logMessage = string.Format("Serializing user '{0}'", user.Name);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
                 Manager.DumpUser(user.Name);
+                WriteObject(PathUtils.GetFilePath(new UserReference(user.Name)));
             }
             else
             {
                 UserReference userReference = new UserReference(user.Name);
-                Manager.DumpUser((target + userReference + PathUtils.UserExtension).Replace('/', System.IO.Path.DirectorySeparatorChar), userReference.User);
+                if (string.IsNullOrEmpty(Path))
+                {
+                    if (string.IsNullOrEmpty(Root))
+                    {
+                        Path = PathUtils.GetFilePath(userReference);
+                    }
+                    else
+                    {
+                        var target = Root.EndsWith("\\") ? Root : Root + "\\";
+                        Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                    }
+                }
+                var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
+                Manager.DumpUser(Path, userReference.User);
+                WriteObject(Path);
             }
         }
     }

@@ -21,17 +21,17 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [ValidateNotNullOrEmpty]
         public string Filter { get; set; }
 
-        [Parameter(ParameterSetName = "Role", Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = "Role", Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public User Role { get; set; }
 
-        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Path", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
+        [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Filter")]
-        [Parameter(ParameterSetName = "User")]
-        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "Role")]
         public string Root { get; set; }
 
         protected override void ProcessRecord()

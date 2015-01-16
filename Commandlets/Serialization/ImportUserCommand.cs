@@ -27,17 +27,17 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [ValidateNotNullOrEmpty]
         public string Filter { get; set; }
 
-        [Parameter(ParameterSetName = "User", Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = "User", Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public User User { get; set; }
 
-        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Path", Mandatory = true)]
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
         [Parameter(ParameterSetName = "Filter")]
         [Parameter(ParameterSetName = "User")]
-        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "Id")]
         public string Root { get; set; }
 
         protected override void ProcessRecord()
@@ -49,6 +49,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             switch (ParameterSetName)
             {
                 case "User":
+                case "Path User":
                     DeserializeUser(User.Name);
                     break;
                 case "Filter":

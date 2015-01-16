@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
     {
 
         [Alias("Name")]
-        [Parameter(ParameterSetName = "Id", Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Path Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public AccountIdentity Identity { get; set; }
@@ -36,10 +36,10 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
+        [Alias("Target")]
         [Parameter(ParameterSetName = "Id")]
         [Parameter(ParameterSetName = "Filter")]
         [Parameter(ParameterSetName = "Role")]
-        [Alias("Target")]
         public string Root { get; set; }
 
         protected override void ProcessRecord()
@@ -48,7 +48,6 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             {
                 case "Role":
                 case "Path Role":
-                case "Root Role":
                     SerializeRole(Role);
                     break;
                 case "Filter":
@@ -70,7 +69,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
-                var logMessage = string.Format("Serializing user '{0}'", role.Name);
+                var logMessage = string.Format("Serializing role '{0}'", role.Name);
                 WriteVerbose(logMessage);
                 WriteDebug(logMessage);
                 Manager.DumpRole(role.Name);
