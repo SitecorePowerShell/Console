@@ -12,10 +12,10 @@
         The following examples show how to use the filter syntax.
 
         To get all the roles, use the asterisk wildcard:
-        Get-Role -Filter *
+        Export-Role -Filter *
 
         To get all the roles in a domain use the following command:
-        Get-Role -Filter "sitecore\*"
+        Export-Role -Filter "sitecore\*"
 
     .PARAMETER Identity
         Specifies the Sitecore role by providing one of the following values.
@@ -64,4 +64,13 @@
 
     .EXAMPLE
         PS master:\> Export-Role -Identity sitecore\Author
+
+    .EXAMPLE
+        PS master:\> Export-Role -Filter sitecore\*
+
+    .EXAMPLE
+        PS master:\> Export-Role -Root C:\my\Serialization\Folder\ -Filter *\*
+
+    .EXAMPLE
+        PS master:\> Export-Role -Path C:\my\Serialization\Folder\Authors.role -Identity sitecore\Author
 #>

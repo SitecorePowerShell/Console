@@ -28,10 +28,10 @@
         The following examples show how to use the filter syntax.
 
         To get all the users, use the asterisk wildcard:
-        Get-User -Filter *
+        Export-User -Filter *
 
         To get all the users in a domain use the following command:
-        Get-User -Filter "sitecore\*"
+        Export-User -Filter "sitecore\*"
 
     .PARAMETER User
         User object retrieved from the Sitecore API or using the Get-User commandlet.
