@@ -23,11 +23,17 @@ namespace Cognifide.PowerShell.Core.Processors
             Assert.ArgumentNotNull(arguments, "arguments");
             try
             {
-                string localPath = arguments.Context.Request.Url.LocalPath;
-                if (localPath.StartsWith("/-/script/v1"))
+                Assert.ArgumentNotNull(arguments.Context, "context");
+                Uri url = arguments.Context.Request.Url;
+                string localPath = url.LocalPath;
+                if (localPath.StartsWith("/Console/",StringComparison.OrdinalIgnoreCase))
                 {
-                    Assert.ArgumentNotNull(arguments.Context, "context");
-                    Uri url = arguments.Context.Request.Url;
+                    // this bit is for compatibility of solutions integrating with SPE 2.x services in mind
+                    WebUtil.RewriteUrl(
+                        new UrlString { Path = localPath.ToLowerInvariant().Replace("/console/","/sitecore modules/PowerShell/"), Query = url.Query }.ToString());
+                }
+                if (localPath.StartsWith("/-/script/v1",StringComparison.OrdinalIgnoreCase))
+                {
                     string[] sourceArray = url.LocalPath.TrimStart('/').Split('/');
                     if (sourceArray.Length < 3)
                     {
@@ -42,10 +48,8 @@ namespace Cognifide.PowerShell.Core.Processors
                     WebUtil.RewriteUrl(
                         new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
                 }
-                if (localPath.StartsWith("/-/script/v2"))
+                if (localPath.StartsWith("/-/script/v2", StringComparison.OrdinalIgnoreCase))
                 {
-                    Assert.ArgumentNotNull(arguments.Context, "context");
-                    Uri url = arguments.Context.Request.Url;
                     string[] sourceArray = url.LocalPath.TrimStart('/').Split('/');
                     if (sourceArray.Length < 4)
                     {
