@@ -38,8 +38,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border ProgressOverlay;
         protected Border ScriptResult;
         protected Border EnterScriptInfo;
-        protected Border ScriptName;
-
+        protected Literal ScriptName;
         protected bool ScriptRunning { get; set; }
         public ApplicationSettings Settings { get; set; }
         protected Literal Progress;
@@ -240,8 +239,9 @@ namespace Cognifide.PowerShell.Client.Applications
             string id = scriptItem.ID.ToString();
             string name = scriptItem.Name;
             string icon = scriptItem[FieldIDs.Icon];
-            ScriptName.Value = string.Format("{1}", db, scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length));
-            SheerResponse.SetInnerHtml("ScriptName", ScriptName.Value);
+            var scriptName = string.Format("{1}", db, scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length));
+            ScriptName.Text = scriptName;
+            SheerResponse.Eval(string.Format("cognifide.powershell.changeWindowTitle('{0}', false);", scriptName));
             Item mruMenu = Sitecore.Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
                            Sitecore.Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
 
@@ -286,12 +286,10 @@ namespace Cognifide.PowerShell.Client.Applications
             Assert.ArgumentNotNull(args, "args");
             ScriptItemId = string.Empty;
             Editor.Value = string.Empty;
-            SheerResponse.Eval("cognifide.powershell.clearEditor();");
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
             ScriptResult.Visible = false;
-            SheerResponse.SetInnerHtml("ScriptName", "Unsaved script.");
-            ScriptName.Value = string.Empty;
+            SheerResponse.Eval("cognifide.powershell.changeWindowTitle('Untitled', true);");
             UpdateRibbon();
         }
 

@@ -76,9 +76,6 @@
           <Border class="status-bar-panel status-bar-right">
             Ln: <Literal ID="PosY" Text=""/>
           </Border>
-          <Border ID="ScriptName" class="status-bar-panel status-bar-script">
-          Unsaved script.
-          </Border>
           <Border class="status-bar-panel status-bar-text">
             <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
             <Literal ID="StatusTip">
@@ -100,6 +97,7 @@
           </p>
         </Border>
       </Border>
+      <Literal ID="ScriptName" Text="Untitled" />
     </FormPage>
   </PowerShellIse>
 </control>

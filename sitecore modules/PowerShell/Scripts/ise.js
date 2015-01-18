@@ -184,6 +184,13 @@ extend(cognifide, 'powershell');
             codeeditor.getSession().setValue('');
         };
 
+        cognifide.powershell.changeWindowTitle = function (newTitle, clearWindow) {
+            if(clearWindow){
+              codeeditor.getSession().setValue('');
+            }
+            $ise('#WindowCaption',window.parent.document)[0].innerHTML = '<i style="font-style: italic; color: #bbb;">'+newTitle + '</i> - ';
+        };
+
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
         };
@@ -232,6 +239,7 @@ extend(cognifide, 'powershell');
         $.commandHelp = "";
         $("#Help").dialog({ autoOpen: false });
 
+	cognifide.powershell.changeWindowTitle($("#ScriptName")[0].innerHTML, false);
         var tipIndex = Math.floor(Math.random() * tips.length);
         var tip = tips[tipIndex];
 
@@ -267,7 +275,6 @@ extend(cognifide, 'powershell');
             }).animate({ backgroundColor: "#fff" });
 
         });
-
         $("#ResultsClose").click(function () {
 	    $("#ResultsSplitter").hide();
             $("#ResultsRow").hide( "slow", function() { codeeditor.resize(); /* do something cool here? */ } );

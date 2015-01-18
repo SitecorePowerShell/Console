@@ -256,3 +256,7 @@ a.ps-link {
 	top:4px;
 	right:21px;
 }
+
+#ScriptName {
+    display: none;
+}
