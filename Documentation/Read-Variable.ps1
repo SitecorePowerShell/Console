@@ -4,6 +4,8 @@
 
     .DESCRIPTION
         Prompts user to provide values for variables required by the script to perform its operation.
+        If user selects the "OK" button the commandlet will return 'ok' as its value.
+        If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value.
 
     .PARAMETER Parameters
         Specifies the variables that value should be provided by the user. Each variable definition can have the following structure:
@@ -50,6 +52,22 @@
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
 
+    .LINK
+        Show-Alert
+    .LINK
+        Show-Application
+    .LINK
+        Show-Confirm
+    .LINK
+        Show-FieldEditor
+    .LINK
+        Show-Input
+    .LINK
+        Show-ListView
+    .LINK
+        Show-ModalDialog
+    .LINK
+        Show-YesNoCancel
     .LINK
         https://github.com/SitecorePowerShell/Console/
 

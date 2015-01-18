@@ -70,6 +70,8 @@
     .LINK
         Format-Table
     .LINK
+        Read-Variable
+    .LINK
         Show-Alert
     .LINK
         Show-Application

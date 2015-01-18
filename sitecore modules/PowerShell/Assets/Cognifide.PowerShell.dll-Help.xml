@@ -21,7 +21,7 @@
 Based on parameters you can make the commandlet bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -374,7 +374,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -541,7 +541,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Expands tokens like $name in fields on items.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -642,7 +642,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Returns Sitecore archives in context of a particular database.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -760,7 +760,7 @@ recyclebin                                   1950
       <maml:para>Retrieves Sitecore Database object based on name or item passed to it.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -904,7 +904,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <maml:para>Returns Sitecore indices in context of a particular database.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -1018,7 +1018,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -1106,7 +1106,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -1282,7 +1282,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -1634,7 +1634,7 @@ __Preview                           __Preview                          Appearanc
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -1906,7 +1906,7 @@ TargetPath         : /sitecore/content/Home
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -2180,7 +2180,7 @@ TargetPath         : /sitecore/content/Home
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -2411,7 +2411,7 @@ then format it to only show the template name, path and Key</dev:remarks>
       <maml:para>Returns sitecore Search indices.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -2507,7 +2507,7 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -2767,7 +2767,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       <maml:para>The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -3055,7 +3055,7 @@ Language  parameter supports globbing so you can delete whole language groups us
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -3326,7 +3326,7 @@ This command used to be named Wrap-Item - a matching alias added for compatibili
       <maml:para>Wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -3421,7 +3421,7 @@ PS master:\&gt; $item.MyCustomeTextField = "New Text"
       <maml:para>Ensures the runner proces window is closed after the script finishes execution.    
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
@@ -3487,7 +3487,7 @@ Executing it for an Item located in Sitecore Media library allows the user to do
 If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -3732,7 +3732,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <maml:para>Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -3959,9 +3959,11 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
     </command:details>
     <maml:description>
       <maml:para>Prompts user to provide values for variables required by the script to perform its operation.
+If user selects the "OK" button the commandlet will return 'ok' as its value.
+If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -4240,6 +4242,38 @@ The editors for some other are set by providing the "editor" value
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Show-Alert</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Application</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Confirm</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-FieldEditor</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-Input</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-ListView</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-ModalDialog</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Show-YesNoCancel</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -4265,7 +4299,7 @@ The editors for some other are set by providing the "editor" value
       <maml:para>Sends a sheer message to the app in which context the script is executing.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -4373,7 +4407,7 @@ The editors for some other are set by providing the "editor" value
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -4437,6 +4471,10 @@ The editors for some other are set by providing the "editor" value
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Application</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -4495,7 +4533,7 @@ The editors for some other are set by providing the "editor" value
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -4699,6 +4737,10 @@ Show-Application `
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -4758,7 +4800,7 @@ Returns "yes" or "no" based on user's response.
 The buttons that are shown to the user are "OK" and "Cancel".
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -4824,6 +4866,10 @@ yes
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -4883,7 +4929,7 @@ If user closes the dialog by pressing the "OK" button "ok" string will be return
 Otherwise "cancel" will be returned.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -5372,6 +5418,10 @@ The dialog will preserve the item sections.</dev:remarks>
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -5430,7 +5480,7 @@ The dialog will preserve the item sections.</dev:remarks>
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -5593,6 +5643,10 @@ PS master:\&gt; Write-Host "The new name you've chosen is '$($newName)'"
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -5656,7 +5710,7 @@ You can use the following features of the table to examine your data:
 -- Export contents of the view in XML, CSV, Json, HTML or Excel file and download that onto the user's computer. The downloaded results will take into account current filter and order of the items.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -5995,6 +6049,10 @@ like in the case of languages which are aggregarde form the "Languages" property
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -6064,7 +6122,7 @@ like in the case of languages which are aggregarde form the "Languages" property
       <maml:para>Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -6247,6 +6305,10 @@ like in the case of languages which are aggregarde form the "Languages" property
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -6305,7 +6367,7 @@ like in the case of languages which are aggregarde form the "Languages" property
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -6543,6 +6605,10 @@ Show-Result -Url "/sitecore/shell/Applications/PowerShell/PowerShellIse"
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -6605,7 +6671,7 @@ Depending on the user response one of the 2 strings is returned:
 - cancel
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -6711,6 +6777,10 @@ cancel
     </command:examples>
     <maml:relatedLinks>
       <maml:navigationLink>
+        <maml:linkText>Read-Variable</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
         <maml:linkText>Show-Alert</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
@@ -6775,7 +6845,7 @@ For example the main script might be listing all logged in users. And than the "
 Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView commandlet will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -6922,7 +6992,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7140,7 +7210,7 @@ System.String
       <maml:para>Returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7270,7 +7340,7 @@ Get-SpeModuleFeatureRoot -Module $module -Feature listViewExport -ReturnPath
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7486,7 +7556,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7621,7 +7691,7 @@ This command used to be named Import-Package - a matching alias added for compat
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7790,7 +7860,7 @@ This command used to be named Import-Package - a matching alias added for compat
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -7965,7 +8035,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -8212,7 +8282,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -8426,7 +8496,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -8714,7 +8784,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -8869,7 +8939,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       <maml:para>Adds rendering to a chosen device for the presentation of an item.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -9228,7 +9298,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Returns a Layout set on an item for a specific device.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -9445,7 +9515,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -9603,7 +9673,7 @@ If Device is specified but no layout is specified the commandlet will return an 
       <maml:para>Returns RenderingDefinition from an item based on provided filtering parameters.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -10088,7 +10158,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -10559,7 +10629,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -11059,7 +11129,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -11302,7 +11372,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -11631,7 +11701,7 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <maml:para>The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -11757,7 +11827,7 @@ This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -11876,7 +11946,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12085,7 +12155,7 @@ Check DSN Messages               master          True     False        False    
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12252,7 +12322,7 @@ Check Bounced Messages           master          True     False        False    
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12382,7 +12452,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12522,7 +12592,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12660,7 +12730,7 @@ One or more user instances.
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12766,7 +12836,7 @@ You can also specify role object variable, such as $&lt;role&gt;.
 To search for and retrieve more than one role, use the Filter parameter.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -12932,7 +13002,7 @@ sitecore\Developer                       sitecore     False
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -13146,7 +13216,7 @@ Name        : sitecore\Developer
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -13304,7 +13374,7 @@ You can also specify user object variable, such as $&lt;user&gt;.
 To search for and retrieve more than one user, use the Filter parameter.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -13521,7 +13591,7 @@ sitecore\michael         sitecore     False           False
       <maml:para>The Lock-Item cmdlet unlocks the item.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -13771,7 +13841,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -13881,7 +13951,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
@@ -13946,7 +14016,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14089,7 +14159,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 The Identity parameter specifies the Sitecore user to create. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14351,7 +14421,7 @@ sitecore\michael2        sitecore     False           False
       <maml:para>The Protect-Item cmdlet protects the item.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14601,7 +14671,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14716,7 +14786,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14843,7 +14913,7 @@ Represents the identity of a role.
       <maml:para>The Remove-Session cmdlet removes user sessions in Sitecore.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -14975,7 +15045,7 @@ Accepts a user session.
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -15135,7 +15205,7 @@ Represents the instance of a user.
 The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -15479,7 +15549,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -15666,7 +15736,7 @@ Represents the instance of a user.
       <maml:para>The Unlock-Item cmdlet unlocks the item.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -15918,7 +15988,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -16071,7 +16141,7 @@ One or more user instances.
       <maml:para>The Unprotect-Item cmdlet protects the item.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -16321,7 +16391,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -16549,7 +16619,7 @@ Sitecore.Security.Accounts.Role
       <maml:para>Exports (serializes) Sitecore roles to server disk drive.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -16812,7 +16882,7 @@ Sitecore.Security.Accounts.Role
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -17047,7 +17117,7 @@ You can also pipe a user from the Get-user commandlet.
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -17334,7 +17404,7 @@ e.g.:
 Import-Item -Path "c:\project\data\serialization\master\sitecore\content\articles" -Root "c:\project\data\serialization\"
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -17688,7 +17758,7 @@ Import-Item -path "c:\project\data\serialization\master\sitecore\content\article
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -17815,7 +17885,7 @@ You can send more items from the pipeline to the Export-Item command, e.g. if yo
 Get-Childitem "master:\content\home" -recurse | Where-Object { $_."__Created By" -eq "sitecore\admin" } | Export-Item
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18071,7 +18141,7 @@ This command used to be named Execute-Script - a matching alias added for compat
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18209,7 +18279,7 @@ PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with 
       <maml:para>Retrieves a Sitecore cache.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18312,7 +18382,7 @@ master[data]                             True           3427    7420654   209715
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18462,7 +18532,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       <maml:para>Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button)    
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
@@ -18529,7 +18599,7 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
@@ -18602,7 +18672,7 @@ that was imported as a result of the execution of the following line</dev:remark
       <maml:para>Restarts the Sitecore Application pool.    
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax />
@@ -18667,7 +18737,7 @@ that was imported as a result of the execution of the following line</dev:remark
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18820,7 +18890,7 @@ that was imported as a result of the execution of the following line</dev:remark
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -18966,7 +19036,7 @@ that was imported as a result of the execution of the following line</dev:remark
     </command:details>
     <maml:description>
       <maml:para />
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -19049,7 +19119,7 @@ Install-UpdatePackage.
     -InstallMode {Install or Update}
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -19197,7 +19267,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -19448,7 +19518,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -19683,7 +19753,7 @@ User     : sitecore\admin
 
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
@@ -19962,7 +20032,7 @@ User     : sitecore\admin
       <maml:para>The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
 
 </maml:para>
-      <maml:para />
+      <maml:para>-</maml:para>
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
     <command:syntax>
