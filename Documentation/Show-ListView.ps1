@@ -39,7 +39,7 @@
         Data to be displayed in the view.
 
     .PARAMETER Property
-        Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.        
+        Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.
 
 	The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
 	-- Name (or Label) <string>
@@ -86,7 +86,11 @@
     .LINK
         Show-YesNoCancel
     .LINK
-        http://michaellwest.blogspot.com/2014/04/sitecore-code-editor-14-preview.html
+        http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/
+    .LINK
+        http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html
+    .LINK
+        http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
