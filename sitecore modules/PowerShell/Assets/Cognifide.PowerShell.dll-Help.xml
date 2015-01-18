@@ -321,23 +321,21 @@ Fields ignored out of the box include:__Archive date, __Archive Version date, __
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Translate the Home Item from English to US and Polish leaving the "Title" field blank. If a version exists don't do anything
-PS master:\&gt; Add-ItemLanguage -Path "master:\content\home" -Language "en" -TargetLanguage "pl-pl", "en-us" -IfExist Skip -IgnoredFields "Title"
+        <dev:code>PS master:\&gt; Add-ItemLanguage -Path "master:\content\home" -Language "en" -TargetLanguage "pl-pl", "en-us" -IfExist Skip -IgnoredFields "Title"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Translate the Home Item from English to US and Polish leaving the "Title" field blank. If a version exists don't do anything</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Translate the children of Home item (but only those of Template Name "Sample Item") from English to US and Polish. If a version exists create a new version for that language. Display results in a table listing item name, language and created version number.
-
+        <dev:code>
 Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
     Where-Object { $_.TemplateName -eq "Sample Item" } | `
     Add-ItemLanguage -TargetLanguage "pl-pl" -IfExist Append | `
     Format-Table Name, Language, Version -auto                   
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Translate the children of Home item (but only those of Template Name "Sample Item") from English to US and Polish. If a version exists create a new version for that language. Display results in a table listing item name, language and created version number.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -1523,20 +1521,18 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Get list of names of non standard fields from /sitecore/content/home item
-PS master:\&gt; Get-ItemField -Path master:\content\home
+        <dev:code>PS master:\&gt; Get-ItemField -Path master:\content\home
 
 Text
 Title
 Image
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get list of names of non standard fields from /sitecore/content/home item</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Get list of fields including standard fields from /sitecore/content/home item and list their Name, DisplayName, SectionDisplayName and Description in a table.
-PS master:\&gt; Get-Item master:\content\home | Get-ItemField -IncludeStandardFields -ReturnType Field -Name "*" | ft Name, DisplayName, SectionDisplayName, Description -auto
+        <dev:code>PS master:\&gt; Get-Item master:\content\home | Get-ItemField -IncludeStandardFields -ReturnType Field -Name "*" | ft Name, DisplayName, SectionDisplayName, Description -auto
 
 Name                                DisplayName                        SectionDisplayName Description
 ----                                -----------                        ------------------ -----------
@@ -1603,7 +1599,7 @@ __Preview                           __Preview                          Appearanc
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get list of fields including standard fields from /sitecore/content/home item and list their Name, DisplayName, SectionDisplayName and Description in a table.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -2338,8 +2334,7 @@ TargetPath         : /sitecore/content/Home
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Get template of /sitecore/conent/home item
-
+        <dev:code>
        PS master:\&gt; Get-ItemTemplate -Path master:\content\home
 
        BaseTemplates  : {Standard template}
@@ -2356,13 +2351,11 @@ TargetPath         : /sitecore/content/Home
        Name           : Sample Item
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get template of /sitecore/conent/home item</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Get template of /sitecore/conent/home item and all of the templates its template is based on
-       # then format it to only show the template name, path and Key
-
+        <dev:code>
        PS master:\&gt; Get-Item -Path master:/content/Home | Get-ItemTemplate -Recurse | ft Name, FullName, Key -auto
 
        Name              FullName                                 Key
@@ -2383,7 +2376,8 @@ TargetPath         : /sitecore/content/Home
        Workflow          System/Templates/Sections/Workflow       workflow
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get template of /sitecore/conent/home item and all of the templates its template is based on
+then format it to only show the template name, path and Key</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -2723,12 +2717,11 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Clone /sitecore/content/home/ under /sitecore/content/new-target/ with the "New Home" name.
-PS master:\&gt; $newTarget = Get-Item master:\content\new-target\
+        <dev:code>PS master:\&gt; $newTarget = Get-Item master:\content\new-target\
 PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget -Name "New Home"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Clone /sitecore/content/home/ under /sitecore/content/new-target/ with the "New Home" name.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -3278,27 +3271,24 @@ If Language parameter is not is not specified but ExcludeLanguage is provided, t
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Remove Polish and Spanish language from /sitecore/content/home item in the master database
-PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "pl-pl", "es-es"
+        <dev:code>PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "pl-pl", "es-es"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Remove Polish and Spanish language from /sitecore/content/home item in the master database</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Remove all english based languages defined in /sitecore/content/home item and all of its children in the master database
-PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" -Recurse
+        <dev:code>PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -Language "en-*" -Recurse
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Remove all english based languages defined in /sitecore/content/home item and all of its children in the master database</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code># Remove all languages except those that are "en" based defined in /sitecore/content/home item and all of its children in the master database
-PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage "en*" -Recurse
+        <dev:code>PS master:\&gt; Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage "en*" -Recurse
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Remove all languages except those that are "en" based defined in /sitecore/content/home item and all of its children in the master database</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -3700,20 +3690,18 @@ If the file has been downloaded the dialog returns "downloaded" string, otherwis
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Download File from server disk drive
-PS master:\&gt; Download-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip"
+        <dev:code>PS master:\&gt; Download-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Download File from server disk drive</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#Download item from media library
-PS master:\&gt; Get-Item "master:/media library/Showcase/cognifide_logo" | Download-File -Message "Cognifide Logo"
+        <dev:code>PS master:\&gt; Get-Item "master:/media library/Showcase/cognifide_logo" | Download-File -Message "Cognifide Logo"
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Download item from media library</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -3926,27 +3914,24 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Launch Publishing Viewer for /sitecore/content/home item.
-       PS master:\&gt; Get-Item master:\content\home\ | Invoke-ShellCommand "item:publishingviewer"
+        <dev:code>       PS master:\&gt; Get-Item master:\content\home\ | Invoke-ShellCommand "item:publishingviewer"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Launch Publishing Viewer for /sitecore/content/home item.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Initiate /sitecore/content/home item duplication.
-PS master:\&gt; Get-Item master:/content/home | Invoke-ShellCommand "item:duplicate"
+        <dev:code>PS master:\&gt; Get-Item master:/content/home | Invoke-ShellCommand "item:duplicate"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Initiate /sitecore/content/home item duplication.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code># Show properties of the /sitecore/content/home item.
-PS master:\&gt; Get-Item master:/content/home | Invoke-ShellCommand "contenteditor:properties"
+        <dev:code>PS master:\&gt; Get-Item master:/content/home | Invoke-ShellCommand "contenteditor:properties"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show properties of the /sitecore/content/home item.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -4232,11 +4217,10 @@ PS master:\&gt; Get-Item master:/content/home | Invoke-ShellCommand "contentedit
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>#If you execute the following script in the PowerShell ISE the Save dialog will popup
-Send-SheerMessage -Name 'ise:save'
+        <dev:code>Send-SheerMessage -Name 'ise:save'
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>If you execute the following script in the PowerShell ISE the Save dialog will popup</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -4569,8 +4553,7 @@ Send-SheerMessage -Name 'ise:save'
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Show Content Editor in new window (or as an overlay in modal mode in Sitecore 7.2+) with "/sitecore/templates" item selected.
-$item = gi master:\templates
+        <dev:code>$item = gi master:\templates
 
 Show-Application `
     -Application "Content Editor" `
@@ -4578,19 +4561,18 @@ Show-Application `
     -Modal -Width 1600 -Height 800
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show Content Editor in new window (or as an overlay in modal mode in Sitecore 7.2+) with "/sitecore/templates" item selected.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#Show Content Editor as a new application on desktop with "/sitecore/content/home" item selected.
-$item = gi master:\content\home
+        <dev:code>$item = gi master:\content\home
 
 Show-Application `
     -Application "Content Editor" `
     -Parameter @{id ="$($item.ID)"; fo="$($item.ID)";la="$($item.Language.Name)"; vs="$($item.Version.Number)";sc_content="$($item.Database.Name)"} `
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show Content Editor as a new application on desktop with "/sitecore/content/home" item selected.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -5251,21 +5233,19 @@ Show-FieldEditor -Path "master:\content\home" -Name "*", "-Title"
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Show field editor that shows all non-standard fields on sitecore/content/home item except for field "title"
-# The dialog will be titled "My Home Item" all fields inside will be in single section.
-PS master:\&gt; Show-FieldEditor -Path master:\content\home -Name "*" , "-Title" -Title "My Home Item" 
+        <dev:code>PS master:\&gt; Show-FieldEditor -Path master:\content\home -Name "*" , "-Title" -Title "My Home Item" 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show field editor that shows all non-standard fields on sitecore/content/home item except for field "title"
+The dialog will be titled "My Home Item" all fields inside will be in single section.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Show field editor that shows all fields including standard fields on sitecore/content/home
-# The dialog will preserve the item sections.
-PS master:\&gt; Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -IncludeStandardFields -PreserveSections
+        <dev:code>PS master:\&gt; Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -IncludeStandardFields -PreserveSections
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show field editor that shows all fields including standard fields on sitecore/content/home
+The dialog will preserve the item sections.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -5464,32 +5444,29 @@ PS master:\&gt; Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -In
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Requests that the user provides an email, validates it against a regular expression snd whows an allert if the format is not valid
-PS master:\&gt; Show-Input "Please provide your email" -DefaultValue "my@email.com"  -Validation "^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$" -ErrorMessage "Not a proper email!"
+        <dev:code>PS master:\&gt; Show-Input "Please provide your email" -DefaultValue "my@email.com"  -Validation "^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$" -ErrorMessage "Not a proper email!"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Requests that the user provides an email, validates it against a regular expression snd whows an allert if the format is not valid</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Uses Show-Input commandlet to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)
-PS master:\&gt; $contentItem = get-item master:\content
+        <dev:code>PS master:\&gt; $contentItem = get-item master:\content
 PS master:\&gt; $newName = Show-Input "Please provide the new name for the '$($contentItem.Name)' Item" -DefaultValue $contentItem.Name  -Validation "^[\w\*\$][\w\s\-\$]*(\(\d{1,}\)){0,1}$" -ErrorMessage "Invalid characters in the name"
 
 #print new name
 PS master:\&gt; Write-Host "The new name you've chosen is '$($newName)'"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Uses Show-Input commandlet to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code># Requests that the user provides a string of at most  5 characters
-Show-Input "Please provide 5 characters at most" -MaxLength 5
+        <dev:code>Show-Input "Please provide 5 characters at most" -MaxLength 5
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Requests that the user provides a string of at most  5 characters</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -5765,7 +5742,7 @@ You can use the following features of the table to examine your data:
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Property</maml:name>
         <maml:description>
-          <maml:para>Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.        
+          <maml:para>Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.
 
 The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
 -- Name (or Label) &lt;string&gt;
@@ -5861,27 +5838,25 @@ The value of the Property parameter can be a new calculated property. To create 
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># This command formats information about Sitecore items in a table. The Get-ChildItem cmdlet gets objects representing the items. 
-# The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
-PS master:\&gt; Get-Item -path master:\* | Show-ListView -Property Name, DisplayName, ProviderPath, TemplateName, Language
+        <dev:code>PS master:\&gt; Get-Item -path master:\* | Show-ListView -Property Name, DisplayName, ProviderPath, TemplateName, Language
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>This command formats information about Sitecore items in a table. The Get-ChildItem cmdlet gets objects representing the items. 
+The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># This command formats information about Sitecore items in a table. The Get-ItemReferrer cmdlet gets all references of the "Sample Item" template. 
-# The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
-# The Properties are not displaying straight properties but use the Name/Expression scheme to provide a nicely named values that 
-# like in the case of languages which are aggregarde form the "Languages" property.
-PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' | 
+        <dev:code>PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' | 
                  Show-ListView -Property `
                      @{Label="Name"; Expression={$_.DisplayName} }, 
                      @{Label="Path"; Expression={$_.Paths.Path} }, 
                      @{Label="Languages"; Expression={$_.Languages | % { $_.Name + ", "} } }
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>This command formats information about Sitecore items in a table. The Get-ItemReferrer cmdlet gets all references of the "Sample Item" template. 
+The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
+The Properties are not displaying straight properties but use the Name/Expression scheme to provide a nicely named values that 
+like in the case of languages which are aggregarde form the "Languages" property.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -5930,7 +5905,15 @@ PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>http://michaellwest.blogspot.com/2014/04/sitecore-code-editor-14-preview.html</maml:linkText>
+        <maml:linkText>http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/</maml:linkText>
         <maml:uri />
       </maml:navigationLink>
       <maml:navigationLink>
@@ -6410,19 +6393,17 @@ PS master:\&gt; Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Show results of script execution
-PS master:\&gt; Show-Result -Text
+        <dev:code>PS master:\&gt; Show-Result -Text
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show results of script execution</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#Show the Control Panel control in a Window of specified size.
-PS master:\&gt; Show-Result -Control "ControlPanel" -Width 1024 -Height 640
+        <dev:code>PS master:\&gt; Show-Result -Control "ControlPanel" -Width 1024 -Height 640
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Show the Control Panel control in a Window of specified size.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
@@ -6752,8 +6733,7 @@ Another example is Task Manager script you can find in Toolbox. The List View sh
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>#This example consists of 2 scripts - a report that shows a list view and the second one that updates the list view from an action.
-
+        <dev:code>
 # THE INITIAL SCRIPT showing the list of tasks in a list view
 # This script does not yet make use of Update-ListView but tests the state for actions to be performed
 
@@ -6785,7 +6765,7 @@ Import-Function "Edit-TaskSchedule"
 Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } | Update-ListView
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>This example consists of 2 scripts - a report that shows a list view and the second one that updates the list view from an action.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -6982,28 +6962,25 @@ System.String
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Return all modules defined in the provided database
-PS master:\&gt; Get-SpeModule -Database (Get-Database "master")
+        <dev:code>PS master:\&gt; Get-SpeModule -Database (Get-Database "master")
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Return all modules defined in the provided database</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#Return all modules defined in the master database Matching the "Content*" wildcard
-PS master:\&gt; Get-SpeModule -Database (Get-Database "master")
+        <dev:code>PS master:\&gt; Get-SpeModule -Database (Get-Database "master")
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Return all modules defined in the master database Matching the "Content*" wildcard</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code>#Return the module the piped script belongs to
-PS master:\&gt; Get-item "master:\system\Modules\PowerShell\Script Library\Copy Renderings\Content Editor\Context Menu\Layout\Copy Renderings" |  Get-SpeModule
+        <dev:code>PS master:\&gt; Get-item "master:\system\Modules\PowerShell\Script Library\Copy Renderings\Content Editor\Context Menu\Layout\Copy Renderings" |  Get-SpeModule
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Return the module the piped script belongs to</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -7120,21 +7097,19 @@ If not provided the feature root will be returned for all modules.
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Return the library item for "Content Editor Context Menu"
-$module = Get-SpeModule -Name "Copy Renderings"
+        <dev:code>$module = Get-SpeModule -Name "Copy Renderings"
 Get-SpeModuleFeatureRoot -Feature contentEditorContextMenu -Module $module 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Return the library item for "Content Editor Context Menu"</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Return the Path to where "List View Export" scripts would be located if this feature was defined
-$module = Get-SpeModule -Name "Copy Renderings"
+        <dev:code>$module = Get-SpeModule -Name "Copy Renderings"
 Get-SpeModuleFeatureRoot -Module $module -Feature listViewExport -ReturnPath
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Return the Path to where "List View Export" scripts would be located if this feature was defined</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -7294,9 +7269,7 @@ If this parameter is missing only Xml file with the package project definition w
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content/home item to it and 
-       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -7319,7 +7292,8 @@ $package.Sources.Add($source);
        Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content/home item to it and 
+saves it in the Sitecore Package folder+ gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -7770,9 +7744,7 @@ This command used to be named Import-Package - a matching alias added for compat
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content of the Console folder (except the source files) under the site folder
-       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -7795,7 +7767,8 @@ This command used to be named Import-Package - a matching alias added for compat
        Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content of the Console folder (except the source files) under the site folder
+saves it in the Sitecore Package folder + gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -8019,9 +7992,7 @@ This command used to be named Import-Package - a matching alias added for compat
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content/home item and all of its children to it and 
-       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -8044,7 +8015,8 @@ $package.Sources.Add($source);
        Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content/home item and all of its children to it and 
+saves it in the Sitecore Package folder + gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -8234,9 +8206,7 @@ $package.Sources.Add($source);
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content of the Console folder under the site folder
-       # saves it in the Sitecore Package folder + gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -8259,7 +8229,8 @@ $package.Sources.Add($source);
        Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content of the Console folder under the site folder
+saves it in the Sitecore Package folder + gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -8522,9 +8493,7 @@ $package.Sources.Add($source);
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content/home item to it and 
-       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -8547,7 +8516,8 @@ $package.Sources.Add($source);
        Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content/home item to it and 
+saves it in the Sitecore Package folder+ gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -8678,9 +8648,7 @@ $package.Sources.Add($source);
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># Following example creates a new package, adds content/home item to it and 
-       # saves it in the Sitecore Package folder+ gives you an option to download the saved package.
-
+        <dev:code>
 # Create package
        $package = new-package "Sitecore PowerShell Extensions";
 
@@ -8704,7 +8672,8 @@ $package.Sources.Add($source);
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Following example creates a new package, adds content/home item to it and 
+saves it in the Sitecore Package folder+ gives you an option to download the saved package.</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -9072,15 +9041,14 @@ $package.Sources.Add($source);
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># find item defining rendering and create rendering definition
-PS master:\&gt; $renderingItem = gi master:\layout\Sublayouts\ZenGarden\Basic\Content | New-Rendering -Placeholder "main"
+        <dev:code>PS master:\&gt; $renderingItem = gi master:\layout\Sublayouts\ZenGarden\Basic\Content | New-Rendering -Placeholder "main"
 # find item you want the rendering added to
 PS master:\&gt; $item = gi master:\content\Demo\Int\Home
 # Add the rendering to the item
 PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $renderingItem -Parameter @{ FieldName = "Content" }
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>find item defining rendering and create rendering definition</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -9438,27 +9406,24 @@ If Device is specified but no layout is specified the commandlet will return an 
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Get Print device
-PS master:\&gt; Get-LayoutDevice "Print"
+        <dev:code>PS master:\&gt; Get-LayoutDevice "Print"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get Print device</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Get default device
-PS master:\&gt; Get-LayoutDevice -Default
+        <dev:code>PS master:\&gt; Get-LayoutDevice -Default
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get default device</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code># Get all layout devices
-PS master:\&gt; Get-LayoutDevice *
+        <dev:code>PS master:\&gt; Get-LayoutDevice *
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Get all layout devices</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -9939,11 +9904,10 @@ PS master:\&gt; Get-LayoutDevice *
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># get all renderings for "Default" device, located in the any placeholder that has name in it or any of its sub-placeholders
-PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*main*" -Device (Get-LayoutDevice "Default")
+        <dev:code>PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*main*" -Device (Get-LayoutDevice "Default")
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>get all renderings for "Default" device, located in the any placeholder that has name in it or any of its sub-placeholders</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -10408,15 +10372,14 @@ PS master:\&gt; Get-Item master:\content\home | Get-Rendering -Placeholder "*mai
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># find item defining rendering and create rendering definition
-PS master:\&gt; $renderingItem = gi master:\layout\Sublayouts\ZenGarden\Basic\Content | New-Rendering -Placeholder "main"
+        <dev:code>PS master:\&gt; $renderingItem = gi master:\layout\Sublayouts\ZenGarden\Basic\Content | New-Rendering -Placeholder "main"
 # find item you want the rendering added to
 PS master:\&gt; $item = gi master:\content\Demo\Int\Home
 # Add the rendering to the item
 PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $renderingItem -Parameter @{ FieldName = "Content" }
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>find item defining rendering and create rendering definition</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -10898,27 +10861,24 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#remove all renderings for "Default" device
-PS master:\&gt; Remove-Rendering -Path master:\content\home -Device (Get-LayoutDevice "Default")
+        <dev:code>PS master:\&gt; Remove-Rendering -Path master:\content\home -Device (Get-LayoutDevice "Default")
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>remove all renderings for "Default" device</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#remove all renderings from the "main" placeholder and all of its embedded placeholders.
-PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*"
+        <dev:code>PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>remove all renderings from the "main" placeholder and all of its embedded placeholders.</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
-        <dev:code>#remove all renderings from the "main" placeholder and all of its embedded placeholders, but only in the "Default" device
-PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*" -Device (Get-LayoutDevice "Default")
+        <dev:code>PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*" -Device (Get-LayoutDevice "Default")
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>remove all renderings from the "main" placeholder and all of its embedded placeholders, but only in the "Default" device</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -11486,13 +11446,12 @@ PS master:\&gt; Remove-Rendering -Path master:\content\home -PlaceHolder "main*"
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>#change all rendering's placeholder from main to footer
-PS master:\&gt; $item = Get-Item -Path master:\content\home
+        <dev:code>PS master:\&gt; $item = Get-Item -Path master:\content\home
 PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object { $_.Placeholder = "footer"; Set-Rendering -Item $item -Instance $_ }
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>change all rendering's placeholder from main to footer</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -18483,12 +18442,11 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code># The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" commandlet 
-       # that was imported as a result of the execution of the following line
-       PS master:\&gt; Import-Function -Name Resolve-Error
+        <dev:code>       PS master:\&gt; Import-Function -Name Resolve-Error
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" commandlet 
+that was imported as a result of the execution of the following line</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -18703,20 +18661,18 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code>#Set width of the console buffer to 80 and persist it for the future instances 
-PS master:\&gt; Set-HostProperty -HostWidth 80 -Persist
+        <dev:code>PS master:\&gt; Set-HostProperty -HostWidth 80 -Persist
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Set width of the console buffer to 80 and persist it for the future instances </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code>#Set color of the console text to cyan. Next instance of the console will revert to default (white).
-PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
+        <dev:code>PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
 
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Set color of the console text to cyan. Next instance of the console will revert to default (white).</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
@@ -18951,7 +18907,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:name>Install-UpdatePackage</command:name>
       <gl:group>UpdatePackage</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
@@ -18961,7 +18919,14 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <dev:version>3.0.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
+
+Install-UpdatePackage.
+    Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 
+    -UpgradeAction {Preview or Upgrade}
+    -InstallMode {Install or Update}
+
+</maml:para>
       <maml:para />
       <maml:para>Copyright © Adam Najmanowicz 2011-2015 Cognifide PowerShell Console for Sitecore</maml:para>
     </maml:description>
@@ -18990,7 +18955,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the .update package on the Sitecore server disk drive.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -19004,7 +18971,9 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
       <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>RollbackPackagePath</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specify Rollback Package Path - for rolling back if the installation was not functioning as expected.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -19044,17 +19013,45 @@ PS master:\&gt; Set-HostProperty -ForegroundColor Cyan
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 
+    -UpgradeAction Preview -InstallMode Install
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -19288,19 +19285,17 @@ This command used to be named Execute-Workflow - a matching alias added for comp
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
-        <dev:code># Submit item to approval, item gotten from path
-       PS master:\&gt; Invoke-Workflow -Path master:/content/home -CommandName "Submit" -Comments "Automated"
+        <dev:code>       PS master:\&gt; Invoke-Workflow -Path master:/content/home -CommandName "Submit" -Comments "Automated"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Submit item to approval, item gotten from path</dev:remarks>
       </command:example>
       <command:example>
         <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
-        <dev:code># Reject item, item gotten from pipeline
-       PS master:\&gt; Get-Item master:/content/home | Invoke-Workflow -CommandName "Reject" -Comments "Automated"
+        <dev:code>       PS master:\&gt; Get-Item master:/content/home | Invoke-Workflow -CommandName "Reject" -Comments "Automated"
 
 </dev:code>
-        <dev:remarks />
+        <dev:remarks>Reject item, item gotten from pipeline</dev:remarks>
       </command:example>
     </command:examples>
     <maml:relatedLinks>
