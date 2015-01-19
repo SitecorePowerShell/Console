@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellResultViewerList>
+    <FormPage Application="PowerShell/PowerShellListView">
+      <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
+      <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
+      <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/Console/Styles/ListView.css" DeviceDependant="true" runat="server" />
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
+      <Action ID="HasFile" Disabled="true" />
+      <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
+      <Script src="/Console/Scripts/json2.js" runat="server"></Script>
+      <Script src="/Console/Scripts/jquery-ui.js"></Script>
+      <Script src="/Console/Scripts/listview.js"></Script>
+      <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
+      <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
+        <Border ID="RibbonPanel" />
+        <Border class="scEditorWarningPanel">
+          <GridPanel ID="InfoPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable" Columns="2">
+            <ThemedImage ID="InfoIcon" Src="Business/32x32/message.png" Width="24" Height="24" Class="scEditorWarningIcon"/>
+            <Border GridPanel.Width="100%">
+              <Border class="scEditorWarningTitle"><Literal ID="InfoTitle"/></Border>
+              <Border class="scEditorWarningHelp"><Literal ID="Description" /></Border>
+            </Border>
+          </GridPanel>
+        </Border>
+        <Border Id="LvProgressOverlay" Visible="false">
+          <Border>
+            <p>
+              <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+            </p>
+          </Border>
+        </Border>
+
+        <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%" Background="#e9e9e9">
+          <PowerShellListView ID="ListViewer" Width="100%" Height="100%" Background="white" Multiselect="true" runat="server"></PowerShellListView>
+        </GridPanel>
+
+        <Border ID="StatusBar">
+          <Border class="status-bar-panel status-bar-left">
+            Results: <Literal ID="ItemCount" Text=""/>
+          </Border>
+          <Border class="status-bar-panel status-bar-left">
+            Page: <Literal ID="CurrentPage" Text=""/> / <Literal ID="PageCount" Text=""/>
+          </Border>
+          <Border class="status-bar-panel status-bar-text">
+            <Literal ID="StatusTip">
+            </Literal>
+            <Image ID="RefreshHint" src="/Console/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
+          </Border>
+        </Border>
+      </GridPanel>
+    </FormPage>
+  </PowerShellResultViewerList>
+</control>

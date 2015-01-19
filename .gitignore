@@ -214,9 +214,12 @@ pip-log.txt
 !/Libraries/PowerShell.MamlGenerator.dll
 
 # Sitecore
+deploy.targets
 /Website/
 /Database/
+/Databases/
 /Data/*/
+/Data/*
 !/Data/packages/
 !/Data/serialization/
 /Data/serialization/security/

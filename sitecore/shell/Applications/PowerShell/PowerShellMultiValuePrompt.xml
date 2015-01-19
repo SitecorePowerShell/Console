@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
+  <PowerShellMultiValuePrompt>
+    <FormPage>
+      <Literal ID="TabOffsetValue"/>
+      <Script src="/Console/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script runat="server" x:placeholder="Scripts">$ise = jQuery.noConflict();</Script>
+      <Script src="/Console/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/Console/Scripts/jquery-ui.js" x:placeholder="Scripts"></Script>
+      <Script src="/Console/Scripts/jquery.qtip.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/Console/Scripts/VariablePrompt.js" runat="server" x:placeholder="Scripts"></Script>
+      <Stylesheet Src="/Console/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/Console/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" runat="server" x:placeholder="Scripts"/>
+      <CodeBeside Type="Cognifide.PowerShell.SitecoreIntegrations.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
+
+      <Border ID="DataContextPanel" Style="display:none;"></Border>
+      <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+      <Border class="scStretch">
+        <Border class="scWizardPageContainer">
+
+          <Border class="scStretch scFlexColumnContainerWithoutFlexie">     
+            <Border class="scWizardHeader">
+              <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" />
+              <Border>
+                <Border Class="scWizardTitle"><Literal Text="Script parameters" ID="DialogHeader"/></Border>
+                <Border Class="scWizardText"><Literal Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/></Border>
+              </Border>
+            </Border>
+            
+            <Border Class="scBottomEdge" />
+            <Border Class="scTopEdge" />
+
+            <GridPanel ID="ValuePanel" GridPanel.Class="EntryGrid" GridPanel.ID="EntryGrid" Columns="1" Cellpadding="2px">
+              <Tabstrip ID="Tabstrip" Visible="false"></Tabstrip>
+            </GridPanel>
+          </Border>
+        </Border>
+        <Border class="scWizardButtons">
+          <Border class="scBottomEdge" />
+          <Border class="scTopEdge" />
+          <Image ID="Copyright" src="/Console/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2014 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <Button ID="OKButton" Class="scButton" Click="OkClick" Header="OK"/>
+          <Button ID="CancelButton" Class="scButton" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+        </Border>
+      </Border>
+    </FormPage>
+  </PowerShellMultiValuePrompt>
+</control>
