@@ -22,23 +22,26 @@ namespace Cognifide.PowerShell.Core.Modules
                 if (modules == null)
                 {
                     modules = new List<Module>();
-                    Item masterLibrary = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb).GetItem(ApplicationSettings.ScriptLibraryPath);
+                    Item masterLibrary =
+                        Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)
+                            .GetItem(ApplicationSettings.ScriptLibraryPath);
                     if (masterLibrary != null)
                     {
-                        modules.Add(new Module(masterLibrary,true));
+                        modules.Add(new Module(masterLibrary, true));
+
+                        foreach (Item item in masterLibrary.GetChildren())
+                        {
+                            if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
+                            {
+                                modules.Add(new Module(item, false));
+                            }
+                        }
                     }
 
                     Item coreLibrary = Factory.GetDatabase("core").GetItem(ApplicationSettings.ScriptLibraryPath);
-                    if (coreLibrary  != null)
+                    if (coreLibrary != null)
                     {
-                        modules.Add(new Module(coreLibrary,true));
-                    }
-                    foreach (Item item in masterLibrary.GetChildren())
-                    {
-                        if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
-                        {
-                            modules.Add(new Module(item,false));
-                        }
+                        modules.Add(new Module(coreLibrary, true));
                     }
                 }
                 return modules;
