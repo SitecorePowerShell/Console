@@ -330,7 +330,6 @@ namespace Cognifide.PowerShell.Client.Applications
             session.SetVariable("title", ListViewer.Data.Title);
             session.SetVariable("infoTitle", ListViewer.Data.InfoTitle);
             session.SetVariable("infoDescription", ListViewer.Data.InfoDescription);
-            session.SetVariable("actionData", ListViewer.Data.ActionData);
 
             session.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
             session.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
