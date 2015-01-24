@@ -458,7 +458,9 @@
     <Content Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx" />
     <Content Include="sitecore modules\PowerShell\Services\web.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <CallTarget Targets="DeployToWeb" Condition="$(SitecorePath) != ''" />

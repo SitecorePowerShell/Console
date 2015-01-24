@@ -9,13 +9,6 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {0E8C1FB7-3775-4B79-BB60-C74F8CCF49A9}
 templatekey: PowerShell Script library
 
-----field----
-field: {1172F251-DAD4-4EFB-A329-0C63500E4F1E}
-name: __Masters
-key: __masters
-content-length: 77
-
-{0E8C1FB7-3775-4B79-BB60-C74F8CCF49A9}|{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 ----version----
 language: en
 version: 1
