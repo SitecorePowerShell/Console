@@ -79,18 +79,20 @@
     <Reference Include="Sitecore.Client">
       <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ExperienceEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.ExperienceEditor">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\80\Sitecore.ExperienceEditor.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.ExperienceEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Kernel, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Logging, Version=1.2.0.30715, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="Sitecore.Update, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.Logging">
+      <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.Update">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\Sitecore.Update.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -444,35 +446,6 @@
     <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
-    <Content Include="sitecore\shell\Applications\PowerShell\ConfirmChoice.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellConsole.xml" />
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerList.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellMultiValuePrompt.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellResultViewerText.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\DownloadFile.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\GetStringResponse.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellRunner.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellIse.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Applications\PowerShell\PowerShellScriptBrowser.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="sitecore\shell\Override\Controls\Splitters\HSplitter.xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Config\Include\Cognifide.PowerShell.config">
@@ -484,7 +457,6 @@
     <Content Include="sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteScriptCall.ashx" />
     <Content Include="sitecore modules\PowerShell\Services\web.config" />
-    <None Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -506,8 +478,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>:xcopy C:\Users\Michael.West\Documents\GitHub\Console\Data\*.* C:\inetpub\wwwroot\Sitecore7\Data\*.* /s /e /c /y
-xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y</PostBuildEvent>
+    <PostBuildEvent>REM xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
