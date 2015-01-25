@@ -184,10 +184,20 @@ extend(cognifide, 'powershell');
             codeeditor.getSession().setValue('');
         };
 
+        function escapeRegExp(string) {
+            return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        }
+
+        function replaceAll(string, find, replace) {
+          return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+        }
+
         cognifide.powershell.changeWindowTitle = function (newTitle, clearWindow) {
             if(clearWindow){
               codeeditor.getSession().setValue('');
             }
+            newTitle = replaceAll(newTitle,'/','</i> / <i style="font-style: italic; color: #bbb;">');
+            //.replace('/','</i>/<i style="font-style: italic; color: #bbb;">');
             $ise('#WindowCaption',window.parent.document)[0].innerHTML = '<i style="font-style: italic; color: #bbb;">'+newTitle + '</i> - ';
         };
 
