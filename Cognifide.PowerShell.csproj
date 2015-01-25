@@ -480,7 +480,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>REM xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y</PostBuildEvent>
+    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

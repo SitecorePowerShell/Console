@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8330
+content-length: 8149
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -162,8 +162,6 @@ $source = Get-Item "$AppPath/sitecore/shell/Themes/Standard/PowerShell.zip" | Ne
 $package.Sources.Add($source);
 $source = Get-ChildItem -exclude *.cs -Path "$AppPath\sitecore modules\PowerShell\" -filter "*.*" -Recurse -File | New-ExplicitFileSource -Name "Console Assets"
 $package.Sources.Add($source);
-$source = Get-ChildItem -Path "$AppPath\sitecore\Shell\Applications\Powershell\*" -Recurse -File | New-ExplicitFileSource -Name "Application Files"
-$package.Sources.Add($source);
 
 Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).xml"
 Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
@@ -172,7 +170,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 1ee8c613-ac79-4873-bb5f-6b4637b685b4
+revision: e8ac0961-0f78-4685-a43c-c7e17c3fb0d5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -187,14 +185,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1ee8c613-ac79-4873-bb5f-6b4637b685b4
+e8ac0961-0f78-4685-a43c-c7e17c3fb0d5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150120T025329:635573192090520781Z
+20150124T205912:635577299529236484Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
