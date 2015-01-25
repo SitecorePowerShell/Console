@@ -37,11 +37,12 @@ Enjoy!
 
 [Adam Najmanowicz](http://blog.najmanowicz.com/) - [Cognifide](http://www.cognifide.com/)
 
-[Michael West] (http://michaellwest.blogspot.com)
+[Michael West](http://michaellwest.blogspot.com)
 
+[Mike Reynolds](http://sitecorejunkie.com/)
 
 If you simply want to download the module go to the Sitecore Marketplace and download the latest from the
-[Sitecore PowerShell Extensions Page](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx)
+[Sitecore PowerShell Extensions](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx) page.
 
 [All kind of Resources about Sitecore PowerShell Extensions](http://blog.najmanowicz.com/sitecore-powershell-console/)
 
