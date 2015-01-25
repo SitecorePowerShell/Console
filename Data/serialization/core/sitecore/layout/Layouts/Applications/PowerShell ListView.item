@@ -1,33 +1,33 @@
 ----item----
 version: 1
-id: {513E193D-6946-4E83-AC19-FAC01FDCAC77}
+id: {DE28D8F7-D47B-4A97-98FC-B5F4F2FBBBB4}
 database: core
-path: /sitecore/templates/Modules
-parent: {3C1715FE-6A13-4FCF-845F-DE308BA9741D}
-name: Modules
+path: /sitecore/layout/Layouts/Applications/PowerShell ListView
+parent: {FA21DB1E-3F70-4201-9245-98A864582651}
+name: PowerShell ListView
 master: {00000000-0000-0000-0000-000000000000}
-template: {239F9CF4-E5A0-44E0-B342-0F32CD4C6D8B}
-templatekey: Node
+template: {1163DA83-B2EF-4381-BF09-B2FF714B1B3F}
+templatekey: Xml layout
 
+----field----
+field: {5851D498-15F9-4B1A-BB02-0B736C13AFE3}
+name: Control
+key: control
+content-length: 26
+
+PowerShellResultViewerList
 ----version----
 language: en
 version: 1
-revision: 1bf731d0-3d1e-40fa-8e4f-f08347233cda
+revision: 627a101f-d1f7-45f7-917e-d70676e8f7fe
 
-----field----
-field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
-name: __Owner
-key: __owner
-content-length: 14
-
-sitecore\admin
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20141219T145425Z
+20121128T124800
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -41,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1bf731d0-3d1e-40fa-8e4f-f08347233cda
+627a101f-d1f7-45f7-917e-d70676e8f7fe
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20141219T145425:635545976658569843Z
+20130907T195224:635141803441447578
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

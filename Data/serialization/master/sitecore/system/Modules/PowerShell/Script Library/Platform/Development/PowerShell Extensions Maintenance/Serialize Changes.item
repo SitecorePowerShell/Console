@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5389
+content-length: 5711
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -21,7 +21,9 @@ Write-Progress -Activity "Serializing items"
 
 #Item templates
 Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
+Get-Item 'master:\templates\Modules' | Serialize-Item
 Get-Item 'master:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
+Get-Item 'core:\templates\Modules' | Serialize-Item
 Get-Item 'core:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
 
 # Module Root
@@ -69,6 +71,7 @@ Get-Item core:\content\Applications\PowerShell | Serialize-Item -Recurse
 Write-Progress -Activity "Serializing PowerShell Application Layouts" -PercentComplete 87
 Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Serialize-Item -Recurse
 Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Serialize-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Serialize-Item -Recurse
 
 # Start Menu icons
 Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
@@ -83,6 +86,7 @@ Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Power
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts\' | Serialize-Item
 
 # Content Editor Ribbon integration
 Write-Progress -Activity "Serializing Content Editor Ribbon integration" -PercentComplete 95
@@ -100,7 +104,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 878cc162-82e3-48ea-969d-71747ed5ff4f
+revision: 40caff35-50cb-4f43-961b-96f6e5a0e85e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -115,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-878cc162-82e3-48ea-969d-71747ed5ff4f
+40caff35-50cb-4f43-961b-96f6e5a0e85e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175203:635552995235975312Z
+20150125T210208:635578165289550781Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
