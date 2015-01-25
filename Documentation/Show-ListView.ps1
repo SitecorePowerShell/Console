@@ -26,6 +26,9 @@
     .PARAMETER Modal
         If this parameter is provided Results will show in a new window (in Sitecore 6.x up till Sitecore 7.1) or in a modal overlay (Sitecore 7.2+)
 
+    .PARAMETER MissingDataMessage 
+        If no Items were provided for -Data parameter the message provided in this parameter will be shown in the middle of the List View dialog to notify users of the lack of items to display.
+
     .PARAMETER ActionData
         Additional data what will be passed to the view. All actions that are executed from that view window will have that data accessible to them as $actionData variable.
 
