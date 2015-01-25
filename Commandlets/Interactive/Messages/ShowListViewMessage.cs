@@ -28,6 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string InfoDescription { get; private set; }
         public Hashtable[] Property { get; private set; }
         public string ViewName { get; set; }
+        public string MissingDataMessage { get; set; }
 
 
         public string FormatProperty
@@ -60,9 +61,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string SessionId { get; private set; }
         public object ActionData { get; private set; }
 
-        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title,
-            string icon, string width, string height, bool modal, string infoTitle,
-            string infoDescription, string sessionId, object actionData, object[] property, string viewName)
+        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon, string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId, object actionData, object[] property, string viewName, string missingDataMessage)
         {
             Data = data;
             Title = title;
@@ -76,6 +75,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             SessionId = sessionId;
             ActionData = actionData;
             ViewName = viewName;
+            MissingDataMessage = missingDataMessage;
             Property = property
                 .Select(p =>
                 {

@@ -19,7 +19,7 @@
     overflow: auto;
 }
 
-.progressBar {
+.lvProgressbar {
     background:#fff;
     color: #012456;
     padding:4px 0;
@@ -45,4 +45,35 @@
 
 .scListControl > tbody > tr > td:nth-child(1) {  
     width:8px;
+}
+
+.emptyResultsPanel{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    background: white;
+    padding: 15px;
+    text-align: center;
+    margin-left: -250px;
+}
+
+.emptyResultsText {
+    font-size: 1.5em;
+    display: block;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.progressStatus {
+    padding-top: 4px;
+}
+
+#lvProgressOverlay {
+    padding: 8px 20px;
+    background: white;
+}
+
+.progressActivity {
+    font-weight: bold;
 }

@@ -247,6 +247,7 @@ html {
     margin-top: 8px;
     width:100%
 }
+
 #OperationProgress {
     padding-right: 30px;
     padding-left: 40px;
@@ -256,14 +257,14 @@ html {
 }
 
 #lvProgressbar {
-    background-color: #E6E6E6;
-    border: #CCCCCC 1px solid;
+    background-color: #f7f7f7;
+    border: #e3e3e3 1px solid;
     margin-top: 4px;
 }
 
 #lvProgressbar div {
-    border: 1px solid #8CCC98/*{borderColorHighlight}*/;
-    background: #06B025;
+    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
+    background: #5E5E5E;
     height: 20px;
 }
 

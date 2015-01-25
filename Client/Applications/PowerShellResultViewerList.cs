@@ -39,11 +39,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal PageCount;
         protected Literal InfoTitle;
         protected Literal Description;
-        protected GridPanel InfoPanel;
+        protected Border InfoPanel;
         protected Image InfoIcon;
         protected Border LvProgressOverlay;
         protected Literal Progress;
-
+        protected Border EmptyPanel;
+        protected Literal EmptyDataMessageText;
         protected bool ScriptRunning { get; set; }
 
         public string ParentFrameName
@@ -87,8 +88,8 @@ namespace Cognifide.PowerShell.Client.Applications
             if (showProgress)
             {
 
-                sb.AppendFormat("<div>{0}</div>", args.Parameters["Activity"]);
-                sb.AppendFormat("<div>");
+                sb.AppendFormat("<div class='progressActivity'>{0}</div>", args.Parameters["Activity"]);
+                sb.AppendFormat("<div class='progressStatus'>");
                 if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
                 {
                     sb.AppendFormat("{0}, ", args.Parameters["StatusDescription"]);
@@ -98,7 +99,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
-                        sb.AppendFormat("<strong>{0:c} </strong> remaining, ", new TimeSpan(0, 0, secondsRemaining));
+                        sb.AppendFormat("<strong class='progressRemaining'>{0:c} </strong> remaining, ", new TimeSpan(0, 0, secondsRemaining));
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
@@ -153,6 +154,16 @@ namespace Cognifide.PowerShell.Client.Applications
             ChangePage(ListViewer.CurrentPage);
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
+            if (ListViewer.Data.Data.Count == 0)
+            {
+                ListViewer.Visible = false;
+                EmptyPanel.Visible = true;
+                EmptyDataMessageText.Visible = true;
+                if (ListViewer.Data != null && ListViewer.Data.MissingDataMessage != null)
+                {
+                    EmptyDataMessageText.Text = ListViewer.Data.MissingDataMessage;
+                }
+            }
             string infoTitle = ListViewer.Data.InfoTitle;
             string infoDescription = ListViewer.Data.InfoDescription;
 
