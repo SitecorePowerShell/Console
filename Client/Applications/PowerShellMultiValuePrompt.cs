@@ -174,9 +174,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 };
                 if (value is DateTime)
                 {
-                    if ((DateTime) value != DateTime.MinValue && (DateTime) value != DateTime.MaxValue)
+                    var date = (DateTime) value;
+                    if (date != DateTime.MinValue && date != DateTime.MaxValue)
                     {
-                        dateTimePicker.Value = DateUtil.ToIsoDate((DateTime) value);
+                        dateTimePicker.Value = (date.Kind == DateTimeKind.Utc)
+                            ? DateUtil.ToIsoDate(DateUtil.ToServerTime(date))
+                            : DateUtil.ToIsoDate(date);
                     }
                 }
                 else
