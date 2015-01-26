@@ -52,11 +52,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
 
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
-            string sid = WebUtil.GetQueryString("sid");
+            var sid = WebUtil.GetQueryString("sid");
             var variables = (object[]) HttpContext.Current.Session[sid];
             HttpContext.Current.Session.Remove(sid);
 
-            string title = WebUtil.GetQueryString("te");
+            var title = WebUtil.GetQueryString("te");
             ShowHints = WebUtil.GetQueryString("sh") == "1";
 
             if (!string.IsNullOrEmpty(title))
@@ -64,18 +64,18 @@ namespace Cognifide.PowerShell.Client.Applications
                 DialogHeader.Text = title;
             }
 
-            string description = WebUtil.GetQueryString("ds");
+            var description = WebUtil.GetQueryString("ds");
             if (!string.IsNullOrEmpty(description))
             {
                 DialogDescription.Text = description;
             }
-            string okText = WebUtil.GetQueryString("ob");
+            var okText = WebUtil.GetQueryString("ob");
             if (!string.IsNullOrEmpty(okText))
             {
                 OKButton.Header = okText;
             }
 
-            string cancelText = WebUtil.GetQueryString("cb");
+            var cancelText = WebUtil.GetQueryString("cb");
             if (!string.IsNullOrEmpty(cancelText))
             {
                 CancelButton.Header = cancelText;
@@ -90,32 +90,30 @@ namespace Cognifide.PowerShell.Client.Applications
             foreach (Hashtable variable in variables)
             {
                 var tabName = variable["Tab"] as string;
-                if (!string.IsNullOrEmpty(tabName) && !Tabstrip.Visible)
-                {
-                    Tabstrip.Visible = true;
-                    break;
-                }
+                if (string.IsNullOrEmpty(tabName) || Tabstrip.Visible) continue;
+
+                Tabstrip.Visible = true;
+                break;
             }
 
             foreach (Hashtable variable in variables)
             {
-                string tabName = (variable["Tab"] as string) ?? "Other";
+                var tabName = (variable["Tab"] as string) ?? "Other";
                 var name = variable["Title"] as string;
-                var hint = (variable["Tip"] as string) ?? (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
-                WebControl container = GetContainer(tabs, tabName);
+                var hint = (variable["Tip"] as string) ??
+                           (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
+                var container = GetContainer(tabs, tabName);
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
                 {
-                    var label = new Literal {Text = name};
-                    label.Class = "varTitle";
+                    var label = new Literal {Text = name, Class = "varTitle"};
                     container.Controls.Add(label);
                     if (ShowHints && !string.IsNullOrEmpty(hint))
                     {
-                        label = new Literal {Text = hint};
-                        label.Class = "varHint";
+                        label = new Literal {Text = hint, Class = "varHint"};
                         container.Controls.Add(label);
                     }
                 }
-                Control input = GetVariableEditor(variable);
+                var input = GetVariableEditor(variable);
                 container.Controls.Add(input);
             }
 
@@ -136,16 +134,12 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             if (!tabs.ContainsKey(tabName))
             {
-                var tab = new Tab();
-                tab.Header = tabName;
-                tab.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_");
+                var tab = new Tab {Header = tabName, ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_")};
                 //tab.Height = new Unit("100%");
                 Tabstrip.Controls.Add(tab);
                 Tabstrip.Width = new Unit("100%");
                 //Tabstrip.Height = new Unit("100%");
-                var panel = new GridPanel();
-                panel.Width = new Unit("100%");
-                panel.CssClass = "ValuePanel";
+                var panel = new GridPanel {Width = new Unit("100%"), CssClass = "ValuePanel"};
                 tab.Controls.Add(panel);
                 tabs.Add(tabName, panel);
                 return panel;
@@ -155,10 +149,10 @@ namespace Cognifide.PowerShell.Client.Applications
 
         private Control GetVariableEditor(Hashtable variable)
         {
-            object value = variable["Value"];
+            var value = variable["Value"];
             var name = (string) variable["Name"];
             var editor = variable["Editor"] as string;
-            Type type = value.GetType();
+            var type = value.GetType();
 
             if (type == typeof (DateTime) ||
                 (!string.IsNullOrEmpty(editor) &&
@@ -170,7 +164,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     ShowTime = (variable["ShowTime"] != null && (bool) variable["ShowTime"]) ||
                                (!string.IsNullOrEmpty(editor) &&
-                                editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1),
+                                editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1)
                 };
                 if (value is DateTime)
                 {
@@ -196,7 +190,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 Item item = null;
                 List<Item> items = null;
-                string strValue = string.Empty;
+                var strValue = string.Empty;
                 if (value is Item)
                 {
                     item = (Item) value;
@@ -210,16 +204,16 @@ namespace Cognifide.PowerShell.Client.Applications
                     strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
 
-                string dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
+                var dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
                 if (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    Multilist multiList = new Multilist
+                    var multiList = new Multilist
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Value = strValue,
                         Database = dbName,
                         ItemID = "{11111111-1111-1111-1111-111111111111}",
-                        Source = variable["Source"] as string ?? "/sitecore",
+                        Source = variable["Source"] as string ?? "/sitecore"
                     };
                     multiList.Class += "  treePicker";
                     return multiList;
@@ -227,7 +221,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 if (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    LookupEx lookup = new LookupEx
+                    var lookup = new LookupEx
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
@@ -247,7 +241,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     DatabaseName = dbName,
                     Database = dbName,
                     Source = variable["Source"] as string ?? "/sitecore",
-                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName",
+                    DisplayFieldName = variable["DisplayFieldName"] as string ?? "__DisplayName"
                 };
                 treeList.Class += " treePicker";
                 return treeList;
@@ -256,12 +250,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var item = (Item) value;
-                string source = variable["Source"] as string;
-                string sourceDB = string.IsNullOrEmpty(source)
+                var source = variable["Source"] as string;
+                var sourceDB = string.IsNullOrEmpty(source)
                     ? Sitecore.Context.ContentDatabase.Name
                     : StringUtil.ExtractParameter("databasename", source);
-                string root = variable["Root"] as string;
-                string sourceRoot = string.IsNullOrEmpty(source)
+                var root = variable["Root"] as string;
+                var sourceRoot = string.IsNullOrEmpty(source)
                     ? "/sitecore"
                     : StringUtil.ExtractParameter("DataSource", source);
                 var dataContext = new DataContext
@@ -275,7 +269,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
                     Folder = item.ID.ToString(),
                     Language = item.Language,
-                    Version = item.Version,
+                    Version = item.Version
                 };
                 DataContextPanel.Controls.Add(dataContext);
 
@@ -314,9 +308,9 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!string.IsNullOrEmpty(editor))
             {
-                bool showRoles = editor.IndexOf("role", StringComparison.OrdinalIgnoreCase) > -1;
-                bool showUsers = editor.IndexOf("user", StringComparison.OrdinalIgnoreCase) > -1;
-                bool multiple = editor.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
+                var showRoles = editor.IndexOf("role", StringComparison.OrdinalIgnoreCase) > -1;
+                var showUsers = editor.IndexOf("user", StringComparison.OrdinalIgnoreCase) > -1;
+                var multiple = editor.IndexOf("multiple", StringComparison.OrdinalIgnoreCase) > -1;
                 if (showRoles || showUsers)
                 {
                     var picker = new UserPicker();
@@ -341,16 +335,16 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else if (variable["Options"] != null)
             {
-                object psOptions = variable["Options"].BaseObject();
-                OrderedDictionary options = new OrderedDictionary();
+                var psOptions = variable["Options"].BaseObject();
+                var options = new OrderedDictionary();
                 if (psOptions is OrderedDictionary)
                 {
                     options = psOptions as OrderedDictionary;
                 }
                 else if (psOptions is string)
                 {
-                    string[] strOptions = ((string) variable["Options"]).Split('|');
-                    int i = 0;
+                    var strOptions = ((string) variable["Options"]).Split('|');
+                    var i = 0;
                     while (i < strOptions.Length)
                     {
                         options.Add(strOptions[i++], strOptions[i++]);
@@ -373,7 +367,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     if (editor.IndexOf("radio", StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        var radioList = new Groupbox()
+                        var radioList = new Groupbox
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                             Header = (string) variable["Title"],
@@ -401,7 +395,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                     if (editor.IndexOf("check", StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        var checkList = new PSCheckList()
+                        var checkList = new PSCheckList
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                             //Header = (string)variable["Title"],                    
@@ -425,7 +419,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         }
                         else
                         {
-                            values = new[]{ value.ToString() };
+                            values = new[] {value.ToString()};
                         }
                         foreach (var option in options.Keys)
                         {
@@ -455,7 +449,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var item = new ListItem
                     {
                         Header = optionName,
-                        Value = optionValue,
+                        Value = optionValue
                     };
                     edit.Controls.Add(item);
                 }
@@ -478,10 +472,10 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void UserPickerClick()
         {
-            string requestParams = Sitecore.Context.ClientPage.Request.Params["__PARAMETERS"];
+            var requestParams = Sitecore.Context.ClientPage.Request.Params["__PARAMETERS"];
             if (requestParams.StartsWith("UserPickerClick("))
             {
-                string controlId = requestParams.Substring(16, requestParams.IndexOf(')') - 16);
+                var controlId = requestParams.Substring(16, requestParams.IndexOf(')') - 16);
                 var picker = ValuePanel.FindControl(controlId) as UserPicker;
                 if (picker != null)
                 {
@@ -492,8 +486,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void OKClick()
         {
-            object[] variables = GetVariableValues();
-            string sid = WebUtil.GetQueryString("sid");
+            var variables = GetVariableValues();
+            var sid = WebUtil.GetQueryString("sid");
             HttpContext.Current.Session[sid] = variables;
             SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
@@ -520,23 +514,23 @@ namespace Cognifide.PowerShell.Client.Applications
 
         private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control control, List<object> results)
         {
-            string controlId = control.ID;
+            var controlId = control.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
             {
-                object result = GetVariableValue(control);
+                var result = GetVariableValue(control);
                 results.Add(result);
             }
         }
 
         private object GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
         {
-            string controlId = control.ID;
-            string[] parts = controlId.Split('_');
+            var controlId = control.ID;
+            var parts = controlId.Split('_');
 
             var result = new Hashtable(2);
             result.Add("Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray()));
 
-            string controlValue = control.Value;
+            var controlValue = control.Value;
             if (controlValue != null)
             {
                 if (control is DateTimePicker)
@@ -545,35 +539,35 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (control is TreePicker)
                 {
-                    string contextID = (control as TreePicker).DataContext;
+                    var contextID = (control as TreePicker).DataContext;
                     var context = (DataContext) DataContextPanel.FindControl(contextID);
                     result.Add("Value", context.CurrentItem);
                 }
                 else if (control is Checkbox)
                 {
-                    bool boolValue = (control as Checkbox).Checked;
+                    var boolValue = (control as Checkbox).Checked;
                     result.Add("Value", boolValue);
                 }
                 else if (control is Combobox)
                 {
-                    string boolValue = (control as Combobox).Value;
+                    var boolValue = (control as Combobox).Value;
                     result.Add("Value", boolValue);
                 }
                 else if (control is TreeList)
                 {
                     var treeList = control as TreeList;
-                    string strIds = treeList.GetValue();
-                    string[] ids = strIds.Split('|');
-                    Database db = Database.GetDatabase(treeList.DatabaseName);
-                    List<Item> items = ids.Select(p => db.GetItem(p)).ToList();
+                    var strIds = treeList.GetValue();
+                    var ids = strIds.Split('|');
+                    var db = Database.GetDatabase(treeList.DatabaseName);
+                    var items = ids.Select(p => db.GetItem(p)).ToList();
                     result.Add("Value", items);
                 }
                 else if (control is Multilist)
                 {
                     var multilist = control as Multilist;
-                    string strIds = multilist.GetValue();
-                    string[] ids = strIds.Split('|');
-                    List<Item> items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
+                    var strIds = multilist.GetValue();
+                    var ids = strIds.Split('|');
+                    var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
                     result.Add("Value", items);
                 }
                 else if (control is LookupEx)
@@ -587,7 +581,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (control is PSCheckList)
                 {
                     var checkList = control as PSCheckList;
-                    string[] values =
+                    var values =
                         checkList.Controls.Cast<Control>()
                             .Where(item => (item is ChecklistItem))
                             .Cast<ChecklistItem>()
@@ -608,14 +602,13 @@ namespace Cognifide.PowerShell.Client.Applications
                                 result.Add("Value", radioItem.Value);
                                 break;
                             }
-
                         }
                     }
                 }
                 else if (control is Edit || control is Memo)
                 {
-                    string value = control.Value;
-                    string type = GetClrTypeName(control.Class);
+                    var value = control.Value;
+                    var type = GetClrTypeName(control.Class);
                     switch (type)
                     {
                         case ("Int16"):
@@ -663,7 +656,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected string GetClrTypeName(string classNames)
         {
-            Match typeMatch = typeRegex.Match(classNames);
+            var typeMatch = typeRegex.Match(classNames);
             if (typeMatch.Success)
             {
                 return typeMatch.Groups["type"].Value;
