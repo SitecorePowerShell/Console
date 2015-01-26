@@ -17,6 +17,16 @@ content-length: 0
 
 
 ----field----
+field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
+name: Description
+key: description
+content-length: 207
+
+Provides the following Context Menu items:
+- Recent Author Activity for the selected and child items
+- Statistics about how many times authors updated each item
+- Publish items updated by the current user
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -26,7 +36,7 @@ Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: d2576349-7611-4e39-af53-41696ac29da9
+revision: ccfd3c9f-16cb-4c06-94f9-18ad51cb77bc
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +51,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d2576349-7611-4e39-af53-41696ac29da9
+ccfd3c9f-16cb-4c06-94f9-18ad51cb77bc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150106T121716:635561434366334531Z
+20150126T001415:635578280551006235Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

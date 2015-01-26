@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1393
+content-length: 1488
 
 # Get the item based on the current context
 $item = Get-Item -Path .
@@ -55,9 +55,9 @@ if($result -ne "ok") {
 }
 
 $item = Wrap-Item -Item $item
-Get-Childitem $item.ProviderPath -Recurse |
-    Where-Object { $from.CompareTo($_.__Updated) -lt 0 -and $to.CompareTo($_.__Updated) -gt 0 } |
-    Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated } }
+$item, (Get-ChildItem $item.ProviderPath -Recurse) |
+    Where-Object { $from.CompareTo($_.__Updated.ToLocalTime()) -lt 0 -and $to.CompareTo($_.__Updated.ToLocalTime()) -gt 0 } |
+    Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated.ToLocalTime() } }
 
 Close-Window
 ----field----
@@ -77,7 +77,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: fc020407-b177-4084-adfa-62b44fe48dcb
+revision: b2964d2c-73cf-4973-8fab-257ff1a7a0a0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -92,14 +92,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fc020407-b177-4084-adfa-62b44fe48dcb
+b2964d2c-73cf-4973-8fab-257ff1a7a0a0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20131023T171514:635181453143592188
+20150125T235748:635578270689581262Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
