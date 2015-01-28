@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 ? Factory.GetDatabase(contextDB).GetItem(contextItemId)
                 : null;
 
-            output.Write(string.Format("<div class=\"iseRibbonContextPanel {0}\">", context.Parameters["ScriptRunning"] == "1" ? "disabled" : string.Empty));
+            output.Write("<div class=\"iseRibbonContextPanel {0}\">", context.Parameters["ScriptRunning"] == "1" ? "disabled" : string.Empty);
             output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\">");
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
             output.Write(Translate.Text("Context"));
