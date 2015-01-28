@@ -3,7 +3,7 @@ version: 1
 id: {88CAC390-7A86-40BF-BFC5-D40C2992258D}
 database: master
 path: /sitecore/system/Modules/PowerShell/Script Library/Examples/Script Testing/Long Running Script with Progress Demo
-parent: {31F5BC29-0E37-40E8-A8DC-AE22993ABD13}
+parent: {A43850A2-6A27-404E-B4B8-543156A0E59A}
 name: Long Running Script with Progress Demo
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
