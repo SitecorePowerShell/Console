@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Applications\ConfirmChoice.cs" />
+    <Compile Include="Client\Applications\PowerShellItemSelector.cs" />
     <Compile Include="Client\Applications\DownloadFile.cs" />
     <Compile Include="Client\Applications\ExecutionMessages.cs" />
     <Compile Include="Client\Applications\FieldEditor.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
     <Compile Include="Client\Commands\AbortQueryState.cs" />
+    <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
     <Compile Include="Client\Commands\ItemDefinedQueryState.cs" />
@@ -140,11 +142,13 @@
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
+    <Compile Include="Client\Controls\IseContextPanel.cs" />
     <Compile Include="Client\Controls\ListViewComparer.cs" />
     <Compile Include="Client\Controls\PowerShellListView.cs" />
     <Compile Include="Client\Controls\PSCheckList.cs" />
     <Compile Include="Client\Controls\RibbonActionScriptsPanel.cs" />
     <Compile Include="Client\Controls\RibbonExportScriptsPanel.cs" />
+    <Compile Include="Client\Controls\SessionIDGallery.cs" />
     <Compile Include="Client\Controls\SpeJobMonitor.cs" />
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
@@ -309,6 +313,7 @@
     <Compile Include="Core\Settings\ApplicationNames.cs" />
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
     <Compile Include="Core\Settings\ScriptItemFieldNames.cs" />
+    <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\WebServiceSettings.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />

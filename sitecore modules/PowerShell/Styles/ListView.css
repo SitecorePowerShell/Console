@@ -77,3 +77,34 @@
 .progressActivity {
     font-weight: bold;
 }
+
+#LvProgressOverlay {
+    padding-right: 30px;
+    padding-left: 30px;
+}
+
+#LvProgressOverlay #progressbar {
+    margin-top: 8px;
+    width:100%
+}
+
+#OperationProgress {
+    padding-right: 30px;
+    padding-left: 40px;
+    margin: auto;
+    margin-top: 30px;
+    width: 90%;
+}
+
+#lvProgressbar {
+    background-color: #f7f7f7;
+    border: #e3e3e3 1px solid;
+    margin-top: 4px;
+}
+
+#lvProgressbar div {
+    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
+    background: #5E5E5E;
+    height: 20px;
+}
+

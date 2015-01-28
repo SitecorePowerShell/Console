@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
+  <PowerShellItemSelector>
+    <FormPage>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellItemSelector,Cognifide.PowerShell" />
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <Border>
+            <Border Class="DialogHeader"><Literal Text="Script parameters" ID="DialogHeader"/></Border>
+            <Border Class="DialogHeaderDescription"><Literal Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/></Border>
+          </Border>
+        </Border>
+          
+	<Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+            <DataContext ID="ItemDataContext" Root="/" DataViewName="Master" filter="@@virtual=0"/>
+            <div>
+              <Literal class="scFieldLabel sc-text-bold" Text="Database:"/>
+              <Combobox ID="Databases" Change="ChangeDatabase"/>
+              <Literal class="scFieldLabel sc-text-bold" Text="Item:"/>
+            </div>
+            <div class="scScrollbox" style="height: calc(100% - 105px)">
+              <TreeviewEx ID="ItemTreeview" DataContext="ItemDataContext" Root="true" />
+            </div>
+          </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <div class="footerOkCancel">
+            <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK"/>
+            <Button ID="CancelButton" Class="scButton" KeyCode="27" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+          </div>
+        </div>
+        <Literal ID="TabOffsetValue"/>
+        <Border ID="DataContextPanel" Style="display:none;">
+          <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+        </Border>
+      </Border>
+    </FormPage>
+  </PowerShellItemSelector>
+</control>

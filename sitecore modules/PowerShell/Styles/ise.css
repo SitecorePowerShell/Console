@@ -188,47 +188,41 @@ a.ps-link {
 
 #HelpClose, #ResultsClose {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
 	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
 	background-color:#ededed;
-	-webkit-border-top-left-radius:9px;
 	-moz-border-radius-topleft:9px;
 	border-top-left-radius:9px;
-	-webkit-border-top-right-radius:0px;
 	-moz-border-radius-topright:0px;
 	border-top-right-radius:0px;
-	-webkit-border-bottom-right-radius:9px;
 	-moz-border-radius-bottomright:9px;
 	border-bottom-right-radius:9px;
-	-webkit-border-bottom-left-radius:9px;
 	-moz-border-radius-bottomleft:9px;
 	border-bottom-left-radius:9px;
 	text-indent:0;
 	border:1px solid #dcdcdc;
 	display:inline-block;
 	color:#777777;
-	font-family:Arial;
-	font-size:14px;
-	font-weight:bold;
+	font-family:cursive;
+	font-size:24px;
+	font-weight:normal;
 	font-style:normal;
-	height:16px;
+	height:24px;
 	line-height:16px;
-	width:16px;
+	width:24px;
 	text-decoration:none;
 	text-align:center;
 	text-shadow:1px 1px 0px #ffffff;
 	float: right;
 	margin: 1px 4px 0 0; 
+        padding: 7px 5px 4px 6px;
 }
 
 #HelpClose:hover, #ResultsClose:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
 	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
-	background-color:#dfdfdf;
+	background-color:#e3e3e3;
 }
 
 #ResultsClose:active {
@@ -260,3 +254,120 @@ a.ps-link {
 #ScriptName {
     display: none;
 }
+
+.ui-state-highlight {
+	background: white;
+}
+
+#ProgressOverlay {
+    padding-right: 30px;
+    padding-left: 40px;
+    margin: auto;
+    margin-top: 30px;
+    width: 50%;
+    font-weight: normal;
+}
+
+#Progress h2 {
+    font-size: 1.3em;
+    padding: 5px;
+}
+
+#Progress p {
+    padding: 4px;
+}
+
+#progressbar {
+    background-color: #012456;
+    border-radius: 13px; /* (height of inner div) / 2 + padding */
+    padding: 3px 5px 3px 3px;
+    width: 300px;
+    margin: 30px auto;
+}
+
+#progressbar div {
+    border: 1px solid white /*{borderColorHighlight}*/;
+    background: white;
+    height: 20px;
+    border-radius: 10px;
+}
+
+.ui-menu-item { font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace; }
+
+.ui-autocomplete {
+    border-top-width: 0;
+    padding: 0 1px;
+}
+
+.ui-menu-item a {
+    padding: .1em .1em !important;
+    border: 1px solid #fcefa1;
+}
+
+#Tip .ui-widget-content {
+    border: 1px solid #012456 /*{borderColorContent}*/;
+    background: #fcefa1 /*{bgColorContent}*/ 50% /*{bgContentXPos}*/ 50% /*{bgContentYPos}*/ repeat-x/*{bgContentRepeat}*/;
+    color: black/*{fcContent}*/;
+}
+
+#Tip .ui-widget-content a { color: #012456 /*{fcContent}*/; }
+
+#Tip .ui-state-hover,
+#Tip .ui-widget-content .ui-state-hover,
+#Tip .ui-widget-header .ui-state-hover,
+#Tip .ui-state-focus,
+#Tip .ui-widget-content .ui-state-focus,
+#Tip .ui-widget-header .ui-state-focus {
+    border: 1px solid #fcefa1 /*{borderColorHover}*/;
+    background: #012456 /*{bgColorHover}*/ 50% /*{bgHoverXPos}*/ 50% /*{bgHoverYPos}*/ repeat-x/*{bgHoverRepeat}*/;
+    font-weight: normal/*{fwDefault}*/;
+    color: white/*{fcHover}*/;
+}
+
+#Filter { margin-top: 8px; }
+
+#Input_Filter {
+    width: 300px;
+    padding-left: 3px;
+}
+
+/* List view Page*/
+
+.scEditorWarningIcon { margin: 0 16px 0 8px; }
+
+.scEditorWarningTitle {
+    width: 100%;
+    float: left;
+}
+
+.scEditorWarningHelp {
+    width: 100%;
+    float: left;
+}
+
+.checked {
+    width: 13px;
+    height: 13px;
+    margin: auto;
+    background-image: url("/sitecore modules/PowerShell/Assets/checked.png");
+}
+
+.unchecked {
+    width: 13px;
+    height: 13px;
+    margin: auto;
+    background-image: url("/sitecore modules/PowerShell/Assets/unchecked.png");
+}
+
+#HeaderIconContainer {
+  float: left;
+  padding: 4px 10px 0 16px;
+}
+
+.iseRibbonContextPanelLabel {
+  padding: 4px 0;
+  text-align: right;
+}
+
+.iseRibbonContextPanel .scRibbonToolbarSmallButtons.scRibbonContextLabels {
+  padding-right: 0;
