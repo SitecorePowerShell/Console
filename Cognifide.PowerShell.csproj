@@ -100,6 +100,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -131,6 +132,7 @@
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
     <Compile Include="Client\Commands\AbortQueryState.cs" />
+    <Compile Include="Client\Commands\EditIseSettingsCombo.cs" />
     <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
+    <Compile Include="Client\Controls\ContextGallery.cs" />
     <Compile Include="Client\Controls\IseContextPanel.cs" />
     <Compile Include="Client\Controls\ListViewComparer.cs" />
     <Compile Include="Client\Controls\PowerShellListView.cs" />
@@ -385,16 +388,20 @@
     <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Controls\ConfirmChoice.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\ContextGallery.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\DownloadFile.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\GetStringResponse.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellConsole.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellIse.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\PowerShellItemSelector.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellMultiValuePrompt.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerList.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerText.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellRunner.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PowerShellScriptBrowser.xml" />
     <Content Include="sitecore modules\PowerShell\Controls\PsHSplitter.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\SessionIDGallery.Option.xml" />
+    <Content Include="sitecore modules\PowerShell\Controls\SessionIDGallery.xml" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-beautify.js" />

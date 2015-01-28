@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.IdentityModel.Protocols.WSTrust;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
@@ -33,7 +34,9 @@ namespace Cognifide.PowerShell.Client.Controls
             var currentSessionId = context.Parameters["currentSessionId"];
             var currentSessionName = context.Parameters["currentSessionName"];
             var persistentSessionId = context.Parameters["persistentSessionId"];
-            var contextItem = Factory.GetDatabase(contextDB).GetItem(contextItemId);
+            var contextItem = !string.IsNullOrEmpty(contextDB) && !string.IsNullOrEmpty(contextItemId)
+                ? Factory.GetDatabase(contextDB).GetItem(contextItemId)
+                : null;
 
             output.Write("<div class=\"iseRibbonContextPanel\">");
             output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\">");
@@ -45,9 +48,13 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("</div>");
             output.Write("</div>");
             var contextEnabled = string.IsNullOrEmpty(persistentSessionId); 
-            RenderContext(output, contextItem, ribbon, contextEnabled);
+            //RenderContext(output, contextItem, ribbon, contextEnabled);
+            var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
+            string path = contextItem != null ? PathUtilities.GetItemPsPath(contextItem).EllipsisString(50) : "none";
+            string icon = contextItem != null ? contextItem.Appearance.Icon : "Office/32x32/sign_forbidden.png";
+            RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon);
             var sessionButton = Factory.GetDatabase("core").GetItem("{0C784F54-2B46-4EE2-B0BA-72384125E123}");
-            RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName);
+            RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName, string.Empty);
             output.Write("</div>");
         }
 
@@ -64,13 +71,13 @@ namespace Cognifide.PowerShell.Client.Controls
         }
 
         private void RenderSmallGalleryButton(HtmlTextWriter output, Item button, CommandContext commandContext,
-            Ribbon ribbon, string title)
+            Ribbon ribbon, string title, string overrideIcon)
         {
             Assert.ArgumentNotNull(output, "output");
             Assert.ArgumentNotNull(button, "button");
             var enabled = CommandState.Enabled;
             var fieldValue = GetFieldValue(button, "Header");
-            var icon = GetFieldValue(button, "Icon");
+            var icon = string.IsNullOrEmpty(overrideIcon) ? GetFieldValue(button, "Icon") : overrideIcon;
             var click = GetFieldValue(button, "Command");
             var str4 = GetFieldValue(button, "ID");
             var keyCode = GetFieldValue(button, "KeyCode");

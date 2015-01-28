@@ -53,6 +53,12 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["ItemID"] = value; }
         }
 
+        public static bool UseContext
+        {
+            get { return string.IsNullOrEmpty(StringUtil.GetString(Context.ClientPage.ServerProperties["UseContext"])); }
+            set { Context.ClientPage.ServerProperties["UseContext"] = value ? string.Empty : "0"; }
+        }
+
         public static Item ScriptItem
         {
             get
@@ -393,7 +399,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 try
                 {
                     scriptSession.ExecuteScriptPart(Settings.Prescript);
-                    scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                    if (UseContext)
+                    {
+                        scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                    }
                     scriptSession.SetExecutedScript(Sitecore.Client.ContentDatabase.Name, ScriptItemId);
                     scriptSession.ExecuteScriptPart(Editor.Value);
 
@@ -439,12 +448,16 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole,true);
                 scriptSession = new ScriptSession(Settings.ApplicationName);
-                scriptSession.SetItemLocationContext(DataContext.CurrentItem);
             }
             else
             {
                 scriptSession = ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
                 Settings = scriptSession.Settings;
+            }
+
+            if (UseContext)
+            {
+                scriptSession.SetItemLocationContext(DataContext.CurrentItem);
             }
 
             scriptSession.SetExecutedScript(Sitecore.Client.ContentDatabase.Name, ScriptItemId);
@@ -496,6 +509,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
                     JobContext.PostMessage("ise:updateresults");
+                    scriptSession.Output.Clear();
                     JobContext.Flush();
                 }
             }
@@ -625,8 +639,8 @@ namespace Cognifide.PowerShell.Client.Applications
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
 
-            ribbon.CommandContext.Parameters.Add("contextDB", DataContext.CurrentItem.Database.Name);
-            ribbon.CommandContext.Parameters.Add("contextItem", DataContext.CurrentItem.ID.ToString());
+            ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? DataContext.CurrentItem.Database.Name : string.Empty);
+            ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? DataContext.CurrentItem.ID.ToString() : string.Empty);
 
 
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
@@ -643,6 +657,27 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             CurrentSessionId = args.Parameters["id"];
+            UpdateRibbon();
+        }
+
+        [HandleMessage("ise:setcontextitem", true)]
+        protected void SetContextItem(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var contextDb = args.Parameters["db"];
+            var contextId = args.Parameters["id"];
+            if (string.IsNullOrEmpty(contextId) || string.IsNullOrEmpty(contextDb))
+            {
+                UseContext = false;
+                UpdateRibbon();
+                return;
+            }
+
+            UseContext = true;
+            var newCurrentItem = Factory.GetDatabase(contextDb).GetItem(contextId);
+
+            DataContext.Parameters = "databasename=" + newCurrentItem.Database.Name;
+                DataContext.SetFolder(newCurrentItem.Uri);
             UpdateRibbon();
         }
 
