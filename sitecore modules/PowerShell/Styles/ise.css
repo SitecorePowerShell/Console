@@ -371,3 +371,8 @@ a.ps-link {
 
 .iseRibbonContextPanel .scRibbonToolbarSmallButtons.scRibbonContextLabels {
   padding-right: 0;
+}
+
+.iseRibbonContextPanel.disabled {
+  color: #d6d6d6
+}
