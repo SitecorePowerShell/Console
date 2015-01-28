@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5711
+content-length: 5633
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -45,9 +45,9 @@ Get-Item "master:/system/Settings/Rules/PowerShell" | Serialize-Item -Recurse
 # Script Library
 Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Serialize-Item
-Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
 Get-Item 'core:\system\Modules\PowerShell\Script Library' | Serialize-Item -Recurse
-Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
 
 # Settings
 Write-Progress -Activity "Serializing Settings" -PercentComplete 80
@@ -104,7 +104,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 40caff35-50cb-4f43-961b-96f6e5a0e85e
+revision: fa0d2c19-64f2-45c8-b4d4-8feb426a8a04
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -119,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-40caff35-50cb-4f43-961b-96f6e5a0e85e
+fa0d2c19-64f2-45c8-b4d4-8feb426a8a04
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150125T210208:635578165289550781Z
+20150128T170355:635580614355064844Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
