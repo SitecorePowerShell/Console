@@ -2,9 +2,9 @@
 version: 1
 id: {49280D23-D313-4AB9-AB1C-CF245D41E44A}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Control Panel Examples
+path: /sitecore/system/Modules/PowerShell/Script Library/System Maintenance
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Control Panel Examples
+name: System Maintenance
 master: {00000000-0000-0000-0000-000000000000}
 template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
 templatekey: PowerShell Script Module
@@ -17,6 +17,15 @@ content-length: 1
 
 1
 ----field----
+field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
+name: Description
+key: description
+content-length: 99
+
+Provides the following control panel functions:
+- Clean up deleted items
+- Download Sitecore logs
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -26,7 +35,7 @@ Software/32x32/jar_bean.png
 ----version----
 language: en
 version: 1
-revision: c4d5ecd1-5cc4-417b-84b0-bd3a1f81232b
+revision: 1640d472-b564-4c96-b56e-5b99ef977742
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +50,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c4d5ecd1-5cc4-417b-84b0-bd3a1f81232b
+1640d472-b564-4c96-b56e-5b99ef977742
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141129T151104:635528706644140078
+20150128T042233:635580157530960596Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -2,7 +2,7 @@
 version: 1
 id: {476489C2-B3DE-4F35-A1C7-1E992D869FE5}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Control Panel Examples/Control Panel/Analytics
+path: /sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Control Panel/Analytics
 parent: {19C4FC86-35F6-42F5-BA3D-5575DCE7013A}
 name: Analytics
 master: {00000000-0000-0000-0000-000000000000}

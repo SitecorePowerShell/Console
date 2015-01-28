@@ -2,9 +2,9 @@
 version: 1
 id: {C2BBD223-5189-42ED-B6E9-5591E69CD0C7}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Control Panel Examples/Control Panel/Administration/Clear Old Archive Items
+path: /sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Control Panel/Administration/Clean up deleted items
 parent: {148B7002-A342-4D2F-9159-E02080FE6746}
-name: Clear Old Archive Items
+name: Clean up deleted items
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 744
+content-length: 753
 
 $parameters = @{
     Title = "Starting Parameters"
@@ -38,12 +38,12 @@ if($result -ne "ok") {
     Exit
 }
 
-Execute-Script -Path 'master:\system\Modules\PowerShell\Script Library\Functions\Clear-Archive'
+Execute-Script -Path 'master:\system\Modules\PowerShell\Script Library\Platform\Functions\Clear-Archive'
 Clear-Archive -Expired $expired -Verbose
 ----version----
 language: en
 version: 1
-revision: 4a2ae06b-284d-4788-8c94-bdce2e187ef9
+revision: 482469a0-64bf-4286-be1e-2df72ecdee6f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -58,14 +58,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4a2ae06b-284d-4788-8c94-bdce2e187ef9
+482469a0-64bf-4286-be1e-2df72ecdee6f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175155:635552995150321015Z
+20150128T041330:635580152103616481Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

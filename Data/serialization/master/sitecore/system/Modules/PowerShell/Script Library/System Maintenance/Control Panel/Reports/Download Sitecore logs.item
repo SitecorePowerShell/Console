@@ -2,9 +2,9 @@
 version: 1
 id: {66FB1E5C-7E32-4C5B-8648-7B30FADAE2BE}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Control Panel Examples/Control Panel/Reports/Zip and download Sitecore logs
+path: /sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Control Panel/Reports/Download Sitecore logs
 parent: {4655F9C8-16BE-4343-A101-1473823EB017}
-name: Zip and download Sitecore logs
+name: Download Sitecore logs
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2072
+content-length: 2080
 
 ###########################################################################
 #                                                                         #
@@ -54,10 +54,10 @@ function ZipFiles( $zipArchive, $sourcedir )
   $ZipPackage.Close()
 }
 
-$dateTime = Get-Date -format "yyyy-MM-d_hhmmss"
+20150124ZTime = Get-Date -format "yyyy-MM-d_hhmmss"
 $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
 $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
-$myZipFile = "$dataFolder\logs-$datetime.zip"
+$myZipFile = "$dataFolder\logs-20150124Ztime.zip"
 Remove-Item $myZipFile -ErrorAction SilentlyContinue
 ZipFiles $myZipFile $LogsFolder
 Download-File -FullName $myZipFile | Out-Null
@@ -65,7 +65,7 @@ Remove-Item $myZipFile
 ----version----
 language: en
 version: 1
-revision: c73f241e-12db-4ec0-8e1c-d8e962f61f98
+revision: 7c9905a4-dc3d-4f11-ad6a-159c4b1d3c16
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -80,14 +80,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c73f241e-12db-4ec0-8e1c-d8e962f61f98
+7c9905a4-dc3d-4f11-ad6a-159c4b1d3c16
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175155:635552995151844453Z
+20150128T041832:635580155128799274Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
