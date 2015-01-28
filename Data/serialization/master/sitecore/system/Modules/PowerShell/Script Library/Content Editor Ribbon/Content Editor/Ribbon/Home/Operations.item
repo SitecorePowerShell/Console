@@ -2,7 +2,7 @@
 version: 1
 id: {D4B4B2F7-7A40-433A-BEC2-C4E8DAD12F57}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon Example/Content Editor/Ribbon/Home/Operations
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon/Content Editor/Ribbon/Home/Operations
 parent: {5F1F1218-DEF3-4ECB-886D-43F6F597F09F}
 name: Operations
 master: {00000000-0000-0000-0000-000000000000}

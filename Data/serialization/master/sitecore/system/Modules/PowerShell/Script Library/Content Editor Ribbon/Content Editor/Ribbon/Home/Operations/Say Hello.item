@@ -2,7 +2,7 @@
 version: 1
 id: {ABAD88E6-384A-445C-AE72-BADEC3BCF49F}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon Example/Content Editor/Ribbon/Home/Operations/Say Hello
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon/Content Editor/Ribbon/Home/Operations/Say Hello
 parent: {D4B4B2F7-7A40-433A-BEC2-C4E8DAD12F57}
 name: Say Hello
 master: {00000000-0000-0000-0000-000000000000}

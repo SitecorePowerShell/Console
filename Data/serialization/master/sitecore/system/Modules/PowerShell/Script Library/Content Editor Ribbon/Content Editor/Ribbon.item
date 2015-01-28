@@ -2,7 +2,7 @@
 version: 1
 id: {AE6292CB-049F-4FD7-BD63-11B7702D9304}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon Example/Content Editor/Ribbon
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Ribbon/Content Editor/Ribbon
 parent: {F47969FF-9CED-488F-A6A7-83CC3D390920}
 name: Ribbon
 master: {00000000-0000-0000-0000-000000000000}
