@@ -5,6 +5,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
@@ -27,16 +28,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public SwitchParameter ShowHints { get; set; }
 
-        public ReadVariableCommand()
-        {
-            Width = 500;
-            Height = 300;
-        }
-
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
+                AssertDefaultSize(500,300);
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
                     OkButtonName, CancelButtonName, ShowHints);
 

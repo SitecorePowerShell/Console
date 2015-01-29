@@ -16,28 +16,23 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
 
         protected override void ProcessRecord()
         {
+            TextReader reader = null; 
             try
             {
-                var reader = new StringReader(InputObject);
-                var xmlReader = XmlReader.Create(reader);
-                Type type = typeof(PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
-                var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
-                    new[] { typeof(XmlReader) }, null);
-                var deserializer = ctor.Invoke(new object[] { xmlReader });
-                method = type.GetMethod("Deserialize", BindingFlags.Instance | BindingFlags.NonPublic, null,
-                    new Type[] {}, null);
-                done = type.GetMethod("Done", BindingFlags.Instance | BindingFlags.NonPublic);
-                try
+                reader = new StringReader(InputObject);
+                using (var xmlReader = XmlReader.Create(reader))
                 {
+                    Type type = typeof (PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
+                    var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
+                        new[] {typeof (XmlReader)}, null);
+                    var deserializer = ctor.Invoke(new object[] {xmlReader});
+                    method = type.GetMethod("Deserialize", BindingFlags.Instance | BindingFlags.NonPublic, null,
+                        new Type[] {}, null);
+                    done = type.GetMethod("Done", BindingFlags.Instance | BindingFlags.NonPublic);
                     while (!(bool) done.Invoke(deserializer, new object[] {}))
                     {
                         WriteObject(method.Invoke(deserializer, new object[] {}));
                     }
-                }
-                finally
-                {
-                    xmlReader.Close();
-                    reader.Close();
                 }
             }
             catch(Exception ex)

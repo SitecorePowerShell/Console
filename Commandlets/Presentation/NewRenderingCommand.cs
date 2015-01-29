@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Sitecore.Text;
@@ -70,9 +71,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             //renderingDefinition.Conditions
             //todo: add support for multivariate tests
             //rendering.MultiVariateTest
-            PSObject psobj = PSObject.AsPSObject(rendering);
-            psobj.Properties.Add(new PSScriptProperty(
-                "OwnerItemId",SessionState.InvokeCommand.NewScriptBlock(string.Format("{{0}}",item.ID))));
+            PSObject psobj = ItemShellExtensions.WrapInItemOwner(SessionState, item, rendering);
             WriteObject(psobj);
         }
     }

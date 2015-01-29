@@ -12,7 +12,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class DownloadMessage : BasePipelineMessage, IMessage
     {
+        [NonSerializedAttribute]
         private readonly Item item;
+
+        [NonSerializedAttribute]
         private readonly string fileName;
 
         /// <summary>

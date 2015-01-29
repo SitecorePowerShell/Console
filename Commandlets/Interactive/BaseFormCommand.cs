@@ -5,19 +5,30 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     public class BaseFormCommand : BaseShellCommand
     {
+        private int width;
+        private int height;
+
         [Parameter]
         public virtual string Title { get; set; }
 
         [Parameter]
-        public virtual int Width { get; set; }
+        public virtual int Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
 
         [Parameter]
-        public virtual int Height { get; set; }
+        public virtual int Height
+        {
+            get { return height; }
+            set { height = value; }
+        }
 
         public BaseFormCommand()
         {
-            Width = 800;
-            Height = 600;
+            width = 800;
+            height = 600;
         }
         protected string WidthString
         {
@@ -27,6 +38,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         protected string HeightString
         {
             get { return Height.ToString(CultureInfo.InvariantCulture); }
+        }
+
+        protected void AssertDefaultSize(int defaultWidth, int defaultHeight)
+        {
+            if (!MyInvocation.BoundParameters.ContainsKey("Width"))
+            {
+                Width = defaultWidth;
+            }
+            if (!MyInvocation.BoundParameters.ContainsKey("Height"))
+            {
+                Height = defaultHeight;
+            }
+
+            
         }
     }
 }

@@ -15,33 +15,75 @@ using Sitecore.Diagnostics;
 namespace Cognifide.PowerShell.Commandlets.Session
 {
     [Cmdlet(VerbsData.Import, "Function")]
-    [OutputType(new[] {typeof (object)})]
+    [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand, IDynamicParameters
     {
         private static string[] functions;
         private static string[] libraries;
         private static string[] modules;
 
+        public ImportFunctionCommand()
+        {
+            if (functions == null)
+            {
+                UpdateCache();
+            }
+            AddDynamicParameter<string>("Name", new ParameterAttribute
+            {
+                ParameterSetName = ParameterAttribute.AllParameterSets,
+                Mandatory = true,
+                Position = 0
+            }, new ValidateSetAttribute(functions));
+
+            var libraryAttributes = new List<Attribute>
+            {
+                new ParameterAttribute
+                {
+                    ParameterSetName = ParameterAttribute.AllParameterSets,
+                    Mandatory = false,
+                    Position = 1
+                }
+            };
+            if (libraries.Length > 0)
+            {
+                libraryAttributes.Add(new ValidateSetAttribute(libraries));
+            }
+
+            AddDynamicParameter<string>("Library", libraryAttributes.ToArray());
+
+            AddDynamicParameter<string>("Module", new ParameterAttribute
+            {
+                ParameterSetName = ParameterAttribute.AllParameterSets,
+                Mandatory = false,
+                Position = 2
+            }, new ValidateSetAttribute(modules));
+        }
+
+        static ImportFunctionCommand()
+        {
+            ModuleManager.OnInvalidate += InvalidateCache;
+            functions = null;
+        }
+
         // Methods
         protected override void ProcessRecord()
         {
-            string script = string.Empty;
+            var script = string.Empty;
             string name;
             if (TryGetParameter("Name", out name))
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     WriteError(new ErrorRecord(new AmbiguousMatchException(
-                        string.Format(
-                            "Function name was not provided.",
-                            name)), "sitecore_name_missing", ErrorCategory.NotSpecified, null));
+                        "Function name was not provided."),
+                        "sitecore_name_missing", ErrorCategory.NotSpecified, null));
                     return;
                 }
             }
 
             if (name != null)
             {
-                List<Item> functions = new List<Item>();
+                var functions = new List<Item>();
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
 
                 string module;
@@ -57,7 +99,6 @@ namespace Cognifide.PowerShell.Commandlets.Session
                             p =>
                                 string.Equals(ModuleManager.GetItemModule(p).Name, module,
                                     StringComparison.InvariantCultureIgnoreCase)).ToList();
-
                 }
 
                 foreach (var path in roots.Select(root => PathUtilities.PreparePathForQuery(root.Paths.Path)))
@@ -98,15 +139,9 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
                 script = functions[0]["script"];
                 object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                    PipelineResultTypes.Output | PipelineResultTypes.Error, null, new object[0]);
+                    PipelineResultTypes.Output | PipelineResultTypes.Error, null);
                 WriteObject(sendToPipeline);
             }
-        }
-
-        static ImportFunctionCommand()
-        {
-            ModuleManager.OnInvalidate += InvalidateCache;
-            functions = null;
         }
 
         private static void UpdateCache()
@@ -117,7 +152,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                string query = string.Format(
+                var query = string.Format(
                     "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\"]",
                     path);
                 try
@@ -156,51 +191,5 @@ namespace Cognifide.PowerShell.Commandlets.Session
         {
             functions = null;
         }
-
-        public ImportFunctionCommand()
-        {
-            if (functions == null)
-            {
-                UpdateCache();
-            }
-            AddDynamicParameter<string>("Name", new Attribute[]
-            {                
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets,
-                    Mandatory = true,
-                    Position = 0
-                },
-                new ValidateSetAttribute(functions)
-            });
-
-            var libraryAttributes = new List<Attribute>
-            {
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets,
-                    Mandatory = false,
-                    Position = 1
-                }
-            };
-            if (libraries.Length > 0)
-            {
-                libraryAttributes.Add(new ValidateSetAttribute(libraries));
-            }
-
-            AddDynamicParameter<string>("Library", libraryAttributes.ToArray());
-
-            AddDynamicParameter<string>("Module", new Attribute[]
-            {                
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets,
-                    Mandatory = false,
-                    Position = 2
-                },
-                new ValidateSetAttribute(modules)
-            });
-
-        }            
     }
 }

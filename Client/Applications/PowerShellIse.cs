@@ -55,7 +55,10 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public static bool UseContext
         {
-            get { return string.IsNullOrEmpty(StringUtil.GetString(Context.ClientPage.ServerProperties["UseContext"])); }
+            get
+            {
+                return string.IsNullOrEmpty(StringUtil.GetString(Context.ClientPage.ServerProperties["UseContext"]));
+            }
             set { Context.ClientPage.ServerProperties["UseContext"] = value ? string.Empty : "0"; }
         }
 
@@ -236,8 +239,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var id = scriptItem.ID.ToString();
             var name = scriptItem.Name;
             var icon = scriptItem[FieldIDs.Icon];
-            var scriptName = string.Format("{1}", db,
-                scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length));
+            var scriptName = scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length);
             ScriptName.Text = scriptName;
             SheerResponse.Eval(string.Format("cognifide.powershell.changeWindowTitle('{0}', false);", scriptName));
             var mruMenu = Sitecore.Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
@@ -434,8 +436,8 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
 
             ScriptSession scriptSession = null;
-            
-            string sessionName = CurrentSessionId;
+
+            var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
                 var script = ScriptItem;
@@ -446,7 +448,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (autoDispose)
             {
-                Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole,true);
+                Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole, true);
                 scriptSession = new ScriptSession(Settings.ApplicationName);
             }
             else
@@ -618,7 +620,7 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters["ScriptRunning"] = ScriptRunning ? "1" : "0";
             ribbon.CommandContext.Parameters["currentSessionId"] = CurrentSessionId ?? string.Empty;
             var sessionName = CurrentSessionId ?? string.Empty;
-            var persistentSessionId = sessionName; 
+            var persistentSessionId = sessionName;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
                 var name =
@@ -639,8 +641,10 @@ namespace Cognifide.PowerShell.Client.Applications
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
 
-            ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? DataContext.CurrentItem.Database.Name : string.Empty);
-            ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? DataContext.CurrentItem.ID.ToString() : string.Empty);
+            ribbon.CommandContext.Parameters.Add("contextDB",
+                UseContext ? DataContext.CurrentItem.Database.Name : string.Empty);
+            ribbon.CommandContext.Parameters.Add("contextItem",
+                UseContext ? DataContext.CurrentItem.ID.ToString() : string.Empty);
 
 
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
@@ -677,7 +681,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var newCurrentItem = Factory.GetDatabase(contextDb).GetItem(contextId);
 
             DataContext.Parameters = "databasename=" + newCurrentItem.Database.Name;
-                DataContext.SetFolder(newCurrentItem.Uri);
+            DataContext.SetFolder(newCurrentItem.Uri);
             UpdateRibbon();
         }
 

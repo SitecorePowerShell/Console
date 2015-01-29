@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Xml;
 using Cognifide.PowerShell.Core.Provider;
 using Sitecore.Configuration;
+using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 using Pipeline = Sitecore.Pipelines.Pipeline;
 
@@ -45,7 +46,7 @@ namespace Cognifide.PowerShell.Core.Host
                         {
                             message += exc.Message;
                         }
-                        throw new Exception(message);
+                        Log.Error("Error while loading commandlets list",ex,typeof(CognifideSitecorePowerShellSnapIn));
                     }
                 }
             }

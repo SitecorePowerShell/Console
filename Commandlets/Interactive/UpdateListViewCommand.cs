@@ -3,7 +3,7 @@
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsData.Update, "ListView")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class UpdateListViewCommand : BaseListViewCommand
     {
         public override string Title { get; set; }

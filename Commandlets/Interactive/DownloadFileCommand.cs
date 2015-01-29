@@ -4,6 +4,7 @@ using System.IO;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
 
@@ -29,16 +30,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Download File")]
         public SwitchParameter NoDialog { get; set; }
 
-        public DownloadFileCommand()
-        {
-            Width = 700;
-            Height = 140;
-        }
-
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
+                AssertDefaultSize(700,140);
+
                 string response = null;
                 var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
                 if (Item != null)
