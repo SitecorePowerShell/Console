@@ -57,6 +57,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -131,6 +132,13 @@
     <Compile Include="Client\Applications\PowerShellRunner.cs" />
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
+    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFileForm.cs" />
+    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage2.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Client\Commands\AbortQueryState.cs" />
     <Compile Include="Client\Commands\EditIseSettingsCombo.cs" />
     <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
@@ -181,6 +189,8 @@
     <Compile Include="Commandlets\Interactive\BaseListViewCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseShellCommand.cs" />
     <Compile Include="Commandlets\Interactive\CloseWindowCommand.cs" />
+    <Compile Include="Commandlets\Interactive\Messages\ShowUploadFileMessage.cs" />
+    <Compile Include="Commandlets\Interactive\ReceiveFileCommand.cs" />
     <Compile Include="Commandlets\Interactive\DownloadFileCommand.cs" />
     <Compile Include="Commandlets\Interactive\InvokeShellCommandCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\CloseWindowMessage.cs" />

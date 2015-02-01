@@ -42,11 +42,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         protected void AssertDefaultSize(int defaultWidth, int defaultHeight)
         {
-            if (!MyInvocation.BoundParameters.ContainsKey("Width"))
+            if (!IsParameterSpecified("Width"))
             {
                 Width = defaultWidth;
             }
-            if (!MyInvocation.BoundParameters.ContainsKey("Height"))
+            if (!IsParameterSpecified("Height"))
             {
                 Height = defaultHeight;
             }

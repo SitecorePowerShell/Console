@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellUploadFile>
+    <FormDialog Icon="Business/32x32/Paperclip.png" FormTarget="sitecoreattach" Enctype="multipart/form-data" Header="Upload File" 
+      Text="Select a file. When done click the Upload button." OKButton="Upload">
+
+      <Script Key="Upload">
+
+        function submit() {
+          try {
+            document.forms[0].submit();
+          }
+          catch(e) {
+            scForm.invoke("ShowError");
+          }
+        }
+
+        Event.observe(window, 'load', function(){
+          if(window.scForm) {
+            scForm.autoIncreaseModalDialogHeight()
+          };
+        })
+
+      </Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/UploadFile.js" runat="server"></Script>
+
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.UploadFile.PowerShellUploadFileForm,Cognifide.PowerShell"/>
+
+      <input id="ItemUri" name="ItemUri" type="hidden" value=""/>
+
+      <Border Padding="0px 0px 4px 0px">
+        <Literal Text="File name:" />
+      </Border>
+
+      <input id="File" name="File" type="file" style="width:100%" />
+      
+    </FormDialog>
+  </PowerShellUploadFile>
+</control>

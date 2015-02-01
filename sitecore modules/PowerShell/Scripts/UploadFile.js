@@ -1,4 +1,5 @@
 ﻿jQuery(document).ready(function ($) {
+
     $('#Copyright').each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
@@ -20,3 +21,8 @@
         });	
     });
 });
+
+function setDialogValue(id, text) {
+    $ise(id)[0].innerHTML = text;
+    alert("sfasdfasdfasdf ds");
+}

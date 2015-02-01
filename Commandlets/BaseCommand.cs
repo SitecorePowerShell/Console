@@ -292,5 +292,10 @@ namespace Cognifide.PowerShell.Commandlets
         {
             return _parameters;
         }
+
+        protected bool IsParameterSpecified(string name)
+        {
+            return MyInvocation.BoundParameters.ContainsKey(name);
+        }
     }
 }
