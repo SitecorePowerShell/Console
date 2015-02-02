@@ -13,9 +13,9 @@ using Sitecore.Update.Interfaces;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
-    [Cmdlet(VerbsCommon.Get, "UpdatePackageDiffCommands")]
+    [Cmdlet(VerbsCommon.Get, "UpdatePackageDiff")]
     [OutputType(new[] { typeof(ICommand) })]
-    public class GetUpdatePackageDiffCommandsCommand : BasePackageCommand
+    public class GetUpdatePackageDiffCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
         public string SourcePath { get; set; }

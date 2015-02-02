@@ -32,9 +32,14 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Export-UpdatePackage
+
+    .LINK
+        Get-UpdatePackageDiff
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 
-            -UpgradeAction Preview -InstallMode Install
+        PS master:\> Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" -UpgradeAction Preview -InstallMode Install
 #>

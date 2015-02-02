@@ -14,13 +14,13 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
     [Cmdlet(VerbsData.Export, "UpdatePackage")]
     public class ExportUpdatePackageCommand : BasePackageCommand
     {
-        [Parameter(Position = 0)]
-        public string Name { get; set; }
-
-        [Parameter(Position = 1, Mandatory = true)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public List<ICommand> CommandList { get; set; }
 
-        [Parameter(Position = 0)]
+        [Parameter(Position = 1)]
+        public string Name { get; set; }
+
+        [Parameter(Position = 2)]
         public string Path { get; set; }
 
         [Parameter]
@@ -44,8 +44,8 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                     var diff = new DiffInfo(
                         CommandList,
                         string.IsNullOrEmpty(Name) ? "Sitecore PowerShell Extensions Generated Update Package" : Name,
-                        Readme,
-                        Tag);
+                        Readme ?? string.Empty,
+                        Tag ?? string.Empty);
 
                     var fileName = Path;
                     if (string.IsNullOrEmpty(fileName))
@@ -58,7 +58,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                         fileName = FullPackageProjectPath(fileName);
                     }
 
-                    PackageGenerator.GeneratePackage(diff, string.Empty, fileName);
+                    PackageGenerator.GeneratePackage(diff, LicenseFileName, fileName);
                 });
         }
     }
