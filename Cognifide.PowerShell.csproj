@@ -191,7 +191,7 @@
     <Compile Include="Commandlets\Interactive\CloseWindowCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowUploadFileMessage.cs" />
     <Compile Include="Commandlets\Interactive\ReceiveFileCommand.cs" />
-    <Compile Include="Commandlets\Interactive\DownloadFileCommand.cs" />
+    <Compile Include="Commandlets\Interactive\SendFileCommand.cs" />
     <Compile Include="Commandlets\Interactive\InvokeShellCommandCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\CloseWindowMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\DownloadMessage.cs" />

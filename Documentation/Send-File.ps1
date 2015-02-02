@@ -7,7 +7,7 @@
 	Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
 	If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
 
-    .PARAMETER FullName
+    .PARAMETER Path
         Path to the file to be downloaded. The file has to exist in the Data folder. Files from outside the Data folder are not downloadable.
 
     .PARAMETER Message
@@ -42,10 +42,10 @@
 
     .EXAMPLE
         #Download File from server disk drive
-        PS master:\> Download-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip"
+        PS master:\> Send-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip"
 
     .EXAMPLE
         #Download item from media library
-        PS master:\> Get-Item "master:/media library/Showcase/cognifide_logo" | Download-File -Message "Cognifide Logo"
+        PS master:\> Get-Item "master:/media library/Showcase/cognifide_logo" | Send-File -Message "Cognifide Logo"
 
 #>

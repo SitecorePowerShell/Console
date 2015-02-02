@@ -48,9 +48,10 @@ namespace Cognifide.PowerShell.Core.Host
             {"Invoke-ShellCommand", "Execute-ShellCommand"},
             {"Invoke-Workflow", "Execute-Workflow"},
             {"Install-Package","Import-Package"},
-            {"Initialize-Item","Wrap-Item"}
+            {"Initialize-Item","Wrap-Item"},
+            {"Send-File", "Download-File"}
         };
-
+        
         public bool AutoDispose
         {
             get { return host.AutoDispose; }

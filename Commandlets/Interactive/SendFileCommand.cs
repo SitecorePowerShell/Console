@@ -10,13 +10,14 @@ using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
-    [Cmdlet("Download", "File")]
-    [OutputType(new[] {typeof (String)}, ParameterSetName = new[] {"Download Item", "Download File"})]
-    public class DownloadFileCommand : BaseFormCommand
+    [Cmdlet(VerbsCommunications.Send, "File")]
+    [OutputType(typeof (String), ParameterSetName = new[] {"Download Item", "Download File"})]
+    public class SendFileCommand : BaseFormCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             Mandatory = true, Position = 0, ParameterSetName = "Download File")]
-        public string FullName { get; set; }
+        [Alias("FullName", "FileName")]
+        public virtual string Path { get; set; }
 
         [Parameter(ParameterSetName = "Download Item")]
         [Parameter(ParameterSetName = "Download File")]
@@ -48,19 +49,19 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     hashParams.Add("id", Item.ID);
                     hashParams.Add("db", Item.Database.Name);
                 }
-                else if (!string.IsNullOrEmpty(FullName))
+                else if (!string.IsNullOrEmpty(Path))
                 {
-                    string file = FileUtil.MapPath(FullName);
+                    string file = FileUtil.MapPath(Path);
                     if (!File.Exists(file))
                     {
                         PutMessage(
-                            new AlertMessage("You cannot download:\n" + FullName + "\n\n The file could not be found."));
+                            new AlertMessage("You cannot download:\n" + Path + "\n\n The file could not be found."));
                         return;
                     }
 
                     if (NoDialog.IsPresent)
                     {
-                        PutMessage(new DownloadMessage(FullName));
+                        PutMessage(new DownloadMessage(Path));
                         return;
                     }
 
@@ -74,7 +75,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                             "Copy the file to the Sitecore Data folder and try again."));
                         return;
                     }
-                    hashParams.Add("fn", FullName);
+                    hashParams.Add("fn", Path);
                 }
                 hashParams.Add("te", Message ?? string.Empty);
                 hashParams.Add("cp", Title ?? string.Empty);
