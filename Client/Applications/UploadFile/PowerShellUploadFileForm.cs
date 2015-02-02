@@ -63,14 +63,27 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 string title = handle["te"];
                 if (!string.IsNullOrEmpty(title))
                 {
-                    DialogHeader.Text = WebUtil.SafeEncode(title);
-                    
+                    DialogHeader.Text = WebUtil.SafeEncode(title);                    
                 }
+
                 string message = handle["ds"];
                 if (!string.IsNullOrEmpty(message))
                 {
                     DialogDescription.Text = WebUtil.SafeEncode(message);
                 }
+                
+                string ok = handle["ok"];
+                if (!string.IsNullOrEmpty(ok))
+                {
+                    OKButton.Header = WebUtil.SafeEncode(ok);
+                }
+
+                string cancel = handle["cancel"];
+                if (!string.IsNullOrEmpty(cancel))
+                {
+                    CancelButton.Header = WebUtil.SafeEncode(cancel);
+                }
+
             }
         }
 
