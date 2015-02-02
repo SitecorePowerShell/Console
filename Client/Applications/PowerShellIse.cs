@@ -542,17 +542,23 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             ScriptRunning = false;
             EnterScriptInfo.Visible = false;
-            UpdateRibbon();
+            UpdateResults(args);
         }
 
         [HandleMessage("ise:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
-            var result = JobManager.GetJob(Monitor.JobHandle).Status.Result as string;
-            HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
+            var handle = Monitor.JobHandle;
+            var job = JobManager.GetJob(Monitor.JobHandle);
+            var result = string.Empty;
+            if (job != null)
+            {
+                HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
+                result = job.Status.Result as string;
+            }
             Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",
                 "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
-                (result ?? "Script finished - no results to display."));
+                (result ?? "No results to display."));
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
 
