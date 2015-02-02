@@ -20,13 +20,13 @@ content-length: 38
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 24
+content-length: 39
 
-powershell/32x32/ise.png
+powershell/32x32/powershell_library.png
 ----version----
 language: en
 version: 1
-revision: e74fd11a-294b-4588-bae8-59172f018548
+revision: e715e601-4632-4a4d-94eb-54989dd79c98
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e74fd11a-294b-4588-bae8-59172f018548
+e715e601-4632-4a4d-94eb-54989dd79c98
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20130723T022137:635101428973162890
+20141227T155843:635552927235838593Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

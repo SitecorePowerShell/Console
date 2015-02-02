@@ -13,13 +13,13 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1183
+content-length: 1187
 
 <#
    The script enumerates events definitions in web.config and creates appropriate folder structure 
    in the PowerShell Module script library to add support for them
 #>
-$integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::EventHandlersFeature;
+$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::EventHandlersFeature;
 Import-Function -Name Create-IntegrationPoint
 CreateIntegrationPoint($integrationPoint)
 (Get-SpeModule -Item $module).GetProviderFeaturePath($integrationPoint)
@@ -41,7 +41,7 @@ foreach ($eventnode in $nodes)
 ----version----
 language: en
 version: 1
-revision: 0becef27-b670-4166-933f-5140c61ca7b2
+revision: 1545e5cd-7aeb-43b2-ab77-fd2eeada7aec
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -56,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0becef27-b670-4166-933f-5140c61ca7b2
+1545e5cd-7aeb-43b2-ab77-fd2eeada7aec
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141205T012200:635533393200235312
+20150105T105754:635560522744244687Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

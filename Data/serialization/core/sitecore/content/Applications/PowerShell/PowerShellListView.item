@@ -5,7 +5,7 @@ database: core
 path: /sitecore/content/Applications/PowerShell/PowerShellListView
 parent: {6FFCBB47-D21B-4861-8F1C-2EAC23CEB450}
 name: PowerShellListView
-master: {1F0770EA-8B77-4110-91AA-CC00DEE102DD}
+master: {00000000-0000-0000-0000-000000000000}
 template: {EB06CEC0-5E2D-4DC4-875B-01ADCC577D13}
 templatekey: Application
 

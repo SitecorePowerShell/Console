@@ -2,7 +2,7 @@
 $documentation = Split-Path $Invocation
 $rootDirectory = Split-Path $documentation -Parent
 
-$help = Join-Path -Path $rootDirectory -ChildPath "Console\Assets"
+$help = Join-Path -Path $rootDirectory -ChildPath "sitecore modules\PowerShell\Assets"
 $moduleLibraryPath = (Join-Path -Path $rootDirectory -ChildPath "bin\Debug\Cognifide.PowerShell.dll")
 if(!(Test-Path -Path $moduleLibraryPath)) {
     Write-Error "Module Library Path not found"

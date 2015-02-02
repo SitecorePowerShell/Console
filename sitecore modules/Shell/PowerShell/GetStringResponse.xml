@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <GetStringResponse>
+    <FormPage Background="threedface">
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.GetStringResponse,Cognifide.PowerShell" />
+
+      <GridPanel Width="100%" Height="100%">
+        <GridPanel Columns="2" Width="98%" GridPanel.Height="100%" GridPanel.Valign="top">
+
+          <ThemedImage Src="Applications/32x32/question_and_answer.png" Width="32" Height="32" Margin="8px 0px 8px 16px" GridPanel.Valign="top" />
+          <Label ID="Message" Width="100%" GridPanel.Width="100%" Style="padding-left:16px;"/>
+          <Label ID="nbsp"/>
+          <Edit ID="EditBox" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top" GridPanel.Align="right" />
+
+        </GridPanel>
+
+        <Border Align="right" Padding="16px 8px 8px 8px" ID="Buttons">
+          <Button Click="OK" Header="OK" Margin="0px 4px 0px 0px"/>
+          <Button Click="Cancel" Header="Cancel" Margin="0px 4px 0px 0px"/>
+        </Border>
+      </GridPanel>
+
+    </FormPage>
+  </GetStringResponse>
+</control>

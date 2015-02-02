@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <ConfirmChoice>
+    <FormPage Background="threedface">
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.ConfirmChoice,Cognifide.PowerShell" />
+
+      <GridPanel Width="100%" Height="100%">
+        <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
+
+          <ThemedImage Src="Applications/32x32/Warning.png" Width="32" Height="32" Margin="8px 0px 8px 16px"
+                       GridPanel.Valign="top" />
+
+          <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
+            <Literal ID="Text" />
+          </Border>
+
+        </GridPanel>
+
+        <Border Align="Center" Padding="16px 8px 8px 8px" ID="Buttons">
+        </Border>
+      </GridPanel>
+
+    </FormPage>
+  </ConfirmChoice>
+</control>

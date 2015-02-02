@@ -17,6 +17,8 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Read-Variable
+    .LINK
         Show-Application
     .LINK
         Show-Confirm

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4981
+content-length: 5633
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -21,7 +21,9 @@ Write-Progress -Activity "Serializing items"
 
 #Item templates
 Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
+Get-Item 'master:\templates\Modules' | Serialize-Item
 Get-Item 'master:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
+Get-Item 'core:\templates\Modules' | Serialize-Item
 Get-Item 'core:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
 
 # Module Root
@@ -36,14 +38,16 @@ Get-Item 'core:\system\Modules\PowerShell\Console Colors' | Serialize-Item -Recu
 
 # Rules Engine Rules
 Write-Progress -Activity "Serializing Rules Engine Rules" -PercentComplete 45
-Get-Item 'master:\system\Modules\PowerShell\Rules' | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/PowerShell" | Serialize-Item -Recurse
 
 # Script Library
 Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Serialize-Item
-Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
 Get-Item 'core:\system\Modules\PowerShell\Script Library' | Serialize-Item -Recurse
-Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
+Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
 
 # Settings
 Write-Progress -Activity "Serializing Settings" -PercentComplete 80
@@ -67,12 +71,14 @@ Get-Item core:\content\Applications\PowerShell | Serialize-Item -Recurse
 Write-Progress -Activity "Serializing PowerShell Application Layouts" -PercentComplete 87
 Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Serialize-Item -Recurse
 Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Serialize-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Serialize-Item -Recurse
 
 # Start Menu icons
 Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE\' | Serialize-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console\' | Serialize-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
+Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
 
 # Content Editor Context Menu integration
 Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
@@ -80,6 +86,7 @@ Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Power
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts\' | Serialize-Item
 
 # Content Editor Ribbon integration
 Write-Progress -Activity "Serializing Content Editor Ribbon integration" -PercentComplete 95
@@ -97,7 +104,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 0f69c89a-b564-4228-913d-c359dcac6f98
+revision: fa0d2c19-64f2-45c8-b4d4-8feb426a8a04
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -112,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0f69c89a-b564-4228-913d-c359dcac6f98
+fa0d2c19-64f2-45c8-b4d4-8feb426a8a04
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141127T124219:635526889391076329
+20150128T170355:635580614355064844Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

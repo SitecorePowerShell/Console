@@ -13,15 +13,15 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 213
+content-length: 197
 
-$integrationPoint = [Cognifide.PowerShell.PowerShellIntegrations.Modules.IntegrationPoints]::ContentEditorContextMenuFeature;
+$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::ContentEditorContextMenuFeature;
 Import-Function -Name Create-IntegrationPoint
 CreateIntegrationPoint($integrationPoint)
 ----version----
 language: en
 version: 1
-revision: 5b129d36-249d-4f07-b474-e0a744fed6a7
+revision: 0d121856-7bde-447b-ad7f-6bdaee74f58c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -36,14 +36,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5b129d36-249d-4f07-b474-e0a744fed6a7
+0d121856-7bde-447b-ad7f-6bdaee74f58c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141203T024241:635531713618947422
+20150105T105711:635560522316031797Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

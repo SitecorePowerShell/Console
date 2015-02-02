@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4931
+content-length: 5264
 
 #Based on http://poshcode.org/1612
 function FixString {
@@ -21,9 +21,15 @@ function FixString {
   if ($in -eq $null) {
     $in = ''
   }
-  return $in.Trim().Trim('\n').Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("
-","<br/>
-")
+  return $in.Trim().Trim('\n').Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("`n","<br/>")
+}
+
+function FixExampleString {
+  param($in = '')
+  if ($in -eq $null) {
+    $in = ''
+  }
+  return $in.Trim().Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("`n","<br/>")
 }
 
 if($helpFor -eq $null){
@@ -131,7 +137,7 @@ if (($c.examples | Out-String).Trim().Length -gt 0)
         "<h3> $(FixString($example.title.Trim(('-',' '))))</h3>
         <div class='example-description'>$(FixString($example.remarks | out-string -Width 2000).Trim())</div>
         <div class='codeSnippetContainerCodeContainer'><div class='codeSnippetContainerCode'>
-        <pre>$(FixString($example.code | out-string ))</pre></div></div>"
+        <pre>$(FixExampleString($example.code))</pre></div></div>"
     }
 }
 
@@ -158,7 +164,7 @@ foreach ($relatedLink in $c.relatedLinks.navigationLink) {
 ----version----
 language: en
 version: 1
-revision: c1a47d68-b9a6-48b9-8a1c-7d5de10d3383
+revision: de7343b3-33de-4c72-92e2-104f292c8988
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -173,14 +179,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c1a47d68-b9a6-48b9-8a1c-7d5de10d3383
+de7343b3-33de-4c72-92e2-104f292c8988
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20131001T153258:635162383788610625
+20150118T162441:635571950810926328Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

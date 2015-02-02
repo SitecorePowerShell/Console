@@ -20,9 +20,9 @@ Rules
 field: {1EB8AE32-E190-44A6-968D-ED904C794EBF}
 name: Source
 key: source
-content-length: 68
+content-length: 88
 
-rulespath=/sitecore/system/Modules/PowerShell/Rules&hideactions=true
+rulespath=/sitecore/system/Settings/Rules/PowerShell&hideactions=true&allowmultiple=true
 ----field----
 field: {BE351A73-FCB0-4213-93FA-C302D8AB4F51}
 name: Shared
@@ -40,7 +40,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 582321fa-1672-470c-b345-19ab28dcc63f
+revision: 47ab872a-b244-4c58-ada1-f6188e9b3c2c
 
 ----field----
 field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
@@ -76,18 +76,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-582321fa-1672-470c-b345-19ab28dcc63f
+47ab872a-b244-4c58-ada1-f6188e9b3c2c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131024T165847:635182307278133672
+20141102T235141:635505691010852513
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
-content-length: 14
+content-length: 16
 
-sitecore\admin
+sitecore\adamnaj

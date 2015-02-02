@@ -13,9 +13,9 @@ templatekey: Application folder
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 31
+content-length: 32
 
-PowerShell/32x32/PowerShell.png
+powershell/32x32/powershell8.png
 ----field----
 field: {F6D8A61C-2F84-4401-BD24-52D2068172BC}
 name: __Originator
@@ -33,7 +33,7 @@ content-length: 78
 ----version----
 language: en
 version: 1
-revision: 50ad9d34-ac72-49c7-bdad-5dab43df0903
+revision: 10090a63-2cb9-4d13-959b-a44f2409e331
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-50ad9d34-ac72-49c7-bdad-5dab43df0903
+10090a63-2cb9-4d13-959b-a44f2409e331
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20130903T161815:635138218952159765
+20141227T155909:635552927496746797Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

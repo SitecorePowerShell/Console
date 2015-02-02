@@ -26,6 +26,9 @@
     .PARAMETER Modal
         If this parameter is provided Results will show in a new window (in Sitecore 6.x up till Sitecore 7.1) or in a modal overlay (Sitecore 7.2+)
 
+    .PARAMETER MissingDataMessage 
+        If no Items were provided for -Data parameter the message provided in this parameter will be shown in the middle of the List View dialog to notify users of the lack of items to display.
+
     .PARAMETER ActionData
         Additional data what will be passed to the view. All actions that are executed from that view window will have that data accessible to them as $actionData variable.
 
@@ -39,7 +42,7 @@
         Data to be displayed in the view.
 
     .PARAMETER Property
-        Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.        
+        Specifies the object properties that appear in the display and the order in which they appear. Type one or more property names (separated by commas), or use a hash table to display a calculated property.
 
 	The value of the Property parameter can be a new calculated property. To create a calculated, property, use a hash table. Valid keys are:
 	-- Name (or Label) <string>
@@ -70,6 +73,8 @@
     .LINK
         Format-Table
     .LINK
+        Read-Variable
+    .LINK
         Show-Alert
     .LINK
         Show-Application
@@ -86,7 +91,11 @@
     .LINK
         Show-YesNoCancel
     .LINK
-        http://michaellwest.blogspot.com/2014/04/sitecore-code-editor-14-preview.html
+        http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/
+    .LINK
+        http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html
+    .LINK
+        http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/
     .LINK
         https://github.com/SitecorePowerShell/Console/
 

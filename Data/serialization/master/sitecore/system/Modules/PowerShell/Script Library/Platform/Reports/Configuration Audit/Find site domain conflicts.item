@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2511
+content-length: 2606
 
 $sites = [Sitecore.Sites.SiteManager]::GetSites()
 $usedUrls = @();
@@ -60,7 +60,7 @@ if($conflicts -gt 0) {
     $conflictText = "Congratulations your Sitecore instance has no domain collisions!";
 }
 
-$outSites | Show-ListView  -Title "Site Manager Report" -InfoTitle "Site domain collision report" -InfoDescription $conflictText `
+$outSites | Show-ListView  -Title "Site Manager Report" -InfoTitle "Site domain collision report" -InfoDescription $conflictText -MissingDataMessage "No domains defined" `
     -Property `
      @{Label="Site"; Expression={$_.Name}}, 
      @{Label="Host"; Expression={$_.Properties["hostName"]}},
@@ -80,7 +80,7 @@ Applications/32x32/help_earth.png
 ----version----
 language: en
 version: 1
-revision: b0470da3-829d-4b75-a0be-8930dcf0b4aa
+revision: d9005677-35c5-4d93-9827-75c227f474f4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +95,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b0470da3-829d-4b75-a0be-8930dcf0b4aa
+d9005677-35c5-4d93-9827-75c227f474f4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20140413T133050:635329926503062968
+20150125T145218:635577943385849609Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

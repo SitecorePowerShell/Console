@@ -1,0 +1,55 @@
+----item----
+version: 1
+id: {374F14C6-867A-47F2-B5E2-E9A7224F33A0}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Index On Demand/Content Editor/Context Menu/Index this
+parent: {08109391-3B69-4510-B06B-477B7F54A0CE}
+name: Index this
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 218
+
+# Get the item based on the current context
+$item = Get-Item -Path .
+
+Write-Log "Preparing to run indexing on this item: $($item.Paths.FullPath)"
+$item.Database.Engines.HistoryEngine.RegisterItemSaved($item, $null)
+----version----
+language: en
+version: 1
+revision: 6dcde1b3-e824-49b4-a0c4-dc06a915c219
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20150201T185521Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+6dcde1b3-e824-49b4-a0c4-dc06a915c219
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20150201T220731:635584252515238130Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
