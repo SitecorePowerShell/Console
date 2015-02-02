@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?> 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellUploadFile>
-    <FormDialog Icon="Business/32x32/Paperclip.png" FormTarget="sitecoreattach" Enctype="multipart/form-data" Header="Upload File" 
-      Text="Select a file. When done click the Upload button." OKButton="Upload">
+    <FormPage FormTarget="sitecoreattach" Enctype="multipart/form-data">
 
       <Script Key="Upload">
 
@@ -24,18 +23,49 @@
       </Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/UploadFile.js" runat="server"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"/>
 
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.UploadFile.PowerShellUploadFileForm,Cognifide.PowerShell"/>
 
-      <input id="ItemUri" name="ItemUri" type="hidden" value=""/>
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <Border>
+            <Border Class="DialogHeader"><Literal Text="Upload File" ID="DialogHeader"/></Border>
+            <Border Class="DialogHeaderDescription"><Literal Text="Select a file. When done click the Upload button." ID="DialogDescription"/></Border>
+          </Border>
+        </Border>
+          
+	<Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+	      <input id="ItemUri" name="ItemUri" type="hidden" value=""/>
 
-      <Border Padding="0px 0px 4px 0px">
-        <Literal Text="File name:" />
-      </Border>
+	      <Border Padding="0px 0px 4px 0px">
+	        <Literal Text="File name:" />
+	      </Border>
 
-      <input id="File" name="File" type="file" style="width:100%" />
-      
-    </FormDialog>
+	      <input id="File" name="File" type="file" style="width:100%" />
+	  </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <div class="footerOkCancel">
+            <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="Upload"/>
+            <Button ID="CancelButton" Class="scButton" KeyCode="27" Click="CancelClick" Header="Cancel"/>&#160;&#160;&#160;
+          </div>
+        </div>
+        <Literal ID="TabOffsetValue"/>
+        <Border ID="DataContextPanel" Style="display:none;">
+          <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
+        </Border>
+      </Border>      
+    </FormPage>
   </PowerShellUploadFile>
 </control>

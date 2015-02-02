@@ -19,8 +19,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     [OutputType(new[] {typeof (String)}, ParameterSetName = new[] {"Receive Media Item", "Receive File"})]
     public class ReceiveFileCommand : BaseFormCommand
     {
-        [Parameter(ParameterSetName = "Receive Media Item")]
-        [Parameter(ParameterSetName = "Receive File")]
+        [Parameter]
         public string Description { get; set; }
 
         [Parameter(ValueFromPipeline = true,
@@ -30,6 +29,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             Mandatory = true, Position = 0, ParameterSetName = "Receive File")]
         public string Folder { get; set; }
+
+        [Parameter]
+        public string CancelButtonName { get; set; }
+
+        [Parameter]
+        public string OkButtonName { get; set; }
+
 
         protected override void ProcessRecord()
         {
@@ -41,7 +47,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                 AssertDefaultSize(500, 300);
                 var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description,
-                    "OK", "Cancel", ParentItem != null ? (ParentItem.ID.ToString()) : Folder);
+                    OkButtonName ?? "OK", CancelButtonName ?? "Cancel", ParentItem != null ? (ParentItem.ID.ToString()) : Folder);
 
                 PutMessage(message);
                 var results = (string)GetResult(message);

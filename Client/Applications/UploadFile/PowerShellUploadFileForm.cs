@@ -12,13 +12,18 @@ using Sitecore.Web.UI.XmlControls;
 using System;
 using System.Web;
 using Sitecore.Reflection;
+using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.Client.Applications.UploadFile
 {
-    public class PowerShellUploadFileForm : DialogForm
+    public class PowerShellUploadFileForm : BaseForm
     {
         protected GenericControl ItemUri;
         protected XmlControl Dialog;
+        protected Button OKButton;
+        protected Button CancelButton;
+        protected Literal DialogHeader;
+        protected Literal DialogDescription;
 
         protected void EndUploading(string id)
         {
@@ -31,7 +36,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
             {
                 SheerResponse.SetDialogValue(HttpUtility.UrlDecode(id));
             }
-            base.OnOK(this, EventArgs.Empty);
+            SheerResponse.CloseWindow();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -55,25 +60,21 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                     ItemUri.Attributes["value"] = path;
                 }
 
-                string title = handle["h"];
+                string title = handle["te"];
                 if (!string.IsNullOrEmpty(title))
                 {
-                    ReflectionUtil.SetProperty(this, "Header", WebUtil.SafeEncode(title));
-                    //Dialog["Header"] = WebUtil.SafeEncode(title);
-                    SheerResponse.Eval("setDialogValue('.DialogHeader', 'new title');");
-                    SheerResponse.Eval("setDialogValue('.DialogHeaderDescription', 'new description');");
+                    DialogHeader.Text = WebUtil.SafeEncode(title);
                     
                 }
-                string message = handle["t"];
+                string message = handle["ds"];
                 if (!string.IsNullOrEmpty(message))
                 {
-                    //Dialog["Text"] = WebUtil.SafeEncode(message);
-                    ReflectionUtil.SetProperty(this, "Text", WebUtil.SafeEncode(message));
+                    DialogDescription.Text = WebUtil.SafeEncode(message);
                 }
             }
         }
 
-        protected override void OnOK(object sender, EventArgs args)
+        protected void OKClick()
         {
             var str = Context.ClientPage.ClientRequest.Form["File"];
             if ((str == null) || (str.Trim().Length == 0))
@@ -82,20 +83,24 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
             }
             else
             {
-                OK.Disabled = true;
-                Cancel.Disabled = true;
+                OKButton.Disabled = true;
+                CancelButton.Disabled = true;
                 Context.ClientPage.ClientResponse.Timer("StartUploading", 10);
             }
         }
 
+        protected void CancelClick()
+        {
+            SheerResponse.CloseWindow();
+        }
         protected void ShowError()
         {
             SheerResponse.Alert(
                 "An error occured while uploading a file .\n\nThe reason may be that the file does not exist or the path is wrong.");
-            OK.Disabled = true;
-            Cancel.Disabled = true;
-            OK.Disabled = false;
-            Cancel.Disabled = false;
+            OKButton.Disabled = true;
+            CancelButton.Disabled = true;
+            OKButton.Disabled = false;
+            CancelButton.Disabled = false;
         }
 
         protected void ShowFileTooBig()
@@ -104,10 +109,10 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 Translate.Text(
                     "The file is too big to be uploaded.\n\nThe maximum size of a file that can be uploaded is {0}.",
                     MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
-            OK.Disabled = true;
-            Cancel.Disabled = true;
-            OK.Disabled = false;
-            Cancel.Disabled = false;
+            OKButton.Disabled = true;
+            CancelButton.Disabled = true;
+            OKButton.Disabled = false;
+            CancelButton.Disabled = false;
         }
 
         protected void ShowFileTooBig(string filename)
@@ -117,10 +122,10 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 Translate.Text(
                     "The file \"{0}\" is too big to be uploaded.\n\nThe maximum size of a file that can be uploaded is {1}.",
                     filename, MainUtil.FormatSize(Settings.Upload.MaximumDatabaseUploadSize)));
-            OK.Disabled = true;
-            Cancel.Disabled = true;
-            OK.Disabled = false;
-            Cancel.Disabled = false;
+            OKButton.Disabled = true;
+            CancelButton.Disabled = true;
+            OKButton.Disabled = false;
+            CancelButton.Disabled = false;
         }
 
         protected void StartUploading()

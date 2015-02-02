@@ -52,8 +52,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
             UrlString urlString = new UrlString("/sitecore modules/Shell/PowerShell/UploadFile/PowerShellUploadFile.aspx");
             UrlHandle handle = new UrlHandle();
-            handle["h"] = Title ?? string.Empty;
-            handle["t"] = Description ?? string.Empty;
+            handle["te"] = Title ?? string.Empty;
+            handle["ds"] = Description ?? string.Empty;
             handle["ic"] = "powershell/32x32/powershell8.png";
             handle["ok"] = "OK";
             var ask = true;
