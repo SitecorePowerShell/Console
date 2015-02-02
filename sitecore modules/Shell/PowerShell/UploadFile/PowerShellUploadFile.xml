@@ -45,6 +45,10 @@
 	<Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
 	      <input id="ItemUri" name="ItemUri" type="hidden" value=""/>
+	      <input id="Versioned" name="Versioned" type="hidden" value=""/>
+	      <input id="Overwrite" name="Overwrite" type="hidden" value=""/>
+	      <input id="Unpack" name="Unpack" type="hidden" value=""/>
+	      <input id="LanguageName" name="LanguageName" type="hidden" value=""/>
 
 	      <Border Padding="0px 0px 4px 0px">
 	        <Literal Text="File name:" />

@@ -19,6 +19,10 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
     public class PowerShellUploadFileForm : BaseForm
     {
         protected GenericControl ItemUri;
+        protected GenericControl Versioned;
+        protected GenericControl Overwrite;
+        protected GenericControl Unpack;
+        protected GenericControl LanguageName;
         protected XmlControl Dialog;
         protected Button OKButton;
         protected Button CancelButton;
@@ -60,6 +64,10 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                     ItemUri.Attributes["value"] = path;
                 }
 
+                Versioned.Attributes["value"] = handle["versioned"];
+                LanguageName.Attributes["value"] = handle["language"];
+                Overwrite.Attributes["value"] = handle["overwrite"];
+                Unpack.Attributes["value"] = handle["unpack"];
                 string title = handle["te"];
                 if (!string.IsNullOrEmpty(title))
                 {

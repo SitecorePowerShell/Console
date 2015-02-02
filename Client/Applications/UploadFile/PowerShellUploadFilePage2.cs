@@ -3,7 +3,9 @@ using System.Web;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Sitecore.Pipelines.Upload;
 using Sitecore.Shell.Web.UI;
@@ -39,13 +41,15 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 try
                 {
                     var pathOrId = Sitecore.Context.ClientPage.ClientRequest.Form["ItemUri"];
-                    var language = Sitecore.Context.ContentLanguage;
+                    var langStr = Sitecore.Context.ClientPage.ClientRequest.Form["LanguageName"];
+                    var language = langStr.Length > 0
+                        ? LanguageManager.GetLanguage(langStr) ?? Sitecore.Context.ContentLanguage
+                        : Sitecore.Context.ContentLanguage;
                     var itemUri = ItemUri.Parse(pathOrId);
                     var uploadArgs = new UploadArgs();
                     if (itemUri != null)
                     {
                         pathOrId = itemUri.GetPathOrId();
-                        language = itemUri.Language;
                         uploadArgs.Destination = Settings.Media.UploadAsFiles
                             ? UploadDestination.File
                             : UploadDestination.Database;
@@ -57,9 +61,11 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                     }
                     uploadArgs.Files = Request.Files;
                     uploadArgs.Folder = pathOrId;
-                    uploadArgs.Overwrite = Settings.Upload.SimpleUploadOverwriting;
-                    uploadArgs.Unpack = false;
-                    uploadArgs.Versioned = Settings.Media.UploadAsVersionableByDefault;
+                    uploadArgs.Overwrite = Sitecore.Context.ClientPage.ClientRequest.Form["Overwrite"].Length > 0;
+                    //uploadArgs.Overwrite = Settings.Upload.SimpleUploadOverwriting;
+                    uploadArgs.Unpack = Sitecore.Context.ClientPage.ClientRequest.Form["Unpack"].Length > 0;
+                    uploadArgs.Versioned = Sitecore.Context.ClientPage.ClientRequest.Form["Versioned"].Length > 0;
+                    //uploadArgs.Versioned = Settings.Media.UploadAsVersionableByDefault;
                     uploadArgs.Language = language;
                     uploadArgs.CloseDialogOnEnd = false;
                     PipelineFactory.GetPipeline("uiUpload").Start(uploadArgs);
@@ -75,6 +81,10 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                         if (fileHandle != null)
                         {
                             fileName = WebUtil.UrlEncode(FileHandle.GetFilename(fileHandle.ToString()));
+                        }
+                        else if (uploadArgs.Unpack)
+                        {
+                            fileName = WebUtil.UrlEncode(uploadArgs.Folder);
                         }
                         else
                         {
