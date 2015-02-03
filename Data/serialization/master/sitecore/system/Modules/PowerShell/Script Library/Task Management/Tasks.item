@@ -2,9 +2,9 @@
 version: 1
 id: {8CBF1E18-06EE-49E3-9C30-FB3DE16E96F3}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Example Tasks
+path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Tasks
 parent: {A84C5676-0E2B-401E-9C65-24DF7B55E6C1}
-name: Example Tasks
+name: Tasks
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
@@ -12,7 +12,7 @@ templatekey: PowerShell Script Library
 ----version----
 language: en
 version: 1
-revision: 2569935c-17bb-4914-9f28-2c58f3d77c10
+revision: d7bd2c52-2360-4235-ad37-ed70701a535b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -27,14 +27,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2569935c-17bb-4914-9f28-2c58f3d77c10
+d7bd2c52-2360-4235-ad37-ed70701a535b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141126T125831:635526035112756953
+20150203T022448:635585270884964788Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

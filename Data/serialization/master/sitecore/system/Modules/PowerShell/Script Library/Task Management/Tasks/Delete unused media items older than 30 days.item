@@ -2,7 +2,7 @@
 version: 1
 id: {86FBEE0D-6190-40BA-B045-511969B65745}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Example Tasks/Delete unused media items older than 30 days
+path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Tasks/Delete unused media items older than 30 days
 parent: {8CBF1E18-06EE-49E3-9C30-FB3DE16E96F3}
 name: Delete unused media items older than 30 days
 master: {00000000-0000-0000-0000-000000000000}
@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 731
+content-length: 739
 
 <#
     .SYNOPSIS
@@ -30,11 +30,11 @@ filter Skip-MissingReference {
     }
 }
 
-$date = [datetime]::Today.AddDays(-30)
+20150124Z = [datetime]::Today.AddDays(-30)
 
 $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | 
     Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } |
-    Where-Object { $_.__Owner -ne "sitecore\admin" -and $_.__Updated -lt $date } |
+    Where-Object { $_.__Owner -ne "sitecore\admin" -and $_.__Updated -lt 20150124Z } |
     Skip-MissingReference
 
 if($items) {

@@ -27,10 +27,17 @@ Write-Log "Cleaning up deleted items older than 30 days"
 
 Import-Function -Name "Clear-Archive"
 Clear-Archive -Days 30
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 41
+
+Applications/32x32/garbage_make_empty.png
 ----version----
 language: en
 version: 1
-revision: ca643d5a-e154-4d50-a947-903aa034e58b
+revision: c62f7a69-42e9-48ab-b945-2f9ddf3c3210
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -45,14 +52,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ca643d5a-e154-4d50-a947-903aa034e58b
+c62f7a69-42e9-48ab-b945-2f9ddf3c3210
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T215102:635584242627839260Z
+20150203T022340:635585270202779428Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

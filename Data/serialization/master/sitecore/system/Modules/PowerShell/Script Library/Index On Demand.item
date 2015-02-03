@@ -26,6 +26,13 @@ Provides the following Context Menu items:
 - Index this
 - Index this and descendants
 ----field----
+field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
+name: Version
+key: version
+content-length: 3
+
+1.0
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -35,7 +42,7 @@ Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: 0b92a872-ad6a-4ef4-8246-8c1b94c2d485
+revision: e9dbc946-9381-4f8d-8730-92d4087a886a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -50,14 +57,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0b92a872-ad6a-4ef4-8246-8c1b94c2d485
+e9dbc946-9381-4f8d-8730-92d4087a886a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T220723:635584252432388575Z
+20150203T020948:635585261888832397Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

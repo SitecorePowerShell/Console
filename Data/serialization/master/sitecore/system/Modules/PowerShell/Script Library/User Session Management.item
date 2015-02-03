@@ -31,6 +31,13 @@ Provides the following pipeline functions:
 Provides the following scripts available for scheduled tasks:
 - Remove idle user sessions
 ----field----
+field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
+name: Version
+key: version
+content-length: 3
+
+1.0
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -40,7 +47,7 @@ Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: d40dd145-11dd-4b43-988b-08ba904fff05
+revision: 4e76a76a-29e8-4266-9214-02eaf72a6738
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d40dd145-11dd-4b43-988b-08ba904fff05
+4e76a76a-29e8-4266-9214-02eaf72a6738
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T220417:635584250570865179Z
+20150203T021112:635585262724857804Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
