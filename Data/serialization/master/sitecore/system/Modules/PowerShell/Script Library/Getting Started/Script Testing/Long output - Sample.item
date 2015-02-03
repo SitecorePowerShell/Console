@@ -1,0 +1,56 @@
+----item----
+version: 1
+id: {FD61509C-AC87-46B2-B4C4-A2E9FEB8A135}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Script Testing/Long output - Sample
+parent: {A43850A2-6A27-404E-B4B8-543156A0E59A}
+name: Long output - Sample
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 50
+
+$i = 1
+do {
+Write-Host $i
+$i++
+}
+while ($i -le 50)
+----version----
+language: en
+version: 1
+revision: 6631851d-6821-434f-9ec0-c35fa9a921b1
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130509T234041
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+6631851d-6821-434f-9ec0-c35fa9a921b1
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20141227T175157:635552995172283906Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

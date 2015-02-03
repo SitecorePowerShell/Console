@@ -1,0 +1,66 @@
+----item----
+version: 1
+id: {5FA3CB60-F4C3-4B93-8FC9-E118A544DA4B}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/User Interaction/Using Colors
+parent: {97909803-E651-41E4-A13A-BA1A831685B3}
+name: Using Colors
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 493
+
+Write-Host "This is a multi-colored line sample: " -nonewline;
+Write-Host "Red " -f Red -nonewline;
+Write-Host "Green " -f Green -nonewline;
+Write-Host "Blue " -f Blue -nonewline;
+Write-Host "Yellow " -f Yellow; 
+
+Set-HostProperty -f Magenta; 
+Write-Host Now we are writing to host in Magenta by default.; 
+
+Set-HostProperty -f Cyan;
+Write-Host Now everything you write to host is  Cyan by default.;
+
+Set-HostProperty -f DarkBlue -b White;
+Write-Host Hey! We can change background color too!
+
+
+----version----
+language: en
+version: 1
+revision: 2cac3328-eecb-475d-968d-387449489216
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130625T113436
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+2cac3328-eecb-475d-968d-387449489216
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20141227T175159:635552995197996797Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
