@@ -397,21 +397,6 @@
     <Content Include="sitecore modules\PowerShell\Assets\stewie.png" />
     <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
-    <Content Include="sitecore modules\PowerShell\Controls\ConfirmChoice.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\ContextGallery.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\DownloadFile.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\GetStringResponse.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellConsole.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellIse.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellItemSelector.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellMultiValuePrompt.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerList.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellResultViewerText.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellRunner.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PowerShellScriptBrowser.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\PsHSplitter.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\SessionIDGallery.Option.xml" />
-    <Content Include="sitecore modules\PowerShell\Controls\SessionIDGallery.xml" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-beautify.js" />
@@ -481,7 +466,28 @@
     <Content Include="sitecore modules\PowerShell\Services\web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="sitecore modules\Shell\PowerShell\ConfirmChoice.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\ContextGallery.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\DownloadFile.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellItemSelector.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellMultiValuePrompt.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerList.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerText.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PsHSplitter.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.Option.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile.aspx" />
+    <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile2.aspx" />
     <Content Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="sitecore modules\Shell\PowerShell\debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
