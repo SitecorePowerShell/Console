@@ -53,6 +53,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Receive Media Item")]
         public string Language { get; set; }
 
+        [Parameter(ParameterSetName = "Receive File")]
         [Parameter(ParameterSetName = "Receive Media Item")]
         public SwitchParameter Overwrite { get; set; }
 
