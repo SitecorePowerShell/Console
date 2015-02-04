@@ -39,7 +39,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 : null;
 
             output.Write("<div class=\"iseRibbonContextPanel {0}\">", context.Parameters["ScriptRunning"] == "1" ? "disabled" : string.Empty);
-            output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\">");
+            // timestamp added because Sitecore won't re-send it to browser it if content didn't change - so changing session to the same wouldn't close the dropdowns
+            output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",DateTime.Now.ToString("O"));
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
             output.Write(Translate.Text("Context"));
             output.Write("</div>");
