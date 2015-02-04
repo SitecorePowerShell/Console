@@ -31,5 +31,15 @@ namespace Cognifide.PowerShell.Core.Extensions
             }
             return newList;
         }
+
+        public static object[] BaseArray(this object[] array)
+        {
+            var newArray = new object[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                newArray[i] = array[i].BaseObject();
+            }
+            return newArray;
+        }
     }
 }

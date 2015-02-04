@@ -80,6 +80,14 @@
     <Reference Include="Sitecore.Client">
       <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
     </Reference>
+    <Reference Include="Sitecore.ContentSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\SC8\Sitecore.ContentSearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Sitecore.ContentSearch.Linq, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\SC8\Sitecore.ContentSearch.Linq.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.ExperienceEditor">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.ExperienceEditor.dll</HintPath>
@@ -185,6 +193,7 @@
     <Compile Include="Commandlets\Data\PublishItemCommand.cs" />
     <Compile Include="Commandlets\Data\RemoveItemLanguageCommand.cs" />
     <Compile Include="Commandlets\Data\InitializeItemCommand.cs" />
+    <Compile Include="Commandlets\Data\FindItemCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseListViewCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseShellCommand.cs" />
@@ -488,6 +497,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="sitecore modules\Shell\PowerShell\debug\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="license.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Release process.md" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
