@@ -52,7 +52,21 @@ var PowershellHighlightRules = function() {
        "Write-Output|Write-Progress|Write-Verbose|Write-Warning|Set-WmiInstance|Invoke-WmiMethod|" +
        "Get-WmiObject|Remove-WmiObject|Connect-WSMan|Disconnect-WSMan|Test-WSMan|Invoke-WSManAction|" +
        "Disable-WSManCredSSP|Enable-WSManCredSSP|Get-WSManCredSSP|New-WSManInstance|Get-WSManInstance|Set-WSManInstance|" +
-       "Remove-WSManInstance|Set-WSManQuickConfig|New-WSManSessionOption"
+       "Remove-WSManInstance|Set-WSManQuickConfig|New-WSManSessionOption" +
+       // Sitecore PowerShell built in functions
+       "|Add-ItemLanguage|Add-Rendering|Add-RoleMember|Close-Window|ConvertFrom-CliXml|ConvertFrom-ItemClone|ConvertTo-CliXml" +
+       "|Disable-User|Enable-User|Expand-Token|Export-Item|Export-Package|Export-Role|Export-UpdatePackage|Export-User|Find-Item" +
+       "|Get-Archive|Get-Cache|Get-Database|Get-Domain|Get-Index|Get-ItemByUri|Get-ItemClone|Get-ItemField|Get-ItemReference" +
+       "|Get-ItemReferrer|Get-ItemTemplate|Get-ItemWorkflowEvent|Get-Layout|Get-LayoutDevice|Get-Package|Get-Preset|Get-Rendering" +
+       "|Get-Role|Get-RoleMember|Get-ScriptSession|Get-SearchIndex|Get-Session|Get-SpeModule|Get-SpeModuleFeatureRoot|Get-TaskSchedule" +
+       "|Get-UpdatePackageDiff|Get-User|Get-UserAgent|Import-Function|Import-Item|Import-Role|Import-User|Initialize-Item|Install-Package" +
+       "|Install-UpdatePackage|Invoke-Script|Invoke-ShellCommand|Invoke-Workflow|Lock-Item|Login-User|Logout-User|New-Domain" +
+       "|New-ExplicitFileSource|New-ExplicitItemSource|New-FileSource|New-ItemClone|New-ItemSource|New-ItemWorkflowEvent|New-Package" +
+       "|New-Rendering|New-User|Protect-Item|Publish-Item|Read-Variable|Receive-File|Remove-Domain|Remove-ItemLanguage|Remove-Rendering" +
+       "|Remove-RoleMember|Remove-Session|Remove-User|Restart-Application|Send-File|Send-SheerMessage|Set-HostProperty|Set-Layout" +
+       "|Set-Rendering|Set-User|Set-UserPassword|Show-Alert|Show-Application|Show-Confirm|Show-FieldEditor|Show-Input|Show-ListView" +
+       "|Show-ModalDialog|Show-Result|Show-YesNoCancel|Start-TaskSchedule|Unlock-Item|Unlock-User|Unprotect-Item|Update-ListView" +
+       "|Write-Log"
        );
 
     var keywordMapper = this.createKeywordMapper({
