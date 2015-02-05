@@ -4,6 +4,17 @@
     <Gallery>
       <CodeBeside Type="Cognifide.PowerShell.Client.Controls.ContextGallery, Cognifide.PowerShell"/>
 
+      <Stylesheet Key="GalleryLanguages">
+      #Databases{
+position: relative;
+left: 4px;
+top: 4px;
+right: 4px;
+width: 97%;
+margin-bottom: 7px;        
+      }
+      </Stylesheet>
+
       <div class="scStretch">
         <div class="scGalleryContent13">
           <GalleryMenu ID="Options" Class="scStretch">

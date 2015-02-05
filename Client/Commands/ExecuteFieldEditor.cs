@@ -11,10 +11,11 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Data.Templates;
 using Sitecore.Diagnostics;
-using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Applications.WebEdit;
+using Sitecore.Shell.Applications.WebEdit;
 
 namespace Cognifide.PowerShell.Client.Commands
 {

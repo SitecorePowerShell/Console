@@ -88,10 +88,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libraries\SC8\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ExperienceEditor">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.ExperienceEditor.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
@@ -523,7 +519,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y</PostBuildEvent>
+    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy C:\Projects\sitecorepowershell\Trunk\bin\Debug\Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

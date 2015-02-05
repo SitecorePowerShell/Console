@@ -9,6 +9,8 @@ using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Common;
+using Sitecore.Configuration;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -168,12 +170,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 };
                 if (value is DateTime)
                 {
-                    var date = (DateTime) value;
-                    if (date != DateTime.MinValue && date != DateTime.MaxValue)
+                    if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue)
                     {
-                        dateTimePicker.Value = (date.Kind == DateTimeKind.Utc)
-                            ? DateUtil.ToIsoDate(DateUtil.ToServerTime(date))
-                            : DateUtil.ToIsoDate(date);
+                        dateTimePicker.Value = DateUtil.ToIsoDate((DateTime)value);
                     }
                 }
                 else

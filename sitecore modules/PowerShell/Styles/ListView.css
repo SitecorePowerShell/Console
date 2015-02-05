@@ -108,3 +108,14 @@
     height: 20px;
 }
 
+.scEditorWarningPanelTable
+{
+    border: 0px;
+}
+
+#RibbonPanel {
+    padding: 0;
+}
+#Content {
+  padding: 1px !important;
+}
