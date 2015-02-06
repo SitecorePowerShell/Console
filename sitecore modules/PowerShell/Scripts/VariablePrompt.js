@@ -1,8 +1,9 @@
 ﻿jQuery(document).ready(function ($) {
+
     $('#Copyright').each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
-                text: "Copyright (c) 2010-2015 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
+                text: "Copyright (c) 2010-2014 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
                 title: 'Sitecore PowerShell Extensions'
             },
             position: {
@@ -18,5 +19,31 @@
                 inactive: 3000
             }
         });	
+	ResizeDialogControls();
+    });
+    $(window).resize(function() {
+	ResizeDialogControls();
     });
 });
+
+function ResizeDialogControls() {
+    var windowW = $ise(window).width();
+    var windowH = $ise("#ValuePanel").height() - 8;
+    var tabsWidth = (windowW - 26) + "px";
+    var tabsPage = (windowW - 60) + "px";
+    var controlWidth = (windowW - 34 - tabsOffset) + "px";
+    var windowWidth = (windowW - 14) + "px";
+    var tabsHeight = (windowH) + "px";
+    console.log("windowW:"+windowW + "; windowH:"+windowH+"; controlWidth:"+controlWidth+"; windowWidth:"+windowWidth+"; tabsHeight:"+tabsHeight+ ";");
+
+    //$ise("#ValuePanel").css({ width: windowWidth });
+    $ise("#Tabstrip").css({ height: tabsHeight, width: tabsWidth});
+    $ise(".treePicker").css({ width: controlWidth });
+    $ise(".scContentControlChecklist").css({ width: (windowW - 58 - tabsOffset) + "px" });
+    $ise(".scRadioGroup").css({ width: (windowW - 58 - tabsOffset) + "px" });
+    $ise(".textEdit").css({ width: controlWidth });        
+    if ($ise(".scUserPickerButton").length > 0) {
+        var editWidth = (windowW - $ise(".scUserPickerButton").outerWidth() - 40 - tabsOffset) + "px";
+        $ise(".scUserPickerEdit").css({ width: editWidth });
+    }
+}

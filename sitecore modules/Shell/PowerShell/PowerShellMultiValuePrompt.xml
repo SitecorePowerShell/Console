@@ -48,7 +48,7 @@
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
-          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" />
           <Border>
             <Border Class="DialogHeader"><Literal Text="Script parameters" ID="DialogHeader"/></Border>
             <Border Class="DialogHeaderDescription"><Literal Text="The script you are running requires that you provide some values to continute running. Please provide the parameters below." ID="DialogDescription"/></Border>

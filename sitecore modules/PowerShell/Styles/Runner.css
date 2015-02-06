@@ -1,4 +1,8 @@
-﻿.done {
+﻿html {
+  overflow-y: hidden;
+}
+
+.done {
     animation-name: greenPulse;
     animation-duration: 3s;
     animation-iteration-count: infinite;
@@ -10,16 +14,25 @@
 .status {
     margin-bottom: 6px;
     display: block;
+    color: black;
+/*    font: normal 9pt tahoma;
+    line-height: 31px; */
+    padding-left: 21px;
 }
 
 #Title {
-    margin-bottom: 6px;
-    display: block;
+  font: 9pt Tahoma;
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 23px;
+  margin-bottom: 6px;
 }
 
 #Copyright {
     float: left;
-    margin-left: 6px;
     margin-top: 4px;
 }
 
@@ -42,6 +55,21 @@
 
 #HeaderTextContainer { display: inline-block; }
 
+.scDialogHeader {
+  background: #f0f0f0;
+  border-bottom: solid 1px #dfdfdf;
+}
+
+.DialogHeader {
+  color: black;
+  font: normal 11pt tahoma;
+  height: 34px;
+  line-height: 34px;
+}
+
+#DialogHeader {
+  padding: 0 0 4px 6px;
+}
 #Promo a { color: #ABADAB; }
 
 .timeRemaining {
@@ -151,4 +179,20 @@ a#ViewErrorsButton {
     margin-left: -120px;
     height: 14px;
     width: 120px;
+}
+
+.scDialogContentContainer {
+  padding: 4px 22px 4px 22px !important;
+}
+
+.scFormDialogFooter {
+  bottom: 4px;
+  display: block;
+  float: right;
+  position: absolute;
+  right: 0px;
+  left: 0px;
+  color: #CBCDCB;
+  border-top: #E3E3E3 solid 1px;
+  height: 40px;
 }

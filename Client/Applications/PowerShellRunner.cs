@@ -261,7 +261,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
-            PsProgressStatus.Text = "<span class='status'> </span><br/>";
+            PsProgressStatus.Text = "<span class='status'> </span>";
             if (result != null)
             {
                 SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
@@ -318,7 +318,7 @@ namespace Cognifide.PowerShell.Client.Applications
             bool showStatus = !string.IsNullOrEmpty(status);
             PsProgressStatus.Visible = showStatus;
             PsProgressStatus.Text = showStatus
-                ? string.Format("<span class='status'>{0}</span><br/>", status)
+                ? string.Format("<span class='status'>{0}</span>", status)
                 : "<span class='status'> </span><br/>";
 
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())

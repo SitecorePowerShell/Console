@@ -26,7 +26,6 @@
             </div>
           <Border>
             <Border Class="DialogHeader"><Literal Text="In Progress" ID="DialogHeader"/></Border>
-            <Border Class="DialogHeaderDescription"><Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;"/></Border>
           </Border>
         </Border>
           
@@ -38,6 +37,7 @@
               <Literal ID="Log" runat="server" />
             </Border>
             <Literal runat="server" Style="white-space:nowrap;" ID="Title" Text="Running script..." />
+            <Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt; &lt;/span&gt;"/>
             <Literal runat="server" ID="Subtitle" Visible="false" />
 
             <Border runat="server" ID="Progress">
