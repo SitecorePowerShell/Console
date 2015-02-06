@@ -80,13 +80,13 @@
     <Reference Include="Sitecore.Client">
       <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.ContentSearch">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\SC8\Sitecore.ContentSearch.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Linq, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.ContentSearch.Linq">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libraries\SC8\Sitecore.ContentSearch.Linq.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ExperienceEditor">
       <SpecificVersion>False</SpecificVersion>

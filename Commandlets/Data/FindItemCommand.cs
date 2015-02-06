@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
@@ -41,9 +42,12 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public int First { get; set; }
 
         [Parameter]
+        public int Last { get; set; }
+
+        [Parameter]
         public int Skip { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void EndProcessing()
         {
             string index;
             if (!TryGetParameter("Index", out index))
@@ -55,7 +59,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 // get all items in medialibrary
                 var query = context.GetQueryable<SearchResultItem>();
 
-                if (!string.IsNullOrEmpty(Where))
+                if (!String.IsNullOrEmpty(Where))
                 {
                     query = query.Where(Where, WhereValues.BaseArray());
                 }
@@ -82,23 +86,43 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 break;
                         }
                     }
-                if (!string.IsNullOrEmpty(OrderBy))
+                if (!String.IsNullOrEmpty(OrderBy))
                 {
                     query = query.OrderBy(OrderBy);
                 }
 
-                if (First > 0)
-                {
-                    query = query.Take(First);
-                }
-                
-                if (Skip > 0)
-                {
-                    query = query.Skip(Skip);
-                }
-
-                WriteObject(query.ToList(), true);
+                WriteObject(FilterByPosition(query), true);
             }
+        }
+
+        private List<SearchResultItem> FilterByPosition(IQueryable<SearchResultItem> query)
+        {
+            var count = query.Count();
+            var skipEnd = (Last != 0 && First == 0);
+            var skipFirst = skipEnd ? 0 : Skip;
+            var takeFirst = First;
+            if (Last == 0 && First == 0)
+            {
+                takeFirst = count - skipFirst;
+            }
+            var firstObjects = query.Skip(skipFirst).Take(takeFirst);
+            var takenAndSkipped = (skipFirst + takeFirst);
+            if (takenAndSkipped >= count || Last == 0 || (skipEnd && Skip >= (count - takenAndSkipped)))
+            {
+                return firstObjects.ToList();
+            }
+            var takeAndSkipAtEnd = Last + (skipEnd ? Skip : 0);
+            var skipBeforeEnd = count - takenAndSkipped - takeAndSkipAtEnd;
+            var takeLast = Last;
+            if (skipBeforeEnd >= 0)
+            {
+                // Concat not support by Sitecore.
+                return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
+            }
+            takeLast += skipBeforeEnd;
+            skipBeforeEnd = 0;
+            // Concat not support by Sitecore.
+            return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
         }
     }
 
