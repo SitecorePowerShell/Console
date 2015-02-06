@@ -5,11 +5,12 @@
     <FormPage>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerText,Cognifide.PowerShell" />
       <Border class="scFlexColumnContainer scStretch">
-        <Border class="scDialogHeader">
+        <Border class="scDialogHeader psTextResults">
             <div id="HeaderIconContainer">
               <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/Logo_Square.png" Alt="" runat="server" />
             </div>

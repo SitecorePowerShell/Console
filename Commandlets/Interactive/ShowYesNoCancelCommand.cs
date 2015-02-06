@@ -9,6 +9,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     {
         protected override void ProcessRecord()
         {
+            AssertDefaultSize(500, 100);
             LogErrors(() =>
             {
                 string yesnoresult = JobContext.ShowModalDialog(Title, "YesNoCancel", WidthString, HeightString);

@@ -16,8 +16,8 @@
     display: block;
     color: black;
 /*    font: normal 9pt tahoma;
-    line-height: 31px; */
-    padding-left: 21px;
+    line-height: 31px;
+    padding-left: 21px; */
 }
 
 #Title {
@@ -65,6 +65,7 @@
   font: normal 11pt tahoma;
   height: 34px;
   line-height: 34px;
+  padding-top: 10px;
 }
 
 #DialogHeader {
@@ -195,4 +196,17 @@ a#ViewErrorsButton {
   color: #CBCDCB;
   border-top: #E3E3E3 solid 1px;
   height: 40px;
+}
+
+#HeaderIconContainer{
+  padding: 10px;
+  float: left;
+}
+
+#Promo.promoArea {
+  border: 0px;
+}
+
+.scDialogHeader.psTextResults {
+  display: none;
 }

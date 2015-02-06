@@ -5,5 +5,23 @@
   text-align: right;
   float: right;
   display: block;
- margin-right: 12px;
+  margin-right: 12px;
+}
+
+.scFormDialogHeader {
+  min-height: 40px;
+  border-bottom: solid 1px #dbdbdb;
+  display: none;
+}
+
+.scFormDialogHeader div {
+  padding-top: 12px;
+}
+
+.scFormDialogFooter {
+  height : 44px;
+}
+
+.scHorizontalLine {
+  display: none;
 }
