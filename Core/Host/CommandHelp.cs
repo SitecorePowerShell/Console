@@ -4,6 +4,8 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
@@ -24,8 +26,13 @@ namespace Cognifide.PowerShell.Core.Host
                 var platformmodule = ModuleManager.GetModule("Platform");
                 Item scriptItem = Database.GetDatabase(platformmodule.Database)
                         .GetItem(platformmodule.Path + "/Internal/Context Help/Command Help");
+                if (scriptItem == null)
+                {
+                    scriptItem = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)
+                        .GetItem(ApplicationSettings.ScriptLibraryPath + "Internal/Context Help/Command Help");
+                }
                 session.ExecuteScriptPart(scriptItem["script"], true, true);
-                var sb = new StringBuilder("<div id=\"HelpClose\">x</div>");
+                var sb = new StringBuilder("<div id=\"HelpClose\">X</div>");
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)
                 {
                     return new[]
