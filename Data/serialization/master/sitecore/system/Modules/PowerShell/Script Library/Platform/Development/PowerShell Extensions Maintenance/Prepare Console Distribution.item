@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8234
+content-length: 8412
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -24,19 +24,23 @@ $package.Sources.Clear();
 $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
 $package.Metadata.Publisher = "Cognifide Limited";
 $package.Metadata.Version = "3.0";
-$package.Metadata.Readme = 'This module provides 2 immediately usable interfaces 
+$package.Metadata.Readme = '
+This module provides 2 immediately usable interfaces 
 The "PowerShell Console" available from the "Sitecore"
 menu and the "PowerShell ISE" available from the 
-"Developer Tools" sub-menu. 
+"Developer Tools" sub-menu as well as Reports 
+in the Sitecore -> Reporting Tools menu.
 
-As well as Reports in the Sitecore -> Reporting Tools menu.
+******************************************************
+BEFORE UPGRADING THE MODULE from previous version, 
+please back-up your script library!
+******************************************************
 
-
-PowerShell ISE comes with a sample script and
+PowerShell ISE comes with a sample scripts and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
-- 3.0 (January 2015)
+- 3.0 (February 2015)
   Release Notes: http://bit.ly/ScPs30Iss
 - 2.8 (December 2014)
   Release Notes: http://bit.ly/ScPs28Iss
@@ -105,11 +109,11 @@ $package.Sources.Add($source);
 # Script Library
 $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
-$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode Merge -MergeMode Clear
+$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
 $package.Sources.Add($source);
 $source = Get-Item 'core:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Core Script Library" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
-$source = Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | New-ExplicitItemSource -Name "Core Script Library Content" -InstallMode Merge -MergeMode Clear
+$source = Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | New-ExplicitItemSource -Name "Core Script Library Content" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
@@ -172,7 +176,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 5cbf84a8-0d47-40c0-8632-53e4a205c344
+revision: c8cd45db-d62b-4316-b279-d8223c7a1ec1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -187,14 +191,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5cbf84a8-0d47-40c0-8632-53e4a205c344
+c8cd45db-d62b-4316-b279-d8223c7a1ec1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150205T153129:635587470899904531Z
+20150206T164059:635588376594394531Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
