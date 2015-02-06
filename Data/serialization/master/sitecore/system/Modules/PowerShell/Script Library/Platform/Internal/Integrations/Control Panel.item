@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4017
+content-length: 4050
 
 $scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
 $controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
@@ -56,7 +56,8 @@ foreach($root in $roots){
         }
     }
 }    
-    #Remove non existing scripts from Control Panel
+
+#Remove non existing scripts from Control Panel
 Write-Host "Purging Control Panel entries for non existing scripts and disabled modules" -ForegroundColor Cyan
 Get-Childitem $controlPanelPath | ForEach-Object {
     Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
@@ -68,7 +69,7 @@ Get-Childitem $controlPanelPath | ForEach-Object {
             $scriptDb = $message.Arguments["scriptDb"]
             $scriptId = $message.Arguments["script"];
             $script = Get-Item "$($scriptDb):/" -Id $scriptId
-            if($script -eq $null){
+            if($script -eq $null -or $script.Name -ne $cpEntry.Name){
                 Write-Host "Removing '$($cpSection.Name)/$($cpEntry.Name)' from Control Panel as the script no longer exists."  -ForegroundColor Magenta
                 $cpEntry | remove-item
             }else {
@@ -93,7 +94,7 @@ Applications/16x16/preferences.png
 ----version----
 language: en
 version: 1
-revision: d1abe90c-7f24-4630-af40-99ca2afbb5dc
+revision: fc4d5505-e326-47ca-875f-7b5717de13de
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -108,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d1abe90c-7f24-4630-af40-99ca2afbb5dc
+fc4d5505-e326-47ca-875f-7b5717de13de
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150105T110118:635560524784225156Z
+20150206T163129:635588370898408203Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
