@@ -1,0 +1,71 @@
+----item----
+version: 1
+id: {AC05422C-A1B1-41BA-A1FD-4EC7E944DE3B}
+database: core
+path: /sitecore/system/Modules/PowerShell/Script Library/Tutorials/Prepare Console Distribution
+parent: {6AC48922-FF71-472C-8992-E8EEF407FB74}
+name: Prepare Console Distribution
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1272
+
+$package = get-package "powershell console.xml"
+
+##########################################################################
+# master DB scripts - only include stuff that's not for internal testing #
+##########################################################################
+$master_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
+#$master_scripts | ft ProviderPath
+
+$master_scripts_source =  $master_scripts | New-ExplicitItemSource "Master Scripts" -InstallMode Merge -MergeMode Merge;
+$package.Sources.Add($master_scripts_source);
+
+$core_scripts = Get-ChildItem -recurse "master:/system/Modules/PowerShell" | ? { -not ($_.ProviderPath -Match "Testing") }
+#$core_scripts | ft ProviderPath
+
+#$package | Export-Package "powershell console (automate).xml"
+# cleanup user specific settings
+$settingsToCleanup = get-childitem -recurse "core:/content/Applications/PowerShell/Settings/"  | ? { $_.ProviderPath -Match "sitecore" }
+$settingsToCleanup | ft PSPath,ProvierPath -auto
+#get-childitem -recurse "core:/content/Applications/PowerShell/Settings/" | ? { $_.ProviderPath -Match "sitecore" } | remove-item
+#get-childitem -recurse | fl PSPath, PSParentPath,ItemPath,ContentPath,ProvierPath
+#Read-YesNoCancel
+----version----
+language: en
+version: 1
+revision: a7012b4d-e0eb-4a8a-804d-534aa1d6e046
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130510T150325
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+a7012b4d-e0eb-4a8a-804d-534aa1d6e046
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130515T135334:635042228149688281
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
