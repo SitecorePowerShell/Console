@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?> 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
   <Gallery.ContextGallery>
     <Gallery>
       <CodeBeside Type="Cognifide.PowerShell.Client.Controls.ContextGallery, Cognifide.PowerShell"/>
+      <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
 
       <Stylesheet Key="GalleryLanguages">
       #Databases{
@@ -13,6 +15,58 @@ right: 4px;
 width: 97%;
 margin-bottom: 7px;        
       }
+
+/* Sitecore 7.0 */
+
+.scScrollbox {
+  background: white;
+  height: 100%;
+  overflow: auto;
+  border-top: solid 1px #B4B4B4;
+  border-left: solid 1px #B4B4B4;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.ff .scScrollbox {
+    min-height: 50px !important;
+}
+.scScrollboxStretchAbsolute {
+  background: white;
+  overflow: auto;
+  border-top: solid 1px #B4B4B4;
+  border-left: solid 1px #B4B4B4;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 4px;
+}
+
+.scStretchAbsolute {
+  position: absolute !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.scStretch {
+  width: 100%;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+}
+.scTabs {
+    border-bottom: 0px;
+}
       </Stylesheet>
 
       <div class="scStretch">
@@ -35,10 +89,6 @@ margin-bottom: 7px;
             </MenuPanel>
             <MenuHeader Header="Other"/>
           </GalleryMenu>
-        </div>
-        <div class="scGalleryBottom13">
-          <GalleryMenuLine />
-          <Gallery.Grip />
         </div>
       </div>
     </Gallery>
