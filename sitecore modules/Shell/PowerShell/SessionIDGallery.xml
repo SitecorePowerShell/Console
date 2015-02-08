@@ -86,7 +86,7 @@
     border-bottom: 0px;
 }
 
-.ff .scScrollbox {
+.ff .scScrollbox, .scScrollbox {
     min-height: 50px !important;
 }        
       </Stylesheet>

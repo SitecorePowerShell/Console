@@ -25,3 +25,7 @@
 .scHorizontalLine {
   display: none;
 }
+
+.ff .scScrollbox, .scScrollbox {
+    min-height: 50px !important;
+}        
