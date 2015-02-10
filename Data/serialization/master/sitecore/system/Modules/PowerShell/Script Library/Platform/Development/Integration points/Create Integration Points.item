@@ -13,31 +13,42 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2207
+content-length: 2310
 
 $integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
-
 $options = New-Object System.Collections.Specialized.OrderedDictionary
 
 $integrationPoints.Values | % { $options.Add($_.Name, $_.Id) }
 
 if($module -eq $null){
-    $module = Get-Item "master:/sitecore/system/Modules/PowerShell/Script Library"
+    $moduleEnabled = $true;
     $result = Read-Variable -Parameters `
-        @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" },
+        @{ Name = "moduleName"; Title="Name of the module"; Root="/sitecore/system/Modules/PowerShell/Script Library" },
+        @{ Name = "moduleEnabled"; Title="Enable module" },
         @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."} `
-        -Description "Pick a module that you will be creating your event handlers in. When you press OK all possible event handler script libraries will be created. You can clean up empty ones later by right clicking the module and selecting 'Purge empty libraries' from the 'Scripts' menu." `
-        -Title "Pick a module to populate" -Width 500 -Height 600 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+        -Description "Pick the settings for the module that you will be creating and the integration points to include in it." `
+        -Title "Create a new module" -Width 500 -Height 500 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+
     if($result -ne "ok")
     {
         Exit
+    }
+    
+    $moduleitem = New-Item -Path "master:/sitecore/system/Modules/PowerShell/Script Library/" -ItemType "Modules/PowerShell Console/PowerShell Script Module" -Name "$moduleName"
+    if($moduleitem -eq $null){
+        Show-Alert "$error"
+        Exit
+    }
+    Set-Variable -Name "module" -Scope Global -Value $moduleitem
+    if($moduleEnabled){    
+        $moduleitem.Enabled = "1";
     }
 }
 else{
     $result = Read-Variable -Parameters `
         @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."} `
-        -Description "Pick the integration points you want to create Script libraries for. When you press OK all required script libraries for selected integration points will be created. You can clean up empty ones later by right clicking the module and selecting 'Purge empty libraries' from the 'Scripts' menu." `
+        -Description "Pick the integration points you want to create Script libraries for. When you press OK all required script libraries for selected integration points will be created." `
         -Title "Pick a module to populate" -Width 500 -Height 600 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
     if($result -ne "ok")
     {
@@ -52,7 +63,7 @@ foreach($pointToCreate in $pointsToCreate){
 ----version----
 language: en
 version: 1
-revision: 7f88d025-0d15-4807-8d23-843eae054a0d
+revision: d03a3f14-159e-4abd-9071-c266a779ecdd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -67,14 +78,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7f88d025-0d15-4807-8d23-843eae054a0d
+d03a3f14-159e-4abd-9071-c266a779ecdd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150105T110202:635560525222828672Z
+20150210T175834:635591879145273438Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
