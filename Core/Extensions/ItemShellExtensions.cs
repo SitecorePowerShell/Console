@@ -52,15 +52,18 @@ namespace Cognifide.PowerShell.Core.Extensions
                 {
                     bool duplicate = psobj.Properties[field] == null;
 
-                    string getter;
-                    switch (item.Fields[field].TypeKey)
+                    string getter = String.Format("$this[\"{0}\"]", field);
+                    if (item.Fields[field] != null)
                     {
-                        case ("datetime"):
-                            getter = String.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
-                            break;
-                        default:
-                            getter = String.Format("$this[\"{0}\"]", field);
-                            break;
+                        switch (item.Fields[field].TypeKey)
+                        {
+                            case ("datetime"):
+                                getter = String.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
+                                break;
+                            default:
+                                getter = String.Format("$this[\"{0}\"]", field);
+                                break;
+                        }
                     }
                     string setter =
                             String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
