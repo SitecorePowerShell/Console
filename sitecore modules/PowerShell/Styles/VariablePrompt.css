@@ -39,6 +39,7 @@
 .varHint {
     margin: 2px 0 4px 2px;
     display: block;
+    clear: both;
 }
 
 .varCheckbox {
@@ -85,6 +86,12 @@
 
 .scBottomEdge, .scTopEdge { height: 1px; }
 
+.checkBoxWrapper {
+  display: block;
+  padding: 24px 0 16px 0;
+  float: left;
+  clear: both;
+}
 /*
 .scTabPage {
     padding: 8px;

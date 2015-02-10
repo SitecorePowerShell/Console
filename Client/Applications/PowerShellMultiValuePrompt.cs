@@ -279,15 +279,6 @@ namespace Cognifide.PowerShell.Client.Applications
                     Value = item.ID.ToString(),
                     DataContext = dataContext.ID
                 };
-/*
-                if (source != null)
-                {
-                    string root = StringUtil.ExtractParameter("DataSource", source);
-                    string db = StringUtil.ExtractParameter("DatabaseName", source);
-                    dataContext.Root = string.IsNullOrEmpty(root) ? dataContext.Root : root;
-                    dataContext.Database = string.IsNullOrEmpty(db) ? dataContext.Database : db;
-                }
-*/
                 treePicker.Class += " treePicker";
                 return treePicker;
             }
@@ -295,6 +286,9 @@ namespace Cognifide.PowerShell.Client.Applications
             if (type == typeof (bool) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
+                Border checkboxBorder = new Border();
+                checkboxBorder.Class = "checkBoxWrapper";
+                checkboxBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name+"_");
                 var checkBox = new Checkbox
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -303,7 +297,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     Checked = (bool) value
                 };
                 checkBox.Class = "varCheckbox";
-                return checkBox;
+                checkboxBorder.Controls.Add(checkBox);
+                return checkboxBorder;
             }
 
             if (!string.IsNullOrEmpty(editor))
@@ -543,10 +538,17 @@ namespace Cognifide.PowerShell.Client.Applications
                     var context = (DataContext) DataContextPanel.FindControl(contextID);
                     result.Add("Value", context.CurrentItem);
                 }
-                else if (control is Checkbox)
+                else if (control is Checkbox || (control is Border && (control as Border).Class == "checkBoxWrapper"))
                 {
-                    var boolValue = (control as Checkbox).Checked;
-                    result.Add("Value", boolValue);
+                    Border checkboxBorder = control as Border;
+                    foreach (var ctl in checkboxBorder.Controls)
+                    {
+                        if (ctl is Checkbox)
+                        {
+                            var boolValue = (ctl as Checkbox).Checked;
+                            result.Add("Value", boolValue);
+                        }
+                    }
                 }
                 else if (control is Combobox)
                 {

@@ -188,7 +188,8 @@ namespace Cognifide.PowerShell.Client.Controls
             public void Run()
             {
                 this._task();
-                JobContext.MessageQueue.PutMessage((IMessage)new CompleteMessage());
+                JobContext.MessageQueue.PutMessage(new CompleteMessage());               
+                JobContext.MessageQueue.GetResult();
             }
         }
 
