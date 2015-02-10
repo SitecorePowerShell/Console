@@ -51,12 +51,20 @@ namespace Cognifide.PowerShell.Core.Extensions
                 if (!String.IsNullOrEmpty(field))
                 {
                     bool duplicate = psobj.Properties[field] == null;
-                    string getter = item.Fields[field] != null && item.Fields[field].TypeKey == "datetime"
-                        ? String.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field)
-                        : String.Format("$this[\"{0}\"]", field);
+
+                    string getter;
+                    switch (item.Fields[field].TypeKey)
+                    {
+                        case ("datetime"):
+                            getter = String.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
+                            break;
+                        default:
+                            getter = String.Format("$this[\"{0}\"]", field);
+                            break;
+                    }
                     string setter =
-                        String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
-                            typeof (ItemShellExtensions).FullName, field);
+                            String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
+                                typeof (ItemShellExtensions).FullName, field);
 
                     psobj.Properties.Add(new PSScriptProperty(
                         duplicate ? field : String.Format("_{0}", field),
@@ -140,7 +148,6 @@ namespace Cognifide.PowerShell.Core.Extensions
                                 foreach (var linkedItem in items)
                                     linkField.Add(linkedItem.ID.ToString());
                             }
-
                             else if (field is FileField)
                             {
                                 var linkField = field as FileField;
@@ -164,6 +171,10 @@ namespace Cognifide.PowerShell.Core.Extensions
                         else if (newValue is DateTime)
                         {
                             item[propertyName] = ((DateTime)newValue).ToString("yyyyMMddTHHmmss");
+                        }
+                        else if (newValue is bool)
+                        {
+                            item[propertyName] = ((bool)newValue) ? "1" : "";
                         }
                         else
                         {
