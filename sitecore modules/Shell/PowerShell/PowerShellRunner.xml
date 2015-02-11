@@ -17,6 +17,7 @@
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellRunner,Cognifide.PowerShell" />
       <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
       <Literal ID="CurrentProgressValue" Visible="false" runat="server"/>
+      <Literal ID="Closed" Visible="false" runat="server" />
       <Literal ID="Result" runat="server" />
 
       <Border class="scFlexColumnContainer scStretch">
