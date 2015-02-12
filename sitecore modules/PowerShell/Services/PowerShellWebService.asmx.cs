@@ -40,6 +40,11 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public void LoginUser(string userName, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return;
+            }
+
             if (!userName.Contains("\\"))
             {
                 userName = "sitecore\\" + userName;
@@ -60,13 +65,25 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public object ExecuteRocksCommand(string guid, string command, string username, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return string.Empty;
+            }
             LoginUser(username, password);
+            if (!Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             return ExecuteCommand(guid, command, "text");
         }
 
         [WebMethod(EnableSession = true)]
         public object ExecuteCommand(string guid, string command, string stringFormat)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var output = new StringBuilder();
 
@@ -123,6 +140,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object KeepAlive(string guid)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var sessionExists = ScriptSessionManager.SessionExists(guid);
             return sessionExists ? "alive" : "session-not-found";
         }
@@ -135,6 +156,10 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         protected void RunJob(ScriptSession session, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return;
+            }
             try
             {
                 session.ExecuteScriptPart(command);
@@ -161,6 +186,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object PollCommandOutput(string guid, string handle, string stringFormat)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
 
             var session = GetScriptSession(guid);
@@ -228,7 +257,15 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public string[] CompleteRocksCommand(string guid, string command, string username, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return new string[0];
+            }
             LoginUser(username, password);
+            if (!Sitecore.Context.IsLoggedIn)
+            {
+                return new string[0];
+            }
             return GetTabCompletionOutputs(guid, command, false);
         }
 
@@ -236,6 +273,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteAceCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
@@ -245,6 +286,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
             return result;
@@ -254,6 +299,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetAutoCompletionPrefix(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
@@ -272,6 +321,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetHelpForCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetHelpOutputs(guid, command));
             return result;

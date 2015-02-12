@@ -2,7 +2,7 @@
 version: 1
 id: {29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/API/View All Custom Sitecore Powershell Commandlets
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Web API/View All Custom Sitecore Powershell Commandlets
 parent: {C86F2D40-B80E-425B-9721-AD7162982A69}
 name: View All Custom Sitecore Powershell Commandlets
 master: {00000000-0000-0000-0000-000000000000}

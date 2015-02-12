@@ -2,7 +2,7 @@
 version: 1
 id: {28CE9247-7245-424E-90D8-37B487E225FE}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/API/ChildrenAsJson
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Web API/ChildrenAsJson
 parent: {C86F2D40-B80E-425B-9721-AD7162982A69}
 name: ChildrenAsJson
 master: {00000000-0000-0000-0000-000000000000}

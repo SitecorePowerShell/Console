@@ -21,6 +21,7 @@ namespace Cognifide.PowerShell.Core.Modules
         public const string ToolboxFeature = "toolbox";
         public const string StartMenuReportsFeature = "startMenuReports";
         public const string EventHandlersFeature = "eventHandlers";
+        public const string WebApi = "webAPI";
 
         private static SortedList<string, IntegrationPoint> libraries = null;
 

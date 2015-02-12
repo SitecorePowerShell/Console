@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Core.Processors
                     Array.Copy(sourceArray, 3, destinationArray, 0, length);
                     string scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
                     string query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath);
+                    query += string.Format("{0}script={1}&apiVersion=1", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath);
                     WebUtil.RewriteUrl(
                         new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
                 }
@@ -60,7 +60,7 @@ namespace Cognifide.PowerShell.Core.Processors
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
                     string scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
                     string query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&sc_database={2}", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath, sourceArray[3]);
+                    query += string.Format("{0}script={1}&sc_database={2}&apiVersion=2", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath, sourceArray[3]);
                     WebUtil.RewriteUrl(
                         new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
                 }

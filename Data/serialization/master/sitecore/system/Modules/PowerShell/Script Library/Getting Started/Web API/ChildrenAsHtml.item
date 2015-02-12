@@ -2,7 +2,7 @@
 version: 1
 id: {81648EA7-09D5-479D-8E78-D540EEE29106}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/API/ChildrenAsHtml
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Web API/ChildrenAsHtml
 parent: {C86F2D40-B80E-425B-9721-AD7162982A69}
 name: ChildrenAsHtml
 master: {00000000-0000-0000-0000-000000000000}
