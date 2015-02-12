@@ -2,7 +2,7 @@
 version: 1
 id: {20D867D5-584B-4494-99A8-0511667E9BEB}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Content Editor/Context Menu/Recent Author Activity
+path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu/Recent Author Activity
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
 name: Recent Author Activity
 master: {00000000-0000-0000-0000-000000000000}

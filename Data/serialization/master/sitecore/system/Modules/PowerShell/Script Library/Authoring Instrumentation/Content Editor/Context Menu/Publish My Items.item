@@ -2,7 +2,7 @@
 version: 1
 id: {F8573830-393A-45B1-8856-DCCE48EB5E92}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Content Editor/Context Menu/Publish My Items
+path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
 name: Publish My Items
 master: {00000000-0000-0000-0000-000000000000}

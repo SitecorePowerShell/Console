@@ -2,7 +2,7 @@
 version: 1
 id: {1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Content Editor/Context Menu/Author Statistics
+path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics
 parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
 name: Author Statistics
 master: {00000000-0000-0000-0000-000000000000}

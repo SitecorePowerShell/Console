@@ -2,7 +2,7 @@
 version: 1
 id: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Context Menu/Content Editor/Context Menu
+path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu
 parent: {16111A63-6336-4B17-B38E-84E9EDA02709}
 name: Context Menu
 master: {00000000-0000-0000-0000-000000000000}
