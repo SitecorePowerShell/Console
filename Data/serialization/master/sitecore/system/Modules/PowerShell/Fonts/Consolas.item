@@ -6,8 +6,8 @@ path: /sitecore/system/Modules/PowerShell/Fonts/Consolas
 parent: {4406B665-C086-4D1F-9048-0E62A9863755}
 name: Consolas
 master: {00000000-0000-0000-0000-000000000000}
-template: {AB86861A-6030-46C5-B394-E8F99E8B87DB}
-templatekey: Template
+template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
+templatekey: Standard template
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -19,7 +19,7 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: 0d224165-c2ce-4798-a527-95c1ab2c884b
+revision: bda9515c-42a5-4a13-8c0b-ef4eeb26c1f0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0d224165-c2ce-4798-a527-95c1ab2c884b
+bda9515c-42a5-4a13-8c0b-ef4eeb26c1f0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150213T013430:635593880705008982Z
+20150213T032147:635593945073808594Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

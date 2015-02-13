@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {8F1ED16B-0876-48B8-B8F9-29C7A9F3DD1D}
+id: {A1861BC6-98EF-4949-9E45-2A482B35B577}
 database: master
-path: /sitecore/system/Modules/PowerShell/Fonts/Source Code Pro
+path: /sitecore/system/Modules/PowerShell/Fonts/monospace
 parent: {4406B665-C086-4D1F-9048-0E62A9863755}
-name: Source Code Pro
+name: monospace
 master: {00000000-0000-0000-0000-000000000000}
 template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
 templatekey: Standard template
@@ -19,7 +19,7 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: eabed600-a50a-4239-a2dd-b2a0e2eb2913
+revision: 326d9356-be4d-4e6a-894b-8409190b7a5a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,7 +41,7 @@ name: __Revision
 key: __revision
 content-length: 36
 
-eabed600-a50a-4239-a2dd-b2a0e2eb2913
+326d9356-be4d-4e6a-894b-8409190b7a5a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8412
+content-length: 8573
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -91,7 +91,11 @@ $package.Sources.Add($source);
 # Colors
 $source = Get-Item 'master:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Master Colors" -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Module Root" -InstallMode Overwrite
+$source = Get-Item 'core:\system\Modules\PowerShell\Console Colors' | New-ItemSource -Name "Core Colors" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Fonts
+$source = Get-Item 'master:\system\Modules\PowerShell\Fonts' | New-ItemSource -Name "Master Fonts" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Rules Engine - Tag Definition
@@ -176,7 +180,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: c8cd45db-d62b-4316-b279-d8223c7a1ec1
+revision: 734aa436-2f28-4392-90ed-c3f691299411
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -191,14 +195,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c8cd45db-d62b-4316-b279-d8223c7a1ec1
+734aa436-2f28-4392-90ed-c3f691299411
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150206T164059:635588376594394531Z
+20150213T032833:635593949137304688Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
