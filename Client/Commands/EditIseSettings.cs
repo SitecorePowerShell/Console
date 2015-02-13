@@ -29,7 +29,7 @@ namespace Cognifide.PowerShell.Client.Commands
 
         protected override void EnsureContext(ClientPipelineArgs args)
         {
-            string settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
+            var settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
             CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
 
             Assert.IsNotNull(CurrentItem, CurrentItemIsNull);
@@ -44,11 +44,11 @@ namespace Cognifide.PowerShell.Client.Commands
 
             Assert.ArgumentNotNull(context, "context");
 
-            string settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
+            var settingsPath = ApplicationSettings.GetSettingsPath(AppName, Personalized);
             CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
             if (CurrentItem == null)
             {
-                ApplicationSettings settings = ApplicationSettings.GetInstance(AppName, Personalized);
+                var settings = ApplicationSettings.GetInstance(AppName, Personalized);
                 settings.Save();
                 CurrentItem = Factory.GetDatabase(ApplicationSettings.SettingsDb).GetItem(settingsPath);
             }
@@ -66,6 +66,14 @@ namespace Cognifide.PowerShell.Client.Commands
         {
             base.StartFieldEditor(args);
             ApplicationSettings.ReloadInstance(AppName, Personalized);
+
+            if (!args.IsPostBack)
+            {
+                return;
+            }
+
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, settings.FontFamily));
         }
     }
 }

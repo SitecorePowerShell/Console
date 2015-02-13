@@ -722,5 +722,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 args.WaitForPostBack();
             }
         }
+
+        [HandleMessage("ise:updatesettings", true)]
+        protected virtual void SetFontSize(ClientPipelineArgs args)
+        {
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, settings.FontFamily));
+        }
     }
 }

@@ -162,26 +162,38 @@ extend(cognifide, 'powershell');
             name: "fontSizeIncrease",
             bindKey: {win: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+", mac: "Ctrl-Alt-Shift-=|Ctrl-Alt-Shift-+"},
             exec: function(editor) { 
-                editor.setFontSize(Math.min(editor.getFontSize() + 1, 25)); 
+                cognifide.powershell.changeFontSize(editor.getFontSize() + 1);
             },
             readOnly: true
         }, {
             name: "fontSizeDecrease",
             bindKey: {win: "Ctrl-Alt-Shift--", mac: "Ctrl-Alt-Shift--"},
             exec: function(editor) { 
-                editor.setFontSize(Math.max(editor.getFontSize() - 1, 12)); 
+                cognifide.powershell.changeFontSize(Math.max(editor.getFontSize() - 1, 8));
             },
             readOnly: true
         }];
 
         codeeditor.commands.addCommands(codeeeditorcommands);
 
+        cognifide.powershell.changeFontSize = function (setting) {
+            setting = parseInt(setting) || 12;
+            codeeditor.setOption("fontSize", setting);
+        };
+
+        cognifide.powershell.changeFontFamily = function (setting) {
+            setting = setting || "Monaco";
+            codeeditor.setOption("fontFamily", setting);
+        };
+
+        window.scForm.postRequest("", "", "", "ise:updatesettings");
+
         cognifide.powershell.updateEditor = function () {
             codeeditor.getSession().setValue(editor.val());
         };
 
         cognifide.powershell.clearEditor = function () {
-            codeeditor.getSession().setValue('');
+            codeeditor.getSession().setValue("");
         };
 
         function escapeRegExp(string) {

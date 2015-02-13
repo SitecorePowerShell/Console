@@ -79,6 +79,8 @@ namespace Cognifide.PowerShell.Core.Settings
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
         public string ApplicationName { get; private set; }
+        public int FontSize { get; set; }
+        public string FontFamily { get; set; }
 
         public static string GetSettingsPath(string applicationName, bool personalizedSettings)
         {
@@ -214,6 +216,8 @@ namespace Cognifide.PowerShell.Core.Settings
                         configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
                         configuration["ForegroundColor"] = ForegroundColor.ToString();
                         configuration["BackgroundColor"] = BackgroundColor.ToString();
+                        configuration["FontSize"] = FontSize.ToString();
+                        configuration["FontFamily"] = FontFamily.Replace(" ", "_");
                     });
             }
         }
@@ -247,6 +251,10 @@ namespace Cognifide.PowerShell.Core.Settings
                 {
                     BackgroundColor = ConsoleColor.DarkBlue;
                 }
+
+                int fontSize;
+                FontSize = Int32.TryParse(configuration["FontSize"], out fontSize) ? Math.Max(fontSize, 8) : 12;
+                FontFamily = configuration["FontFamily"];
                 Loaded = true;
             }
             else
@@ -258,6 +266,8 @@ namespace Cognifide.PowerShell.Core.Settings
                 HostWidth = 80;
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.DarkBlue;
+                FontSize = 12;
+                FontFamily = "Monaco";
                 Loaded = true;
             }
         }
