@@ -298,7 +298,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Database scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             Item scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
-            using (var session = new ScriptSession(ApplicationNames.Default))
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
             {
                 String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
@@ -423,7 +423,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters,false);
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
             LvProgressOverlay.Visible = false;
-            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+            Monitor.SessionID = scriptSession.ID;
         }
 
         protected void ExecuteInternal(params object[] parameters)

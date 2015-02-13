@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return new NameValue[0];
             }
             Login(userName, password);
-            using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(script);
@@ -90,7 +90,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             Login(userName, password);
 
-            using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);

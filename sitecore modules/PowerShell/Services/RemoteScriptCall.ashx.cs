@@ -166,7 +166,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            using (var session = new ScriptSession(ApplicationNames.Default))
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
                 String script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
 

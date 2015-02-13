@@ -53,8 +53,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
-            var variables = (object[]) HttpContext.Current.Session[sid];
-            HttpContext.Current.Session.Remove(sid);
+            var variables = (object[]) HttpContext.Current.Cache[sid];
+            HttpContext.Current.Cache.Remove(sid);
 
             var title = WebUtil.GetQueryString("te");
             ShowHints = WebUtil.GetQueryString("sh") == "1";
@@ -483,7 +483,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var variables = GetVariableValues();
             var sid = WebUtil.GetQueryString("sid");
-            HttpContext.Current.Session[sid] = variables;
+            HttpContext.Current.Cache[sid] = variables;
             SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
         }

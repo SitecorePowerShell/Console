@@ -39,7 +39,6 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal ScriptName;
         protected Border ScriptResult;
         protected bool ScriptRunning { get; set; }
-        public ApplicationSettings Settings { get; set; }
 
         public string ParentFrameName
         {
@@ -117,11 +116,11 @@ namespace Cognifide.PowerShell.Client.Applications
             if (Context.ClientPage.IsEvent)
                 return;
 
-            Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
 
-            if (Settings.SaveLastScript)
+            if (settings.SaveLastScript)
             {
-                Editor.Value = Settings.LastScript;
+                Editor.Value = settings.LastScript;
             }
 
             var itemId = WebUtil.GetQueryString("id");
@@ -393,14 +392,13 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:run", true)]
         protected virtual void ClientExecute(ClientPipelineArgs args)
         {
-            Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            using (var scriptSession = new ScriptSession(Settings.ApplicationName))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true))
             {
+                var settings = scriptSession.Settings;
                 EnterScriptInfo.Visible = false;
-
                 try
                 {
-                    scriptSession.ExecuteScriptPart(Settings.Prescript);
+                    scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                     if (UseContext)
                     {
                         scriptSession.SetItemLocationContext(DataContext.CurrentItem);
@@ -419,12 +417,12 @@ namespace Cognifide.PowerShell.Client.Applications
                         string.Format("<pre style='background:red;'>{0}</pre>",
                             scriptSession.GetExceptionString(exc)));
                 }
-            }
-            if (Settings.SaveLastScript)
-            {
-                Settings.Load();
-                Settings.LastScript = Editor.Value;
-                Settings.Save();
+                if (settings.SaveLastScript)
+                {
+                    settings.Load();
+                    settings.LastScript = Editor.Value;
+                    settings.Save();
+                }
             }
         }
 
@@ -448,13 +446,11 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (autoDispose)
             {
-                Settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole, true);
-                scriptSession = new ScriptSession(Settings.ApplicationName);
+                scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true);
             }
             else
             {
-                scriptSession = ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
-                Settings = scriptSession.Settings;
+                scriptSession = ScriptSessionManager.GetSession(sessionName);
             }
 
             if (UseContext)
@@ -482,14 +478,14 @@ namespace Cognifide.PowerShell.Client.Applications
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
-            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+            Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("cognifide.powershell.restoreResults();");
 
-            if (Settings.SaveLastScript)
+            if (scriptSession.Settings.SaveLastScript)
             {
-                Settings.Load();
-                Settings.LastScript = Editor.Value;
-                Settings.Save();
+                scriptSession.Settings.Load();
+                scriptSession.Settings.LastScript = Editor.Value;
+                scriptSession.Settings.Save();
             }
         }
 
@@ -504,9 +500,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
             try
             {
-                scriptSession.ExecuteScriptPart(Settings.Prescript);
+                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(Editor.Value);
-                var output = new StringBuilder(10240);
                 if (Context.Job != null)
                 {
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
@@ -531,7 +526,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
-            var currentSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
+            var currentSession = ScriptSessionManager.GetSession(Monitor.SessionID);
             if (currentSession != null)
             {
                 currentSession.Abort();
@@ -553,7 +548,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var result = string.Empty;
             if (job != null)
             {
-                HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
+                Monitor.SessionID = string.Empty;
                 result = job.Status.Result as string;
             }
             Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",

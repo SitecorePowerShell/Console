@@ -100,7 +100,7 @@
 */
 
 .scContentControl.treePicker td{
-    padding: 2px 0 2px 0;
+    padding: 2px 0 2px 6px;
 }
 
 .scContentControl.treePicker{
@@ -178,4 +178,8 @@ fieldset label {
 
 fieldset {
   padding: 6px 8px 8px 10px;
+}
+
+table.scContentControl.treePicker > :first-child > :first-child {
+  height: 20px;
 }

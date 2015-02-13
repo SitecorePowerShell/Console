@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Web;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
@@ -36,6 +37,21 @@ namespace Cognifide.PowerShell.Client.Controls
             }
         }
 
+        public string SessionID
+        {
+            get { return HttpContext.Current.Session[JobHandle.ToString()].ToString(); }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    HttpContext.Current.Session.Remove(JobHandle.ToString());
+                }
+                else
+                {
+                    HttpContext.Current.Session[JobHandle.ToString()] = value;
+                }
+            }
+        }
         public bool Active
         {
             get

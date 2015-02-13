@@ -181,7 +181,7 @@ namespace Cognifide.PowerShell.Client.Applications
             };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
-            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+            Monitor.SessionID = scriptSession.ID;
         }
 
         public class RunnerOutput
@@ -272,8 +272,9 @@ namespace Cognifide.PowerShell.Client.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            var scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
-            HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
+            var sessionId = Monitor.SessionID;
+            var scriptSession = ScriptSessionManager.GetSession(sessionId);
+            Monitor.SessionID = string.Empty;
 
             if (scriptSession.CloseRunner)
             {
@@ -308,7 +309,9 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected virtual void AbortClick()
         {
-            var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
+
+            var sessionId = Monitor.SessionID;
+            var currentSession = ScriptSessionManager.GetSession(sessionId);
             if (currentSession != null) currentSession.Abort();
         }
 

@@ -12,7 +12,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
     {
-        public object[] Parameters { get; private set; }
+        public object[] Parameters
+        {
+            get { return parameters; }
+        }
+
         public string Width { get; private set; }
         public string Height { get; private set; }
         public string Title { get; private set; }
@@ -20,20 +24,28 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string CancelButtonName { get; private set; }
         public string OkButtonName { get; private set; }
         public bool ShowHints { get; set; }
-
         private Handle jobHandle;
-        public MessageQueue MessageQueue { get; private set; }
+        [NonSerialized]
+        private readonly object[] parameters;
+        [NonSerialized]
+        private readonly MessageQueue messageQueue;
+
+        public MessageQueue MessageQueue
+        {
+            get { return messageQueue; }
+        }
+
         public object Result { get; private set; }
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
             string description, string okButtonName, string cancelButtonName, bool showHints)
         {
-            MessageQueue = new MessageQueue();
+            messageQueue = new MessageQueue();
             if (JobContext.IsJob)
             {
                 jobHandle = JobContext.JobHandle;
             }
-            Parameters = parameters;
+            this.parameters = parameters;
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             Title = title ?? string.Empty;
@@ -55,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 (Context.ClientPage.CodeBeside as IPowerShellRunner).Monitor.Active = false;
             }
 
-            HttpContext.Current.Session[resultSig] = Parameters;
+            HttpContext.Current.Cache[resultSig] = Parameters;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
             if (!string.IsNullOrEmpty(Title))
@@ -105,8 +117,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 if (args.HasResult)
                 {
-                    object result = HttpContext.Current.Session[args.Result];
-                    HttpContext.Current.Session.Remove(args.Result);
+                    object result = HttpContext.Current.Cache[args.Result];
+                    HttpContext.Current.Cache.Remove(args.Result);
                     Result = result;
                 }
                 else

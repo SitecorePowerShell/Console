@@ -99,13 +99,6 @@ namespace Cognifide.PowerShell.Console.Services
                     });
             }
 
-            if (command.StartsWith("recycle-session", StringComparison.OrdinalIgnoreCase))
-            {
-                RecycleSession(guid);
-                return serializer.Serialize(
-                    new {result = "Session recycled.", prompt = "PS >"});
-            }
-
             var session = GetScriptSession(guid);
             try
             {
@@ -341,15 +334,6 @@ namespace Cognifide.PowerShell.Console.Services
         protected string GetJobId(string sessionGuid, string handle)
         {
             return "PowerShell-" + sessionGuid + "-" + handle;
-        }
-
-        private static void RecycleSession(string guid)
-        {
-            var session = HttpContext.Current.Session[guid] as ScriptSession;
-            if (session == null) return;
-
-            HttpContext.Current.Session.Remove(guid);
-            session.Dispose();
         }
 
         // TODO: Using the default JavaScript Serializer prevents us from being able to use PascalCasing.
