@@ -25,16 +25,36 @@ namespace Cognifide.PowerShell.Client.Applications
     [Serializable]
     public class FieldEditor : Command
     {
+        [NonSerialized]
+        private List<WildcardPattern> includePatterns;
+        [NonSerialized]
+        private List<WildcardPattern> excludePatterns;
         private const string UriParameter = "uri";
         private const string PathParameter = "path";
         private const string PreserveSectionsParameter = "preservesections";
         private const string IncludeStandardFieldsParameter = "isf";
         private const string CurrentItemIsNull = "Current item is null";
 
-        protected Item CurrentItem { get; set; }
-        protected List<WildcardPattern> IncludePatterns { get; private set; }
-        protected List<WildcardPattern> ExcludePatterns { get; private set; }
+        protected List<WildcardPattern> IncludePatterns
+        {
+            get { return includePatterns; }
+            private set { includePatterns = value; }
+        }
+
+        protected List<WildcardPattern> ExcludePatterns
+        {
+            get { return excludePatterns; }
+            private set { excludePatterns = value; }
+        }
+
         protected bool IncludeStandardFields { get; set; }
+        protected ItemUri CurrentItemUri { get; set; }
+
+        protected Item CurrentItem
+        {
+            get { return Database.GetItem(CurrentItemUri); }
+            set { CurrentItemUri = value.Uri; }
+        }
 
         protected virtual PageEditFieldEditorOptions GetOptions(ClientPipelineArgs args, NameValueCollection form)
         {

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -35,8 +36,20 @@ namespace Cognifide.PowerShell.Client.Commands
         protected const string SettingsItemIsNull = "Settings item is null";
         protected const string RequireTemplateParameter = "requiretemplate";
 
-        protected Item CurrentItem { get; set; }
-        protected Item SettingsItem { get; set; }
+        protected ItemUri CurrentItemUri { get; set; }
+        protected ItemUri SettingsItemUri { get; set; }
+
+        protected Item CurrentItem
+        {
+            get { return Database.GetItem(CurrentItemUri); }
+            set { CurrentItemUri = value.Uri; }
+        }
+
+        protected Item SettingsItem
+        {
+            get { return Database.GetItem(SettingsItemUri); }
+            set { SettingsItemUri = value.Uri; }
+        }
 
         public override CommandState QueryState(CommandContext context)
         {
