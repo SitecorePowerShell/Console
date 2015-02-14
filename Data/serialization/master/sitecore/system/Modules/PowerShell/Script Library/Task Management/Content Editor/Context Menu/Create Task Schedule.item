@@ -2,9 +2,9 @@
 version: 1
 id: {38C2F540-8609-4050-A60A-D7A914F5798C}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Content Editor/Context Menu/Create PowerShell Task Schedule
+path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Content Editor/Context Menu/Create Task Schedule
 parent: {E472779C-C39A-4C80-8F51-D28E64E6AD07}
-name: Create PowerShell Task Schedule
+name: Create Task Schedule
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -26,28 +26,28 @@ content-length: 276
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 984
+content-length: 1039
 
-$parent = Get-Item .
-$item = get-item "master:\system\Modules\PowerShell\Script Library"
+$parent = Get-Item -Path .
+$item = Get-Item -Path "master:\system\Modules\PowerShell\Script Library"
 
 $result = Read-Variable -Parameters `
     @{ Name = "name"; Value="Schedule"; Title="Name for the task schedule."}, 
     @{ Name = "item"; Title="Script to execute"; Root="/sitecore/system/Modules/PowerShell/Script Library"} `
-    -Description "Creates a new schedule for a task that will execute a script from your PoserShell Script Library" `
+    -Description "Creates a new schedule for a task that will execute a script from your PowerShell Script Library" `
     -Title "Create new Scripted Schedule" -Width 500 -Height 500 -OkButtonName "Create" -ShowHints
 
-if($result -ne "ok")
-{
+if($result -ne "ok") {
     Close-Window
     Exit
 }
 
-if($name -ne $null){
+if($name -and $item) {
   $schedule = New-Item -Path "$($parent.ProviderPath)" -Name $name -ItemType "System/Tasks/Schedule"
-  $command = get-item master:\system\Tasks\Commands\PowerShellScriptCommand
+  $command = Get-Item -Path master:\system\Tasks\Commands\PowerShellScriptCommand
   $schedule.Command = $command
   $schedule.Schedule = '20140101|99990101|127|1.00:00'
+  $schedule.Items = $item.ItemPath
   Import-Function -Name Edit-TaskSchedule
   Edit-TaskSchedule $schedule
   Close-Window
@@ -63,7 +63,7 @@ People/32x32/clock.png
 ----version----
 language: en
 version: 1
-revision: 7ae2525d-b143-4d50-a456-adebbc2b3081
+revision: 5c123976-7852-4552-9fd2-759ba881cb0c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -78,14 +78,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7ae2525d-b143-4d50-a456-adebbc2b3081
+5c123976-7852-4552-9fd2-759ba881cb0c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150212T161831:635593547112763672Z
+20150214T182848:635595353280138158Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
