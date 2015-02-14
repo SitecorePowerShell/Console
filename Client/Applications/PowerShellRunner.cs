@@ -32,6 +32,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal DialogHeader;
         protected Literal PreviousProgressValue;
         protected Literal CurrentProgressValue;
+        protected Literal Closed;
         protected Button Cancel;
         protected ThemedImage Icon;
 
@@ -275,6 +276,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (scriptSession.CloseRunner)
             {
                 scriptSession.CloseRunner = false;
+                Closed.Text = "close";
                 Context.ClientPage.ClientResponse.CloseWindow();
             }
             if (string.IsNullOrEmpty(PersistentId))
