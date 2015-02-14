@@ -276,7 +276,12 @@ namespace Cognifide.PowerShell.Client.Applications
             if (scriptSession.CloseRunner)
             {
                 scriptSession.CloseRunner = false;
-                Closed.Text = "close";
+                
+                if (Closed != null)
+                {
+                    Closed.Text = "close";
+                }
+
                 Context.ClientPage.ClientResponse.CloseWindow();
             }
             if (string.IsNullOrEmpty(PersistentId))
