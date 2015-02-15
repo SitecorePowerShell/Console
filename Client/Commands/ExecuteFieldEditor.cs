@@ -78,14 +78,15 @@ namespace Cognifide.PowerShell.Client.Commands
         protected virtual PageEditFieldEditorOptions GetOptions(ClientPipelineArgs args, NameValueCollection form)
         {
             EnsureContext(args);
+            var settingsItem = SettingsItem;
             var options = new PageEditFieldEditorOptions(form, BuildListWithFieldsToShow())
             {
-                Title = SettingsItem[Header],
-                Icon = SettingsItem[Icon]
+                Title = settingsItem[Header],
+                Icon = settingsItem[Icon]
             };
-            options.Parameters["contentitem"] = CurrentItem.Uri.ToString();
+            options.Parameters["contentitem"] = CurrentItemUri.ToString();
             options.PreserveSections = args.Parameters[PreserveSectionsParameter] == "1";
-            options.DialogTitle = SettingsItem[Header];
+            options.DialogTitle = settingsItem[Header];
             options.SaveItem = true;
             return options;
         }
@@ -95,17 +96,19 @@ namespace Cognifide.PowerShell.Client.Commands
             string path = args.Parameters[PathParameter];
             Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
 
-            CurrentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
-            Assert.IsNotNull(CurrentItem, CurrentItemIsNull);
-            SettingsItem = Sitecore.Client.CoreDatabase.GetItem(args.Parameters[ButtonParameter]);
-            Assert.IsNotNull(SettingsItem, SettingsItemIsNull);
+            currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
+            Assert.IsNotNull(currentItem, CurrentItemIsNull);
+            CurrentItem = currentItem;
+            var settingsItem = Sitecore.Client.CoreDatabase.GetItem(args.Parameters[ButtonParameter]);
+            Assert.IsNotNull(settingsItem, SettingsItemIsNull);
+            SettingsItem = settingsItem;
         }
 
         private IEnumerable<FieldDescriptor> BuildListWithFieldsToShow()
         {
             var fieldList = new List<FieldDescriptor>();
             var fieldString = new ListString(SettingsItem[FieldName]);
-
+            var currentItem = CurrentItem;
             foreach (var fieldName in new ListString(fieldString))
             {
                 // add all non "standard fields"
@@ -118,7 +121,7 @@ namespace Cognifide.PowerShell.Client.Commands
                 // remove fields that are prefixed with a "-" sign
                 if (fieldName.IndexOf('-') == 0)
                 {
-                    Field field = CurrentItem.Fields[fieldName.Substring(1, fieldName.Length - 1)];
+                    Field field = currentItem.Fields[fieldName.Substring(1, fieldName.Length - 1)];
                     if (field != null)
                     {
                         ID fieldId = field.ID;
@@ -134,9 +137,9 @@ namespace Cognifide.PowerShell.Client.Commands
                     continue;
                 }
 
-                if (CurrentItem.Fields[fieldName] != null)
+                if (currentItem.Fields[fieldName] != null)
                 {
-                    fieldList.Add(new FieldDescriptor(CurrentItem, fieldName));
+                    fieldList.Add(new FieldDescriptor(currentItem, fieldName));
                 }
             }
             return fieldList;
@@ -144,12 +147,13 @@ namespace Cognifide.PowerShell.Client.Commands
 
         private void GetNonStandardFields(List<FieldDescriptor> fieldList)
         {
-            CurrentItem.Fields.ReadAll();
-            foreach (Field field in CurrentItem.Fields)
+            var currentItem = CurrentItem;
+            currentItem.Fields.ReadAll();
+            foreach (Field field in currentItem.Fields)
             {
                 if (field.GetTemplateField().Template.BaseIDs.Length > 0)
                 {
-                    fieldList.Add(new FieldDescriptor(CurrentItem, field.Name));
+                    fieldList.Add(new FieldDescriptor(currentItem, field.Name));
                 }
             }
         }
@@ -207,30 +211,14 @@ namespace Cognifide.PowerShell.Client.Commands
                     return;
 
                 PageEditFieldEditorOptions results = PageEditFieldEditorOptions.Parse(args.Result);
-
-                CurrentItem.Edit(options =>
+                var currentItem = CurrentItem;
+                currentItem.Edit(options =>
                 {
                     foreach (var field in results.Fields)
                     {
-                        CurrentItem.Fields[field.FieldID].Value = field.Value;
+                        currentItem.Fields[field.FieldID].Value = field.Value;
                     }
                 });
-
-/*
-                Context.ClientPage.ServerProperties["ItemID"] = CurrentItem.ID.ToString();
-                if (!string.IsNullOrEmpty(args.Parameters["ParentFrameName"]))
-                {
-                    ScriptInvokationBuilder invokationBuilder = new ScriptInvokationBuilder("scForm", "postMessage");
-                    invokationBuilder.AddString("item:updated(id={0})", new object[1]
-                                                                                {
-                                                                                    CurrentItem.ID.ToString()
-                                                                                });
-                    invokationBuilder.AddString(args.Parameters["ParentFrameName"], new object[0]);
-                    invokationBuilder.AddString("Shell", new object[0]);
-                    invokationBuilder.Add(false);
-                    SheerResponse.Eval(invokationBuilder.ToString());
-                }
-*/
 
                 PageEditFieldEditorOptions.Parse(args.Result).SetPageEditorFieldValues();
             }

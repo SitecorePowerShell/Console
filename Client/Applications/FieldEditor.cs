@@ -75,8 +75,9 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             string path = args.Parameters[PathParameter];
             Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
-            CurrentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
-            Assert.IsNotNull(CurrentItem, CurrentItemIsNull);
+            currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
+            Assert.IsNotNull(currentItem, CurrentItemIsNull);
+            CurrentItem = currentItem;
             IncludeStandardFields = args.Parameters[IncludeStandardFieldsParameter] == "1";
         }
 
@@ -102,13 +103,13 @@ namespace Cognifide.PowerShell.Client.Applications
                                 new WildcardPattern(name.Substring(1), WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
                         .ToList();
             }
-
-            CurrentItem.Fields.ReadAll();
+            var currentItem = CurrentItem;
+            currentItem.Fields.ReadAll();
             Template template =
                 TemplateManager.GetTemplate(Sitecore.Configuration.Settings.DefaultBaseTemplate,
-                    CurrentItem.Database);
+                    currentItem.Database);
 
-            foreach (Field field in CurrentItem.Fields)
+            foreach (Field field in currentItem.Fields)
             {
                 //if not including standard field and it's standard, skip it.
                 if (!IncludeStandardFields && template.ContainsField(field.ID))
@@ -128,7 +129,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 if (wildcardMatch)
                 {
-                    fieldList.Add(new FieldDescriptor(CurrentItem, field.Name));
+                    fieldList.Add(new FieldDescriptor(currentItem, field.Name));
                 }
             }
             return fieldList;
@@ -189,12 +190,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (args.HasResult)
                 {
                     PageEditFieldEditorOptions results = PageEditFieldEditorOptions.Parse(args.Result);
-
-                    CurrentItem.Edit(options =>
+                    var currentItem = CurrentItem;
+                    currentItem.Edit(options =>
                     {
                         foreach (var field in results.Fields)
                         {
-                            CurrentItem.Fields[field.FieldID].Value = field.Value;
+                            currentItem.Fields[field.FieldID].Value = field.Value;
                         }
                     });
 
