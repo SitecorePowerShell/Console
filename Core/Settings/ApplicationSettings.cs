@@ -217,7 +217,7 @@ namespace Cognifide.PowerShell.Core.Settings
                         configuration["ForegroundColor"] = ForegroundColor.ToString();
                         configuration["BackgroundColor"] = BackgroundColor.ToString();
                         configuration["FontSize"] = FontSize.ToString();
-                        configuration["FontFamily"] = FontFamily.Replace(" ", "_");
+                        configuration["FontFamily"] = FontFamily;
                     });
             }
         }
