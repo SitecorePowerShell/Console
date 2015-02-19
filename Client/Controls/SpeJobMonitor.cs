@@ -39,7 +39,15 @@ namespace Cognifide.PowerShell.Client.Controls
 
         public string SessionID
         {
-            get { return HttpContext.Current.Session[JobHandle.ToString()].ToString(); }
+            get
+            {
+                var sessionId = HttpContext.Current.Session[JobHandle.ToString()];
+                if (sessionId != null)
+                {
+                    return sessionId.ToString();
+                }
+                return string.Empty;
+            }
             set
             {
                 if (string.IsNullOrEmpty(value))
