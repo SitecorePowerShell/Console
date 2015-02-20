@@ -165,7 +165,9 @@ namespace Cognifide.PowerShell.Client.Controls
             this.JobHandle = JobManager.Start(new JobOptions(name, category, siteName, (object)new SpeJobMonitor.TaskRunner(task), "Run")
             {
                 ContextUser = Sitecore.Context.User,
-                AtomicExecution = false
+                AtomicExecution = false,
+                EnableSecurity = true,
+                ClientLanguage = Sitecore.Context.ContentLanguage
             }).Handle;
             ScheduleCallback();
         }

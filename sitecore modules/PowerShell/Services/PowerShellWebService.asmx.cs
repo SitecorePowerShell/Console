@@ -107,7 +107,9 @@ namespace Cognifide.PowerShell.Console.Services
                     new object[] {session, command})
                 {
                     AfterLife = new TimeSpan(0, 10, 0),
-                    ContextUser = Sitecore.Context.User
+                    ContextUser = Sitecore.Context.User,
+                    EnableSecurity = true,
+                    ClientLanguage = Sitecore.Context.ContentLanguage
                 };
                 JobManager.Start(jobOptions);
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
