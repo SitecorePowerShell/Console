@@ -92,7 +92,9 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteDebugLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Debug, message, RawUI, true);
+            var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + message, 
+                RawUI.WindowSize.Width,
+                ConsoleColor.Cyan, RawUI.BackgroundColor, true);
             Output.AddRange(splitter);
         }
 

@@ -54,7 +54,7 @@
           <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
           <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results</a>
-          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results (there were errors)</a>
+          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results and errors</a>
           <div class="footerOkCancel">
             <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close"/>
             <Button ID="AbortButton" Class="scButton scButtonPrimary" Click="AbortClick" Header="Abort"/>
