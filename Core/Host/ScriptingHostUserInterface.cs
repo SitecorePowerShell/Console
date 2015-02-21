@@ -177,14 +177,14 @@ namespace Cognifide.PowerShell.Core.Host
                     {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
                 };
             Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
-            int lineWidth = choices.Count*75 + 120;
+            int lineWidth = choices.Count*80 + 140;
             int strLineWidth = lineWidth/8;
             int lineHeight = 0;
             foreach (string line in message.Split('\n'))
             {
                 lineHeight += 1 + line.Length/strLineWidth;
             }
-            lineHeight = lineHeight*14 + 40;
+            lineHeight = lineHeight*21 + 130;
             string dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 
