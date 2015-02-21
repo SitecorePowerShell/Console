@@ -413,9 +413,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 catch (Exception exc)
                 {
-                    Context.ClientPage.ClientResponse.SetInnerHtml("Result",
-                        string.Format("<pre style='background:red;'>{0}</pre>",
-                            scriptSession.GetExceptionString(exc)));
+                    var result = string.Empty;
+                    if (scriptSession.Output != null)
+                    {
+                        result += scriptSession.Output.ToHtml();
+                    }
+                    result += string.Format("<pre style='background:red;'>{0}</pre>",
+                            scriptSession.GetExceptionString(exc));
+                    Context.ClientPage.ClientResponse.SetInnerHtml("Result", result);
                 }
                 if (settings.SaveLastScript)
                 {
@@ -514,9 +519,15 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (Context.Job != null)
                 {
-                    Context.Job.Status.Result =
-                        string.Format("<pre style='background:red;'>{0}</pre>",
-                            scriptSession.GetExceptionString(exc));
+                    var result = string.Empty;
+                    if (scriptSession.Output != null)
+                    {
+                        result += scriptSession.Output.ToHtml();
+                    }
+                    result += string.Format("<pre style='background:red;'>{0}</pre>",
+                        scriptSession.GetExceptionString(exc));
+
+                    Context.Job.Status.Result = result;
                     JobContext.PostMessage("ise:updateresults");
                     JobContext.Flush();
                 }
