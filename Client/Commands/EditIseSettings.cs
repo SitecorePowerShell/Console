@@ -71,9 +71,7 @@ namespace Cognifide.PowerShell.Client.Commands
             {
                 return;
             }
-
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, settings.FontFamily));
+            SheerResponse.Timer("ise:updatesettings", 10);
         }
     }
 }

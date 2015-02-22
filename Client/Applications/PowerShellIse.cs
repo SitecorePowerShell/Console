@@ -739,7 +739,14 @@ namespace Cognifide.PowerShell.Client.Applications
         protected virtual void SetFontSize(ClientPipelineArgs args)
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, settings.FontFamily));
+            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+            var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
+            var font = string.IsNullOrEmpty(settings.FontFamily)? "monospace": settings.FontFamily;
+            var fontItem = fonts.Children[font];
+            font = fontItem != null
+                ? fontItem["Phrase"]
+                : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
+            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, font));
         }
     }
 }
