@@ -3,7 +3,7 @@ version: 1
 id: {D7C22826-9D04-476E-BDBE-780988899A9E}
 database: core
 path: /sitecore/templates/Modules/PowerShell Console
-parent: {513E193D-6946-4E83-AC19-FAC01FDCAC77}
+parent: {618D16F1-5FBB-41AA-8A73-3EF61C4E991D}
 name: PowerShell Console
 master: {00000000-0000-0000-0000-000000000000}
 template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}

@@ -13,9 +13,9 @@ templatekey: Menu item
 field: {335C6760-6C0E-4C6C-814C-A53D203F553E}
 name: Icon
 key: icon
-content-length: 33
+content-length: 27
 
-Office/32x32/selection_delete.png
+People/32x32/cpu_delete.png
 ----field----
 field: {CAB694FC-E37C-44EB-9012-488B775CF638}
 name: Message
@@ -23,10 +23,17 @@ key: message
 content-length: 21
 
 ise:setsessionid(id=)
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 27
+
+People/32x32/cpu_delete.png
 ----version----
 language: en
 version: 1
-revision: 42679124-cd77-4c1d-bc66-85785dae8d0d
+revision: 0a0aaa02-7828-4e40-99cd-8143bf9c93ff
 
 ----field----
 field: {9B72A62B-2775-423D-B17A-EC34A9F31AF8}
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-42679124-cd77-4c1d-bc66-85785dae8d0d
+0a0aaa02-7828-4e40-99cd-8143bf9c93ff
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150127T234727:635579992479361797Z
+20150205T145109:635587446696847890
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

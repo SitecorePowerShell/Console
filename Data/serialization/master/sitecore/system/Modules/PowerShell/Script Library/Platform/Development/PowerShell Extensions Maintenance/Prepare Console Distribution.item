@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8573
+content-length: 8113
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -149,12 +149,6 @@ $package.Sources.Add($source);
 $source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
-# Content Editor Ribbon integration
-$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Chunks/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #1" -InstallMode Overwrite
-$package.Sources.Add($source);
-$source = Get-Item 'core:/content/Applications/Content Editor/Ribbons/Strips/View/PowerShell/' | New-ItemSource -Name "Content Editor Ribbon integration #2" -InstallMode Overwrite
-$package.Sources.Add($source);
-
 # Task Integration
 $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
 $package.Sources.Add($source);
@@ -180,7 +174,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 734aa436-2f28-4392-90ed-c3f691299411
+revision: b46fee39-c8ac-4789-8de8-e94a62ccce46
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -195,14 +189,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-734aa436-2f28-4392-90ed-c3f691299411
+b46fee39-c8ac-4789-8de8-e94a62ccce46
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150213T032833:635593949137304688Z
+20150222T155949:635602175898896484
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

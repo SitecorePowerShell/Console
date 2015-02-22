@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5796
+content-length: 5249
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -85,19 +85,12 @@ Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Report
 Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
 
 # Content Editor Context Menu integration
-Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
+Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 95
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts\' | Serialize-Item
-
-# Content Editor Ribbon integration
-Write-Progress -Activity "Serializing Content Editor Ribbon integration" -PercentComplete 95
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\Scripts\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Chunks\PowerShell\Terminal\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Ribbons\Strips\View\PowerShell\' | Serialize-Item
 
 # Tasks integration
 Write-Progress -Activity "Serializing Content Tasks integration" -PercentComplete 100
@@ -108,7 +101,7 @@ Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 ----version----
 language: en
 version: 1
-revision: 950eb0bf-4149-4bbb-8b65-c0e850662228
+revision: 341b0bea-94f6-4182-ae5c-c24596ff3f57
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -123,14 +116,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-950eb0bf-4149-4bbb-8b65-c0e850662228
+341b0bea-94f6-4182-ae5c-c24596ff3f57
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150213T032617:635593947774609375Z
+20150222T155931:635602175716044922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
