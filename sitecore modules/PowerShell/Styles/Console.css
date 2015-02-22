@@ -238,3 +238,11 @@ html {
 #All {
   padding: 0 8px 0 8px;
 }
+
+#ProgressOverlay {
+  position: absolute;
+  padding: 0;
+  top: 30px;
+  right: 30px;
+  left: 30px;
+}

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Console.Services;
@@ -18,6 +20,8 @@ namespace Cognifide.PowerShell.Client.Applications
     public class PowerShellConsole : BaseForm, IPowerShellRunner
     {
         protected Literal Options;
+        protected Literal Progress;
+        protected Border ProgressOverlay;
         public ApplicationSettings Settings { get; set; }
 
         public bool MonitorActive
@@ -80,7 +84,51 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 iMessage.Execute();
             }
+            if (message.Arguments.AllKeys.Contains("finished") && message.Arguments["finished"] == "true")
+            {
+                ProgressOverlay.Visible = false;
+            }
         }
 
+        [HandleMessage("ise:updateprogress", true)]
+        protected virtual void UpdateProgress(ClientPipelineArgs args)
+        {
+            var showProgress =
+                !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
+            ProgressOverlay.Visible = showProgress;
+            var sb = new StringBuilder();
+            if (showProgress)
+            {
+                ProgressOverlay.Visible = true;
+
+                sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
+                if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
+                {
+                    sb.AppendFormat("<p>{0}</p>", args.Parameters["StatusDescription"]);
+                }
+
+                if (!string.IsNullOrEmpty(args.Parameters["PercentComplete"]))
+                {
+                    var percentComplete = Int32.Parse(args.Parameters["PercentComplete"]);
+                    if (percentComplete > -1)
+                        sb.AppendFormat("<div id='progressbar'><div style='width:{0}%'></div></div>", percentComplete);
+                }
+
+                if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
+                {
+                    var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                    if (secondsRemaining > -1)
+                        sb.AppendFormat("<p><strong>{0:c} </strong> remaining.</p>",
+                            new TimeSpan(0, 0, secondsRemaining));
+                }
+
+                if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
+                {
+                    sb.AppendFormat("<p>{0}</p>", args.Parameters["CurrentOperation"]);
+                }
+            }
+
+            Progress.Text = sb.ToString();
+        }
     }
 }
