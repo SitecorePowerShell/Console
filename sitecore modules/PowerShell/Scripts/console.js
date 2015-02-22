@@ -99,6 +99,7 @@ extend(cognifide, 'powershell');
                     var attempts = 0;
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
+                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                     (function poll(wait) {
                         setTimeout(function() {
                             getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
@@ -134,6 +135,8 @@ extend(cognifide, 'powershell');
                     })(initialWait);
                 } else {
                     displayResult(term, data);
+                    var handle = data["handle"];
+                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                 }
             }
         );

@@ -197,12 +197,13 @@ namespace Cognifide.PowerShell.Console.Services
                     "Can't find your command result. This might mean that your session has timed out or your script caused the application to restart.";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
-                return serializer.Serialize(result);
+                return serializer.Serialize(result);            
             }
+
+            result.handle = handle;
             if (!scriptJob.IsDone)
             {
                 result.status = StatusWorking;
-                result.handle = handle;
                 return serializer.Serialize(result);
             }
             if (scriptJob.Status.Failed)
