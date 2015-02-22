@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 
                 foreach (var scriptItem in libraryItem.Children.ToList())
                 {
-                    using (var session = new ScriptSession(ApplicationNames.Default))
+                    using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
                     {
                         var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                             ? scriptItem.Fields[ScriptItemFieldNames.Script].Value

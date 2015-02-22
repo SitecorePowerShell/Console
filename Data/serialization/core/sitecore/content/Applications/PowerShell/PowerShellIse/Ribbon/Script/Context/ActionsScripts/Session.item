@@ -13,9 +13,9 @@ templatekey: Small Gallery Button
 field: {601EBEC8-1D78-4D06-8228-45C28D9FABD8}
 name: Icon
 key: icon
-content-length: 20
+content-length: 24
 
-People/32x32/cpu.png
+Office/32x32/reticle.png
 ----field----
 field: {1BA953EE-84AD-4753-870E-ABE82AF900C4}
 name: Command
@@ -36,7 +36,7 @@ name: Gallery Width
 key: gallery width
 content-length: 3
 
-400
+500
 ----field----
 field: {DEC8D2D5-E3CF-48B6-A653-8E69E2716641}
 name: __Security
@@ -204,7 +204,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 2df3ce47-4e4f-43af-a036-97ad1625df5d
+revision: 597a0f20-d301-41fa-972c-f38c2a968e12
 
 ----field----
 field: {CF5BB092-1A85-4C78-B486-A79FD6D84771}
@@ -233,7 +233,7 @@ name: Gallery Height
 key: gallery height
 content-length: 3
 
-250
+400
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -261,14 +261,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2df3ce47-4e4f-43af-a036-97ad1625df5d
+597a0f20-d301-41fa-972c-f38c2a968e12
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150205T145221:635587447418420156
+20150213T174242:635594461625683593Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

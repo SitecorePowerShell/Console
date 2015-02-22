@@ -2,6 +2,12 @@
     scForm.postRequest("", "", "", "psr:execute");
 };
 
+window.onfocus=function(){
+    if($ise('#Closed')[0].innerHTML === "close"){
+      scForm.postRequest("", "", "", "psr:delayedclose");
+    }
+};
+
 jQuery(document).ready(function ($) {
     if ($('#progressbar').length > 0) {
         $('#progressbar').empty().VistaProgressBar({

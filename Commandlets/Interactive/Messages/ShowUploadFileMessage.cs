@@ -15,12 +15,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     public class ShowUploadFileMessage : IMessage, IMessageWithResult
     {
         private Handle jobHandle;
+        [NonSerialized]
+        private readonly MessageQueue messageQueue;
 
         public ShowUploadFileMessage(string width, string height, string title, string description, string okButtonName,
             string cancelButtonName, string path, bool versioned, string language, bool overwrite, bool unpack,
             bool advancedDialog)
         {
-            MessageQueue = new MessageQueue();
+            messageQueue = new MessageQueue();
             if (JobContext.IsJob)
             {
                 jobHandle = JobContext.JobHandle;
@@ -51,6 +53,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public bool Overwrite { get; set; }
         public string Language { get; set; }
         public bool Versioned { get; set; }
+        public MessageQueue MessageQueue { get { return messageQueue; } }
 
         /// <summary>
         ///     Starts the pipeline.
@@ -60,7 +63,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Context.ClientPage.Start(this, "Pipeline");
         }
 
-        public MessageQueue MessageQueue { get; private set; }
 
         /// <summary>
         ///     Shows a confirmation dialog.

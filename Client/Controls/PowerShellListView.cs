@@ -64,7 +64,7 @@ namespace Cognifide.PowerShell.Client.Controls
 
         public ShowListViewMessage Data
         {
-            get { return (ShowListViewMessage) HttpContext.Current.Session[ContextId]; }
+            get { return (ShowListViewMessage) HttpContext.Current.Cache[ContextId]; }
         }
 
         protected override void DoClick(Message message)

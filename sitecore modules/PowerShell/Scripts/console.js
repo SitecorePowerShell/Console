@@ -23,13 +23,15 @@ extend(cognifide, 'powershell');
         initialPoll: 100,
         maxPoll: 5000,
         keepAliveInterval: 60000, // 60 * 1000 - every minute
-        keepAliveCheck: 2000 // 2 * 1000 - every 2 seconds
+        keepAliveCheck: 2000, // 2 * 1000 - every 2 seconds
+        monitorActive: true
 };
 
     var settings = defaults;
     cognifide.powershell.setOptions = function(options) {
         $.extend(settings, options);
     };
+
 
     var tabCompletions = null;
     var lastUpdate = 0;
@@ -99,8 +101,12 @@ extend(cognifide, 'powershell');
                     var attempts = 0;
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
+                    if(settings.monitorActive){
+                      scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
+                    };
                     (function poll(wait) {
                         setTimeout(function() {
+                            if(settings.monitorActive){
                             getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                 function(pollJson) {
                                     var jsonData = JSON.parse(pollJson.d);
@@ -122,6 +128,7 @@ extend(cognifide, 'powershell');
                                     } else {
                                         displayResult(term, jsonData);
                                     }
+                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                                 },
                                 function(jqXHR, textStatus, errorThrown) {
                                     term.resume();
@@ -129,10 +136,15 @@ extend(cognifide, 'powershell');
                                     term.echo("Communication error: " + textStatus + "; " + errorThrown);
                                 }
                             );
+                           } else {
+                               poll(initialWait);
+                           }
                         }, wait);
                     })(initialWait);
                 } else {
                     displayResult(term, data);
+                    var handle = data["handle"];
+                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                 }
             }
         );

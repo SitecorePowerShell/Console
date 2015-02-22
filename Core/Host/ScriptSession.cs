@@ -31,14 +31,6 @@ namespace Cognifide.PowerShell.Core.Host
             "[[;#f00;#000]Exception: {0}]\r\n" + "[[;#f00;#000]Type: {1}]\r\n" + "[[;#f00;#000]Stack trace:\r\n{2}]";
 
         private const string ConsoleInnerExceptionPrefix = "\r\n[[b;#fff;#F00]Inner ] {0}";
-        private readonly ScriptingHost host;
-        private readonly Runspace runspace;
-
-        private bool disposed;
-        private bool initialized;
-        private Pipeline pipeline;
-
-        public static Version PsVersion { get; private set; }
 
         public static Dictionary<string, string> RenamedCommandlets = new Dictionary<string, string>
         {
@@ -47,36 +39,18 @@ namespace Cognifide.PowerShell.Core.Host
             {"Invoke-Script", "Execute-Script"},
             {"Invoke-ShellCommand", "Execute-ShellCommand"},
             {"Invoke-Workflow", "Execute-Workflow"},
-            {"Install-Package","Import-Package"},
-            {"Initialize-Item","Wrap-Item"},
+            {"Install-Package", "Import-Package"},
+            {"Initialize-Item", "Wrap-Item"},
             {"Send-File", "Download-File"}
         };
-        
-        public bool AutoDispose
-        {
-            get { return host.AutoDispose; }
-            internal set { host.AutoDispose = value; }
-        }
 
-        public bool CloseRunner
-        {
-            get { return host.CloseRunner; }
-            internal set { host.CloseRunner = value; }
-        }
+        private bool disposed;
+        private bool initialized;
+        private Pipeline pipeline;
+        private readonly ScriptingHost host;
+        private readonly Runspace runspace;
 
-        public string ID
-        {
-            get { return host.SessionId; }
-            internal set { host.SessionId = value; }
-        }
-
-        public string Key { get; internal set; }
-
-        public ScriptSession(string applianceType) : this(applianceType, true)
-        {
-        }
-
-        public ScriptSession(string applianceType, bool personalizedSettings)
+        internal ScriptSession(string applianceType, bool personalizedSettings)
         {
             // Create and open a PowerShell runspace.  A runspace is a container 
             // that holds PowerShell pipelines, and provides access to the state
@@ -84,7 +58,7 @@ namespace Cognifide.PowerShell.Core.Host
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
 
-            RunspaceConfiguration conf = RunspaceConfiguration.Create();
+            var conf = RunspaceConfiguration.Create();
             host = new ScriptingHost(Settings, conf);
             runspace = host.Runspace;
 
@@ -92,10 +66,12 @@ namespace Cognifide.PowerShell.Core.Host
             if (Settings.UseTypeInfo)
             {
                 conf.Formats.Prepend(
-                    new FormatConfigurationEntry(HttpRuntime.AppDomainAppPath + @"sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml"));
+                    new FormatConfigurationEntry(HttpRuntime.AppDomainAppPath +
+                                                 @"sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml"));
                 conf.Formats.Update();
                 conf.Types.Prepend(
-                    new TypeConfigurationEntry(HttpRuntime.AppDomainAppPath + @"sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml"));
+                    new TypeConfigurationEntry(HttpRuntime.AppDomainAppPath +
+                                               @"sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml"));
                 conf.Types.Update();
             }
 
@@ -114,11 +90,44 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public static Version PsVersion { get; private set; }
+
+        public bool AutoDispose
+        {
+            get { return host.AutoDispose; }
+            internal set { host.AutoDispose = value; }
+        }
+
+        public bool CloseRunner
+        {
+            get { return host.CloseRunner; }
+            internal set { host.CloseRunner = value; }
+        }
+
+        public string ID
+        {
+            get { return host.SessionId; }
+            internal set { host.SessionId = value; }
+        }
+
+        public string UserName
+        {
+            get { return host.User; }
+            internal set { host.User = value; }
+        }
+
+        public string Key { get; internal set; }
         public ApplicationSettings Settings { get; private set; }
 
-        public OutputBuffer Output { get { return host.Output; } }
+        public OutputBuffer Output
+        {
+            get { return host.Output; }
+        }
 
-        public string CurrentLocation { get { return runspace.SessionStateProxy.Path.CurrentLocation.Path; } }
+        public string CurrentLocation
+        {
+            get { return runspace.SessionStateProxy.Path.CurrentLocation.Path; }
+        }
 
         public string ApplianceType { get; set; }
 
@@ -154,7 +163,8 @@ namespace Cognifide.PowerShell.Core.Host
                 runspace.SessionStateProxy.SetVariable("AppVPath", HttpRuntime.AppDomainAppVirtualPath);
                 runspace.SessionStateProxy.SetVariable("tempPath", Environment.GetEnvironmentVariable("temp"));
                 runspace.SessionStateProxy.SetVariable("tmpPath", Environment.GetEnvironmentVariable("tmp"));
-                runspace.SessionStateProxy.SetVariable("me", User.Current.Name);
+                UserName = User.Current.Name;
+                runspace.SessionStateProxy.SetVariable("me", UserName);
                 runspace.SessionStateProxy.SetVariable("HttpContext", HttpContext.Current);
                 if (HttpContext.Current != null)
                 {
@@ -195,14 +205,15 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
-                
-                StringBuilder sb = new StringBuilder(2048);
+
+                var sb = new StringBuilder(2048);
                 foreach (var rename in RenamedCommandlets)
                 {
-                    sb.AppendFormat("New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n", rename.Key, rename.Value);
+                    sb.AppendFormat(
+                        "New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n", rename.Key,
+                        rename.Value);
                 }
                 ExecuteScriptPart(sb.ToString(), false, true);
-
             }
         }
 
@@ -238,7 +249,7 @@ namespace Cognifide.PowerShell.Core.Host
         internal List<object> ExecuteScriptPart(string script, bool stringOutput, bool internalScript,
             bool marshalResults)
         {
-            if (String.IsNullOrEmpty(script))
+            if (String.IsNullOrWhiteSpace(script))
             {
                 return null;
             }
@@ -288,7 +299,9 @@ namespace Cognifide.PowerShell.Core.Host
             var execResults = pipeline.Invoke();
 
             //Output = host.Output;
-            return marshallResults ? execResults.Select(p => p.BaseObject).ToList() : execResults.Cast<object>().ToList();
+            return marshallResults
+                ? execResults.Select(p => p.BaseObject).ToList()
+                : execResults.Cast<object>().ToList();
         }
 
         private void PipelineStateChanged(object sender, PipelineStateEventArgs e)
@@ -325,6 +338,32 @@ namespace Cognifide.PowerShell.Core.Host
                 exception += String.Format(ConsoleInnerExceptionPrefix, GetExceptionConsoleString(exc.InnerException));
             }
             return exception;
+        }
+
+        public void SetItemLocationContext(Item item)
+        {
+            SetVariable("SitecoreContextItem", item);
+            var contextScript = GetDataContextSwitch(item);
+            ExecuteScriptPart(contextScript);
+        }
+
+        public void SetExecutedScript(string database, string path)
+        {
+            if (!string.IsNullOrEmpty(database) && !string.IsNullOrEmpty(path))
+            {
+                var scriptItem = Factory.GetDatabase(database).GetItem(new ID(path));
+                SetExecutedScript(scriptItem);
+            }
+        }
+
+        public void SetExecutedScript(Item scriptItem)
+        {
+            if (scriptItem != null)
+            {
+                SetVariable("PSScriptRoot", PathUtilities.GetItemPsPath(scriptItem.Parent));
+                SetVariable("PSCommandPath", PathUtilities.GetItemPsPath(scriptItem));
+                SetVariable("PSScript", scriptItem);
+            }
         }
 
         #region IDisposable logic
@@ -371,32 +410,5 @@ namespace Cognifide.PowerShell.Core.Host
         }
 
         #endregion
-
-        public void SetItemLocationContext(Item item)
-        {
-            SetVariable("SitecoreContextItem", item);
-            var contextScript = GetDataContextSwitch(item);
-            ExecuteScriptPart(contextScript);
-        }
-
-
-        public void SetExecutedScript(string database, string path)
-        {
-            if (!string.IsNullOrEmpty(database) && !string.IsNullOrEmpty(path))
-            {
-                Item scriptItem = Factory.GetDatabase(database).GetItem(new ID(path));
-                SetExecutedScript(scriptItem);
-            }
-        }
-
-        public void SetExecutedScript(Item scriptItem)
-        {
-            if (scriptItem != null)
-            {
-                SetVariable("PSScriptRoot", PathUtilities.GetItemPsPath(scriptItem.Parent));
-                SetVariable("PSCommandPath", PathUtilities.GetItemPsPath(scriptItem));
-                SetVariable("PSScript", scriptItem);
-            }
-        }
     }
 }

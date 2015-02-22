@@ -94,6 +94,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             LogErrors(() => SessionState.PSVariable.Remove("ScPsSlvProperties"));
         }
 
+        [Serializable]
         public class DataObject
         {
             public DataObject()

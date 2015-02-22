@@ -41,12 +41,12 @@ body.ie {
 .varHint {
     margin: 2px 0 4px 2px;
     display: block;
+    clear: both;
 }
 
 .varCheckbox {
     margin-top: 20px;
-    margin-right: 6px;
-    margin-bottom: 10px;
+    float: left;
 }
 
 .scContentControl {
@@ -60,6 +60,7 @@ body.ie {
     border: solid 1px ButtonShadow;
     padding-left: 2px;
     float: left;
+    /* width: 90% !important; */
     position: relative;
     left: 0;
 }
@@ -86,6 +87,12 @@ body.ie {
 
 .scBottomEdge, .scTopEdge { height: 1px; }
 
+.checkBoxWrapper {
+  display: block;
+  padding: 24px 0 16px 0;
+  float: left;
+  clear: both;
+}
 .scTabPage {
     padding: 12px;
     width: 100%;
@@ -228,7 +235,6 @@ fieldset {
 .scScrollbox {
   border: solid 1px #B4B4B4;
 }
-
 .scContentControlSelectedList {
   bottom: 0px;
 }

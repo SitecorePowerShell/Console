@@ -21,7 +21,7 @@
       </Stylesheet>
       <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" runat="server" x:placeholder="Stylesheets"/>
 
       <GridPanel class="scConfirmationContainer" Columns="2" Width="100%" >
         <ThemedImage class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64" Height="64" Margin="8px 0px 8px 16px" />

@@ -1,0 +1,115 @@
+----item----
+version: 1
+id: {E1EE14D4-5725-45C2-9629-A6F5BCCC6E4F}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Beginner Tutorials/Lesson 1 - Running Commands
+parent: {0078756A-12C3-4104-B263-D52A73A69CC6}
+name: Lesson 1 - Running Commands
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 3337
+
+<#
+    Running PowerShell Commands
+#>
+
+# Ignore this for now.
+$sectionStyle = @{
+    "ForegroundColor" = "White"
+    "BackgroundColor" = "Red"
+}
+
+$sampleStyle = @{
+    "ForegroundColor" = "Yellow"
+}
+
+Set-Location master:\
+
+Write-Host "Windows PowerShell commands follow the format <Verb>-<Noun>. Examples of verbs include Get and Set, examples of nouns include Process and Item." @sectionStyle
+Write-Host ""
+Write-Host "Let's begin with getting version details about the Sitecore PowerShell Extensions Module." @sectionStyle
+Write-Host "PS master:\> Get-Host" @sampleStyle
+Get-Host
+
+Write-Host "Some commands just work without anything special. Let's list the running processes on the server." @sectionStyle
+Write-Host "PS master:\> Get-Process" @sampleStyle
+Get-Process | Format-Table
+Write-Host "Your standard command line interface (CLI) CMD.exe returns text, Windows PowerShell returns objects. Objects can be files, folders, registry keys, and even Sitecore items." @sectionStyle
+Write-Host "Now let's be more specific using parameters on the command. This time let's return only the IIS worker process." @sectionStyle
+Write-Host "The format in this example is <Verb>-<Noun> -<ParameterName> <Argument>" @sectionStyle
+Write-Host "PS master:\> Get-Process -Name w3wp" @sampleStyle
+Get-Process -Name w3wp | Format-Table
+
+Write-Host "To learn more about Get-Process, or any other command, use Get-Help <Command Name>" @sectionStyle
+Write-Host "The documentation provides the different syntax options available; such as when to use -Name." @sectionStyle
+Write-Host "PS master:\> Get-Help -Name Get-Process" @sampleStyle
+Get-Help -Name Get-Process
+
+Write-Host "List all the verbs and format into a table." @sectionStyle
+Write-Host "PS master:\> Get-Verb | Format-Table -AutoSize" @sampleStyle
+Get-Verb | Format-Table -AutoSize
+
+Write-Host "List all the providers available. Providers connect you to disk drives, the registry, and even the Sitecore CMS!" @sectionStyle
+Write-Host "PS master:\> Get-PSDrive" @sampleStyle
+Get-PSDrive | Format-Table
+
+Write-Host "Variables are denoted with the symbol '$'. The New-Object command creates a new object with the specified type." @sectionStyle
+Write-Host 'PS master:\> $item = New-Object -TypeName PSObject -Property @{Name="Michael";Height=73;}' @sampleStyle
+$item = New-Object -TypeName PSObject -Property @{Name="Michael";Height=73;}
+Write-Host 'PS master:\> $item' @sampleStyle
+$item | Format-Table
+Write-Host "Windows PowerShell allows you to chain commands together using the | (pipe) character; the object from one command are passed to the next command." @sectionStyle
+Write-Host "Pipe the objects in the variable and list the members." @sectionStyle
+Write-Host 'PS master:\> $item | Get-Member' @sampleStyle
+$item | Get-Member | Format-Table
+
+Write-Host "Change the current location from one provider to another." @sectionStyle
+Write-Host 'PS master:\> Set-Location HKLM:' @sampleStyle
+Set-Location HKLM:
+Write-Host 'PS HKLM:\> Set-Location C:' @sampleStyle
+Set-Location C:\
+Write-Host 'PS C:\> Get-Item -Path .' @sampleStyle
+Get-Item -Path . | Format-Table -AutoSize
+Write-Host 'PS C:\> Set-Location Alias:' @sampleStyle
+Set-Location Alias:
+Write-Host 'PS Alias:\> Get-ChildItem' @sampleStyle
+Get-ChildItem | Format-Table
+----version----
+language: en
+version: 1
+revision: 5d8678c6-1fbe-4b93-a49a-980ab94a3c85
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20150215T191354Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+5d8678c6-1fbe-4b93-a49a-980ab94a3c85
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20150215T232811:635596396910835035Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

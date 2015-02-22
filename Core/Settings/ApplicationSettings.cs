@@ -79,6 +79,8 @@ namespace Cognifide.PowerShell.Core.Settings
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
         public string ApplicationName { get; private set; }
+        public int FontSize { get; set; }
+        public string FontFamily { get; set; }
 
         public static string GetSettingsPath(string applicationName, bool personalizedSettings)
         {
@@ -144,9 +146,12 @@ namespace Cognifide.PowerShell.Core.Settings
         internal static void ReloadInstance(string applicationName, bool personalizedSettings)
         {
             string settingsPath = GetSettingsName(applicationName, personalizedSettings);
-            if (instances.ContainsKey(settingsPath))
+            lock (instances)
             {
-                instances.Remove(settingsPath);
+                if (instances.ContainsKey(settingsPath))
+                {
+                    instances.Remove(settingsPath);
+                }
             }
         }
 
@@ -172,26 +177,26 @@ namespace Cognifide.PowerShell.Core.Settings
 
         private Item GetSettingsDto()
         {
-            Database settingsDb = Factory.GetDatabase(SettingsDb);
-            return settingsDb.GetItem(CurrentUserSettingsPath) ?? settingsDb.GetItem(AllUsersSettingsPath);
+            Database db = Factory.GetDatabase(SettingsDb);
+            return db.GetItem(CurrentUserSettingsPath) ?? db.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
         {
-            Database settingsDb = Factory.GetDatabase(SettingsDb);
+            Database db = Factory.GetDatabase(SettingsDb);
             string appSettingsPath = AppSettingsPath;
-            Item currentUserItem = settingsDb.GetItem(CurrentUserSettingsPath);
+            Item currentUserItem = db.GetItem(CurrentUserSettingsPath);
             if (currentUserItem == null)
             {
-                Item settingsRootItem = settingsDb.GetItem(appSettingsPath);
+                Item settingsRootItem = db.GetItem(appSettingsPath);
                 if (settingsRootItem == null)
                 {
                     return null;
                 }
-                Item folderTemplateItem = settingsDb.GetItem(FolderTemplatePath);
-                Item currentDomainItem = settingsDb.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
+                Item folderTemplateItem = db.GetItem(FolderTemplatePath);
+                Item currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
                     folderTemplateItem);
-                Item defaultItem = settingsDb.GetItem(appSettingsPath + IseSettingsItemAllUsers);
+                Item defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
                 currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
             }
             return currentUserItem;
@@ -211,6 +216,8 @@ namespace Cognifide.PowerShell.Core.Settings
                         configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
                         configuration["ForegroundColor"] = ForegroundColor.ToString();
                         configuration["BackgroundColor"] = BackgroundColor.ToString();
+                        configuration["FontSize"] = FontSize.ToString();
+                        configuration["FontFamily"] = FontFamily;
                     });
             }
         }
@@ -244,6 +251,10 @@ namespace Cognifide.PowerShell.Core.Settings
                 {
                     BackgroundColor = ConsoleColor.DarkBlue;
                 }
+
+                int fontSize;
+                FontSize = Int32.TryParse(configuration["FontSize"], out fontSize) ? Math.Max(fontSize, 8) : 12;
+                FontFamily = configuration["FontFamily"];
                 Loaded = true;
             }
             else
@@ -255,6 +266,8 @@ namespace Cognifide.PowerShell.Core.Settings
                 HostWidth = 80;
                 ForegroundColor = ConsoleColor.White;
                 BackgroundColor = ConsoleColor.DarkBlue;
+                FontSize = 12;
+                FontFamily = "Monaco";
                 Loaded = true;
             }
         }

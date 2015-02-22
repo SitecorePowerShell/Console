@@ -1,0 +1,81 @@
+----item----
+version: 1
+id: {1876D433-4FAE-46B2-B2EF-AAA0FDA110E7}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics
+parent: {47BA2B5B-36CB-4061-9DC0-BEE85700780E}
+name: Author Statistics
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 618
+
+$runScript = Show-Confirm "This script might take a long while on a larger branches - are you sure you want to run this script?"
+
+Set-HostProperty -HostWidth 60
+
+if($runScript -eq "yes"){
+    get-childitem -recurse | `
+    Group-Object "__Updated By" | `
+        Sort count -descending | `
+        Show-ListView -property Name, `
+        @{Label="Items Updated"; Expression={$_.count}}, `
+        @{Label="Icon"; Expression={ [Sitecore.Security.Accounts.User]::FromName("$($_.name)", $false).Profile.Portrait } } `
+        -Modal -Width 690 -Height 600
+#    Show-Result -Text
+    Close-Window
+} else {
+  Close-Window
+}
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+Business/32x32/businessmen.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+400
+----version----
+language: en
+version: 1
+revision: ad2f7e5c-c9a7-4f32-945a-6f80ac94dfc2
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20121129T134604
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+ad2f7e5c-c9a7-4f32-945a-6f80ac94dfc2
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130916T012701:635148916217226563
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

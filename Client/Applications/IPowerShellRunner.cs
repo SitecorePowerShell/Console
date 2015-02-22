@@ -4,6 +4,6 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public interface IPowerShellRunner
     {
-        SpeJobMonitor Monitor { get; }
+        bool MonitorActive { set; }
     }
 }

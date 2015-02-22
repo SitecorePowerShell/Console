@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
             Item scriptItem = item.Database.GetItem(scriptSource);
-            using (var session = new ScriptSession(ApplicationNames.Default))
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
             {
                 String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value

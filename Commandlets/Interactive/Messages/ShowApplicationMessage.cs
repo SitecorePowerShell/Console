@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web;
 using Sitecore.Data;
@@ -10,6 +11,7 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
+    [Serializable]
     public class ShowApplicationMessage : IMessage
     {
         public List<BaseListViewCommand.DataObject> Data { get; set; }

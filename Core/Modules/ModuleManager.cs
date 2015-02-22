@@ -22,30 +22,38 @@ namespace Cognifide.PowerShell.Core.Modules
                 if (modules == null)
                 {
                     modules = new List<Module>();
-                    Item masterLibrary =
-                        Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)
-                            .GetItem(ApplicationSettings.ScriptLibraryPath);
-                    if (masterLibrary != null)
-                    {
-                        modules.Add(new Module(masterLibrary, true));
+                    var dbModules = GetDbModules(ApplicationSettings.ScriptLibraryDb);
+                    modules.AddRange(dbModules);
 
-                        foreach (Item item in masterLibrary.GetChildren())
-                        {
-                            if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
-                            {
-                                modules.Add(new Module(item, false));
-                            }
-                        }
-                    }
-
-                    Item coreLibrary = Factory.GetDatabase("core").GetItem(ApplicationSettings.ScriptLibraryPath);
-                    if (coreLibrary != null)
-                    {
-                        modules.Add(new Module(coreLibrary, true));
-                    }
+                    dbModules = GetDbModules("core");
+                    modules.AddRange(dbModules);
                 }
                 return modules;
             }
+        }
+
+        public static List<Module> GetDbModules(string database)
+        {
+            var dbModules = new List<Module>();
+
+            var db = Factory.GetDatabase(database);
+            if (db != null)
+            {
+                Item library = db.GetItem(ApplicationSettings.ScriptLibraryPath);
+                if (library != null)
+                {
+                    dbModules.Add(new Module(library, true));
+
+                    foreach (Item item in library.GetChildren())
+                    {
+                        if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
+                        {
+                            dbModules.Add(new Module(item, false));
+                        }
+                    }
+                }
+            }
+            return dbModules;
         }
 
         public static List<Item> GetFeatureRoots(string featureName)
@@ -58,6 +66,19 @@ namespace Cognifide.PowerShell.Core.Modules
             }
             return list;
         }
+
+        public static List<Item> GetFeatureRoots(string featureName, string dbName)
+        {
+            List<Item> list = new List<Item>();
+            var modules = GetDbModules(dbName);
+            foreach (Module module in modules)
+            {
+                Item featureRoot = module.GetFeatureRoot(featureName);
+                if (featureRoot != null) list.Add(featureRoot);
+            }
+            return list;
+        }
+
 
         public static void Invalidate(Item item)
         {

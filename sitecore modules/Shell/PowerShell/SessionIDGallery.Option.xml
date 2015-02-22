@@ -2,17 +2,28 @@
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
   <SessionIDGallery.Option>
     <Border RollOver="true" Class="scMenuPanelItem" Click="$Click">
-      <GridPanel Columns="2">
+      <GridPanel Columns="2" Width="100%">
         <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top">
           <Literal Text="$Number"/>
         </Border>
 
+        <Stylesheet>
+          .userName { float: left; }
+          .sessionId { float: right; padding-right: 8px; color: red; }
+          .location { clear: both; }
+        </Stylesheet>
         <Border NoWrap="true">
 
           <Border Padding="0px 0px 0px 8px">
-            <Literal Text="$Header"/>
-            <br/>
-            <Literal Text="$SubHeader"/>
+            <p class="userName">
+              <Literal Text="$UserName"/>
+            </p>
+            <p class="sessionId">
+                  <Literal Text="$SessionId"/>
+            </p>
+            <p class="location">
+              <Literal Text="$Location"/>
+            </p>
           </Border>
 
         </Border>

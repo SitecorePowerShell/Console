@@ -14,6 +14,7 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
+    [Serializable]
     public class ShowListViewMessage : IMessage
     {
         public List<BaseListViewCommand.DataObject> Data { get; set; }
@@ -22,7 +23,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string Height { get; private set; }
         public string Icon { get; private set; }
         public int PageSize { get; private set; }
-        public ScriptSession Session { get; private set; }
         public bool Modal { get; set; }
         public string InfoTitle { get; private set; }
         public string InfoDescription { get; private set; }
@@ -109,7 +109,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public void Execute()
         {
             string resultSig = Guid.NewGuid().ToString();
-            HttpContext.Current.Session[resultSig] = this;
+            HttpContext.Current.Cache[resultSig] = this;
 
             if (!Modal)
             {

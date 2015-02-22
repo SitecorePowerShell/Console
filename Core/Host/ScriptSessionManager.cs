@@ -21,6 +21,11 @@ namespace Cognifide.PowerShell.Core.Host
             return GetSession(sessionId);            
         }
 
+        public static ScriptSession NewSession(string applicanceType, bool personalizedSettings)
+        {
+            return GetSession(string.Empty, applicanceType, personalizedSettings);
+        }
+
         public static ScriptSession GetSession(string persistentId)
         {
             return GetSession(persistentId, ApplicationNames.Default, false);

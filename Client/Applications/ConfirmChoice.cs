@@ -13,6 +13,8 @@ namespace Cognifide.PowerShell.Client.Applications
     {
         protected Border Buttons;
         protected Literal Text;
+        protected Literal DialogHeader;
+        protected Literal DialogDescription;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -21,10 +23,9 @@ namespace Cognifide.PowerShell.Client.Applications
             if (Context.ClientPage.IsEvent)
                 return;
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te")).Replace("\n", "<br/>");
-            string caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
-            //string defaultChoice = WebUtil.GetQueryString("dc");
+            DialogHeader.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
+            string defaultChoice = WebUtil.GetQueryString("dc");
             int i = 0;
-            Context.ClientPage.Title = caption;
             while (HttpContext.Current.Request.QueryString.AllKeys.Contains("btn_" + i))
             {
                 string key = "btn_" + i;
@@ -34,6 +35,11 @@ namespace Cognifide.PowerShell.Client.Applications
                     Header = HttpContext.Current.Request.QueryString[key],
                     Click = string.Format("button:click(value={0})", key)
                 };
+                if (i.ToString() == defaultChoice)
+                {
+                    button.Class += " scButtonPrimary";
+                    button.KeyCode = "13";
+                }
                 Buttons.Controls.Add(button);
                 i++;
             }

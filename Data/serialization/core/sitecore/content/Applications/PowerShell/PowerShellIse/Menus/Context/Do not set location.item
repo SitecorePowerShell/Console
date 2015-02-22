@@ -13,9 +13,9 @@ templatekey: Menu item
 field: {335C6760-6C0E-4C6C-814C-A53D203F553E}
 name: Icon
 key: icon
-content-length: 39
+content-length: 31
 
-Applications/32x32/selection_delete.png
+Office/32x32/sign_forbidden.png
 ----field----
 field: {CAB694FC-E37C-44EB-9012-488B775CF638}
 name: Message
@@ -26,7 +26,7 @@ ise:setcontextitem(id=,db=)
 ----version----
 language: en
 version: 1
-revision: 3140b078-3a61-43b6-8124-5e9be9e71ac1
+revision: c0fe7083-13b4-47b4-a78b-99ad6409434e
 
 ----field----
 field: {9B72A62B-2775-423D-B17A-EC34A9F31AF8}
@@ -48,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3140b078-3a61-43b6-8124-5e9be9e71ac1
+c0fe7083-13b4-47b4-a78b-99ad6409434e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150205T143252:635587435729377187
+20150128T134335:635580494154437344Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 {
                     return;
                 }
-                using (var session = new ScriptSession(ApplicationNames.Default))
+                using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
                 {
                     foreach (Item scriptItem in libraryItem.Children)
                     {

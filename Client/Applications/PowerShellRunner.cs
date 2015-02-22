@@ -19,7 +19,6 @@ using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Job = Sitecore.Jobs.Job;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Client.Applications
@@ -33,6 +32,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal DialogHeader;
         protected Literal PreviousProgressValue;
         protected Literal CurrentProgressValue;
+        protected Literal Closed;
         protected Button Cancel;
         protected ThemedImage Icon;
 
@@ -49,6 +49,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal PsProgressStatus;
         protected Button OkButton;
         protected Button AbortButton;
+
+        public bool MonitorActive
+        {
+            get { return Monitor.Active; }
+            set { Monitor.Active = value; }
+        }
 
         public string PersistentId
         {
@@ -114,7 +120,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
-            
+
             if (!Context.ClientPage.IsEvent)
             {
                 ItemId = WebUtil.GetQueryString("id");
@@ -125,7 +131,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 ScriptId = WebUtil.GetQueryString("scriptId");
                 ScriptDb = WebUtil.GetQueryString("scriptDb");
 
-                Item scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
+                var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
                 scriptItem.Fields.ReadAll();
                 Icon.Src = scriptItem.Appearance.Icon;
 
@@ -133,11 +139,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 ScriptContent = scriptItem[ScriptItemFieldNames.Script];
                 DialogHeader.Text = scriptItem.DisplayName;
 
-                if (Monitor == null)
-                {
-                    Monitor = new SpeJobMonitor {ID = "Monitor"};
-                    Context.ClientPage.Controls.Add(Monitor);
-                }
+                if (Monitor != null) return;
+
+                Monitor = new SpeJobMonitor {ID = "Monitor"};
+                Context.ClientPage.Controls.Add(Monitor);
             }
             else
             {
@@ -149,7 +154,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (Context.ClientPage.ClientRequest.Parameters == "pstaskmonitor:check" &&
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
-                    int percentComplete = Int32.Parse(CurrentProgressValue.Text);
+                    var percentComplete = Int32.Parse(CurrentProgressValue.Text);
                     SheerResponse.Eval(
                         string.Format(@"updateProgress('#progressbar',{0});", percentComplete));
                     PreviousProgressValue.Text = CurrentProgressValue.Text;
@@ -165,13 +170,13 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void Execute()
         {
-            ScriptSession scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
+            var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
-            string contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}",
+            var contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}",
                 scriptSession.Settings.HostWidth,
                 scriptSession.Settings.Prescript);
 
-            scriptSession.SetExecutedScript(ScriptDb,ScriptId);
+            scriptSession.SetExecutedScript(ScriptDb, ScriptId);
             var parameters = new object[]
             {
                 scriptSession,
@@ -180,7 +185,7 @@ namespace Cognifide.PowerShell.Client.Applications
             };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
-            HttpContext.Current.Session[Monitor.JobHandle.ToString()] = scriptSession;
+            Monitor.SessionID = scriptSession.ID;
         }
 
         public class RunnerOutput
@@ -205,17 +210,16 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 scriptSession.ExecuteScriptPart(contextScript);
                 scriptSession.ExecuteScriptPart(script);
-                if (Context.Job != null)
+                if (Context.Job == null) return;
+
+                Context.Job.Status.Result = new RunnerOutput
                 {
-                    Context.Job.Status.Result = new RunnerOutput
-                    {
-                        Errors = string.Empty,
-                        Output = scriptSession.Output.ToHtml(),
-                        HasErrors = scriptSession.Output.HasErrors
-                    };
-                    JobContext.PostMessage("psr:updateresults");
-                    JobContext.Flush();
-                }
+                    Errors = string.Empty,
+                    Output = scriptSession.Output.ToHtml(),
+                    HasErrors = scriptSession.Output.HasErrors
+                };
+                JobContext.PostMessage("psr:updateresults");
+                JobContext.Flush();
             }
             catch (Exception exc)
             {
@@ -252,16 +256,16 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("psr:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
-            Job job = JobManager.GetJob(Monitor.JobHandle);
+            var job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
-            string printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
+            var printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
             if (result != null && !string.IsNullOrEmpty(result.Errors))
             {
                 printResults += string.Format("<pre style='background:red;'>{0}</pre>", result.Errors);
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
-            PsProgressStatus.Text = "<span class='status'> </span>";
+            PsProgressStatus.Text = "<span class='status'> </span><br/>";
             if (result != null)
             {
                 SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
@@ -271,12 +275,19 @@ namespace Cognifide.PowerShell.Client.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            var scriptSession = (ScriptSession) HttpContext.Current.Session[Monitor.JobHandle.ToString()];
-            HttpContext.Current.Session.Remove(Monitor.JobHandle.ToString());
+            var sessionId = Monitor.SessionID;
+            var scriptSession = ScriptSessionManager.GetSession(sessionId);
+            Monitor.SessionID = string.Empty;
 
             if (scriptSession.CloseRunner)
             {
                 scriptSession.CloseRunner = false;
+                
+                if (Closed != null)
+                {
+                    Closed.Text = "close";
+                }
+
                 Context.ClientPage.ClientResponse.CloseWindow();
             }
             if (string.IsNullOrEmpty(PersistentId))
@@ -285,20 +296,35 @@ namespace Cognifide.PowerShell.Client.Applications
             }
         }
 
+        [HandleMessage("psr:close", true)]
         protected virtual void OkClick()
         {
             SheerResponse.CloseWindow();
         }
 
+        [HandleMessage("psr:delayedclose", true)]
+        protected virtual void DelayedClose(ClientPipelineArgs args)
+        {
+            SheerResponse.Timer("psr:dodelayedclose", 10);
+        }
+
+        [HandleMessage("psr:dodelayedclose", true)]
+        protected virtual void DoDelayedClose(ClientPipelineArgs args)
+        {
+            SheerResponse.CloseWindow();
+        }
+
+
         protected virtual void AbortClick()
         {
-            var currentSession = HttpContext.Current.Session[Monitor.JobHandle.ToString()] as ScriptSession;
+            var sessionId = Monitor.SessionID;
+            var currentSession = ScriptSessionManager.GetSession(sessionId);
             if (currentSession != null) currentSession.Abort();
         }
 
         protected virtual void ViewResults()
         {
-            string resultSig = Guid.NewGuid().ToString();
+            var resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Result.Value;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
             urlString.Add("sid", resultSig);
@@ -311,15 +337,15 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var sb = new StringBuilder();
 
-            string activity = args.Parameters["Activity"];
+            var activity = args.Parameters["Activity"];
             Title.Text = string.IsNullOrEmpty(activity) ? "Running script..." : activity;
 
-            string status = args.Parameters["StatusDescription"];
-            bool showStatus = !string.IsNullOrEmpty(status);
+            var status = args.Parameters["StatusDescription"];
+            var showStatus = !string.IsNullOrEmpty(status);
             PsProgressStatus.Visible = showStatus;
             PsProgressStatus.Text = showStatus
-                ? string.Format("<span class='status'>Status: {0}</span>", status)
-                : "<span class='status'> </span><br/>";
+                ? string.Format("<span class='status'>{0}</span><br/>", status)
+                : "<span class='status'> </span><br/>";
 
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {
@@ -340,7 +366,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
                 {
-                    int secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
+                    var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
                         sb.AppendFormat(
                             "<span class='timeRemaining'><span class='label'>Time remaining:</span> {0:c}</span><br/>",
@@ -373,5 +399,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
             Dispatcher.Dispatch(message, context);
         }
+
     }
 }

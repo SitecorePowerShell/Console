@@ -26,27 +26,26 @@ content-length: 280
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 109
+content-length: 128
 
 Import-Function -Name "Edit-TaskSchedule"
 
-$schedule = get-item .
-
-Edit-TaskSchedule $schedule
-
-Close-Window
-
+$item = Get-Item -Path .
+if($item) {
+  Edit-TaskSchedule $item
+  Close-Window
+}
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 26
+content-length: 34
 
-People/16x16/clock_run.png
+People/32x32/clock_preferences.png
 ----version----
 language: en
 version: 1
-revision: 266a7096-4bc9-4233-a42a-3130df24fc9b
+revision: b96d500f-b2fa-47db-83df-7132060e4cf8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -61,14 +60,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-266a7096-4bc9-4233-a42a-3130df24fc9b
+b96d500f-b2fa-47db-83df-7132060e4cf8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141126T125256:635526031765286250
+20150215T173207:635596183277210641Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

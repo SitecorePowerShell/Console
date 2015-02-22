@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Web;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
@@ -36,6 +37,29 @@ namespace Cognifide.PowerShell.Client.Controls
             }
         }
 
+        public string SessionID
+        {
+            get
+            {
+                var sessionId = HttpContext.Current.Session[JobHandle.ToString()];
+                if (sessionId != null)
+                {
+                    return sessionId.ToString();
+                }
+                return string.Empty;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    HttpContext.Current.Session.Remove(JobHandle.ToString());
+                }
+                else
+                {
+                    HttpContext.Current.Session[JobHandle.ToString()] = value;
+                }
+            }
+        }
         public bool Active
         {
             get
@@ -141,7 +165,9 @@ namespace Cognifide.PowerShell.Client.Controls
             this.JobHandle = JobManager.Start(new JobOptions(name, category, siteName, (object)new SpeJobMonitor.TaskRunner(task), "Run")
             {
                 ContextUser = Sitecore.Context.User,
-                AtomicExecution = false
+                AtomicExecution = false,
+                EnableSecurity = true,
+                ClientLanguage = Sitecore.Context.ContentLanguage
             }).Handle;
             ScheduleCallback();
         }
@@ -188,7 +214,8 @@ namespace Cognifide.PowerShell.Client.Controls
             public void Run()
             {
                 this._task();
-                JobContext.MessageQueue.PutMessage((IMessage)new CompleteMessage());
+                JobContext.MessageQueue.PutMessage(new CompleteMessage());               
+                JobContext.MessageQueue.GetResult();
             }
         }
 

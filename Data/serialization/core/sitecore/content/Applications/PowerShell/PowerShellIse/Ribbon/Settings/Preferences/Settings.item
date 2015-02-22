@@ -15,7 +15,7 @@ name: Icon
 key: icon
 content-length: 28
 
-Applications/32x32/gears.png
+Office/32x32/window_gear.png
 ----field----
 field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
 name: Click
@@ -36,7 +36,7 @@ name: __Icon
 key: __icon
 content-length: 28
 
-Applications/32x32/gears.png
+Office/32x32/window_gear.png
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -54,7 +54,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: bc9d196c-e0eb-4820-9730-0abad56986ba
+revision: a70a8f2e-3e34-465d-919a-727af945fb80
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-bc9d196c-e0eb-4820-9730-0abad56986ba
+a70a8f2e-3e34-465d-919a-727af945fb80
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150205T163607:635587509676213125
+20150128T155305:635580571855826562Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

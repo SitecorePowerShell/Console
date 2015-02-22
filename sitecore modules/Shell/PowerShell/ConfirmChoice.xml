@@ -1,26 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
   <ConfirmChoice>
-    <FormPage Background="threedface">
+    <FormPage>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.ConfirmChoice,Cognifide.PowerShell" />
 
-      <GridPanel Width="100%" Height="100%">
-        <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
+      <Stylesheet>
+        .scConfirmationContainer td:first-child{
+            width: 1px;
+        }
 
-          <ThemedImage Src="Applications/32x32/Warning.png" Width="32" Height="32" Margin="8px 0px 8px 16px"
-                       GridPanel.Valign="top" />
+        .scConfirmationContainer td:last-child{
+            padding-left: 15px;
+        }
+      </Stylesheet>
 
-          <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
-            <Literal ID="Text" />
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <Border>
+            <Border Class="DialogHeader"><Literal Text="PowerShell Message" ID="DialogHeader"/></Border>
+            <Border Class="DialogHeaderDescription"><Literal Text="" ID="DialogDescription"/></Border>
           </Border>
-
-        </GridPanel>
-
-        <Border Align="Center" Padding="16px 8px 8px 8px" ID="Buttons">
         </Border>
-      </GridPanel>
-
+          
+	<Scrollbox Class="scFlexContent">
+          <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
+            <GridPanel class="scConfirmationContainer" Columns="2" Width="100%" >
+              <ThemedImage class="scConfirmationIcon" Src="Images/warning.png" />
+              <Literal id="Text" class="scDialogMessage"></Literal>
+            </GridPanel>
+	  </Scrollbox>
+        </Scrollbox>
+        <div Class="scFormDialogFooter">
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
+          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <div class="footerOkCancel">
+            <Border Align="Center" ID="Buttons">
+            </Border>
+          </div>
+        </div>
+      </Border>
     </FormPage>
   </ConfirmChoice>
 </control>

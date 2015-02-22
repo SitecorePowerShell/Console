@@ -31,6 +31,13 @@ content-length: 8
 
 DarkBlue
 ----field----
+field: {6F442AC9-7001-4124-9BC3-589875876C27}
+name: FontSize
+key: fontsize
+content-length: 2
+
+15
+----field----
 field: {D0620274-D94D-4B13-BD66-CE3104DAEE0D}
 name: LastScript
 key: lastscript
@@ -96,8 +103,15 @@ People/32x32/users1.png
 ----version----
 language: en
 version: 1
-revision: 34098e31-2688-4848-96a1-10e8f9f63e38
+revision: 7367d6fd-d1be-4299-9614-39f17880f85c
 
+----field----
+field: {86ECC435-0924-4EA0-92D8-CCA12ED7E644}
+name: FontFamily
+key: fontfamily
+content-length: 9
+
+monospace
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -125,14 +139,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-34098e31-2688-4848-96a1-10e8f9f63e38
+7367d6fd-d1be-4299-9614-39f17880f85c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20130624T192514:635076987149873359
+20150213T032546:635593947463017578Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

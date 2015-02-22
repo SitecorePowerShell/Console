@@ -17,6 +17,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         private readonly string command;
         private Handle jobHandle;
 
+        [NonSerialized]
+        private readonly MessageQueue messageQueue;
+
+        public MessageQueue MessageQueue
+        {
+            get { return messageQueue; }
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
         /// </summary>
@@ -28,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 jobHandle = JobContext.JobHandle;
             }
 
-            MessageQueue = new MessageQueue();
+            messageQueue = new MessageQueue();
             if (item != null)
             {
                 itemUri = item.Uri.ToDataUri().ToString();
@@ -64,6 +72,5 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             shellCommand.Execute(context);
         }
 
-        public MessageQueue MessageQueue { get; private set; }
     }
 }

@@ -40,6 +40,11 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public void LoginUser(string userName, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return;
+            }
+
             if (!userName.Contains("\\"))
             {
                 userName = "sitecore\\" + userName;
@@ -60,13 +65,25 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public object ExecuteRocksCommand(string guid, string command, string username, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return string.Empty;
+            }
             LoginUser(username, password);
+            if (!Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             return ExecuteCommand(guid, command, "text");
         }
 
         [WebMethod(EnableSession = true)]
         public object ExecuteCommand(string guid, string command, string stringFormat)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var output = new StringBuilder();
 
@@ -82,13 +99,6 @@ namespace Cognifide.PowerShell.Console.Services
                     });
             }
 
-            if (command.StartsWith("recycle-session", StringComparison.OrdinalIgnoreCase))
-            {
-                RecycleSession(guid);
-                return serializer.Serialize(
-                    new {result = "Session recycled.", prompt = "PS >"});
-            }
-
             var session = GetScriptSession(guid);
             try
             {
@@ -97,7 +107,9 @@ namespace Cognifide.PowerShell.Console.Services
                     new object[] {session, command})
                 {
                     AfterLife = new TimeSpan(0, 10, 0),
-                    ContextUser = Sitecore.Context.User
+                    ContextUser = Sitecore.Context.User,
+                    EnableSecurity = true,
+                    ClientLanguage = Sitecore.Context.ContentLanguage
                 };
                 JobManager.Start(jobOptions);
                 Thread.Sleep(WebServiceSettings.CommandWaitMillis);
@@ -123,6 +135,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object KeepAlive(string guid)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var sessionExists = ScriptSessionManager.SessionExists(guid);
             return sessionExists ? "alive" : "session-not-found";
         }
@@ -135,6 +151,10 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         protected void RunJob(ScriptSession session, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return;
+            }
             try
             {
                 session.ExecuteScriptPart(command);
@@ -161,6 +181,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object PollCommandOutput(string guid, string handle, string stringFormat)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
 
             var session = GetScriptSession(guid);
@@ -173,12 +197,13 @@ namespace Cognifide.PowerShell.Console.Services
                     "Can't find your command result. This might mean that your session has timed out or your script caused the application to restart.";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
-                return serializer.Serialize(result);
+                return serializer.Serialize(result);            
             }
+
+            result.handle = handle;
             if (!scriptJob.IsDone)
             {
                 result.status = StatusWorking;
-                result.handle = handle;
                 return serializer.Serialize(result);
             }
             if (scriptJob.Status.Failed)
@@ -228,7 +253,15 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public string[] CompleteRocksCommand(string guid, string command, string username, string password)
         {
+            if (!WebServiceSettings.ServiceEnabledClient)
+            {
+                return new string[0];
+            }
             LoginUser(username, password);
+            if (!Sitecore.Context.IsLoggedIn)
+            {
+                return new string[0];
+            }
             return GetTabCompletionOutputs(guid, command, false);
         }
 
@@ -236,6 +269,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteAceCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
@@ -245,6 +282,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
             return result;
@@ -254,6 +295,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetAutoCompletionPrefix(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
@@ -272,6 +317,10 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetHelpForCommand(string guid, string command)
         {
+            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            {
+                return string.Empty;
+            }
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetHelpOutputs(guid, command));
             return result;
@@ -285,18 +334,9 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
 
-        protected string GetJobId(string sessionGuid, string handle)
+        public static string GetJobId(string sessionGuid, string handle)
         {
             return "PowerShell-" + sessionGuid + "-" + handle;
-        }
-
-        private static void RecycleSession(string guid)
-        {
-            var session = HttpContext.Current.Session[guid] as ScriptSession;
-            if (session == null) return;
-
-            HttpContext.Current.Session.Remove(guid);
-            session.Dispose();
         }
 
         // TODO: Using the default JavaScript Serializer prevents us from being able to use PascalCasing.

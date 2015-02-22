@@ -49,9 +49,12 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public NameValue[] ExecuteScript(string userName, string password, string script, string returnVariables)
         {
+            if (!WebServiceSettings.ServiceEnabledRemoting)
+            {
+                return new NameValue[0];
+            }
             Login(userName, password);
-
-            using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(script);
@@ -81,9 +84,13 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
         {
+            if (!WebServiceSettings.ServiceEnabledRemoting)
+            {
+                return string.Empty;
+            }
             Login(userName, password);
 
-            using (var scriptSession = new ScriptSession(ApplicationNames.RemoteAutomation, false))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
@@ -98,6 +105,11 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public bool UploadFile(string userName, string password, string filePath, byte[] fileContent, string database, string language)
         {
+            if (!WebServiceSettings.ServiceEnabledRemoting)
+            {
+                return false;
+            }
+
             try
             {
                 Login(userName, password);
@@ -131,6 +143,11 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public byte[] DownloadFile(string userName, string password, string filePath, string database, string language)
         {
+            if (!WebServiceSettings.ServiceEnabledRemoting)
+            {
+                return new byte[0];
+            }
+
             try
             {
                 Login(userName, password);
