@@ -45,8 +45,8 @@ body.ie {
 }
 
 .varCheckbox {
-    margin-top: 20px;
     float: left;
+    margin-right: 8px;
 }
 
 .scContentControl {
@@ -60,7 +60,6 @@ body.ie {
     border: solid 1px ButtonShadow;
     padding-left: 2px;
     float: left;
-    /* width: 90% !important; */
     position: relative;
     left: 0;
 }
@@ -89,7 +88,7 @@ body.ie {
 
 .checkBoxWrapper {
   display: block;
-  padding: 24px 0 16px 0;
+  padding: 16px 0 8px 0;
   float: left;
   clear: both;
 }
@@ -235,6 +234,7 @@ fieldset {
 .scScrollbox {
   border: solid 1px #B4B4B4;
 }
+
 .scContentControlSelectedList {
   bottom: 0px;
 }

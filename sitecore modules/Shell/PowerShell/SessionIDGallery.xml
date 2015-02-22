@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?> 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
   <Gallery.SessionIDGallery>
     <Gallery>
       <CodeBeside Type="Cognifide.PowerShell.Client.Controls.SessionIDGallery, Cognifide.PowerShell"/>
@@ -35,7 +35,7 @@
         #Versions{
           height: auto !important;
         }
-        
+
 /* Sitecore 7.0 */
 
 .scScrollbox {

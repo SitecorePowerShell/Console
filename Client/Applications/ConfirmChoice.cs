@@ -23,7 +23,10 @@ namespace Cognifide.PowerShell.Client.Applications
             if (Context.ClientPage.IsEvent)
                 return;
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te")).Replace("\n", "<br/>");
-            DialogHeader.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
+            if (DialogHeader != null)
+            {
+                DialogHeader.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
+            }
             string defaultChoice = WebUtil.GetQueryString("dc");
             int i = 0;
             while (HttpContext.Current.Request.QueryString.AllKeys.Contains("btn_" + i))
