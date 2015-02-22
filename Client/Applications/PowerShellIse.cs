@@ -40,6 +40,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border ScriptResult;
         protected bool ScriptRunning { get; set; }
 
+        public bool MonitorActive
+        {
+            get { return Monitor.Active; }
+            set { Monitor.Active = value; }
+        }
+
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }

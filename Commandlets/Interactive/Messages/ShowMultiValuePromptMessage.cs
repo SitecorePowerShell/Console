@@ -64,7 +64,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             string resultSig = Guid.NewGuid().ToString();
             if (Context.ClientPage.CodeBeside is IPowerShellRunner)
             {
-                (Context.ClientPage.CodeBeside as IPowerShellRunner).Monitor.Active = false;
+                (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = false;
             }
 
             HttpContext.Current.Cache[resultSig] = Parameters;
@@ -144,7 +144,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
                 if (Context.ClientPage.CodeBeside is IPowerShellRunner)
                 {
-                    (Context.ClientPage.CodeBeside as IPowerShellRunner).Monitor.Active = true;
+                    (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = true;
                 }
             }
         }

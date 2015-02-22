@@ -50,6 +50,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Button OkButton;
         protected Button AbortButton;
 
+        public bool MonitorActive
+        {
+            get { return Monitor.Active; }
+            set { Monitor.Active = value; }
+        }
+
         public string PersistentId
         {
             get { return StringUtil.GetString(ServerProperties["PersistentId"]); }
@@ -393,5 +399,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
             Dispatcher.Dispatch(message, context);
         }
+
     }
 }

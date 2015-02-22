@@ -17,9 +17,17 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellConsole : BaseForm, IPowerShellRunner
     {
-        public SpeJobMonitor Monitor { get; private set; }
         protected Literal Options;
         public ApplicationSettings Settings { get; set; }
+
+        public bool MonitorActive
+        {
+            set
+            {
+                SheerResponse.Eval(@"$ise(function() { cognifide.powershell.setOptions({ monitorActive: " +
+                                   (value ? "true" : "false") + @" });});");
+            }
+        }
 
         protected override void OnLoad(EventArgs e)
         {
