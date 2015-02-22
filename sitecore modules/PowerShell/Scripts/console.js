@@ -106,6 +106,7 @@ extend(cognifide, 'powershell');
                     };
                     (function poll(wait) {
                         setTimeout(function() {
+                            if(settings.monitorActive){
                             getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                 function(pollJson) {
                                     var jsonData = JSON.parse(pollJson.d);
@@ -127,9 +128,7 @@ extend(cognifide, 'powershell');
                                     } else {
                                         displayResult(term, jsonData);
                                     }
-                                    if(settings.monitorActive){
-                                        scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
-                                    }
+                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                                 },
                                 function(jqXHR, textStatus, errorThrown) {
                                     term.resume();
@@ -137,6 +136,9 @@ extend(cognifide, 'powershell');
                                     term.echo("Communication error: " + textStatus + "; " + errorThrown);
                                 }
                             );
+                           } else {
+                               poll(initialWait);
+                           }
                         }, wait);
                     })(initialWait);
                 } else {
