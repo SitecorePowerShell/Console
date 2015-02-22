@@ -6,9 +6,16 @@ path: /sitecore/system/Modules/PowerShell/Fonts/monospace
 parent: {4406B665-C086-4D1F-9048-0E62A9863755}
 name: monospace
 master: {00000000-0000-0000-0000-000000000000}
-template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
-templatekey: Standard template
+template: {6D1CD897-1936-4A3A-A511-289A94C2A7B1}
+templatekey: Dictionary entry
 
+----field----
+field: {580C75A8-C01A-4580-83CB-987776CEB3AF}
+name: Key
+key: key
+content-length: 9
+
+monospace
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -19,8 +26,15 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: 326d9356-be4d-4e6a-894b-8409190b7a5a
+revision: 17059571-50b8-4c78-ac85-148b6ede0052
 
+----field----
+field: {2BA3454A-9A9C-4CDF-A9F8-107FD484EB6E}
+name: Phrase
+key: phrase
+content-length: 66
+
+monospace, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -41,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-326d9356-be4d-4e6a-894b-8409190b7a5a
+17059571-50b8-4c78-ac85-148b6ede0052
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150213T032147:635593945074843750Z
+20150222T184725:635602276456455078
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
