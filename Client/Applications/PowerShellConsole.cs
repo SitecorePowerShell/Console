@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
+using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Diagnostics;
+using Sitecore.Jobs;
+using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
@@ -36,22 +39,6 @@ namespace Cognifide.PowerShell.Client.Applications
                                @"color: " + OutputLine.ProcessHtmlColor(settings.ForegroundColor) + ";" +
                                @"background-color: " + OutputLine.ProcessHtmlColor(settings.BackgroundColor) +
                                ";}</style>";
-/*
-                if (Monitor == null)
-                {
-                    Monitor = new SpeJobMonitor {ID = "Monitor"};
-                    Context.ClientPage.Controls.Add(Monitor);
-                }
-*/
-            }
-            else
-            {
-/*
-                if (Monitor == null)
-                {
-                    Monitor = Context.ClientPage.FindControl("Monitor") as SpeJobMonitor;
-                }
-*/
             }
         }
 
@@ -64,6 +51,27 @@ namespace Cognifide.PowerShell.Client.Applications
             parameters.Add("id", args.Parameters["id"]);
             parameters.Add("fo", args.Parameters["id"]);
             Windows.RunApplication("Content Editor", parameters.ToString());
+        }
+
+        /// <summary>
+        /// Handles the message.
+        /// 
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public override void HandleMessage(Message message)
+        {
+            base.HandleMessage(message);
+            if (message.Name != "pstaskmonitor:check")
+                return;
+
+            var job =
+                JobManager.GetJob(PowerShellWebService.GetJobId(message.Arguments["guid"], message.Arguments["handle"]));
+
+            IMessage iMessage;
+            while (job.MessageQueue.GetMessage(out iMessage))
+            {
+                iMessage.Execute();
+            }
         }
 
     }

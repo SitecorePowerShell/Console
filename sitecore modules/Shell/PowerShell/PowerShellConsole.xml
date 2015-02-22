@@ -9,7 +9,11 @@
       <Script>$ise = jQuery.noConflict();</Script>
       <Script type="text/javascript" src="/sitecore modules/PowerShell/Scripts/jquery.terminal.js"> </Script>
       <Script type="text/javascript" src="/sitecore modules/PowerShell/Scripts/split.js"> </Script>
-      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
+      <script type="text/javascript">if (!window.$sc) $sc = jQuery.noConflict();</script>
+      <Script runat="server" src="/sitecore/shell/controls/SitecoreObjects.js"></Script>
+      <Script runat="server" src="/sitecore/shell/controls/SitecoreKeyboard.js"></Script>
+      <Script runat="server" src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
+      <Script runat="server" src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <!--[if lt IE 9]>
             <script type="text/javascript" language="javascript" src="/sitecore modules/PowerShell/Scripts/json2.js"> </script>
         <![endif]-->

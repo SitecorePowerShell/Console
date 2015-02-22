@@ -122,6 +122,7 @@ extend(cognifide, 'powershell');
                                     } else {
                                         displayResult(term, jsonData);
                                     }
+                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
                                 },
                                 function(jqXHR, textStatus, errorThrown) {
                                     term.resume();

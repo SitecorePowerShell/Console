@@ -333,7 +333,7 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
 
-        protected string GetJobId(string sessionGuid, string handle)
+        public static string GetJobId(string sessionGuid, string handle)
         {
             return "PowerShell-" + sessionGuid + "-" + handle;
         }
