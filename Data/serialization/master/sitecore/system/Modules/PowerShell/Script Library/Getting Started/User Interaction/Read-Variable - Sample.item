@@ -71,7 +71,7 @@ $result = Read-Variable -Parameters `
     @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
     @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights" } `
     -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
-    -Title "Initialise various variable types (with tabs)" -Width 600 -Height 640 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+    -Title "Initialise various variable types (with tabs)" -Width 600 -Height 660 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
 if($result -ne "ok")
 {
     Exit
@@ -114,7 +114,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: b745dbf5-a817-49f8-9c14-998e66f7b51c
+revision: 4f940a2d-bad0-4ca7-b341-70f5543a2c8e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -129,14 +129,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b745dbf5-a817-49f8-9c14-998e66f7b51c
+4f940a2d-bad0-4ca7-b341-70f5543a2c8e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175158:635552995185399140Z
+20150222T183909:635602271498095703Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
