@@ -95,6 +95,11 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var showProgress =
                 !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
+            if (showProgress && args.Parameters.AllKeys.Contains("JobId"))
+            {
+                var job = JobManager.GetJob(args.Parameters["JobId"]);
+                showProgress = !job.IsDone;
+            }
             ProgressOverlay.Visible = showProgress;
             var sb = new StringBuilder();
             if (showProgress)

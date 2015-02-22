@@ -112,6 +112,7 @@ namespace Cognifide.PowerShell.Core.Host
             var sheerMessage = new SendMessageMessage(message, false);
             if (JobContext.IsJob)
             {
+                message.Arguments.Add("JobId", JobContext.Job.Name);
                 JobContext.MessageQueue.PutMessage(sheerMessage);
             }
             else
