@@ -110,6 +110,7 @@ extend(cognifide, 'powershell');
                             getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
                                 function(pollJson) {
                                     var jsonData = JSON.parse(pollJson.d);
+                                    var finished = false;
                                     if (jsonData["status"] == "working") {
                                         if (attempts >= 0) {
                                             attempts++;
@@ -127,8 +128,9 @@ extend(cognifide, 'powershell');
                                         poll(initialWait);
                                     } else {
                                         displayResult(term, jsonData);
+                                        finished = true;
                                     }
-                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
+                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+",finished="+finished+")");
                                 },
                                 function(jqXHR, textStatus, errorThrown) {
                                     term.resume();
