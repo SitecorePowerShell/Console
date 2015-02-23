@@ -95,7 +95,8 @@ namespace Cognifide.PowerShell.Console.Services
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs");
-                scriptSession.ExecuteScriptPart(script + "| ConvertTo-CliXml");
+                script = script.TrimEnd(' ', '\t', '\n');
+                scriptSession.ExecuteScriptPart(script + " ` | ConvertTo-CliXml");
 
                 return scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
                                 (current, next) => current + next);
