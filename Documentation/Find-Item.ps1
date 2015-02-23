@@ -34,12 +34,18 @@
             select -expand "Fields"
         
     .PARAMETER Where
+        Works on Sitecore 7.5 and later versions only.
+
         Filtering Criteria using Dynamic Linq syntax: http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library
 
     .PARAMETER WhereValues
+        Works on Sitecore 7.5 and later versions only.
+
         An Array of objects for Dynamic Linq "-Where" parameter as explained in: http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library
 
     .PARAMETER OrderBy
+        Works on Sitecore 7.5 and later versions only.
+
         Field by which the search results sorting should be performed. 
         Dynamic Linq ordering syntax used.
         http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library

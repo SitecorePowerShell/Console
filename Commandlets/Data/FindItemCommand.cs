@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
@@ -59,10 +60,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 // get all items in medialibrary
                 var query = context.GetQueryable<SearchResultItem>();
 
-                if (!String.IsNullOrEmpty(Where))
+                if (CheckSupportedVersion("Where", ApplicationSettings.SitecoreVersion75))
                 {
-                    query = query.Where(Where, WhereValues.BaseArray());
+                    query = FilterIfSupported(query);
                 }
+
                 if (Criteria != null)
                     foreach (var filter in Criteria)
                     {
@@ -86,13 +88,45 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 break;
                         }
                     }
-                if (!String.IsNullOrEmpty(OrderBy))
+                
+                if (CheckSupportedVersion("OrderBy", ApplicationSettings.SitecoreVersion75))
                 {
-                    query = query.OrderBy(OrderBy);
+                    query = OrderIfSupported(query);
                 }
 
                 WriteObject(FilterByPosition(query), true);
             }
+        }
+
+        private bool CheckSupportedVersion(string parameter, Version thresholdSitecoreVersion)
+        {
+            bool supported = thresholdSitecoreVersion < ApplicationSettings.SitecoreVersionCurrent;
+            if (!supported)
+            {
+                WriteWarning(
+                    string.Format(
+                        "The parameter {0} is not supported on this version of Sitecore due to platform limitations. This parameter is supported starting from Sitecore Version {1}.{2}",
+                        parameter, thresholdSitecoreVersion.Major, thresholdSitecoreVersion.Minor));
+            }
+            return supported;
+        }
+
+        private IQueryable<SearchResultItem> FilterIfSupported(IQueryable<SearchResultItem> query)
+        {
+            if (!String.IsNullOrEmpty(Where))
+            {
+                query = query.Where(Where, WhereValues.BaseArray());
+            }
+            return query;
+        }
+
+        private IQueryable<SearchResultItem> OrderIfSupported(IQueryable<SearchResultItem> query)
+        {
+            if (!String.IsNullOrEmpty(OrderBy))
+            {
+                query = query.OrderBy(OrderBy);
+            }
+            return query;
         }
 
         private List<SearchResultItem> FilterByPosition(IQueryable<SearchResultItem> query)
