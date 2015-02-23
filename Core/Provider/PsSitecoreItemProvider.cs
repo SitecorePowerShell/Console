@@ -12,7 +12,12 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
+using Sitecore.Data.Proxies;
+using Sitecore.Diagnostics;
+using Sitecore.Events;
+using Sitecore.Exceptions;
 using Sitecore.Globalization;
+using Sitecore.Web.UI.Sheer;
 using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
 
@@ -322,9 +327,12 @@ namespace Cognifide.PowerShell.Core.Provider
         private void WriteItem(Item item)
         {
             // add the properties defined by the page type
-            PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-            string path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
-            WriteItemObject(psobj, path, item.HasChildren);
+            if (item != null)
+            {
+                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+                string path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
+                WriteItemObject(psobj, path, item.HasChildren);
+            }
         }
 
         protected override void CopyItem(string path, string destination, bool recurse)
@@ -352,13 +360,15 @@ namespace Cognifide.PowerShell.Core.Provider
                     if (destinationItem == null)
                     {
                         SignalPathDoesNotExistError(destination);
+                        return;
                     }
                 }
 
                 if (ShouldProcess(sourceItem.Paths.Path, "Copy to '" + destinationItem.Paths.Path + "/" + leafName + "'"))
                 {
-                    var id = new ID(Guid.NewGuid());
-                    Item itemCopy = sourceItem.CopyTo(destinationItem, leafName, id, recurse);
+                    var itemCopy = sourceItem.Database.Name == destinationItem.Database.Name
+                        ? sourceItem.CopyTo(destinationItem, leafName, new ID(Guid.NewGuid()), recurse)
+                        : TransferItem(sourceItem, destinationItem, leafName, recurse);
                     WriteItem(itemCopy);
                 }
             }
@@ -368,6 +378,45 @@ namespace Cognifide.PowerShell.Core.Provider
                     "Error while executing CopyItem(string '{0}', string '{1}', bool {2}", path,
                     destination, recurse);
                 throw;
+            }
+        }
+
+        private Item TransferItem(Item sourceItem, Item destinationItem, string leafName, bool recurse)
+        {
+            using (new ProxyDisabler())
+            {
+                var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+                TransferOptions transferOptions = TransferOptions.ChangeID;
+                if (dic != null && dic[TransferOptionsParam].IsSet)
+                {
+                    transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
+                }
+
+                if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
+                {
+                    WriteError(new ErrorRecord(new TemplateNotFoundException(string.Format(
+                        "The data contains a reference to a template \"{0}\" that does not exist in the destination database.\nYou must transfer the template first.",
+                        sourceItem.Template.FullName)), "sitecore_tranfer_error", ErrorCategory.InvalidData, sourceItem));
+                    return null;
+                }
+
+                ItemSerializerOptions options = ItemSerializerOptions.GetDefaultOptions();
+                options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
+                options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
+                options.ProcessChildren = recurse;
+                string outerXml = sourceItem.GetOuterXml(options);
+                var transferedItem = destinationItem.PasteItem(outerXml,
+                    transferOptions.HasFlag(TransferOptions.ChangeID),
+                    Force ? PasteMode.Overwrite : PasteMode.Undefined);
+                Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
+                Log.Audit(this, "Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+                    AuditFormatter.FormatItem(destinationItem));
+                if (transferedItem.Name != leafName)
+                {
+                    transferedItem.Edit(args => transferedItem.Name = leafName);
+                }
+
+                return transferedItem;
             }
         }
 

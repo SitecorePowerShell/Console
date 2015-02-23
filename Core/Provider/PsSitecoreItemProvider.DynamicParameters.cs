@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
+using Sitecore.Pipelines.Upload;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -22,6 +26,15 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string UriParam = "Uri";
         private const string ParentParam = "Parent";
         private const string AmbiguousPathsParam = "AmbiguousPaths";
+        private const string TransferOptionsParam = "TransferOptions";
+
+        [Flags]
+        public enum TransferOptions
+        {
+            ChangeID = 1,
+            AllowDefaultValues = 2,
+            AllowStandardValues = 4
+        }
 
         public object GetPropertyDynamicParameters(string path, Collection<string> providerSpecificPickList)
         {
@@ -91,6 +104,22 @@ namespace Cognifide.PowerShell.Core.Provider
             }
 
             return paramAdded;
+        }
+
+        protected override object CopyItemDynamicParameters(string path, string destination, bool recurse)
+        {
+            LogInfo("Executing CopyItemDynamicParameters(string path='{0}', destination='{1}', string recurse='{2}')",
+                path, destination, recurse);
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            bool paramAdded = FailSilentlyDynamicParameters(ref dic);
+            var sourceDrive = PathUtilities.GetDrive(path, SessionState.Drive.Current.Name);
+            var destinationDrive = PathUtilities.GetDrive(destination, SessionState.Drive.Current.Name);
+            if (!string.Equals(sourceDrive, destination, StringComparison.OrdinalIgnoreCase) &&
+                Factory.GetDatabase(sourceDrive) != null && Factory.GetDatabase(destinationDrive) != null)
+            {
+                paramAdded |= AddDynamicParameter(typeof(TransferOptions), TransferOptionsParam, ref dic);
+            }
+            return paramAdded ? dic : null;
         }
 
         protected override object RemoveItemDynamicParameters(string path, bool recurse)

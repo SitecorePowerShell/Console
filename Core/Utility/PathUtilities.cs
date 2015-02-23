@@ -23,6 +23,17 @@ namespace Cognifide.PowerShell.Core.Utility
             return currentDb.GetItem(itemPath);
         }
 
+        public static string GetDrive(string path,string currentDb)
+        {
+            if (path.Contains(":"))
+            {
+                //path with drive
+                string[] drivepath = path.Split(':');
+                return drivepath[0];
+            }
+            return currentDb;
+        }
+
         public static Item GetItem(string path, string currentDb, string currentPath)
         {
             Item item;
