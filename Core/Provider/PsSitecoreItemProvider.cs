@@ -6,6 +6,7 @@ using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
@@ -385,13 +386,6 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             using (new ProxyDisabler())
             {
-                var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                TransferOptions transferOptions = TransferOptions.ChangeID;
-                if (dic != null && dic[TransferOptionsParam].IsSet)
-                {
-                    transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
-                }
-
                 if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
                 {
                     WriteError(new ErrorRecord(new TemplateNotFoundException(string.Format(
@@ -400,11 +394,16 @@ namespace Cognifide.PowerShell.Core.Provider
                     return null;
                 }
 
-                ItemSerializerOptions options = ItemSerializerOptions.GetDefaultOptions();
-                options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
-                options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
-                options.ProcessChildren = recurse;
-                string outerXml = sourceItem.GetOuterXml(options);
+                var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+                TransferOptions transferOptions = TransferOptions.ChangeID;
+                if (dic != null && dic[TransferOptionsParam].IsSet)
+                {
+                    transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
+                }
+
+                var outerXml = ApplicationSettings.SitecoreVersionCurrent >= ApplicationSettings.SitecoreVersion72
+                    ? GetSerializedItem72(sourceItem, recurse, transferOptions)
+                    : GetSerializedItemOld(sourceItem, recurse, transferOptions);
                 var transferedItem = destinationItem.PasteItem(outerXml,
                     transferOptions.HasFlag(TransferOptions.ChangeID),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
@@ -418,6 +417,20 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 return transferedItem;
             }
+        }
+
+        private string GetSerializedItem72(Item sourceItem, bool recurse, TransferOptions transferOptions)
+        {
+            ItemSerializerOptions options = ItemSerializerOptions.GetDefaultOptions();
+            options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
+            options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
+            options.ProcessChildren = recurse;
+            return sourceItem.GetOuterXml(options);
+        }
+
+        private string GetSerializedItemOld(Item sourceItem, bool recurse, TransferOptions transferOptions)
+        {
+            return sourceItem.GetOuterXml(recurse);
         }
 
         protected override void MoveItem(string path, string destination)

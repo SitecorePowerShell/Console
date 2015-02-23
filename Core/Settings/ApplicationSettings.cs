@@ -8,6 +8,7 @@ using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
+using Version = System.Version;
 
 namespace Cognifide.PowerShell.Core.Settings
 {
@@ -22,6 +23,10 @@ namespace Cognifide.PowerShell.Core.Settings
         private static string rulesDb = null;
         private static string settingsDb = null;
         private static string scriptLibraryDb = null;
+
+        public static Version SitecoreVersionCurrent = Version.Parse(About.Version);
+        public static Version SitecoreVersion72 = new Version(7, 2);
+        public static Version SitecoreVersion75 = new Version(7, 5);
 
         public static string RulesDb {
             get
