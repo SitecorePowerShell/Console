@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5029
+content-length: 5155
 
 <# 
   Sitecore PowerShell Remoting.
@@ -62,21 +62,20 @@ function Invoke-SitecoreScript {
         [ValidateNotNullOrEmpty()]
         [ScriptBlock]$Command,
         
-        [Parameter(Position=1, Mandatory=$true, ValueFromPipeline=$true)]
-		[ValidateNotNullOrEmpty()]
-        [Hashtable]$Params
+        [Parameter(Position=1, ValueFromPipeline=$true)]
+        [Hashtable]$Params = @{noParameters=$true}
     )
 	
-	$sb = New-Object System.Text.StringBuilder
-	$settings = New-Object System.Xml.XmlWriterSettings -Property @{CloseOutput = $true; Encoding = [System.Text.Encoding]::UTF8; Indent = $false; OmitXmlDeclaration = $true}
+    $sb = New-Object System.Text.StringBuilder
+    $settings = New-Object System.Xml.XmlWriterSettings -Property @{CloseOutput = $true; Encoding = [System.Text.Encoding]::UTF8; Indent = $false; OmitXmlDeclaration = $true}
     $xw = [System.Xml.XmlWriter]::Create($sb, $settings)
     $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Serializer")
     $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlWriter]), $null)
     $serializer = $ctor.invoke($xw)
-	$method = $type.GetMethod("Serialize", "invokemethod,nonpublic,instance", $null, @([object]), @())
+    $method = $type.GetMethod("Serialize", "invokemethod,nonpublic,instance", $null, @([object]), @())
     $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
     $method.Invoke($serializer, @($Params));
-	$done.Invoke($serializer, @());
+    $done.Invoke($serializer, @());
     $cliXmlArgs = $sb.ToString();
 	$xw.Close()
 
@@ -156,7 +155,7 @@ function Download-SitecoreFile {
 ----version----
 language: en
 version: 1
-revision: 03be5848-8283-472c-8928-11b9b7a8de40
+revision: 0eab24d3-3d0d-47bc-a46b-f6a7f011ebbc
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +170,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-03be5848-8283-472c-8928-11b9b7a8de40
+0eab24d3-3d0d-47bc-a46b-f6a7f011ebbc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20141227T175205:635552995253026093Z
+20150223T191326:635603156068535156
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
