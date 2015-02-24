@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5155
+content-length: 5244
 
 <# 
   Sitecore PowerShell Remoting.
@@ -66,40 +66,41 @@ function Invoke-SitecoreScript {
         [Hashtable]$Params = @{noParameters=$true}
     )
 	
-    $sb = New-Object System.Text.StringBuilder
-    $settings = New-Object System.Xml.XmlWriterSettings -Property @{CloseOutput = $true; Encoding = [System.Text.Encoding]::UTF8; Indent = $false; OmitXmlDeclaration = $true}
-    $xw = [System.Xml.XmlWriter]::Create($sb, $settings)
-    $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Serializer")
-    $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlWriter]), $null)
-    $serializer = $ctor.invoke($xw)
-    $method = $type.GetMethod("Serialize", "invokemethod,nonpublic,instance", $null, @([object]), @())
-    $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
-    $method.Invoke($serializer, @($Params));
-    $done.Invoke($serializer, @());
+    $sb = New-Object System.Text.StringBuilder;
+    $settings = New-Object System.Xml.XmlWriterSettings -Property @{CloseOutput = $true; Encoding = [System.Text.Encoding]::UTF8; Indent = $false; OmitXmlDeclaration = $true};
+    $xw = [System.Xml.XmlWriter]::Create($sb, $settings);
+    $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Serializer");
+    $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlWriter]), $null);
+    $serializer = $ctor.invoke($xw);
+    $method = $type.GetMethod("Serialize", "invokemethod,nonpublic,instance", $null, @([object]), @());
+    $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance");
+    $method.Invoke($serializer, @($Params)) | Out-Null;
+    $done.Invoke($serializer, @()) | Out-Null;
     $cliXmlArgs = $sb.ToString();
-	$xw.Close()
+    $xw.Close();
 
     $reply = $GLOBAL:SpeRemoteProxy.ExecuteScriptBlock($GLOBAL:SpeRemoteUser, $GLOBAL:SpeRemotePassword, $Command, $cliXmlArgs);
-	
- 	$xmlString = $reply -replace "\n", "" -replace "\r",""
+
+    $xmlString = $reply -replace "\n", "" -replace "\r",""
     $sr = New-Object System.IO.StringReader $xmlString
     $xr = New-Object System.Xml.XmlTextReader $sr
     $type = $type = [PSObject].Assembly.GetType("System.Management.Automation.Deserializer")
     $ctor = $type.GetConstructor("instance,nonpublic", $null, @([Xml.XmlReader]), $null)
     $deserializer = $ctor.Invoke($xr)
-	$method = $type.GetMethod("Deserialize", "nonpublic,instance", $null, @(), @())
+    $method = $type.GetMethod("Deserialize", "nonpublic,instance", $null, @(), @())
     $done = $type.GetMethod("Done", [System.Reflection.BindingFlags]"nonpublic,instance")
     while (!$done.Invoke($deserializer, @()))
     {
         try {
-			$method.Invoke($deserializer, @())
+            $value = $method.Invoke($deserializer, @())
+       	    return $value
         } catch [Exception] {
             write-warning "Error while de-serializing string: $($error[0])"
             break;
         }
     }
-	$xr.Close()
-	$sr.Dispose()
+    $xr.Close()
+    $sr.Dispose()
 }
 
 function Upload-SitecoreFile {
@@ -155,7 +156,7 @@ function Download-SitecoreFile {
 ----version----
 language: en
 version: 1
-revision: 0eab24d3-3d0d-47bc-a46b-f6a7f011ebbc
+revision: 4e1f8c62-a738-42ec-8c9d-27fac4e7919e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -170,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0eab24d3-3d0d-47bc-a46b-f6a7f011ebbc
+4e1f8c62-a738-42ec-8c9d-27fac4e7919e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150223T191326:635603156068535156
+20150224T235320:635604188005546875
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
