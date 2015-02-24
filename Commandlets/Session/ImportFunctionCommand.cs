@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
@@ -101,18 +102,19 @@ namespace Cognifide.PowerShell.Commandlets.Session
                                     StringComparison.InvariantCultureIgnoreCase)).ToList();
                 }
 
-                foreach (var path in roots.Select(root => PathUtilities.PreparePathForQuery(root.Paths.Path)))
+                foreach (var root in roots)
                 {
+                    var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
                     if (string.IsNullOrEmpty(library))
                     {
-                        functions.AddRange(Context.ContentDatabase.SelectItems(
+                        functions.AddRange(root.Database.SelectItems(
                             string.Format(
                                 "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{1}\"]",
                                 path, name)));
                     }
                     else
                     {
-                        functions.AddRange(Context.ContentDatabase.SelectItems(
+                        functions.AddRange(root.Database.SelectItems(
                             string.Format(
                                 "{0}/#{1}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{2}\"]",
                                 path, library, name)));
