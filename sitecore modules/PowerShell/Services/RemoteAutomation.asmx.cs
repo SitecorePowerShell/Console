@@ -14,6 +14,8 @@ using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
+using Sitecore.Sites;
+using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -84,6 +86,15 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
         {
+            Uri requestUri = WebUtil.GetRequestUri();
+            SiteContext site = SiteContextFactory.GetSiteContext(requestUri.Host, Sitecore.Context.Request.FilePath, requestUri.Port);
+            return ExecuteScriptBlockinSite(userName, password, script, cliXmlArgs, site.Name);
+        }
+
+        [WebMethod]
+        public string ExecuteScriptBlockinSite(string userName, string password, string script, string cliXmlArgs,
+            string siteName)
+        {
             if (!WebServiceSettings.ServiceEnabledRemoting)
             {
                 return string.Empty;
@@ -92,14 +103,17 @@ namespace Cognifide.PowerShell.Console.Services
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
+                Sitecore.Context.SetActiveSite(siteName);
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
-                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
-                scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs");
+                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript, false, true);
+                scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs",false,true);
                 script = script.TrimEnd(' ', '\t', '\n');
-                scriptSession.ExecuteScriptPart(script + " ` | ConvertTo-CliXml");
-
-                return scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate(
-                                (current, next) => current + next);
+                var outObjects = scriptSession.ExecuteScriptPart(script,false,false,false);
+                scriptSession.SetVariable("results", outObjects);
+                scriptSession.Output.Clear();
+                scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+                var result = scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate((current, next) => current + next);
+                return result;
             }
         }
 
