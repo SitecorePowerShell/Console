@@ -59,18 +59,6 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("</div>");
         }
 
-        private void RenderContext(HtmlTextWriter output, Item contextItem, Ribbon ribbon, bool contextEnabled)
-        {
-            Assert.ArgumentNotNull(output, "output");
-            Assert.ArgumentNotNull(contextItem, "compareTo");
-            Assert.ArgumentNotNull(ribbon, "ribbon");
-            RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
-                PathUtilities.GetItemPsPath(contextItem).EllipsisString(55),
-                contextItem.Appearance.Icon, string.Empty,
-                string.Format("ise:pickcontextitem(scriptDb={0},scriptID={1})", "",
-                    ""), contextEnabled, false);
-        }
-
         private void RenderSmallGalleryButton(HtmlTextWriter output, Item button, CommandContext commandContext,
             Ribbon ribbon, string title, string overrideIcon)
         {

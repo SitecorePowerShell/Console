@@ -703,38 +703,6 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
         }
 
-        [HandleMessage("ise:pickcontextitem", true)]
-        protected void PickContextItem(ClientPipelineArgs args)
-        {
-            Assert.ArgumentNotNull(args, "args");
-            if (args.IsPostBack)
-            {
-                if (!args.HasResult)
-                    return;
-                var newCurrentItem = PathUtilities.GetItem(args.Result, string.Empty, string.Empty);
-                DataContext.Parameters = "databasename=" + newCurrentItem.Database.Name;
-                DataContext.SetFolder(newCurrentItem.Uri);
-                UpdateRibbon();
-            }
-            else
-            {
-                const string header = "Pick Context Item";
-                const string text = "Select the item the script will be executed in the context of.";
-                const string icon = "powershell/48x48/script.png";
-                const string button = "Change";
-
-                var urlString = new UrlString(UIUtil.GetUri("control:PowerShellItemSelector"));
-                urlString.Append("id", DataContext.CurrentItem.ID.ToString());
-                urlString.Append("db", DataContext.CurrentItem.Database.Name);
-                urlString.Append("ds", text);
-                urlString.Append("te", header);
-                urlString.Append("ic", icon);
-                urlString.Append("ok", button);
-                SheerResponse.ShowModalDialog(urlString.ToString(), true);
-                args.WaitForPostBack();
-            }
-        }
-
         [HandleMessage("ise:updatesettings", true)]
         protected virtual void SetFontSize(ClientPipelineArgs args)
         {
