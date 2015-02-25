@@ -11,7 +11,7 @@ using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Export, "Role")]
+    [Cmdlet(VerbsData.Export, "Role", SupportsShouldProcess = true)]
     [OutputType(typeof(string))]
     public class ExportRoleCommand : BaseCommand
     {
@@ -69,11 +69,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
-                var logMessage = string.Format("Serializing role '{0}'", role.Name);
-                WriteVerbose(logMessage);
-                WriteDebug(logMessage);
-                Manager.DumpRole(role.Name);
-                WriteObject(PathUtils.GetFilePath(new RoleReference(role.Name)));
+                if (ShouldProcess(role.Name, string.Format("Serializing role")))
+                {
+                    var logMessage = string.Format("Serializing role '{0}'", role.Name);
+                    WriteVerbose(logMessage);
+                    WriteDebug(logMessage);
+                    Manager.DumpRole(role.Name);
+                    WriteObject(PathUtils.GetFilePath(new RoleReference(role.Name)));
+                }
             }
             else
             {
@@ -90,12 +93,19 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
                         Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }
+                    if (!System.IO.Path.HasExtension(Path))
+                    {
+                        Path += PathUtils.RoleExtension;
+                    }
                 }
-                var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
-                WriteVerbose(logMessage);
-                WriteDebug(logMessage);
-                Manager.DumpRole(Path, role);
-                WriteObject(Path);
+                if (ShouldProcess(role.Name, string.Format("Serializing role to '{0}'", Path)))
+                {
+                    var logMessage = string.Format("Serializing role '{0}' to '{1}'", role.Name, Path);
+                    WriteVerbose(logMessage);
+                    WriteDebug(logMessage);
+                    Manager.DumpRole(Path, role);
+                    WriteObject(Path);
+                }
             }
         }
     }

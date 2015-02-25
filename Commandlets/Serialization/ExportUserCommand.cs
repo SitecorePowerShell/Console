@@ -11,7 +11,7 @@ using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Export, "User")]
+    [Cmdlet(VerbsData.Export, "User", SupportsShouldProcess = true)]
     public class ExportUserCommand : BaseCommand
     {
 
@@ -78,11 +78,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
-                var logMessage = string.Format("Serializing user '{0}'", user.Name);
-                WriteVerbose(logMessage);
-                WriteDebug(logMessage);
-                Manager.DumpUser(user.Name);
-                WriteObject(PathUtils.GetFilePath(new UserReference(user.Name)));
+                if (ShouldProcess(user.Name, string.Format("Serializing user")))
+                {
+                    var logMessage = string.Format("Serializing user '{0}'", user.Name);
+                    WriteVerbose(logMessage);
+                    WriteDebug(logMessage);
+                    Manager.DumpUser(user.Name);
+                    WriteObject(PathUtils.GetFilePath(new UserReference(user.Name)));
+                }
             }
             else
             {
@@ -98,12 +101,20 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
                         Path = (target + userReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }
+                    if (!System.IO.Path.HasExtension(Path))
+                    {
+                        Path += PathUtils.UserExtension;
+                    }
                 }
-                var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
-                WriteVerbose(logMessage);
-                WriteDebug(logMessage);
-                Manager.DumpUser(Path, userReference.User);
-                WriteObject(Path);
+
+                if (ShouldProcess(user.Name, string.Format("Serializing role to '{0}'", Path)))
+                {
+                    var logMessage = string.Format("Serializing user '{0}' to '{1}'", user.Name, Path);
+                    WriteVerbose(logMessage);
+                    WriteDebug(logMessage);
+                    Manager.DumpUser(Path, userReference.User);
+                    WriteObject(Path);
+                }
             }
         }
     }

@@ -5,7 +5,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsLifecycle.Disable, "User", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsLifecycle.Disable, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class DisableUserCommand : BaseCommand
     {
         [Alias("Name")]
@@ -30,7 +30,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             member.IsApproved = false;
 
-            Membership.UpdateUser(member);
+            if (ShouldProcess(member.UserName, "Disable user"))
+            {
+                Membership.UpdateUser(member);
+            }
         }
     }
 }

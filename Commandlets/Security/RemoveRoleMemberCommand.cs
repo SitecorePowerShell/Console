@@ -6,7 +6,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Remove, "RoleMember", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsCommon.Remove, "RoleMember", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class RemoveRoleMemberCommand : BaseCommand
     {
         [Alias("Name")]
@@ -34,14 +34,20 @@ namespace Cognifide.PowerShell.Commandlets.Security
                     if (user.IsInRole(targetRole)) continue;
 
                     var profile = UserRoles.FromUser(user);
-                    profile.Remove(targetRole);
+                    if (ShouldProcess(targetRole.Name, string.Format("Remove user '{0}' from role", user.Name)))
+                    {
+                        profile.Remove(targetRole);
+                    }
                 }
                 else if (Role.Exists(member.Name))
                 {
                     var role = Role.FromName(member.Name);
                     if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
                     {
-                        RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
+                        if (ShouldProcess(targetRole.Name, string.Format("Remove role '{0}' from role", role.Name)))
+                        {
+                            RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
+                        }
                     }
                 }
                 else

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -10,8 +11,9 @@ using Sitecore.Data.Managers;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsCommon.Add, "ItemLanguage")]
-    [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [Cmdlet(VerbsCommon.Add, "ItemLanguage", SupportsShouldProcess = true)]
+    [OutputType(new[] {typeof (Item)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
+        )]
     public class AddItemLanguageCommand : BaseItemCommand
     {
         public enum ActionIfExists
@@ -27,7 +29,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public ActionIfExists IfExist { get; set; }
 
-        [Parameter]
+        [Parameter(Mandatory = true)]
         public string[] TargetLanguage { get; set; }
 
         [Parameter]
@@ -49,39 +51,45 @@ namespace Cognifide.PowerShell.Commandlets.Data
             {
                 foreach (var ignoredField in IgnoredFields)
                 {
-                    ignoredFields.Add(ignoredField);                    
+                    ignoredFields.Add(ignoredField);
                 }
             }
         }
 
         protected override void ProcessItem(Item item)
         {
-            foreach (string targetLanguage in TargetLanguage)
+            if (ShouldProcess(item.GetProviderPath(),
+                string.Format("Add language '{0}' version(s){1}",
+                    TargetLanguage.Aggregate((seed, curr) => seed + ", " + curr), (Recurse ? " recursively" : ""))))
             {
-                var lang = LanguageManager.GetLanguage(targetLanguage);
-                if (lang == null)
+                foreach (string targetLanguage in TargetLanguage)
                 {
-                    var error = String.Format("Cannot find target language '{0}' or it is not enabled.", targetLanguage);
-                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                        item));
-                }
-                else
-                {
-                    Item latestVersion = item.Versions.GetLatestVersion(lang);
-                    if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
+                    var lang = LanguageManager.GetLanguage(targetLanguage);
+                    if (lang == null)
                     {
-                        CopyFields(item, latestVersion, false);
+                        var error = String.Format("Cannot find target language '{0}' or it is not enabled.",
+                            targetLanguage);
+                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                            ErrorCategory.ObjectNotFound,
+                            item));
                     }
-                    if (Recurse)
+                    else
                     {
-                        foreach (Item childItem in item.Children)
+                        Item latestVersion = item.Versions.GetLatestVersion(lang);
+                        if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
                         {
-                            ProcessItem(childItem);
+                            CopyFields(item, latestVersion, false);
+                        }
+                        if (Recurse)
+                        {
+                            foreach (Item childItem in item.Children)
+                            {
+                                ProcessItem(childItem);
+                            }
                         }
                     }
                 }
             }
-
         }
 
         public void CopyFields(Item sourceItem, Item targetItem, bool itemWasCreated)
@@ -115,7 +123,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
             catch (Exception exception)
             {
                 targetItem.Editing.CancelEdit();
-                WriteError(new ErrorRecord(exception,"sitecore_item_translation_field_copy_error",ErrorCategory.NotSpecified, null));
+                WriteError(new ErrorRecord(exception, "sitecore_item_translation_field_copy_error",
+                    ErrorCategory.NotSpecified, null));
             }
         }
 

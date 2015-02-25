@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 using Sitecore.Workflows;
 
 namespace Cognifide.PowerShell.Commandlets.Workflows
 {
-    [Cmdlet(VerbsLifecycle.Invoke, "Workflow")]
+    [Cmdlet(VerbsLifecycle.Invoke, "Workflow", SupportsShouldProcess = true)]
     public class InvokeWorkflowCommand : BaseItemCommand
     {
 
@@ -51,18 +52,23 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
                     return;
                 }
 
-                WorkflowResult workflowResult = workflow.Execute(command.CommandID, item, Comments, false, new object[0]);
-                if (!workflowResult.Succeeded)
+                if (ShouldProcess(item.GetProviderPath(),
+                    string.Format("Invoke command '{0}' in workflow '{1}'", command.DisplayName,
+                        workflow.Appearance.DisplayName)))
                 {
-                    string message = workflowResult.Message;
-                    if (string.IsNullOrEmpty(message))
+                    WorkflowResult workflowResult = workflow.Execute(command.CommandID, item, Comments, false);
+                    if (!workflowResult.Succeeded)
                     {
-                        message = "IWorkflow.Execute() failed for unknown reason.";
+                        string message = workflowResult.Message;
+                        if (string.IsNullOrEmpty(message))
+                        {
+                            message = "IWorkflow.Execute() failed for unknown reason.";
+                        }
+                        WriteError(new ErrorRecord(
+                            new WorkflowException(message),
+                            "sitecore_workflow_execution_error",
+                            ErrorCategory.OperationStopped, null));
                     }
-                    WriteError(new ErrorRecord(
-                        new WorkflowException(message),
-                        "sitecore_workflow_execution_error",
-                        ErrorCategory.OperationStopped, null));
                 }
             }
             catch (WorkflowStateMissingException)

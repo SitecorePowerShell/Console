@@ -5,7 +5,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Unlock, "User", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsCommon.Unlock, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class UnlockUserCommand : BaseCommand
     {
         [Alias("Name")]
@@ -28,9 +28,11 @@ namespace Cognifide.PowerShell.Commandlets.Security
             var member = Membership.GetUser(name);
             if (member == null) return;
 
-            member.UnlockUser();
-
-            Membership.UpdateUser(member);
+            if (ShouldProcess(name, "Unlock User"))
+            {
+                member.UnlockUser();
+                Membership.UpdateUser(member);
+            }
         }
     }
 }

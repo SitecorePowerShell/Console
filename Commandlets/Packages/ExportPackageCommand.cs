@@ -6,7 +6,7 @@ using Sitecore.IO;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
-    [Cmdlet(VerbsData.Export, "Package")]
+    [Cmdlet(VerbsData.Export, "Package",SupportsShouldProcess = true)]
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
@@ -45,7 +45,15 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         fileName = FullPackageProjectPath(fileName);
                     }
 
-                    FileUtil.WriteToFile(fileName, IOUtils.StoreObject(Project));
+                    if (!System.IO.Path.HasExtension(fileName))
+                    {
+                        fileName = fileName+".xml";
+                    }
+
+                    if (ShouldProcess(fileName, "Export package project"))
+                    {
+                        FileUtil.WriteToFile(fileName, IOUtils.StoreObject(Project));
+                    }
                 });
             }
             else
@@ -70,10 +78,18 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                             fileName = FullPackagePath(fileName);
                         }
 
-                        using (var writer = new PackageWriter(fileName))
+                        if (!System.IO.Path.HasExtension(fileName))
                         {
-                            writer.Initialize(Installer.CreateInstallationContext());
-                            PackageGenerator.GeneratePackage(Project, writer);
+                            fileName = fileName + ".zip";
+                        }
+
+                        if (ShouldProcess(fileName, "Export package"))
+                        {
+                            using (var writer = new PackageWriter(fileName))
+                            {
+                                writer.Initialize(Installer.CreateInstallationContext());
+                                PackageGenerator.GeneratePackage(Project, writer);
+                            }
                         }
                     });
             }

@@ -11,9 +11,12 @@ using Sitecore.Update.Interfaces;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
-    [Cmdlet(VerbsData.Export, "UpdatePackage")]
+    [Cmdlet(VerbsData.Export, "UpdatePackage", SupportsShouldProcess = true)]
     public class ExportUpdatePackageCommand : BasePackageCommand
     {
+
+        private List<ICommand> cumulatedCommandList = new List<ICommand>();
+
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public List<ICommand> CommandList { get; set; }
 
@@ -34,7 +37,12 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 
         protected override void ProcessRecord()
         {
-            // Use default logger
+            cumulatedCommandList.AddRange(CommandList);
+        }
+
+        protected override void EndProcessing()
+        {
+             // Use default logger
             ILog log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
 
@@ -58,7 +66,10 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                         fileName = FullPackageProjectPath(fileName);
                     }
 
-                    PackageGenerator.GeneratePackage(diff, LicenseFileName, fileName);
+                    if (ShouldProcess(fileName, "Export update package"))
+                    {
+                        PackageGenerator.GeneratePackage(diff, LicenseFileName, fileName);
+                    }
                 });
         }
     }

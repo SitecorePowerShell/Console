@@ -3,12 +3,15 @@ using System.Web;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet(VerbsLifecycle.Restart, "Application")]
+    [Cmdlet(VerbsLifecycle.Restart, "Application", SupportsShouldProcess = true)]
     public class RestartApplication : BaseCommand
     {
         protected override void BeginProcessing()
         {
-            HttpRuntime.UnloadAppDomain();
+            if (ShouldProcess("Application", "Restart"))
+            {
+                HttpRuntime.UnloadAppDomain();
+            }
         }
     }
 }

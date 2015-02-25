@@ -3,18 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
-using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Serialization;
-using Sitecore;
 using Sitecore.Data.Serialization;
-using Sitecore.Data.Serialization.Presets;
-using Sitecore.Rules.Conditions.SecurityConditions;
 using Sitecore.Security.Accounts;
-using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Import, "User")]
+    [Cmdlet(VerbsData.Import, "User", SupportsShouldProcess = true)]
     public class ImportUserCommand : BaseCommand
     {
 
@@ -106,10 +100,13 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         private void DeserializeUserFile(string userName, string file)
         {
-            var logMessage = string.Format("Deserializing user '{0}' from '{1}'", userName, file);
-            WriteVerbose(logMessage);
-            WriteDebug(logMessage);
-            Manager.LoadUser(file);
+            if (ShouldProcess(userName, string.Format("Deserializing user from '{0}'", file)))
+            {
+                var logMessage = string.Format("Deserializing user '{0}' from '{1}'", userName, file);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
+                Manager.LoadUser(file);
+            }
         }
     }
 }

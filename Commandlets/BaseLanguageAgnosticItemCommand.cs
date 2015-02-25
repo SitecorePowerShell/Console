@@ -9,10 +9,10 @@ namespace Cognifide.PowerShell.Commandlets
     public abstract class BaseLanguageAgnosticItemCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
-            ParameterSetName = "Item from Pipeline", Mandatory = true)]
+            ParameterSetName = "Item from Pipeline", Mandatory = true, Position = 0)]
         public virtual Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path", Mandatory=true)]
+        [Parameter(ParameterSetName = "Item from Path", Mandatory=true, Position = 0)]
         [Alias("FullName", "FileName")]
         public virtual string Path { get; set; }
 

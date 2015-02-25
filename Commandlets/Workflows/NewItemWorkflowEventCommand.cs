@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Workflows;
 using Sitecore.Workflows.Simple;
 
 namespace Cognifide.PowerShell.Commandlets.Workflows
 {
-    [Cmdlet(VerbsCommon.New, "ItemWorkflowEvent")]
+    [Cmdlet(VerbsCommon.New, "ItemWorkflowEvent", SupportsShouldProcess = true)]
     public class NewItemWorkflowEventCommand : BaseItemCommand
     {
         [Parameter]
@@ -35,8 +36,11 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
                 NewState = lastEvent != null ? lastEvent.NewState : string.Empty;
             }
 
-            ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.AddHistory(
+            if (ShouldProcess(item.GetProviderPath(),string.Format("Add '{0}' workflow history entry.", Text)))
+            {
+                ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.AddHistory(
                 item, OldState, NewState, Text);
+            }
         }
     }
 }

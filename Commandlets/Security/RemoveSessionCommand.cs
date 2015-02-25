@@ -3,8 +3,7 @@ using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Remove, "Session", DefaultParameterSetName = "InstanceId")]
-    [OutputType(new[] {typeof (DomainAccessGuard.Session)})]
+    [Cmdlet(VerbsCommon.Remove, "Session", DefaultParameterSetName = "InstanceId", SupportsShouldProcess = true)]
     public class RemoveSessionCommand : BaseCommand
     {
         [Parameter(ParameterSetName = "InstanceId", Mandatory = true)]
@@ -25,7 +24,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
                         foreach (
                             var result in WildcardFilter(instanceId, DomainAccessGuard.Sessions, s => s.SessionID))
                         {
-                            DomainAccessGuard.Kick(result.SessionID);
+                            if (ShouldProcess(result.SessionID, "Kill session for user '" + result.UserName + "'"))
+                            {
+                                DomainAccessGuard.Kick(result.SessionID);
+                            }
                         }
                     }
                     break;
@@ -34,7 +36,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
                         var result in
                             WildcardFilter(Instance.SessionID, DomainAccessGuard.Sessions, s => s.SessionID))
                     {
-                        DomainAccessGuard.Kick(result.SessionID);
+                        if (ShouldProcess(result.SessionID, "Kill session for user '" + result.UserName + "'"))
+                        {
+                            DomainAccessGuard.Kick(result.SessionID);
+                        }
                     }
                     break;
             }

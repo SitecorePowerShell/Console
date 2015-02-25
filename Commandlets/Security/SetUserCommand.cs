@@ -15,7 +15,7 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class SetUserCommand : BaseCommand, IDynamicParameters
     {
         [Alias("Name")]
@@ -101,6 +101,11 @@ namespace Cognifide.PowerShell.Commandlets.Security
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
             var user = User.FromName(name, true);
+
+            if (!ShouldProcess(name, "Set User information"))
+            {
+                return;
+            }
 
             var profile = user.Profile;
             if (!String.IsNullOrEmpty(FullName))

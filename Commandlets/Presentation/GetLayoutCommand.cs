@@ -10,7 +10,7 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "Layout")]
-    [OutputType(new[] {typeof (Item)})]
+    [OutputType(typeof (Item))]
     public class GetLayoutCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]

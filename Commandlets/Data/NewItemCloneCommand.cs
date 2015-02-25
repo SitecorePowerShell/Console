@@ -1,15 +1,16 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet("New", "ItemClone")]
-    [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [Cmdlet("New", "ItemClone", SupportsShouldProcess = true)]
+    [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class NewItemCloneCommand : BaseLanguageAgnosticItemCommand
     {
-        [Parameter(Mandatory=true)]
+        [Parameter(Mandatory = true)]
         public Item Destination { get; set; }
-        
+
         [Parameter]
         public string Name { get; set; }
 
@@ -18,17 +19,14 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItem(Item item)
         {
-            Item clone;
-            if (string.IsNullOrEmpty(Name))
+            var name = string.IsNullOrEmpty(Name) ? item.Name : Name;
+            if (ShouldProcess(Destination.GetProviderPath(),
+                string.Format("Create clone of '{0}'  with name '{1}' {2} children", item.GetProviderPath(), name,
+                    (Recursive.IsPresent ? "with" : "without"))))
             {
-                clone = item.CloneTo(Destination, Recursive.IsPresent);
+                Item clone = item.CloneTo(Destination, name, Recursive.IsPresent);
+                WriteItem(clone);
             }
-            else
-            {
-                clone = item.CloneTo(Destination, Name, Recursive.IsPresent);
-            }
-
-            WriteItem(clone);
         }
     }
 }

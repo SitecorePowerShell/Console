@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsCommon.Remove, "ItemLanguage")]
+    [Cmdlet(VerbsCommon.Remove, "ItemLanguage", SupportsShouldProcess = true)]
     public class RemoveItemLanguageCommand : BaseItemCommand
     {
         [Parameter]
@@ -18,9 +19,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public override string[] Language { get; set; }
 
         [Alias("ExcludeLanguages")]
-        [Parameter(ParameterSetName = "Item from Path", Mandatory = true)]
-        [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
-        [Parameter(ParameterSetName = "Item from Pipeline", Mandatory = true)]
+        [Parameter(ParameterSetName = "Item from Path")]
+        [Parameter(ParameterSetName = "Item from ID")]
+        [Parameter(ParameterSetName = "Item from Pipeline")]
         public virtual string[] ExcludeLanguage { get; set; }
 
         protected List<WildcardPattern> ExcludeLanguageWildcardPatterns { get; private set; }
@@ -48,21 +49,31 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItemLanguages(Item item)
         {
-            foreach (Item langItem in item.Versions.GetVersions(true))
+            if (ShouldProcess(item.GetProviderPath(),
+                string.Format("{0} versions for language(s) '{1}' {2}", (Recurse ? "Recursively remove" : "Remove"),
+                    Language.Aggregate((seed, curr) => seed + ", " + curr),
+                    (ExcludeLanguage == null || ExcludeLanguage.Length == 0)
+                        ? ""
+                        : string.Format("excluding {0} language(s)",
+                            ExcludeLanguage.Aggregate((seed, curr) => seed + ", " + curr)))))
             {
-                if (LanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
+
+                foreach (Item langItem in item.Versions.GetVersions(true))
                 {
-                    if (!ExcludeLanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
+                    if (LanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
                     {
-                        langItem.Versions.RemoveAll(false);
+                        if (!ExcludeLanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
+                        {
+                            langItem.Versions.RemoveAll(false);
+                        }
                     }
                 }
-            }
-            if (Recurse)
-            {
-                foreach (Item child in item.Children)
+                if (Recurse)
                 {
-                    ProcessItemLanguages(child);
+                    foreach (Item child in item.Children)
+                    {
+                        ProcessItemLanguages(child);
+                    }
                 }
             }
         }

@@ -13,7 +13,7 @@ using Sitecore.Update.Utils;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
-    [Cmdlet(VerbsLifecycle.Install, "UpdatePackage")]
+    [Cmdlet(VerbsLifecycle.Install, "UpdatePackage", SupportsShouldProcess = true)]
     [OutputType(new[] {typeof (ContingencyEntry)})]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
@@ -36,24 +36,28 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
             ILog log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
 
-            PerformInstallAction(
-                () =>
-                {
-                    var installer = new DiffInstaller(UpgradeAction);
-                    MetadataView view = UpdateHelper.LoadMetadata(Path);
-
-                    bool hasPostAction;
-                    string historyPath;
-                    var entries = new List<ContingencyEntry>();
-                    entries = installer.InstallPackage(Path, InstallMode, log, entries, out hasPostAction,
-                        out historyPath);
-                    installer.ExecutePostInstallationInstructions(Path, historyPath, InstallMode, view, log, ref entries);
-                    foreach (var entry in entries)
+            if (ShouldProcess(Path, "Install update package"))
+            {
+                PerformInstallAction(
+                    () =>
                     {
-                        WriteObject(entry);
-                    }
-                    //UpdateHelper.SaveInstallationMessages(entries, historyPath);
-                });
+                        var installer = new DiffInstaller(UpgradeAction);
+                        MetadataView view = UpdateHelper.LoadMetadata(Path);
+
+                        bool hasPostAction;
+                        string historyPath;
+                        var entries = new List<ContingencyEntry>();
+                        entries = installer.InstallPackage(Path, InstallMode, log, entries, out hasPostAction,
+                            out historyPath);
+                        installer.ExecutePostInstallationInstructions(Path, historyPath, InstallMode, view, log,
+                            ref entries);
+                        foreach (var entry in entries)
+                        {
+                            WriteObject(entry);
+                        }
+                        //UpdateHelper.SaveInstallationMessages(entries, historyPath);
+                    });
+            }
         }
     }
 }

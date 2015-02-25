@@ -8,7 +8,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet(VerbsLifecycle.Invoke, "Script", DefaultParameterSetName = "From Content Database Library")]
+    [Cmdlet(VerbsLifecycle.Invoke, "Script", SupportsShouldProcess = true)]
     [OutputType(new[] {typeof (object)})]
     public class InvokeScriptCommand : BaseShellCommand
     {
@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
         protected override void ProcessRecord()
         {
             string script = string.Empty;
+            Item scriptItem = Item;
             if (Item != null)
             {
                 script = Item["script"];
@@ -35,20 +36,24 @@ namespace Cognifide.PowerShell.Commandlets.Session
             {
                 var drive = IsCurrentDriveSitecore ? CurrentDrive : ApplicationSettings.ScriptLibraryDb;
 
-                Item curItem = PathUtilities.GetItem(Path, drive, ApplicationSettings.ScriptLibraryPath);
+                scriptItem = PathUtilities.GetItem(Path, drive, ApplicationSettings.ScriptLibraryPath);
 
-                if (curItem == null)
+                if (scriptItem == null)
                 {
                     WriteError(new ErrorRecord(
                         new ItemNotFoundException(string.Format("Script '{0}' not found.", Path)),
                         "sitecore_script_missing", ErrorCategory.ObjectNotFound, null));
+                    return;
                 }
-                script = curItem["script"];
+                script = scriptItem["script"];
             }
+            if (ShouldProcess(scriptItem.GetProviderPath(), "Invoke script"))
+            {
 
-            object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                PipelineResultTypes.Output | PipelineResultTypes.Error, null, new object[0]);
-            WriteObject(sendToPipeline);
+                object sendToPipeline = InvokeCommand.InvokeScript(script, false,
+                    PipelineResultTypes.Output | PipelineResultTypes.Error, null, new object[0]);
+                WriteObject(sendToPipeline);
+            }
         }
     }
 }

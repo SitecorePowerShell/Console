@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Core.Utility
             return item;
         }
 
-        public static string GetItemPsPath(Item item)
+        public static string GetProviderPath(this Item item)
         {
             if (item == null)
             {

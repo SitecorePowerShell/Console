@@ -1,35 +1,36 @@
 ﻿using System;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsData.Expand, "Token")]
+    [Cmdlet(VerbsData.Expand, "Token", SupportsShouldProcess = true)]
     [OutputType(new[] {typeof (Item)})]
-    public class ExpandTokenCommand : BaseCommand
+    public class ExpandTokenCommand : BaseItemCommand
     {
         private static readonly MasterVariablesReplacer TokenReplacer = Factory.GetMasterVariablesReplacer();
 
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
-        public Item Item { get; set; }
-
-        protected override void ProcessRecord()
+        protected override void ProcessItem(Item item)
         {
-            Item.Editing.BeginEdit();
-            try
+            if (ShouldProcess(item.GetProviderPath(), "Expand tokens"))
             {
-                TokenReplacer.ReplaceItem(Item);
-                Item.Editing.EndEdit();
-            }
-            catch (Exception ex)
-            {
-                Item.Editing.CancelEdit();
-                WriteError(new ErrorRecord(ex,"sitecore_token_expander_error",ErrorCategory.NotSpecified, Item));
-            }
+                Item.Editing.BeginEdit();
+                try
+                {
+                    TokenReplacer.ReplaceItem(Item);
+                    Item.Editing.EndEdit();
+                }
+                catch (Exception ex)
+                {
+                    Item.Editing.CancelEdit();
+                    WriteError(new ErrorRecord(ex, "sitecore_token_expander_error", ErrorCategory.NotSpecified, Item));
+                }
 
-            WriteItem(Item);
+                WriteItem(Item);
+            }
         }
     }
 }

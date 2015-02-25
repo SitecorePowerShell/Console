@@ -77,9 +77,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     AssertDefaultSize(500, 300);                    
                 }
 
-
-                string response = null;
-
                 var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description,
                     OkButtonName ?? "OK", CancelButtonName ?? "Cancel", ParentItem != null ? (ParentItem.ID.ToString()) : Path,
                     Versioned, Language, Overwrite, Unpack, AdvancedDialog);

@@ -10,7 +10,7 @@ using Sitecore.SecurityModel.License;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet("Login", "User")]
+    [Cmdlet("Login", "User", SupportsShouldProcess = true)]
     public class LoginUserCommand : BaseCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -39,31 +39,30 @@ namespace Cognifide.PowerShell.Commandlets.Security
                     "user not found", ErrorCategory.ObjectNotFound, null));
             }
 
-            if (Context.IsLoggedIn)
+            if (ShouldProcess(username, "Login as user"))
             {
-                if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;
-                Context.Logout();
-            }
-            if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
-            {
-                WriteError(new ErrorRecord(new LicenseException("A required license is missing"),
-                    "sitecore_license_missing", ErrorCategory.ResourceUnavailable, null));
-            }
-            if (!Membership.ValidateUser(username, Password))
-            {
-                WriteError(new ErrorRecord(new LicenseException("Unknown username or password."),
-                    "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
-            }
-            var user = User.FromName(username, true);
-            /*
-            if (!user.IsAdministrator && !user.IsInRole(Role.FromName("sitecore\\Sitecore Client Developing")))
-                WriteError(new ErrorRecord(new LicenseException("User is not an Administrator or a member of the sitecore\\Sitecore Client Developing role"),
-                                "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
-            else
-            */
-            UserSwitcher.Enter(user);
 
-            SessionState.PSVariable.Set("me", HttpContext.Current.User.Identity.Name);
+                if (Context.IsLoggedIn)
+                {
+                    if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;
+                    Context.Logout();
+                }
+                if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
+                {
+                    WriteError(new ErrorRecord(new LicenseException("A required license is missing"),
+                        "sitecore_license_missing", ErrorCategory.ResourceUnavailable, null));
+                }
+                if (!Membership.ValidateUser(username, Password))
+                {
+                    WriteError(new ErrorRecord(new LicenseException("Unknown username or password."),
+                        "sitecore_invalid_login_info", ErrorCategory.PermissionDenied, null));
+                }
+                var user = User.FromName(username, true);
+
+                UserSwitcher.Enter(user);
+
+                SessionState.PSVariable.Set("me", HttpContext.Current.User.Identity.Name);
+            }
         }
     }
 }

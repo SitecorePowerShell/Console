@@ -77,7 +77,9 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected void RecoverHttpContext()
         {
+            var job = Sitecore.Context.Job;
             HttpContext.Current = SessionState.PSVariable.Get("HttpContext").Value as HttpContext;
+            Sitecore.Context.Job = job;
         }
 
         protected static WildcardPattern GetWildcardPattern(string name)
