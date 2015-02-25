@@ -122,7 +122,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Applications\ConfirmChoice.cs" />
-    <Compile Include="Client\Applications\PowerShellItemSelector.cs" />
     <Compile Include="Client\Applications\DownloadFile.cs" />
     <Compile Include="Client\Applications\ExecutionMessages.cs" />
     <Compile Include="Client\Applications\FieldEditor.cs" />
