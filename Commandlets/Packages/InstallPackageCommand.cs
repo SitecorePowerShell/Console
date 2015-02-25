@@ -7,7 +7,7 @@ using Sitecore.Install.Utils;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
-    [Cmdlet(VerbsLifecycle.Install, "Package")]
+    [Cmdlet(VerbsLifecycle.Install, "Package",SupportsShouldProcess = true)]
     public class InstallPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
@@ -23,7 +23,6 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         protected override void ProcessRecord()
         {
             string fileName = Path;
-
             PerformInstallAction(
                 () =>
                 {
@@ -32,14 +31,18 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         fileName = FullPackagePath(fileName);
                     }
 
-                    IProcessingContext context = new SimpleProcessingContext();
-                    IItemInstallerEvents events =
-                        new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
-                    context.AddAspect(events);
-                    IFileInstallerEvents events1 = new DefaultFileInstallerEvents(true);
-                    context.AddAspect(events1);
-                    var installer = new Installer();
-                    installer.InstallPackage(fileName, context);
+                    if (ShouldProcess(fileName, "Install package"))
+                    {
+
+                        IProcessingContext context = new SimpleProcessingContext();
+                        IItemInstallerEvents events =
+                            new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
+                        context.AddAspect(events);
+                        IFileInstallerEvents events1 = new DefaultFileInstallerEvents(true);
+                        context.AddAspect(events1);
+                        var installer = new Installer();
+                        installer.InstallPackage(fileName, context);
+                    }
                 });
         }
     }

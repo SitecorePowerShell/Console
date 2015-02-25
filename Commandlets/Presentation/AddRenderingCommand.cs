@@ -2,13 +2,14 @@
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Add, "Rendering")]
+    [Cmdlet(VerbsCommon.Add, "Rendering",SupportsShouldProcess = true)]
     public class AddRenderingCommand : BaseLayoutCommand
     {
         private int index = -1;
@@ -35,6 +36,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
         protected override void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device)
         {
+            if (!ShouldProcess(item.GetProviderPath(), "Add rendering " + Instance.ItemID))
+            {
+                return;
+            }
             var rendering = new RenderingDefinition
             {
                 ItemID = Instance.ItemID,

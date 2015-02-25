@@ -15,7 +15,7 @@ using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet(VerbsData.Import, "Function")]
+    [Cmdlet(VerbsData.Import, "Function", SupportsShouldProcess = true)]
     [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand, IDynamicParameters
     {
@@ -140,9 +140,12 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 }
 
                 script = functions[0]["script"];
-                object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                    PipelineResultTypes.Output | PipelineResultTypes.Error, null);
-                WriteObject(sendToPipeline);
+                if (ShouldProcess(functions[0].GetProviderPath(), "Import functions"))
+                {
+                    object sendToPipeline = InvokeCommand.InvokeScript(script, false,
+                        PipelineResultTypes.Output | PipelineResultTypes.Error, null);
+                    WriteObject(sendToPipeline);
+                }
             }
         }
 

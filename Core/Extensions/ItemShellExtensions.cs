@@ -19,7 +19,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             {"FullPath", "$this.Paths.FullPath"},
             {"MediaPath", "$this.Paths.MediaPath"},
             {"ContentPath", "$this.Paths.ContentPath"},
-            {"ProviderPath", "[Cognifide.PowerShell.Core.Utility.PathUtilities]::GetItemPsPath($this)"}
+            {"ProviderPath", "[Cognifide.PowerShell.Core.Utility.PathUtilities]::GetProviderPath($this)"}
         };
 
         //internal static PSObject GetPSObject(CmdletProvider provider, Item item)

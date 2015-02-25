@@ -8,7 +8,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Import, "Role")]
+    [Cmdlet(VerbsData.Import, "Role", SupportsShouldProcess = true)]
     public class ImportRoleCommand : BaseCommand
     {
 
@@ -99,10 +99,13 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         private void DeserializeRoleFile(string userName, string file)
         {
-            var logMessage = string.Format("Deserializing role '{0}' from '{1}'", userName, file);
-            WriteVerbose(logMessage);
-            WriteDebug(logMessage);
-            Manager.LoadRole(file);
+            if (ShouldProcess(userName, string.Format("Deserializing role from '{0}'", file)))
+            {
+                var logMessage = string.Format("Deserializing role '{0}' from '{1}'", userName, file);
+                WriteVerbose(logMessage);
+                WriteDebug(logMessage);
+                Manager.LoadRole(file);
+            }
         }
     }
 }

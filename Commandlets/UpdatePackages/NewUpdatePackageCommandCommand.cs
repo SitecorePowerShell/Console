@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
         [Parameter]
         public string Tag { get; set; }
 
-        private List<ICommand> commands;
+        //private List<ICommand> commands;
 
         protected override void BeginProcessing()
         {

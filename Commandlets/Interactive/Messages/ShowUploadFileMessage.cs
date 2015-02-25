@@ -86,7 +86,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 handle["ic"] = "powershell/32x32/powershell8.png";
                 handle["ok"] = OkButtonName ?? string.Empty;
                 handle["cancel"] = CancelButtonName ?? string.Empty;
-                var ask = true;
                 handle["path"] = Path;
                 handle["mask"] = "*.*";
                 handle["de"] = "txt";

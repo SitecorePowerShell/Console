@@ -13,21 +13,11 @@ using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Export, "Item")]
-    public class ExportItemCommand : BaseCommand
+    [Cmdlet(VerbsData.Export, "Item", SupportsShouldProcess = true)]
+    public class ExportItemCommand : BaseLanguageAgnosticItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public Item Item { get; set; }
-
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Items from Preset")]
         public IncludeEntry Entry { get; set; }
-
-        [Parameter]
-        [Alias("FullName", "FileName")]
-        public string Path { get; set; }
-
-        [Parameter]
-        public string Id { get; set; }
 
         [Parameter]
         public SwitchParameter Recurse { get; set; }
@@ -39,10 +29,6 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [Alias("Target")]
         public string Root { get; set; }
 
-        //[Parameter]
-        [Alias("Languages")]
-        public string[] Language { get; set; }
-
         protected override void ProcessRecord()
         {
             if (Entry != null)
@@ -51,30 +37,15 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
             else
             {
-                Serialize(Item, Path, Id, Recurse.IsPresent, Root, Language, CurrentProviderLocation("CmsItemProvider"));
+                base.ProcessRecord();
             }
         }
 
-        public void Serialize(Item item, string path, string id, bool recursive, string root,
-            string[] languages, PathInfo currentPathInfo)
+        protected override void ProcessItem(Item item)
         {
-            if (item == null)
-            {
-                if (!String.IsNullOrEmpty(id))
-                {
-                    Database currentDb = Factory.GetDatabase(currentPathInfo.Drive.Name);
-                    item = currentDb.GetItem(new ID(id));
-                }
-                else if (!String.IsNullOrEmpty(path))
-                {
-                    path = path.Replace('\\', '/');
-                    item = PathUtilities.GetItem(path, currentPathInfo.Drive.Name, currentPathInfo.ProviderPath);
-                }
-            }
-
             if (item != null)
             {
-                SerializeToTarget(item, root, recursive, languages);
+                SerializeToTarget(item, Root, Recurse);
             }
             else
             {
@@ -85,39 +56,29 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
         }
 
-        private void SerializeToTarget(Item item, string root, bool recursive, string[] languages)
+        private void SerializeToTarget(Item item, string target, bool recursive)
         {
-            if (!string.IsNullOrEmpty(root) && ItemPathsAbsolute.IsPresent)
+            if (!string.IsNullOrEmpty(target) && ItemPathsAbsolute.IsPresent)
             {
-                root = root.EndsWith("\\")
-                    ? root + item.Parent.Paths.FullPath.Replace("/", "\\")
-                    : root + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
+                target = target.EndsWith("\\")
+                    ? target + item.Parent.Paths.FullPath.Replace("/", "\\")
+                    : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
             }
 
-            if (languages == null)
-            {
-                Language language = item.Language;
-                SerializeToTargetLanguage(item, root, language, recursive);
-            }
-            else
-            {
-                foreach (var siteLanguage in item.Database.GetLanguages())
-                {
-                    if (
-                        languages.Any(
-                            language =>
-                                siteLanguage.CultureInfo.Name.Equals(language, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        SerializeToTargetLanguage(item, root, siteLanguage, recursive);
-                    }
-                }
-            }
-        }
+            string message = string.Format("Serializing item '{0}' to target '{1}'", item.Name, target);
+            WriteVerbose(message);
+            WriteDebug(message);
 
-        private void SerializeToTargetLanguage(Item item, string target, Language language, bool recursive)
-        {
-            WriteVerbose(String.Format("Serializing item '{0}' to target '{1}'", item.Name, target));
-            WriteDebug(String.Format("[Debug]: Serializing item '{0}' to target '{1}'", item.Name, target));
+            string fileName = target;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                ItemReference itemReference = new ItemReference(item);
+                fileName = PathUtils.GetFilePath(itemReference.ToString());
+            }
+            if (!ShouldProcess(item.GetProviderPath(), string.Format("Serializing item to '{0}'", fileName)))
+            {
+                return;
+            }
 
             if (string.IsNullOrEmpty(target))
             {
@@ -132,7 +93,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             {
                 foreach (Item child in item.GetChildren(ChildListOptions.IgnoreSecurity))
                 {
-                    SerializeToTargetLanguage(child, target, language, true);
+                    SerializeToTarget(child, target, true);
                 }
             }
         }

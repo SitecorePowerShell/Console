@@ -4,7 +4,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Remove, "User", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsCommon.Remove, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class RemoveUserCommand : BaseCommand
     {
         [Alias("Name")]
@@ -24,8 +24,11 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
-            var user = User.FromName(name, true);
-            user.Delete();
+            if (ShouldProcess(name, "Remove user"))
+            {
+                var user = User.FromName(name, true);
+                user.Delete();
+            }
         }
     }
 }

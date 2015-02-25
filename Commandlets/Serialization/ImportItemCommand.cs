@@ -7,8 +7,8 @@ using Sitecore.Data.Serialization.Presets;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
-    [Cmdlet(VerbsData.Import, "Item")]
-    [OutputType(new[] { typeof(void)}, ParameterSetName = new[] { "Database", "Item", "Preset", "Path" })]
+    [Cmdlet(VerbsData.Import, "Item", SupportsShouldProcess = true)]
+    [OutputType(new[] {typeof (void)}, ParameterSetName = new[] {"Database", "Item", "Preset", "Path"})]
     public class ImportItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Database")]
@@ -77,7 +77,10 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             LoadOptions options = GetLoadOptions();
             string path = System.IO.Path.Combine(options.Root, database.Name);
-            Manager.LoadTree(path, options);
+            if (ShouldProcess(path, string.Format("Deserializing database")))
+            {
+                Manager.LoadTree(path, options);
+            }
         }
 
         public void Deserialize(Item item)
@@ -85,11 +88,13 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             ItemReference reference = new ItemReference(item);
             if (Recurse.IsPresent)
             {
-                Manager.LoadTree(PathUtils.GetDirectoryPath(reference.ToString()), GetLoadOptions());
+                string path = PathUtils.GetDirectoryPath(reference.ToString());
+                Deserialize(path);
             }
             else
             {
-                Manager.LoadItem(PathUtils.GetFilePath(reference.ToString()), GetLoadOptions());
+                string path = PathUtils.GetFilePath(reference.ToString());
+                Deserialize(path);
             }
         }
 
@@ -97,11 +102,17 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (Recurse.IsPresent)
             {
-                Manager.LoadTree(path, GetLoadOptions());
+                if (ShouldProcess(path, string.Format("Deserializing tree")))
+                {
+                    Manager.LoadTree(path, GetLoadOptions());
+                }
             }
             else
             {
-                Manager.LoadItem(path, GetLoadOptions());
+                if (ShouldProcess(path, string.Format("Deserializing item")))
+                {
+                    Manager.LoadItem(path, GetLoadOptions());
+                }
             }
         }
 

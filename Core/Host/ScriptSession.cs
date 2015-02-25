@@ -360,8 +360,8 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (scriptItem != null)
             {
-                SetVariable("PSScriptRoot", PathUtilities.GetItemPsPath(scriptItem.Parent));
-                SetVariable("PSCommandPath", PathUtilities.GetItemPsPath(scriptItem));
+                SetVariable("PSScriptRoot", scriptItem.Parent.GetProviderPath());
+                SetVariable("PSCommandPath", scriptItem.GetProviderPath());
                 SetVariable("PSScript", scriptItem);
             }
         }

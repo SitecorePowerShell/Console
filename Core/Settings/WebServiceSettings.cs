@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Xml;
-using Cognifide.PowerShell.Core.Modules;
 using Sitecore;
 using Sitecore.Configuration;
 
@@ -9,8 +6,6 @@ namespace Cognifide.PowerShell.Core.Settings
 {
     public static class WebServiceSettings
     {
-        private static SortedList<string, bool> services;
-
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting  = "remoting";

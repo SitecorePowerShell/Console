@@ -3,16 +3,19 @@ using Sitecore.Security.Authentication;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet("Logout", "User")]
+    [Cmdlet("Logout", "User", SupportsShouldProcess = true)]
     public class LogoutUserCommand : BaseCommand
     {
         protected override void ProcessRecord()
         {
             RecoverHttpContext();
 
-            AuthenticationManager.Logout();
+            if (ShouldProcess(SessionState.PSVariable.Get("me").Value.ToString(), "Logout user"))
+            {
+                AuthenticationManager.Logout();
 
-            SessionState.PSVariable.Set("me", string.Empty);
+                SessionState.PSVariable.Set("me", string.Empty);
+            }
         }
     }
 }

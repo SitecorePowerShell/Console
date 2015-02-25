@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -9,7 +10,7 @@ using Sitecore.Publishing;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsData.Publish, "Item")]
+    [Cmdlet(VerbsData.Publish, "Item",SupportsShouldProcess = true)]
     [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class PublishItemCommand : BaseItemCommand
     {
@@ -50,6 +51,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         private void PublishToTarget(Item item, Database source, Database target)
         {
+
             if (PublishMode == PublishMode.Unknown)
             {
                 PublishMode = PublishMode.Smart;
@@ -57,25 +59,32 @@ namespace Cognifide.PowerShell.Commandlets.Data
             
             var language = item.Language;
 
-            WriteVerbose(String.Format("Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'.  (Recurse={4}).",
-                item.Name, language, item.Version, target.Name, Recurse.IsPresent));
-
-            var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
+            if (ShouldProcess(item.GetProviderPath(),
+                string.Format("{3}ublishing language '{0}', version '{1}' to target '{2}'.", language, item.Version, target.Name, Recurse.IsPresent ? "Recursively p" : "P")))
             {
-                Deep = Recurse.IsPresent,
-                RootItem = item
-            };
+                WriteVerbose(
+                    String.Format(
+                        "Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'.  (Recurse={4}).",
+                        item.Name, language, item.Version, target.Name, Recurse.IsPresent));
 
-            PublishOptions[] optionsArgs = new PublishOptions[1];
-            optionsArgs[0] = options;
+                var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
+                {
+                    Deep = Recurse.IsPresent,
+                    RootItem = item
+                };
 
-            var handle = PublishManager.Publish(optionsArgs);
+                PublishOptions[] optionsArgs = new PublishOptions[1];
+                optionsArgs[0] = options;
 
-            if (handle != null)
-            {
-                var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+                var handle = PublishManager.Publish(optionsArgs);
 
-                WriteVerbose(String.Format("Publish Job submitted, current state={0}.",publishStatus.State.ToString()));
+                if (handle != null)
+                {
+                    var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+
+                    WriteVerbose(String.Format("Publish Job submitted, current state={0}.",
+                        publishStatus.State.ToString()));
+                }
             }
         }
     }

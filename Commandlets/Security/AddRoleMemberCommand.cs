@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Management.Automation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Add, "RoleMember", DefaultParameterSetName = "Id")]
+    [Cmdlet(VerbsCommon.Add, "RoleMember", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class AddRoleMemberCommand : BaseCommand
     {
         [Alias("Name")]
@@ -20,43 +21,48 @@ namespace Cognifide.PowerShell.Commandlets.Security
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
-
-            if (Role.Exists(name))
-            {
-                var targetRole = Role.FromName(name);
-
-                foreach (var member in Members)
+                if (Role.Exists(name))
                 {
-                    if (User.Exists(member.Name))
-                    {
-                        var user = User.FromName(member.Name, false);
-                        if (user.IsInRole(targetRole)) continue;
+                    var targetRole = Role.FromName(name);
 
-                        var profile = UserRoles.FromUser(user);
-                        profile.Add(targetRole);
-                    }
-                    else if (Role.Exists(member.Name))
+                    foreach (var member in Members)
                     {
-                        var role = Role.FromName(member.Name);
-                        if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                        if (User.Exists(member.Name))
                         {
-                            RolesInRolesManager.AddRoleToRole(role, targetRole);
+                            var user = User.FromName(member.Name, false);
+                            if (user.IsInRole(targetRole)) continue;
+
+                            if (ShouldProcess(targetRole.Name, string.Format("Add user '{0}' to role", user.Name)))
+                            {
+                                var profile = UserRoles.FromUser(user);
+                                profile.Add(targetRole);
+                            }
+                        }
+                        else if (Role.Exists(member.Name))
+                        {
+                            var role = Role.FromName(member.Name);
+                            if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                            {
+                                if (ShouldProcess(targetRole.Name, string.Format("Add role '{0}' to role", role.Name)))
+                                {
+                                    RolesInRolesManager.AddRoleToRole(role, targetRole);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var error = String.Format("Cannot find an account with identity '{0}'.", member);
+                            WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                                ErrorCategory.ObjectNotFound, member));
                         }
                     }
-                    else
-                    {
-                        var error = String.Format("Cannot find an account with identity '{0}'.", member);
-                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
-                            ErrorCategory.ObjectNotFound, member));
-                    }
                 }
-            }
-            else
-            {
-                var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                    Identity));
-            }
+                else
+                {
+                    var error = String.Format("Cannot find an account with identity '{0}'.", name);
+                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
+                        Identity));
+                }
         }
     }
 }

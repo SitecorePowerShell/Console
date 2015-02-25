@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -8,7 +9,7 @@ using Sitecore.Layouts;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Set, "Layout")]
+    [Cmdlet(VerbsCommon.Set, "Layout", SupportsShouldProcess = true)]
     public class SetLayoutCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter(Mandatory = true)]
@@ -19,30 +20,32 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
         protected override void ProcessItem(Item item)
         {
-
-            LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
-            if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+            if (ShouldProcess(item.GetProviderPath(), string.Format("Set layout '{0}'", Layout.GetProviderPath())))
             {
-                return;
+                LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+                if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+                {
+                    return;
+                }
+
+                LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
+
+                DeviceDefinition device = layout.GetDevice(Device.ID.ToString());
+
+                if (string.Equals(device.Layout, Layout.ID.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    //same layout as already set - no point in setting it again
+                    return;
+                }
+
+                device.Layout = Layout.ID.ToString();
+
+                item.Edit(p =>
+                {
+                    string outputXml = layout.ToXml();
+                    Item["__Renderings"] = outputXml;
+                });
             }
-
-            LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
-
-            DeviceDefinition device = layout.GetDevice(Device.ID.ToString());
-
-            if (string.Equals(device.Layout, Layout.ID.ToString(), StringComparison.OrdinalIgnoreCase))
-            {
-                //same layout as already set - no point in setting it again
-                return;
-            }
-            
-            device.Layout = Layout.ID.ToString();
-
-            item.Edit(p =>
-            {
-                string outputXml = layout.ToXml();
-                Item["__Renderings"] = outputXml;
-            });
         }
     }
 }

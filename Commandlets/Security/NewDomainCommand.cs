@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
+using Sitecore.Security.Domains;
 using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.New, "Domain", DefaultParameterSetName = "Name")]
+    [Cmdlet(VerbsCommon.New, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
+    [OutputType(typeof(Domain))]
     public class NewDomainCommand : BaseCommand
     {
         [Parameter(ParameterSetName = "Name", Mandatory = true, Position = 0)]
@@ -14,9 +16,6 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
         [Parameter]
         public SwitchParameter LocallyManaged { get; set; }
-
-        [Parameter]
-        public SwitchParameter PassThru { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -27,12 +26,12 @@ namespace Cognifide.PowerShell.Commandlets.Security
                 return;
             }
 
-            DomainManager.AddDomain(Name, LocallyManaged);
-
-            if (PassThru)
+            if (ShouldProcess(Name, "Create domain"))
             {
-                DomainManager.GetDomain(Name);
+                DomainManager.AddDomain(Name, LocallyManaged);
+                WriteObject(DomainManager.GetDomain(Name));
             }
+
         }
     }
 }

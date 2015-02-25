@@ -5,7 +5,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
-    [Cmdlet(VerbsCommon.Set, "UserPassword", DefaultParameterSetName = "Set password")]
+    [Cmdlet(VerbsCommon.Set, "UserPassword", DefaultParameterSetName = "Set password", SupportsShouldProcess = true)]
     public class SetUserPasswordCommand : BaseCommand
     {
         [Alias("Name")]
@@ -27,7 +27,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+            if (!this.CanFindAccount(Identity, AccountType.User))
+            {
+                return;
+            }
 
             var name = Identity.Name;
 
@@ -36,12 +39,16 @@ namespace Cognifide.PowerShell.Commandlets.Security
             var member = Membership.GetUser(name);
             if (member == null) return;
 
-            if (Reset.IsPresent && User.Current.IsAdministrator)
+            if (ShouldProcess(name, "Change User Password"))
             {
-                oldpassword = member.ResetPassword();
-            }
 
-            member.ChangePassword(oldpassword, NewPassword);
+                if (Reset.IsPresent && User.Current.IsAdministrator)
+                {
+                    oldpassword = member.ResetPassword();
+                }
+
+                member.ChangePassword(oldpassword, NewPassword);
+            }
         }
     }
 }
