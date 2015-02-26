@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     Versioned, Language, Overwrite, Unpack, AdvancedDialog);
 
                 PutMessage(message);
-                var result = (string)GetResult(message);
+                var result = (string)GetSheerResult(message);
                 
                 ID itemId;
                 if (ID.TryParse(result, out itemId))
