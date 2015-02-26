@@ -92,7 +92,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
 
                 PutMessage(message);
-                var results = (object[]) GetResult(message);
+                var results = (object[]) GetSheerResult(message);
                 WriteObject(results != null ? "ok" : "cancel");
                 if (results != null)
                 {

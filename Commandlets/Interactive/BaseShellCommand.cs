@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             }
         }
 
-        public static object GetResult(IMessageWithResult message)
+        public static object GetSheerResult(IMessageWithResult message)
         {
             if (JobContext.IsJob)
             {
