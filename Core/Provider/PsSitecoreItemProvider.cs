@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
@@ -139,8 +141,13 @@ namespace Cognifide.PowerShell.Core.Provider
                     {
                         GetChildItemsHelper(childUrl, true, wildcard, language, version);
                     }
-                } // foreach (DatabaseTableInfo...
-            } // if (PathIsDrive...
+                }
+            }
+            else
+            {
+                Exception exception = new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
+                WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+            }
         }
 
         public override string GetResourceString(string baseName, string resourceId)
@@ -184,11 +191,16 @@ namespace Cognifide.PowerShell.Core.Provider
                         if (returnContainers == ReturnContainers.ReturnAllContainers || wildcard == null ||
                             wildcard.IsMatch(child.Name))
                         {
-                            WriteItem(child);
+                            WriteItemObject(child.Name, child.GetProviderPath(), child.HasChildren);
                         }
                         if (Stopping)
                             return;
                     }
+                }
+                else
+                {
+                    Exception exception = new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
+                    WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));                    
                 }
             }
             catch (Exception ex)
@@ -267,12 +279,26 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     WriteMatchingItem(language, version, item);
                 }
+                else
+                {
+                    ThrowTerminatingInvalidPathException(path);
+                }
             }
             catch (Exception ex)
             {
                 LogError(ex, "Error while executing GetItem(string path='{0}')", path);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Throws an argument exception stating that the specified path does
+        /// not exist.
+        /// </summary>
+        /// <param name="path">path which is invalid</param>
+        private void ThrowTerminatingInvalidPathException(string path)
+        {
+            throw new ArgumentException("Path '{0}' does not exist", path);
         }
 
         protected override void InvokeDefaultAction(string path)

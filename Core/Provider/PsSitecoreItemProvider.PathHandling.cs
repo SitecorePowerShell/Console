@@ -51,7 +51,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override bool IsItemContainer(string path)
         {
-            return true;
+            bool result = GetItemForPath(path) != null;
+            return result;
         }
 
         protected override bool ConvertPath(string path, string filter, ref string updatedPath, ref string updatedFilter)
