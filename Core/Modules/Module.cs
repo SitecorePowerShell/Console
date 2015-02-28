@@ -9,6 +9,14 @@ namespace Cognifide.PowerShell.Core.Modules
 {
     public class Module
     {
+        public Module(Item moduleItem, bool alwaysEnabled)
+        {
+            AlwaysEnabled = alwaysEnabled;
+            ID = moduleItem.ID;
+            Database = moduleItem.Database.Name;
+            Update(moduleItem);
+        }
+
         public bool AlwaysEnabled { get; private set; }
         public bool Enabled { get; private set; }
         public string Database { get; private set; }
@@ -27,15 +35,6 @@ namespace Cognifide.PowerShell.Core.Modules
         public string License { get; private set; }
         public string PublishedBy { get; private set; }
         public string Category { get; private set; }
-
-        public Module(Item moduleItem, bool alwaysEnabled)
-        {
-            AlwaysEnabled = alwaysEnabled;
-            ID = moduleItem.ID;
-            Database = moduleItem.Database.Name;
-            Update(moduleItem);
-        }
-
 
         private void Update(Item moduleItem)
         {
@@ -58,7 +57,8 @@ namespace Cognifide.PowerShell.Core.Modules
                 Category = moduleItem["Category"];
                 foreach (var integrationPoint in IntegrationPoints.Libraries)
                 {
-                    Item featureItem = moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value.Path);
+                    var featureItem =
+                        moduleItem.Database.GetItem(moduleItem.Paths.Path + "/" + integrationPoint.Value.Path);
                     if (featureItem != null)
                     {
                         Features.Add(integrationPoint.Key, featureItem.ID);
@@ -99,11 +99,13 @@ namespace Cognifide.PowerShell.Core.Modules
                 if (IntegrationPoints.Libraries.Keys.ToList()
                     .Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))
                 {
-                    return string.Format("{0}:{1}/{2}", Database, Path, IntegrationPoints.Libraries[integrationPoint].Path);
+                    return string.Format("{0}:{1}/{2}", Database, Path,
+                        IntegrationPoints.Libraries[integrationPoint].Path);
                 }
             }
             return string.Empty;
         }
+
         public string GetCreateScript(string integrationPoint)
         {
             if (IntegrationPoints.Libraries.Keys.ToList().Contains(integrationPoint, StringComparer.OrdinalIgnoreCase))

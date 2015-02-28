@@ -7,7 +7,7 @@ using Sitecore.Data.Archiving;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "Archive")]
-    [OutputType(new[] {typeof (Archive)})]
+    [OutputType(typeof (Archive))]
     public class GetArchiveCommand : DatabaseContextBaseCommand
     {
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]

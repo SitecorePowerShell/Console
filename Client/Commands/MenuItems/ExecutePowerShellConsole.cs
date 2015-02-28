@@ -2,7 +2,6 @@
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
@@ -15,9 +14,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
     {
         public override void Execute(CommandContext context)
         {
-            string itemId = context.Items[0].ID.ToString();
-            string itemDb = context.Items[0].Database.Name;
-            Item item = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
+            var itemId = context.Items[0].ID.ToString();
+            var itemDb = context.Items[0].Database.Name;
+            var item = Factory.GetDatabase(itemDb).GetItem(new ID(itemId));
 
             var urlString = new UrlString();
             urlString.Append("item", item.Paths.Path.ToLower().Replace("sitecore/", ""));
@@ -27,7 +26,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
         public override CommandState QueryState(CommandContext context)
         {
-            User user = Context.User;
+            var user = Context.User;
             if (!user.IsAdministrator &&
                 !user.IsInRole(Role.FromName("sitecore\\Sitecore Client Developing")))
             {

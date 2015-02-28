@@ -12,23 +12,23 @@ namespace Cognifide.PowerShell.Client.Applications
     public class ConfirmChoice : BaseForm
     {
         protected Border Buttons;
-        protected Literal Text;
-        protected Literal DialogHeader;
         protected Literal DialogDescription;
+        protected Literal DialogHeader;
+        protected Literal Text;
 
         protected override void OnLoad(EventArgs e)
         {
             Assert.ArgumentNotNull(e, "e");
-            base.OnLoad(e); 
+            base.OnLoad(e);
             if (Context.ClientPage.IsEvent)
                 return;
             Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te")).Replace("\n", "<br/>");
             DialogHeader.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
-            string defaultChoice = WebUtil.GetQueryString("dc");
-            int i = 0;
+            var defaultChoice = WebUtil.GetQueryString("dc");
+            var i = 0;
             while (HttpContext.Current.Request.QueryString.AllKeys.Contains("btn_" + i))
             {
-                string key = "btn_" + i;
+                var key = "btn_" + i;
                 var button = new Button
                 {
                     ID = key,

@@ -5,7 +5,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemTemplate")]
-    [OutputType(new[] {typeof (TemplateItem)})]
+    [OutputType(typeof (TemplateItem))]
     public class GetItemTemplateCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter]
@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             if (Recurse)
             {
-                Dictionary<string, TemplateItem> templates = new Dictionary<string, TemplateItem>();
+                var templates = new Dictionary<string, TemplateItem>();
                 var template = item.Template;
                 GetBaseTemplates(template, templates);
                 WriteObject(templates.Values, true);

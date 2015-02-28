@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.IO;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Pipelines.Upload;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
     public partial class PsSitecoreItemProvider : IDynamicParameters
     {
+        [Flags]
+        public enum TransferOptions
+        {
+            ChangeID = 1,
+            AllowDefaultValues = 2,
+            AllowStandardValues = 4
+        }
+
         private const string FailSilentlyParam = "FailSilently";
         private const string QueryParam = "Query";
         private const string LanguageParam = "Language";
@@ -28,12 +34,9 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string AmbiguousPathsParam = "AmbiguousPaths";
         private const string TransferOptionsParam = "TransferOptions";
 
-        [Flags]
-        public enum TransferOptions
+        public object GetDynamicParameters()
         {
-            ChangeID = 1,
-            AllowDefaultValues = 2,
-            AllowStandardValues = 4
+            return null;
         }
 
         public object GetPropertyDynamicParameters(string path, Collection<string> providerSpecificPickList)
@@ -72,7 +75,7 @@ namespace Cognifide.PowerShell.Core.Provider
         protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic,
             bool valueFromPipeline, bool valueFromPipelineByPropertyName, string paramSetName, bool mandatory = false)
         {
-            bool paramAdded = false;
+            var paramAdded = false;
 
             if (dic == null || !dic.ContainsKey(name))
             {
@@ -80,7 +83,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     Mandatory = mandatory,
                     ValueFromPipeline = valueFromPipeline,
-                    ValueFromPipelineByPropertyName = valueFromPipelineByPropertyName,
+                    ValueFromPipelineByPropertyName = valueFromPipelineByPropertyName
                 };
                 if (!string.IsNullOrEmpty(paramSetName))
                 {
@@ -91,7 +94,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     IsSet = false,
                     Name = name,
-                    ParameterType = type,
+                    ParameterType = type
                 };
                 param.Attributes.Add(attrib);
 
@@ -111,13 +114,13 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing CopyItemDynamicParameters(string path='{0}', destination='{1}', string recurse='{2}')",
                 path, destination, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            bool paramAdded = FailSilentlyDynamicParameters(ref dic);
+            var paramAdded = FailSilentlyDynamicParameters(ref dic);
             var sourceDrive = PathUtilities.GetDrive(path, SessionState.Drive.Current.Name);
             var destinationDrive = PathUtilities.GetDrive(destination, SessionState.Drive.Current.Name);
             if (!string.Equals(sourceDrive, destination, StringComparison.OrdinalIgnoreCase) &&
                 Factory.GetDatabase(sourceDrive) != null && Factory.GetDatabase(destinationDrive) != null)
             {
-                paramAdded |= AddDynamicParameter(typeof(TransferOptions), TransferOptionsParam, ref dic);
+                paramAdded |= AddDynamicParameter(typeof (TransferOptions), TransferOptionsParam, ref dic);
             }
             return paramAdded ? dic : null;
         }
@@ -126,7 +129,7 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             LogInfo("Executing RemoveItemDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            bool paramAdded = FailSilentlyDynamicParameters(ref dic);
+            var paramAdded = FailSilentlyDynamicParameters(ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), PermanentlyParam, ref dic);
             return paramAdded ? dic : null;
         }
@@ -139,7 +142,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected static bool FailSilentlyDynamicParameters(ref RuntimeDefinedParameterDictionary dic)
         {
-            bool paramAdded = false;
+            var paramAdded = false;
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), FailSilentlyParam, ref dic);
             return paramAdded;
         }
@@ -151,7 +154,7 @@ namespace Cognifide.PowerShell.Core.Provider
             language = null;
             if (dic != null && dic[LanguageParam].IsSet)
             {
-                string forcedLanguage = dic[LanguageParam].Value.ToString();
+                var forcedLanguage = dic[LanguageParam].Value.ToString();
                 language = forcedLanguage.Contains("*")
                     ? forcedLanguage
                     : LanguageManager.GetLanguage(forcedLanguage).Name;
@@ -161,7 +164,7 @@ namespace Cognifide.PowerShell.Core.Provider
             if (dic != null && dic[VersionParam].IsSet)
             {
                 int forcedVersion;
-                string versionParam = dic[VersionParam].Value.ToString();
+                var versionParam = dic[VersionParam].Value.ToString();
                 if (versionParam == "*")
                 {
                     version = Int32.MaxValue;
@@ -178,7 +181,7 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing GetChildItemsDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
 
@@ -196,17 +199,16 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing GetItemDynamicParameters(string path='{0}')", path);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            bool paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
-            paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic,false,false);
+            paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof(Database), DatabaseParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
-            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof (Database), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof (string), UriParam, ref dic, false, true);
+            paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
 
             return paramAdded ? dic : null;
         }
-
 
         private static void SignalPathDoesNotExistError(string path)
         {
@@ -223,7 +225,6 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-
         protected override object NewItemDynamicParameters(string path, string itemTypeName, object newItemValue)
         {
             LogInfo(
@@ -231,15 +232,10 @@ namespace Cognifide.PowerShell.Core.Provider
                 path, itemTypeName, newItemValue);
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            bool paramAdded = AddDynamicParameter(typeof (SwitchParameter), StartWorkflowParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof (SwitchParameter), StartWorkflowParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (Item), ParentParam, ref dic, true);
             return paramAdded ? dic : null;
-        }
-
-        public object GetDynamicParameters()
-        {
-            return null;
         }
     }
 }

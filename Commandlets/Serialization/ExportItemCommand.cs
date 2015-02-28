@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Serialization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Collections;
-using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Serialization;
 using Sitecore.Data.Serialization.Presets;
-using Sitecore.Globalization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
     [Cmdlet(VerbsData.Export, "Item", SupportsShouldProcess = true)]
     public class ExportItemCommand : BaseLanguageAgnosticItemCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Items from Preset")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "Items from Preset")]
         public IncludeEntry Entry { get; set; }
 
         [Parameter]
@@ -65,14 +62,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                     : target + "\\" + item.Parent.Paths.FullPath.Replace("/", "\\");
             }
 
-            string message = string.Format("Serializing item '{0}' to target '{1}'", item.Name, target);
+            var message = string.Format("Serializing item '{0}' to target '{1}'", item.Name, target);
             WriteVerbose(message);
             WriteDebug(message);
 
-            string fileName = target;
+            var fileName = target;
             if (string.IsNullOrEmpty(fileName))
             {
-                ItemReference itemReference = new ItemReference(item);
+                var itemReference = new ItemReference(item);
                 fileName = PathUtils.GetFilePath(itemReference.ToString());
             }
             if (!ShouldProcess(item.GetProviderPath(), string.Format("Serializing item to '{0}'", fileName)))
@@ -100,7 +97,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         public void Serialize(IncludeEntry entry)
         {
-            PresetWorker worker = new PresetWorker(entry);
+            var worker = new PresetWorker(entry);
             worker.Serialize();
         }
     }

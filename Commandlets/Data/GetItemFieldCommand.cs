@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
@@ -9,7 +10,7 @@ using Sitecore.Data.Templates;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemField")]
-    [OutputType(new[] {typeof (TemplateField), typeof (string), typeof (Field)},
+    [OutputType(typeof (TemplateField), typeof (string), typeof (Field),
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetItemFieldCommand : BaseItemCommand
     {
@@ -50,14 +51,14 @@ namespace Cognifide.PowerShell.Commandlets.Data
         protected override void ProcessItem(Item item)
         {
             item.Fields.ReadAll();
-            Template template =
-                TemplateManager.GetTemplate(Sitecore.Configuration.Settings.DefaultBaseTemplate,
+            var template =
+                TemplateManager.GetTemplate(Settings.DefaultBaseTemplate,
                     item.Database);
             foreach (Field field in item.Fields)
             {
                 if (NameWildcardPatterns != null)
                 {
-                    bool wildcardMatch = false;
+                    var wildcardMatch = false;
                     foreach (var nameWildcardPattern in NameWildcardPatterns)
                     {
                         if (nameWildcardPattern.IsMatch(field.Name))
@@ -70,7 +71,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     {
                         continue;
                     }
-
                 }
                 if (!IncludeStandardFields && template.ContainsField(field.ID))
                 {

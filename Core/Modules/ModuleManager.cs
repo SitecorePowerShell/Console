@@ -11,8 +11,6 @@ namespace Cognifide.PowerShell.Core.Modules
     {
         public delegate void InvalidateEventHandler(object sender, EventArgs e);
 
-        public static event InvalidateEventHandler OnInvalidate;
-
         private static List<Module> modules;
 
         public static List<Module> Modules
@@ -32,6 +30,8 @@ namespace Cognifide.PowerShell.Core.Modules
             }
         }
 
+        public static event InvalidateEventHandler OnInvalidate;
+
         public static List<Module> GetDbModules(string database)
         {
             var dbModules = new List<Module>();
@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Core.Modules
             var db = Factory.GetDatabase(database);
             if (db != null)
             {
-                Item library = db.GetItem(ApplicationSettings.ScriptLibraryPath);
+                var library = db.GetItem(ApplicationSettings.ScriptLibraryPath);
                 if (library != null)
                 {
                     dbModules.Add(new Module(library, true));
@@ -58,10 +58,10 @@ namespace Cognifide.PowerShell.Core.Modules
 
         public static List<Item> GetFeatureRoots(string featureName)
         {
-            List<Item> list = new List<Item>();
-            foreach (Module module in Modules)
+            var list = new List<Item>();
+            foreach (var module in Modules)
             {
-                Item featureRoot = module.GetFeatureRoot(featureName);
+                var featureRoot = module.GetFeatureRoot(featureName);
                 if (featureRoot != null) list.Add(featureRoot);
             }
             return list;
@@ -69,16 +69,15 @@ namespace Cognifide.PowerShell.Core.Modules
 
         public static List<Item> GetFeatureRoots(string featureName, string dbName)
         {
-            List<Item> list = new List<Item>();
+            var list = new List<Item>();
             var modules = GetDbModules(dbName);
-            foreach (Module module in modules)
+            foreach (var module in modules)
             {
-                Item featureRoot = module.GetFeatureRoot(featureName);
+                var featureRoot = module.GetFeatureRoot(featureName);
                 if (featureRoot != null) list.Add(featureRoot);
             }
             return list;
         }
-
 
         public static void Invalidate(Item item)
         {

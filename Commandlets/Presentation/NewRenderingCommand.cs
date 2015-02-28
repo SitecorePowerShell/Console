@@ -8,7 +8,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.New, "Rendering")]
-    [OutputType(new[] {typeof (RenderingDefinition)},
+    [OutputType(typeof (RenderingDefinition),
         ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class NewRenderingCommand : BaseLanguageAgnosticItemCommand
     {
@@ -44,7 +44,6 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
         protected override void ProcessItem(Item item)
         {
-
             var rendering = new RenderingDefinition
             {
                 ItemID = item.ID.ToString(),
@@ -56,7 +55,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 VaryByLogin = VaryByLogin ? "1" : null,
                 VaryByParameters = VaryByParameters ? "1" : null,
                 VaryByQueryString = VaryByQueryString ? "1" : null,
-                VaryByUser = VaryByUser ? "1" : null,
+                VaryByUser = VaryByUser ? "1" : null
             };
 
             if (Parameter != null)
@@ -71,7 +70,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             //renderingDefinition.Conditions
             //todo: add support for multivariate tests
             //rendering.MultiVariateTest
-            PSObject psobj = ItemShellExtensions.WrapInItemOwner(SessionState, item, rendering);
+            var psobj = ItemShellExtensions.WrapInItemOwner(SessionState, item, rendering);
             WriteObject(psobj);
         }
     }

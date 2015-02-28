@@ -8,7 +8,7 @@ using Sitecore.Data.Serialization.Presets;
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
     [Cmdlet(VerbsCommon.Get, "Preset")]
-    [OutputType(new[] { typeof(IncludeEntry) })]
+    [OutputType(typeof (IncludeEntry))]
     public class GetPresetCommand : BaseCommand
     {
         [Parameter(Position = 0, Mandatory = false)]
@@ -35,15 +35,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             {
                 WriteObject(allPresets.SelectMany(CreatePreset), true);
             }
-
         }
 
         private IEnumerable<PSObject> CreatePreset(XmlNode presetNode)
         {
-            IList<IncludeEntry> presetEntries = PresetFactory.Create(presetNode);
+            var presetEntries = PresetFactory.Create(presetNode);
             return presetEntries.Select(preset =>
             {
-                PSObject psPreset = PSObject.AsPSObject(preset);
+                var psPreset = PSObject.AsPSObject(preset);
                 psPreset.Properties.Add(new PSNoteProperty("PresetName", presetNode.Name));
                 return psPreset;
             });

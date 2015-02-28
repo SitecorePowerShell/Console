@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellConsole>
     <FormPage>
@@ -16,17 +17,19 @@
       <Script runat="server" src="/sitecore/shell/controls/SitecoreKeyboard.js"></Script>
       <Script runat="server" src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
       <Script runat="server" src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
-      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <!--for autocomplete and overlay-->
       <!--[if lt IE 9]>
             <script type="text/javascript" language="javascript" src="/sitecore modules/PowerShell/Scripts/json2.js"> </script>
         <![endif]-->
       <Script type="text/javascript" src="/sitecore modules/PowerShell/Scripts/console.js"> </Script>
-      <Literal ID="Options"/>
+      <Literal ID="Options" />
       <a href="#" class="tip_no_hints">No hints found</a>
       <Border Id="ProgressOverlay" Visible="false">
         <Border class="ui-state-highlight ui-corner-all">
           <p>
-            <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+            <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top"
+                     GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px" />
           </p>
         </Border>
       </Border>

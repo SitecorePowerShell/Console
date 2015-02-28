@@ -10,15 +10,14 @@ namespace Cognifide.PowerShell.Core.Host
 {
     public static class ScriptSessionManager
     {
-        private static readonly HashSet<string> sessions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
         private const string sessionIdPrefix = "$scriptSession$";
         private const string expirationSetting = "Cognifide.PowerShell.PersistentSessionExpirationMinutes";
+        private static readonly HashSet<string> sessions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public static ScriptSession GetSession(string persistentId, string defaultId)
         {
-            string sessionId = string.IsNullOrEmpty(persistentId) ? defaultId : persistentId;
-            return GetSession(sessionId);            
+            var sessionId = string.IsNullOrEmpty(persistentId) ? defaultId : persistentId;
+            return GetSession(sessionId);
         }
 
         public static ScriptSession NewSession(string applicanceType, bool personalizedSettings)

@@ -5,7 +5,7 @@ using Sitecore.Security.Accounts;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.Get, "RoleMember", DefaultParameterSetName = "Id")]
-    [OutputType(new[] {typeof (Role), typeof (User)})]
+    [OutputType(typeof (Role), typeof (User))]
     public class GetRoleMemberCommand : BaseCommand
     {
         [Alias("Name")]
@@ -26,7 +26,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.Role)) { return; }
+            if (!this.CanFindAccount(Identity, AccountType.Role))
+            {
+                return;
+            }
 
             var role = Role.FromName(Identity.Name);
             switch (ParameterSetName)

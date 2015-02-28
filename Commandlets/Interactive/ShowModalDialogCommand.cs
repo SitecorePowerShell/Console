@@ -6,7 +6,7 @@ using Sitecore.Web;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "ModalDialog")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ShowModalDialogCommand : BaseFormCommand
     {
         [Parameter(Mandatory = true, ParameterSetName = "Dialog from control name")]
@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     var hashParams = new Hashtable(Parameters.Count);
                     foreach (string key in Parameters.Keys)
                     {
-                        hashParams.Add(key,WebUtil.SafeEncode(Parameters[key].ToString()));
+                        hashParams.Add(key, WebUtil.SafeEncode(Parameters[key].ToString()));
                     }
                     response = JobContext.ShowModalDialog(hashParams, Control, WidthString, HeightString);
                 }

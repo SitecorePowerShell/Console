@@ -6,11 +6,11 @@ using Sitecore.Workflows.Simple;
 namespace Cognifide.PowerShell.Commandlets.Workflows
 {
     [Cmdlet(VerbsCommon.Get, "ItemWorkflowEvent")]
-    [OutputType(new[] {typeof (WorkflowEvent)})]
+    [OutputType(typeof (WorkflowEvent))]
     public class GetItemWorkflowEventCommand : BaseItemCommand
     {
         [Parameter]
-        [Alias(new[] { "UserName", "User" })]
+        [Alias("UserName", "User")]
         public string Identity { get; set; }
 
         protected override void ProcessItem(Item item)
@@ -19,7 +19,7 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
             {
                 Identity = "*";
             }
-            WorkflowEvent[] workflowHistory =
+            var workflowHistory =
                 ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item);
             WildcardWrite(Identity, workflowHistory, workflowEvent => workflowEvent.User);
         }

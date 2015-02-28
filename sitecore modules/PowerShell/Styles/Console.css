@@ -18,12 +18,12 @@ html {
 /* make sure it is at least as tall as the viewport */
 
 #terminal {
-    position: absolute;
-    top: 0;
     bottom: 0;
     left: 0;
-    right: 0;
     overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
     z-index: -1
 }
 
@@ -57,12 +57,12 @@ html {
 }
 
 #ScriptResult {
+    height: 100%;
+    left: 0px;
+    overflow: auto;
     position: absolute;
     top: 0px;
-    left: 0px;
-    height: 100%;
     width: 100%;
-    overflow: auto;
 }
 
 #Result pre { margin: 4px 2px !important; }
@@ -211,15 +211,15 @@ html {
 .terminal .terminal-output div a, .terminal .terminal-output div a:hover, .terminal .terminal-output div a:visited { color: yellow; }
 
 .tip_no_hints {
-    display: none;
-    color: #1d1d1d;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
     background: #fff;
+    border-radius: 3px;
+    color: #1d1d1d;
+    display: none;
     padding: 10px;
     position: fixed;
     z-index: 1000;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
 }
 
 #working {
@@ -231,18 +231,16 @@ html {
 }
 
 #HeaderIconContainer img {
-  float: left;
-  padding: 2px 16px 0 16px;
+    float: left;
+    padding: 2px 16px 0 16px;
 }
 
-#All {
-  padding: 0 8px 0 8px;
-}
+#All { padding: 0 8px 0 8px; }
 
 #ProgressOverlay {
-  position: absolute;
-  padding: 0;
-  top: 30px;
-  right: 30px;
-  left: 30px;
+    left: 30px;
+    padding: 0;
+    position: absolute;
+    right: 30px;
+    top: 30px;
 }

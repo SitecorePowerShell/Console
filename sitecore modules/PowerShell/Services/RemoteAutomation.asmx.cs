@@ -20,9 +20,9 @@ using Sitecore.Web;
 namespace Cognifide.PowerShell.Console.Services
 {
     /// <summary>
-    /// Summary description for RemoteAutomation:
-    /// The service is used by to execute scripts blocks from remote locations
-    /// for the purpose of BDD tests and remote integration with Windows PowerShell.
+    ///     Summary description for RemoteAutomation:
+    ///     The service is used by to execute scripts blocks from remote locations
+    ///     for the purpose of BDD tests and remote integration with Windows PowerShell.
     /// </summary>
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
@@ -31,7 +31,6 @@ namespace Cognifide.PowerShell.Console.Services
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
-
         private void Login(string userName, string password)
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
@@ -40,7 +39,7 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     userName = "sitecore\\" + userName;
                 }
-                bool loggedIn = AuthenticationManager.Login(userName, password, false);
+                var loggedIn = AuthenticationManager.Login(userName, password, false);
                 if (!loggedIn)
                 {
                     throw new AuthenticationException("Unrecognized user or password mismatch.");
@@ -86,8 +85,9 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
         {
-            Uri requestUri = WebUtil.GetRequestUri();
-            SiteContext site = SiteContextFactory.GetSiteContext(requestUri.Host, Sitecore.Context.Request.FilePath, requestUri.Port);
+            var requestUri = WebUtil.GetRequestUri();
+            var site = SiteContextFactory.GetSiteContext(requestUri.Host, Sitecore.Context.Request.FilePath,
+                requestUri.Port);
             return ExecuteScriptBlockinSite(userName, password, script, cliXmlArgs, site.Name);
         }
 
@@ -106,19 +106,22 @@ namespace Cognifide.PowerShell.Console.Services
                 Sitecore.Context.SetActiveSite(siteName);
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript, false, true);
-                scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs",false,true);
+                scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
                 script = script.TrimEnd(' ', '\t', '\n');
-                var outObjects = scriptSession.ExecuteScriptPart(script,false,false,false);
+                var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
                 scriptSession.SetVariable("results", outObjects);
                 scriptSession.Output.Clear();
                 scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-                var result = scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text).Aggregate((current, next) => current + next);
+                var result =
+                    scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text)
+                        .Aggregate((current, next) => current + next);
                 return result;
             }
         }
 
         [WebMethod]
-        public bool UploadFile(string userName, string password, string filePath, byte[] fileContent, string database, string language)
+        public bool UploadFile(string userName, string password, string filePath, byte[] fileContent, string database,
+            string language)
         {
             if (!WebServiceSettings.ServiceEnabledRemoting)
             {
@@ -129,7 +132,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 Login(userName, password);
 
-                string dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
+                var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
                 {
                     dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
@@ -142,7 +145,7 @@ namespace Cognifide.PowerShell.Console.Services
                 mco.Destination = string.Format("{0}/{1}", dirName, Path.GetFileNameWithoutExtension(filePath));
 
                 var mc = new MediaCreator();
-                using (MemoryStream stream = new MemoryStream(fileContent))
+                using (var stream = new MemoryStream(fileContent))
                 {
                     mc.CreateFromStream(stream, Path.GetFileName(filePath), mco);
                 }
@@ -167,18 +170,18 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 Login(userName, password);
 
-                string dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
+                var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
                 {
                     dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
                 }
                 var itemname = dirName + "/" + Path.GetFileNameWithoutExtension(filePath);
                 var db = Factory.GetDatabase(database);
-                var item = (MediaItem)db.GetItem(itemname);
+                var item = (MediaItem) db.GetItem(itemname);
                 using (var stream = item.GetMediaStream())
                 {
                     var result = new byte[stream.Length];
-                    stream.Read(result, 0, (int)stream.Length);
+                    stream.Read(result, 0, (int) stream.Length);
                     return result;
                 }
             }

@@ -8,8 +8,6 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
-using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 

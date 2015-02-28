@@ -3,11 +3,9 @@ using System.IO;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Pages;
@@ -18,13 +16,13 @@ namespace Cognifide.PowerShell.Client.Applications
     public class DownloadFile : DialogForm
     {
         protected Border Buttons;
+        protected Literal FileNameLabel;
+        protected Edit Hidden;
+        protected Literal SizeLabel;
         protected Literal Text;
         protected string FileName { get; set; }
         protected string Id { get; set; }
         protected string Db { get; set; }
-        protected Edit Hidden;
-        protected Literal FileNameLabel;
-        protected Literal SizeLabel;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -43,17 +41,17 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!string.IsNullOrEmpty(Id))
             {
-                Item item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
                 if (MediaManager.HasMediaContent(item))
                 {
-                    Media media = MediaManager.GetMedia(item);
+                    var media = MediaManager.GetMedia(item);
                     FileNameLabel.Text = item.Name + "." + item["Extension"];
                     long size;
                     SizeLabel.Text = Int64.TryParse(item["size"], out size) ? ToFileSize(size) : "unknown";
                 }
                 else
                 {
-                    SheerResponse.Alert("There is no file attached.", new string[0]);
+                    SheerResponse.Alert("There is no file attached.");
                 }
             }
             else if (!string.IsNullOrEmpty(FileName))
@@ -65,7 +63,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 SizeLabel.Text = ToFileSize(file.Length);
             }
 
-            string caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
+            var caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
             Context.ClientPage.Title = caption;
             Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
@@ -115,17 +113,17 @@ namespace Cognifide.PowerShell.Client.Applications
             Assert.ArgumentNotNull(args, "args");
             if (!string.IsNullOrEmpty(Id))
             {
-                Item item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
                 if (MediaManager.HasMediaContent(item))
                 {
-                    UrlString str = item.Uri.ToUrlString(string.Empty);
+                    var str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    Log.Audit(this, "Download file: {0}", new[] {str.ToString()});
+                    Log.Audit(this, "Download file: {0}", str.ToString());
                 }
                 else
                 {
-                    SheerResponse.Alert("There is no file attached.", new string[0]);
+                    SheerResponse.Alert("There is no file attached.");
                 }
             }
             else if (!string.IsNullOrEmpty(FileName))

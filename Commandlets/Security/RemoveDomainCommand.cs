@@ -24,11 +24,12 @@ namespace Cognifide.PowerShell.Commandlets.Security
             {
                 if (!Force)
                 {
-                    var users = UserManager.GetUsers().Where(u => StringExtensions.Is(u.Domain.Name, Name));
+                    var users = UserManager.GetUsers().Where(u => u.Domain.Name.Is(Name));
                     if (users.Any(u => u.LocalName.Is("Anonymous")))
                     {
                         var error = String.Format("Cannot remove a domain '{0}' because it contains users.", Name);
-                        WriteError(new ErrorRecord(new InvalidOperationException(error), error, ErrorCategory.InvalidOperation, Name));
+                        WriteError(new ErrorRecord(new InvalidOperationException(error), error,
+                            ErrorCategory.InvalidOperation, Name));
                         return;
                     }
                 }

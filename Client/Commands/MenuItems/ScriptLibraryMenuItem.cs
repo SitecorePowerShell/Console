@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -16,12 +17,12 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
     [Serializable]
     public class ScriptLibraryMenuItem : Command
     {
+        public string IntegrationPoint { get; protected set; }
+
         public override CommandState QueryState(CommandContext context)
         {
             return CommandState.Enabled;
         }
-
-        public string IntegrationPoint { get; protected set; }
 
         public void SetupIntegrationPoint(CommandContext context)
         {
@@ -37,25 +38,25 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             SheerResponse.DisableOutput();
             var subMenu = new ContextMenu();
             var menuItems = new List<Control>();
-            string menuItemId = context.Parameters["menuItemId"];
-            
+            var menuItemId = context.Parameters["menuItemId"];
+
             if (string.IsNullOrEmpty(menuItemId))
             {
                 // a bit of a hacky way to determine the caller so we can display the menu
                 // in proximity to the triggering control
-                var parameters = new UrlString("?" + Sitecore.Context.Items["SC_FORM"]);
+                var parameters = new UrlString("?" + Context.Items["SC_FORM"]);
                 menuItemId = parameters.Parameters["__EVENTTARGET"];
             }
 
             SetupIntegrationPoint(context);
-            Item contextItem = context.Items.Length == 1
+            var contextItem = context.Items.Length == 1
                 ? context.Items[0]
                 : string.IsNullOrEmpty(context.Parameters["db"]) || string.IsNullOrEmpty(context.Parameters["id"])
                     ? null
                     : Database.GetDatabase(context.Parameters["db"]).GetItem(new ID(context.Parameters["id"]));
             if (string.IsNullOrEmpty(IntegrationPoint))
             {
-                Item submenu =
+                var submenu =
                     Factory.GetDatabase(context.Parameters["scriptDB"]).GetItem(context.Parameters["scriptPath"]);
                 GetLibraryMenuItems(contextItem, menuItems, submenu);
             }
@@ -72,7 +73,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 var menuItem = item as MenuItem;
                 if (menuItem != null)
                 {
-                    MenuItem subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
+                    var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
                         menuItem.Click,
                         menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                     subItem.Disabled = menuItem.Disabled;
@@ -89,7 +90,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 return null;
 
             SetupIntegrationPoint(context);
-            
+
             var menuItems = new List<Control>();
 
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.ContentEditorContextMenuFeature))
@@ -117,7 +118,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     Header = scriptItem.DisplayName,
                     Icon = scriptItem.Appearance.Icon,
-                    ID = scriptItem.ID.ToShortID().ToString(),
+                    ID = scriptItem.ID.ToShortID().ToString()
                 };
                 menuItem.Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem);
 
@@ -159,6 +160,5 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
         {
             return string.Empty;
         }
-
     }
 }

@@ -18,12 +18,12 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         // Fields
         protected DataContext ContentDataContext;
-        protected Combobox Databases;
         protected TreeviewEx ContentTreeview;
+        protected Combobox Databases;
+        protected string InitialDatabase;
         protected GalleryMenu Options;
         protected Menu RecentMenu;
         protected Tab RecentTab;
-        protected string InitialDatabase;
 
         public override void HandleMessage(Message message)
         {
@@ -95,7 +95,8 @@ namespace Cognifide.PowerShell.Client.Controls
                     ContentDataContext.Folder = itemArray[0].ID.ToString();
                 }
                 var menuItem =
-                    Sitecore.Client.CoreDatabase.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Context");
+                    Sitecore.Client.CoreDatabase.GetItem(
+                        "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Context");
                 if ((menuItem != null) && item.HasChildren)
                 {
                     var queryString = WebUtil.GetQueryString("id");
@@ -134,11 +135,11 @@ namespace Cognifide.PowerShell.Client.Controls
 
         private void BuildDatabases()
         {
-            foreach (string str in Factory.GetDatabaseNames())
+            foreach (var str in Factory.GetDatabaseNames())
             {
                 if (!Sitecore.Client.GetDatabaseNotNull(str).ReadOnly)
                 {
-                    ListItem child = new ListItem();
+                    var child = new ListItem();
                     Databases.Controls.Add(child);
                     child.ID = Control.GetUniqueID("ListItem");
                     child.Header = str;
@@ -150,12 +151,11 @@ namespace Cognifide.PowerShell.Client.Controls
 
         protected void ChangeDatabase()
         {
-            string name = Databases.SelectedItem.Value;
+            var name = Databases.SelectedItem.Value;
             ContentDataContext.BeginUpdate();
             ContentDataContext.Parameters = "databasename=" + name;
             ContentDataContext.EndUpdate();
             ContentTreeview.RefreshRoot();
         }
-
     }
 }

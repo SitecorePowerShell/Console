@@ -72,8 +72,8 @@ namespace Cognifide.PowerShell.Core.Utility
                 case LogNotificationLevel.Warning:
                     Sitecore.Diagnostics.Log.Warn(logMessage, this);
                     break;
-                    //case (LogNotificationLevel.Info) :
-                    //case LogNotificationLevel.None:
+                //case (LogNotificationLevel.Info) :
+                //case LogNotificationLevel.None:
                 default:
                     Sitecore.Diagnostics.Log.Info(logMessage, this);
                     break;

@@ -7,6 +7,8 @@ namespace Cognifide.PowerShell.Core.Rules
 {
     public class PowerShellSessionExists<T> : WhenCondition<T> where T : RuleContext
     {
+        // Properties
+        public string PersistentSessionId { get; set; }
         // Methods
         protected override bool Execute(T ruleContext)
         {
@@ -18,8 +20,5 @@ namespace Cognifide.PowerShell.Core.Rules
             }
             return ScriptSessionManager.SessionExists(PersistentSessionId);
         }
-
-        // Properties
-        public string PersistentSessionId { get; set; }
     }
 }

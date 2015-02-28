@@ -7,7 +7,7 @@ using Sitecore.IO;
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
     [Cmdlet(VerbsCommon.Get, "Package")]
-    [OutputType(new[] {typeof (PackageProject)})]
+    [OutputType(typeof (PackageProject))]
     public class GetPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                 PackageProject packageProject = null;
                 if (Path != null)
                 {
-                    string fileName = Path;
+                    var fileName = Path;
 
                     if (!System.IO.Path.IsPathRooted(Path))
                     {

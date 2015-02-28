@@ -11,17 +11,13 @@ namespace Cognifide.PowerShell.Core.Host
 {
     public class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
+        private Runspace runspace;
 
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
         private readonly Guid myId = Guid.NewGuid();
 
-        private readonly Stack<Runspace> pushedRunspaces;
-        private readonly RunspaceConfiguration runspaceConfiguration;
-        private Runspace runspace;
-        private readonly ScriptingHostPrivateData privateData;
-        
         /// <summary>
         ///     The culture information of the thread that created
         ///     this object.
@@ -36,6 +32,9 @@ namespace Cognifide.PowerShell.Core.Host
         private readonly CultureInfo originalUiCultureInfo =
             Thread.CurrentThread.CurrentUICulture;
 
+        private readonly ScriptingHostPrivateData privateData;
+        private readonly Stack<Runspace> pushedRunspaces;
+        private readonly RunspaceConfiguration runspaceConfiguration;
         private readonly ScriptingHostUserInterface ui;
 
         /// <summary>
@@ -96,14 +95,14 @@ namespace Cognifide.PowerShell.Core.Host
         public string SessionId { get; internal set; }
 
         public bool CloseRunner { get; internal set; }
-
         public string User { get; internal set; }
+
         /// <summary>
         ///     This implementation always returns the GUID allocated at
         ///     instantiation time.
         /// </summary>
         public bool AutoDispose { get; internal set; }
-        
+
         /// <summary>
         ///     Return a string that contains the name of the host implementation.
         ///     Keep in mind that this string may be used by script writers to
@@ -144,6 +143,47 @@ namespace Cognifide.PowerShell.Core.Host
         public override PSObject PrivateData
         {
             get { return new PSObject(privateData); }
+        }
+
+        public void PushRunspace(Runspace runspace)
+        {
+            pushedRunspaces.Push(runspace);
+        }
+
+        public void PopRunspace()
+        {
+            pushedRunspaces.Pop();
+        }
+
+        /// <summary>
+        ///     Gets a value indicating whether a request
+        ///     to open a PSSession has been made.
+        /// </summary>
+        public bool IsRunspacePushed
+        {
+            get { return 0 < pushedRunspaces.Count; }
+        }
+
+        /// <summary>
+        ///     Gets or sets the runspace used by the PSSession.
+        /// </summary>
+        public Runspace Runspace
+        {
+            get
+            {
+                if (null == runspace)
+                {
+                    runspace = RunspaceFactory.CreateRunspace(this, runspaceConfiguration);
+                }
+
+                var stack = pushedRunspaces;
+                if (0 == stack.Count)
+                {
+                    return runspace;
+                }
+
+                return stack.Peek();
+            }
         }
 
         /// <summary>
@@ -196,47 +236,6 @@ namespace Cognifide.PowerShell.Core.Host
         /// <param name="exitCode">The exit code that the host application should use.</param>
         public override void SetShouldExit(int exitCode)
         {
-        }
-
-        public void PushRunspace(Runspace runspace)
-        {
-            pushedRunspaces.Push(runspace);
-        }
-
-        public void PopRunspace()
-        {
-            pushedRunspaces.Pop();
-        }
-
-        /// <summary>
-        ///     Gets a value indicating whether a request
-        ///     to open a PSSession has been made.
-        /// </summary>
-        public bool IsRunspacePushed
-        {
-            get { return 0 < pushedRunspaces.Count; }
-        }
-
-        /// <summary>
-        ///     Gets or sets the runspace used by the PSSession.
-        /// </summary>
-        public Runspace Runspace
-        {
-            get
-            {
-                if (null == runspace)
-                {
-                    runspace = RunspaceFactory.CreateRunspace(this, runspaceConfiguration);
-                }
-
-                Stack<Runspace> stack = pushedRunspaces;
-                if (0 == stack.Count)
-                {
-                    return runspace;
-                }
-
-                return stack.Peek();
-            }
         }
     }
 }

@@ -14,7 +14,7 @@ using Sitecore.Update.Interfaces;
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
     [Cmdlet(VerbsCommon.Get, "UpdatePackageDiff")]
-    [OutputType(new[] { typeof(ICommand) })]
+    [OutputType(typeof (ICommand))]
     public class GetUpdatePackageDiffCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -26,9 +26,9 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
         protected override void ProcessRecord()
         {
             // Use default logger
-            ILog log = LogManager.GetLogger("root");
+            var log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
-            
+
             PerformInstallAction("admin",
                 () =>
                 {
@@ -38,8 +38,8 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                     sourceManager.SerializationPath = SourcePath;
                     targetManager.SerializationPath = TargetPath;
 
-                    IDataIterator sourceDataIterator = sourceManager.ItemIterator;
-                    IDataIterator targetDataIterator = targetManager.ItemIterator;
+                    var sourceDataIterator = sourceManager.ItemIterator;
+                    var targetDataIterator = targetManager.ItemIterator;
 
                     var engine = new DataEngine();
 
@@ -68,20 +68,21 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                     }
 
                     engine.ProcessCommands(ref commands);
-                    WriteObject(commands,true);
+                    WriteObject(commands, true);
                 });
         }
 
         protected static IList<ICommand> GenerateDiff(IDataIterator sourceIterator, IDataIterator targetIterator)
         {
-            List<ICommand> commands = new List<ICommand>();
-            IDataItem sourceDataItem = sourceIterator.Next();
-            IDataItem targetDataItem = targetIterator.Next();
+            var commands = new List<ICommand>();
+            var sourceDataItem = sourceIterator.Next();
+            var targetDataItem = targetIterator.Next();
 
             while (sourceDataItem != null || targetDataItem != null)
             {
-                int compareResult = Compare(sourceDataItem, targetDataItem);
-                commands.AddRange((sourceDataItem ?? targetDataItem).GenerateDiff(sourceDataItem, targetDataItem, compareResult));
+                var compareResult = Compare(sourceDataItem, targetDataItem);
+                commands.AddRange((sourceDataItem ?? targetDataItem).GenerateDiff(sourceDataItem, targetDataItem,
+                    compareResult));
                 if (compareResult < 0)
                 {
                     sourceDataItem = sourceIterator.Next();

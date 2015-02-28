@@ -7,7 +7,7 @@ using Sitecore.SecurityModel;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.Get, "Domain", DefaultParameterSetName = "Name")]
-    [OutputType(new[] {typeof (Domain)})]
+    [OutputType(typeof (Domain))]
     public class GetDomainCommand : BaseCommand
     {
         [Parameter(ParameterSetName = "Name")]

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Sitecore;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.ResolveRenderingDatasource;
 
@@ -12,10 +10,10 @@ namespace Cognifide.PowerShell.Integrations.Processors
         public void Process(ResolveRenderingDatasourceArgs args)
         {
             Assert.IsNotNull(args, "args");
-            string source = args.Datasource;
+            var source = args.Datasource;
             if (IsScripted(source))
             {
-                IEnumerable<Item> items = RunEnumeration(source, Context.Item);
+                var items = RunEnumeration(source, Context.Item);
                 args.Datasource = items.First().Paths.Path;
             }
         }

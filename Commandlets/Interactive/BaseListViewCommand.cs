@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
@@ -40,14 +39,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             if (Property == null && SessionState.PSVariable.Get("ScPsSlvProperties") == null)
             {
-                ScriptBlock propScript =
+                var propScript =
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayProperty }");
-                PSObject propDefault = InvokeCommand.InvokeScript(SessionState, propScript).First();
+                var propDefault = InvokeCommand.InvokeScript(SessionState, propScript).First();
                 propScript =
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
-                Collection<PSObject> propResult = InvokeCommand.InvokeScript(SessionState, propScript);
+                var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
                 var properties = new List<object>(propResult.Count + 1);
                 properties.Add(propDefault.ToString());
                 if (propResult.Count() > 0)
@@ -60,17 +59,17 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             LogErrors(() =>
             {
-                string script = (Property == null && SessionState.PSVariable.Get("formatPropertyStr") != null)
+                var script = (Property == null && SessionState.PSVariable.Get("formatPropertyStr") != null)
                     ? "$ScPsSlvPipelineObject | select-object -Property " +
                       SessionState.PSVariable.Get("formatPropertyStr").Value
                     : "$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties";
 
-                ScriptBlock scriptBlock = InvokeCommand.NewScriptBlock(script);
-                Collection<PSObject> result = InvokeCommand.InvokeScript(SessionState, scriptBlock);
+                var scriptBlock = InvokeCommand.NewScriptBlock(script);
+                var result = InvokeCommand.InvokeScript(SessionState, scriptBlock);
 
                 if (result.Count() > 0)
                 {
-                    object varValue = Data.BaseObject();
+                    var varValue = Data.BaseObject();
 
                     var slvDataObject = new DataObject
                     {

@@ -14,13 +14,13 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-            string typeName = context.Parameters["type"];
-            string viewName = context.Parameters["viewName"];
+            var typeName = context.Parameters["type"];
+            var viewName = context.Parameters["viewName"];
             if (!string.IsNullOrEmpty(typeName))
             {
-                foreach (Item parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewRibbonFeature))
+                foreach (var parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewRibbonFeature))
                 {
-                    Item scriptLibrary = parent.Paths.GetSubItem(typeName);
+                    var scriptLibrary = parent.Paths.GetSubItem(typeName);
 
                     if (scriptLibrary != null)
                     {

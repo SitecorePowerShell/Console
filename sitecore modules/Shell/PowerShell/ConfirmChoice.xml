@@ -1,49 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:x="http://www.sitecore.net/xaml">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:x="http://www.sitecore.net/xaml">
   <ConfirmChoice>
     <FormPage>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
+              x:placeholder="Scripts">
+      </Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"  x:placeholder="Stylesheets"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.ConfirmChoice,Cognifide.PowerShell" />
 
       <Stylesheet>
         .scConfirmationContainer td:first-child{
-            width: 1px;
+        width: 1px;
         }
 
         .scConfirmationContainer td:last-child{
-            padding-left: 15px;
+        padding-left: 15px;
         }
       </Stylesheet>
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
-          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false"/>
+          <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
           <Border>
-            <Border Class="DialogHeader"><Literal Text="PowerShell Message" ID="DialogHeader"/></Border>
-            <Border Class="DialogHeaderDescription"><Literal Text="" ID="DialogDescription"/></Border>
+            <Border Class="DialogHeader">
+              <Literal Text="PowerShell Message" ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal Text="" ID="DialogDescription" />
+            </Border>
           </Border>
         </Border>
-          
-	<Scrollbox Class="scFlexContent">
+
+        <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
-            <GridPanel class="scConfirmationContainer" Columns="2" Width="100%" >
+            <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
               <ThemedImage class="scConfirmationIcon" Src="Images/warning.png" />
               <Literal id="Text" class="scDialogMessage"></Literal>
             </GridPanel>
-	  </Scrollbox>
+          </Scrollbox>
         </Scrollbox>
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
-          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
+                 Title="Show copyright..." />
+          <Literal ID="PromoLiteral"
+                   Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
           <div class="footerOkCancel">
             <Border Align="Center" ID="Buttons">
             </Border>

@@ -41,7 +41,6 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             if (ShouldProcess(username, "Login as user"))
             {
-
                 if (Context.IsLoggedIn)
                 {
                     if (Context.User.Name.Equals(username, StringComparison.OrdinalIgnoreCase)) return;

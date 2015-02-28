@@ -8,17 +8,8 @@ namespace Cognifide.PowerShell.Core.Settings
     {
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
-        public const string ServiceRemoting  = "remoting";
-        public const string ServiceClient    = "client";
-
-        public static bool ServiceEnabledRestfulv1 { get; private set; }
-        public static bool ServiceEnabledRestfulv2 { get; private set; }
-        public static bool ServiceEnabledRemoting  { get; private set; }
-        public static bool ServiceEnabledClient    { get; private set; }
-        public static int CommandWaitMillis        { get; private set; }
-        public static int InitialPollMillis        { get; private set; }
-        public static int MaxmimumPollMillis       { get; private set; }
-        public static int SerializationSizeBuffer  { get; private set; }
+        public const string ServiceRemoting = "remoting";
+        public const string ServiceClient = "client";
 
         static WebServiceSettings()
         {
@@ -32,20 +23,30 @@ namespace Cognifide.PowerShell.Core.Settings
                 Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
             MaxmimumPollMillis =
                 Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 5000);
-            string settingStr =
+            var settingStr =
                 Sitecore.Configuration.Settings.GetSetting("Cognifide.PowerShell.SerializationSizeBuffer", "5KB");
-            long sizeLong = StringUtil.ParseSizeString(settingStr);            
+            var sizeLong = StringUtil.ParseSizeString(settingStr);
             SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
         }
 
+        public static bool ServiceEnabledRestfulv1 { get; private set; }
+        public static bool ServiceEnabledRestfulv2 { get; private set; }
+        public static bool ServiceEnabledRemoting { get; private set; }
+        public static bool ServiceEnabledClient { get; private set; }
+        public static int CommandWaitMillis { get; private set; }
+        public static int InitialPollMillis { get; private set; }
+        public static int MaxmimumPollMillis { get; private set; }
+        public static int SerializationSizeBuffer { get; private set; }
+
         private static bool IsServiceEnabled(string serviceName, bool defaultValue)
         {
-            var servicesNode = Factory.GetConfigNode(string.Format("powershell/services/{0}",serviceName));
+            var servicesNode = Factory.GetConfigNode(string.Format("powershell/services/{0}", serviceName));
             if (servicesNode == null)
             {
                 return defaultValue;
             }
-            return string.Equals(servicesNode.Attributes["enabled"].InnerText,"true", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(servicesNode.Attributes["enabled"].InnerText, "true",
+                StringComparison.OrdinalIgnoreCase);
         }
     }
 }

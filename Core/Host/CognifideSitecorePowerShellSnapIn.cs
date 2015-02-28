@@ -19,20 +19,26 @@ namespace Cognifide.PowerShell.Core.Host
     public class CognifideSitecorePowerShellSnapIn : CustomPSSnapIn
     {
         private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
+
+        /// <summary>
+        ///     Specify the providers that belong to this custom PowerShell snap-in.
+        /// </summary>
+        private Collection<ProviderConfigurationEntry> _providers;
+
         private bool initialized;
 
         static CognifideSitecorePowerShellSnapIn()
         {
-            XmlNodeList cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
+            var cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
             foreach (XmlElement cmdltToInclude in cmdltsToIncludes)
             {
-                string[] cmdltTypeDef = cmdltToInclude.Attributes["type"].Value.Split(',');
-                string cmdletType = cmdltTypeDef[0];
-                string cmdletAssembly = cmdltTypeDef[1];
-                WildcardPattern wildcard = GetWildcardPattern(cmdletType);
+                var cmdltTypeDef = cmdltToInclude.Attributes["type"].Value.Split(',');
+                var cmdletType = cmdltTypeDef[0];
+                var cmdletAssembly = cmdltTypeDef[1];
+                var wildcard = GetWildcardPattern(cmdletType);
                 try
                 {
-                    Assembly assembly = Assembly.Load(cmdletAssembly);
+                    var assembly = Assembly.Load(cmdletAssembly);
                     GetCommandletsFromAssembly(assembly, wildcard);
                 }
                 catch (Exception ex)
@@ -40,46 +46,17 @@ namespace Cognifide.PowerShell.Core.Host
                     if (ex is ReflectionTypeLoadException)
                     {
                         var typeLoadException = ex as ReflectionTypeLoadException;
-                        Exception[] loaderExceptions = typeLoadException.LoaderExceptions;
-                        string message = string.Empty;
+                        var loaderExceptions = typeLoadException.LoaderExceptions;
+                        var message = string.Empty;
                         foreach (var exc in loaderExceptions)
                         {
                             message += exc.Message;
                         }
-                        Log.Error("Error while loading commandlets list",ex,typeof(CognifideSitecorePowerShellSnapIn));
+                        Log.Error("Error while loading commandlets list", ex, typeof (CognifideSitecorePowerShellSnapIn));
                     }
                 }
             }
         }
-
-        private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
-        {
-            string helpPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
-                              @"\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml";
-            foreach (var type in assembly.GetTypes())
-            {
-                if (type.GetCustomAttributes(typeof (CmdletAttribute), true).Length > 0 &&
-                    wildcard.IsMatch(type.FullName))
-                {
-                    var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
-                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type,
-                        helpPath));
-                }
-            }
-        }
-
-
-        protected static WildcardPattern GetWildcardPattern(string name)
-        {
-            if (String.IsNullOrEmpty(name))
-            {
-                name = "*";
-            }
-            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
-            var wildcard = new WildcardPattern(name, options);
-            return wildcard;
-        }
-
 
         /// <summary>
         ///     Specify the name of the PowerShell snap-in.
@@ -131,11 +108,6 @@ namespace Cognifide.PowerShell.Core.Host
             get { return new Collection<CmdletConfigurationEntry>(commandlets); }
         }
 
-        /// <summary>
-        ///     Specify the providers that belong to this custom PowerShell snap-in.
-        /// </summary>
-        private Collection<ProviderConfigurationEntry> _providers;
-
         public override Collection<ProviderConfigurationEntry> Providers
         {
             get
@@ -148,22 +120,50 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     _providers = new Collection<ProviderConfigurationEntry>();
                     _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider",
-                        typeof (PsSitecoreItemProvider), @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml"));
+                        typeof (PsSitecoreItemProvider),
+                        @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml"));
                 }
 
                 return _providers;
             }
         }
 
+        public static List<CmdletConfigurationEntry> Commandlets
+        {
+            get { return commandlets; }
+        }
+
+        private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
+        {
+            var helpPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
+                           @"\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml";
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.GetCustomAttributes(typeof (CmdletAttribute), true).Length > 0 &&
+                    wildcard.IsMatch(type.FullName))
+                {
+                    var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
+                    Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type,
+                        helpPath));
+                }
+            }
+        }
+
+        protected static WildcardPattern GetWildcardPattern(string name)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                name = "*";
+            }
+            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
+            var wildcard = new WildcardPattern(name, options);
+            return wildcard;
+        }
+
         private void Initialize()
         {
             initialized = true;
             Pipeline.Start("initialize", new PipelineArgs(), true);
-        }
-
-        public static List<CmdletConfigurationEntry> Commandlets
-        {
-            get { return commandlets; }
         }
     }
 }

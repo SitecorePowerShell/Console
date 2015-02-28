@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Packages;
 using Sitecore.Update.Interfaces;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
     //[Cmdlet(VerbsCommon.New, "UpdatePackageCommand")]
-    [OutputType(new[] { typeof(ICommand) })]
+    [OutputType(typeof (ICommand))]
     public class NewUpdatePackageCommand : BasePackageCommand
     {
         [Parameter]

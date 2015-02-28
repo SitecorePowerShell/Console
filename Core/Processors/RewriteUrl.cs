@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Core.Processors
         {
             int num;
             Assert.ArgumentNotNull(path, "path");
-            string str = path.TrimStart(new[] {'/'}).Split(new[] {'/'})[2];
+            var str = path.TrimStart('/').Split('/')[2];
             Assert.IsTrue(str.StartsWith("v"), "Version token is wrong.");
             Assert.IsTrue(int.TryParse(str.Replace("v", string.Empty), out num), "Version not recognized.");
             return num;
@@ -24,45 +24,59 @@ namespace Cognifide.PowerShell.Core.Processors
             try
             {
                 Assert.ArgumentNotNull(arguments.Context, "context");
-                Uri url = arguments.Context.Request.Url;
-                string localPath = url.LocalPath;
-                if (localPath.StartsWith("/Console/",StringComparison.OrdinalIgnoreCase))
+                var url = arguments.Context.Request.Url;
+                var localPath = url.LocalPath;
+                if (localPath.StartsWith("/Console/", StringComparison.OrdinalIgnoreCase))
                 {
                     // this bit is for compatibility of solutions integrating with SPE 2.x services in mind
                     WebUtil.RewriteUrl(
-                        new UrlString { Path = localPath.ToLowerInvariant().Replace("/console/","/sitecore modules/PowerShell/"), Query = url.Query }.ToString());
+                        new UrlString
+                        {
+                            Path = localPath.ToLowerInvariant().Replace("/console/", "/sitecore modules/PowerShell/"),
+                            Query = url.Query
+                        }.ToString());
                 }
-                if (localPath.StartsWith("/-/script/v1",StringComparison.OrdinalIgnoreCase))
+                if (localPath.StartsWith("/-/script/v1", StringComparison.OrdinalIgnoreCase))
                 {
-                    string[] sourceArray = url.LocalPath.TrimStart('/').Split('/');
+                    var sourceArray = url.LocalPath.TrimStart('/').Split('/');
                     if (sourceArray.Length < 3)
                     {
                         return;
                     }
-                    int length = sourceArray.Length - 3;
+                    var length = sourceArray.Length - 3;
                     var destinationArray = new string[length];
                     Array.Copy(sourceArray, 3, destinationArray, 0, length);
-                    string scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
-                    string query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&apiVersion=1", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath);
+                    var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
+                    var query = url.Query.TrimStart('?');
+                    query += string.Format("{0}script={1}&apiVersion=1", string.IsNullOrEmpty(query) ? "?" : "&",
+                        scriptPath);
                     WebUtil.RewriteUrl(
-                        new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
+                        new UrlString
+                        {
+                            Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx",
+                            Query = query
+                        }.ToString());
                 }
                 if (localPath.StartsWith("/-/script/v2", StringComparison.OrdinalIgnoreCase))
                 {
-                    string[] sourceArray = url.LocalPath.TrimStart('/').Split('/');
+                    var sourceArray = url.LocalPath.TrimStart('/').Split('/');
                     if (sourceArray.Length < 4)
                     {
                         return;
                     }
-                    int length = sourceArray.Length - 4;
+                    var length = sourceArray.Length - 4;
                     var destinationArray = new string[length];
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
-                    string scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
-                    string query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&sc_database={2}&apiVersion=2", string.IsNullOrEmpty(query) ? "?" : "&", scriptPath, sourceArray[3]);
+                    var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
+                    var query = url.Query.TrimStart('?');
+                    query += string.Format("{0}script={1}&sc_database={2}&apiVersion=2",
+                        string.IsNullOrEmpty(query) ? "?" : "&", scriptPath, sourceArray[3]);
                     WebUtil.RewriteUrl(
-                        new UrlString { Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx", Query = query }.ToString());
+                        new UrlString
+                        {
+                            Path = "/sitecore modules/PowerShell/Services/RemoteScriptCall.ashx",
+                            Query = query
+                        }.ToString());
                 }
             }
             catch (Exception exception)

@@ -7,7 +7,6 @@ using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -16,16 +15,16 @@ namespace Cognifide.PowerShell.Core.Host
         public static IEnumerable<string> GetHelp(ScriptSession session, string command)
         {
             Collection<PSParseError> errors;
-            Collection<PSToken> tokens = PSParser.Tokenize(command, out errors);
-            PSToken lastPsToken = tokens.Where(t => t.Type == PSTokenType.Command).LastOrDefault();
+            var tokens = PSParser.Tokenize(command, out errors);
+            var lastPsToken = tokens.Where(t => t.Type == PSTokenType.Command).LastOrDefault();
             if (lastPsToken != null)
             {
                 session.Output.Clear();
-                string lastToken = lastPsToken.Content;
+                var lastToken = lastPsToken.Content;
                 session.SetVariable("helpFor", lastToken);
                 var platformmodule = ModuleManager.GetModule("Platform");
-                Item scriptItem = Database.GetDatabase(platformmodule.Database)
-                        .GetItem(platformmodule.Path + "/Internal/Context Help/Command Help");
+                var scriptItem = Database.GetDatabase(platformmodule.Database)
+                    .GetItem(platformmodule.Path + "/Internal/Context Help/Command Help");
                 if (scriptItem == null)
                 {
                     scriptItem = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb)

@@ -12,7 +12,7 @@ using Sitecore.Data.Managers;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Add, "ItemLanguage", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (Item)}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
+    [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
         )]
     public class AddItemLanguageCommand : BaseItemCommand
     {
@@ -22,6 +22,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
             Append,
             OverwriteLatest
         }
+
+        private static readonly HashSet<string> configIgnoredFields =
+            new HashSet<string>(Factory.GetStringSet("powershell/translation/ignoredFields/field"));
+
+        private HashSet<string> ignoredFields;
 
         [Parameter]
         public SwitchParameter Recurse { get; set; }
@@ -37,11 +42,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         [Parameter]
         public string[] IgnoredFields { get; set; }
-
-        private static readonly HashSet<string> configIgnoredFields =
-            new HashSet<string>(Factory.GetStringSet("powershell/translation/ignoredFields/field"));
-
-        private HashSet<string> ignoredFields;
 
         protected override void BeginProcessing()
         {
@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 string.Format("Add language '{0}' version(s){1}",
                     TargetLanguage.Aggregate((seed, curr) => seed + ", " + curr), (Recurse ? " recursively" : ""))))
             {
-                foreach (string targetLanguage in TargetLanguage)
+                foreach (var targetLanguage in TargetLanguage)
                 {
                     var lang = LanguageManager.GetLanguage(targetLanguage);
                     if (lang == null)
@@ -75,7 +75,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     }
                     else
                     {
-                        Item latestVersion = item.Versions.GetLatestVersion(lang);
+                        var latestVersion = item.Versions.GetLatestVersion(lang);
                         if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
                         {
                             CopyFields(item, latestVersion, false);

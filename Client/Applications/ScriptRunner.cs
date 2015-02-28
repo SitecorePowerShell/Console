@@ -9,9 +9,9 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class ScriptRunner
     {
+        private readonly bool autoDispose;
         private readonly ProgressBoxMethod method;
         private readonly object[] parameters;
-        private readonly bool autoDispose;
 
         public ScriptRunner(ProgressBoxMethod method, object[] parameters, bool autoDispose)
         {

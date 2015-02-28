@@ -7,13 +7,13 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         private static ListViewComparer _instance;
 
+        private ListViewComparer()
+        {
+        }
+
         public static ListViewComparer Instance
         {
             get { return _instance ?? (_instance = new ListViewComparer()); }
-        }
-
-        private ListViewComparer()
-        {
         }
 
         public int Compare(String str1, String str2)

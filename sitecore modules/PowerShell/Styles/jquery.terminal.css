@@ -11,10 +11,10 @@
 .cmd > .clipboard { position: fixed; }
 
 .terminal {
-    padding: 10px;
-    position: relative;
     /* overflow: hidden; */
     font-size: 12px;
+    padding: 10px;
+    position: relative;
 }
 
 .cmd {

@@ -14,8 +14,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
     [Cmdlet(VerbsData.Export, "UpdatePackage", SupportsShouldProcess = true)]
     public class ExportUpdatePackageCommand : BasePackageCommand
     {
-
-        private List<ICommand> cumulatedCommandList = new List<ICommand>();
+        private readonly List<ICommand> cumulatedCommandList = new List<ICommand>();
 
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public List<ICommand> CommandList { get; set; }
@@ -42,8 +41,8 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 
         protected override void EndProcessing()
         {
-             // Use default logger
-            ILog log = LogManager.GetLogger("root");
+            // Use default logger
+            var log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
 
             PerformInstallAction(
@@ -58,7 +57,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                     var fileName = Path;
                     if (string.IsNullOrEmpty(fileName))
                     {
-                        fileName = string.Format("{0}.update",Name);
+                        fileName = string.Format("{0}.update", Name);
                     }
 
                     if (!System.IO.Path.IsPathRooted(fileName))

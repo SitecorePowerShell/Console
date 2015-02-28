@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Input")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ShowInputCommand : BaseShellCommand
     {
         [Parameter(Position = 0, Mandatory = true)]

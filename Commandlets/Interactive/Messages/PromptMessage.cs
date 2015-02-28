@@ -7,12 +7,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class PromptMessage : BasePipelineMessage, IMessage
     {
-        private readonly string text;
         private readonly string defaultValue;
-        private readonly string validation;
-        private readonly string validationText;
         private readonly int maxLength;
         private readonly bool simpleRun;
+        private readonly string text;
+        private readonly string validation;
+        private readonly string validationText;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.

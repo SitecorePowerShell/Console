@@ -5,6 +5,9 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 {
     public class LoggingInScript : PipelineProcessor<LoggingInArgs>
     {
-        protected override string IntegrationPoint { get { return IntegrationPoints.PipelineLoggingInFeature; } }        
+        protected override string IntegrationPoint
+        {
+            get { return IntegrationPoints.PipelineLoggingInFeature; }
+        }
     }
 }

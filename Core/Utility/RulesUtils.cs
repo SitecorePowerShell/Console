@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 return true;
             }
             // hacking the rules xml
-            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
+            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
             var ruleContext = new RuleContext
             {
                 Item = contextItem
@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 return true;
             }
             // hacking the rules xml
-            RuleList<RuleContext> rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
+            var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
             var ruleContext = new RuleContext
             {
                 Item = item
@@ -39,6 +39,5 @@ namespace Cognifide.PowerShell.Core.Utility
             ruleContext.Parameters["ViewName"] = viewName;
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
-
     }
 }

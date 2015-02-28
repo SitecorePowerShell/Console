@@ -7,21 +7,21 @@ namespace Cognifide.PowerShell.Core.Rules
 {
     public class PowerShellSessionExistsWithVariable<T> : WhenCondition<T> where T : RuleContext
     {
+        // Properties
+        public string PersistentSessionId { get; set; }
+        public string VariableName { get; set; }
         // Methods
         protected override bool Execute(T ruleContext)
         {
             Assert.ArgumentNotNull(ruleContext, "ruleContext");
 
-            if (string.IsNullOrEmpty(PersistentSessionId) || string.IsNullOrEmpty(VariableName) || !ScriptSessionManager.SessionExists(PersistentSessionId))
+            if (string.IsNullOrEmpty(PersistentSessionId) || string.IsNullOrEmpty(VariableName) ||
+                !ScriptSessionManager.SessionExists(PersistentSessionId))
             {
                 return false;
             }
-            ScriptSession session = ScriptSessionManager.GetSession(PersistentSessionId);
+            var session = ScriptSessionManager.GetSession(PersistentSessionId);
             return session.GetVariable(VariableName) != null;
         }
-
-        // Properties
-        public string PersistentSessionId { get; set; }
-        public string VariableName { get; set; }
     }
 }

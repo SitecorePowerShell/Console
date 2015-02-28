@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.Shell.Framework;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -19,17 +18,16 @@ namespace Cognifide.PowerShell.Client.Applications
         // Fields
         protected XmlControl Dialog;
         protected Edit Filename;
+        protected Border NamePanel;
         protected DataContext ScriptDataContext;
         protected TreeviewEx Treeview;
-        protected Border NamePanel;
-
         // Methods
         private Item GetCurrentItem(Message message)
         {
             Assert.ArgumentNotNull(message, "message");
-            string str = message["id"];
-            Language language = Context.Language;
-            Item folder = ScriptDataContext.GetFolder();
+            var str = message["id"];
+            var language = Context.Language;
+            var folder = ScriptDataContext.GetFolder();
             if (folder != null)
             {
                 language = folder.Language;
@@ -55,7 +53,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!Context.ClientPage.IsEvent)
             {
                 ScriptDataContext.GetFromQueryString();
-                string queryString = WebUtil.GetQueryString("db");
+                var queryString = WebUtil.GetQueryString("db");
                 if (queryString.Length > 0)
                 {
                     if (!string.IsNullOrEmpty(ScriptDataContext.Parameters))
@@ -68,27 +66,27 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                 }
                 Context.ClientPage.ServerProperties["id"] = WebUtil.GetQueryString("id");
-                string icon = WebUtil.GetQueryString("ic");
+                var icon = WebUtil.GetQueryString("ic");
                 if (icon.Length > 0)
                 {
                     Dialog["Icon"] = icon;
                 }
-                string header = WebUtil.SafeEncode(WebUtil.GetQueryString("he"));
+                var header = WebUtil.SafeEncode(WebUtil.GetQueryString("he"));
                 if (header.Length > 0)
                 {
                     Dialog["Header"] = header;
                 }
-                string text = WebUtil.SafeEncode(WebUtil.GetQueryString("txt"));
+                var text = WebUtil.SafeEncode(WebUtil.GetQueryString("txt"));
                 if (text.Length > 0)
                 {
                     Dialog["Text"] = text;
                 }
-                string buttonText = WebUtil.SafeEncode(WebUtil.GetQueryString("btn"));
+                var buttonText = WebUtil.SafeEncode(WebUtil.GetQueryString("btn"));
                 if (buttonText.Length > 0)
                 {
                     Dialog["OKButton"] = buttonText;
                 }
-                Item folder = ScriptDataContext.GetFolder();
+                var folder = ScriptDataContext.GetFolder();
                 Assert.IsNotNull(folder, "Item not found");
                 //this.Filename.Value = this.ShortenPath(folder.Paths.Path);
                 NamePanel.Visible = WebUtil.SafeEncode(WebUtil.GetQueryString("opn")) != "1";
@@ -99,10 +97,10 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(sender, "sender");
             Assert.ArgumentNotNull(args, "args");
-            Item selectedItem = Treeview.GetSelectionItem();
-            string scriptName = Filename.Value;
+            var selectedItem = Treeview.GetSelectionItem();
+            var scriptName = Filename.Value;
 
-            bool opening = WebUtil.SafeEncode(WebUtil.GetQueryString("opn")) == "1";
+            var opening = WebUtil.SafeEncode(WebUtil.GetQueryString("opn")) == "1";
 
 
             if (opening)
@@ -110,8 +108,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (selectedItem == null || selectedItem.TemplateName != "PowerShell Script")
                 {
                     SheerResponse.Alert(
-                        "Select a script you want to open.",
-                        new string[0]);
+                        "Select a script you want to open.");
                 }
                 else
                 {
@@ -124,12 +121,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (selectedItem == null)
                 {
                     SheerResponse.Alert(
-                        "Select a library where you want your script saved and specify a name for your script.",
-                        new string[0]);
+                        "Select a library where you want your script saved and specify a name for your script.");
                 }
                 else if (selectedItem.TemplateName == "PowerShell Script Library" && scriptName.Length == 0)
                 {
-                    SheerResponse.Alert("Specify a name for your script.", new string[0]);
+                    SheerResponse.Alert("Specify a name for your script.");
                 }
                 else if (selectedItem.TemplateName == "PowerShell Script") // selected existing script.
                 {
@@ -140,7 +136,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    string fullPath = selectedItem.Paths.Path + "/" + Filename.Value;
+                    var fullPath = selectedItem.Paths.Path + "/" + Filename.Value;
                     if (selectedItem.Children[scriptName] != null)
                     {
                         var parameters = new NameValueCollection();
@@ -164,7 +160,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (args.Result == "yes")
                 {
-                    string fullPath = args.Parameters["fullPath"];
+                    var fullPath = args.Parameters["fullPath"];
                     Context.ClientPage.ClientResponse.SetDialogValue(fullPath);
                     base.OnOK(this, args);
                 }
@@ -178,7 +174,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void SelectTreeNode()
         {
-            Item selectionItem = Treeview.GetSelectionItem();
+            var selectionItem = Treeview.GetSelectionItem();
             OK.Enabled = selectionItem != null;
         }
 

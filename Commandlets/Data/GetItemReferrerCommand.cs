@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Links;
@@ -8,10 +9,10 @@ using Sitecore.Links;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemReferrer")]
-    [OutputType(new[] {typeof (Item)},
+    [OutputType(typeof (Item),
         ParameterSetName =
             new[] {"Item from Pipeline, return Item", "Item from Path, return Item", "Item from ID, return Item"})]
-    [OutputType(new[] {typeof (ItemLink)},
+    [OutputType(typeof (ItemLink),
         ParameterSetName =
             new[]
             {"Item from Pipeline, return ItemLink", "Item from Path, return ItemLink", "Item from ID, return ItemLink"})
@@ -51,7 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItem(Item linkedItem)
         {
-            var linkDb = Sitecore.Globals.LinkDatabase;
+            var linkDb = Globals.LinkDatabase;
             if (linkDb.GetReferrerCount(linkedItem) > 0)
             {
                 if (ItemLink)

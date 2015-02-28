@@ -7,12 +7,12 @@ namespace Cognifide.PowerShell.Core.Host
 {
     public class BufferSplitterCollection : IEnumerable<OutputLine>
     {
+        private string value;
         private readonly ConsoleColor backgroundColor;
         private readonly ConsoleColor foregroundColor;
+        private readonly bool terminated;
         private readonly OutputLineType type;
         private readonly int width;
-        private string value;
-        private readonly bool terminated;
 
         public BufferSplitterCollection(OutputLineType type, string value, PSHostRawUserInterface host, bool terminated)
         {

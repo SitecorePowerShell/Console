@@ -13,10 +13,14 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
     public abstract class BaseRenderingCommand : BaseLayoutCommand
     {
         private int index = -1;
+        private Dictionary<string, WildcardPattern> paramPatterns;
 
-        [Parameter(Mandatory = true, ParameterSetName = "Rendering by filter, Item from Pipeline", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Mandatory = true, ParameterSetName = "Rendering by instance, Item from Pipeline", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Mandatory = true, ParameterSetName = "Rendering by unique ID, Item from Pipeline", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, ParameterSetName = "Rendering by filter, Item from Pipeline",
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, ParameterSetName = "Rendering by instance, Item from Pipeline",
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, ParameterSetName = "Rendering by unique ID, Item from Pipeline",
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public override Item Item { get; set; }
 
         [Parameter(Mandatory = true, ParameterSetName = "Rendering by filter, Item from Path")]
@@ -74,8 +78,6 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Parameter(Mandatory = true, ParameterSetName = "Rendering by unique ID, Item from ID")]
         public string UniqueId { get; set; }
 
-        private Dictionary<string, WildcardPattern> paramPatterns = null;
-
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
@@ -84,8 +86,8 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 paramPatterns = new Dictionary<string, WildcardPattern>();
                 foreach (var key in Parameter.Keys)
                 {
-                    WildcardPattern wildcardPattern = GetWildcardPattern(Parameter[key].ToString());
-                    paramPatterns.Add(key.ToString(),wildcardPattern);
+                    var wildcardPattern = GetWildcardPattern(Parameter[key].ToString());
+                    paramPatterns.Add(key.ToString(), wildcardPattern);
                 }
             }
         }
@@ -129,7 +131,6 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 {
                     renderings = renderings.Skip(index).Take(1);
                 }
-         
             }
 
             if (paramPatterns != null)
@@ -142,7 +143,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                         continue;
                     }
                     var parsedParams = new UrlString(rendering.Parameters);
-                    bool match = true;
+                    var match = true;
                     foreach (var param in paramPatterns)
                     {
                         if (!parsedParams.Parameters.AllKeys.Contains(param.Key, StringComparer.OrdinalIgnoreCase))
@@ -158,15 +159,15 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     }
                     if (match)
                     {
-                        paramFilteredRenderings.Add(rendering);                        
+                        paramFilteredRenderings.Add(rendering);
                     }
                 }
                 renderings = paramFilteredRenderings;
             }
             ProcessRenderings(item, layout, device, renderings);
-
         }
 
-        protected abstract void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device, IEnumerable<RenderingDefinition> renderings);
+        protected abstract void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
+            IEnumerable<RenderingDefinition> renderings);
     }
 }

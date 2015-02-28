@@ -11,7 +11,6 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
     [Cmdlet(VerbsData.Import, "User", SupportsShouldProcess = true)]
     public class ImportUserCommand : BaseCommand
     {
-
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
@@ -71,7 +70,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                 var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
                 fileName = target + identity.Domain + @"\Users\" + identity.Account + PathUtils.UserExtension;
             }
-            
+
             // make sure the path has the proper extension
             if (!fileName.EndsWith(PathUtils.UserExtension, StringComparison.OrdinalIgnoreCase))
             {

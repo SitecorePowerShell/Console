@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Utility
@@ -10,7 +9,7 @@ namespace Cognifide.PowerShell.Core.Utility
     {
         public static Item GetItem(string drive, string itemPath)
         {
-            Database currentDb = Factory.GetDatabase(drive);
+            var currentDb = Factory.GetDatabase(drive);
             itemPath = itemPath.Replace('\\', '/');
             if (!itemPath.StartsWith("/"))
             {
@@ -23,12 +22,12 @@ namespace Cognifide.PowerShell.Core.Utility
             return currentDb.GetItem(itemPath);
         }
 
-        public static string GetDrive(string path,string currentDb)
+        public static string GetDrive(string path, string currentDb)
         {
             if (path.Contains(":"))
             {
                 //path with drive
-                string[] drivepath = path.Split(':');
+                var drivepath = path.Split(':');
                 return drivepath[0];
             }
             return currentDb;
@@ -40,9 +39,9 @@ namespace Cognifide.PowerShell.Core.Utility
             if (path.Contains(":"))
             {
                 //path with drive
-                string[] drivepath = path.Split(':');
-                string drive = drivepath[0];
-                string itemPath = drivepath[1];
+                var drivepath = path.Split(':');
+                var drive = drivepath[0];
+                var itemPath = drivepath[1];
                 item = GetItem(drive, itemPath);
             }
             else if (path.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
@@ -69,10 +68,10 @@ namespace Cognifide.PowerShell.Core.Utility
         public static string PreparePathForQuery(string path)
         {
             var parts = path.Split('/');
-            var sb = new StringBuilder(path.Length+10);
+            var sb = new StringBuilder(path.Length + 10);
             foreach (var part in parts)
             {
-                if(string.IsNullOrEmpty(part))
+                if (string.IsNullOrEmpty(part))
                 {
                     continue;
                 }
@@ -82,7 +81,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 }
                 else
                 {
-                    sb.AppendFormat("/{0}",part);
+                    sb.AppendFormat("/{0}", part);
                 }
             }
             return sb.ToString();

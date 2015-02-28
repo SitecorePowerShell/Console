@@ -6,7 +6,7 @@ using Cognifide.PowerShell.Core.Host;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet("Get", "ScriptSession",DefaultParameterSetName = "All")]
+    [Cmdlet("Get", "ScriptSession", DefaultParameterSetName = "All")]
     public class GetScriptSession : BaseCommand
     {
         [Parameter(ParameterSetName = "By ID", Mandatory = true)]

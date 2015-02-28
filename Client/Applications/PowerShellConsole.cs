@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using System.Web;
-using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
@@ -38,7 +37,7 @@ namespace Cognifide.PowerShell.Client.Applications
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
-            ApplicationSettings settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
 
             if (!Context.ClientPage.IsEvent)
             {
@@ -66,8 +65,7 @@ namespace Cognifide.PowerShell.Client.Applications
         }
 
         /// <summary>
-        /// Handles the message.
-        /// 
+        ///     Handles the message.
         /// </summary>
         /// <param name="message">The message.</param>
         public override void HandleMessage(Message message)

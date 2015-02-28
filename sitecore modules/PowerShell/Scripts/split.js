@@ -45,13 +45,16 @@ split = split || function(undef) {
         }
         var output = [],
             flags = (separator.ignoreCase ? "i" : "") +
-                (separator.multiline ? "m" : "") +
-                (separator.extended ? "x" : "") + // Proposed for ES6
-                (separator.sticky ? "y" : ""), // Firefox 3+
+            (separator.multiline ? "m" : "") +
+            (separator.extended ? "x" : "") + // Proposed for ES6
+            (separator.sticky ? "y" : ""), // Firefox 3+
             lastLastIndex = 0,
             // Make `global` and avoid `lastIndex` issues by working with a copy
             separator = new RegExp(separator.source, flags + "g"),
-            separator2, match, lastIndex, lastLength;
+            separator2,
+            match,
+            lastIndex,
+            lastLength;
         str += ""; // Type-convert
         if (!compliantExecNpcg) {
             // Doesn't need flags gy, but they don't hurt

@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 return;
             }
 
-            LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
+            var layout = LayoutDefinition.Parse(layoutField.Value);
 
             if (layout.Devices == null)
             {
@@ -35,10 +35,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             {
                 if (Device == null || string.Equals(device.ID, Device.ID.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
-                    Item layoutItem = item.Database.GetItem(device.Layout);
-                    PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, layoutItem);
+                    var layoutItem = item.Database.GetItem(device.Layout);
+                    var psobj = ItemShellExtensions.GetPsObject(SessionState, layoutItem);
                     psobj.Properties.Add(new PSNoteProperty("DeviceID", device.ID));
-                    DeviceItem deviceItem = Device ?? (DeviceItem)item.Database.GetItem(device.ID);
+                    var deviceItem = Device ?? item.Database.GetItem(device.ID);
                     psobj.Properties.Add(new PSNoteProperty("Device", deviceItem.Name));
                     WriteObject(psobj);
                     if (Device != null)

@@ -5,10 +5,9 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet("Get", "ItemClone")]
-    [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
+    [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetItemCloneCommand : BaseLanguageAgnosticItemCommand
     {
-
         protected override void ProcessItem(Item item)
         {
             item.GetClones().ToList().ForEach(WriteItem);

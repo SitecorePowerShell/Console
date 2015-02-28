@@ -6,7 +6,7 @@ using Sitecore.Security.Accounts;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.Get, "User", DefaultParameterSetName = "Id")]
-    [OutputType(new[] {typeof (User)})]
+    [OutputType(typeof (User))]
     public class GetUserCommand : BaseCommand
     {
         [Alias("Name")]
@@ -39,7 +39,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
                     WriteObject(users, true);
                     break;
                 default:
-                    if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+                    if (!this.CanFindAccount(Identity, AccountType.User))
+                    {
+                        return;
+                    }
 
                     WriteObject(User.FromName(Identity.Name, Authenticated));
                     break;

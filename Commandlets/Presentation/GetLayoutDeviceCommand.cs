@@ -5,13 +5,13 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "LayoutDevice")]
-    [OutputType(new[] {typeof (DeviceItem)}, ParameterSetName = new[] { "By Name", "Default" })]
+    [OutputType(typeof (DeviceItem), ParameterSetName = new[] {"By Name", "Default"})]
     public class GetLayoutDeviceCommand : BaseCommand
     {
         [Parameter(Position = 0, ParameterSetName = "By Name", Mandatory = true)]
         public string Name { get; set; }
 
-        [Parameter(Position = 0, Mandatory = true,ParameterSetName = "Default")]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Default")]
         public SwitchParameter Default { get; set; }
 
         protected override void ProcessRecord()
@@ -26,7 +26,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 {
                     Name = "*";
                 }
-                WildcardWrite(Name, CurrentDatabase.Resources.Devices.GetAll(), device => device.Name);                
+                WildcardWrite(Name, CurrentDatabase.Resources.Devices.GetAll(), device => device.Name);
             }
         }
     }

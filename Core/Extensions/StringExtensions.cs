@@ -25,14 +25,14 @@ namespace Cognifide.PowerShell.Core.Extensions
                 return rawString;
             }
 
-            string final = rawString;
+            var final = rawString;
             List<string> parts;
 
             parts = rawString.Split(delimiter).ToList();
-            int loops = 0;
+            var loops = 0;
             while (loops++ < 100)
             {
-                int removed = parts.Count / 2;
+                var removed = parts.Count/2;
                 parts.RemoveAt(removed);
                 if (parts.Count == 1)
                 {

@@ -3,7 +3,6 @@ using System.Linq;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 
@@ -17,13 +16,13 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
         {
             Assert.ArgumentNotNull(args, "args");
 
-            foreach (Item libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
+            foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
                 if (!libraryItem.HasChildren) return;
 
                 foreach (var scriptItem in libraryItem.Children.ToList())
                 {
-                    using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
+                    using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {
                         var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                             ? scriptItem.Fields[ScriptItemFieldNames.Script].Value

@@ -3,7 +3,6 @@ using System.Web;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
@@ -11,10 +10,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShowResultsMessage : BasePipelineMessage, IMessage
     {
-        public string Html { get; private set; }
-        public string Width { get; private set; }
-        public string Height { get; private set; }
-
         public ShowResultsMessage(string html, string width, string height)
         {
             Html = html;
@@ -22,16 +17,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Height = height;
         }
 
+        public string Html { get; private set; }
+        public string Width { get; private set; }
+        public string Height { get; private set; }
+
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
         protected override void ShowUI()
         {
-            string resultSig = Guid.NewGuid().ToString();
+            var resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Session[resultSig] = Html;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
             urlString.Add("sid", resultSig);
-            ClientCommand response = SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
+            var response = SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
         }
     }
 }

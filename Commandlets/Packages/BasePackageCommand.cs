@@ -23,7 +23,6 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             get { return ApplicationContext.PackageProjectPath; }
         }
 
-
         protected static string FullPackagePath(string packageFileName)
         {
             return Path.Combine(PackagePath, packageFileName);
@@ -60,7 +59,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     {
                         using (new SyncOperationContext())
                         {
-                            string site = Context.GetSiteName();
+                            var site = Context.GetSiteName();
                             Context.SetActiveSite(siteContext);
                             action();
                             Context.SetActiveSite(site);

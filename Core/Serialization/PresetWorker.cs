@@ -9,12 +9,24 @@ namespace Cognifide.PowerShell.Core.Serialization
     public class PresetWorker
     {
         private int processed;
+        private readonly LoadOptions defaultOptions = new LoadOptions {DisableEvents = false};
         private readonly IncludeEntry entry;
-        private readonly LoadOptions defaultOptions = new LoadOptions { DisableEvents = false };
 
         public PresetWorker(IncludeEntry entry)
         {
             this.entry = entry;
+        }
+
+        private static int MessageCount
+        {
+            get
+            {
+                if (Context.Job == null)
+                {
+                    return 0;
+                }
+                return Context.Job.Status.Messages.Cast<string>().Count(m => !m.StartsWith("#"));
+            }
         }
 
         public int Serialize()
@@ -45,7 +57,7 @@ namespace Cognifide.PowerShell.Core.Serialization
         public int Deserialize(LoadOptions options)
         {
             processed = 0;
-            ItemReference reference = new ItemReference(entry.Database, entry.Path);
+            var reference = new ItemReference(entry.Database, entry.Path);
             if (entry is SingleEntry)
             {
                 Manager.LoadItem(PathUtils.GetFilePath(reference.ToString()), options);
@@ -53,24 +65,12 @@ namespace Cognifide.PowerShell.Core.Serialization
             }
             else
             {
-                int messagesInit = MessageCount;
+                var messagesInit = MessageCount;
                 Manager.LoadItem(PathUtils.GetFilePath(reference.ToString()), options);
                 Manager.LoadTree(PathUtils.GetDirectoryPath(reference.ToString()), options);
                 processed += (MessageCount - messagesInit);
             }
             return processed;
-        }
-
-        private static int MessageCount
-        {
-            get
-            {
-                if (Context.Job == null)
-                {
-                    return 0;
-                }
-                return Context.Job.Status.Messages.Cast<string>().Count(m => !m.StartsWith("#"));
-            }
         }
     }
 }

@@ -10,26 +10,32 @@
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerText,Cognifide.PowerShell" />
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
-            <div id="HeaderIconContainer">
-              <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/Logo_Square.png" Alt="" runat="server" />
-            </div>
+          <div id="HeaderIconContainer">
+            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/Logo_Square.png" Alt="" runat="server" />
+          </div>
           <Border>
-            <Border Class="DialogHeader"><Literal Text="Script Execution Result..." ID="DialogHeader"/></Border>
-            <Border Class="DialogHeaderDescription"><Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;"/></Border>
+            <Border Class="DialogHeader">
+              <Literal Text="Script Execution Result..." ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;" />
+            </Border>
           </Border>
         </Border>
-          
-	<Scrollbox Class="scFlexContent">
+
+        <Scrollbox Class="scFlexContent">
           <Scrollbox ID="All" Class="scStretchAbsolute scDialogContentContainer consoleWrapper console pre">
-          <Scrollbox ID="Promo" class="promoArea console pre">
-            <Border Align="Right" Foreground="#999999">
-              <Literal
-                Text="Sitecore PowerShell Extensions - Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
-            </Border>
+            <Scrollbox ID="Promo" class="promoArea console pre">
+              <Border Align="Right" Foreground="#999999">
+                <Literal
+                  Text="Sitecore PowerShell Extensions - Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+              </Border>
+            </Scrollbox>
+            <pre>
+              <Literal ID="Result" class="resultsArea console pre" />
+            </pre>
           </Scrollbox>
-          <pre><Literal ID="Result" class="resultsArea console pre"/></pre>
         </Scrollbox>
-      </Scrollbox>
       </Border>
     </FormPage>
   </PowerShellResultViewerText>

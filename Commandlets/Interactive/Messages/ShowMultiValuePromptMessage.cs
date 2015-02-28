@@ -12,30 +12,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
     {
-        public object[] Parameters
-        {
-            get { return parameters; }
-        }
-
-        public string Width { get; private set; }
-        public string Height { get; private set; }
-        public string Title { get; private set; }
-        public string Description { get; private set; }
-        public string CancelButtonName { get; private set; }
-        public string OkButtonName { get; private set; }
-        public bool ShowHints { get; set; }
         private Handle jobHandle;
-        [NonSerialized]
-        private readonly object[] parameters;
-        [NonSerialized]
-        private readonly MessageQueue messageQueue;
-
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
-
-        public object Result { get; private set; }
+        [NonSerialized] private readonly MessageQueue messageQueue;
+        [NonSerialized] private readonly object[] parameters;
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
             string description, string okButtonName, string cancelButtonName, bool showHints)
@@ -55,13 +34,39 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             ShowHints = showHints;
         }
 
+        public object[] Parameters
+        {
+            get { return parameters; }
+        }
+
+        public string Width { get; private set; }
+        public string Height { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public string CancelButtonName { get; private set; }
+        public string OkButtonName { get; private set; }
+        public bool ShowHints { get; set; }
+        public object Result { get; private set; }
+
+        /// <summary>
+        ///     Starts the pipeline.
+        /// </summary>
+        public void Execute()
+        {
+            Context.ClientPage.Start(this, "Pipeline");
+        }
+
+        public MessageQueue MessageQueue
+        {
+            get { return messageQueue; }
+        }
 
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
         protected virtual void ShowUI()
         {
-            string resultSig = Guid.NewGuid().ToString();
+            var resultSig = Guid.NewGuid().ToString();
             if (Context.ClientPage.CodeBeside is IPowerShellRunner)
             {
                 (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = false;
@@ -91,14 +96,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         }
 
         /// <summary>
-        ///     Starts the pipeline.
-        /// </summary>
-        public void Execute()
-        {
-            Context.ClientPage.Start(this, "Pipeline");
-        }
-
-        /// <summary>
         ///     Entry point for a pipeline.
         /// </summary>
         /// <param name="args">The arguments.</param>
@@ -117,7 +114,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 if (args.HasResult)
                 {
-                    object result = HttpContext.Current.Cache[args.Result];
+                    var result = HttpContext.Current.Cache[args.Result];
                     HttpContext.Current.Cache.Remove(args.Result);
                     Result = result;
                 }
@@ -127,11 +124,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 }
 
 
-                string strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
+                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
                 if (!String.IsNullOrEmpty(strJobId))
                 {
                     jobHandle = Handle.Parse(strJobId);
-                    Job job = JobManager.GetJob(jobHandle);
+                    var job = JobManager.GetJob(jobHandle);
                     if (job != null)
                     {
                         job.MessageQueue.PutResult(Result);

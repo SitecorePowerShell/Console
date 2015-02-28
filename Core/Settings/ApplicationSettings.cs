@@ -4,11 +4,9 @@ using System.Globalization;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
-using Version = System.Version;
 
 namespace Cognifide.PowerShell.Core.Settings
 {
@@ -19,16 +17,25 @@ namespace Cognifide.PowerShell.Core.Settings
         public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
         public const string FontNamesPath = "/sitecore/system/Modules/PowerShell/Fonts/";
-
-        private static string rulesDb = null;
-        private static string settingsDb = null;
-        private static string scriptLibraryDb = null;
-
+        private static string rulesDb;
+        private static string settingsDb;
+        private static string scriptLibraryDb;
         public static Version SitecoreVersionCurrent = Version.Parse(About.Version);
         public static Version SitecoreVersion72 = new Version(7, 2);
         public static Version SitecoreVersion75 = new Version(7, 5);
 
-        public static string RulesDb {
+        private static readonly Dictionary<string, ApplicationSettings> instances =
+            new Dictionary<string, ApplicationSettings>();
+
+        private static readonly char[] invalidChars = {'\\', '/', ':', '"', '<', '>', '|', '[', ']', '.'};
+
+        private ApplicationSettings(string applicationName)
+        {
+            ApplicationName = applicationName;
+        }
+
+        public static string RulesDb
+        {
             get
             {
                 GetDatabaseName(ref rulesDb, "powershell/workingDatabase/rules");
@@ -54,29 +61,7 @@ namespace Cognifide.PowerShell.Core.Settings
             }
         }
 
-        private static void GetDatabaseName(ref string databaseName, string settingPath)
-        {
-            if (String.IsNullOrEmpty(databaseName))
-            {
-                databaseName = Factory.GetString(settingPath, false);
-                if (String.IsNullOrEmpty(databaseName))
-                {
-                    databaseName = "master";
-                }
-            }
-        }
-
-
-        private static readonly Dictionary<string, ApplicationSettings> instances =
-            new Dictionary<string, ApplicationSettings>();
-
-        private ApplicationSettings(string applicationName)
-        {
-            ApplicationName = applicationName;
-        }
-
         protected bool Loaded { get; private set; }
-
         public string Prescript { get; set; }
         public string LastScript { get; set; }
         public bool SaveLastScript { get; set; }
@@ -87,19 +72,6 @@ namespace Cognifide.PowerShell.Core.Settings
         public string ApplicationName { get; private set; }
         public int FontSize { get; set; }
         public string FontFamily { get; set; }
-
-        public static string GetSettingsPath(string applicationName, bool personalizedSettings)
-        {
-            return SettingsItemPath + GetSettingsName(applicationName, personalizedSettings);
-        }
-
-        public static string GetSettingsName(string applicationName, bool personalizedSettings)
-        {
-            return applicationName +
-                   (personalizedSettings
-                       ? "/" + CurrentDomain + "/" + CurrentUserName
-                       : "/All Users");
-        }
 
         public string AppSettingsPath
         {
@@ -116,13 +88,11 @@ namespace Cognifide.PowerShell.Core.Settings
             get { return AppSettingsPath + IseSettingsItemAllUsers; }
         }
 
-        private static readonly char[] invalidChars = {'\\', '/', ':', '"', '<', '>', '|', '[', ']', '.'};
-
         private static string CurrentUserName
         {
             get
             {
-                string currentUserName = User.Current.LocalName;
+                var currentUserName = User.Current.LocalName;
                 foreach (var invalidChar in invalidChars)
                 {
                     currentUserName = currentUserName.Replace(invalidChar, '_');
@@ -135,13 +105,38 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             get
             {
-                string currentUserDomain = User.Current.Domain.Name;
+                var currentUserDomain = User.Current.Domain.Name;
                 foreach (var invalidChar in invalidChars)
                 {
                     currentUserDomain = currentUserDomain.Replace(invalidChar, '_');
                 }
                 return currentUserDomain;
             }
+        }
+
+        private static void GetDatabaseName(ref string databaseName, string settingPath)
+        {
+            if (String.IsNullOrEmpty(databaseName))
+            {
+                databaseName = Factory.GetString(settingPath, false);
+                if (String.IsNullOrEmpty(databaseName))
+                {
+                    databaseName = "master";
+                }
+            }
+        }
+
+        public static string GetSettingsPath(string applicationName, bool personalizedSettings)
+        {
+            return SettingsItemPath + GetSettingsName(applicationName, personalizedSettings);
+        }
+
+        public static string GetSettingsName(string applicationName, bool personalizedSettings)
+        {
+            return applicationName +
+                   (personalizedSettings
+                       ? "/" + CurrentDomain + "/" + CurrentUserName
+                       : "/All Users");
         }
 
         public static ApplicationSettings GetInstance(string applicationName)
@@ -151,7 +146,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         internal static void ReloadInstance(string applicationName, bool personalizedSettings)
         {
-            string settingsPath = GetSettingsName(applicationName, personalizedSettings);
+            var settingsPath = GetSettingsName(applicationName, personalizedSettings);
             lock (instances)
             {
                 if (instances.ContainsKey(settingsPath))
@@ -163,7 +158,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         public static ApplicationSettings GetInstance(string applicationName, bool personalizedSettings)
         {
-            string settingsPath = GetSettingsName(applicationName, personalizedSettings);
+            var settingsPath = GetSettingsName(applicationName, personalizedSettings);
             ApplicationSettings instance = null;
             lock (instances)
             {
@@ -183,26 +178,26 @@ namespace Cognifide.PowerShell.Core.Settings
 
         private Item GetSettingsDto()
         {
-            Database db = Factory.GetDatabase(SettingsDb);
+            var db = Factory.GetDatabase(SettingsDb);
             return db.GetItem(CurrentUserSettingsPath) ?? db.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
         {
-            Database db = Factory.GetDatabase(SettingsDb);
-            string appSettingsPath = AppSettingsPath;
-            Item currentUserItem = db.GetItem(CurrentUserSettingsPath);
+            var db = Factory.GetDatabase(SettingsDb);
+            var appSettingsPath = AppSettingsPath;
+            var currentUserItem = db.GetItem(CurrentUserSettingsPath);
             if (currentUserItem == null)
             {
-                Item settingsRootItem = db.GetItem(appSettingsPath);
+                var settingsRootItem = db.GetItem(appSettingsPath);
                 if (settingsRootItem == null)
                 {
                     return null;
                 }
-                Item folderTemplateItem = db.GetItem(FolderTemplatePath);
-                Item currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
+                var folderTemplateItem = db.GetItem(FolderTemplatePath);
+                var currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
                     folderTemplateItem);
-                Item defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
+                var defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
                 currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
             }
             return currentUserItem;
@@ -210,7 +205,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         public void Save()
         {
-            Item configuration = GetSettingsDtoForSave();
+            var configuration = GetSettingsDtoForSave();
             if (configuration != null)
             {
                 configuration.Edit(
@@ -230,7 +225,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         internal void Load()
         {
-            Item configuration = GetSettingsDto();
+            var configuration = GetSettingsDto();
 
             if (configuration != null)
             {
@@ -277,6 +272,5 @@ namespace Cognifide.PowerShell.Core.Settings
                 Loaded = true;
             }
         }
-
     }
 }

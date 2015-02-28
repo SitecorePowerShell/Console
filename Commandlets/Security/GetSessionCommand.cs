@@ -5,7 +5,7 @@ using Sitecore.Web.Authentication;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.Get, "Session", DefaultParameterSetName = "Id")]
-    [OutputType(new[] {typeof (DomainAccessGuard.Session)})]
+    [OutputType(typeof (DomainAccessGuard.Session))]
     public class GetSessionCommand : BaseCommand
     {
         [Alias("Name")]

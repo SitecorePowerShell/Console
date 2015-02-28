@@ -20,7 +20,6 @@ namespace Cognifide.PowerShell.Core.Host
     {
         private readonly ScriptingHostRawUserInterface rawUi;
 
-
         public ScriptingHostUserInterface(ApplicationSettings settings)
         {
             rawUi = new ScriptingHostRawUserInterface(settings);
@@ -51,7 +50,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void Write(string value)
         {
-            OutputLine lastline = Output[Output.Count - 1];
+            var lastline = Output[Output.Count - 1];
             if (!lastline.Terminated)
             {
                 lastline.Text += value;
@@ -92,7 +91,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteDebugLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + message, 
+            var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + message,
                 RawUI.WindowSize.Width,
                 ConsoleColor.Cyan, RawUI.BackgroundColor, true);
             Output.AddRange(splitter);
@@ -100,7 +99,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            Message message = Message.Parse(this, "ise:updateprogress");
+            var message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
             message.Arguments.Add("CurrentOperation", record.CurrentOperation);
@@ -180,15 +179,15 @@ namespace Cognifide.PowerShell.Core.Host
                     {"dc", defaultChoice.ToString(CultureInfo.InvariantCulture)}
                 };
             Context.Site = Factory.GetSite(Context.Job.Options.SiteName);
-            int lineWidth = choices.Count*80 + 140;
-            int strLineWidth = lineWidth/8;
-            int lineHeight = 0;
-            foreach (string line in message.Split('\n'))
+            var lineWidth = choices.Count*80 + 140;
+            var strLineWidth = lineWidth/8;
+            var lineHeight = 0;
+            foreach (var line in message.Split('\n'))
             {
                 lineHeight += 1 + line.Length/strLineWidth;
             }
             lineHeight = lineHeight*21 + 130;
-            string dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
+            var dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 
             if (!string.IsNullOrEmpty(dialogResult))

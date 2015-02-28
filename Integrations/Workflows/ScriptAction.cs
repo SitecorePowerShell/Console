@@ -3,7 +3,6 @@ using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
@@ -16,21 +15,21 @@ namespace Cognifide.PowerShell.Integrations.Workflows
         public void Process(WorkflowPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            ProcessorItem processorItem = args.ProcessorItem;
+            var processorItem = args.ProcessorItem;
             if (processorItem == null)
             {
                 return;
             }
-            Item actionItem = processorItem.InnerItem;
+            var actionItem = processorItem.InnerItem;
 
-            Item dataItem = args.DataItem;
+            var dataItem = args.DataItem;
 
             if (string.IsNullOrEmpty(actionItem["Script"]))
             {
                 return;
             }
 
-            Item scriptItem = actionItem.Database.GetItem(new ID(actionItem[ScriptItemFieldNames.Script]));
+            var scriptItem = actionItem.Database.GetItem(new ID(actionItem[ScriptItemFieldNames.Script]));
 
             if (RulesUtils.EvaluateRules(actionItem[ScriptItemFieldNames.EnableRule], dataItem) &&
                 RulesUtils.EvaluateRules(scriptItem[ScriptItemFieldNames.EnableRule], dataItem))

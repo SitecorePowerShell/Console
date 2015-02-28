@@ -7,33 +7,30 @@ using System.Web;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Data.Templates;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
-using Job = Sitecore.Jobs.Job;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
     [Serializable]
     public class FieldEditor : Command
     {
-        [NonSerialized]
-        private List<WildcardPattern> includePatterns;
-        [NonSerialized]
-        private List<WildcardPattern> excludePatterns;
         private const string UriParameter = "uri";
         private const string PathParameter = "path";
         private const string PreserveSectionsParameter = "preservesections";
         private const string IncludeStandardFieldsParameter = "isf";
         private const string CurrentItemIsNull = "Current item is null";
+        [NonSerialized] private List<WildcardPattern> excludePatterns;
+        [NonSerialized] private List<WildcardPattern> includePatterns;
 
         protected List<WildcardPattern> IncludePatterns
         {
@@ -73,8 +70,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected virtual void EnsureContext(ClientPipelineArgs args)
         {
-            string path = args.Parameters[PathParameter];
-            Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
+            var path = args.Parameters[PathParameter];
+            var currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
             currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
             Assert.IsNotNull(currentItem, CurrentItemIsNull);
             CurrentItem = currentItem;
@@ -100,13 +97,14 @@ namespace Cognifide.PowerShell.Client.Applications
                         .Where(name => name.StartsWith("-"))
                         .Select(
                             name =>
-                                new WildcardPattern(name.Substring(1), WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
+                                new WildcardPattern(name.Substring(1),
+                                    WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
                         .ToList();
             }
             var currentItem = CurrentItem;
             currentItem.Fields.ReadAll();
-            Template template =
-                TemplateManager.GetTemplate(Sitecore.Configuration.Settings.DefaultBaseTemplate,
+            var template =
+                TemplateManager.GetTemplate(Settings.DefaultBaseTemplate,
                     currentItem.Database);
 
             foreach (Field field in currentItem.Fields)
@@ -118,7 +116,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
 
                 var name = field.Name;
-                bool wildcardMatch = IncludePatterns.Any(pattern => pattern.IsMatch(name));
+                var wildcardMatch = IncludePatterns.Any(pattern => pattern.IsMatch(name));
                 if (!wildcardMatch)
                 {
                     continue;
@@ -168,28 +166,28 @@ namespace Cognifide.PowerShell.Client.Applications
         /// </param>
         protected virtual void StartFieldEditor(ClientPipelineArgs args)
         {
-            HttpContext current = HttpContext.Current;
+            var current = HttpContext.Current;
             if (current == null)
                 return;
             var page = current.Handler as Page;
             if (page == null)
                 return;
-            NameValueCollection form = page.Request.Form;
+            var form = page.Request.Form;
 
             if (!args.IsPostBack)
             {
                 SheerResponse.ShowModalDialog(
-                    GetOptions(args, form).ToUrlString().ToString(), 
+                    GetOptions(args, form).ToUrlString().ToString(),
                     args.Parameters["width"],
                     args.Parameters["height"],
                     string.Empty, true);
                 args.WaitForPostBack();
             }
             else
-            {                   
+            {
                 if (args.HasResult)
                 {
-                    PageEditFieldEditorOptions results = PageEditFieldEditorOptions.Parse(args.Result);
+                    var results = PageEditFieldEditorOptions.Parse(args.Result);
                     var currentItem = CurrentItem;
                     currentItem.Edit(options =>
                     {
@@ -205,18 +203,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (!String.IsNullOrEmpty(strJobId))
                 {
                     var jobHandle = Handle.Parse(strJobId);
-                    Job job = JobManager.GetJob(jobHandle);
+                    var job = JobManager.GetJob(jobHandle);
                     if (job != null)
                     {
                         job.MessageQueue.PutResult(args.HasResult ? "ok" : "cancel");
                     }
                 }
-                else
-                {
-                    //todo: implement out of job execution
-                    //MessageQueue.PutResult(Result);
-                }
-
             }
         }
     }

@@ -8,7 +8,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsData.Expand, "Token", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (Item)})]
+    [OutputType(typeof (Item))]
     public class ExpandTokenCommand : BaseItemCommand
     {
         private static readonly MasterVariablesReplacer TokenReplacer = Factory.GetMasterVariablesReplacer();

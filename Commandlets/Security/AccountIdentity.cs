@@ -34,9 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Security
         }
 
         public string Name { get; private set; }
-
         public string Domain { get; private set; }
-
         public string Account { get; private set; }
 
         public override string ToString()

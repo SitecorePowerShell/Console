@@ -20,10 +20,9 @@ using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 namespace Cognifide.PowerShell.Console.Services
 {
     /// <summary>
-    /// Summary description for PowerShellWebService
-    /// The service is used by Terminal/Console app and the Sitecore Rocks Visual Studio console 
-    /// for all of their operations. It's also used by ISE for code completions.
-    ///     
+    ///     Summary description for PowerShellWebService
+    ///     The service is used by Terminal/Console app and the Sitecore Rocks Visual Studio console
+    ///     for all of their operations. It's also used by ISE for code completions.
     /// </summary>
     [WebService(Namespace = "http://cognifide.powershell.com")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
@@ -197,7 +196,7 @@ namespace Cognifide.PowerShell.Console.Services
                     "Can't find your command result. This might mean that your session has timed out or your script caused the application to restart.";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
-                return serializer.Serialize(result);            
+                return serializer.Serialize(result);
             }
 
             result.handle = handle;
@@ -209,7 +208,10 @@ namespace Cognifide.PowerShell.Console.Services
             if (scriptJob.Status.Failed)
             {
                 result.status = StatusError;
-                var message = string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray()).Replace("[", "&#91;").Replace("]", "&#93;");
+                var message =
+                    string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray())
+                        .Replace("[", "&#91;")
+                        .Replace("]", "&#93;");
                 result.result = "[[;#f00;#000]" + (message.Length > 0 ? message : "Command failed") + "]";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
                 session.Output.Clear();
@@ -234,7 +236,7 @@ namespace Cognifide.PowerShell.Console.Services
                 output.Append(temp);
                 temp.Remove(0, temp.Length);
             }
-            result.result = output.ToString().TrimEnd(new[] {'\r', '\n'});
+            result.result = output.ToString().TrimEnd('\r', '\n');
             result.prompt = string.Format("PS {0}>", session.CurrentLocation);
             if (partial)
             {
@@ -312,7 +314,6 @@ namespace Cognifide.PowerShell.Console.Services
             return result.ToArray();
         }
 
-
         [WebMethod(EnableSession = true)]
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetHelpForCommand(string guid, string command)
@@ -332,7 +333,6 @@ namespace Cognifide.PowerShell.Console.Services
             var result = CommandHelp.GetHelp(session, command);
             return result.ToArray();
         }
-
 
         public static string GetJobId(string sessionGuid, string handle)
         {

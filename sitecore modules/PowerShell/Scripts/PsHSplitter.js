@@ -2,7 +2,7 @@ function scHSplitter() {
     this.dragging = false;
 }
 
-scHSplitter.prototype.createOutline = function (bounds, tag) {
+scHSplitter.prototype.createOutline = function(bounds, tag) {
     var result = document.createElement("div");
 
     result.style.border = "2px ridge";
@@ -27,9 +27,8 @@ scHSplitter.prototype.createOutline = function (bounds, tag) {
     }
 
     return result;
-}
-
-scHSplitter.prototype.mouseDown = function (tag, evt, id) {
+};
+scHSplitter.prototype.mouseDown = function(tag, evt, id) {
     if (!this.dragging) {
         this.bounds = new scRect();
         this.bounds.getControlRect(tag);
@@ -45,9 +44,8 @@ scHSplitter.prototype.mouseDown = function (tag, evt, id) {
 
         scForm.browser.clearEvent(evt, true, false);
     }
-}
-
-scHSplitter.prototype.mouseMove = function (tag, evt, id) {
+};
+scHSplitter.prototype.mouseMove = function(tag, evt, id) {
     if (this.dragging) {
         if (this.outline == null) {
             this.outline = this.createOutline(this.bounds, tag);
@@ -65,9 +63,8 @@ scHSplitter.prototype.mouseMove = function (tag, evt, id) {
 
         scForm.browser.clearEvent(evt, true, false);
     }
-}
-
-scHSplitter.prototype.mouseUp = function (tag, evt, id, target, nopost) {
+};
+scHSplitter.prototype.mouseUp = function(tag, evt, id, target, nopost) {
     if (this.dragging) {
         this.dragging = false;
 
@@ -107,6 +104,5 @@ scHSplitter.prototype.mouseUp = function (tag, evt, id, target, nopost) {
             cognifide.powershell.resizeEditor();
         }
     }
-}
-
+};
 scHSplit = new scHSplitter();

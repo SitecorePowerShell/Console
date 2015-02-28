@@ -5,12 +5,11 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommunications.Read, "Variable")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ReadVariableCommand : BaseFormCommand
     {
         [Parameter]
@@ -32,7 +31,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                AssertDefaultSize(500,300);
+                AssertDefaultSize(500, 300);
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
                     OkButtonName, CancelButtonName, ShowHints);
 
@@ -55,23 +54,23 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                     if (variable != null)
                     {
-                        object varValue = result["Value"];
+                        var varValue = result["Value"];
                         if (varValue == null)
                         {
                             varValue = variable.Value.BaseObject();
 
                             if (varValue is IEnumerable<object>)
                             {
-                                varValue = (varValue as IEnumerable<object>).Select(p => PowerShellExtensions.BaseObject(p)).ToList();
+                                varValue = (varValue as IEnumerable<object>).Select(p => p.BaseObject()).ToList();
                             }
                             result.Add("Value", varValue);
                         }
-                        object varTitle = result["Title"];
+                        var varTitle = result["Title"];
                         if (varTitle == null)
                         {
                             result.Add("Title", string.IsNullOrEmpty(variable.Name) ? name : variable.Name);
                         }
-                        object varDesc = result["Description"];
+                        var varDesc = result["Description"];
                         if (varDesc == null)
                         {
                             result.Add("Description", variable.Description);
@@ -98,7 +97,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 {
                     foreach (Hashtable result in results)
                     {
-                        object resultValue = result["Value"];
+                        var resultValue = result["Value"];
                         if (resultValue is Item)
                         {
                             resultValue = ItemShellExtensions.GetPsObject(SessionState, resultValue as Item);

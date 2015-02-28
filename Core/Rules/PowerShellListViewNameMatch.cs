@@ -8,6 +8,8 @@ namespace Cognifide.PowerShell.Core.Rules
 {
     public class PowerShellListViewNameMatch<T> : WhenCondition<T> where T : RuleContext
     {
+        // Properties
+        public string ValidViewName { get; set; }
         // Methods
         protected override bool Execute(T ruleContext)
         {
@@ -22,12 +24,9 @@ namespace Cognifide.PowerShell.Core.Rules
                 return false;
             }
 
-            string currentViewName = (ruleContext.Parameters["ViewName"] ?? string.Empty).ToString();
-            string[] viewNames = ValidViewName.Split('|');
+            var currentViewName = (ruleContext.Parameters["ViewName"] ?? string.Empty).ToString();
+            var viewNames = ValidViewName.Split('|');
             return viewNames.Contains(currentViewName, StringComparer.OrdinalIgnoreCase);
         }
-
-        // Properties
-        public string ValidViewName { get; set; }
     }
 }

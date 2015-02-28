@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Cognifide.PowerShell.Core.Host;
 using Sitecore;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
@@ -17,51 +15,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShowListViewMessage : IMessage
     {
-        public List<BaseListViewCommand.DataObject> Data { get; set; }
-        public string Title { get; set; }
-        public string Width { get; private set; }
-        public string Height { get; private set; }
-        public string Icon { get; private set; }
-        public int PageSize { get; private set; }
-        public bool Modal { get; set; }
-        public string InfoTitle { get; private set; }
-        public string InfoDescription { get; private set; }
-        public Hashtable[] Property { get; private set; }
-        public string ViewName { get; set; }
-        public string MissingDataMessage { get; set; }
-
-
-        public string FormatProperty
-        {
-            get
-            {
-                return Property
-                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
-                    .Aggregate((a, b) => a + b)
-                    .TrimEnd(',');
-            }
-        }
-
-        public string ExportProperty
-        {
-            get
-            {
-                return Property
-                    .Where(p =>
-                    {
-                        var label = p["Label"].ToString().ToLower();
-                        return label != "icon" && label != "__icon";
-                    })
-                    .Select(p => p["Label"] +",")
-                    .Aggregate((a, b) => a + b)
-                    .TrimEnd(',');
-            }
-        }
-
-        public string SessionId { get; private set; }
-        public object ActionData { get; private set; }
-
-        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon, string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId, object actionData, object[] property, string viewName, string missingDataMessage)
+        public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon,
+            string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId,
+            object actionData, object[] property, string viewName, string missingDataMessage)
         {
             Data = data;
             Title = title;
@@ -106,16 +62,59 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 }).ToArray();
         }
 
+        public List<BaseListViewCommand.DataObject> Data { get; set; }
+        public string Title { get; set; }
+        public string Width { get; private set; }
+        public string Height { get; private set; }
+        public string Icon { get; private set; }
+        public int PageSize { get; private set; }
+        public bool Modal { get; set; }
+        public string InfoTitle { get; private set; }
+        public string InfoDescription { get; private set; }
+        public Hashtable[] Property { get; private set; }
+        public string ViewName { get; set; }
+        public string MissingDataMessage { get; set; }
+
+        public string FormatProperty
+        {
+            get
+            {
+                return Property
+                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
+                    .Aggregate((a, b) => a + b)
+                    .TrimEnd(',');
+            }
+        }
+
+        public string ExportProperty
+        {
+            get
+            {
+                return Property
+                    .Where(p =>
+                    {
+                        var label = p["Label"].ToString().ToLower();
+                        return label != "icon" && label != "__icon";
+                    })
+                    .Select(p => p["Label"] + ",")
+                    .Aggregate((a, b) => a + b)
+                    .TrimEnd(',');
+            }
+        }
+
+        public string SessionId { get; private set; }
+        public object ActionData { get; private set; }
+
         public void Execute()
         {
-            string resultSig = Guid.NewGuid().ToString();
+            var resultSig = Guid.NewGuid().ToString();
             HttpContext.Current.Cache[resultSig] = this;
 
             if (!Modal)
             {
                 var urlString = new UrlString();
                 urlString.Add("sid", resultSig);
-                Item appItem =
+                var appItem =
                     Database.GetDatabase("core").GetItem("/sitecore/content/Applications/PowerShell/PowerShellListView");
                 Windows.RunApplication(appItem, "Business/32x32/table_sql_view.png", Title, urlString.Query);
             }

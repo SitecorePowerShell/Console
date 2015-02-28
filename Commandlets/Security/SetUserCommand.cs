@@ -18,6 +18,40 @@ namespace Cognifide.PowerShell.Commandlets.Security
     [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class SetUserCommand : BaseCommand, IDynamicParameters
     {
+        private static readonly string[] portraits;
+
+        public SetUserCommand()
+        {
+            Enabled = true;
+
+            AddDynamicParameter<string>("Portrait", new ParameterAttribute
+            {
+                ParameterSetName = ParameterAttribute.AllParameterSets
+            }, new ValidateSetAttribute(portraits));
+
+            if (User.Current.IsAdministrator)
+            {
+                AddDynamicParameter<SwitchParameter>("IsAdministrator", new ParameterAttribute
+                {
+                    ParameterSetName = ParameterAttribute.AllParameterSets
+                });
+            }
+        }
+
+        static SetUserCommand()
+        {
+            var validValues = new List<string>();
+            // Extracted example from Sitecore.Shell.Applications.Security.EditUser.EditUserPage.cs in Sitecore.Client.dll
+            foreach (XmlNode xmlNode in Factory.GetConfigNodes("portraits/collection"))
+            {
+                foreach (var src in new ListString(xmlNode.InnerText))
+                {
+                    validValues.Add(ImageBuilder.ResizeImageSrc(src, 16, 16).Trim());
+                }
+            }
+            portraits = validValues.ToArray();
+        }
+
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
             ParameterSetName = "Id")]
@@ -47,47 +81,6 @@ namespace Cognifide.PowerShell.Commandlets.Security
         [ValidateSet("Default", "ContentEditor", "PageEditor", "Preview", "Desktop")]
         public string StartUrl { get; set; }
 
-        private static string[] portraits;
-
-        static SetUserCommand()
-        {
-            var validValues = new List<string>();
-            // Extracted example from Sitecore.Shell.Applications.Security.EditUser.EditUserPage.cs in Sitecore.Client.dll
-            foreach (XmlNode xmlNode in Factory.GetConfigNodes("portraits/collection"))
-            {
-                foreach (var src in new ListString(xmlNode.InnerText))
-                {
-                    validValues.Add(ImageBuilder.ResizeImageSrc(src, 16, 16).Trim());
-                }
-            }
-            portraits = validValues.ToArray();
-        }
-
-        public SetUserCommand()
-        {
-            Enabled = true;
-
-            AddDynamicParameter<string>("Portrait", new Attribute[]
-            {
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets
-                },
-                new ValidateSetAttribute(portraits)
-            });
-
-            if (User.Current.IsAdministrator)
-            {
-                AddDynamicParameter<SwitchParameter>("IsAdministrator", new Attribute[]
-            {
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets
-                }
-            });
-            }
-        }
-
         [Parameter]
         public SwitchParameter Enabled { get; set; }
 
@@ -96,7 +89,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+            if (!this.CanFindAccount(Identity, AccountType.User))
+            {
+                return;
+            }
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 

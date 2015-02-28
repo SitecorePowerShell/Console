@@ -11,7 +11,7 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Set, "Rendering",SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "Rendering", SupportsShouldProcess = true)]
     public class SetRenderingCommand : BaseLanguageAgnosticItemCommand
     {
         private int index = -1;
@@ -42,15 +42,14 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 string.Format("Set '{0}' rendering parameters. Rendering is of type: {1}", Instance.UniqueId,
                     Instance.ItemID)))
             {
-
                 LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
                 if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
                 {
                     return;
                 }
 
-                LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
-                
+                var layout = LayoutDefinition.Parse(layoutField.Value);
+
                 DeviceDefinition device;
                 RenderingDefinition rendering;
 
@@ -71,8 +70,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 return;
 
                 Renderingfound: //goto label
-                rendering.ItemID = Instance.ItemID;                
-                rendering.Placeholder = MyInvocation.BoundParameters.ContainsKey("PlaceHolder") ? PlaceHolder : Instance.Placeholder ?? rendering.Placeholder;
+                rendering.ItemID = Instance.ItemID;
+                rendering.Placeholder = MyInvocation.BoundParameters.ContainsKey("PlaceHolder")
+                    ? PlaceHolder
+                    : Instance.Placeholder ?? rendering.Placeholder;
                 rendering.Datasource =
                     !string.IsNullOrEmpty(DataSource)
                         ? DataSource

@@ -1,8 +1,5 @@
 ﻿using System;
-using Cognifide.PowerShell.Console.Services;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Install.Framework;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
@@ -15,8 +12,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     public class ShowUploadFileMessage : IMessage, IMessageWithResult
     {
         private Handle jobHandle;
-        [NonSerialized]
-        private readonly MessageQueue messageQueue;
+        [NonSerialized] private readonly MessageQueue messageQueue;
 
         public ShowUploadFileMessage(string width, string height, string title, string description, string okButtonName,
             string cancelButtonName, string path, bool versioned, string language, bool overwrite, bool unpack,
@@ -53,7 +49,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public bool Overwrite { get; set; }
         public string Language { get; set; }
         public bool Versioned { get; set; }
-        public MessageQueue MessageQueue { get { return messageQueue; } }
 
         /// <summary>
         ///     Starts the pipeline.
@@ -63,6 +58,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Context.ClientPage.Start(this, "Pipeline");
         }
 
+        public MessageQueue MessageQueue
+        {
+            get { return messageQueue; }
+        }
 
         /// <summary>
         ///     Shows a confirmation dialog.
@@ -71,7 +70,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         {
             if (AdvancedDialog)
             {
-                UrlString urlString =
+                var urlString =
                     new UrlString("/sitecore/shell/Applications/Media/UploadManager/UploadManager.aspx");
                 var item = Context.ContentDatabase.GetItem(Path);
                 item.Uri.AddToUrlString(urlString);

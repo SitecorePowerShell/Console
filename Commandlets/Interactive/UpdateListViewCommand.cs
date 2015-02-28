@@ -7,9 +7,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     public class UpdateListViewCommand : BaseListViewCommand
     {
         public override string Title { get; set; }
-
         public override int Width { get; set; }
-
         public override int Height { get; set; }
 
         protected override void EndProcessing()

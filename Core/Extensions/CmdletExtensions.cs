@@ -45,9 +45,11 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public static bool CanChangeLock(this Cmdlet command, Item item)
         {
-            if (item.Locking.HasLock() || item.Locking.CanUnlock() || (!item.Locking.IsLocked() && item.Locking.CanLock())) return true;
+            if (item.Locking.HasLock() || item.Locking.CanUnlock() ||
+                (!item.Locking.IsLocked() && item.Locking.CanLock())) return true;
 
-            var error = String.Format("Cannot modify item '{0}' because it is locked by '{1}'.", item.Name, item.Locking.GetOwner());
+            var error = String.Format("Cannot modify item '{0}' because it is locked by '{1}'.", item.Name,
+                item.Locking.GetOwner());
             command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied,
                 item));
             return false;
@@ -60,12 +62,14 @@ namespace Cognifide.PowerShell.Core.Extensions
 
             if (accountType == AccountType.Role && !Role.Exists(name))
             {
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, account));
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                    ErrorCategory.ObjectNotFound, account));
                 return false;
             }
             if (accountType == AccountType.User && !User.Exists(name))
             {
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, account));
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                    ErrorCategory.ObjectNotFound, account));
                 return false;
             }
 

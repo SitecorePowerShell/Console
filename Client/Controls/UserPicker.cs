@@ -6,8 +6,8 @@ namespace Cognifide.PowerShell.Client.Controls
 {
     public class UserPicker : Control
     {
-        protected Edit Viewer;
         protected Button PickButton;
+        protected Edit Viewer;
 
         public UserPicker()
         {
@@ -28,18 +28,17 @@ namespace Cognifide.PowerShell.Client.Controls
             set { PickButton.Click = value; }
         }
 
-
         public override string Value
         {
             get { return base.Value; }
             set
             {
                 Viewer.Value = string.Empty;
-                string result = string.Empty;
-                string[] entries = value.Split('|');
+                var result = string.Empty;
+                var entries = value.Split('|');
                 foreach (var entry in entries)
                 {
-                    string[] entryParts = entry.Split('^');
+                    var entryParts = entry.Split('^');
                     Viewer.Value += entryParts[0] + ", ";
                     result += entryParts[0] + "|";
                 }

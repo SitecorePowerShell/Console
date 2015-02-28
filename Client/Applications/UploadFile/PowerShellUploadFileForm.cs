@@ -1,33 +1,29 @@
+using System;
+using System.Web;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
-using Sitecore.Text;
 using Sitecore.Web;
-using Sitecore.Web.UI.Pages;
+using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.XmlControls;
-using System;
-using System.Web;
-using Sitecore.Reflection;
-using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.Client.Applications.UploadFile
 {
     public class PowerShellUploadFileForm : BaseForm
     {
+        protected Button CancelButton;
+        protected XmlControl Dialog;
+        protected Literal DialogDescription;
+        protected Literal DialogHeader;
         protected GenericControl ItemUri;
-        protected GenericControl Versioned;
+        protected GenericControl LanguageName;
+        protected Button OKButton;
         protected GenericControl Overwrite;
         protected GenericControl Unpack;
-        protected GenericControl LanguageName;
-        protected XmlControl Dialog;
-        protected Button OKButton;
-        protected Button CancelButton;
-        protected Literal DialogHeader;
-        protected Literal DialogDescription;
+        protected GenericControl Versioned;
 
         protected void EndUploading(string id)
         {
@@ -48,9 +44,9 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
             base.OnLoad(e);
             if (!Context.ClientPage.IsEvent && !Context.ClientPage.IsPostBack)
             {
-                UrlHandle handle = UrlHandle.Get();
+                var handle = UrlHandle.Get();
                 var path = handle["path"];
-                if ( path== null)
+                if (path == null)
                 {
                     var uri = Sitecore.Data.ItemUri.ParseQueryString(Context.ContentDatabase);
                     var item = Database.GetItem(uri);
@@ -68,30 +64,29 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 LanguageName.Attributes["value"] = handle["language"];
                 Overwrite.Attributes["value"] = handle["overwrite"];
                 Unpack.Attributes["value"] = handle["unpack"];
-                string title = handle["te"];
+                var title = handle["te"];
                 if (!string.IsNullOrEmpty(title))
                 {
-                    DialogHeader.Text = WebUtil.SafeEncode(title);                    
+                    DialogHeader.Text = WebUtil.SafeEncode(title);
                 }
 
-                string message = handle["ds"];
+                var message = handle["ds"];
                 if (!string.IsNullOrEmpty(message))
                 {
                     DialogDescription.Text = WebUtil.SafeEncode(message);
                 }
-                
-                string ok = handle["ok"];
+
+                var ok = handle["ok"];
                 if (!string.IsNullOrEmpty(ok))
                 {
                     OKButton.Header = WebUtil.SafeEncode(ok);
                 }
 
-                string cancel = handle["cancel"];
+                var cancel = handle["cancel"];
                 if (!string.IsNullOrEmpty(cancel))
                 {
                     CancelButton.Header = WebUtil.SafeEncode(cancel);
                 }
-
             }
         }
 
@@ -114,6 +109,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         {
             SheerResponse.CloseWindow();
         }
+
         protected void ShowError()
         {
             SheerResponse.Alert(

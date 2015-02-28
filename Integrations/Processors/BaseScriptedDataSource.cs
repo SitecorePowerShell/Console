@@ -21,12 +21,12 @@ namespace Cognifide.PowerShell.Integrations.Processors
 
         protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
         {
-            string unusedLocations = string.Empty;
+            var unusedLocations = string.Empty;
             foreach (var location in new ListString(sources))
             {
                 if (IsScripted(location))
                 {
-                    string scriptLocation = location.Replace("script:", "").Trim();
+                    var scriptLocation = location.Replace("script:", "").Trim();
                     items.AddRange(RunEnumeration(scriptLocation, contextItem));
                 }
                 else
@@ -42,10 +42,10 @@ namespace Cognifide.PowerShell.Integrations.Processors
             Assert.ArgumentNotNull(scriptSource, "scriptSource");
             Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
-            Item scriptItem = item.Database.GetItem(scriptSource);
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
+            var scriptItem = item.Database.GetItem(scriptSource);
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
-                String script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
                 script = string.Format("{0}\n{1}", ScriptSession.GetDataContextSwitch(item), script);

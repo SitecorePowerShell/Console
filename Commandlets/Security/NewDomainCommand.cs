@@ -7,7 +7,7 @@ using Sitecore.SecurityModel;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.New, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
-    [OutputType(typeof(Domain))]
+    [OutputType(typeof (Domain))]
     public class NewDomainCommand : BaseCommand
     {
         [Parameter(ParameterSetName = "Name", Mandatory = true, Position = 0)]
@@ -31,7 +31,6 @@ namespace Cognifide.PowerShell.Commandlets.Security
                 DomainManager.AddDomain(Name, LocallyManaged);
                 WriteObject(DomainManager.GetDomain(Name));
             }
-
         }
     }
 }

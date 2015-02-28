@@ -12,12 +12,13 @@ namespace Cognifide.PowerShell.Core.Modules
 {
     public class ModuleMonitor
     {
-        private static ID ModuleTemplateId = new ID("{6D82FCD8-C379-443C-97A9-C6423C71E7D5}");
-        
+        private static readonly ID ModuleTemplateId = new ID("{6D82FCD8-C379-443C-97A9-C6423C71E7D5}");
+
         protected bool IsPowerShellMonitoredItem(Item item)
         {
             return (item != null) &&
-                   item.Paths.Path.StartsWith(ApplicationSettings.ScriptLibraryPath, StringComparison.InvariantCultureIgnoreCase);
+                   item.Paths.Path.StartsWith(ApplicationSettings.ScriptLibraryPath,
+                       StringComparison.InvariantCultureIgnoreCase);
         }
 
         internal void OnItemDeleted(object sender, EventArgs args)
@@ -36,7 +37,7 @@ namespace Cognifide.PowerShell.Core.Modules
             var idreArgs = args as ItemDeletedRemoteEventArgs;
             if (idreArgs != null)
             {
-                Item item = idreArgs.Item.Database.GetItem(idreArgs.ParentId);
+                var item = idreArgs.Item.Database.GetItem(idreArgs.ParentId);
                 using (new SecurityDisabler())
                 {
                     if (item != null && IsPowerShellMonitoredItem(item))
@@ -94,6 +95,5 @@ namespace Cognifide.PowerShell.Core.Modules
                 }
             }
         }
-
     }
 }

@@ -1,6 +1,4 @@
-﻿body.ie {
-  overflow: hidden;
-}
+﻿body.ie { overflow: hidden; }
 
 #Copyright {
     float: left;
@@ -15,36 +13,36 @@
 #Result_ { display: none; }
 
 #Promo {
+    border-top: #E3E3E3 solid 1px;
     bottom: 4px;
+    color: #CBCDCB;
     display: block;
     float: right;
+    left: 0px;
     position: absolute;
     right: 0px;
-    left: 0px;
-    color: #CBCDCB;
-    border-top: #E3E3E3 solid 1px;
 }
 
 #Promo a { color: #ABADAB; }
 
 .varTitle {
-    margin: 8px 0 4px 2px;
-    display: block;
-    font-weight: bold;
-    float: left;
     clear: both;
+    display: block;
+    float: left;
+    font-weight: bold;
+    margin: 8px 0 4px 2px;
     width: 100%;
 }
 
 .varHint {
-    margin: 2px 0 4px 2px;
-    display: block;
     clear: both;
+    display: block;
+    margin: 2px 0 4px 2px;
 }
 
 .varCheckbox {
-    margin-top: 20px;
     float: left;
+    margin-top: 20px;
 }
 
 .scContentControl {
@@ -56,42 +54,43 @@
 
 .scUserPickerEdit {
     border: solid 1px ButtonShadow;
-    padding-left: 2px;
     float: left;
-    width: 90% !important;
-    position: relative;
     left: 0;
+    padding-left: 2px;
+    position: relative;
+    width: 90% !important;
 }
 
 .scComboboxEdit, .scDateTimePickerContainer {
-    float: left;
     clear: both;
+    float: left;
     width: 100%;
 }
 
 .scUserPickerButton {
-    margin-left: 4px;
-    vertical-align: top;
     float: right;
     height: 34px;
+    margin-left: 4px;
+    vertical-align: top;
     width: 34px;
 }
 
 .EntryGrid {
     background: #e9e9e9;
-    white-space: nowrap;
-    vertical-align: top;
     height: 100%;
+    vertical-align: top;
+    white-space: nowrap;
 }
 
 .scBottomEdge, .scTopEdge { height: 1px; }
 
 .checkBoxWrapper {
-  display: block;
-  padding: 24px 0 16px 0;
-  float: left;
-  clear: both;
+    clear: both;
+    display: block;
+    float: left;
+    padding: 24px 0 16px 0;
 }
+
 /*
 .scTabPage {
     padding: 8px;
@@ -99,87 +98,71 @@
 }
 */
 
-.scContentControl.treePicker td{
-    padding: 2px 0 2px 6px;
-}
+.scContentControl.treePicker td { padding: 2px 0 2px 6px; }
 
-.scContentControl.treePicker{
-    padding: 4px 2px 4px 8px;
+.scContentControl.treePicker {
     height: 220px;
+    padding: 4px 2px 4px 8px;
 }
 
-.psVarPromptHeaderIcon{
-    margin: 6px 16px 4px 0px !important;
-}
+.psVarPromptHeaderIcon { margin: 6px 16px 4px 0px !important; }
 
 /* 6.6 Backwards compatibility - copied from 7.2 styles */
 
 .scWizardButtons {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  /* height:70px; */
-  text-align:right;
-  white-space: nowrap;
+    bottom: 0;
+    position: absolute;
+    /* height:70px; */
+    text-align: right;
+    white-space: nowrap;
+    width: 100%;
 }
 
-.scWizardButtons > .scButton {
-  margin-top: 10px;
-}
+.scWizardButtons > .scButton { margin-top: 10px; }
 
 .scWizardPageContainer {
-  position: absolute;
-  top: 0;
-  bottom: 40px;
-  width: 100%;
+    bottom: 40px;
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 .scWizardFormPadding {
-  padding: 8px;
-  overflow: auto;
+    overflow: auto;
+    padding: 8px;
 }
 
 .scWizardFirstPageLeftPanel, .scWizardLastPageLeftPanel {
-  width:164px;
-  position:absolute;
-  height: 100%;
-  background:#123960;
-  filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#123960', EndColorStr='#405E7A');
+    background: #123960;
+    filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#123960', EndColorStr='#405E7A');
+    height: 100%;
+    position: absolute;
+    width: 164px;
 }
 
 .scWizardFirstPageContent, .scWizardLastPageContent {
-  margin-left:164px;
-  height: 100%;
-  overflow: auto;
-  padding: 10px;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  background: white;
+    -moz-box-sizing: border-box;
+    background: white;
+    box-sizing: border-box;
+    height: 100%;
+    margin-left: 164px;
+    overflow: auto;
+    padding: 10px;
 }
 
 .ie8 .scWizardFormContentForOldIE, .ie9 .scWizardFormContentForOldIE {
-  position: absolute;
-  top: 66px;
-  bottom: 0;
-  width: 100%;
+    bottom: 0;
+    position: absolute;
+    top: 66px;
+    width: 100%;
 }
 
-.scContentControlChecklist {
-    border: solid 1px ButtonShadow;
-}
+.scContentControlChecklist { border: solid 1px ButtonShadow; }
 
-.scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker, .scRadioGroup {
-    border: ButtonShadow solid 1px;
-}
+.scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker, .scRadioGroup { border: ButtonShadow solid 1px; }
 
-fieldset label {
-  font: 8pt tahoma;
-}
+fieldset label { font: 8pt tahoma; }
 
-fieldset {
-  padding: 6px 8px 8px 10px;
-}
+fieldset { padding: 6px 8px 8px 10px; }
 
-table.scContentControl.treePicker > :first-child > :first-child {
-  height: 20px;
-}
+table.scContentControl.treePicker > :first-child > :first-child { height: 20px; }

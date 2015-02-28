@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.IdentityModel.Protocols.WSTrust;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -16,7 +14,6 @@ using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Text;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using Control = Sitecore.Web.UI.HtmlControls.Control;
 
 namespace Cognifide.PowerShell.Client.Controls
 {
@@ -38,9 +35,11 @@ namespace Cognifide.PowerShell.Client.Controls
                 ? Factory.GetDatabase(contextDB).GetItem(contextItemId)
                 : null;
 
-            output.Write("<div class=\"iseRibbonContextPanel {0}\">", context.Parameters["ScriptRunning"] == "1" ? "disabled" : string.Empty);
+            output.Write("<div class=\"iseRibbonContextPanel {0}\">",
+                context.Parameters["ScriptRunning"] == "1" ? "disabled" : string.Empty);
             // timestamp added because Sitecore won't re-send it to browser it if content didn't change - so changing session to the same wouldn't close the dropdowns
-            output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",DateTime.Now.ToString("O"));
+            output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",
+                DateTime.Now.ToString("O"));
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
             output.Write(Translate.Text("Context"));
             output.Write("</div>");
@@ -48,11 +47,11 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write(Translate.Text("Session"));
             output.Write("</div>");
             output.Write("</div>");
-            var contextEnabled = string.IsNullOrEmpty(persistentSessionId); 
+            var contextEnabled = string.IsNullOrEmpty(persistentSessionId);
             //RenderContext(output, contextItem, ribbon, contextEnabled);
             var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
-            string path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
-            string icon = contextItem != null ? contextItem.Appearance.Icon : "Office/32x32/sign_forbidden.png";
+            var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
+            var icon = contextItem != null ? contextItem.Appearance.Icon : "Office/32x32/sign_forbidden.png";
             RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon);
             var sessionButton = Factory.GetDatabase("core").GetItem("{0C784F54-2B46-4EE2-B0BA-72384125E123}");
             RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName, string.Empty);

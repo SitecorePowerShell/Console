@@ -11,7 +11,6 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
     [Cmdlet(VerbsData.Import, "Role", SupportsShouldProcess = true)]
     public class ImportRoleCommand : BaseCommand
     {
-
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
@@ -70,7 +69,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                 var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
                 fileName = target + identity.Domain + @"\Roles\" + identity.Account + PathUtils.RoleExtension;
             }
-            
+
             // make sure the path has the proper extension
             if (!fileName.EndsWith(PathUtils.RoleExtension, StringComparison.OrdinalIgnoreCase))
             {

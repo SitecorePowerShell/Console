@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void GetHtmlLine(StringBuilder output)
         {
-            string outString = Terminated ? Text.TrimEnd() : Text;
+            var outString = Terminated ? Text.TrimEnd() : Text;
 
             outString = HttpUtility.HtmlEncode(outString);
             if (outString.Contains("{"))
@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public string ToHtmlString()
         {
-            string outString = Terminated ? Text.TrimEnd() : Text;
+            var outString = Terminated ? Text.TrimEnd() : Text;
             outString = HttpUtility.HtmlEncode(outString);
             if (outString.Contains("{"))
             {
@@ -97,13 +97,13 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void GetTerminalLine(StringBuilder output)
         {
-            string outString = Terminated ? Text.TrimEnd() : Text;
+            var outString = Terminated ? Text.TrimEnd() : Text;
             if (outString.EndsWith("\\"))
             {
                 outString += " ";
             }
-            Color htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
-            Color htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
+            var htmlBackgroundColor = ProcessTerminalColor(BackgroundColor);
+            var htmlForegroundColor = ProcessTerminalColor(ForegroundColor);
             output.AppendFormat(
                 Terminated
                     ? "[[;#{0}{1}{2};#{3}{4}{5}]{6}]\r\n"
@@ -132,7 +132,7 @@ namespace Cognifide.PowerShell.Core.Host
                 case (FormatResponseJsterm):
                     GetTerminalLine(temp);
                     break;
-                    //case (FormatResponseText):
+                //case (FormatResponseText):
                 default:
                     GetPlainTextLine(temp);
                     break;

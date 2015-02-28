@@ -9,7 +9,7 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Add, "Rendering",SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Add, "Rendering", SupportsShouldProcess = true)]
     public class AddRenderingCommand : BaseLayoutCommand
     {
         private int index = -1;
@@ -51,10 +51,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 VaryByLogin = Instance.VaryByLogin,
                 VaryByParameters = Instance.VaryByParameters,
                 VaryByQueryString = Instance.VaryByQueryString,
-                VaryByUser = Instance.VaryByUser,
+                VaryByUser = Instance.VaryByUser
             };
 
-            if (Parameter != null)            
+            if (Parameter != null)
             {
                 var parameters = new UrlString(rendering.Parameters ?? string.Empty);
                 foreach (string name in Parameter.Keys)
@@ -64,7 +64,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     }
                     else
                     {
-                        parameters.Add(name, Parameter[name].ToString());                        
+                        parameters.Add(name, Parameter[name].ToString());
                     }
                 rendering.Parameters = parameters.ToString();
             }

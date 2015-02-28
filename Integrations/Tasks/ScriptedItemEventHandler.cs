@@ -17,17 +17,17 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 return;
             }
             var item = eventArgs.Parameters[0] as Item;
-            string eventName = eventArgs.EventName.Replace(':', '/');
+            var eventName = eventArgs.EventName.Replace(':', '/');
 
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.EventHandlersFeature))
             {
-                Item libraryItem = root.Paths.GetSubItem(eventName);
+                var libraryItem = root.Paths.GetSubItem(eventName);
 
                 if (libraryItem == null)
                 {
                     return;
                 }
-                using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
+                using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                 {
                     foreach (Item scriptItem in libraryItem.Children)
                     {
@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                         }
                         session.SetExecutedScript(scriptItem);
                         session.SetVariable("eventArgs", eventArgs);
-                        string script = scriptItem["Script"];
+                        var script = scriptItem["Script"];
                         if (!String.IsNullOrEmpty(script))
                         {
                             session.ExecuteScriptPart(script);

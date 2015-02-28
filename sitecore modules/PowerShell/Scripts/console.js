@@ -16,7 +16,7 @@ function extend(e, t) {
 }
 
 var cognifide = cognifide || {};
-extend(cognifide, 'powershell');
+extend(cognifide, "powershell");
 
 (function($, window, cognifide, undefined) {
     var defaults = {
@@ -25,7 +25,7 @@ extend(cognifide, 'powershell');
         keepAliveInterval: 60000, // 60 * 1000 - every minute
         keepAliveCheck: 2000, // 2 * 1000 - every 2 seconds
         monitorActive: true
-};
+    };
 
     var settings = defaults;
     cognifide.powershell.setOptions = function(options) {
@@ -36,16 +36,17 @@ extend(cognifide, 'powershell');
     var tabCompletions = null;
     var lastUpdate = 0;
 
-    var checkInterval = setInterval(function(){
+    var checkInterval = setInterval(function() {
         if (new Date().getTime() - lastUpdate > settings.keepAliveInterval) {
             getPowerShellResponse({ "guid": guid }, "KeepAlive");
         }
     }, settings.keepAliveCheck);
 
     function getParam(name) {
-        if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+        if (name = (new RegExp("[?&]" + encodeURIComponent(name) + "=([^&]*)")).exec(location.search))
             return decodeURIComponent(decodeURIComponent(name[1]));
     }
+
     function getSessionId() {
         var id = getParam("id");
         if (id !== undefined) {
@@ -59,7 +60,7 @@ extend(cognifide, 'powershell');
 
     function getUrlParameter(name) {
         return decodeURI(
-            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+            (RegExp(name + "=" + "(.+?)(&|$)").exec(location.search) || [, null])[1]
         );
     }
 
@@ -101,52 +102,52 @@ extend(cognifide, 'powershell');
                     var attempts = 0;
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
-                    if(settings.monitorActive){
-                      scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
+                    if (settings.monitorActive) {
+                        scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ")");
                     };
                     (function poll(wait) {
                         setTimeout(function() {
-                            if(settings.monitorActive){
-                            getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
-                                function(pollJson) {
-                                    var jsonData = JSON.parse(pollJson.d);
-                                    var finished = false;
-                                    if (jsonData["status"] == "working") {
-                                        if (attempts >= 0) {
-                                            attempts++;
-                                            var newWait = Math.pow(initialWait, 1 + (attempts / 50));
-                                            if (newWait > maxWait) {
-                                                newWait = maxWait;
-                                                attempts = -1; //stop incrementing
+                            if (settings.monitorActive) {
+                                getPowerShellResponse({ "guid": guid, "handle": handle, "stringFormat": "jsterm" }, "PollCommandOutput",
+                                    function(pollJson) {
+                                        var jsonData = JSON.parse(pollJson.d);
+                                        var finished = false;
+                                        if (jsonData["status"] == "working") {
+                                            if (attempts >= 0) {
+                                                attempts++;
+                                                var newWait = Math.pow(initialWait, 1 + (attempts / 50));
+                                                if (newWait > maxWait) {
+                                                    newWait = maxWait;
+                                                    attempts = -1; //stop incrementing
+                                                }
+                                                poll(newWait);
+                                            } else {
+                                                poll(maxWait);
                                             }
-                                            poll(newWait);
+                                        } else if (jsonData["status"] == "partial") {
+                                            displayResult(term, jsonData);
+                                            poll(initialWait);
                                         } else {
-                                            poll(maxWait);
+                                            displayResult(term, jsonData);
+                                            finished = true;
                                         }
-                                    } else if (jsonData["status"] == "partial") {
-                                        displayResult(term, jsonData);
-                                        poll(initialWait);
-                                    } else {
-                                        displayResult(term, jsonData);
-                                        finished = true;
+                                        scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ",finished=" + finished + ")");
+                                    },
+                                    function(jqXHR, textStatus, errorThrown) {
+                                        term.resume();
+                                        $("#working").hide();
+                                        term.echo("Communication error: " + textStatus + "; " + errorThrown);
                                     }
-                                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+",finished="+finished+")");
-                                },
-                                function(jqXHR, textStatus, errorThrown) {
-                                    term.resume();
-                                    $("#working").hide();
-                                    term.echo("Communication error: " + textStatus + "; " + errorThrown);
-                                }
-                            );
-                           } else {
-                               poll(initialWait);
-                           }
+                                );
+                            } else {
+                                poll(initialWait);
+                            }
                         }, wait);
                     })(initialWait);
                 } else {
                     displayResult(term, data);
                     var handle = data["handle"];
-                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid="+guid+",handle="+handle+")");
+                    scForm.postRequest("", "", "", "pstaskmonitor:check(guid=" + guid + ",handle=" + handle + ")");
                 }
             }
         );
@@ -192,14 +193,14 @@ extend(cognifide, 'powershell');
 
     function tabCompletionNoHints() {
 
-        var tip = $('.tip_no_hints');
+        var tip = $(".tip_no_hints");
 
         //Absolute position the tooltip according to mouse position
         tip.css({ top: 10, left: 10 });
 
         tip.fadeIn(function() {
             window.setTimeout(function() {
-                tip.fadeOut('slow');
+                tip.fadeOut("slow");
             }, 1000);
         });
     }
@@ -209,9 +210,9 @@ extend(cognifide, 'powershell');
     $(function() {
 
         var terminal =
-            $('#terminal').terminal(function(command, term) {
+            $("#terminal").terminal(function(command, term) {
                 var buffer;
-                if (command.length > 0 && command.lastIndexOf(' `') == command.length - 1) {
+                if (command.length > 0 && command.lastIndexOf(" `") == command.length - 1) {
                     buffer = command;
                     term.push(function(subCommand) {
                         if (subCommand.length == 0) {
@@ -222,8 +223,8 @@ extend(cognifide, 'powershell');
                             buffer += subCommand;
                         }
                     }, {
-                        prompt: '>>',
-                        name: 'nested'
+                        prompt: ">>",
+                        name: "nested"
                     });
                 } else {
                     callPowerShellHost(term, guid, command);
@@ -248,7 +249,7 @@ extend(cognifide, 'powershell');
         window.focus();
 
         function setFocusOnConsole() {
-            $('body').focus();
+            $("body").focus();
         }
 
         setTimeout(setFocusOnConsole, 1000);

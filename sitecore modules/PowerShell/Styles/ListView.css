@@ -1,98 +1,90 @@
-﻿body
-{
-    position: absolute;
+﻿body {
     bottom: 1px;
+    position: absolute;
 }
 
 #Filter label {
     float: left;
-    margin-top: 8px;
     margin-right: 8px;
+    margin-top: 8px;
 }
 
 .scListView {
-    position: relative !important;
-    top: 0;
-    right: 0;
     bottom: 0;
     left: 0;
     overflow: auto;
+    position: relative !important;
+    right: 0;
+    top: 0;
 }
 
 .lvProgressbar {
-    background:#fff;
-    color: #012456;
-    padding:4px 0;
-    width:100%;
-    text-align:center;
-    position:relative;
+    background: #fff;
     border: 1px solid #ccc;
+    color: #012456;
+    padding: 4px 0;
+    position: relative;
+    text-align: center;
+    width: 100%;
 }
 
 .progressFill {
-    background:#012456;
-    color:#fff;
-    width:51%;
-    padding:4px 0;
-    position:absolute;
-    left:0;
-    top:0;
-    overflow:hidden;
-}
-
-.progressFillText {
-}
-
-.scListControl > tbody > tr > td:nth-child(1) {  
-    width:8px;
-}
-
-.emptyResultsPanel{
+    background: #012456;
+    color: #fff;
+    left: 0;
+    overflow: hidden;
+    padding: 4px 0;
     position: absolute;
+    top: 0;
+    width: 51%;
+}
+
+.progressFillText { }
+
+.scListControl > tbody > tr > td:nth-child(1) { width: 8px; }
+
+.emptyResultsPanel {
+    background: white;
     left: 50%;
+    margin-left: -250px;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
     top: 50%;
     width: 500px;
-    background: white;
-    padding: 15px;
-    text-align: center;
-    margin-left: -250px;
 }
 
 .emptyResultsText {
-    font-size: 1.5em;
     display: block;
-    text-align: center;
+    font-size: 1.5em;
     padding-top: 10px;
+    text-align: center;
 }
 
-.progressStatus {
-    padding-top: 4px;
-}
+.progressStatus { padding-top: 4px; }
 
 #lvProgressOverlay {
-    padding: 8px 20px;
     background: white;
+    padding: 8px 20px;
 }
 
-.progressActivity {
-    font-weight: bold;
-}
+.progressActivity { font-weight: bold; }
 
 #LvProgressOverlay {
-    padding-right: 30px;
     padding-left: 30px;
+    padding-right: 30px;
 }
 
 #LvProgressOverlay #progressbar {
     margin-top: 8px;
-    width:100%
+    width: 100%
 }
 
 #OperationProgress {
-    padding-right: 30px;
-    padding-left: 40px;
     margin: auto;
     margin-top: 30px;
+    padding-left: 40px;
+    padding-right: 30px;
     width: 90%;
 }
 
@@ -103,8 +95,7 @@
 }
 
 #lvProgressbar div {
-    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
     background: #5E5E5E;
+    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
     height: 20px;
 }
-

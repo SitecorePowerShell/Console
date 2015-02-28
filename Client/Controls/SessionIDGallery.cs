@@ -47,7 +47,9 @@ namespace Cognifide.PowerShell.Client.Controls
                     Context.ClientPage.AddControl(Sessions, control);
                     var culture = Context.User.Profile.Culture;
 
-                    var icon = session.ApplianceType == ApplicationNames.AjaxConsole ? "powershell/16x16/console.png" : "powershell/16x16/PowerShell_Runner.png"; 
+                    var icon = session.ApplianceType == ApplicationNames.AjaxConsole
+                        ? "powershell/16x16/console.png"
+                        : "powershell/16x16/PowerShell_Runner.png";
                     var builder = new ImageBuilder
                     {
                         Src = Images.GetThemedImageSource(icon, ImageDimension.id16x16),
@@ -71,7 +73,8 @@ namespace Cognifide.PowerShell.Client.Controls
                     control["Click"] = string.Format("ise:setsessionid(id={0})", session.ID);
                 }
                 var item =
-                    Sitecore.Client.CoreDatabase.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions");
+                    Sitecore.Client.CoreDatabase.GetItem(
+                        "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions");
                 if ((item != null) && item.HasChildren)
                 {
                     var queryString = WebUtil.GetQueryString("id");

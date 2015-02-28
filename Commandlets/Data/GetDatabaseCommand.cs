@@ -6,7 +6,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "Database")]
-    [OutputType(new[] {typeof (Database)})]
+    [OutputType(typeof (Database))]
     public class GetDatabaseCommand : BaseCommand
     {
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]

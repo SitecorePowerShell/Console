@@ -57,8 +57,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         : string.Format("excluding {0} language(s)",
                             ExcludeLanguage.Aggregate((seed, curr) => seed + ", " + curr)))))
             {
-
-                foreach (Item langItem in item.Versions.GetVersions(true))
+                foreach (var langItem in item.Versions.GetVersions(true))
                 {
                     if (LanguageWildcardPatterns.Any(wildcard => wildcard.IsMatch(langItem.Language.Name)))
                     {
@@ -82,7 +81,5 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             // this function is not used due to override on ProcessItemLanguages
         }
-
     }
-
 }

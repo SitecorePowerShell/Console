@@ -5,7 +5,6 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Sitecore.Pipelines.Upload;
 using Sitecore.Shell.Web.UI;
@@ -77,7 +76,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                     }
                     else
                     {
-                        object fileHandle = uploadArgs.Properties["filename"];
+                        var fileHandle = uploadArgs.Properties["filename"];
                         if (fileHandle != null)
                         {
                             fileName = WebUtil.UrlEncode(FileHandle.GetFilename(fileHandle.ToString()));

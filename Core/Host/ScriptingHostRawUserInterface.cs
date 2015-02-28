@@ -15,11 +15,6 @@ namespace Cognifide.PowerShell.Core.Host
         private Coordinates windowPosition;
         private Size windowSize;
 
-        /// <summary>
-        ///     A reference to the PSHost implementation.
-        /// </summary>
-        public OutputBuffer Output { get; private set; }
-
         public ScriptingHostRawUserInterface(ApplicationSettings settings)
         {
             Output = new OutputBuffer();
@@ -31,6 +26,11 @@ namespace Cognifide.PowerShell.Core.Host
             bufferSize = new Size(settings.HostWidth, Int32.MaxValue);
             windowSize = bufferSize;
         }
+
+        /// <summary>
+        ///     A reference to the PSHost implementation.
+        /// </summary>
+        public OutputBuffer Output { get; private set; }
 
         public override ConsoleColor ForegroundColor
         {

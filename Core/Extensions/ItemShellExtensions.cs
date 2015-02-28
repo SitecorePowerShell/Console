@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Core.Extensions
         //internal static PSObject GetPSObject(CmdletProvider provider, Item item)
         internal static PSObject GetPsObject(SessionState provider, Item item)
         {
-            PSObject psobj = PSObject.AsPSObject(item);
+            var psobj = PSObject.AsPSObject(item);
 
             List<string> propertySet;
             if (allPropertySets.ContainsKey(item.TemplateID))
@@ -50,9 +50,9 @@ namespace Cognifide.PowerShell.Core.Extensions
             {
                 if (!String.IsNullOrEmpty(field))
                 {
-                    bool duplicate = psobj.Properties[field] == null;
+                    var duplicate = psobj.Properties[field] == null;
 
-                    string getter = String.Format("$this[\"{0}\"]", field);
+                    var getter = String.Format("$this[\"{0}\"]", field);
                     if (item.Fields[field] != null)
                     {
                         switch (item.Fields[field].TypeKey)
@@ -65,9 +65,9 @@ namespace Cognifide.PowerShell.Core.Extensions
                                 break;
                         }
                     }
-                    string setter =
-                            String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
-                                typeof (ItemShellExtensions).FullName, field);
+                    var setter =
+                        String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
+                            typeof (ItemShellExtensions).FullName, field);
 
                     psobj.Properties.Add(new PSScriptProperty(
                         duplicate ? field : String.Format("_{0}", field),
@@ -98,13 +98,17 @@ namespace Cognifide.PowerShell.Core.Extensions
             {
                 item.Edit(
                     args =>
-                    {                                                
-                        object newValue = value.BaseObject();
-                        CustomField field = FieldTypeManager.GetField(item.Fields[propertyName]);
+                    {
+                        var newValue = value.BaseObject();
+                        var field = FieldTypeManager.GetField(item.Fields[propertyName]);
 
                         if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
                         {
-                            newValue = (newValue as object[]).Select(p => PowerShellExtensions.BaseObject(p)).Where(p => p is Item).Cast<Item>().ToList();
+                            newValue =
+                                (newValue as object[]).Select(p => p.BaseObject())
+                                    .Where(p => p is Item)
+                                    .Cast<Item>()
+                                    .ToList();
                         }
                         if (newValue is Item)
                         {
@@ -129,7 +133,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                             }
                             else if (field is LinkField)
                             {
-                                LinkField linkField = field as LinkField;
+                                var linkField = field as LinkField;
                                 linkField.Clear();
 
                                 if (MediaManager.HasMediaContent(lastItem))
@@ -146,7 +150,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                             }
                             else if (field is MultilistField)
                             {
-                                MultilistField linkField = field as MultilistField;
+                                var linkField = field as MultilistField;
                                 linkField.Value = string.Empty;
                                 foreach (var linkedItem in items)
                                     linkField.Add(linkedItem.ID.ToString());
@@ -173,11 +177,11 @@ namespace Cognifide.PowerShell.Core.Extensions
                         }
                         else if (newValue is DateTime)
                         {
-                            item[propertyName] = ((DateTime)newValue).ToString("yyyyMMddTHHmmss");
+                            item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
                         }
                         else if (newValue is bool)
                         {
-                            item[propertyName] = ((bool)newValue) ? "1" : "";
+                            item[propertyName] = ((bool) newValue) ? "1" : "";
                         }
                         else
                         {
@@ -189,7 +193,7 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public static PSObject WrapInItemOwner(SessionState provider, Item item, object o)
         {
-            PSObject psobj = PSObject.AsPSObject(o);
+            var psobj = PSObject.AsPSObject(o);
             if (item != null && provider != null && o != null)
             {
                 psobj.Properties.Add(new PSScriptProperty(
@@ -200,7 +204,6 @@ namespace Cognifide.PowerShell.Core.Extensions
                         item.Paths.Path.Substring(9).Replace('/', '\\')))));
             }
             return psobj;
-            
         }
     }
 }

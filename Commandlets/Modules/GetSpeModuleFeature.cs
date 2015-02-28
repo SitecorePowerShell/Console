@@ -7,10 +7,21 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Modules
 {
     [Cmdlet(VerbsCommon.Get, "SpeModuleFeatureRoot")]
-    [OutputType(new[] { typeof(Item) }, ParameterSetName = new[] { "By Feature Name", "Module from Pipeline" })]
+    [OutputType(typeof (Item), ParameterSetName = new[] {"By Feature Name", "Module from Pipeline"})]
     public class GetSpeModuleFeatureRoot : BaseCommand, IDynamicParameters
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Module from Pipeline")]
+        public GetSpeModuleFeatureRoot()
+        {
+            AddDynamicParameter<string>("Feature", new ParameterAttribute
+            {
+                ParameterSetName = ParameterAttribute.AllParameterSets,
+                Mandatory = true,
+                Position = 0
+            }, new ValidateSetAttribute(IntegrationPoints.Libraries.Keys.ToArray()));
+        }
+
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = "Module from Pipeline")]
         public Module Module { get; set; }
 
         [Parameter]
@@ -19,7 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         protected override void ProcessRecord()
         {
             string feature;
-            bool featureDefined = TryGetParameter("Feature", out feature);
+            var featureDefined = TryGetParameter("Feature", out feature);
             if (Module != null)
             {
                 if (ReturnPath)
@@ -46,20 +57,6 @@ namespace Cognifide.PowerShell.Commandlets.Modules
                     }
                 }
             }
-        }
-
-        public GetSpeModuleFeatureRoot()
-        {
-            AddDynamicParameter<string>("Feature", new Attribute[]
-            {
-                new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets,
-                    Mandatory = true,
-                    Position = 0
-                },
-                new ValidateSetAttribute(IntegrationPoints.Libraries.Keys.ToArray())
-            });
         }
     }
 }

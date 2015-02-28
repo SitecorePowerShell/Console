@@ -8,15 +8,13 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "Rendering")]
-    [OutputType(new[] {typeof (RenderingDefinition)})]
+    [OutputType(typeof (RenderingDefinition))]
     public class GetRenderingCommand : BaseRenderingCommand
     {
-
         protected override void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
             IEnumerable<RenderingDefinition> renderings)
         {
-            renderings.ToList().ForEach(r => WriteObject(ItemShellExtensions.WrapInItemOwner(SessionState,item,r)));
-
+            renderings.ToList().ForEach(r => WriteObject(ItemShellExtensions.WrapInItemOwner(SessionState, item, r)));
         }
     }
 }

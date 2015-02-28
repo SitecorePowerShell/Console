@@ -3,8 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
-using Sitecore.Data.Fields;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -17,11 +15,11 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing GetProperty(string path='{0}', Collection<string> providerSpecificPickList)", path);
 
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     // create PSObject from the FileSystemInfo instance
-                    PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+                    var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
 
                     // create the PSObject to copy properties into and that we will return
                     var result = new PSObject();
@@ -29,7 +27,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     foreach (var name in providerSpecificPickList)
                     {
                         // Copy all the properties from the original object into ’result’
-                        PSPropertyInfo prop = psobj.Properties[name];
+                        var prop = psobj.Properties[name];
                         object value = null;
                         if (prop != null)
                         {
@@ -45,7 +43,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                     foreach (var name in providerSpecificPickList)
                     {
-                        Field field = item.Fields[name];
+                        var field = item.Fields[name];
                         if (field != null)
                         {
                             result.Properties[name].Value = field.Value;
@@ -74,14 +72,13 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 LogInfo("Executing SetProperty(string path='{0}', PSObject propertyToSet='{1}')", path, propertyToSet);
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     foreach (PSMemberInfo property in propertyToSet.Properties)
                     {
-
                         if (ShouldProcess(path,
-                            "Setting property '" + property.Name +"' to '" + property.Value +"'"))
+                            "Setting property '" + property.Name + "' to '" + property.Value + "'"))
                         {
                             item.Fields.ReadAll();
                             if (item.Fields != null && item.Fields[property.Name] != null)
@@ -116,7 +113,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing ClearProperty(string path='{0}', string propertyToClear='{1}')",
                     path,
                     propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 item.Edit(args =>
                 {
                     foreach (var property in propertyToClear)

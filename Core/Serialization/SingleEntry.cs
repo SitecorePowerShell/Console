@@ -1,5 +1,4 @@
 ﻿using Sitecore.Configuration;
-using Sitecore.Data.Items;
 using Sitecore.Data.Serialization.Presets;
 using Sitecore.Diagnostics;
 
@@ -11,7 +10,7 @@ namespace Cognifide.PowerShell.Core.Serialization
         {
             Assert.IsNotNull(Database, "database");
             Assert.IsNotNull(Path, "path");
-            Item item = Factory.GetDatabase(Database).GetItem(Path);
+            var item = Factory.GetDatabase(Database).GetItem(Path);
             if (item != null)
             {
                 callback(item);

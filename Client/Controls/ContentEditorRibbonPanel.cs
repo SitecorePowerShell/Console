@@ -1,12 +1,9 @@
 ﻿using System.Web.UI;
-using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
-using Sitecore.Pipelines.RenderField;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.Sheer;
@@ -22,7 +19,7 @@ namespace Cognifide.PowerShell.Client.Controls
             var psButtons = button.GetChildren();
             foreach (Item psButton in psButtons)
             {
-                Message msg = Message.Parse(this, psButton["Click"]);
+                var msg = Message.Parse(this, psButton["Click"]);
                 var scriptDb = msg.Arguments["scriptDB"];
                 var scriptId = msg.Arguments["script"];
 
@@ -48,11 +45,10 @@ namespace Cognifide.PowerShell.Client.Controls
             }
         }
 
-
         public void RenderLargeButton(HtmlTextWriter output, Ribbon ribbon, string id, string header, string icon,
             string tooltip, string command, bool enabled, bool down, CommandContext context)
         {
-            LargeButton largeButton = new LargeButton();
+            var largeButton = new LargeButton();
             largeButton.ID = Control.GetUniqueID("script");
             largeButton.Header = header;
             largeButton.Icon = icon;
@@ -73,7 +69,7 @@ namespace Cognifide.PowerShell.Client.Controls
         private static string GetClick(string click, CommandContext commandContext, string buttonId)
         {
             Assert.ArgumentNotNull(click, "click");
-            Item[] itemArray = (commandContext == null) ? new Item[0] : commandContext.Items;
+            var itemArray = (commandContext == null) ? new Item[0] : commandContext.Items;
             if (itemArray.Length == 1)
             {
                 Assert.IsNotNull(commandContext, "context");
@@ -82,6 +78,5 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             return click;
         }
-
     }
 }

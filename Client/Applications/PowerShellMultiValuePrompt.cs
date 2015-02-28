@@ -32,16 +32,16 @@ namespace Cognifide.PowerShell.Client.Applications
         private static readonly Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
-        protected Literal Result;
-        protected Literal DialogHeader;
-        protected Literal DialogDescription;
-        protected Literal TabOffsetValue;
-        protected Border DataContextPanel;
-        protected Scrollbox ValuePanel;
-        protected Button OKButton;
         protected Button CancelButton;
-        protected Tabstrip Tabstrip;
+        protected Border DataContextPanel;
+        protected Literal DialogDescription;
+        protected Literal DialogHeader;
+        protected Button OKButton;
+        protected Literal Result;
         protected bool ShowHints;
+        protected Literal TabOffsetValue;
+        protected Tabstrip Tabstrip;
+        protected Scrollbox ValuePanel;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -286,9 +286,9 @@ namespace Cognifide.PowerShell.Client.Applications
             if (type == typeof (bool) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
-                Border checkboxBorder = new Border();
+                var checkboxBorder = new Border();
                 checkboxBorder.Class = "checkBoxWrapper";
-                checkboxBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name+"_");
+                checkboxBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                 var checkBox = new Checkbox
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -540,7 +540,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (control is Checkbox || (control is Border && (control as Border).Class == "checkBoxWrapper"))
                 {
-                    Border checkboxBorder = control as Border;
+                    var checkboxBorder = control as Border;
                     foreach (var ctl in checkboxBorder.Controls)
                     {
                         if (ctl is Checkbox)

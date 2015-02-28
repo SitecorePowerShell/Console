@@ -14,15 +14,27 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected override void ProcessItemInUserContext(Item item)
         {
-            if (!this.CanChangeReadOnly(item)) { return; }
-            if (!this.CanWrite(item)) { return; }
-            if (!this.CanChangeLock(item)) { return; }
+            if (!this.CanChangeReadOnly(item))
+            {
+                return;
+            }
+            if (!this.CanWrite(item))
+            {
+                return;
+            }
+            if (!this.CanChangeLock(item))
+            {
+                return;
+            }
 
             item.Editing.BeginEdit();
             EditItem(item);
             item.Editing.EndEdit();
 
-            if (PassThru) { WriteItem(item); }
+            if (PassThru)
+            {
+                WriteItem(item);
+            }
         }
     }
 }

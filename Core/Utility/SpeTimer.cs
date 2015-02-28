@@ -10,16 +10,16 @@ namespace Cognifide.PowerShell.Core.Utility
         {
             try
             {
-                Stopwatch stopWatch = new Stopwatch();
+                var stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                T result = action();
+                var result = action();
 
                 stopWatch.Stop();
                 Log.Info(string.Format("Timer {0} finished at {1}ms", message, stopWatch.ElapsedMilliseconds), action);
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex.Message, action);
                 throw;

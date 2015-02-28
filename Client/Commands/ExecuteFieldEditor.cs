@@ -5,12 +5,10 @@ using System.Web;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
-using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Data.Templates;
 using Sitecore.Diagnostics;
 using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
@@ -25,7 +23,6 @@ namespace Cognifide.PowerShell.Client.Commands
         protected const string FieldName = "Fields";
         protected const string Header = "Header";
         protected const string Icon = "Icon";
-
         protected const string UriParameter = "uri";
         protected const string ButtonParameter = "button";
         protected const string PathParameter = "path";
@@ -35,7 +32,6 @@ namespace Cognifide.PowerShell.Client.Commands
         protected const string CurrentItemIsNull = "Current item is null";
         protected const string SettingsItemIsNull = "Settings item is null";
         protected const string RequireTemplateParameter = "requiretemplate";
-
         protected ItemUri CurrentItemUri { get; set; }
         protected ItemUri SettingsItemUri { get; set; }
 
@@ -53,7 +49,7 @@ namespace Cognifide.PowerShell.Client.Commands
 
         public override CommandState QueryState(CommandContext context)
         {
-            string requiredTemplate = context.Parameters[RequireTemplateParameter];
+            var requiredTemplate = context.Parameters[RequireTemplateParameter];
 
             if (!string.IsNullOrEmpty(requiredTemplate))
             {
@@ -62,8 +58,8 @@ namespace Cognifide.PowerShell.Client.Commands
                     return CommandState.Disabled;
                 }
 
-                Template template = TemplateManager.GetTemplate(context.Items[0]);
-                CommandState result = template.InheritsFrom(requiredTemplate)
+                var template = TemplateManager.GetTemplate(context.Items[0]);
+                var result = template.InheritsFrom(requiredTemplate)
                     ? base.QueryState(context)
                     : CommandState.Disabled;
                 return result;
@@ -73,7 +69,6 @@ namespace Cognifide.PowerShell.Client.Commands
                 ? CommandState.Disabled
                 : CommandState.Enabled;
         }
-
 
         protected virtual PageEditFieldEditorOptions GetOptions(ClientPipelineArgs args, NameValueCollection form)
         {
@@ -93,8 +88,8 @@ namespace Cognifide.PowerShell.Client.Commands
 
         protected virtual void EnsureContext(ClientPipelineArgs args)
         {
-            string path = args.Parameters[PathParameter];
-            Item currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
+            var path = args.Parameters[PathParameter];
+            var currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
 
             currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
             Assert.IsNotNull(currentItem, CurrentItemIsNull);
@@ -121,10 +116,10 @@ namespace Cognifide.PowerShell.Client.Commands
                 // remove fields that are prefixed with a "-" sign
                 if (fieldName.IndexOf('-') == 0)
                 {
-                    Field field = currentItem.Fields[fieldName.Substring(1, fieldName.Length - 1)];
+                    var field = currentItem.Fields[fieldName.Substring(1, fieldName.Length - 1)];
                     if (field != null)
                     {
-                        ID fieldId = field.ID;
+                        var fieldId = field.ID;
                         foreach (var fieldDescriptor in fieldList)
                         {
                             if (fieldDescriptor.FieldID == fieldId)
@@ -191,13 +186,13 @@ namespace Cognifide.PowerShell.Client.Commands
         /// </param>
         protected virtual void StartFieldEditor(ClientPipelineArgs args)
         {
-            HttpContext current = HttpContext.Current;
+            var current = HttpContext.Current;
             if (current == null)
                 return;
             var page = current.Handler as Page;
             if (page == null)
                 return;
-            NameValueCollection form = page.Request.Form;
+            var form = page.Request.Form;
 
             if (!args.IsPostBack)
             {
@@ -210,7 +205,7 @@ namespace Cognifide.PowerShell.Client.Commands
                 if (!args.HasResult)
                     return;
 
-                PageEditFieldEditorOptions results = PageEditFieldEditorOptions.Parse(args.Result);
+                var results = PageEditFieldEditorOptions.Parse(args.Result);
                 var currentItem = CurrentItem;
                 currentItem.Edit(options =>
                 {

@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellIse>
     <FormPage Application="PowerShell/PowerShellIse">
@@ -23,9 +24,10 @@
       <Script runat="server" src="/sitecore/shell/Controls/Lib/Scriptaculous/Effects.js"></Script>
       <Script runat="server" src="/sitecore/shell/Controls/Lib/Scriptaculous/DragDrop.js"></Script>
       <Script runat="server" src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script>
-      
+
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
-      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script> <!--for autocomplete and overlay-->
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <!--for autocomplete and overlay-->
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
@@ -43,22 +45,27 @@
                             Padding="1" />
                 <Combobox ID="Databases" Change="ChangeDatabase" GridPanel.Style="padding:0px 0px 0px 4px" />
               </GridPanel-->
-              <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%" >
+              <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%">
                 <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="1px"
-                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false"/>
-                <Border ID="CodeEditor" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%" GridPanel.Width="100%" />
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" />
+                <Border ID="CodeEditor" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%"
+                        GridPanel.Width="100%" />
               </GridPanel>
             </GridPanel>
-            <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter" Height="10px"/>
-            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane" GridPanel.Row.ID="ResultsRow" GridPanel.Style="padding-bottom:2px">
-              <Border ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results" GridPanel.Style="padding:0px">
+            <PsHSplitter ID="IDEXsltBottom" GridPanel.Height="2" Target="top" GridPanel.Row.ID="ResultsSplitter"
+                         Height="10px" />
+            <GridPanel Columns="1" Height="100%" GridPanel.Height="100%" Width="100%" GridPanel.ID="ResultsPane"
+                       GridPanel.Row.ID="ResultsRow" GridPanel.Style="padding-bottom:2px">
+              <Border ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results"
+                      GridPanel.Style="padding:0px">
                 <Border ID="EnterScriptInfo" Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
                   <Literal Text="Enter a script in the Script field and Execute." />
                 </Border>
                 <Border Id="ProgressOverlay" Visible="false">
                   <Border class="ui-state-highlight ui-corner-all">
                     <p>
-                      <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top" GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px"/>
+                      <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top"
+                               GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px" />
                     </p>
                   </Border>
                 </Border>
@@ -71,13 +78,14 @@
         </GridPanel>
         <Border ID="StatusBar">
           <Border class="status-bar-panel status-bar-right">
-            Col: <Literal ID="PosX" Text=""/>
+            Col: <Literal ID="PosX" Text="" />
           </Border>
           <Border class="status-bar-panel status-bar-right">
-            Ln: <Literal ID="PosY" Text=""/>
+            Ln: <Literal ID="PosY" Text="" />
           </Border>
           <Border class="status-bar-panel status-bar-text">
-            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..."/>
+            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"
+                   Alt="Show next usability hint..." Title="Show next usability hint..." />
             <Literal ID="StatusTip">
             </Literal>
           </Border>
@@ -92,7 +100,9 @@
         <Border class="ui-state-highlight ui-corner-all">
           <p>
             <Literal class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></Literal>
-            <p class="tip-title"><b> Hey! Did you know that... </b></p>
+            <p class="tip-title">
+              <b> Hey! Did you know that... </b>
+            </p>
             <Literal ID="TipText"></Literal>
           </p>
         </Border>

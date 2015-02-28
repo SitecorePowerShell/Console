@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 string.Format("Create clone of '{0}'  with name '{1}' {2} children", item.GetProviderPath(), name,
                     (Recursive.IsPresent ? "with" : "without"))))
             {
-                Item clone = item.CloneTo(Destination, name, Recursive.IsPresent);
+                var clone = item.CloneTo(Destination, name, Recursive.IsPresent);
                 WriteItem(clone);
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
-using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -19,19 +17,16 @@ using Sitecore.Data.Proxies;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Exceptions;
-using Sitecore.Globalization;
-using Sitecore.Web.UI.Sheer;
-using Sitecore.Workflows;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
     [CmdletProvider("PsSitecoreItemProvider",
         ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
-    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-ChildItem")]
-    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Get-Item")]
-    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "New-Item")]
-    [OutputType(new[] {typeof (Item)}, ProviderCmdlet = "Copy-Item")]
+    [OutputType(typeof (Item), ProviderCmdlet = "Get-ChildItem")]
+    [OutputType(typeof (Item), ProviderCmdlet = "Get-Item")]
+    [OutputType(typeof (Item), ProviderCmdlet = "New-Item")]
+    [OutputType(typeof (Item), ProviderCmdlet = "Copy-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
         private ProviderInfo providerInfo;
@@ -46,7 +41,7 @@ namespace Cognifide.PowerShell.Core.Provider
             try
             {
                 LogInfo("Executing ConvertPath(string path='{0}', string recurse='{1}')", path, recurse);
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     CheckOperationAllowed("remove", item.Access.CanDelete(), item.Uri.ToString());
@@ -78,7 +73,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing HasChildItems(string path='{0}')", path);
                 path = path.Replace("\\", "/");
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     return item.HasChildren;
@@ -121,19 +116,19 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
             }
-            Item pageRef = GetItemForPath(path);
+            var pageRef = GetItemForPath(path);
             //Language lang = LanguageManager.GetLanguage(language);
             if (pageRef != null)
             {
-                ChildList children = pageRef.GetChildren();
+                var children = pageRef.GetChildren();
                 foreach (Item childItem in children)
                 {
-                    Item child = childItem;
+                    var child = childItem;
                     if (wildcard.IsMatch(child.Name))
                     {
                         WriteMatchingItem(language, version, child);
                     }
-                    string childUrl = VirtualPathUtility.AppendTrailingSlash(path) + child.Name;
+                    var childUrl = VirtualPathUtility.AppendTrailingSlash(path) + child.Name;
 
                     // if the specified item exists and recurse has been set then 
                     // all child items within it have to be obtained as well
@@ -145,7 +140,8 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             else
             {
-                Exception exception = new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
+                Exception exception =
+                    new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
                 WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
             }
         }
@@ -157,7 +153,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override string GetChildName(string path)
         {
-            string result = base.GetChildName(path);
+            var result = base.GetChildName(path);
             LogInfo("Executing GetChildName(string path='{0}'); returns '{1}'", path, result);
             return result;
         }
@@ -182,10 +178,10 @@ namespace Cognifide.PowerShell.Core.Provider
                     wildcard = new WildcardPattern(Filter, WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
                 }
 
-                Item pageRef = GetItemForPath(path);
+                var pageRef = GetItemForPath(path);
                 if (pageRef != null)
                 {
-                    ChildList children = pageRef.GetChildren();
+                    var children = pageRef.GetChildren();
                     foreach (Item child in children)
                     {
                         if (returnContainers == ReturnContainers.ReturnAllContainers || wildcard == null ||
@@ -199,8 +195,9 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    Exception exception = new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
-                    WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));                    
+                    Exception exception =
+                        new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
+                    WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
                 }
             }
             catch (Exception ex)
@@ -237,16 +234,17 @@ namespace Cognifide.PowerShell.Core.Provider
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
                 if (dic != null && dic.ContainsKey(UriParam) && dic[UriParam].IsSet)
                 {
-                    string uri = dic[UriParam].Value.ToString();
-                    ItemUri itemUri = ItemUri.Parse(uri);
-                    Item uriItem = Factory.GetDatabase(itemUri.DatabaseName).GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
+                    var uri = dic[UriParam].Value.ToString();
+                    var itemUri = ItemUri.Parse(uri);
+                    var uriItem = Factory.GetDatabase(itemUri.DatabaseName)
+                        .GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
                     WriteItem(uriItem);
                     return;
-                } 
+                }
                 if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
                 {
-                    string query = dic[QueryParam].Value.ToString();
-                    Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
+                    var query = dic[QueryParam].Value.ToString();
+                    var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
                     foreach (var currentItem in items)
                     {
                         WriteMatchingItem(language, version, currentItem);
@@ -255,7 +253,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
                 {
-                    string Id = dic[IdParam].Value.ToString();
+                    var Id = dic[IdParam].Value.ToString();
                     Database database;
                     if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
                     {
@@ -265,7 +263,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     {
                         database = Factory.GetDatabase(PSDriveInfo.Name);
                     }
-                    Item itemById = database.GetItem(new ID(Id));
+                    var itemById = database.GetItem(new ID(Id));
                     if (itemById != null)
                     {
                         WriteMatchingItem(language, version, itemById);
@@ -274,7 +272,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
 
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     WriteMatchingItem(language, version, item);
@@ -292,8 +290,8 @@ namespace Cognifide.PowerShell.Core.Provider
         }
 
         /// <summary>
-        /// Throws an argument exception stating that the specified path does
-        /// not exist.
+        ///     Throws an argument exception stating that the specified path does
+        ///     not exist.
         /// </summary>
         /// <param name="path">path which is invalid</param>
         private void ThrowTerminatingInvalidPathException(string path)
@@ -311,7 +309,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             if (dic != null && dic.ContainsKey(AmbiguousPathsParam) && dic[AmbiguousPathsParam].IsSet)
             {
-                IEnumerable<Item> ambiguousItems =
+                var ambiguousItems =
                     item.Parent.GetChildren()
                         .Where(child => string.Equals(child.Name, item.Name, StringComparison.CurrentCultureIgnoreCase));
                 foreach (var ambiguousItem in ambiguousItems)
@@ -330,9 +328,9 @@ namespace Cognifide.PowerShell.Core.Provider
             // if language is forced get the item in proper language
             if (language != null || version != Version.Latest.Number)
             {
-                WildcardPattern pattern = GetWildcardPattern(language);
+                var pattern = GetWildcardPattern(language);
 
-                Item[] allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
+                var allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
 
                 foreach (var matchingItem in allVersions.Where(
                     (curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
@@ -356,8 +354,8 @@ namespace Cognifide.PowerShell.Core.Provider
             // add the properties defined by the page type
             if (item != null)
             {
-                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-                string path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
+                var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+                var path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
                 WriteItemObject(psobj, path, item.HasChildren);
             }
         }
@@ -368,7 +366,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing CopyItem(string path='{0}', string destination='{1}', bool recurse={2}", path,
                     destination, recurse);
-                Item sourceItem = GetItemForPath(path);
+                var sourceItem = GetItemForPath(path);
 
                 if (sourceItem == null)
                 {
@@ -376,8 +374,8 @@ namespace Cognifide.PowerShell.Core.Provider
                     return;
                 }
 
-                Item destinationItem = GetItemForPath(destination);
-                string leafName = sourceItem.Name;
+                var destinationItem = GetItemForPath(destination);
+                var leafName = sourceItem.Name;
 
                 if (destinationItem == null)
                 {
@@ -421,7 +419,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                TransferOptions transferOptions = TransferOptions.ChangeID;
+                var transferOptions = TransferOptions.ChangeID;
                 if (dic != null && dic[TransferOptionsParam].IsSet)
                 {
                     transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
@@ -447,7 +445,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private string GetSerializedItem72(Item sourceItem, bool recurse, TransferOptions transferOptions)
         {
-            ItemSerializerOptions options = ItemSerializerOptions.GetDefaultOptions();
+            var options = ItemSerializerOptions.GetDefaultOptions();
             options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
             options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
             options.ProcessChildren = recurse;
@@ -465,7 +463,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing MoveItem(string path='{0}', string destination='{1}')",
                     path, destination);
-                Item sourceItem = GetItemForPath(path);
+                var sourceItem = GetItemForPath(path);
 
                 if (sourceItem == null)
                 {
@@ -477,8 +475,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     destination = path.Substring(0, path.IndexOf(':') + 1) + destination;
                 }
-                Item destinationItem = GetItemForPath(destination);
-                string leafName = sourceItem.Name;
+                var destinationItem = GetItemForPath(destination);
+                var leafName = sourceItem.Name;
 
                 if (destinationItem == null)
                 {
@@ -518,7 +516,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing RenameItem(string path='{0}', string newName='{1}')",
                     path, newName);
-                Item item = GetItemForPath(path);
+                var item = GetItemForPath(path);
                 if (item != null)
                 {
                     CheckOperationAllowed("rename", item.Access.CanRename(), item.Uri.ToString());
@@ -557,7 +555,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     itemTypeName = "templates/" + itemTypeName;
                 }
 
-                Item srcItem = GetItemForPath("/" + itemTypeName);
+                var srcItem = GetItemForPath("/" + itemTypeName);
 
                 if (srcItem == null)
                 {
@@ -565,7 +563,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         string.Format("Template '{0}' does not exist or wrong path provided.",
                             itemTypeName));
                 }
-                Item parentItem = GetItemForPath(GetParentFromPath(path));
+                var parentItem = GetItemForPath(GetParentFromPath(path));
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
                 if (dic != null && dic[ParentParam].IsSet)
@@ -588,8 +586,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
                     if (dic != null && dic[LanguageParam].IsSet)
                     {
-                        string forcedLanguage = dic[LanguageParam].Value.ToString();
-                        Language language = LanguageManager.GetLanguage(forcedLanguage);
+                        var forcedLanguage = dic[LanguageParam].Value.ToString();
+                        var language = LanguageManager.GetLanguage(forcedLanguage);
                         // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
                         // switching language with LanguageSwitcher didn't work
                         // Thanks Kern!
@@ -600,7 +598,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     // start default workflow on the created item if necessary
                     if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
                     {
-                        IWorkflow defaultWorkflow =
+                        var defaultWorkflow =
                             createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[FieldIDs.DefaultWorkflow]);
                         if (null != defaultWorkflow)
                         {

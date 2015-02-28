@@ -3,13 +3,12 @@ using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
     [Cmdlet(VerbsLifecycle.Invoke, "Script", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (object)})]
+    [OutputType(typeof (object))]
     public class InvokeScriptCommand : BaseShellCommand
     {
         private const string ParameterSetNameFromItem = "From Item";
@@ -26,8 +25,8 @@ namespace Cognifide.PowerShell.Commandlets.Session
         // Methods
         protected override void ProcessRecord()
         {
-            string script = string.Empty;
-            Item scriptItem = Item;
+            var script = string.Empty;
+            var scriptItem = Item;
             if (Item != null)
             {
                 script = Item["script"];
@@ -49,9 +48,8 @@ namespace Cognifide.PowerShell.Commandlets.Session
             }
             if (ShouldProcess(scriptItem.GetProviderPath(), "Invoke script"))
             {
-
                 object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                    PipelineResultTypes.Output | PipelineResultTypes.Error, null, new object[0]);
+                    PipelineResultTypes.Output | PipelineResultTypes.Error, null);
                 WriteObject(sendToPipeline);
             }
         }

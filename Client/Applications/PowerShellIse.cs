@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -39,12 +37,6 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal ScriptName;
         protected Border ScriptResult;
         protected bool ScriptRunning { get; set; }
-
-        public bool MonitorActive
-        {
-            get { return Monitor.Active; }
-            set { Monitor.Active = value; }
-        }
 
         public string ParentFrameName
         {
@@ -86,6 +78,8 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["CurrentSessionId"] = value; }
         }
 
+        public SpeJobMonitor Monitor { get; private set; }
+
         public CommandContext GetCommandContext()
         {
             var itemNotNull = Sitecore.Client.CoreDatabase.GetItem("{FDD5B2D5-31BE-41C3-AA76-64E5CC63B187}");
@@ -94,7 +88,11 @@ namespace Cognifide.PowerShell.Client.Applications
             return context;
         }
 
-        public SpeJobMonitor Monitor { get; private set; }
+        public bool MonitorActive
+        {
+            get { return Monitor.Active; }
+            set { Monitor.Active = value; }
+        }
 
         /// <summary>
         ///     Raises the load event.
@@ -425,7 +423,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         result += scriptSession.Output.ToHtml();
                     }
                     result += string.Format("<pre style='background:red;'>{0}</pre>",
-                            scriptSession.GetExceptionString(exc));
+                        scriptSession.GetExceptionString(exc));
                     Context.ClientPage.ClientResponse.SetInnerHtml("Result", result);
                 }
                 if (settings.SaveLastScript)
@@ -709,12 +707,14 @@ namespace Cognifide.PowerShell.Client.Applications
             var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
             var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
-            var font = string.IsNullOrEmpty(settings.FontFamily)? "monospace": settings.FontFamily;
+            var font = string.IsNullOrEmpty(settings.FontFamily) ? "monospace" : settings.FontFamily;
             var fontItem = fonts.Children[font];
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-            SheerResponse.Eval(String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');", settings.FontSize, font));
+            SheerResponse.Eval(
+                String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');",
+                    settings.FontSize, font));
         }
     }
 }

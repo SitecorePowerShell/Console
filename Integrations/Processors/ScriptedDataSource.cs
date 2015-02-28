@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             if (IsScripted(args.Source))
             {
                 var items = new ItemList();
-                string source = GetScriptedQueries(args.Source, args.Item, items);
+                var source = GetScriptedQueries(args.Source, args.Item, items);
                 args.Result.AddRange(items.ToArray());
                 if (string.IsNullOrEmpty(source))
                 {

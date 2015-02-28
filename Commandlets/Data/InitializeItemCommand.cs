@@ -5,10 +5,11 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsData.Initialize, "Item")]
-    [OutputType(new[] {typeof (Item)})]
+    [OutputType(typeof (Item))]
     public class InitializeItemCommand : BaseCommand
     {
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item", Mandatory = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "From Item",
+            Mandatory = true)]
         public Item Item { get; set; }
 
         [Parameter(ValueFromPipeline = true, ParameterSetName = "From Search Result Item", Mandatory = true)]

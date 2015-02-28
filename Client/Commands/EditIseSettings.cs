@@ -13,7 +13,6 @@ namespace Cognifide.PowerShell.Client.Commands
     {
         protected const string AppNameParameter = "appName";
         protected const string PersonalParameter = "personal";
-
         protected bool Personalized { get; set; }
         protected string AppName { get; set; }
 

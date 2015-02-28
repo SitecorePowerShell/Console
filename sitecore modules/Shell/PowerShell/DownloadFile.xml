@@ -8,29 +8,30 @@
 
       <Stylesheet>
         .scConfirmationContainer td:first-child{
-            width: 1px;
+        width: 1px;
         }
 
         .scConfirmationContainer td:last-child{
-            padding-left: 15px;
+        padding-left: 15px;
         }
       </Stylesheet>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
 
-      <GridPanel class="scConfirmationContainer" Columns="2" Width="100%" >
-        <ThemedImage class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64" Height="64" Margin="8px 0px 8px 16px" />
+      <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
+        <ThemedImage class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64"
+                     Height="64" Margin="8px 0px 8px 16px" />
         <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
           <Literal ID="Text" />
           <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
             <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
               <Border Padding="8px 8px 0px 8px">
-                <Literal Text="Path:" style="font-weight:bold;"/>
+                <Literal Text="Path:" style="font-weight:bold;" />
               </Border>
               <Border Padding="8px 8px 0px 0px">
                 <Literal ID="FileNameLabel" />
               </Border>
               <Border Padding="2px 8px 0px 8px">
-                <Literal Text="Size:" style="font-weight:bold;"/>
+                <Literal Text="Size:" style="font-weight:bold;" />
               </Border>
               <Border Padding="2px 8px 0px 0px">
                 <Literal ID="SizeLabel" />
@@ -41,13 +42,13 @@
               <Border Padding="2px 8px 0px 0px" Align="Right">
               </Border>
             </GridPanel>
-          </GridPanel>                
+          </GridPanel>
         </Border>
       </GridPanel>
       <Border def:placeholder="Buttons" Class="footerOkCancel">
-         <Button ID="CancelButton" Header="Close" Click="Close" KeyCode="27" />
+        <Button ID="CancelButton" Header="Close" Click="Close" KeyCode="27" />
       </Border>
- 
+
       <script type="text/javascript">
         document.getElementById('ConfirmMessage').innerHTML = scForm.getDialogArguments().message;
       </script>

@@ -7,6 +7,5 @@
         public const string ScriptModuleTemplateName = "PowerShell Script Module";
         public const string ScriptWorkflowActionTemplateName = "PowerShell Script Workflow Action";
         public const string SettingsTemplateName = "PowerShell Console Settings";
-
     }
 }

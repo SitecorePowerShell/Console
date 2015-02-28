@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 {
 #pragma warning disable 612, 618
     [Cmdlet(VerbsCommon.Get, "Index")]
-    [OutputType(new[] {typeof (Index)})]
+    [OutputType(typeof (Index))]
     public class GetIndexCommand : DatabaseContextBaseCommand
     {
         protected override void ProcessRecord(IEnumerable<Database> databases)
@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 foreach (var database in databases)
                 {
                     var indices = new List<Index>(database.Indexes.Count);
-                    for (int i = 0; i < database.Indexes.Count; i++)
+                    for (var i = 0; i < database.Indexes.Count; i++)
                     {
                         indices.Add(database.Indexes[i]);
                     }

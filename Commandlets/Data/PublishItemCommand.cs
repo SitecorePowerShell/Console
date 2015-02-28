@@ -10,7 +10,7 @@ using Sitecore.Publishing;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsData.Publish, "Item",SupportsShouldProcess = true)]
+    [Cmdlet(VerbsData.Publish, "Item", SupportsShouldProcess = true)]
     [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class PublishItemCommand : BaseItemCommand
     {
@@ -28,8 +28,12 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             if (item.Database.Name.IsNot("master"))
             {
-                var error = String.Format("Item '{0}' cannot be published. Only items from the 'master' database can be published!", item.Name);
-                WriteError(new ErrorRecord(new PSInvalidOperationException(error), error, ErrorCategory.InvalidData, null));
+                var error =
+                    String.Format(
+                        "Item '{0}' cannot be published. Only items from the 'master' database can be published!",
+                        item.Name);
+                WriteError(new ErrorRecord(new PSInvalidOperationException(error), error, ErrorCategory.InvalidData,
+                    null));
                 return;
             }
 
@@ -51,16 +55,16 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         private void PublishToTarget(Item item, Database source, Database target)
         {
-
             if (PublishMode == PublishMode.Unknown)
             {
                 PublishMode = PublishMode.Smart;
             }
-            
+
             var language = item.Language;
 
             if (ShouldProcess(item.GetProviderPath(),
-                string.Format("{3}ublishing language '{0}', version '{1}' to target '{2}'.", language, item.Version, target.Name, Recurse.IsPresent ? "Recursively p" : "P")))
+                string.Format("{3}ublishing language '{0}', version '{1}' to target '{2}'.", language, item.Version,
+                    target.Name, Recurse.IsPresent ? "Recursively p" : "P")))
             {
                 WriteVerbose(
                     String.Format(
@@ -73,7 +77,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     RootItem = item
                 };
 
-                PublishOptions[] optionsArgs = new PublishOptions[1];
+                var optionsArgs = new PublishOptions[1];
                 optionsArgs[0] = options;
 
                 var handle = PublishManager.Publish(optionsArgs);
@@ -83,7 +87,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
 
                     WriteVerbose(String.Format("Publish Job submitted, current state={0}.",
-                        publishStatus.State.ToString()));
+                        publishStatus.State));
                 }
             }
         }

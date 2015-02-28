@@ -88,7 +88,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 break;
                         }
                     }
-                
+
                 if (CheckSupportedVersion("OrderBy", ApplicationSettings.SitecoreVersion75))
                 {
                     query = OrderIfSupported(query);
@@ -100,7 +100,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         private bool CheckSupportedVersion(string parameter, Version thresholdSitecoreVersion)
         {
-            bool supported = thresholdSitecoreVersion < ApplicationSettings.SitecoreVersionCurrent;
+            var supported = thresholdSitecoreVersion < ApplicationSettings.SitecoreVersionCurrent;
             if (!supported)
             {
                 WriteWarning(

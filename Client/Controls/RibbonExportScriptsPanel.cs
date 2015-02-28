@@ -14,8 +14,7 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-
-            foreach (Item parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature))
+            foreach (var parent in ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature))
             {
                 foreach (Item scriptItem in parent.Children)
                 {

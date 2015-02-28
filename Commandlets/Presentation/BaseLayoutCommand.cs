@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
             if (layoutField != null && !string.IsNullOrEmpty(layoutField.Value))
             {
-                LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
+                var layout = LayoutDefinition.Parse(layoutField.Value);
                 if (Device == null)
                 {
                     Device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault);
@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     return;
                 }
 
-                DeviceDefinition device = layout.GetDevice(Device.ID.ToString());
+                var device = layout.GetDevice(Device.ID.ToString());
                 if (device != null)
                 {
                     ProcessLayout(item, layout, device);

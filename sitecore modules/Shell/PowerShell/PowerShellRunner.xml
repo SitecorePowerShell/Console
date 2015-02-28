@@ -11,56 +11,68 @@
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery.VistaProgressBar-0.6.js" runat="server"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js" runat="server"></Script>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css"/>
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
-      <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css"/>
+      <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css" />
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellRunner,Cognifide.PowerShell" />
-      <Literal ID="PreviousProgressValue" Visible="false" runat="server"/>
-      <Literal ID="CurrentProgressValue" Visible="false" runat="server"/>
+      <Literal ID="PreviousProgressValue" Visible="false" runat="server" />
+      <Literal ID="CurrentProgressValue" Visible="false" runat="server" />
       <Literal ID="Closed" Visible="false" runat="server" />
       <Literal ID="Result" runat="server" />
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
-            <div id="HeaderIconContainer" Visible="false">
-              <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/powershell.png" Alt="" runat="server" />
-            </div>
+          <div id="HeaderIconContainer" Visible="false">
+            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/powershell.png" Alt="" runat="server" />
+          </div>
           <Border>
-            <Border Class="DialogHeader"><Literal Text="In Progress" ID="DialogHeader"/></Border>
-            <Border Class="DialogHeaderDescription"><Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;"/></Border>
+            <Border Class="DialogHeader">
+              <Literal Text="In Progress" ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;" />
+            </Border>
           </Border>
         </Border>
-          
-	<Scrollbox Class="scFlexContent">
+
+        <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
 
             <ThemedImage runat="server" ID="TitleIcon" Src="powershell/32x32/powershell.png" Visible="false" />
-            <Border runat="server" ID="LogContainer" style="display:none" >
+            <Border runat="server" ID="LogContainer" style="display:none">
               <Literal ID="Log" runat="server" />
             </Border>
             <Literal runat="server" Style="white-space:nowrap;" ID="Title" Text="Running script..." />
             <Literal runat="server" ID="Subtitle" Visible="false" />
 
             <Border runat="server" ID="Progress">
-              
-              <Literal ID="ProgressBar" Text="&lt;div id='progressbar'&gt;&lt;/div&gt;"/>
-              <Literal ID="PsProgress"/>
+
+              <Literal ID="ProgressBar" Text="&lt;div id='progressbar'&gt;&lt;/div&gt;" />
+              <Literal ID="PsProgress" />
             </Border>
 
-	  </Scrollbox>
+          </Scrollbox>
         </Scrollbox>
 
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..." Title="Show copyright..."/>
-          <Literal ID="PromoLiteral" Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
-          <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results</a>
-          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')" onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">View Script Results and errors</a>
+          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
+                 Title="Show copyright..." />
+          <Literal ID="PromoLiteral"
+                   Text="Copyright (c) 2010-2015 &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt; &amp; &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;." />
+          <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
+             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
+            View Script Results
+          </a>
+          <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
+             onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
+            View Script Results and errors
+          </a>
           <div class="footerOkCancel">
-            <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close"/>
-            <Button ID="AbortButton" Class="scButton scButtonPrimary" Click="AbortClick" Header="Abort"/>
+            <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close" />
+            <Button ID="AbortButton" Class="scButton scButtonPrimary" Click="AbortClick" Header="Abort" />
           </div>
         </div>
-        <Style ID ="ConsoleStyle">
+        <Style ID="ConsoleStyle">
           .console {
           color: <Literal ID="ForegroundColor" />;
           background-color: <Literal ID="BackgroundColor" />;

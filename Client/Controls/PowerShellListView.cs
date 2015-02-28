@@ -16,17 +16,18 @@ namespace Cognifide.PowerShell.Client.Controls
     public class PowerShellListView : Listview
     {
         private List<BaseListViewCommand.DataObject> filteredItems;
+
         public int CurrentPage
         {
             get
             {
-                int value = GetViewStateInt("CurrentPage");
+                var value = GetViewStateInt("CurrentPage");
                 return value < 1 ? 1 : value;
             }
             set
             {
-                int count = FilteredItems.Count;
-                int pageCount = count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
+                var count = FilteredItems.Count;
+                var pageCount = count/Data.PageSize + ((count%Data.PageSize > 0) ? 1 : 0);
                 value = Math.Min(Math.Max(1, value), pageCount);
                 SetViewStateInt("CurrentPage", value);
             }
@@ -36,10 +37,11 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             get
             {
-                int count = FilteredItems.Count;
-                return count / Data.PageSize + ((count % Data.PageSize > 0) ? 1 : 0);
+                var count = FilteredItems.Count;
+                return count/Data.PageSize + ((count%Data.PageSize > 0) ? 1 : 0);
             }
         }
+
         public string Filter
         {
             get { return GetViewStateString("Filter"); }
@@ -67,13 +69,29 @@ namespace Cognifide.PowerShell.Client.Controls
             get { return (ShowListViewMessage) HttpContext.Current.Cache[ContextId]; }
         }
 
+        public List<BaseListViewCommand.DataObject> FilteredItems
+        {
+            get
+            {
+                if (filteredItems == null)
+                {
+                    var filter = Filter;
+                    filteredItems = string.IsNullOrEmpty(filter)
+                        ? Data.Data
+                        : Data.Data.FindAll(p => p.Display.Values.Any(
+                            value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
+                }
+                return filteredItems;
+            }
+        }
+
         protected override void DoClick(Message message)
         {
-            string source = Sitecore.Context.ClientPage.ClientRequest.Source;
+            var source = Sitecore.Context.ClientPage.ClientRequest.Source;
             if (source.StartsWith("SortBy"))
             {
-                string columnIndex = source.Substring(source.IndexOf('_') + 1);
-                int colindex = MainUtil.GetInt(columnIndex, 0);
+                var columnIndex = source.Substring(source.IndexOf('_') + 1);
+                var colindex = MainUtil.GetInt(columnIndex, 0);
                 if (colindex > 0)
                 {
                     Sort(colindex);
@@ -99,7 +117,7 @@ namespace Cognifide.PowerShell.Client.Controls
 
         protected void Sort(int columnIndex)
         {
-            string columnName = ColumnNames.GetKey(columnIndex);
+            var columnName = ColumnNames.GetKey(columnIndex);
             if (SortBy == columnName)
             {
                 SortAscending = !SortAscending;
@@ -110,7 +128,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 SortAscending = true;
             }
 
-            IOrderedEnumerable<ShowListViewCommand.DataObject> sorted = SortAscending
+            var sorted = SortAscending
                 ? Data.Data.OrderBy(item => item.Display[columnName], ListViewComparer.Instance)
                 : Data.Data.OrderByDescending(item => item.Display[columnName], ListViewComparer.Instance);
             Data.Data = sorted.ToList();
@@ -130,7 +148,6 @@ namespace Cognifide.PowerShell.Client.Controls
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
             Sitecore.Context.ClientPage.ClientResponse.Timer("keepAlive", 1000);
-
         }
 
         public override void Refresh()
@@ -146,14 +163,14 @@ namespace Cognifide.PowerShell.Client.Controls
                 return;
             }
 
-            int pageSize = Data.PageSize;
-            int offset = (CurrentPage - 1)*pageSize;
+            var pageSize = Data.PageSize;
+            var offset = (CurrentPage - 1)*pageSize;
             var columnNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var result in FilteredItems.Skip(offset).Take(pageSize))
             {
                 var lvi = new ListviewItem();
-                Dictionary<string, string>.KeyCollection keys = result.Display.Keys;
+                var keys = result.Display.Keys;
                 lvi.ID = GetUniqueID("lvi");
                 lvi.Icon = keys.Contains("__icon")
                     ? result.Display["__Icon"]
@@ -166,10 +183,10 @@ namespace Cognifide.PowerShell.Client.Controls
                 foreach (var column in result.Display.Keys)
                 {
                     columnNames.Add(column);
-                    string val = result.Display[column];
+                    var val = result.Display[column];
                     switch (val)
                     {
-                        case("False"):
+                        case ("False"):
                             val = "<div class='unchecked'></div>";
                             break;
                         case ("True"):
@@ -180,7 +197,7 @@ namespace Cognifide.PowerShell.Client.Controls
                             {
                                 val =
                                     string.Format(
-                                        "<div class='progressBar'><div class='progressFill' style='width:{0}'><div class='progressFillText'>{0}</div></div>{0}</div>", 
+                                        "<div class='progressBar'><div class='progressFill' style='width:{0}'><div class='progressFillText'>{0}</div></div>{0}</div>",
                                         val);
                             }
                             break;
@@ -196,22 +213,6 @@ namespace Cognifide.PowerShell.Client.Controls
 
             Sitecore.Context.ClientPage.ClientResponse.EnableOutput();
             Sitecore.Context.ClientPage.ClientResponse.SetOuterHtml(ID, this);
-        }
-
-        public List<BaseListViewCommand.DataObject> FilteredItems
-        {
-            get
-            {
-                if (filteredItems == null)
-                {
-                    string filter = Filter;
-                    filteredItems = string.IsNullOrEmpty(filter)
-                        ? Data.Data
-                        : Data.Data.FindAll(p => p.Display.Values.Any(
-                            value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
-                }
-                return filteredItems;
-            }
         }
     }
 }

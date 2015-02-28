@@ -20,7 +20,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+            if (!this.CanFindAccount(Identity, AccountType.User))
+            {
+                return;
+            }
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 

@@ -8,7 +8,7 @@ using Sitecore.Data.Serialization.Presets;
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
     [Cmdlet(VerbsData.Import, "Item", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (void)}, ParameterSetName = new[] {"Database", "Item", "Preset", "Path"})]
+    [OutputType(typeof (void), ParameterSetName = new[] {"Database", "Item", "Preset", "Path"})]
     public class ImportItemCommand : BaseCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Database")]
@@ -75,8 +75,8 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         public void Deserialize(Database database)
         {
-            LoadOptions options = GetLoadOptions();
-            string path = System.IO.Path.Combine(options.Root, database.Name);
+            var options = GetLoadOptions();
+            var path = System.IO.Path.Combine(options.Root, database.Name);
             if (ShouldProcess(path, string.Format("Deserializing database")))
             {
                 Manager.LoadTree(path, options);
@@ -85,15 +85,15 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         public void Deserialize(Item item)
         {
-            ItemReference reference = new ItemReference(item);
+            var reference = new ItemReference(item);
             if (Recurse.IsPresent)
             {
-                string path = PathUtils.GetDirectoryPath(reference.ToString());
+                var path = PathUtils.GetDirectoryPath(reference.ToString());
                 Deserialize(path);
             }
             else
             {
-                string path = PathUtils.GetFilePath(reference.ToString());
+                var path = PathUtils.GetFilePath(reference.ToString());
                 Deserialize(path);
             }
         }
@@ -118,7 +118,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
         public void Deserialize(IncludeEntry entry)
         {
-            PresetWorker worker = new PresetWorker(entry);
+            var worker = new PresetWorker(entry);
             worker.Deserialize(GetLoadOptions());
         }
 

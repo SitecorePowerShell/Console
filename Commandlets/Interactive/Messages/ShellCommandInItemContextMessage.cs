@@ -12,18 +12,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessage, IMessageWithResult
     {
-        private readonly string itemUri;
-        private readonly string itemDb;
         private readonly string command;
-        private Handle jobHandle;
-
-        [NonSerialized]
-        private readonly MessageQueue messageQueue;
-
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
+        private readonly string itemDb;
+        private readonly string itemUri;
+        private readonly Handle jobHandle;
+        [NonSerialized] private readonly MessageQueue messageQueue;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
@@ -46,6 +39,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             this.command = command;
         }
 
+        public MessageQueue MessageQueue
+        {
+            get { return messageQueue; }
+        }
+
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
@@ -54,7 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             CommandContext context = null;
             if (!string.IsNullOrEmpty(itemUri))
             {
-                Item item = Factory.GetDatabase(itemDb).GetItem(new DataUri(itemUri));
+                var item = Factory.GetDatabase(itemDb).GetItem(new DataUri(itemUri));
                 context = new CommandContext(item);
             }
             else
@@ -66,11 +64,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 context.Parameters.Add("jobHandle", jobHandle.ToString());
             }
-            Command shellCommand = CommandManager.GetCommand(command);
+            var shellCommand = CommandManager.GetCommand(command);
             if (shellCommand == null)
                 return;
             shellCommand.Execute(context);
         }
-
     }
 }

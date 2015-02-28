@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.Core.Serialization
     {
         public static IList<IncludeEntry> Create(XmlNode configuration)
         {
-            List<IncludeEntry> list = new List<IncludeEntry>();
+            var list = new List<IncludeEntry>();
             foreach (XmlNode child in configuration.ChildNodes)
             {
                 if (child.Name == "include")
@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Core.Serialization
 
         private static SingleEntry CreateSingleEntry(XmlNode configuration)
         {
-            SingleEntry singleEntry = new SingleEntry();
+            var singleEntry = new SingleEntry();
             if (configuration.Attributes != null)
             {
                 singleEntry.Database = configuration.Attributes["database"].Value;
@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.Core.Serialization
 
         private static IncludeEntry CreateIncludeEntry(XmlNode configuration)
         {
-            IncludeEntry includeEntry = new IncludeEntry();
+            var includeEntry = new IncludeEntry();
             if (configuration.Attributes != null)
             {
                 includeEntry.Database = configuration.Attributes["database"].Value;
@@ -58,7 +58,7 @@ namespace Cognifide.PowerShell.Core.Serialization
 
         private static ExcludeEntry CreateExcludeEntry(XmlNode configuration)
         {
-            ExcludeEntry excludeEntry = new ExcludeEntry();
+            var excludeEntry = new ExcludeEntry();
             if (configuration.Attributes != null && configuration.Attributes.Count > 0)
             {
                 excludeEntry.Type = configuration.Attributes[0].Name;

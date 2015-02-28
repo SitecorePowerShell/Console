@@ -6,7 +6,7 @@ using Sitecore.IO;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
-    [Cmdlet(VerbsData.Export, "Package",SupportsShouldProcess = true)]
+    [Cmdlet(VerbsData.Export, "Package", SupportsShouldProcess = true)]
     public class ExportPackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0)]
@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         protected override void ProcessRecord()
         {
-            string fileName = Path;
+            var fileName = Path;
 
             if (!Zip.IsPresent)
             {
@@ -47,7 +47,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
                     if (!System.IO.Path.HasExtension(fileName))
                     {
-                        fileName = fileName+".xml";
+                        fileName = fileName + ".xml";
                     }
 
                     if (ShouldProcess(fileName, "Export package project"))

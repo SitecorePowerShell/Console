@@ -2,20 +2,17 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Serialization;
 using Sitecore;
 using Sitecore.Data.Serialization;
-using Sitecore.Data.Serialization.Presets;
 using Sitecore.Security.Accounts;
 using Sitecore.Security.Serialization;
 
 namespace Cognifide.PowerShell.Commandlets.Serialization
 {
     [Cmdlet(VerbsData.Export, "Role", SupportsShouldProcess = true)]
-    [OutputType(typeof(string))]
+    [OutputType(typeof (string))]
     public class ExportRoleCommand : BaseCommand
     {
-
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Path Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
@@ -59,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                     roles.ToList().ForEach(SerializeRole);
                     break;
                 default:
-                    if (!this.CanFindAccount(Identity, AccountType.Role)) return; 
+                    if (!this.CanFindAccount(Identity, AccountType.Role)) return;
                     SerializeRole(Role.FromName(Identity.Name));
                     break;
             }
@@ -84,12 +81,12 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                 {
                     if (string.IsNullOrEmpty(Root))
                     {
-                        RoleReference roleReference = new RoleReference(role.Name);
+                        var roleReference = new RoleReference(role.Name);
                         Path = PathUtils.GetFilePath(roleReference);
                     }
                     else
                     {
-                        RoleReference roleReference = new RoleReference(role.Name);
+                        var roleReference = new RoleReference(role.Name);
                         var target = Root.EndsWith("\\") ? Root : Root + "\\";
                         Path = (target + roleReference).Replace('/', System.IO.Path.DirectorySeparatorChar);
                     }

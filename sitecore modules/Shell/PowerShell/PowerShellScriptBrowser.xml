@@ -10,8 +10,10 @@
       <DataContext ID="ScriptDataContext" />
 
       <GridPanel Width="100%" Height="100%" Style="table-layout:fixed">
-        <Scrollbox Height="100%" Class="scScrollbox scFixSize scFixSize4 scInsetBorder" Background="white" Padding="0px" GridPanel.Height="100%">
-          <TreeviewEx ID="Treeview" Click="SelectTreeNode" DblClick="TreeviewDblClick" DataContext="ScriptDataContext" ShowRoot="true" ContextMenu='Treeview.GetContextMenu("contextmenu")' />
+        <Scrollbox Height="100%" Class="scScrollbox scFixSize scFixSize4 scInsetBorder" Background="white"
+                   Padding="0px" GridPanel.Height="100%">
+          <TreeviewEx ID="Treeview" Click="SelectTreeNode" DblClick="TreeviewDblClick" DataContext="ScriptDataContext"
+                      ShowRoot="true" ContextMenu='Treeview.GetContextMenu("contextmenu")' />
         </Scrollbox>
 
         <Border Padding="4px 0px 4px 0px" ID="NamePanel">

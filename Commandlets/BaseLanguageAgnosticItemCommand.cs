@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Commandlets
             ParameterSetName = "Item from Pipeline", Mandatory = true, Position = 0)]
         public virtual Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Item from Path", Mandatory=true, Position = 0)]
+        [Parameter(ParameterSetName = "Item from Path", Mandatory = true, Position = 0)]
         [Alias("FullName", "FileName")]
         public virtual string Path { get; set; }
 
@@ -40,6 +40,5 @@ namespace Cognifide.PowerShell.Commandlets
         }
 
         protected abstract void ProcessItem(Item item);
-
     }
 }

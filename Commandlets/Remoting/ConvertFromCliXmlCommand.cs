@@ -9,20 +9,21 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
     [Cmdlet(VerbsData.ConvertFrom, "CliXml", SupportsShouldProcess = false)]
     public class ConvertFromCliXmlCommand : PSCmdlet
     {
-        private MethodInfo method;
         private MethodInfo done;
+        private MethodInfo method;
+
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true), AllowNull]
         public string InputObject { get; set; }
 
         protected override void ProcessRecord()
         {
-            TextReader reader = null; 
+            TextReader reader = null;
             try
             {
                 reader = new StringReader(InputObject);
                 using (var xmlReader = XmlReader.Create(reader))
                 {
-                    Type type = typeof (PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
+                    var type = typeof (PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
                     var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
                         new[] {typeof (XmlReader)}, null);
                     var deserializer = ctor.Invoke(new object[] {xmlReader});
@@ -35,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteWarning("Could not deserialize string. Exception: " + ex.Message);
             }

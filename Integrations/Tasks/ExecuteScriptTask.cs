@@ -10,11 +10,11 @@ namespace Cognifide.PowerShell.Integrations.Tasks
     {
         public void Update(Item[] items, CommandItem command, ScheduleItem schedule)
         {
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default,true))
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
                 foreach (var item in items)
                 {
-                    string script = item["Script"];
+                    var script = item["Script"];
                     if (!String.IsNullOrEmpty(script))
                     {
                         session.SetExecutedScript(item);

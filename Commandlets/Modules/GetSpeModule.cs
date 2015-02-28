@@ -7,8 +7,10 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Modules
 {
     [Cmdlet(VerbsCommon.Get, "SpeModule")]
-    [OutputType(new[] {typeof (Module)},
-        ParameterSetName =new[]{"Module from Database", "Module from Pipeline", "Module from Path", "Module from ID", "Module from Name"})]
+    [OutputType(typeof (Module),
+        ParameterSetName =
+            new[]
+            {"Module from Database", "Module from Pipeline", "Module from Path", "Module from ID", "Module from Name"})]
     public class GetSpeModule : BaseItemCommand
     {
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
@@ -38,8 +40,8 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         {
             IEnumerable<Module> modules = ModuleManager.Modules;
 
-            bool databaseDefined = Database != null && string.IsNullOrEmpty(Id);
-            bool nameDefined = !string.IsNullOrEmpty(Name);
+            var databaseDefined = Database != null && string.IsNullOrEmpty(Id);
+            var nameDefined = !string.IsNullOrEmpty(Name);
 
             if (databaseDefined)
             {

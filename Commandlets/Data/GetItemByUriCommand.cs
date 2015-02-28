@@ -6,16 +6,20 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Get, "ItemByUri")]
-    [OutputType(new[] {typeof (Item)})]
+    [OutputType(typeof (Item))]
     public class GetItemByUriCommand : BaseCommand
     {
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        [Parameter()]
+        [Parameter]
         public string ItemUri { get; set; }
 
         protected override void ProcessRecord()
         {
-            WriteError(new ErrorRecord(new Exception("This commandlet have been deprecated. Use Get-Item master:\\ -Uri \"sitecore://{database}/{ID}?lang=_lang_&ver=_ver_\" instead."), "sitecore_commandlet_deprecated", ErrorCategory.NotImplemented, null));            
+            WriteError(
+                new ErrorRecord(
+                    new Exception(
+                        "This commandlet have been deprecated. Use Get-Item master:\\ -Uri \"sitecore://{database}/{ID}?lang=_lang_&ver=_ver_\" instead."),
+                    "sitecore_commandlet_deprecated", ErrorCategory.NotImplemented, null));
         }
     }
 }

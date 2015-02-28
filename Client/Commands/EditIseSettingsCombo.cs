@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Cognifide.PowerShell.Core.Modules;
-using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
@@ -28,17 +23,19 @@ namespace Cognifide.PowerShell.Client.Commands
             SheerResponse.DisableOutput();
             var subMenu = new ContextMenu();
             var menuItems = new List<Control>();
-            string menuItemId = "iseSettingsDropdown";//context.Parameters["Id"];
+            var menuItemId = "iseSettingsDropdown"; //context.Parameters["Id"];
 
             if (string.IsNullOrEmpty(menuItemId))
             {
                 // a bit of a hacky way to determine the caller so we can display the menu
                 // in proximity to the triggering control
-                var parameters = new UrlString("?" + Sitecore.Context.Items["SC_FORM"]);
+                var parameters = new UrlString("?" + Context.Items["SC_FORM"]);
                 menuItemId = parameters.Parameters["__EVENTTARGET"];
             }
 
-            Item menuRootItem = Factory.GetDatabase("core").GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Settings");
+            var menuRootItem =
+                Factory.GetDatabase("core")
+                    .GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Settings");
             GetMenuItems(menuItems, menuRootItem);
 
             foreach (var item in menuItems)
@@ -46,7 +43,7 @@ namespace Cognifide.PowerShell.Client.Commands
                 var menuItem = item as MenuItem;
                 if (menuItem != null)
                 {
-                    MenuItem subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
+                    var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
                         menuItem.Click,
                         menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                     subItem.Disabled = menuItem.Disabled;

@@ -8,7 +8,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "FieldEditor")]
-    [OutputType(new[] {typeof (string)}, ParameterSetName = new[]
+    [OutputType(typeof (string), ParameterSetName = new[]
     {
         "Item from Path, Preserve Sections",
         "Item from ID, Preserve Sections",
@@ -19,6 +19,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     })]
     public class ShowFieldEditorCommand : BaseItemCommand
     {
+        public ShowFieldEditorCommand()
+        {
+            Width = 800;
+            Height = 600;
+        }
+
         [Parameter]
         [Alias("FieldName")]
         public string[] Name { get; set; }
@@ -61,7 +67,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
         public override string[] Language { get; set; }
 
-
         [Parameter(ParameterSetName = "Item from Pipeline, Preserve Sections", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from Path, Preserve Sections", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections", Mandatory = true)]
@@ -76,13 +81,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from Path, Named Section")]
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
         public string SectionIcon { get; set; }
-
-
-        public ShowFieldEditorCommand()
-        {
-            Width = 800;
-            Height = 600;
-        }
 
         protected override void ProcessItem(Item item)
         {
@@ -105,7 +103,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         ",height=" + Height +
                         ",isf=" + (IncludeStandardFields ? "1" : "0") +
                         ")");
-                    
+
                     PutMessage(message);
                     var result = GetSheerResult(message).ToString();
                     WriteObject(result);

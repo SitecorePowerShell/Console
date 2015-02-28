@@ -4,7 +4,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Confirm")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ShowConfirmCommand : BaseShellCommand
     {
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true)]
@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                string response = JobContext.Confirm(Title);
+                var response = JobContext.Confirm(Title);
                 WriteObject(response);
             });
         }

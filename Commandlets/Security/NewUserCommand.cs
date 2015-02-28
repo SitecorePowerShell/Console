@@ -7,7 +7,7 @@ using Sitecore.Security.Accounts;
 namespace Cognifide.PowerShell.Commandlets.Security
 {
     [Cmdlet(VerbsCommon.New, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (User)})]
+    [OutputType(typeof (User))]
     public class NewUserCommand : BaseCommand
     {
         [Alias("Name")]
@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.Commandlets.Security
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
-            if (ShouldProcess(Identity.Domain, "Create User '" +Identity.Account + "' in the domain"))
+            if (ShouldProcess(Identity.Domain, "Create User '" + Identity.Account + "' in the domain"))
             {
                 if (User.Exists(name))
                 {

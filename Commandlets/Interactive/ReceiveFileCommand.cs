@@ -1,24 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
 using System.Management.Automation;
-using System.Web;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
-using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
-using Sitecore.IO;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Applications.Install;
-using Sitecore.Text;
-using Sitecore.Web;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommunications.Receive, "File")]
-    [OutputType(typeof(String), ParameterSetName = new[] { "Receive Media Item", "Receive File", "Receive Media Item Advanced" })]
+    [OutputType(typeof (String),
+        ParameterSetName = new[] {"Receive Media Item", "Receive File", "Receive Media Item Advanced"})]
     public class ReceiveFileCommand : BaseFormCommand
     {
         [Parameter(ParameterSetName = "Receive Media Item")]
@@ -74,16 +64,17 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 else
                 {
-                    AssertDefaultSize(500, 300);                    
+                    AssertDefaultSize(500, 300);
                 }
 
                 var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description,
-                    OkButtonName ?? "OK", CancelButtonName ?? "Cancel", ParentItem != null ? (ParentItem.ID.ToString()) : Path,
+                    OkButtonName ?? "OK", CancelButtonName ?? "Cancel",
+                    ParentItem != null ? (ParentItem.ID.ToString()) : Path,
                     Versioned, Language, Overwrite, Unpack, AdvancedDialog);
 
                 PutMessage(message);
-                var result = (string)GetSheerResult(message);
-                
+                var result = (string) GetSheerResult(message);
+
                 ID itemId;
                 if (ID.TryParse(result, out itemId))
                 {
@@ -94,8 +85,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 {
                     WriteObject(string.IsNullOrEmpty(result) ? "cancel" : result);
                 }
-
-
             });
         }
     }

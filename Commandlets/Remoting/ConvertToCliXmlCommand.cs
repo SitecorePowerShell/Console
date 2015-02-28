@@ -6,14 +6,15 @@ using System.Xml;
 namespace Cognifide.PowerShell.Commandlets.Remoting
 {
     [Cmdlet(VerbsData.ConvertTo, "CliXml", SupportsShouldProcess = false)]
-    [OutputType(typeof(string))]
+    [OutputType(typeof (string))]
     public class ConvertToCliXmlCommand : PSCmdlet
     {
-        private object serializer;
-        private MethodInfo method;
-        private MethodInfo done;
         private StringBuilder builder;
+        private MethodInfo done;
+        private MethodInfo method;
+        private object serializer;
         private XmlWriter xmlWriter;
+
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true), AllowNull]
         public PSObject InputObject { get; set; }
 
@@ -25,10 +26,10 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
                 CloseOutput = true,
                 Encoding = Encoding.UTF8,
                 Indent = false,
-                OmitXmlDeclaration = true,
+                OmitXmlDeclaration = true
             };
             xmlWriter = XmlWriter.Create(builder, settings);
-            var type = typeof(PSObject).Assembly.GetType("System.Management.Automation.Serializer");
+            var type = typeof (PSObject).Assembly.GetType("System.Management.Automation.Serializer");
             var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
                 new[] {typeof (XmlWriter)}, null);
             serializer = ctor.Invoke(new object[] {xmlWriter});
@@ -41,7 +42,7 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
         {
             try
             {
-                method.Invoke(serializer, new object[]{InputObject});
+                method.Invoke(serializer, new object[] {InputObject});
             }
             catch
             {
@@ -51,7 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
 
         protected override void EndProcessing()
         {
-            done.Invoke(serializer, new object[]{});
+            done.Invoke(serializer, new object[] {});
             WriteObject(builder.ToString());
             //File.WriteAllText(@"C:\temp\serialized.xml", builder.ToString()); 
             xmlWriter.Close();

@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 

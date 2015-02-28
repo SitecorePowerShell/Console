@@ -8,13 +8,12 @@ using log4net.Config;
 using Sitecore.Update;
 using Sitecore.Update.Installer;
 using Sitecore.Update.Installer.Utils;
-using Sitecore.Update.Metadata;
 using Sitecore.Update.Utils;
 
 namespace Cognifide.PowerShell.Commandlets.UpdatePackages
 {
     [Cmdlet(VerbsLifecycle.Install, "UpdatePackage", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (ContingencyEntry)})]
+    [OutputType(typeof (ContingencyEntry))]
     public class InstallUpdatePackageCommand : BasePackageCommand
     {
         [Parameter(Position = 0, Mandatory = true)]
@@ -33,7 +32,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
         protected override void ProcessRecord()
         {
             // Use default logger
-            ILog log = LogManager.GetLogger("root");
+            var log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
 
             if (ShouldProcess(Path, "Install update package"))
@@ -42,7 +41,7 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
                     () =>
                     {
                         var installer = new DiffInstaller(UpgradeAction);
-                        MetadataView view = UpdateHelper.LoadMetadata(Path);
+                        var view = UpdateHelper.LoadMetadata(Path);
 
                         bool hasPostAction;
                         string historyPath;

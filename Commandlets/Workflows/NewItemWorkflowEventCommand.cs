@@ -2,7 +2,6 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
-using Sitecore.Workflows;
 using Sitecore.Workflows.Simple;
 
 namespace Cognifide.PowerShell.Commandlets.Workflows
@@ -21,8 +20,7 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
 
         protected override void ProcessItem(Item item)
         {
-
-            WorkflowEvent lastEvent =
+            var lastEvent =
                 ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.GetHistory(item)
                     .OrderBy(p => p.Date)
                     .LastOrDefault();
@@ -36,10 +34,10 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
                 NewState = lastEvent != null ? lastEvent.NewState : string.Empty;
             }
 
-            if (ShouldProcess(item.GetProviderPath(),string.Format("Add '{0}' workflow history entry.", Text)))
+            if (ShouldProcess(item.GetProviderPath(), string.Format("Add '{0}' workflow history entry.", Text)))
             {
                 ((WorkflowProvider) item.Database.WorkflowProvider).HistoryStore.AddHistory(
-                item, OldState, NewState, Text);
+                    item, OldState, NewState, Text);
             }
         }
     }

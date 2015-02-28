@@ -41,7 +41,6 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             if (ShouldProcess(name, "Change User Password"))
             {
-
                 if (Reset.IsPresent && User.Current.IsAdministrator)
                 {
                     oldpassword = member.ResetPassword();

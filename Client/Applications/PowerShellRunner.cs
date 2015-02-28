@@ -25,36 +25,28 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellRunner : BaseForm, IPowerShellRunner
     {
-        public SpeJobMonitor Monitor { get; private set; }
+        protected Button AbortButton;
         protected Scrollbox All;
-        protected Literal Result;
-        protected Literal Title;
-        protected Literal DialogHeader;
-        protected Literal PreviousProgressValue;
-        protected Literal CurrentProgressValue;
-        protected Literal Closed;
-        protected Button Cancel;
-        protected ThemedImage Icon;
-
-        public string Script { get; set; }
-        public ApplicationSettings Settings { get; set; }
-        public bool NonInteractive { get; set; }
-
         //protected Item CurrentItem { get; set; }
 
         protected Literal BackgroundColor;
+        protected Button Cancel;
+        protected Literal Closed;
+        protected Literal CurrentProgressValue;
+        protected Literal DialogHeader;
         protected Literal ForegroundColor;
-        protected Literal PsProgress;
-        protected Literal ProgressBar;
-        protected Literal PsProgressStatus;
+        protected ThemedImage Icon;
         protected Button OkButton;
-        protected Button AbortButton;
-
-        public bool MonitorActive
-        {
-            get { return Monitor.Active; }
-            set { Monitor.Active = value; }
-        }
+        protected Literal PreviousProgressValue;
+        protected Literal ProgressBar;
+        protected Literal PsProgress;
+        protected Literal PsProgressStatus;
+        protected Literal Result;
+        protected Literal Title;
+        public SpeJobMonitor Monitor { get; private set; }
+        public string Script { get; set; }
+        public ApplicationSettings Settings { get; set; }
+        public bool NonInteractive { get; set; }
 
         public string PersistentId
         {
@@ -114,6 +106,12 @@ namespace Cognifide.PowerShell.Client.Applications
                     ? db.GetItem(new ID(ItemId), Language.Parse(ItemLang), Version.Parse(ItemVer))
                     : db.GetItem(new ID(ItemId));
             }
+        }
+
+        public bool MonitorActive
+        {
+            get { return Monitor.Active; }
+            set { Monitor.Active = value; }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -186,13 +184,6 @@ namespace Cognifide.PowerShell.Client.Applications
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
             Monitor.SessionID = scriptSession.ID;
-        }
-
-        public class RunnerOutput
-        {
-            public string Output { get; set; }
-            public string Errors { get; set; }
-            public bool HasErrors { get; set; }
         }
 
         protected void ExecuteInternal(params object[] parameters)
@@ -282,7 +273,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (scriptSession.CloseRunner)
             {
                 scriptSession.CloseRunner = false;
-                
+
                 if (Closed != null)
                 {
                     Closed.Text = "close";
@@ -313,7 +304,6 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             SheerResponse.CloseWindow();
         }
-
 
         protected virtual void AbortClick()
         {
@@ -400,5 +390,11 @@ namespace Cognifide.PowerShell.Client.Applications
             Dispatcher.Dispatch(message, context);
         }
 
+        public class RunnerOutput
+        {
+            public string Output { get; set; }
+            public string Errors { get; set; }
+            public bool HasErrors { get; set; }
+        }
     }
 }

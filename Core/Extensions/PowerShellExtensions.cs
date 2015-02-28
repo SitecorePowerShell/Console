@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.Core.Extensions
         public static object[] BaseArray(this object[] array)
         {
             var newArray = new object[array.Length];
-            for (int i = 0; i < array.Length; i++)
+            for (var i = 0; i < array.Length; i++)
             {
                 newArray[i] = array[i].BaseObject();
             }

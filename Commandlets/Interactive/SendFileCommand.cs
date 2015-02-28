@@ -3,8 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
 
@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                AssertDefaultSize(700,140);
+                AssertDefaultSize(700, 140);
 
                 string response = null;
                 var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 else if (!string.IsNullOrEmpty(Path))
                 {
-                    string file = FileUtil.MapPath(Path);
+                    var file = FileUtil.MapPath(Path);
                     if (!File.Exists(file))
                     {
                         PutMessage(
@@ -65,8 +65,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         return;
                     }
 
-                    string str1 = FileUtil.MapPath("/");
-                    string str2 = FileUtil.MapPath(Sitecore.Configuration.Settings.DataFolder);
+                    var str1 = FileUtil.MapPath("/");
+                    var str2 = FileUtil.MapPath(Settings.DataFolder);
                     if (!file.StartsWith(str1, StringComparison.InvariantCultureIgnoreCase) &&
                         !file.StartsWith(str2, StringComparison.InvariantCultureIgnoreCase))
                     {

@@ -13,12 +13,12 @@ namespace Cognifide.PowerShell.Client.Applications
     public class GetStringResponse : BaseForm
     {
         protected Border Buttons;
-        protected Label Message;
-        protected Edit EditBox;
         protected string DefaultValue;
-        protected string ValidationExpression;
+        protected Edit EditBox;
         protected string ErrorMessage;
         protected string MaxLength;
+        protected Label Message;
+        protected string ValidationExpression;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -35,10 +35,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
 
             EditBox.Value = WebUtil.SafeEncode(DefaultValue);
-            int i = 0;
+            var i = 0;
             while (HttpContext.Current.Request.QueryString.AllKeys.Contains("btn_" + i))
             {
-                string key = "btn_" + i;
+                var key = "btn_" + i;
                 var button = new Button
                 {
                     ID = key,
@@ -60,7 +60,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void OK()
         {
-            string value = EditBox.Value;
+            var value = EditBox.Value;
             if (!string.IsNullOrEmpty(ValidationExpression))
             {
                 if (!Regex.IsMatch(value, ValidationExpression))

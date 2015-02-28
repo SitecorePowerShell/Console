@@ -5,7 +5,7 @@ using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "ListView")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ShowListViewCommand : BaseListViewCommand
     {
         [Parameter]
@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             base.EndProcessing();
             LogErrors(() =>
             {
-                int pageSize = PageSize == 0 ? 25 : PageSize;
+                var pageSize = PageSize == 0 ? 25 : PageSize;
                 if (Data == null)
                 {
                     Data = new List<object>();

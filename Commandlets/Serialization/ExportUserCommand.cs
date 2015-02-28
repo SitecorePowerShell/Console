@@ -2,10 +2,8 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Serialization;
 using Sitecore;
 using Sitecore.Data.Serialization;
-using Sitecore.Data.Serialization.Presets;
 using Sitecore.Security.Accounts;
 using Sitecore.Security.Serialization;
 
@@ -14,7 +12,6 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
     [Cmdlet(VerbsData.Export, "User", SupportsShouldProcess = true)]
     public class ExportUserCommand : BaseCommand
     {
-
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Path Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
@@ -64,10 +61,13 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
                     var users = WildcardFilter(filter, UserManager.GetUsers(), user => user.Name);
                     users.ToList().ForEach(SerializeUser)
-                    ;
+                        ;
                     break;
                 default:
-                    if (!this.CanFindAccount(Identity, AccountType.User)) { return; }
+                    if (!this.CanFindAccount(Identity, AccountType.User))
+                    {
+                        return;
+                    }
 
                     SerializeUser(User.FromName(Identity.Name, true));
                     break;
@@ -89,7 +89,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
             else
             {
-                UserReference userReference = new UserReference(user.Name);
+                var userReference = new UserReference(user.Name);
                 if (string.IsNullOrEmpty(Path))
                 {
                     if (string.IsNullOrEmpty(Root))

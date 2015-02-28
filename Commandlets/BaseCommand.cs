@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -63,7 +64,10 @@ namespace Cognifide.PowerShell.Commandlets
             }
         }
 
-        protected ScriptingHostPrivateData HostData { get { return (Host.PrivateData.BaseObject as ScriptingHostPrivateData); } }
+        protected ScriptingHostPrivateData HostData
+        {
+            get { return (Host.PrivateData.BaseObject as ScriptingHostPrivateData); }
+        }
 
         protected string CurrentPath
         {
@@ -77,9 +81,9 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected void RecoverHttpContext()
         {
-            var job = Sitecore.Context.Job;
+            var job = Context.Job;
             HttpContext.Current = SessionState.PSVariable.Get("HttpContext").Value as HttpContext;
-            Sitecore.Context.Job = job;
+            Context.Job = job;
         }
 
         protected static WildcardPattern GetWildcardPattern(string name)
@@ -101,7 +105,7 @@ namespace Cognifide.PowerShell.Commandlets
         protected static IEnumerable<T> WildcardFilter<T>(string filter, IEnumerable<T> items,
             Func<T, string> propertyName)
         {
-            WildcardPattern wildcardPattern = GetWildcardPattern(filter);
+            var wildcardPattern = GetWildcardPattern(filter);
             return items.Where(item => wildcardPattern.IsMatch(propertyName(item)));
         }
 
@@ -112,7 +116,7 @@ namespace Cognifide.PowerShell.Commandlets
             var itemsList = items.ToList();
             foreach (var filter in filters)
             {
-                foreach (T matchingItem in WildcardFilter(filter, itemsList, propertyName))
+                foreach (var matchingItem in WildcardFilter(filter, itemsList, propertyName))
                 {
                     matchingItems[propertyName(matchingItem)] = matchingItem;
                 }
@@ -126,7 +130,7 @@ namespace Cognifide.PowerShell.Commandlets
             {
                 if (!String.IsNullOrEmpty(id))
                 {
-                    Database currentDb = Factory.GetDatabase(CurrentDrive);
+                    var currentDb = Factory.GetDatabase(CurrentDrive);
                     item = currentDb.GetItem(new ID(id));
                 }
                 else if (!String.IsNullOrEmpty(path))
@@ -154,10 +158,10 @@ namespace Cognifide.PowerShell.Commandlets
                     return database ?? CurrentDatabase;
                 }
 
-                int driveSeparator = path.IndexOf(':');
+                var driveSeparator = path.IndexOf(':');
                 if (driveSeparator > 0)
                 {
-                    string driveName = path.Substring(0, driveSeparator);
+                    var driveName = path.Substring(0, driveSeparator);
                     return Factory.GetDatabase(driveName);
                 }
                 return CurrentDatabase;
@@ -165,13 +169,14 @@ namespace Cognifide.PowerShell.Commandlets
             return item.Database;
         }
 
-        protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language, Database database)
+        protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language,
+            Database database)
         {
             if (item == null)
             {
                 if (!String.IsNullOrEmpty(id))
                 {
-                    Database currentDb = database ?? CurrentDatabase;
+                    var currentDb = database ?? CurrentDatabase;
                     item = currentDb.GetItem(new ID(id));
                 }
                 else if (!String.IsNullOrEmpty(path))
@@ -188,7 +193,9 @@ namespace Cognifide.PowerShell.Commandlets
                 }
                 if (item != null)
                 {
-                    item = language != null ? item.Versions.GetLatestVersion(language) : item.Versions.GetLatestVersion();
+                    item = language != null
+                        ? item.Versions.GetLatestVersion(language)
+                        : item.Versions.GetLatestVersion();
                 }
             }
             return item;
@@ -203,7 +210,7 @@ namespace Cognifide.PowerShell.Commandlets
             catch (Exception ex)
             {
                 Log.Error("Error while executing '{0}' command", ex, this);
-                WriteError(new ErrorRecord(ex,"loggable_error",ErrorCategory.NotSpecified, null));
+                WriteError(new ErrorRecord(ex, "loggable_error", ErrorCategory.NotSpecified, null));
             }
         }
 
@@ -212,7 +219,7 @@ namespace Cognifide.PowerShell.Commandlets
             if (item != null)
             {
                 // add the properties defined by the page type
-                PSObject psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+                var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
                 WriteObject(psobj);
             }
         }
@@ -223,7 +230,7 @@ namespace Cognifide.PowerShell.Commandlets
             var parameter = new RuntimeDefinedParameter
             {
                 Name = name,
-                ParameterType = typeof(T),
+                ParameterType = typeof (T)
             };
 
             if (attributes != null)
@@ -250,7 +257,7 @@ namespace Cognifide.PowerShell.Commandlets
             if (TryGetDynamicParameter(name, out parameter))
             {
                 isPresent = parameter.IsSet;
-                value = (SwitchParameter)parameter.Value;
+                value = (SwitchParameter) parameter.Value;
                 return true;
             }
 
@@ -266,7 +273,7 @@ namespace Cognifide.PowerShell.Commandlets
 
             if (TryGetDynamicParameter(name, out parameter))
             {
-                value = (T)parameter.Value;
+                value = (T) parameter.Value;
                 return true;
             }
 

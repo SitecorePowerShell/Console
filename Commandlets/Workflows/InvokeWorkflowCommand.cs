@@ -3,14 +3,12 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
-using Sitecore.Workflows;
 
 namespace Cognifide.PowerShell.Commandlets.Workflows
 {
     [Cmdlet(VerbsLifecycle.Invoke, "Workflow", SupportsShouldProcess = true)]
     public class InvokeWorkflowCommand : BaseItemCommand
     {
-
         [Parameter]
         public string CommandName { get; set; }
 
@@ -19,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
 
         protected override void ProcessItem(Item item)
         {
-            IWorkflowProvider workflowProvider = item.Database.WorkflowProvider;
+            var workflowProvider = item.Database.WorkflowProvider;
             if (workflowProvider == null)
             {
                 WriteError(
@@ -30,7 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
                 return;
             }
 
-            IWorkflow workflow = workflowProvider.GetWorkflow(item);
+            var workflow = workflowProvider.GetWorkflow(item);
             if (workflow == null)
             {
                 WriteError(new ErrorRecord(
@@ -42,7 +40,7 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
 
             try
             {
-                WorkflowCommand command = workflow.GetCommands(item).FirstOrDefault(c => c.DisplayName == CommandName);
+                var command = workflow.GetCommands(item).FirstOrDefault(c => c.DisplayName == CommandName);
                 if (command == null)
                 {
                     WriteError(new ErrorRecord(
@@ -56,10 +54,10 @@ namespace Cognifide.PowerShell.Commandlets.Workflows
                     string.Format("Invoke command '{0}' in workflow '{1}'", command.DisplayName,
                         workflow.Appearance.DisplayName)))
                 {
-                    WorkflowResult workflowResult = workflow.Execute(command.CommandID, item, Comments, false);
+                    var workflowResult = workflow.Execute(command.CommandID, item, Comments, false);
                     if (!workflowResult.Succeeded)
                     {
-                        string message = workflowResult.Message;
+                        var message = workflowResult.Message;
                         if (string.IsNullOrEmpty(message))
                         {
                             message = "IWorkflow.Execute() failed for unknown reason.";

@@ -14,9 +14,9 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private Item GetItemForPath(string path)
         {
-            string relativePath = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            string databaseName = path.IndexOf(':') < 0 ? PSDriveInfo.Name : path.Substring(0, path.IndexOf(':'));
-            Item currentItem = PathUtilities.GetItem(databaseName, relativePath);
+            var relativePath = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
+            var databaseName = path.IndexOf(':') < 0 ? PSDriveInfo.Name : path.Substring(0, path.IndexOf(':'));
+            var currentItem = PathUtilities.GetItem(databaseName, relativePath);
             return currentItem;
         }
 
@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             try
             {
-                bool result = GetItemForPath(path) != null;
+                var result = GetItemForPath(path) != null;
                 LogInfo("Executing ItemExists(string path='{0}') returns '{1}'", path, result);
                 return result;
             }
@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override bool IsItemContainer(string path)
         {
-            bool result = GetItemForPath(path) != null;
+            var result = GetItemForPath(path) != null;
             return result;
         }
 
@@ -82,22 +82,22 @@ namespace Cognifide.PowerShell.Core.Provider
         protected override string[] ExpandPath(string path)
         {
             path = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            string parent = GetParentFromPath(path);
-            string name = GetLeafFromPath(path).Trim('*');
+            var parent = GetParentFromPath(path);
+            var name = GetLeafFromPath(path).Trim('*');
             if (parent.Contains("-") || parent.Contains(" "))
             {
-                string[] segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+                var segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
                 var escapedPath = new StringBuilder(path.Length + segments.Length*2 + 4);
-                for (int i = 0; i < segments.Length; i++)
+                for (var i = 0; i < segments.Length; i++)
                 {
                     escapedPath.AppendFormat("/#{0}#", segments[i]);
                 }
                 parent = escapedPath.ToString();
             }
-            Item[] items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
+            var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
                 string.Format("/sitecore{0}/*[startswith(@@Name, '{1}')] ",
                     parent, name));
-            string[] results = items.Select(
+            var results = items.Select(
                 item => string.Format("{0}:{1}",
                     item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'))).ToArray();
             return results;
@@ -106,14 +106,14 @@ namespace Cognifide.PowerShell.Core.Provider
         private static string GetParentFromPath(string path)
         {
             path = path.Replace('\\', '/').TrimEnd('/');
-            int lastLeafIndex = path.LastIndexOf('/');
+            var lastLeafIndex = path.LastIndexOf('/');
             return path.Substring(0, lastLeafIndex);
         }
 
         private static string GetLeafFromPath(string path)
         {
             path = path.Replace('\\', '/').TrimEnd('/');
-            int lastLeafIndex = path.LastIndexOf('/');
+            var lastLeafIndex = path.LastIndexOf('/');
             return path.Substring(lastLeafIndex + 1);
         }
     }

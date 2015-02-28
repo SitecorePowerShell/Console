@@ -12,13 +12,13 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
     {
         public override void Execute(CommandContext context)
         {
-            string scriptId = context.Parameters["script"];
-            string scriptDb = context.Parameters["scriptDb"];
+            var scriptId = context.Parameters["script"];
+            var scriptDb = context.Parameters["scriptDb"];
 
-            string itemId = string.Empty;
-            string itemDb = string.Empty;
-            string itemLang = string.Empty;
-            string itemVer = string.Empty;
+            var itemId = string.Empty;
+            var itemDb = string.Empty;
+            var itemLang = string.Empty;
+            var itemVer = string.Empty;
 
             if (context.Items.Length > 0)
             {
@@ -39,7 +39,6 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 SheerResponse.ShowModalDialog(str.ToString(), "400", "260", "PowerShell Script Results", false),
                 "Shell");
         }
-
 
         public override CommandState QueryState(CommandContext context)
         {

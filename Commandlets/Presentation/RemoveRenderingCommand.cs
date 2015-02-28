@@ -5,16 +5,15 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
-using Sitecore.Shell.Framework.Commands.TemplateBuilder;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Remove, "Rendering", SupportsShouldProcess = true)]
-    [OutputType(new[] {typeof (void)})]
+    [OutputType(typeof (void))]
     public class RemoveRenderingCommand : BaseRenderingCommand
     {
-
-        protected override void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device, IEnumerable<RenderingDefinition> renderings)
+        protected override void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
+            IEnumerable<RenderingDefinition> renderings)
         {
             if (ShouldProcess(item.GetProviderPath(),
                 string.Format("Remove rendering(s) '{0}' from device {1}",
@@ -34,11 +33,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
                 item.Edit(p =>
                 {
-                    string outputXml = layout.ToXml();
+                    var outputXml = layout.ToXml();
                     Item["__Renderings"] = outputXml;
                 });
             }
         }
-
     }
 }

@@ -19,7 +19,6 @@ namespace Cognifide.PowerShell.Integrations.Gutters
         {
             return SpeTimer.Measure("gutter timing", () =>
             {
-
                 // The scriptId parameter is configured when we create a new gutter
                 // here /sitecore/content/Applications/Content Editor/Gutters
                 if (!Parameters.ContainsKey("scriptId")) return null;

@@ -4,7 +4,6 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
-using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
@@ -12,11 +11,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class DownloadMessage : BasePipelineMessage, IMessage
     {
-        [NonSerializedAttribute]
-        private readonly Item item;
-
-        [NonSerializedAttribute]
-        private readonly string fileName;
+        [NonSerialized] private readonly string fileName;
+        [NonSerialized] private readonly Item item;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
@@ -39,10 +35,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         {
             if (item != null && MediaManager.HasMediaContent(item))
             {
-                UrlString str = item.Uri.ToUrlString(string.Empty);
+                var str = item.Uri.ToUrlString(string.Empty);
                 str.Append("field", "Blob");
                 Files.Download(str.ToString());
-                Log.Audit(this, "Download file: {0}", new[] {str.ToString()});
+                Log.Audit(this, "Download file: {0}", str.ToString());
             }
             else if (!string.IsNullOrEmpty(fileName))
             {
@@ -50,7 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             }
             else
             {
-                SheerResponse.Alert("There is no file attached.", new string[0]);
+                SheerResponse.Alert("There is no file attached.");
             }
         }
     }

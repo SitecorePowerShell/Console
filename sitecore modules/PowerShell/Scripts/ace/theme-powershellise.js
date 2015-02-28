@@ -1,6 +1,6 @@
-ace.define('ace/theme/powershellise', ['require', 'exports', 'module' , 'ace/lib/dom'], function(require, exports, module) {
-exports.isDark = false;
-exports.cssText = ".ace-powershell-ise .ace_keyword {\
+ace.define("ace/theme/powershellise", ["require", "exports", "module", "ace/lib/dom"], function(require, exports, module) {
+    exports.isDark = false;
+    exports.cssText = ".ace-powershell-ise .ace_keyword {\
 color: #00008B;\
 }\
 .ace-powershell-ise .ace_identifier {\
@@ -42,8 +42,8 @@ margin: -1px 0 0 -1px;\
 border: 1px solid #C0C0C0;\
 }";
 
-exports.cssClass = "ace-powershell-ise";
+    exports.cssClass = "ace-powershell-ise";
 
-var dom = require("../lib/dom");
-dom.importCssString(exports.cssText, exports.cssClass);
+    var dom = require("../lib/dom");
+    dom.importCssString(exports.cssText, exports.cssClass);
 });

@@ -28,9 +28,9 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     return;
                 }
 
-                LayoutDefinition layout = LayoutDefinition.Parse(layoutField.Value);
+                var layout = LayoutDefinition.Parse(layoutField.Value);
 
-                DeviceDefinition device = layout.GetDevice(Device.ID.ToString());
+                var device = layout.GetDevice(Device.ID.ToString());
 
                 if (string.Equals(device.Layout, Layout.ID.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
@@ -42,7 +42,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
                 item.Edit(p =>
                 {
-                    string outputXml = layout.ToXml();
+                    var outputXml = layout.ToXml();
                     Item["__Renderings"] = outputXml;
                 });
             }

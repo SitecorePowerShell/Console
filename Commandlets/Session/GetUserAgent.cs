@@ -4,7 +4,7 @@ using System.Web;
 namespace Cognifide.PowerShell.Commandlets.Session
 {
     [Cmdlet("Get", "UserAgent")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class GetUserAgentCommand : PSCmdlet
     {
         protected override void ProcessRecord()

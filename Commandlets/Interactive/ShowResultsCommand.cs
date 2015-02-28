@@ -9,7 +9,7 @@ using Sitecore.Web;
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsCommon.Show, "Result")]
-    [OutputType(new[] {typeof (string)})]
+    [OutputType(typeof (string))]
     public class ShowResultsCommand : BaseFormCommand
     {
         [Parameter(ParameterSetName = "Custom Viewer from Control Name", Mandatory = true)]
@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     if (session != null)
                     {
                         var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString);
-                        
+
                         PutMessage(message);
                     }
                 }

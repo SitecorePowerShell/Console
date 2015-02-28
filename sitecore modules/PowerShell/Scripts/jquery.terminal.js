@@ -37,7 +37,6 @@
 */
 
 
-
 (function($, undefined) {
     "use strict";
 
@@ -49,7 +48,8 @@
         });
         return result;
     };
-    // debug function
+
+// debug function
     function get_stack(caller) {
         if (caller) {
             return [caller.toString().match(/.*\n.*\n/)].
@@ -58,18 +58,20 @@
             return [];
         }
     }
-    // ----------------------------------------
+
+// ----------------------------------------
     // START Storage plugin
     // ----------------------------------------
     // Private data
-    var isLS = typeof window.localStorage !== 'undefined';
-    // Private functions
+    var isLS = typeof window.localStorage !== "undefined";
+
+// Private functions
     function wls(n, v) {
         var c;
-        if (typeof n === 'string' && typeof v === 'string') {
+        if (typeof n === "string" && typeof v === "string") {
             localStorage[n] = v;
             return true;
-        } else if (typeof n === 'object' && typeof v === 'undefined') {
+        } else if (typeof n === "object" && typeof v === "undefined") {
             for (c in n) {
                 if (n.hasOwnProperty(c)) {
                     localStorage[c] = n[c];
@@ -79,34 +81,37 @@
         }
         return false;
     }
+
     function wc(n, v) {
         var dt, e, c;
         dt = new Date();
         dt.setTime(dt.getTime() + 31536000000);
-        e = '; expires=' + dt.toGMTString();
-        if (typeof n === 'string' && typeof v === 'string') {
-            document.cookie = n + '=' + v + e + '; path=/';
+        e = "; expires=" + dt.toGMTString();
+        if (typeof n === "string" && typeof v === "string") {
+            document.cookie = n + "=" + v + e + "; path=/";
             return true;
-        } else if (typeof n === 'object' && typeof v === 'undefined') {
+        } else if (typeof n === "object" && typeof v === "undefined") {
             for (c in n) {
                 if (n.hasOwnProperty(c)) {
-                    document.cookie = c + '=' + n[c] + e + '; path=/';
+                    document.cookie = c + "=" + n[c] + e + "; path=/";
                 }
             }
             return true;
         }
         return false;
     }
+
     function rls(n) {
         return localStorage[n];
     }
+
     function rc(n) {
         var nn, ca, i, c;
-        nn = n + '=';
-        ca = document.cookie.split(';');
+        nn = n + "=";
+        ca = document.cookie.split(";");
         for (i = 0; i < ca.length; i++) {
             c = ca[i];
-            while (c.charAt(0) === ' ') {
+            while (c.charAt(0) === " ") {
                 c = c.substring(1, c.length);
             }
             if (c.indexOf(nn) === 0) {
@@ -115,13 +120,16 @@
         }
         return null;
     }
+
     function dls(n) {
         return delete localStorage[n];
     }
+
     function dc(n) {
-        return wc(n, '', -1);
+        return wc(n, "", -1);
     }
-    /**
+
+/**
     * Public API
     * $.Storage.set("name", "value")
     * $.Storage.set({"name1":"value1", "name2":"value2", etc})
@@ -199,7 +207,7 @@
 
                 interval = jQuery.timer.timeParse(interval);
 
-                if (typeof interval !== 'number' ||
+                if (typeof interval !== "number" ||
                     isNaN(interval) ||
                     interval <= 0) {
                     return;
@@ -296,7 +304,7 @@
 
     if (jQuery.browser && jQuery.browser.msie ||
         /(msie) ([\w.]+)/.exec(navigator.userAgent.toLowerCase())) {
-        jQuery(window).one('unload', function() {
+        jQuery(window).one("unload", function() {
             var global = jQuery.timer.global;
             for (var label in global) {
                 if (global.hasOwnProperty(label)) {
@@ -321,22 +329,25 @@
         }
 
         var nativeSplit = String.prototype.split,
-        compliantExecNpcg = /()??/.exec("")[1] === undef, // NPCG: nonparticipating capturing group
-        self;
+            compliantExecNpcg = /()??/.exec("")[1] === undef, // NPCG: nonparticipating capturing group
+            self;
 
-        self = function (str, separator, limit) {
+        self = function(str, separator, limit) {
             // If `separator` is not a regex, use `nativeSplit`
             if (Object.prototype.toString.call(separator) !== "[object RegExp]") {
                 return nativeSplit.call(str, separator, limit);
             }
             var output = [],
-            flags = (separator.ignoreCase ? "i" : "") +
-                (separator.multiline  ? "m" : "") +
-                (separator.extended   ? "x" : "") + // Proposed for ES6
-                (separator.sticky     ? "y" : ""), // Firefox 3+
+                flags = (separator.ignoreCase ? "i" : "") +
+                (separator.multiline ? "m" : "") +
+                (separator.extended ? "x" : "") + // Proposed for ES6
+                (separator.sticky ? "y" : ""), // Firefox 3+
                 lastLastIndex = 0,
-            // Make `global` and avoid `lastIndex` issues by working with a copy
-            separator2, match, lastIndex, lastLength;
+                // Make `global` and avoid `lastIndex` issues by working with a copy
+                separator2,
+                match,
+                lastIndex,
+                lastLength;
             separator = new RegExp(separator.source, flags + "g");
             str += ""; // Type-convert
             if (!compliantExecNpcg) {
@@ -353,34 +364,34 @@
             // ? Math.pow(2, 32) - 1 : ToUint32(limit)
             limit = limit === undef ? -1 >>> 0 : limit >>> 0;
             while (match = separator.exec(str)) {
-                    // `separator.lastIndex` is not reliable cross-browser
-                    lastIndex = match.index + match[0].length;
-                    if (lastIndex > lastLastIndex) {
-                        output.push(str.slice(lastLastIndex, match.index));
-                        // Fix browsers whose `exec` methods don't consistently return `undefined` for
-                        // nonparticipating capturing groups
-                        if (!compliantExecNpcg && match.length > 1) {
-                            match[0].replace(separator2, function () {
-                                for (var i = 1; i < arguments.length - 2; i++) {
-                                    if (arguments[i] === undef) {
-                                        match[i] = undef;
-                                    }
+                // `separator.lastIndex` is not reliable cross-browser
+                lastIndex = match.index + match[0].length;
+                if (lastIndex > lastLastIndex) {
+                    output.push(str.slice(lastLastIndex, match.index));
+                    // Fix browsers whose `exec` methods don't consistently return `undefined` for
+                    // nonparticipating capturing groups
+                    if (!compliantExecNpcg && match.length > 1) {
+                        match[0].replace(separator2, function() {
+                            for (var i = 1; i < arguments.length - 2; i++) {
+                                if (arguments[i] === undef) {
+                                    match[i] = undef;
                                 }
-                            });
-                        }
-                        if (match.length > 1 && match.index < str.length) {
-                            Array.prototype.push.apply(output, match.slice(1));
-                        }
-                        lastLength = match[0].length;
-                        lastLastIndex = lastIndex;
-                        if (output.length >= limit) {
-                            break;
-                        }
+                            }
+                        });
                     }
-                    if (separator.lastIndex === match.index) {
-                        separator.lastIndex++; // Avoid an infinite loop
+                    if (match.length > 1 && match.index < str.length) {
+                        Array.prototype.push.apply(output, match.slice(1));
+                    }
+                    lastLength = match[0].length;
+                    lastLastIndex = lastIndex;
+                    if (output.length >= limit) {
+                        break;
                     }
                 }
+                if (separator.lastIndex === match.index) {
+                    separator.lastIndex++; // Avoid an infinite loop
+                }
+            }
             if (lastLastIndex === str.length) {
                 if (lastLength || !separator.test("")) {
                     output.push("");
@@ -392,7 +403,7 @@
         };
 
         // For convenience
-        String.prototype.split = function (separator, limit) {
+        String.prototype.split = function(separator, limit) {
             return self(this, separator, limit);
         };
 
@@ -469,7 +480,8 @@
             }
         });
     }
-    // -----------------------------------------------------------------------
+
+// -----------------------------------------------------------------------
     // :: STACK DATA STRUCTURE
     // -----------------------------------------------------------------------
     function Stack(init) {
@@ -496,91 +508,94 @@
             }
         });
     }
-    // serialize object myself (biwascheme or prototype library do something
+
+// serialize object myself (biwascheme or prototype library do something
     // wiked with JSON serialization for Arrays)
     $.json_stringify = function(object, level) {
-        var result = '', i;
+        var result = "", i;
         level = level === undefined ? 1 : level;
         var type = typeof object;
         switch (type) {
-        case 'function':
+        case "function":
             result += object;
             break;
-        case 'boolean':
-            result += object ? 'true' : 'false';
+        case "boolean":
+            result += object ? "true" : "false";
             break;
-        case 'object':
+        case "object":
             if (object === null) {
-                result += 'null';
+                result += "null";
             } else if (object instanceof Array) {
-                result += '[';
+                result += "[";
                 var len = object.length;
                 for (i = 0; i < len - 1; ++i) {
                     result += $.json_stringify(object[i], level + 1);
                 }
-                result += $.json_stringify(object[len - 1], level + 1) + ']';
+                result += $.json_stringify(object[len - 1], level + 1) + "]";
             } else {
-                result += '{';
+                result += "{";
                 for (var property in object) {
                     if (object.hasOwnProperty(property)) {
-                        result += '"' + property + '":' +
+                        result += "\"" + property + "\":" +
                             $.json_stringify(object[property], level + 1);
                     }
                 }
-                result += '}';
+                result += "}";
             }
             break;
-        case 'string':
+        case "string":
             var str = object;
             var repl = {
-                '\\\\': '\\\\',
-                '"': '\\"',
-                '/': '\\/',
-                '\\n': '\\n',
-                '\\r': '\\r',
-                '\\t': '\\t'};
+                '\\\\': "\\\\",
+                '"': "\\\"",
+                '/': "\\/",
+                '\\n': "\\n",
+                '\\r': "\\r",
+                '\\t': "\\t"
+            };
             for (i in repl) {
                 if (repl.hasOwnProperty(i)) {
-                    str = str.replace(new RegExp(i, 'g'), repl[i]);
+                    str = str.replace(new RegExp(i, "g"), repl[i]);
                 }
             }
-            result += '"' + str + '"';
+            result += "\"" + str + "\"";
             break;
-        case 'number':
+        case "number":
             result += String(object);
             break;
         }
-        result += (level > 1 ? ',' : '');
+        result += (level > 1 ? "," : "");
         // quick hacks below
         if (level === 1) {
             // fix last comma
-            result = result.replace(/,([\]}])/g, '$1');
+            result = result.replace(/,([\]}])/g, "$1");
         }
         // fix comma before array or object
-        return result.replace(/([\[{]),/g, '$1');
+        return result.replace(/([\[{]),/g, "$1");
     };
-    // -----------------------------------------------------------------------
+
+// -----------------------------------------------------------------------
     // :: HISTORY CLASS
     // -----------------------------------------------------------------------
     function History(name, size) {
         var enabled = true;
-        if (typeof name === 'string' && name !== '') {
-            name += '_';
+        if (typeof name === "string" && name !== "") {
+            name += "_";
         }
-        var data = $.Storage.get(name + 'commands');
-        data = data ? new Function('return ' + data + ';')() : [];
-        var pos = data.length-1;
+        var data = $.Storage.get(name + "commands");
+        data = data ? new Function("return " + data + ";")() : [];
+        var pos = data.length - 1;
 
         $.extend(this, {
             append: function(item) {
                 if (enabled) {
-                    if (data[data.length-1] !== item) {
+                    if (data[data.length - 1] !== item) {
                         data.push(item);
-                        pos = data.length-1;
+                        pos = data.length - 1;
                         if (size && data.length > size) {
                             data = data.slice(-size);
                         }
-                        $.Storage.set(name + 'commands', $.json_stringify(data));
+                        $.Storage.set(name + "commands", $.json_stringify(data));
                     }
                 }
             },
@@ -588,7 +603,7 @@
                 return data;
             },
             next: function() {
-                if (pos < data.length-1) {
+                if (pos < data.length - 1) {
                     ++pos;
                 }
                 if (pos !== -1) {
@@ -596,13 +611,13 @@
                 }
             },
             reset: function() {
-                pos = data.length-1;
+                pos = data.length - 1;
             },
             last: function() {
-                return data[length-1];
+                return data[length - 1];
             },
             end: function() {
-                return pos === data.length-1;
+                return pos === data.length - 1;
             },
             position: function() {
                 return pos;
@@ -618,7 +633,7 @@
             },
             clear: function() {
                 data = [];
-                $.Storage.remove(name + 'commands');
+                $.Storage.remove(name + "commands");
             },
             enable: function() {
                 enabled = true;
@@ -628,47 +643,51 @@
             }
         });
     }
-    // -----------------------------------------------------------------------
+
+// -----------------------------------------------------------------------
     // :: COMMAND LINE PLUGIN
     // -----------------------------------------------------------------------
     $.fn.cmd = function(options) {
         var self = this;
-        self.addClass('cmd');
-        self.append('<span class="prompt"></span><span></span>' +
-                    '<span class="cursor">&nbsp;</span><span></span>');
-        var clip = $('<textarea/>').addClass('clipboard').appendTo(self);
+        self.addClass("cmd");
+        self.append("<span class=\"prompt\"></span><span></span>" +
+            "<span class=\"cursor\">&nbsp;</span><span></span>");
+        var clip = $("<textarea/>").addClass("clipboard").appendTo(self);
         if (options.width) {
             self.width(options.width);
         }
         var num_chars; // calculates by draw_prompt
         var prompt_len;
         var reverse_search = false;
-        var reverse_search_string = '';
+        var reverse_search_string = "";
         var reverse_search_position = null;
         var backup_prompt;
         var mask = options.mask || false;
-        var command = '';
+        var command = "";
         var position = 0;
         var prompt;
         var enabled = options.enabled;
         var historySize = options.historySize || 60;
         var name, history;
-        var cursor = self.find('.cursor');
+        var cursor = self.find(".cursor");
 
         function blink(i) {
-            cursor.toggleClass('inverted');
+            cursor.toggleClass("inverted");
         }
+
         function draw_reverse_prompt() {
             prompt = "(reverse-i-search)`" + reverse_search_string + "': ";
             draw_prompt();
         }
+
         function clear_reverse_state() {
             prompt = backup_prompt;
             reverse_search = false;
             reverse_search_position = null;
-            reverse_search_string = '';
+            reverse_search_string = "";
         }
-        // if next is not defined or false it search for first item from the end
+
+// if next is not defined or false it search for first item from the end
         // if true it search for next item
         function reverse_history_search(next) {
             var history_data = history.data();
@@ -678,9 +697,9 @@
                 len -= reverse_search_position;
             }
             if (reverse_search_string.length > 0) {
-                for (var j=reverse_search_string.length; j>0; j--) {
-                    regex = new RegExp('^' + reverse_search_string.substring(0, j));
-                    for (var i=len; i--;) {
+                for (var j = reverse_search_string.length; j > 0; j--) {
+                    regex = new RegExp("^" + reverse_search_string.substring(0, j));
+                    for (var i = len; i--;) {
                         if (regex.test(history_data[i])) {
                             reverse_search_position = history_data.length - i;
                             position = 0;
@@ -702,29 +721,33 @@
             var w = cursor.innerWidth();
             num_chars = Math.floor(W / w);
         }
+
         function str_repeat(str, n) {
-            var result = '';
+            var result = "";
             for (var i = n; i--;) {
                 result += str;
             }
             return result;
         }
+
         function get_splited_command_line(string) {
             var first = string.substring(0, num_chars - prompt_len);
             var rest = string.substring(num_chars - prompt_len);
             return [first].concat(str_parts(rest, num_chars));
         }
+
         var redraw = (function(self) {
             var before = cursor.prev();
             var after = cursor.next();
+
             function draw_cursor_line(string, position) {
                 var len = string.length;
                 if (position === len) {
                     before.html($.terminal.encode(string));
-                    cursor.html('&nbsp;');
-                    after.html('');
+                    cursor.html("&nbsp;");
+                    after.html("");
                 } else if (position === 0) {
-                    before.html('');
+                    before.html("");
                     //fix for tilda in IE
                     cursor.html($.terminal.encode(string.slice(0, 1)));
                     //cursor.html($.terminal.encode(string[0]));
@@ -735,35 +758,39 @@
                     //fix for tilda in IE
                     var c = string.slice(position, position + 1);
                     //cursor.html(string[position]));
-                    cursor.html(c === ' ' ? '&nbsp;' : $.terminal.encode(c));
+                    cursor.html(c === " " ? "&nbsp;" : $.terminal.encode(c));
                     if (position === string.length - 1) {
-                        after.html('');
+                        after.html("");
                     } else {
                         after.html($.terminal.encode(string.slice(position + 1)));
                     }
                 }
             }
+
             function div(string) {
-                return '<div>' + $.terminal.encode(string) + '</div>';
+                return "<div>" + $.terminal.encode(string) + "</div>";
             }
+
             function lines_after(lines) {
                 var last_ins = after;
                 $.each(lines, function(i, line) {
                     last_ins = $(div(line)).insertAfter(last_ins).
-                        addClass('clear');
+                        addClass("clear");
                 });
             }
+
             function lines_before(lines) {
                 $.each(lines, function(i, line) {
                     before.before(div(line));
                 });
             }
+
             var count = 0;
             return function() {
-                var string = mask ? command.replace(/./g, '*') : command;
+                var string = mask ? command.replace(/./g, "*") : command;
                 var i, first_len;
-                self.find('div').remove();
-                before.html('');
+                self.find("div").remove();
+                before.html("");
                 // long line
                 if (string.length > num_chars - prompt_len - 1 ||
                     string.match(/\n/)) {
@@ -772,15 +799,15 @@
                     var tabs_rm = tabs ? tabs.length * 3 : 0;
                     //quick tabulation hack
                     if (tabs) {
-                        string = string.replace(/\t/g, '\x00\x00\x00\x00');
+                        string = string.replace(/\t/g, "\x00\x00\x00\x00");
                     }
                     // command contain new line characters
                     if (string.match(/\n/)) {
                         var tmp = string.split("\n");
                         first_len = num_chars - prompt_len - 1;
                         // empty character after each line
-                        for (i=0; i<tmp.length-1; ++i) {
-                            tmp[i] += ' ';
+                        for (i = 0; i < tmp.length - 1; ++i) {
+                            tmp[i] += " ";
                         }
                         // split first line
                         if (tmp[0].length > first_len) {
@@ -790,7 +817,7 @@
                             array = [tmp[0]];
                         }
                         // process rest of the lines
-                        for (i=1; i<tmp.length; ++i) {
+                        for (i = 1; i < tmp.length; ++i) {
                             if (tmp[i].length > num_chars) {
                                 array = array.concat(str_parts(tmp[i], num_chars));
                             } else {
@@ -802,7 +829,7 @@
                     }
                     if (tabs) {
                         array = $.map(array, function(line) {
-                            return line.replace(/\x00\x00\x00\x00/g, '\t');
+                            return line.replace(/\x00\x00\x00\x00/g, "\t");
                         });
                     }
                     first_len = array[0].length;
@@ -831,23 +858,23 @@
                             var pos = 0;
                             if (from_last <= last_len) {
                                 lines_before(array.slice(0, -1));
-                                pos = last_len === from_last ? 0 : last_len-from_last;
-                                draw_cursor_line(last, pos+tabs_rm);
+                                pos = last_len === from_last ? 0 : last_len - from_last;
+                                draw_cursor_line(last, pos + tabs_rm);
                             } else {
                                 // in the middle
                                 if (num_lines === 3) {
-                                    before.before('<div>' + $.terminal.encode(array[0]) +
-                                                  '</div>');
-                                    draw_cursor_line(array[1], position-first_len-1);
-                                    after.after('<div class="clear">' +
-                                                $.terminal.encode(array[2]) +
-                                                '</div>');
+                                    before.before("<div>" + $.terminal.encode(array[0]) +
+                                        "</div>");
+                                    draw_cursor_line(array[1], position - first_len - 1);
+                                    after.after("<div class=\"clear\">" +
+                                        $.terminal.encode(array[2]) +
+                                        "</div>");
                                 } else {
                                     // more lines, cursor in the middle
                                     var line_index;
                                     var current;
                                     pos = position;
-                                    for (i=0; i<array.length; ++i) {
+                                    for (i = 0; i < array.length; ++i) {
                                         var current_len = array[i].length;
                                         if (pos > current_len) {
                                             pos -= current_len;
@@ -864,27 +891,27 @@
                                     }
                                     draw_cursor_line(current, pos);
                                     lines_before(array.slice(0, line_index));
-                                    lines_after(array.slice(line_index+1));
+                                    lines_after(array.slice(line_index + 1));
                                 }
                             }
                         }
                     }
                 } else {
-                     if (string === '') {
-                         before.html('');
-                         cursor.html('&nbsp;');
-                         after.html('');
-                     } else {
-                         draw_cursor_line(string, position);
-                     }
+                    if (string === "") {
+                        before.html("");
+                        cursor.html("&nbsp;");
+                        after.html("");
+                    } else {
+                        draw_cursor_line(string, position);
+                    }
                 }
             };
         })(self);
         var last_command;
         var draw_prompt = (function() {
-            var prompt_node = self.find('.prompt');
+            var prompt_node = self.find(".prompt");
             return function() {
-                if (typeof prompt === 'string') {
+                if (typeof prompt === "string") {
                     prompt_len = skipFormattingCount(prompt);
                     prompt_node.html($.terminal.format(prompt));
                 } else {
@@ -896,18 +923,20 @@
                 //change_num_chars();
             };
         })();
-        // paste content to terminal using hidden textarea
+
+// paste content to terminal using hidden textarea
         function paste() {
             clip.focus();
             //wait until Browser insert text to textarea
             self.oneTime(1, function() {
                 self.insert(clip.val());
-                clip.blur().val('');
+                clip.blur().val("");
             });
         }
-        //var prevent_keypress = false;
+
+//var prevent_keypress = false;
         function keydown_event(e) {
-            if (typeof options.keydown == 'function') {
+            if (typeof options.keydown == "function") {
                 var result = options.keydown(e);
                 if (result !== undefined) {
                     //prevent_keypress = true;
@@ -918,13 +947,13 @@
                 var pos, len, result;
                 // arrows / Home / End / ENTER
                 if (reverse_search && (e.which === 35 || e.which === 36 ||
-                                       e.which === 37 || e.which === 38 ||
-                                       e.which === 39 || e.which === 40 ||
-                                       e.which === 13 || e.which === 27)) {
+                    e.which === 37 || e.which === 38 ||
+                    e.which === 39 || e.which === 40 ||
+                    e.which === 13 || e.which === 27)) {
                     clear_reverse_state();
                     draw_prompt();
                     if (e.which === 27) { // ESC
-                        command = '';
+                        command = "";
                     }
                     redraw();
                     // finish reverse search and execute normal event handler
@@ -934,43 +963,43 @@
                     // need to check for alt first
                     //if (e.which === 18) { // press ALT
                     if (e.which === 68) { //ALT+D
-                        var regex  = /[^ ]+ |[^ ]+$/;
+                        var regex = /[^ ]+ |[^ ]+$/;
                         self.set(command.slice(0, position) +
-                                 command.slice(position).replace(regex, ''),
-                                 true);
+                            command.slice(position).replace(regex, ""),
+                            true);
                         // chrome jump to address bar
                         return false;
                     }
                     return true;
                 } else if (e.keyCode === 13) { //enter
                     if ((history && command) &&
-                        ((options.historyFilter &&
-                         options.historyFilter(command)) ||
-                         !options.historyFilter)) {
+                    ((options.historyFilter &&
+                            options.historyFilter(command)) ||
+                        !options.historyFilter)) {
                         history.append(command);
                     }
                     var tmp = command;
                     history.reset();
-                    self.set('');
+                    self.set("");
                     if (options.commands) {
                         options.commands(tmp);
                     }
-                    if (typeof prompt === 'function') {
+                    if (typeof prompt === "function") {
                         draw_prompt();
                     }
                 } else if (e.which === 32) { //space
                     if (reverse_search) {
-                        reverse_search_string += ' ';
+                        reverse_search_string += " ";
                         draw_reverse_prompt();
                     } else {
-                        self.insert(' ');
+                        self.insert(" ");
                     }
                 } else if (e.which === 8) { //backspace
                     if (reverse_search) {
                         reverse_search_string = reverse_search_string.slice(0, -1);
                         draw_reverse_prompt();
                     } else {
-                        if (command !== '' && position > 0) {
+                        if (command !== "" && position > 0) {
                             command = command.slice(0, position - 1) +
                                 command.slice(position, command.length);
                             --position;
@@ -978,43 +1007,43 @@
                         }
                     }
                 } else if (e.which === 9 && !(e.ctrlKey || e.altKey)) { // TAB
-                    self.insert('\t');
+                    self.insert("\t");
                 } else if (e.which === 27) { // Esc
-                    command = '';
+                    command = "";
                     redraw();
                 } else if (e.which === 46) {
                     //DELETE
-                    if (command !== '' && position < command.length) {
+                    if (command !== "" && position < command.length) {
                         command = command.slice(0, position) +
                             command.slice(position + 1, command.length);
                         redraw();
                     }
                     return true;
                 } else if (history && e.which === 38 ||
-                           (e.which === 80 && e.ctrlKey)) {
+                (e.which === 80 && e.ctrlKey)) {
                     //UP ARROW or CTRL+P
                     if (history.end()) {
                         last_command = command;
                     }
                     self.set(history.previous());
                 } else if (history && e.which === 40 ||
-                           (e.which === 78 && e.ctrlKey)) {
+                (e.which === 78 && e.ctrlKey)) {
                     //DOWN ARROW or CTRL+N
                     self.set(history.end() ? last_command : history.next());
                 } else if (e.which === 37 ||
-                           (e.which === 66 && e.ctrlKey)) {
+                (e.which === 66 && e.ctrlKey)) {
                     //CTRL+LEFT ARROW or CTRL+B
                     if (e.ctrlKey && e.which !== 66) {
                         len = position - 1;
                         pos = 0;
-                        if (command[len] === ' ') {
+                        if (command[len] === " ") {
                             --len;
                         }
                         for (var i = len; i > 0; --i) {
-                            if (command[i] === ' ' && command[i+1] !== ' ') {
+                            if (command[i] === " " && command[i + 1] !== " ") {
                                 pos = i + 1;
                                 break;
-                            } else if (command[i] === '\n' && command[i+1] !== '\n') {
+                            } else if (command[i] === "\n" && command[i + 1] !== "\n") {
                                 pos = i;
                                 break;
                             }
@@ -1034,7 +1063,7 @@
                         backup_prompt = prompt;
                         draw_reverse_prompt();
                         last_command = command;
-                        command = '';
+                        command = "";
                         redraw();
                         reverse_search = true;
                     }
@@ -1047,22 +1076,22 @@
                         reverse_search = false;
                     }
                 } else if (e.which === 39 ||
-                           (e.which === 70 && e.ctrlKey)) {
+                (e.which === 70 && e.ctrlKey)) {
                     //RIGHT ARROW OR CTRL+F
                     if (e.ctrlKey && e.which !== 70) {
                         // jump to beginig or end of the word
-                        if (command[position] === ' ') {
+                        if (command[position] === " ") {
                             ++position;
                         }
                         var match = command.slice(position).match(/\S[\n\s]{2,}|[\n\s]+\S?/);
                         if (!match || match[0].match(/^\s+$/)) {
                             position = command.length;
                         } else {
-                            if (match[0][0] !== ' ') {
+                            if (match[0][0] !== " ") {
                                 position += match.index + 1;
                             } else {
                                 position += match.index + match[0].length - 1;
-                                if (match[0][match[0].length-1] !== ' ') {
+                                if (match[0][match[0].length - 1] !== " ") {
                                     --position;
                                 }
                             }
@@ -1090,28 +1119,28 @@
                             //CTRL+SHIFT+T open closed tab
                             return true;
                         }
-                    //} else if (e.altKey) { //ALT+CTRL+??
+                        //} else if (e.altKey) { //ALT+CTRL+??
                     } else {
                         if (e.which === 87) { // CTRL+W
-                            if (command !== '') {
+                            if (command !== "") {
                                 var first = command.slice(0, position);
-                                var last = command.slice(position+1);
+                                var last = command.slice(position + 1);
                                 var m = first.match(/([^ ]+ *$)/);
-                                position = first.length-m[0].length;
+                                position = first.length - m[0].length;
                                 command = first.slice(0, position) + last;
                                 redraw();
                             }
                             return false;
                         } else if (e.which === 72) { // CTRL+H
-                            if (command !== '' && position > 0) {
+                            if (command !== "" && position > 0) {
                                 command = command.slice(0, --position);
-                                if (position < command.length-1) {
+                                if (position < command.length - 1) {
                                     command += command.slice(position);
                                 }
                                 redraw();
                             }
                             return false;
-                        //NOTE: in opera charCode is undefined
+                            //NOTE: in opera charCode is undefined
                         } else if (e.which === 65) {
                             //CTRL+A
                             self.position(0);
@@ -1128,7 +1157,7 @@
                         } else if (e.which === 75) {
                             //CTRL+K
                             if (position === 0) {
-                                self.set('');
+                                self.set("");
                             } else if (position !== command.length) {
                                 self.set(command.slice(0, position));
                             }
@@ -1153,6 +1182,7 @@
                 }
             } */
         }
+
         $.extend(self, {
             name: function(string) {
                 if (string !== undefined) {
@@ -1172,7 +1202,7 @@
                         position = command.length;
                     }
                     redraw();
-                    if (typeof options.onCommandChange === 'function') {
+                    if (typeof options.onCommandChange === "function") {
                         options.onCommandChange(command);
                     }
                 }
@@ -1190,7 +1220,7 @@
                     position += string.length;
                 }
                 redraw();
-                if (typeof options.onCommandChange === 'function') {
+                if (typeof options.onCommandChange === "function") {
                     options.onCommandChange(command);
                 }
             },
@@ -1205,18 +1235,18 @@
                 }
             },
             destroy: function() {
-                $(document.documentElement).unbind('.commandline');
-                self.find('.prompt').remove();
+                $(document.documentElement).unbind(".commandline");
+                self.find(".prompt").remove();
             },
             prompt: function(user_prompt) {
                 if (user_prompt === undefined) {
                     return prompt;
                 } else {
-                    if (typeof user_prompt === 'string' ||
-                        typeof user_prompt === 'function') {
+                    if (typeof user_prompt === "string" ||
+                        typeof user_prompt === "function") {
                         prompt = user_prompt;
                     } else {
-                        throw 'prompt must be a function or string';
+                        throw "prompt must be a function or string";
                     }
                     draw_prompt();
                     // we could check if command is longer then numchars-new prompt
@@ -1224,7 +1254,7 @@
                 }
             },
             position: function(n) {
-                if (typeof n === 'number') {
+                if (typeof n === "number") {
                     position = n < 0 ? 0 : n > command.length ? command.length : n;
                     redraw();
                 } else {
@@ -1257,8 +1287,8 @@
             },
             enable: function() {
                 if (!enabled) {
-                    cursor.addClass('inverted');
-                    self.everyTime(500, 'blink', blink);
+                    cursor.addClass("inverted");
+                    self.everyTime(500, "blink", blink);
                     enabled = true;
                 }
             },
@@ -1267,13 +1297,13 @@
             },
             disable: function() {
                 if (enabled) {
-                    self.stopTime('blink', blink);
-                    cursor.removeClass('inverted');
+                    self.stopTime("blink", blink);
+                    cursor.removeClass("inverted");
                     enabled = false;
                 }
             },
             mask: function(display) {
-                if (typeof display === 'boolean') {
+                if (typeof display === "boolean") {
                     mask = display;
                     redraw();
                 } else {
@@ -1282,8 +1312,8 @@
             }
         });
         // INIT
-        self.name(options.name || '');
-        prompt = options.prompt || '> ';
+        self.name(options.name || "");
+        prompt = options.prompt || "> ";
         draw_prompt();
         if (options.enabled === undefined || options.enabled === true) {
             self.enable();
@@ -1301,7 +1331,7 @@
             if (e.ctrlKey && e.which === 99) { // CTRL+C
                 return true;
             }
-            if (!reverse_search && typeof options.keypress === 'function') {
+            if (!reverse_search && typeof options.keypress === "function") {
                 result = options.keypress(e);
             }
             if (result === undefined || result) {
@@ -1343,13 +1373,15 @@
     // :: TOOLS
     // -------------------------------------------------------------------------
     function skipFormattingCount(string) {
-        return $('<div>' + $.terminal.strip(string) + '</div>').text().length;
+        return $("<div>" + $.terminal.strip(string) + "</div>").text().length;
     }
-    // -------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------
     function formattingCount(string) {
         return string.length - skipFormattingCount(string);
     }
-    // -------------------------------------------------------------------------
+
+// -------------------------------------------------------------------------
     var format_split_re = /(\[\[[gbius]*;[^;]*;[^\]]*\](?:[^\]]*\\\][^\]]*|[^\]]*|[^\[]*\[[^\]]*)\]?)/;
     var format_re = /\[\[([gbius]*);([^;]*);([^;\]]*;|[^\]]*);?([^;\]]*;|[^\]]*);?([^\]]*)\]([^\]]*\\\][^\]]*|[^\]]*|[^\[]*\[[^\]]*)\]?/g;
     var format_re = /\[\[([gbius]*);([^;]*);([^;\]]*);?([^;\]]*);?([^\]]*)\]([^\]]*\\\][^\]]*|[^\]]*|[^\[]*\[[^\]]*)\]?/g;
@@ -1367,27 +1399,27 @@
             var formatting = false;
             var in_text = false;
             var braket = 0;
-            var prev_format = '';
+            var prev_format = "";
             var result = [];
             var array = str.replace(re_format, function(_, format, text) {
                 var semicolons = format.match(/;/g).length;
                 // missing semicolons
                 if (semicolons == 2) {
-                    semicolons = ';;';
+                    semicolons = ";;";
                 } else if (semicolons == 3) {
-                    semicolons = ';';
+                    semicolons = ";";
                 } else {
-                    semicolons = '';
+                    semicolons = "";
                 }
                 //return '[[' + format + ']' + text + ']';
                 // closing braket will break formatting
-                return '[[' + format + semicolons +
-                    text.replace(/\\\]/g, '&#93;').replace(/\n/g, '\\n') + ']' +
-                    text + ']';
+                return "[[" + format + semicolons +
+                    text.replace(/\\\]/g, "&#93;").replace(/\n/g, "\\n") + "]" +
+                    text + "]";
             }).split(/\n/g);
             for (var i = 0, len = array.length; i < len; ++i) {
-                if (array[i] === '') {
-                    result.push('');
+                if (array[i] === "") {
+                    result.push("");
                     continue;
                 }
                 /*
@@ -1403,10 +1435,10 @@
                 var line = array[i];
                 var first_index = 0;
                 var count = 0;
-                for (var j=0, jlen=line.length; j<jlen; ++j) {
-                    if (line[j] === '[' && line[j+1] === '[') {
+                for (var j = 0, jlen = line.length; j < jlen; ++j) {
+                    if (line[j] === "[" && line[j + 1] === "[") {
                         formatting = true;
-                    } else if (formatting && line[j] === ']') {
+                    } else if (formatting && line[j] === "]") {
                         if (in_text) {
                             formatting = false;
                             in_text = false;
@@ -1414,44 +1446,44 @@
                             in_text = true;
                         }
                     } else if ((formatting && in_text) || !formatting) {
-                        if (line[j] === '&') { // treat entity as one character
+                        if (line[j] === "&") { // treat entity as one character
                             var m = line.substring(j).match(/^(&[^;]+;)/);
                             if (!m) {
                                 throw "Unclosed html entity at char " + j;
                             }
-                            j+=m[1].length-2; // because contine add 1 to j
+                            j += m[1].length - 2; // because contine add 1 to j
                             // if entity is at the end there is no next loop - issue #77
-                            if (j === jlen-1) {
+                            if (j === jlen - 1) {
                                 result.push(output_line + m[1]);
                             }
                             continue;
-                        } else if (line[j] === ']' && line[j-1] === '\\') {
+                        } else if (line[j] === "]" && line[j - 1] === "\\") {
                             // escape \] count as one character
                             --count;
                         } else {
                             ++count;
                         }
                     }
-                    if (count === length || j === jlen-1) {
-                        var output_line = line.substring(first_index, j+1);
+                    if (count === length || j === jlen - 1) {
+                        var output_line = line.substring(first_index, j + 1);
                         if (prev_format) {
                             output_line = prev_format + output_line;
-                            if (output_line.match(']')) {
-                                prev_format = '';
+                            if (output_line.match("]")) {
+                                prev_format = "";
                             }
                         }
-                        first_index = j+1;
+                        first_index = j + 1;
                         count = 0;
                         var matched = output_line.match(re_format);
                         if (matched) {
-                            var last = matched[matched.length-1];
-                            if (last[last.length-1] !== ']') {
+                            var last = matched[matched.length - 1];
+                            if (last[last.length - 1] !== "]") {
                                 prev_format = last.match(re_begin)[1];
-                                output_line += ']';
+                                output_line += "]";
                             } else if (output_line.match(re_last)) {
                                 var line_len = output_line.length;
-                                var f_len = line_len - last[last.length-1].length;
-                                output_line = output_line.replace(re_last, '');
+                                var f_len = line_len - last[last.length - 1].length;
+                                output_line = output_line.replace(re_last, "");
                                 prev_format = last.match(re_begin)[1];
                             }
                         }
@@ -1464,90 +1496,90 @@
         // encode formating as html for inserto into DOM
         encode: function(str) {
             // don't escape entities
-            return str.replace(/&(?!#[0-9]+;|[a-zA-Z]+;)/g, '&amp;')
-                      .replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                        // I don't think that it find \n
-                      .replace(/\n/g, '<br/>')
-                      .replace(/ /g, '&nbsp;')
-                      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+            return str.replace(/&(?!#[0-9]+;|[a-zA-Z]+;)/g, "&amp;")
+                .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                // I don't think that it find \n
+                .replace(/\n/g, "<br/>")
+                .replace(/ /g, "&nbsp;")
+                .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
         },
         format: function(str) {
-            if (typeof str === 'string') {
+            if (typeof str === "string") {
                 str = $.terminal.encode($.terminal.from_ansi(str));
                 //support for formating foo[[u;;]bar]baz[[b;#fff;]quux]zzz
                 var splited = str.split(format_split_re);
                 if (splited && splited.length > 1) {
                     str = $.map(splited, function(text) {
-                        if (text === '') {
+                        if (text === "") {
                             return text;
-                        } else if (text.substring(0,1) === '[') {
+                        } else if (text.substring(0, 1) === "[") {
                             // use substring for IE quirks mode - [0] don't work
                             return text.replace(format_re, function(s,
-                                                                    style,
-                                                                    color,
-                                                                    background,
-                                                                    _class,
-                                                                    data_text,
-                                                                    text) {
-                                if (text === '') {
-                                    return '<span>&nbsp;</span>';
+                                style,
+                                color,
+                                background,
+                                _class,
+                                data_text,
+                                text) {
+                                if (text === "") {
+                                    return "<span>&nbsp;</span>";
                                 }
-                                text = text.replace(/\\]/g, ']');
-                                var style_str = '';
-                                if (style.indexOf('b') !== -1) {
-                                    style_str += 'font-weight:bold;';
+                                text = text.replace(/\\]/g, "]");
+                                var style_str = "";
+                                if (style.indexOf("b") !== -1) {
+                                    style_str += "font-weight:bold;";
                                 }
-                                var text_decoration = 'text-decoration:';
-                                if (style.indexOf('u') !== -1) {
-                                    text_decoration += 'underline ';
+                                var text_decoration = "text-decoration:";
+                                if (style.indexOf("u") !== -1) {
+                                    text_decoration += "underline ";
                                 }
-                                if (style.indexOf('s') !== -1) {
-                                    text_decoration += 'line-through';
+                                if (style.indexOf("s") !== -1) {
+                                    text_decoration += "line-through";
                                 }
-                                if (style.indexOf('s') !== -1 ||
-                                    style.indexOf('u') !== -1) {
-                                    style_str += text_decoration + ';';
+                                if (style.indexOf("s") !== -1 ||
+                                    style.indexOf("u") !== -1) {
+                                    style_str += text_decoration + ";";
                                 }
-                                if (style.indexOf('i') !== -1) {
-                                    style_str += 'font-style:italic;';
+                                if (style.indexOf("i") !== -1) {
+                                    style_str += "font-style:italic;";
                                 }
                                 if (color.match(color_hex_re)) {
-                                    style_str += 'color:' + color + ';';
-                                    if (style.indexOf('g') !== -1) {
-                                        style_str += 'text-shadow: 0 0 5px ' + color + ';';
+                                    style_str += "color:" + color + ";";
+                                    if (style.indexOf("g") !== -1) {
+                                        style_str += "text-shadow: 0 0 5px " + color + ";";
                                     }
                                 }
                                 if (background.match(color_hex_re)) {
-                                    style_str += 'background-color:' + background;
+                                    style_str += "background-color:" + background;
                                 }
-                                var result = '<span style="' + style_str + '"' + (_class !== '' ? ' class="' + _class + '"' : '') + ' data-text="'+ (data_text==='' ? text : data_text.replace(/&#93;/g, ']')).replace('"', '&quote;') + '">' + text + '</span>';
+                                var result = "<span style=\"" + style_str + "\"" + (_class !== "" ? " class=\"" + _class + "\"" : "") + " data-text=\"" + (data_text === "" ? text : data_text.replace(/&#93;/g, "]")).replace("\"", "&quote;") + "\">" + text + "</span>";
                                 return result;
                             });
                         } else {
-                            return '<span>' + text + '</span>';
+                            return "<span>" + text + "</span>";
                         }
-                    }).join('');
+                    }).join("");
                 }
                 return $.map(str.split(/(<\/?span[^>]*>)/g), function(string) {
                     if (!string.match(/span/)) {
                         return string.replace(url_re, function(link) {
-                            var comma = link.match(/\.$/);
-                            link = link.replace(/\.$/, '');
-                            return '<a target="_blank" href="' + link + '">' + link + '</a>' +
-                                (comma ? '.' : '');
-                        }).replace(email_regex, '<a href="mailto:$1">$1</a>')
-                           .replace(guid_re, "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id=$1)')\" href=\"#\">$1</a>");
+                                var comma = link.match(/\.$/);
+                                link = link.replace(/\.$/, "");
+                                return "<a target=\"_blank\" href=\"" + link + "\">" + link + "</a>" +
+                                (comma ? "." : "");
+                            }).replace(email_regex, "<a href=\"mailto:$1\">$1</a>")
+                            .replace(guid_re, "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id=$1)')\" href=\"#\">$1</a>");
                     } else {
                         return string;
                     }
-                }).join('').replace(/<span><br\/?><\/span>/g, '<br/>');
+                }).join("").replace(/<span><br\/?><\/span>/g, "<br/>");
             } else {
-                return '';
+                return "";
             }
         },
         // remove formatting from text
         strip: function(str) {
-            return str.replace(format_re, '$6');
+            return str.replace(format_re, "$6");
         },
         // return active terminal
         active: function() {
@@ -1555,60 +1587,61 @@
         },
         ansi_colors: {
             normal: {
-                black: '#000',
-                red: '#AA0000',
-                green: '#008400',
-                yellow: '#AA5500',
-                blue: '#0000AA',
-                magenta: '#AA00AA',
-                cyan: '#00AAAA',
-                white: '#fff'
+                black: "#000",
+                red: "#AA0000",
+                green: "#008400",
+                yellow: "#AA5500",
+                blue: "#0000AA",
+                magenta: "#AA00AA",
+                cyan: "#00AAAA",
+                white: "#fff"
             },
             bold: {
-                white: '#fff',
-                red: '#FF5555',
-                green: '#44D544',
-                yellow: '#FFFF55',
-                blue: '#5555FF',
-                magenta: '#FF55FF',
-                cyan: '#55FFFF',
-                black: '#000'
+                white: "#fff",
+                red: "#FF5555",
+                green: "#44D544",
+                yellow: "#FFFF55",
+                blue: "#5555FF",
+                magenta: "#FF55FF",
+                cyan: "#55FFFF",
+                black: "#000"
             }
         },
         from_ansi: (function() {
             var color = {
-                30:	'black',
-                31:	'red',
-                32:	'green',
-                33:	'yellow',
-                34:	'blue',
-                35:	'magenta',
-                36:	'cyan',
-                37:	'white'
+                30: "black",
+                31: "red",
+                32: "green",
+                33: "yellow",
+                34: "blue",
+                35: "magenta",
+                36: "cyan",
+                37: "white"
             };
             var background = {
-                40: 'black',
-                41: 'red',
-                42: 'green',
-                43: 'yellow',
-                44: 'blue',
-                45: 'magenta',
-                46: 'cyan',
-                47: 'white'
+                40: "black",
+                41: "red",
+                42: "green",
+                43: "yellow",
+                44: "blue",
+                45: "magenta",
+                46: "cyan",
+                47: "white"
             };
+
             function format_ansi(code) {
-                var controls = code.split(';');
+                var controls = code.split(";");
                 var num;
                 var styles = [];
-                var output_color = '';
-                var output_background = '';
-                for(var i in controls) {
+                var output_color = "";
+                var output_background = "";
+                for (var i in controls) {
                     num = parseInt(controls[i], 10);
                     if (num === 1) {
-                       styles.push('b');
+                        styles.push("b");
                     }
                     if (num === 4) {
-                       styles.push('u');
+                        styles.push("u");
                     }
                     if (background[num]) {
                         output_background = background[num];
@@ -1619,20 +1652,22 @@
                 }
                 var normal = $.terminal.ansi_colors.normal;
                 var colors = normal;
-                for (var i=styles.length;i--;) {
-                    if (styles[i] == 'b') {
-                        if (output_color == '') {
-                            output_color = 'white';
+                for (var i = styles.length; i--;) {
+                    if (styles[i] == "b") {
+                        if (output_color == "") {
+                            output_color = "white";
                         }
                         colors = $.terminal.ansi_colors.bold;
                         break;
                     }
                 }
-                return '[[' + [styles.join(''),
-                               colors[output_color],
-                               normal[output_background]
-                              ].join(';') + ']';
+                return "[[" + [
+                    styles.join(""),
+                    colors[output_color],
+                    normal[output_background]
+                ].join(";") + "]";
             }
+
             return function(input) {
                 var splitted = input.split(/(\[[0-9;]*m)/g);
                 if (splitted.length == 1) {
@@ -1640,19 +1675,19 @@
                 }
                 var output = [];
                 //skip closing at the begining
-                if (splitted.length > 3 && splitted.slice(0,3).join('') == '[0m') {
+                if (splitted.length > 3 && splitted.slice(0, 3).join("") == "[0m") {
                     splitted = splitted.slice(3);
                 }
                 var inside = false;
-                for (var i=0; i<splitted.length; ++i) {
+                for (var i = 0; i < splitted.length; ++i) {
                     var match = splitted[i].match(/^\[([0-9;]*)m$/);
                     if (match) {
-                        if (match[1] == '') {
+                        if (match[1] == "") {
                             continue;
                         }
                         if (inside) {
-                            output.push(']');
-                            if (match[1] == '0') {
+                            output.push("]");
+                            if (match[1] == "0") {
                                 //just closing
                                 inside = false;
                             } else {
@@ -1668,9 +1703,9 @@
                     }
                 }
                 if (inside) {
-                    output.push(']');
+                    output.push("]");
                 }
-                return output.join('');
+                return output.join("");
             };
         })()
     };
@@ -1679,61 +1714,73 @@
     // Helpers
     // -----------------------------------------------------------------------
     $.fn.visible = function() {
-        return this.css('visibility', 'visible');
+        return this.css("visibility", "visible");
     };
     $.fn.hidden = function() {
-        return this.css('visibility', 'hidden');
+        return this.css("visibility", "hidden");
     };
     // -----------------------------------------------------------------------
     // JSON-RPC CALL
     // -----------------------------------------------------------------------
     $.jrpc = function(url, id, method, params, success, error) {
         var request = $.json_stringify({
-           'jsonrpc': '2.0', 'method': method,
-            'params': params, 'id': id});
+            'jsonrpc': "2.0",
+            'method': method,
+            'params': params,
+            'id': id
+        });
         return $.ajax({
             url: url,
             data: request,
             success: success,
             error: error,
-            contentType: 'application/json',
-            dataType: 'json',
+            contentType: "application/json",
+            dataType: "json",
             async: true,
             cache: false,
             //timeout: 1,
-            type: 'POST'});
+            type: "POST"
+        });
     };
 
     // -----------------------------------------------------------------------
     // :: TERMINAL PLUGIN CODE
     // -----------------------------------------------------------------------
-    var version = '0.6.3';
-    var copyright = 'Copyright (c) 2011-2012 Jakub Jankiewicz <http://jcubic.pl>';
-    var version_string = 'version ' + version;
+    var version = "0.6.3";
+    var copyright = "Copyright (c) 2011-2012 Jakub Jankiewicz <http://jcubic.pl>";
+    var version_string = "version " + version;
     //regex is for placing version string aligned to the right
     var reg = new RegExp(" {" + version_string.length + "}$");
     var signatures = [
-        ['jQuery Terminal', '(c) 2011-2012 jcubic'],
-        ['jQuery Terminal Emulator v. ' + version,
-         copyright.replace(/ *<.*>/, '')],
-        ['jQuery Terminal Emulator version ' + version_string,
-         copyright],
-        ['      _______                 ________                        __',
-         '     / / _  /_ ____________ _/__  ___/______________  _____  / /',
-         ' __ / / // / // / _  / _/ // / / / _  / _/     / /  \\/ / _ \\/ /',
-         '/  / / // / // / ___/ // // / / / ___/ // / / / / /\\  / // / /__',
-         '\\___/____ \\\\__/____/_/ \\__ / /_/____/_//_/ /_/ /_/  \\/\\__\\_\\___/',
-         '         \\/          /____/                                   '.replace(reg, '') +
-         version_string,
-         copyright],
-        ['      __ _____                     ________                              __',
-         '     / // _  /__ __ _____ ___ __ _/__  ___/__ ___ ______ __ __  __ ___  / /',
-         ' __ / // // // // // _  // _// // / / // _  // _//     // //  \\/ // _ \\/ /',
-         '/  / // // // // // ___// / / // / / // ___// / / / / // // /\\  // // / /__',
-         '\\___//____ \\\\___//____//_/ _\\_  / /_//____//_/ /_/ /_//_//_/ /_/ \\__\\_\\___/',
-         '          \\/              /____/                                          '.replace(reg, '') +
-         version_string,
-         copyright]
+        ["jQuery Terminal", "(c) 2011-2012 jcubic"],
+        [
+            "jQuery Terminal Emulator v. " + version,
+            copyright.replace(/ *<.*>/, "")
+        ],
+        [
+            "jQuery Terminal Emulator version " + version_string,
+            copyright
+        ],
+        [
+            "      _______                 ________                        __",
+            "     / / _  /_ ____________ _/__  ___/______________  _____  / /",
+            " __ / / // / // / _  / _/ // / / / _  / _/     / /  \\/ / _ \\/ /",
+            "/  / / // / // / ___/ // // / / / ___/ // / / / / /\\  / // / /__",
+            "\\___/____ \\\\__/____/_/ \\__ / /_/____/_//_/ /_/ /_/  \\/\\__\\_\\___/",
+            "         \\/          /____/                                   ".replace(reg, "") +
+            version_string,
+            copyright
+        ],
+        [
+            "      __ _____                     ________                              __",
+            "     / // _  /__ __ _____ ___ __ _/__  ___/__ ___ ______ __ __  __ ___  / /",
+            " __ / // // // // // _  // _// // / / // _  // _//     // //  \\/ // _ \\/ /",
+            "/  / // // // // // ___// / / // / / // ___// / / / / // // /\\  // // / /__",
+            "\\___//____ \\\\___//____//_/ _\\_  / /_//____//_/ /_/ /_//_//_/ /_/ \\__\\_\\___/",
+            "          \\/              /____/                                          ".replace(reg, "") +
+            version_string,
+            copyright
+        ]
     ];
     // for canceling on CTRL+D
     var requests = [];
@@ -1742,46 +1789,49 @@
         function haveScrollbars() {
             return self.get(0).scrollHeight > self.innerHeight();
         }
-        //calculate numbers of characters
+
+//calculate numbers of characters
         function get_num_chars() {
-            var cursor = self.find('.cursor');
+            var cursor = self.find(".cursor");
             var cur_width = cursor.width();
             var result = Math.floor(self.width() / cur_width);
             if (haveScrollbars()) {
                 // assume that scrollbars are 20px - in my Laptop with
                 // Linux/Chrome they are 16px
                 var margins = self.innerWidth() - self.width();
-                result -= Math.ceil((20 - margins / 2) / (cur_width-1));
+                result -= Math.ceil((20 - margins / 2) / (cur_width - 1));
             }
 
             return result;
         }
+
         function escape_brackets(string) {
-            return string.replace(/\[/g, '&#91;').replace(/\]/g, '&#93;');
+            return string.replace(/\[/g, "&#91;").replace(/\]/g, "&#93;");
         }
-        // display Exception on terminal
+
+// display Exception on terminal
         function display_exception(e, label) {
             if (settings.displayExceptions) {
                 var message;
-                if (typeof e === 'string') {
+                if (typeof e === "string") {
                     message = e;
                 } else {
-                    if (typeof e.fileName === 'string') {
-                        message = e.fileName + ': ' + e.message;
+                    if (typeof e.fileName === "string") {
+                        message = e.fileName + ": " + e.message;
                     } else {
                         message = e.message;
                     }
                 }
-                self.error('&#91;' + label + '&#93;: ' + message);
-                if (typeof e.fileName === 'string') {
+                self.error("&#91;" + label + "&#93;: " + message);
+                if (typeof e.fileName === "string") {
                     //display filename and line which throw exeption
                     self.pause();
                     $.get(e.fileName, function(file) {
                         self.resume();
                         var num = e.lineNumber - 1;
-                        var line = file.split('\n')[num];
+                        var line = file.split("\n")[num];
                         if (line) {
-                            self.error('&#91;' + e.lineNumber + '&#93;: ' + line);
+                            self.error("&#91;" + e.lineNumber + "&#93;: " + line);
                         }
                     });
                 }
@@ -1790,22 +1840,25 @@
                 }
             }
         }
+
         var scroll_object;
+
         function scroll_to_bottom() {
-            var scrollHeight = scroll_object.prop ? scroll_object.prop('scrollHeight') :
-                scroll_object.attr('scrollHeight');
+            var scrollHeight = scroll_object.prop ? scroll_object.prop("scrollHeight") :
+                scroll_object.attr("scrollHeight");
             scroll_object.scrollTop(scrollHeight);
         }
-        //validating if object is string or function, call that function and
+
+//validating if object is string or function, call that function and
         //display exeption if any
         function validate(label, object) {
             try {
-                if (typeof object === 'function') {
+                if (typeof object === "function") {
                     object(function() {
                         // don't care
                     });
-                } else if (typeof object !== 'string') {
-                    var msg = label + ' must be string or function';
+                } else if (typeof object !== "string") {
+                    var msg = label + " must be string or function";
                     throw msg;
                 }
             } catch (e) {
@@ -1814,8 +1867,9 @@
             }
             return true;
         }
+
         function draw_line(string) {
-            string = typeof string === 'string' ? string : String(string);
+            string = typeof string === "string" ? string : String(string);
             var div, i, len;
             if (string.length > num_chars || string.match(/\n/)) {
                 // string can have line break
@@ -1823,19 +1877,19 @@
                 // TODO: the way it should work
                 var array = $.terminal.split_equal(string, num_chars);
 
-                div = $('<div></div>');
+                div = $("<div></div>");
                 for (i = 0, len = array.length; i < len; ++i) {
-                    if (array[i] === '' || array[i] === '\r') {
-                        div.append('<div>&nbsp;</div>');
+                    if (array[i] === "" || array[i] === "\r") {
+                        div.append("<div>&nbsp;</div>");
                     } else {
-                        $('<div/>').html($.terminal.format(array[i])).appendTo(div);
+                        $("<div/>").html($.terminal.format(array[i])).appendTo(div);
                     }
                 }
             } else {
-                div = $('<div/>').html('<div>' + $.terminal.format(string) + '</div>');
+                div = $("<div/>").html("<div>" + $.terminal.format(string) + "</div>");
             }
             output.append(div);
-            div.width('100%');
+            div.width("100%");
             scroll_to_bottom();
             return div;
         }
@@ -1857,38 +1911,39 @@
 
             return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom));
         }
-        //function constructor for eval
+
+//function constructor for eval
         function make_json_rpc_eval_fun(url, terminal) {
             var id = 1;
             var service = function(method, params) {
                 terminal.pause();
                 $.jrpc(url, id++, method, params, function(json) {
                     if (!json.error) {
-                        if (typeof json.result === 'string') {
+                        if (typeof json.result === "string") {
                             terminal.echo(json.result);
                         } else if (json.result instanceof Array) {
                             terminal.echo($.map(json.result, function(object) {
                                 return $.json_stringify(object);
-                            }).join(' '));
-                        } else if (typeof json.result === 'object') {
+                            }).join(" "));
+                        } else if (typeof json.result === "object") {
                             terminal.echo($.json_stringify(json.result));
                         }
                     } else {
-                        terminal.error('&#91;RPC&#93; ' + json.error.message);
+                        terminal.error("&#91;RPC&#93; " + json.error.message);
                     }
                     terminal.resume();
                 }, function(xhr, status, error) {
-                    if (status !== 'abort') {
-                        terminal.error('&#91;AJAX&#93; ' + status +
-                                       ' - Server reponse is: \n' +
-                                       xhr.responseText);
+                    if (status !== "abort") {
+                        terminal.error("&#91;AJAX&#93; " + status +
+                            " - Server reponse is: \n" +
+                            xhr.responseText);
                     }
                     terminal.resume();
                 });
             };
             //this is eval function
             return function(command, terminal) {
-                if (command === '') {
+                if (command === "") {
                     return;
                 }
                 var method, params;
@@ -1900,7 +1955,7 @@
                     method = command[0];
                     params = command.slice(1);
                 }
-                if (!settings.login || method === 'help') {
+                if (!settings.login || method === "help") {
                     // allow to call help without token
                     service(method, params);
                 } else {
@@ -1909,7 +1964,7 @@
                         service(method, [token].concat(params));
                     } else {
                         //should never happen
-                        terminal.error('&#91;AUTH&#93; Access denied (no token)');
+                        terminal.error("&#91;AUTH&#93; Access denied (no token)");
                     }
                 }
             };
@@ -1917,12 +1972,12 @@
 
         //display prompt and last command
         function echo_command(command) {
-            command = command.replace(/\[/g, '&#91;').replace(/\]/g, '&#93;');
+            command = command.replace(/\[/g, "&#91;").replace(/\]/g, "&#93;");
             var prompt = command_line.prompt();
             if (command_line.mask()) {
-                command = command.replace(/./g, '*');
+                command = command.replace(/./g, "*");
             }
-            if (typeof prompt === 'function') {
+            if (typeof prompt === "function") {
                 prompt(function(string) {
                     self.echo(string + command);
                 });
@@ -1930,14 +1985,16 @@
                 self.echo(prompt + command);
             }
         }
+
         var prev_command;
-        // wrapper over eval it implements exit and catch all exeptions
+
+// wrapper over eval it implements exit and catch all exeptions
         // from user code and display them on terminal
         function commands(command, silent) {
             try {
                 prev_command = command;
                 var interpreter = interpreters.top();
-                if (command === 'exit' && settings.exit) {
+                if (command === "exit" && settings.exit) {
                     if (interpreters.size() === 1) {
                         if (settings.login) {
                             logout();
@@ -1949,21 +2006,21 @@
                             self.echo(msg);
                         }
                     } else {
-                        self.pop('exit');
+                        self.pop("exit");
                     }
                 } else {
                     if (!silent) {
                         echo_command(command);
                     }
-                    var position = lines.length-1;
+                    var position = lines.length - 1;
                     var commandLow = command.toLowerCase();
-                    if ((commandLow === 'clear' || commandLow === 'cls' || commandLow === 'clear-host') && settings.clear) {
+                    if ((commandLow === "clear" || commandLow === "cls" || commandLow === "clear-host") && settings.clear) {
                         self.clear();
                     } else {
-                        var result = interpreter['eval'](command, self);
+                        var result = interpreter["eval"](command, self);
                         if (result !== undefined) {
                             // was lines after echo_command (by eval)
-                            if (position === lines.length-1) {
+                            if (position === lines.length - 1) {
                                 lines.pop();
                                 if (result !== false) {
                                     self.echo(result);
@@ -1972,11 +2029,11 @@
                             } else {
                                 if (result === false) {
                                     lines = lines.slice(0, position).
-                                        concat(lines.slice(position+1));
+                                        concat(lines.slice(position + 1));
                                 } else {
                                     lines = lines.slice(0, position).
                                         concat([result]).
-                                        concat(lines.slice(position+1));
+                                        concat(lines.slice(position + 1));
                                 }
                                 self.resize();
                             }
@@ -1985,7 +2042,7 @@
                 }
 
             } catch (e) {
-                display_exception(e, 'USER');
+                display_exception(e, "USER");
                 self.resume();
                 throw e;
             }
@@ -1996,7 +2053,7 @@
         // if user call it with value that is truthy
         function login() {
             var user = null;
-            command_line.prompt('login: ');
+            command_line.prompt("login: ");
             // don't stor logins in history
             if (settings.history) {
                 command_line.history().disable();
@@ -2006,28 +2063,28 @@
                     echo_command(command);
                     if (!user) {
                         user = command;
-                        command_line.prompt('password: ');
+                        command_line.prompt("password: ");
                         command_line.mask(true);
                     } else {
                         command_line.mask(false);
                         self.pause();
-                        if (typeof settings.login !== 'function') {
+                        if (typeof settings.login !== "function") {
                             throw "Value of login property must be a function";
                         }
                         var passwd = command;
                         settings.login(user, passwd, function(token) {
                             if (token) {
                                 var name = settings.name;
-                                name = (name ? '_' + name : '');
-                                $.Storage.set('token' + name, token);
-                                $.Storage.set('login' + name, user);
+                                name = (name ? "_" + name : "");
+                                $.Storage.set("token" + name, token);
+                                $.Storage.set("login" + name, user);
                                 //restore commands and run interpreter
                                 command_line.commands(commands);
                                 // move this to one function init.
                                 initialize();
                             } else {
-                                self.error('Wrong password try again');
-                                command_line.prompt('login: ');
+                                self.error("Wrong password try again");
+                                command_line.prompt("login: ");
                                 user = null;
                             }
                             self.resume();
@@ -2037,7 +2094,7 @@
                         }, self);
                     }
                 } catch (e) {
-                    display_exception(e, 'LOGIN', self);
+                    display_exception(e, "LOGIN", self);
                     throw e;
                 }
             });
@@ -2047,29 +2104,29 @@
         //this function is call only when options.login function is defined
         //check for this is in self.pop method
         function logout() {
-            if (typeof settings.onBeforelogout === 'function') {
+            if (typeof settings.onBeforelogout === "function") {
                 try {
                     if (settings.onBeforelogout(self) == false) {
                         return;
                     }
                 } catch (e) {
-                    display_exception(e, 'onBeforelogout');
+                    display_exception(e, "onBeforelogout");
                     throw e;
                 }
             }
             var name = settings.name;
-            name = (name ? '_' + name : '');
-            $.Storage.remove('token' + name, null);
-            $.Storage.remove('login' + name, null);
+            name = (name ? "_" + name : "");
+            $.Storage.remove("token" + name, null);
+            $.Storage.remove("login" + name, null);
             if (settings.history) {
                 command_line.history().disable();
             }
             login();
-            if (typeof settings.onAfterlogout === 'function') {
+            if (typeof settings.onAfterlogout === "function") {
                 try {
                     settings.onAfterlogout(self);
                 } catch (e) {
-                    display_exception(e, 'onAfterlogout');
+                    display_exception(e, "onAfterlogout");
                     throw e;
                 }
             }
@@ -2078,14 +2135,14 @@
         //function enable history, set prompt, run eval function
         function prepare_top_interpreter() {
             var interpreter = interpreters.top();
-            var name = '';
+            var name = "";
             if (interpreter.name !== undefined &&
-                interpreter.name !== '') {
-                name += interpreter.name + '_';
+                interpreter.name !== "") {
+                name += interpreter.name + "_";
             }
             name += terminal_id;
             command_line.name(name);
-            if (typeof interpreter.prompt == 'function') {
+            if (typeof interpreter.prompt == "function") {
                 command_line.prompt(function(command) {
                     interpreter.prompt(command, self);
                 });
@@ -2095,24 +2152,26 @@
             if (settings.history) {
                 command_line.history().enable();
             }
-            command_line.set('');
-            if (typeof interpreter.onStart === 'function') {
+            command_line.set("");
+            if (typeof interpreter.onStart === "function") {
                 interpreter.onStart(self);
             }
         }
+
         function initialize() {
             prepare_top_interpreter();
             show_greetings();
-            if (typeof settings.onInit === 'function') {
+            if (typeof settings.onInit === "function") {
                 try {
                     settings.onInit(self);
                 } catch (e) {
-                    display_exception(e, 'OnInit');
+                    display_exception(e, "OnInit");
                     throw e;
                 }
             }
         }
-        // ---------------------------------------------------------------------
+
+// ---------------------------------------------------------------------
         // KEYDOWN EVENT HANDLER
         // ---------------------------------------------------------------------
         var tab_count = -1;
@@ -2120,7 +2179,7 @@
 
         function key_down(e) {
             var top = interpreters.top();
-            if ($.type(top.keydown) === 'function') {
+            if ($.type(top.keydown) === "function") {
                 var result = top.keydown(e, self);
                 if (result !== undefined) {
                     return result;
@@ -2131,7 +2190,7 @@
             self.oneTime(10, function() {
                 on_scrollbar_show_resize();
             });
-            if ($.type(settings.keydown) === 'function') {
+            if ($.type(settings.keydown) === "function") {
                 var result = settings.keydown(e, self);
                 if (result !== undefined) {
                     return result;
@@ -2145,16 +2204,16 @@
                     }
                 }
                 if (e.which === 68 && e.ctrlKey) { // CTRL+D
-                    if (command_line.get() === '') {
+                    if (command_line.get() === "") {
                         if (interpreters.size() > 1 ||
                             settings.login !== undefined) {
-                            self.pop('');
+                            self.pop("");
                         } else {
                             self.resume();
-                            self.echo('');
+                            self.echo("");
                         }
                     } else {
-                        self.set_command('');
+                        self.set_command("");
                     }
                     return false;
                 } else if (settings.tabcompletion && e.which === 9) { // TAB
@@ -2236,16 +2295,16 @@
                 } else if (e.which === 33) { // PAGE UP
                     self.scroll(-self.height());
                 } else {
-                    self.attr({scrollTop: self.attr('scrollHeight')});
+                    self.attr({ scrollTop: self.attr("scrollHeight") });
                 }
             } else if (e.which === 68 && e.ctrlKey) { // CTRL+D
-                for (i=requests.length; i--;) {
+                for (i = requests.length; i--;) {
                     var r = requests[i];
                     if (4 !== r.readyState) {
                         try {
                             r.abort();
-                        } catch(e) {
-                            self.error('error in aborting ajax');
+                        } catch (e) {
+                            self.error("error in aborting ajax");
                         }
                     }
                 }
@@ -2261,18 +2320,18 @@
         function split_command_line(string) {
             var re = /('[^']*'|"(\\"|[^"])*"|\/(\\\/|[^\/])*\/|(\\ |[^ ])+|[\w-]+)/g;
             return $.map(string.match(re), function(arg) {
-                if (arg[0] === "'" && arg[arg.length-1] === "'") {
-                    return arg.replace(/^'|'$/g, '');
-                } else if (arg[0] === '"' && arg[arg.length-1] === '"') {
-                    arg = arg.replace(/^"|"$/g, '').replace(/\\([" ])/g, '$1');
+                if (arg[0] === "'" && arg[arg.length - 1] === "'") {
+                    return arg.replace(/^'|'$/g, "");
+                } else if (arg[0] === "\"" && arg[arg.length - 1] === "\"") {
+                    arg = arg.replace(/^"|"$/g, "").replace(/\\([" ])/g, "$1");
                     if (settings.processArguments) {
                         return arg.replace(/\\\\|\\t|\\n/g, function(string) {
-                            if (string[1] === 't') {
-                                return '\t';
-                            } else if (string[1] === 'n') {
-                                return '\n';
+                            if (string[1] === "t") {
+                                return "\t";
+                            } else if (string[1] === "n") {
+                                return "\n";
                             } else {
-                                return '\\';
+                                return "\\";
                             }
                         });
                     } else {
@@ -2280,30 +2339,31 @@
                     }
                 } else {
                     if (settings.processArguments) {
-                        if (arg[0] === '/' && arg[arg.length-1] == '/') {
-                            return new RegExp(arg.replace(/^\/|\/$/g, ''));
+                        if (arg[0] === "/" && arg[arg.length - 1] == "/") {
+                            return new RegExp(arg.replace(/^\/|\/$/g, ""));
                         } else if (arg.match(/^-?[0-9]+$/)) {
                             return parseInt(arg, 10);
                         } else if (arg.match(/^-?[0-9]*\.[0-9]+$/)) {
                             return parseFloat(arg);
                         } else {
-                            return arg.replace(/\\ /g, ' ');
+                            return arg.replace(/\\ /g, " ");
                         }
                     } else {
-                        if (arg[0] === '/' && arg[arg.length-1] == '/') {
+                        if (arg[0] === "/" && arg[arg.length - 1] == "/") {
                             return arg;
                         } else {
-                            return arg.replace(/\\ /g, ' ');
+                            return arg.replace(/\\ /g, " ");
                         }
                     }
                 }
             });
         }
+
         function make_eval_from_object(object) {
             // function that maps commands to object methods
             // it keeps terminal context
             return function(command, terminal) {
-                if (command === '') {
+                if (command === "") {
                     return;
                 }
                 command = split_command_line(command);
@@ -2311,11 +2371,11 @@
                 var params = command.slice(1);
                 var val = object[method];
                 var type = $.type(val);
-                if (type === 'function') {
+                if (type === "function") {
                     return val.apply(self, params);
-                } else if (type === 'object' || type === 'string') {
+                } else if (type === "object" || type === "string") {
                     var commands = [];
-                    if (type === 'object') {
+                    if (type === "object") {
                         for (var m in val) {
                             if (val.hasOwnProperty(m)) {
                                 commands.push(m);
@@ -2324,9 +2384,9 @@
                         val = make_eval_from_object(val);
                     }
                     self.push(val, {
-                        prompt: method + '> ',
+                        prompt: method + "> ",
                         name: method,
-                        completion: type === 'object' ? function(term, string, callback) {
+                        completion: type === "object" ? function(term, string, callback) {
                             callback(commands);
                         } : undefined
                     });
@@ -2335,12 +2395,13 @@
                 }
             };
         }
+
         var self = this;
         if (this.length > 1) {
             return this.each(function() {
                 $.fn.terminal.call($(this),
-                                   init_eval,
-                                   $.extend({name: self.selector}, options));
+                    init_eval,
+                    $.extend({ name: self.selector }, options));
             });
         } else {
             var lines = [];
@@ -2350,7 +2411,7 @@
             var command_list = []; // for tab completion
             var settings = $.extend({
                 name: self.selector,
-                prompt: '> ',
+                prompt: "> ",
                 history: true,
                 exit: true,
                 clear: true,
@@ -2371,8 +2432,8 @@
                 keypress: $.noop,
                 keydown: $.noop,
                 onTabCompletionInit: $.noop, // Adam Najmanowicz
-                onTabCompletion: $.noop,  // Adam Najmanowicz
-                onTabCompletionEnd: $.noop,  // Adam Najmanowicz
+                onTabCompletion: $.noop, // Adam Najmanowicz
+                onTabCompletionEnd: $.noop, // Adam Najmanowicz
                 onTabCompletionNoHints: $.noop,
             }, options || {});
 
@@ -2383,33 +2444,33 @@
                 self.height(settings.height);
             }
             if (!navigator.userAgent.toLowerCase().match(/(webkit)[ \/]([\w.]+)/) &&
-                self[0].tagName.toLowerCase() == 'body') {
-                scroll_object = $('html');
+                self[0].tagName.toLowerCase() == "body") {
+                scroll_object = $("html");
             } else {
                 scroll_object = self;
             }
             var pause = !settings.enabled;
             if (self.length === 0) {
-                throw 'Sorry, but terminal said that "' + self.selector +
-                    '" is not valid selector!';
+                throw "Sorry, but terminal said that \"" + self.selector +
+                    "\" is not valid selector!";
             }
             // register ajaxSend for cancel requests on CTRL+D
             self.ajaxSend(function(e, xhr, opt) {
                 requests.push(xhr);
             });
             // terminal already exist
-            if (self.data('terminal')) {
-                return self.data('terminal');
+            if (self.data("terminal")) {
+                return self.data("terminal");
             }
-            output = $('<div>').addClass('terminal-output').appendTo(self);
-            self.addClass('terminal').append('<div/>');
+            output = $("<div>").addClass("terminal-output").appendTo(self);
+            self.addClass("terminal").append("<div/>");
             // keep focus in clipboard textarea in mobile
-            if (('ontouchstart' in window) || window.DocumentTouch &&
+            if (("ontouchstart" in window) || window.DocumentTouch &&
                 document instanceof DocumentTouch) {
                 self.click(function() {
-                    self.find('textarea').focus();
+                    self.find("textarea").focus();
                 });
-                self.find('textarea').focus();
+                self.find("textarea").focus();
             }
             /*
               self.bind('touchstart.touchScroll', function() {
@@ -2428,16 +2489,16 @@
             var dalyed_commands = [];
             $.extend(self, $.omap({
                 clear: function() {
-                    output.html('');
-                    command_line.set('');
+                    output.html("");
+                    command_line.set("");
                     lines = [];
                     try {
                         settings.onClear(self);
                     } catch (e) {
-                        display_exception(e, 'onClear');
+                        display_exception(e, "onClear");
                         throw e;
                     }
-                    self.attr({ scrollTop: 0});
+                    self.attr({ scrollTop: 0 });
                     show_greetings();
                     return self;
                 },
@@ -2501,7 +2562,7 @@
                     return num_chars;
                 },
                 rows: function() {
-                    return Math.floor(self.height() / self.find('.cursor').height());
+                    return Math.floor(self.height() / self.find(".cursor").height());
                 },
                 history: function() {
                     return command_line.history();
@@ -2515,18 +2576,18 @@
                         var scrollTop = self.scrollTop();
                         if (!is_scrolled_into_view(self)) {
                             self.enable();
-                            $('html, body').animate({scrollTop: offsetTop-50}, 500);
+                            $("html, body").animate({ scrollTop: offsetTop - 50 }, 500);
                             return self;
                         } else {
                             terminals.front().disable();
                             var next = terminals.rotate().enable();
                             // 100 provides buffer in viewport
                             var x = next.offset().top - 50;
-                            $('html, body').animate({scrollTop: x}, 500);
+                            $("html, body").animate({ scrollTop: x }, 500);
                             try {
                                 settings.onTerminalChange(next);
                             } catch (e) {
-                                display_exception(e, 'onTerminalChange');
+                                display_exception(e, "onTerminalChange");
                                 throw e;
                             }
                             return next;
@@ -2543,7 +2604,7 @@
                                         self.disable();
                                     }
                                 } catch (e) {
-                                    display_exception(e, 'onBlur');
+                                    display_exception(e, "onBlur");
                                     throw e;
                                 }
                             } else {
@@ -2552,7 +2613,7 @@
                                         self.enable();
                                     }
                                 } catch (e) {
-                                    display_exception(e, 'onFocus');
+                                    display_exception(e, "onFocus");
                                     throw e;
                                 }
                             }
@@ -2567,7 +2628,7 @@
                                         try {
                                             settings.onTerminalChange(self);
                                         } catch (e) {
-                                            display_exception(e, 'onTerminalChange');
+                                            display_exception(e, "onTerminalChange");
                                             throw e;
                                         }
                                     }
@@ -2607,9 +2668,9 @@
                     var cols = self.cols();
                     var i = cols < 15 ? null : cols < 35 ? 0 : cols < 55 ? 1 : cols < 64 ? 2 : cols < 75 ? 3 : 4;
                     if (i !== null) {
-                        return signatures[i].join('\n') + '\n';
+                        return signatures[i].join("\n") + "\n";
                     } else {
-                        return '';
+                        return "";
                     }
                 },
                 version: function() {
@@ -2620,7 +2681,7 @@
                     return command_line.get();
                 },
                 insert: function(string) {
-                    if (typeof string === 'string') {
+                    if (typeof string === "string") {
                         command_line.insert(string);
                         return self;
                     } else {
@@ -2628,8 +2689,8 @@
                     }
                 },
                 set_prompt: function(prompt) {
-                    if (validate('prompt', prompt)) {
-                        if (typeof prompt == 'function') {
+                    if (validate("prompt", prompt)) {
+                        if (typeof prompt == "function") {
                             command_line.prompt(function(command) {
                                 prompt(command, self);
                             });
@@ -2658,8 +2719,8 @@
                         return lines;
                     } else {
                         return $.map(lines, function(i, item) {
-                            return typeof item == 'function' ? item() : item;
-                        }).join('\n');
+                            return typeof item == "function" ? item() : item;
+                        }).join("\n");
                     }
                 },
                 resize: function(width, height) {
@@ -2672,14 +2733,14 @@
                     num_chars = get_num_chars();
                     command_line.resize(num_chars);
                     var o = output.detach();
-                    output.html('');
+                    output.html("");
                     $.each(lines, function(i, line) {
-                        draw_line(line && typeof line == 'function' ? line() : line);
+                        draw_line(line && typeof line == "function" ? line() : line);
                     });
                     self.prepend(o);
                     scroll_to_bottom();
-                    if ($.type(settings.onResize) === 'function' &&
-                        (old_height !== height || old_width !== width)) {
+                    if ($.type(settings.onResize) === "function" &&
+                    (old_height !== height || old_width !== width)) {
                         settings.onResize(self);
                     }
                     if (old_height !== height || old_width !== width) {
@@ -2690,31 +2751,31 @@
                 },
                 echo: function(line) {
                     lines.push(line);
-                    draw_line($.type(line) === 'function' ? line() : line);
+                    draw_line($.type(line) === "function" ? line() : line);
                     on_scrollbar_show_resize();
                     return self;
                 },
                 error: function(message) {
                     //echo red message
                     //quick hack to fix trailing back slash
-                    return self.echo('[[;#f00;]' + escape_brackets(message).
-                                     replace(/\\$/, '&#92;') + ']');
+                    return self.echo("[[;#f00;]" + escape_brackets(message).
+                        replace(/\\$/, "&#92;") + "]");
                 },
                 scroll: function(amount) {
                     var pos;
                     amount = Math.round(amount);
                     if (scroll_object.prop) {
-                        if (amount > scroll_object.prop('scrollTop') && amount > 0) {
-                            scroll_object.prop('scrollTop', 0);
+                        if (amount > scroll_object.prop("scrollTop") && amount > 0) {
+                            scroll_object.prop("scrollTop", 0);
                         }
-                        pos = scroll_object.prop('scrollTop');
+                        pos = scroll_object.prop("scrollTop");
                         scroll_object.scrollTop(pos + amount);
                         return self;
                     } else {
-                        if (amount > scroll_object.attr('scrollTop') && amount > 0) {
-                            scroll_object.attr('scrollTop', 0);
+                        if (amount > scroll_object.attr("scrollTop") && amount > 0) {
+                            scroll_object.attr("scrollTop", 0);
                         }
-                        pos = scroll_object.attr('scrollTop');
+                        pos = scroll_object.attr("scrollTop");
                         scroll_object.scrollTop(pos + amount);
                         return self;
                     }
@@ -2730,38 +2791,38 @@
                 },
                 token: settings.login ? function() {
                     var name = settings.name;
-                    return $.Storage.get('token' + (name ? '_' + name : ''));
+                    return $.Storage.get("token" + (name ? "_" + name : ""));
                 } : $.noop,
                 login_name: settings.login ? function() {
                     var name = settings.name;
-                    return $.Storage.get('login' + (name ? '_' + name : ''));
+                    return $.Storage.get("login" + (name ? "_" + name : ""));
                 } : $.noop,
                 name: function() {
                     return interpreters.top().name;
                 },
                 push: function(_eval, options) {
-                    if (options && (!options.prompt || validate('prompt', options.prompt)) ||
+                    if (options && (!options.prompt || validate("prompt", options.prompt)) ||
                         !options) {
                         options = options || {};
                         options.name = options.name || prev_command;
                         interpreters.top().mask = command_line.mask();
-                        if ($.type(_eval) === 'string') {
+                        if ($.type(_eval) === "string") {
                             //_eval = make_json_rpc_eval_fun(options['eval'], self);
                             _eval = make_json_rpc_eval_fun(_eval, self);
-                        } else if ($.type(_eval) === 'object') {
+                        } else if ($.type(_eval) === "object") {
                             var commands = [];
                             for (var name in _eval) {
                                 commands.push(name);
                             }
                             _eval = make_eval_from_object(_eval);
                             options = options || {};
-                            options['completion'] = function(term, string, callback) {
+                            options["completion"] = function(term, string, callback) {
                                 callback(commands);
                             };
-                        } else if ($.type(_eval) != 'function') {
+                        } else if ($.type(_eval) != "function") {
                             throw "Invalid value as eval in push command";
                         }
-                        interpreters.push($.extend({'eval': _eval}, options));
+                        interpreters.push($.extend({ 'eval': _eval }, options));
                         prepare_top_interpreter();
                     }
                     return self;
@@ -2773,11 +2834,11 @@
                     if (interpreters.top().name === settings.name) {
                         if (settings.login) {
                             logout();
-                            if ($.type(settings.onExit) === 'function') {
+                            if ($.type(settings.onExit) === "function") {
                                 try {
                                     settings.onExit(self);
                                 } catch (e) {
-                                    display_exception(e, 'onExit');
+                                    display_exception(e, "onExit");
                                     throw e;
                                 }
                             }
@@ -2785,11 +2846,11 @@
                     } else {
                         var current = interpreters.pop();
                         prepare_top_interpreter();
-                        if ($.type(current.onExit) === 'function') {
+                        if ($.type(current.onExit) === "function") {
                             try {
                                 current.onExit(self);
                             } catch (e) {
-                                display_exception(e, 'onExit');
+                                display_exception(e, "onExit");
                                 throw e;
                             }
                         }
@@ -2803,7 +2864,7 @@
                 },
                 reset: function() {
                     self.clear();
-                    while(interpreters.size() > 1) {
+                    while (interpreters.size() > 1) {
                         interpreters.pop();
                     }
                     initialize();
@@ -2813,9 +2874,9 @@
                 return function() {
                     try {
                         return fun.apply(this, Array.prototype.slice.apply(arguments));
-                    } catch(e) {
-                        if (_ !== 'exec') { // exec catch by command
-                            display_exception(e, 'TERMINAL');
+                    } catch (e) {
+                        if (_ !== "exec") { // exec catch by command
+                            display_exception(e, "TERMINAL");
                         }
                         throw e;
                     }
@@ -2839,21 +2900,21 @@
             // INIT CODE
             // ---------------------------------------------------------------------
             var url;
-            if (settings.login && $.type(settings.onBeforeLogin) === 'function') {
+            if (settings.login && $.type(settings.onBeforeLogin) === "function") {
                 try {
                     settings.onBeforeLogin(self);
                 } catch (e) {
-                    display_exception(e, 'onBeforeLogin');
+                    display_exception(e, "onBeforeLogin");
                     throw e;
                 }
             }
 
-            if ($.type(init_eval) === 'string') {
+            if ($.type(init_eval) === "string") {
                 url = init_eval; //url variable is use when making login function
                 init_eval = make_json_rpc_eval_fun(init_eval, self);
-            } else if ($.type(init_eval) === 'array') {
+            } else if ($.type(init_eval) === "array") {
                 throw "You can't use array as eval";
-            } else if ($.type(init_eval) === 'object') {
+            } else if ($.type(init_eval) === "object") {
                 // top commands
                 for (var i in init_eval) {
                     if (init_eval.hasOwnProperty(i)) {
@@ -2861,38 +2922,38 @@
                     }
                 }
                 init_eval = make_eval_from_object(init_eval);
-            } else if ($.type(init_eval) !== 'function') {
-                throw 'Unknow object "' + String(init_eval) + '" passed as eval';
+            } else if ($.type(init_eval) !== "function") {
+                throw "Unknow object \"" + String(init_eval) + "\" passed as eval";
             }
 
             // create json-rpc authentication function
-            if (url && ($.type(settings.login) === 'string' || settings.login)) {
+            if (url && ($.type(settings.login) === "string" || settings.login)) {
                 settings.login = (function(method) {
                     var id = 1;
                     return function(user, passwd, callback, term) {
                         self.pause();
                         $.jrpc(url,
-                               id++,
-                               method,
-                               [user, passwd],
-                               function(response) {
-                                   self.resume();
-                                   if (!response.error && response.result) {
-                                       callback(response.result);
-                                   } else {
-                                       callback(null);
-                                   }
-                               }, function(xhr, status, error) {
-                                   self.resume();
-                                   self.error('&#91;AJAX&#92; Response: ' +
-                                              status + '\n' +
-                                              xhr.responseText);
-                               });
+                            id++,
+                            method,
+                            [user, passwd],
+                            function(response) {
+                                self.resume();
+                                if (!response.error && response.result) {
+                                    callback(response.result);
+                                } else {
+                                    callback(null);
+                                }
+                            }, function(xhr, status, error) {
+                                self.resume();
+                                self.error("&#91;AJAX&#92; Response: " +
+                                    status + "\n" +
+                                    xhr.responseText);
+                            });
                     };
                     //default name is login so you can pass true
-                })($.type(settings.login) === 'boolean' ? 'login' : settings.login);
+                })($.type(settings.login) === "boolean" ? "login" : settings.login);
             }
-            if (validate('prompt', settings.prompt)) {
+            if (validate("prompt", settings.prompt)) {
                 var interpreters = new Stack({
                     name: settings.name,
                     'eval': init_eval,
@@ -2904,22 +2965,22 @@
                         },
                     greetings: settings.greetings
                 });
-                var command_line = self.find('.terminal-output').next().cmd({
+                var command_line = self.find(".terminal-output").next().cmd({
                     prompt: settings.prompt,
                     history: settings.history,
                     historyFilter: settings.historyFilter,
                     historySize: settings.historySize,
-                    width: '100%',
+                    width: "100%",
                     keydown: key_down,
                     keypress: settings.keypress ? function(e) {
                         return settings.keypress(e, self);
                     } : null,
                     onCommandChange: function(command) {
-                        if ($.type(settings.onCommandChange) === 'function') {
+                        if ($.type(settings.onCommandChange) === "function") {
                             try {
                                 settings.onCommandChange(command, self);
                             } catch (e) {
-                                display_exception(e, 'onCommandChange');
+                                display_exception(e, "onCommandChange");
                                 throw e;
                             }
                         }
@@ -2935,7 +2996,7 @@
                     self.disable();
                 }
                 $(document).click(function(e) {
-                    if (!$(e.target).parents().hasClass('terminal') &&
+                    if (!$(e.target).parents().hasClass("terminal") &&
                         settings.onBlur(self) !== false) {
                         self.disable();
                     }
@@ -2959,7 +3020,7 @@
                 } else {
                     initialize();
                 }
-                if ($.type($.fn.init.prototype.mousewheel) === 'function') {
+                if ($.type($.fn.init.prototype.mousewheel) === "function") {
                     self.mousewheel(function(event, delta) {
                         //self.echo(dir(event));
                         if (delta > 0) {
@@ -2971,7 +3032,7 @@
                     }, true);
                 }
             }
-            self.data('terminal', self);
+            self.data("terminal", self);
             return self;
         }
     }; //terminal plugin
