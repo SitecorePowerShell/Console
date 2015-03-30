@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -12,19 +13,25 @@ namespace Cognifide.PowerShell.Core.Modules
         public delegate void InvalidateEventHandler(object sender, EventArgs e);
 
         private static List<Module> modules;
+        private volatile static bool modulesListDirty = true;
+        private static readonly object modulesLock = new object();
 
         public static List<Module> Modules
         {
             get
             {
-                if (modules == null)
+                if (modulesListDirty)
                 {
-                    modules = new List<Module>();
-                    var dbModules = GetDbModules(ApplicationSettings.ScriptLibraryDb);
-                    modules.AddRange(dbModules);
-
-                    dbModules = GetDbModules("core");
-                    modules.AddRange(dbModules);
+                    lock (modulesLock)
+                    {
+                        if (modulesListDirty)
+                        {
+                            modulesListDirty = false;
+                            var newModulesList = GetDbModules(ApplicationSettings.ScriptLibraryDb);
+                            newModulesList.AddRange(GetDbModules("core"));
+                            modules = newModulesList;
+                        }
+                    }
                 }
                 return modules;
             }
@@ -81,7 +88,7 @@ namespace Cognifide.PowerShell.Core.Modules
 
         public static void Invalidate(Item item)
         {
-            modules = null;
+            modulesListDirty = true;
             if (OnInvalidate != null)
             {
                 OnInvalidate(null, EventArgs.Empty);
