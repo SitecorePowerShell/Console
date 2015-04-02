@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Core.Modules
                             CreationScript = integrationPoint.Attributes["creationScript"].InnerText,
                             Name = integrationPoint.Attributes["name"].InnerText,
                             Id = integrationPoint.Name,
-                            Path = integrationPoint.InnerText
+                            Path = integrationPoint.InnerText.Trim()
                         });
                     }
                 }
