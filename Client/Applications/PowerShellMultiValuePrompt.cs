@@ -193,7 +193,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    dateTimePicker.Value = (string) value ?? string.Empty;
+                    dateTimePicker.Value = value as string ?? string.Empty;
                 }
                 return dateTimePicker;
             }
@@ -204,17 +204,17 @@ namespace Cognifide.PowerShell.Client.Applications
                  (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 Item item = null;
-                List<Item> items = null;
+                //List<Item> items = null;
                 var strValue = string.Empty;
                 if (value is Item)
                 {
                     item = (Item) value;
-                    items = new List<Item> {item};
+                    //items = new List<Item> {item};
                     strValue = item.ID.ToString();
                 }
                 else if (value is IEnumerable<object>)
                 {
-                    items = (value as IEnumerable<object>).Cast<Item>().ToList();
+                    List<Item> items = (value as IEnumerable<object>).Cast<Item>().ToList();
                     item = items.First();
                     strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
@@ -222,13 +222,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 var dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
                 if (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    var multiList = new Multilist
+                    var multiList = new MultilistEx
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Value = strValue,
                         Database = dbName,
                         ItemID = "{11111111-1111-1111-1111-111111111111}",
-                        Source = variable["Source"] as string ?? "/sitecore"
+                        Source = variable["Source"] as string ?? "/sitecore",
+                        ItemLanguage = Sitecore.Context.Language.Name
                     };
                     multiList.Class += "  treePicker";
                     return multiList;
@@ -584,9 +585,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     var items = ids.Select(p => db.GetItem(p)).ToList();
                     result.Add("Value", items);
                 }
-                else if (control is Multilist)
+                else if (control is MultilistEx)
                 {
-                    var multilist = control as Multilist;
+                    var multilist = control as MultilistEx;
                     var strIds = multilist.GetValue();
                     var ids = strIds.Split('|');
                     var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
