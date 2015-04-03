@@ -103,6 +103,7 @@
 .scContentControl.treePicker {
     height: 220px;
     padding: 4px 2px 4px 8px;
+    float: left;
 }
 
 .psVarPromptHeaderIcon { margin: 6px 16px 4px 0px !important; }
@@ -166,3 +167,9 @@ fieldset label { font: 8pt tahoma; }
 fieldset { padding: 6px 8px 8px 10px; }
 
 table.scContentControl.treePicker > :first-child > :first-child { height: 20px; }
+
+.variableWrapperFixedHeight .scRadioGroup { height : 100% }
+.variableWrapperFixedHeight .treePicker { height : 100% }
+.variableWrapperFixedHeight .scContentControlChecklist { height : 100% }
+.variableWrapperFixedHeight .scRadioGroup { height : 100% }
+.variableWrapperFixedHeight textArea { height : 100% }

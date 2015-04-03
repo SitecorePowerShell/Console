@@ -114,7 +114,22 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                 }
                 var input = GetVariableEditor(variable);
-                container.Controls.Add(input);
+
+                var variableBorder = new Border();
+                name = (string)variable["Name"];
+                variableBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+                variableBorder.Controls.Add(input);
+                var height = variable["Height"] as string;
+                if (!string.IsNullOrEmpty(height))
+                {
+                    variableBorder.Height = new Unit(height);
+                    variableBorder.Class = "variableWrapper variableWrapperFixedHeight";
+                }
+                else
+                {
+                    variableBorder.Class = "variableWrapper";
+                }
+                container.Controls.Add(variableBorder);
             }
 
             TabOffsetValue.Text = string.Format("<script type='text/javascript'>var tabsOffset={0};</script>",
@@ -512,9 +527,14 @@ namespace Cognifide.PowerShell.Client.Applications
             var controlId = control.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
             {
+                control = control.Controls[0] as Sitecore.Web.UI.HtmlControls.Control;
+                controlId = control.ID;
+                if (controlId != null && controlId.StartsWith("variable_"))
+                {
                 var result = GetVariableValue(control);
                 results.Add(result);
             }
+        }
         }
 
         private object GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
