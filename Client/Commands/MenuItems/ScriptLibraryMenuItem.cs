@@ -27,10 +27,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
         public void SetupIntegrationPoint(CommandContext context)
         {
             Assert.IsNotNull(context, "Context is null.");
-            if (!string.IsNullOrEmpty(context.Parameters["integrationPoint"]))
-            {
-                IntegrationPoint = context.Parameters["integrationPoint"];
-            }
+            IntegrationPoint = !string.IsNullOrEmpty(context.Parameters["integrationPoint"])
+                ? context.Parameters["integrationPoint"]
+                : string.Empty;
         }
 
         public override void Execute(CommandContext context)
