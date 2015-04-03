@@ -20,11 +20,11 @@ namespace Cognifide.PowerShell.Core.Modules
         {
             get
             {
-                if (modulesListDirty)
+                if (modulesListDirty || modules == null)
                 {
                     lock (modulesLock)
                     {
-                        if (modulesListDirty)
+                        if (modulesListDirty || modules == null)
                         {
                             modulesListDirty = false;
                             var newModulesList = GetDbModules(ApplicationSettings.ScriptLibraryDb);
