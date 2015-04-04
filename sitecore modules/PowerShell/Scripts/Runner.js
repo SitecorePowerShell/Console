@@ -20,7 +20,7 @@ jQuery(document).ready(function($) {
     $("#Copyright").each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
-                text: "Copyright (c) 2010-2015 <a href='http://www.cognifide.com' target='_blank'>Cognifide Limited</a> &amp; <a href='http://blog.najmanowicz.com/' target='_blank'>Adam Najmanowicz</a>.",
+                text: "Copyright &copy; 2010-2015 Adam Najmanowicz - Cognifide, Michael West. All rights Reserved.\r\n",
                 title: "Sitecore PowerShell Extensions"
             },
             position: {

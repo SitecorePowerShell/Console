@@ -16,19 +16,24 @@
         Examples:
         The following examples show how to use the filter syntax.
 
-        To get all the users, use the asterisk wildcard:
-        Get-User -Filter *
+        To get all the users, use the asterisk wildcard:  
+        
+            Get-User -Filter *
 
-        To get all the users in a domain use the following command:
-        Get-User -Filter "sitecore\*"
+        To get all the users in a domain use the following command:  
+        
+            Get-User -Filter "sitecore\*"
 
     .PARAMETER Identity
         Specifies the Sitecore user by providing one of the following values.
 
-            Local Name
-                Example: admin
-            Fully Qualified Name
-                Example: sitecore\admin
+        Local Name:
+          
+            admin
+        
+        Fully Qualified Name:
+        
+            sitecore\admin  
 
     .INPUTS
         System.String

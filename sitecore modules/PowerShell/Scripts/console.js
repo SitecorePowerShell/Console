@@ -230,7 +230,7 @@ extend(cognifide, "powershell");
                     callPowerShellHost(term, guid, command);
                 }
             }, {
-                greetings: "Sitecore Powershell Console\r\nCopyright (c) 2010-2015 Cognifide Limited &amp; Adam Najmanowicz. All rights Reserved\n\n",
+                greetings: "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-2015 Adam Najmanowicz - Cognifide, Michael West. All rights Reserved.\r\n",
                 name: "mainConsole",
                 tabcompletion: true,
                 onTabCompletionInit: tabCompletionInit,
