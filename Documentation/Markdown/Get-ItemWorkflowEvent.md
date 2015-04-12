@@ -12,8 +12,11 @@ Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identi
  
  
 ## Detailed Description 
+ 
 Retrieves entries from the history store notifying of workflow state change of a specific item. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

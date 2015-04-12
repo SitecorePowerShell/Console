@@ -12,10 +12,13 @@ Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive]
  
  
 ## Detailed Description 
+ 
 The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

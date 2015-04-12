@@ -16,8 +16,11 @@ Get-SpeModule [-Database &lt;Database&gt;] -Name &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Retrieves the object that describes a Sitecore PowerShell Extensions Module. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

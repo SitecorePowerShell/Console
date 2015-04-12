@@ -6,8 +6,11 @@ Returns current user's browser user agent.
  
  
 ## Detailed Description 
+ 
 Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button) 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

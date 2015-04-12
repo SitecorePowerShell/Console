@@ -8,10 +8,13 @@ Read-Variable [-Parameters &lt;Object[]&gt;] [-Description &lt;String&gt;] [-Can
  
  
 ## Detailed Description 
+ 
 Prompts user to provide values for variables required by the script to perform its operation.
 If user selects the "OK" button the commandlet will return 'ok' as its value.
 If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

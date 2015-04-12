@@ -12,8 +12,11 @@ Expand-Token [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt;
  
  
 ## Detailed Description 
+ 
 Expands tokens like $name in fields on items. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

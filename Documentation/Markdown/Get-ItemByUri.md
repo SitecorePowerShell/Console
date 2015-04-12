@@ -8,8 +8,11 @@ Get-ItemByUri [-ItemUri &lt;String&gt;]
  
  
 ## Detailed Description 
+ 
 This commandlet has been obsoleted - use "Get-Item -Uri" instead. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

@@ -12,8 +12,11 @@ Set-Rendering -Id &lt;String&gt; [-Database &lt;Database&gt;] -Instance &lt;Rend
  
  
 ## Detailed Description 
+ 
 Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

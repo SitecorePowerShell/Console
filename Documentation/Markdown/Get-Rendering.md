@@ -24,8 +24,11 @@ Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -Instance &lt;Re
  
  
 ## Detailed Description 
+ 
 Returns RenderingDefinition from an item based on provided filtering parameters. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

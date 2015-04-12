@@ -13,9 +13,12 @@ Initialize-Item -SearchResultItem &lt;SearchResultItem&gt;
  
  
 ## Detailed Description 
+ 
 Wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
 This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item commandlet into full Sitecore Items. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Wrap-Item 

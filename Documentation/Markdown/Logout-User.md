@@ -6,8 +6,11 @@ Logs the current user out.
  
  
 ## Detailed Description 
+ 
 Logs the current user out. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

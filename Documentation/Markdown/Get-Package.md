@@ -8,8 +8,11 @@ Get-Package [-Path] &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Loads package from the package definition (xml file). Package definitions can be created by PowerShell scripts by using Export-Package commandlet (without the -Zip parameter) 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

@@ -8,8 +8,11 @@ Get-Preset [[-Name] &lt;String[]&gt;]
  
  
 ## Detailed Description 
+ 
 Returns a serialization preset for use with Serialize-Item. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

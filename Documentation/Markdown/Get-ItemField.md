@@ -12,8 +12,11 @@ Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandar
  
  
 ## Detailed Description 
+ 
 Retrieves item fields as either names or fields or template fields. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

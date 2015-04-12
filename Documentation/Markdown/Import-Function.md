@@ -6,8 +6,11 @@ Imports a function script from the script library's "Functions" folder.
  
  
 ## Detailed Description 
+ 
 Imports a function script from the script library's "Functions" folder. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

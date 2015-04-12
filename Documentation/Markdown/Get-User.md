@@ -12,13 +12,16 @@ Get-User -Current
  
  
 ## Detailed Description 
+ 
 The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;.
 
 To search for and retrieve more than one user, use the Filter parameter. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

@@ -12,8 +12,11 @@ Unprotect-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-PassThru] [-I
  
  
 ## Detailed Description 
+ 
 The Unprotect-Item cmdlet protects the item. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

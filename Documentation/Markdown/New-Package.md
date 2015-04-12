@@ -8,8 +8,11 @@ New-Package [-Name] &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Creates a new Sitecore install package object that allows for further addition of items and files &amp; further export to file. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

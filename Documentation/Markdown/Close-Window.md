@@ -6,8 +6,11 @@ Closes runner job  window after the script finishes.
  
  
 ## Detailed Description 
+ 
 Ensures the runner proces window is closed after the script finishes execution. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

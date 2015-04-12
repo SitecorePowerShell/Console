@@ -10,8 +10,11 @@ Get-LayoutDevice [-Default]
  
  
 ## Detailed Description 
+ 
 Returns Sitecore Layout device associated with a name or a default instance layout device/ 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

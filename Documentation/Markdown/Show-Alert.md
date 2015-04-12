@@ -8,8 +8,11 @@ Show-Alert [-Title] &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Pauses the script and shows an alert specified in the -Title to the user. Once user clicks the OK button - script execution resumes. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

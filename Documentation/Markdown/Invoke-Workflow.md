@@ -13,8 +13,11 @@ Invoke-Workflow [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-CommandName 
  
  
 ## Detailed Description 
+ 
 Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-Workflow 

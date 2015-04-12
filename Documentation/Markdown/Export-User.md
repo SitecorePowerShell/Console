@@ -20,6 +20,7 @@ Export-User -Current -Path &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 The Export-User cmdlet serializes a user to a disk drive on the Sitecore server.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
@@ -28,7 +29,9 @@ You can also specify user object variable, such as $&lt;user&gt;.
 To search for and retrieve more than one user, use the Filter parameter.
 
 You can also pipe a user from the Get-user commandlet. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

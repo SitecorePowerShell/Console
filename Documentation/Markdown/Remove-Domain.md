@@ -8,8 +8,11 @@ Remove-Domain [-Name] &lt;String&gt; [-Force]
  
  
 ## Detailed Description 
+ 
 The Remove-Domain cmdlet removes the specified domain. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

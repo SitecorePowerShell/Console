@@ -12,8 +12,11 @@ Set-Layout -Id &lt;String&gt; [-Database &lt;Database&gt;] -Device &lt;DeviceIte
  
  
 ## Detailed Description 
+ 
 Sets item layout for a specific device provided 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

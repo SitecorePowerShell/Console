@@ -8,8 +8,11 @@ New-ExplicitFileSource [-Name] &lt;String&gt; [-File &lt;FileSystemInfo&gt;]
  
  
 ## Detailed Description 
+ 
 Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

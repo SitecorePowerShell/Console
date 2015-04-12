@@ -8,8 +8,11 @@ Write-Log [[-Object] &lt;Object&gt;] [-Separator &lt;Object&gt;] [-Log &lt;Debug
  
  
 ## Detailed Description 
+ 
 The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

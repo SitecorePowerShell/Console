@@ -12,8 +12,11 @@ Show-Result [-Text] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;
  
  
 ## Detailed Description 
+ 
 Shows a Sheer dialog with text results showing the output of the script or another control selected by the user based on either control name or Url to the control. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

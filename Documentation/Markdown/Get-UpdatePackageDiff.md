@@ -9,9 +9,12 @@ Get-UpdatePackageDiff [-SourcePath] &lt;String&gt; [[-TargetPath] &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Performs a diff operation between the Source and taget path akin to Sitecore Courier. The diff is the difference that takes the content of Source folder and transforms it to Target.
 IMPORTANT! This functionality requires changes to web.config file on your sitecore server to work. Please consult the first Example. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

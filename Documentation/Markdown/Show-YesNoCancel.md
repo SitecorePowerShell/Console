@@ -8,13 +8,16 @@ Show-YesNoCancel [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int
  
  
 ## Detailed Description 
+ 
 Shows Yes/No/Cancel dialog to the user and returns user choice as a string value.
 
 Depending on the user response one of the 2 strings is returned:
 - yes
 - no
 - cancel 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

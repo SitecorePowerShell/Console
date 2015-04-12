@@ -8,8 +8,11 @@ Get-Database [[-Name] &lt;String&gt;] [-Item &lt;Item&gt;]
  
  
 ## Detailed Description 
+ 
 Retrieves Sitecore Database object based on name or item passed to it. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

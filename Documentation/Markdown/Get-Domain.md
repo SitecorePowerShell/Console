@@ -8,8 +8,11 @@ Get-Domain [-Name &lt;String&gt;]
  
  
 ## Detailed Description 
+ 
 The Get-Domain cmdlet returns all the domains or the specified domain. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

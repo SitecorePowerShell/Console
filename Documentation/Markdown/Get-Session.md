@@ -10,10 +10,13 @@ Get-Session -InstanceId &lt;String[]&gt;
  
  
 ## Detailed Description 
+ 
 The Get-Session cmdlet gets user sessions in Sitecore.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

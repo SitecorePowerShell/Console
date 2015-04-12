@@ -8,8 +8,11 @@ Get-Archive [[-Database] &lt;Database&gt;] [[-Name] &lt;String&gt;]
  
  
 ## Detailed Description 
+ 
 Returns Sitecore archives in context of a particular database. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

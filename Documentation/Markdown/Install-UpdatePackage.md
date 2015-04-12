@@ -8,13 +8,16 @@ Install-UpdatePackage [-Path] &lt;String&gt; [[-RollbackPackagePath] &lt;String&
  
  
 ## Detailed Description 
+ 
 Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
 
 Install-UpdatePackage.
     Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 
     -UpgradeAction {Preview or Upgrade}
     -InstallMode {Install or Update} 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

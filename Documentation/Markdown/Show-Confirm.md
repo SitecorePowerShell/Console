@@ -8,10 +8,13 @@ Show-Confirm [-Title] &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Shows a user a confirmation request message box.
 Returns "yes" or "no" based on user's response.
 The buttons that are shown to the user are "OK" and "Cancel". 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

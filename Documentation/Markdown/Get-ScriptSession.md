@@ -12,8 +12,11 @@ Get-ScriptSession -Type &lt;String[]&gt;
  
  
 ## Detailed Description 
+ 
 Returns the list of PowerShell Extension Sessions running in background. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

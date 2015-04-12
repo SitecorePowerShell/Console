@@ -14,6 +14,7 @@ Export-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-ItemPat
  
  
 ## Detailed Description 
+ 
 Serializes sitecore item to server disk drive.
 The simplest command syntax is:
 Export-Item -path "master:\content"
@@ -26,7 +27,9 @@ Both of them will serialize the content item in the master database. In first ca
 You can send more items from the pipeline to the Export-Item command, e.g. if you need to serialize all the descendants of the home item created by sitecore\admin, you can use:
 
 Get-Childitem "master:\content\home" -recurse | Where-Object { $_."__Created By" -eq "sitecore\admin" } | Export-Item 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Serialize-Item 

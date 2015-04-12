@@ -12,8 +12,11 @@ New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldSta
  
  
 ## Detailed Description 
+ 
 Creates new entry in the history store notifying of workflow state change. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

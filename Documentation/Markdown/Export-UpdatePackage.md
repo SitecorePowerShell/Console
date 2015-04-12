@@ -8,8 +8,11 @@ Export-UpdatePackage [-CommandList] &lt;List`1&gt; [[-Name] &lt;String&gt;] [[-P
  
  
 ## Detailed Description 
+ 
 Saves a sitecore serialization diff list as a Sitecore Update Package. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

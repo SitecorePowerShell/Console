@@ -13,8 +13,11 @@ Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &l
  
  
 ## Detailed Description 
+ 
 Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-ShellCommand 

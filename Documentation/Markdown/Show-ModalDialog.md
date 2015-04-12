@@ -10,8 +10,11 @@ Show-ModalDialog -Url &lt;String&gt; [-Title &lt;String&gt;] [-Width &lt;Int32&g
  
  
 ## Detailed Description 
+ 
 Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

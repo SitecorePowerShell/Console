@@ -8,10 +8,13 @@ ConvertTo-CliXml [-InputObject] &lt;PSObject&gt;
  
  
 ## Detailed Description 
+ 
 The ConvertTo-CliXml cmdlet returns an XML-based representation of an object or objects provided as InputObject parameter. You can then use the ConvertFrom-CliXml cmdlet to re-create the saved object based on the contents of that XML.
 
 This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the resulting XML in a string. ConvertTo-XML returns the XML, so you can continue to process it in Windows PowerShell. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

@@ -12,9 +12,12 @@ Add-ItemLanguage [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-
  
  
 ## Detailed Description 
+ 
 Creates a version of the item in a new language based on a language version already existing. 
 Based on parameters you can make the commandlet bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

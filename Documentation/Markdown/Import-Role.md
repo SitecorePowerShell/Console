@@ -14,8 +14,11 @@ Import-Role -Path &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 Imports (deserializes) Sitecore roles from the Sitecore server disk drive. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

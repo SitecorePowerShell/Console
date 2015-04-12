@@ -10,13 +10,16 @@ Get-Role -Filter &lt;String&gt;
  
  
 ## Detailed Description 
+ 
 The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 You can also specify role object variable, such as $&lt;role&gt;.
 
 To search for and retrieve more than one role, use the Filter parameter. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 

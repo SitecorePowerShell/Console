@@ -14,6 +14,7 @@ Import-Item [-Path &lt;String&gt;] [-Recurse] [-Root &lt;String&gt;] [-UseNewId]
  
  
 ## Detailed Description 
+ 
 Deserialization of items with Sitecore Powershell Extensions uses Import-Item command. The simplest syntax requires 2 parameters:
 -Path - which is a path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
 -Root - the directory which is the root of serialization. Trailing slash \ character is required, 
@@ -21,7 +22,9 @@ Deserialization of items with Sitecore Powershell Extensions uses Import-Item co
 e.g.:
 
 Import-Item -Path "c:\project\data\serialization\master\sitecore\content\articles" -Root "c:\project\data\serialization\" 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Deserialize-Item 

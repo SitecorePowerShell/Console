@@ -8,8 +8,11 @@ New-Domain [-Name] &lt;String&gt; [-LocallyManaged]
  
  
 ## Detailed Description 
+ 
 The New-Domain cmdlet creates a domain if it does not exist. 
+ 
 - 
+ 
 © 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
