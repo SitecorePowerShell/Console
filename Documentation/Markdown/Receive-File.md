@@ -23,185 +23,445 @@ If the file has been uploaded the dialog returns path to the file (in case of fi
  
 ### -Description&nbsp; &lt;String&gt; 
  
-Dialog description displayed below the dialog title.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Dialog description displayed below the dialog title. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -ParentItem&nbsp; &lt;Item&gt; 
  
-The item under which the uploaded media items should be stored.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | 1 |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue) |
-| Accept Wildcard Characters? | false | 
+The item under which the uploaded media items should be stored. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the folder where uploaded file should be stored.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | 1 |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+Path to the folder where uploaded file should be stored. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Title&nbsp; &lt;String&gt; 
  
-Dialog title - shown at the top of the dialog.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Dialog title - shown at the top of the dialog. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -CancelButtonName&nbsp; &lt;String&gt; 
  
-Text shown on the cancel button.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Text shown on the cancel button. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -OkButtonName&nbsp; &lt;String&gt; 
  
-Text shown on the OK button.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Text shown on the OK button. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Versioned&nbsp; &lt;SwitchParameter&gt; 
  
-Indicates that the Media item should be created as a Versioned media item.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Indicates that the Media item should be created as a Versioned media item. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Language&nbsp; &lt;String&gt; 
  
-Specifies the language in which the media item should be created. if not specified - context language is selected.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Specifies the language in which the media item should be created. if not specified - context language is selected. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Overwrite&nbsp; &lt;SwitchParameter&gt; 
  
-indicates that the upload should overwrite a file or a media item if that one exists. Otherwise a file with a non-confilicting name or a sibling media item is created.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+indicates that the upload should overwrite a file or a media item if that one exists. Otherwise a file with a non-confilicting name or a sibling media item is created. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Unpack&nbsp; &lt;SwitchParameter&gt; 
  
-Indicates that the uplaod is expected to be a ZIP file which should be unpacked when it's received.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Indicates that the uplaod is expected to be a ZIP file which should be unpacked when it's received. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -AdvancedDialog&nbsp; &lt;SwitchParameter&gt; 
  
-Shows advanced dialog where user can upload multiple media items and select if the uploaded items are versioned, overwritten and unpacked.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Shows advanced dialog where user can upload multiple media items and select if the uploaded items are versioned, overwritten and unpacked. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Width&nbsp; &lt;Int32&gt; 
  
-Dialog width.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Dialog width. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Height&nbsp; &lt;Int32&gt; 
  
-Dialog width.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Dialog width. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ## Inputs 
  

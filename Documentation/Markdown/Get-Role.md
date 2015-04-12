@@ -29,17 +29,37 @@ Specifies the Sitecore role by providing one of the following values.
     Local Name
         Example: developer
     Fully Qualified Name
-        Example: sitecore\developer
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | 1 |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue) |
-| Accept Wildcard Characters? | false | 
+        Example: sitecore\developer 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Filter&nbsp; &lt;String&gt; 
  
@@ -52,17 +72,37 @@ To get all the roles, use the asterisk wildcard:
 Get-Role -Filter *
 
 To get all the roles in a domain use the following command:
-Get-Role -Filter "sitecore\*"
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Get-Role -Filter "sitecore\*" 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ## Inputs 
  

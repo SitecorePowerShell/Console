@@ -18,31 +18,71 @@ Returns library item or path to the library where scripts for a particular integ
 ### -Module&nbsp; &lt;Module&gt; 
  
 Module for which the feature root library should be returned. 
-If not provided the feature root will be returned for all modules.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+If not provided the feature root will be returned for all modules. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -ReturnPath&nbsp; &lt;SwitchParameter&gt; 
  
-
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ## Inputs 
  

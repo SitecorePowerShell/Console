@@ -31,131 +31,311 @@ The following abbreviations are aliases for this cmdlet:
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database to contain the item to be deserialized.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+Database to contain the item to be deserialized. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-The item to be serialized.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+The item to be serialized. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Preset&nbsp; &lt;IncludeEntry&gt; 
  
-Name of the preset to be deserialized.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+Name of the preset to be deserialized. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Recurse&nbsp; &lt;SwitchParameter&gt; 
  
-If included in the execution - dederializes both the item and all of its children.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+If included in the execution - dederializes both the item and all of its children. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Root&nbsp; &lt;String&gt; 
  
-The directory which is the root of serialization. Trailing slash \ character is required. if not specified the default root will be used.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+The directory which is the root of serialization. Trailing slash \ character is required. if not specified the default root will be used. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -UseNewId&nbsp; &lt;SwitchParameter&gt; 
  
 Tells Sitecore if each of the items should be created with a newly generated ID, e.g.
-Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -usenewid -recurse
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project\data\serialization\" -usenewid -recurse 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -DisableEvents&nbsp; &lt;SwitchParameter&gt; 
  
 If set Sitecore will use EventDisabler during deserialization, e.g.:
-Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Import-Item -path "c:\project\data\serialization\master\sitecore\content\articles" -root "c:\project 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -ForceUpdate&nbsp; &lt;SwitchParameter&gt; 
  
-Forces item to be updated even if it has not changed.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | false |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | false |
-| Accept Wildcard Characters? | false | 
+Forces item to be updated even if it has not changed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ## Notes 
  

@@ -25,31 +25,71 @@ The following abbreviations are aliases for this cmdlet:
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-The item to be wrapped/initialized.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue, ByPropertyName) |
-| Accept Wildcard Characters? | false | 
+The item to be wrapped/initialized. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -SearchResultItem&nbsp; &lt;SearchResultItem&gt; 
  
-The item obtained from Find-Item commandlet to be translated into a sitecore item.
- 
-
-| | |
-| - | - |
-| Aliases |  |
-| Required? | true |
-| Position? | named |
-| Default Value |  |
-| Accept Pipeline Input? | true (ByValue) |
-| Accept Wildcard Characters? | false | 
+The item obtained from Find-Item commandlet to be translated into a sitecore item. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ## Inputs 
  
