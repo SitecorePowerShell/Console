@@ -144,7 +144,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
  
 ## Related Topics 
  
-* Show-ListView 
- 
+* Show-ListView
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

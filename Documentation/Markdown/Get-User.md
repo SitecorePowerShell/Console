@@ -247,13 +247,10 @@ sitecore\michael         sitecore     False           False
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Set-User 
- 
-* New-User 
- 
-* Remove-User 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Set-User
+* New-User
+* Remove-User
 * Unlock-User
+
 

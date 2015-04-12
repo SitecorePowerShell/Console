@@ -122,7 +122,7 @@ PS master:\> Invoke-Script 'Examples\Script Testing\Long Running Script with Pro
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
 * Import-Function
+
 

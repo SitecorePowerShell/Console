@@ -401,7 +401,7 @@ __Preview                           __Preview                          Appearanc
  
 ## Related Topics 
  
-* Get-ItemTemplate 
- 
+* Get-ItemTemplate
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

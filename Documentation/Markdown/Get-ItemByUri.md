@@ -69,3 +69,4 @@ PS master:\> Get-Item -Path master: -Uri "sitecore://master/{658017A8-F2D9-45C2-
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
 
+

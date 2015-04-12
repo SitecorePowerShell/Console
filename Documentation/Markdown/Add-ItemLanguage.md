@@ -409,9 +409,8 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Remove-ItemLanguage 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Remove-ItemLanguage
 * New-Item
+
 

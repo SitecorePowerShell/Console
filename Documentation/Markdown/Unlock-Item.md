@@ -301,9 +301,8 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Lock-Item 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Lock-Item
 * Get-Item
+
 

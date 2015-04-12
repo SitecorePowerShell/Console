@@ -356,19 +356,13 @@ PS master:\> Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object { $_
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-Rendering 
- 
-* New-Rendering 
- 
-* Get-Rendering 
- 
-* Get-LayoutDevice 
- 
-* Remove-Rendering 
- 
-* Get-Layout 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-Rendering
+* New-Rendering
+* Get-Rendering
+* Get-LayoutDevice
+* Remove-Rendering
+* Get-Layout
 * Set-Layout
+
 

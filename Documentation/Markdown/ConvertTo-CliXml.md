@@ -86,15 +86,11 @@ PS master:\> $myCliXmlItem | ConvertFrom-CliXml
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* ConvertFrom-CliXml 
- 
-* ConvertFrom-Xml 
- 
-* ConvertTo-Xml 
- 
-* Export-CliXml 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* ConvertFrom-CliXml
+* ConvertFrom-Xml
+* ConvertTo-Xml
+* Export-CliXml
 * Import-CliXml
+
 

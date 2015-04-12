@@ -79,9 +79,8 @@ PS master:\> Get-Domain -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Remove-Domain 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Remove-Domain
 * New-Domain
+
 

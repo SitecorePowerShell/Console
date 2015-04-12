@@ -185,13 +185,10 @@ PS master:\> Get-ItemClone -Path master:\content\home
  
 ## Related Topics 
  
-* New-ItemClone 
- 
-* ConvertFrom-ItemClone 
- 
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/> 
- 
+* New-ItemClone
+* ConvertFrom-ItemClone
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
 * Get-Item
+
 

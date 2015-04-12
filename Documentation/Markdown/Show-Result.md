@@ -318,23 +318,15 @@ Show-Result -Url "/sitecore/shell/Applications/PowerShell/PowerShellIse"
  
 ## Related Topics 
  
-* Read-Variable 
- 
-* Show-Alert 
- 
-* Show-Application 
- 
-* Show-Confirm 
- 
-* Show-FieldEditor 
- 
-* Show-Input 
- 
-* Show-ListView 
- 
-* Show-ModalDialog 
- 
-* Show-YesNoCancel 
- 
+* Read-Variable
+* Show-Alert
+* Show-Application
+* Show-Confirm
+* Show-FieldEditor
+* Show-Input
+* Show-ListView
+* Show-ModalDialog
+* Show-YesNoCancel
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

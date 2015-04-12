@@ -489,19 +489,13 @@ PS master:\> Remove-Rendering -Path master:\content\home -PlaceHolder "main*" -D
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-Rendering 
- 
-* New-Rendering 
- 
-* Set-Rendering 
- 
-* Get-Rendering 
- 
-* Get-LayoutDevice 
- 
-* Get-Layout 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-Rendering
+* New-Rendering
+* Set-Rendering
+* Get-Rendering
+* Get-LayoutDevice
+* Get-Layout
 * Set-Layout
+
 

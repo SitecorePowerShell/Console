@@ -269,15 +269,11 @@ PS master:\> Export-Role -Path C:\my\Serialization\Folder\Authors.role -Identity
  
 ## Related Topics 
  
-* Import-Role 
- 
-* Export-User 
- 
-* Import-User 
- 
-* Export-Item 
- 
-* Import-Item 
- 
+* Import-Role
+* Export-User
+* Import-User
+* Export-Item
+* Import-Item
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

@@ -321,9 +321,8 @@ PS master:\> New-ItemWorkflowEvent -Path master:\content\home -lanuage "en" -Tex
  
 ## Related Topics 
  
-* Get-ItemWorkflowEvent 
- 
-* Execute-Workflow 
- 
+* Get-ItemWorkflowEvent
+* Execute-Workflow
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

@@ -282,17 +282,12 @@ PS master:\> Export-User -Identify sitecore\admin
  
 ## Related Topics 
  
-* Export-Role 
- 
-* Import-User 
- 
-* Export-Item 
- 
-* Import-Role 
- 
-* Import-Item 
- 
-* Get-User 
- 
+* Export-Role
+* Import-User
+* Export-Item
+* Import-Role
+* Import-Item
+* Get-User
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

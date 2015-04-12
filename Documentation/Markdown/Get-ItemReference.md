@@ -285,7 +285,7 @@ TargetPath         : /sitecore/content/Home
  
 ## Related Topics 
  
-* Get-ItemReferrer 
- 
+* Get-ItemReferrer
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

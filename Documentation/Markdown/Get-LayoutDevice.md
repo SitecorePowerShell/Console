@@ -135,19 +135,13 @@ PS master:\> Get-LayoutDevice *
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-Rendering 
- 
-* New-Rendering 
- 
-* Set-Rendering 
- 
-* Get-Rendering 
- 
-* Remove-Rendering 
- 
-* Get-Layout 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-Rendering
+* New-Rendering
+* Set-Rendering
+* Get-Rendering
+* Remove-Rendering
+* Get-Layout
 * Set-Layout
+
 

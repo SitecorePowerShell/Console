@@ -253,19 +253,13 @@ PS master:\> Set-Layout -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-Rendering 
- 
-* New-Rendering 
- 
-* Set-Rendering 
- 
-* Get-Rendering 
- 
-* Get-LayoutDevice 
- 
-* Remove-Rendering 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-Rendering
+* New-Rendering
+* Set-Rendering
+* Get-Rendering
+* Get-LayoutDevice
+* Remove-Rendering
 * Get-Layout
+
 

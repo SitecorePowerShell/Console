@@ -122,9 +122,8 @@ PS master:\> Remove-RoleMember -Identity developer -Members "michael","adam","mi
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-RoleMember 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-RoleMember
 * Get-RoleMember
+
 

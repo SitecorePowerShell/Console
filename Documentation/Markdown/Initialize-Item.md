@@ -127,11 +127,9 @@ $item.Title = "New Title"
  
 ## Related Topics 
  
-* Find-Item 
- 
-* Get-Item 
- 
-* Get-ChildItem 
- 
+* Find-Item
+* Get-Item
+* Get-ChildItem
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
 

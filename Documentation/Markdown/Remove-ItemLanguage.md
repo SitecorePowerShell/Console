@@ -314,9 +314,8 @@ PS master:\> Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage "en
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/> 
- 
-* Add-ItemLanguage 
- 
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Add-ItemLanguage
 * Remove-Item
+
 
