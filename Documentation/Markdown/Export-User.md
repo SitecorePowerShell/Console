@@ -30,9 +30,7 @@ To search for and retrieve more than one user, use the Filter parameter.
 
 You can also pipe a user from the Get-user commandlet. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -11,9 +11,7 @@ ConvertFrom-CliXml [-InputObject] &lt;String&gt;
  
 The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -17,9 +17,7 @@ Import-User -Path &lt;String&gt;
  
 Imports (deserializes) Sitecore users from the Sitecore server disk drive. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

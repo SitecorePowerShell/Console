@@ -18,9 +18,7 @@ You can also specify role object variable, such as $&lt;role&gt;.
 
 To search for and retrieve more than one role, use the Filter parameter. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

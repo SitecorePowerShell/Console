@@ -17,9 +17,7 @@ Start-TaskSchedule -Id &lt;String&gt; [-Database &lt;Database&gt;]
  
 Executes a task schedule either passed from Get-Schedule, based on Item or Schedule path. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

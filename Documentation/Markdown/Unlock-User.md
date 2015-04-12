@@ -16,9 +16,7 @@ The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

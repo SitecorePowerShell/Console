@@ -13,9 +13,7 @@ The ConvertTo-CliXml cmdlet returns an XML-based representation of an object or 
 
 This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the resulting XML in a string. ConvertTo-XML returns the XML, so you can continue to process it in Windows PowerShell. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

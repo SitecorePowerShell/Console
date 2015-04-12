@@ -15,9 +15,7 @@ ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;]
  
 Converts item from clone to fully independent item. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

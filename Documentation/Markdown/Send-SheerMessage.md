@@ -11,9 +11,7 @@ Send-SheerMessage [-Name] &lt;String&gt; [-GetResult]
  
 Sends a sheer message to the app in which context the script is executing. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

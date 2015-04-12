@@ -15,9 +15,7 @@ The Set-UserPassword cmdlet resets or changes a user password.
 
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

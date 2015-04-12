@@ -11,9 +11,7 @@ Find-Item [-Criteria &lt;SearchCriteria[]&gt;] [-Where &lt;String&gt;] [-WhereVa
  
 Allows to find items using the Sitecore Content Search API. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

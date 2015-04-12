@@ -14,9 +14,7 @@ Invoke-Script [-Path] &lt;String&gt;
  
 Executes a script from Sitecore PowerShell Extensions Script Library. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-Script 
  

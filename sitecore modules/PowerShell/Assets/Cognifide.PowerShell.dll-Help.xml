@@ -10,7 +10,7 @@
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemLanguage</command:noun>
@@ -21,8 +21,7 @@
 Based on parameters you can make the commandlet bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -363,7 +362,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
@@ -374,8 +373,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -531,7 +529,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
@@ -541,8 +539,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Expands tokens like $name in fields on items.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -718,7 +715,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
@@ -728,8 +725,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       <maml:para>Returns Sitecore archives in context of a particular database.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -836,7 +832,7 @@ recyclebin                                   1950
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
@@ -846,8 +842,7 @@ recyclebin                                   1950
       <maml:para>Retrieves Sitecore Database object based on name or item passed to it.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -980,7 +975,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Index</command:noun>
@@ -990,8 +985,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <maml:para>Returns Sitecore indices in context of a particular database.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1093,7 +1087,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemByUri</command:noun>
@@ -1104,8 +1098,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1181,7 +1174,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
@@ -1192,8 +1185,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1357,7 +1349,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
@@ -1368,8 +1360,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1709,7 +1700,7 @@ __Preview                           __Preview                          Appearanc
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
@@ -1720,8 +1711,7 @@ __Preview                           __Preview                          Appearanc
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1981,7 +1971,7 @@ TargetPath         : /sitecore/content/Home
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
@@ -1992,8 +1982,7 @@ TargetPath         : /sitecore/content/Home
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2255,7 +2244,7 @@ TargetPath         : /sitecore/content/Home
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
@@ -2266,8 +2255,7 @@ TargetPath         : /sitecore/content/Home
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2487,7 +2475,7 @@ then format it to only show the template name, path and Key</dev:remarks>
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
@@ -2497,8 +2485,7 @@ then format it to only show the template name, path and Key</dev:remarks>
       <maml:para>Returns sitecore Search indices.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2582,7 +2569,7 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
@@ -2593,8 +2580,7 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -2843,7 +2829,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
@@ -2853,8 +2839,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       <maml:para>The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3129,7 +3114,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemLanguage</command:noun>
@@ -3141,8 +3126,7 @@ Language  parameter supports globbing so you can delete whole language groups us
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3405,7 +3389,7 @@ This command used to be named Wrap-Item - a matching alias added for compatibili
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>Item</command:noun>
@@ -3416,8 +3400,7 @@ This command used to be named Wrap-Item - a matching alias added for compatibili
 This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item commandlet into full Sitecore Items.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3541,7 +3524,7 @@ $item.Title = "New Title"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Find</command:verb>
       <command:noun>Item</command:noun>
@@ -3552,8 +3535,7 @@ $item.Title = "New Title"
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -3824,7 +3806,7 @@ http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
@@ -3834,8 +3816,7 @@ http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-
       <maml:para>Ensures the runner proces window is closed after the script finishes execution.    
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -3888,7 +3869,7 @@ http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Receive</command:verb>
       <command:noun>File</command:noun>
@@ -3900,8 +3881,7 @@ Executing it for an Item located in Sitecore Media library (provided as -ParentI
 If the file has been uploaded the dialog returns path to the file (in case of file system storage) or Item that has been created if the file was uplaoded to media library.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4309,7 +4289,7 @@ A new versioned media item in Danish language is created and returned. If the me
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>File</command:noun>
@@ -4321,8 +4301,7 @@ Executing it for an Item located in Sitecore Media library allows the user to do
 If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4556,7 +4535,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>ShellCommand</command:noun>
@@ -4566,8 +4545,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <maml:para>Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -4785,7 +4763,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
@@ -4797,8 +4775,7 @@ If user selects the "OK" button the commandlet will return 'ok' as its value.
 If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5123,7 +5100,7 @@ The editors for some other are set by providing the "editor" value
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
@@ -5133,8 +5110,7 @@ The editors for some other are set by providing the "editor" value
       <maml:para>Sends a sheer message to the app in which context the script is executing.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5230,7 +5206,7 @@ The editors for some other are set by providing the "editor" value
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
@@ -5241,8 +5217,7 @@ The editors for some other are set by providing the "editor" value
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5356,7 +5331,7 @@ The editors for some other are set by providing the "editor" value
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
@@ -5367,8 +5342,7 @@ The editors for some other are set by providing the "editor" value
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5622,7 +5596,7 @@ Show-Application `
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
@@ -5634,8 +5608,7 @@ Returns "yes" or "no" based on user's response.
 The buttons that are shown to the user are "OK" and "Cancel".
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -5751,7 +5724,7 @@ yes
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
@@ -5763,8 +5736,7 @@ If user closes the dialog by pressing the "OK" button "ok" string will be return
 Otherwise "cancel" will be returned.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6303,7 +6275,7 @@ The dialog will preserve the item sections.</dev:remarks>
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
@@ -6314,8 +6286,7 @@ The dialog will preserve the item sections.</dev:remarks>
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6528,7 +6499,7 @@ PS master:\&gt; Write-Host "The new name you've chosen is '$($newName)'"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
@@ -6544,8 +6515,7 @@ You can use the following features of the table to examine your data:
 -- Export contents of the view in XML, CSV, Json, HTML or Excel file and download that onto the user's computer. The downloaded results will take into account current filter and order of the items.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -6966,7 +6936,7 @@ like in the case of languages which are aggregarde form the "Languages" property
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
@@ -6976,8 +6946,7 @@ like in the case of languages which are aggregarde form the "Languages" property
       <maml:para>Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7210,7 +7179,7 @@ like in the case of languages which are aggregarde form the "Languages" property
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
@@ -7221,8 +7190,7 @@ like in the case of languages which are aggregarde form the "Languages" property
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7510,7 +7478,7 @@ Show-Result -Url "/sitecore/shell/Applications/PowerShell/PowerShellIse"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
@@ -7525,8 +7493,7 @@ Depending on the user response one of the 2 strings is returned:
 - cancel
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7686,7 +7653,7 @@ cancel
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
@@ -7699,8 +7666,7 @@ For example the main script might be listing all logged in users. And than the "
 Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView commandlet will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -7835,7 +7801,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModule</command:noun>
@@ -7846,8 +7812,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8054,7 +8019,7 @@ System.String
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModuleFeatureRoot</command:noun>
@@ -8064,8 +8029,7 @@ System.String
       <maml:para>Returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8183,7 +8147,7 @@ Get-SpeModuleFeatureRoot -Module $module -Feature listViewExport -ReturnPath
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
@@ -8194,8 +8158,7 @@ Get-SpeModuleFeatureRoot -Module $module -Feature listViewExport -ReturnPath
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8399,7 +8362,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
@@ -8410,8 +8373,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8534,7 +8496,7 @@ This command used to be named Import-Package - a matching alias added for compat
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>Package</command:noun>
@@ -8545,8 +8507,7 @@ This command used to be named Import-Package - a matching alias added for compat
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8704,7 +8665,7 @@ This command used to be named Import-Package - a matching alias added for compat
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
@@ -8714,8 +8675,7 @@ This command used to be named Import-Package - a matching alias added for compat
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -8878,7 +8838,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
@@ -8889,8 +8849,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9126,7 +9085,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
@@ -9136,8 +9095,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9340,7 +9298,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
@@ -9350,8 +9308,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9627,7 +9584,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
@@ -9638,8 +9595,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -9783,7 +9739,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
@@ -9793,8 +9749,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       <maml:para>Adds rendering to a chosen device for the presentation of an item.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10142,7 +10097,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
@@ -10152,8 +10107,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Returns a Layout set on an item for a specific device.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10358,7 +10312,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>LayoutDevice</command:noun>
@@ -10369,8 +10323,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -10517,7 +10470,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
@@ -10527,8 +10480,7 @@ If Device is specified but no layout is specified the commandlet will return an 
       <maml:para>Returns RenderingDefinition from an item based on provided filtering parameters.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11001,7 +10953,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
@@ -11012,8 +10964,7 @@ If Device is specified but no layout is specified the commandlet will return an 
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11473,7 +11424,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
@@ -11483,8 +11434,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -11972,7 +11922,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
@@ -11983,8 +11933,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12216,7 +12165,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
@@ -12226,8 +12175,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       <maml:para>Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12545,7 +12493,7 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
@@ -12555,8 +12503,7 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <maml:para>The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12668,7 +12615,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
@@ -12681,8 +12628,7 @@ This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12789,7 +12735,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
@@ -12800,8 +12746,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -12998,7 +12943,7 @@ Check DSN Messages               master          True     False        False    
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
@@ -13009,8 +12954,7 @@ Check DSN Messages               master          True     False        False    
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13203,7 +13147,7 @@ Check Bounced Messages           master          True     False        False    
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
@@ -13215,8 +13159,7 @@ Check Bounced Messages           master          True     False        False    
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13332,7 +13275,7 @@ Represents the identity of a role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
@@ -13345,8 +13288,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13472,7 +13414,7 @@ One or more user instances.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
@@ -13485,8 +13427,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13612,7 +13553,7 @@ One or more user instances.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
@@ -13623,8 +13564,7 @@ One or more user instances.
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13714,7 +13654,7 @@ One or more user instances.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
@@ -13729,8 +13669,7 @@ You can also specify role object variable, such as $&lt;role&gt;.
 To search for and retrieve more than one role, use the Filter parameter.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -13883,7 +13822,7 @@ sitecore\Developer                       sitecore     False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
@@ -13895,8 +13834,7 @@ sitecore\Developer                       sitecore     False
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14097,7 +14035,7 @@ Name        : sitecore\Developer
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
@@ -14109,8 +14047,7 @@ Name        : sitecore\Developer
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14252,7 +14189,7 @@ Created                LastRequest            SessionID                  UserNam
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
@@ -14267,8 +14204,7 @@ You can also specify user object variable, such as $&lt;user&gt;.
 To search for and retrieve more than one user, use the Filter parameter.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14309,7 +14245,7 @@ Local Name:
 
 Fully Qualified Name:
 
-    sitecore\admin
+    sitecore\admin  
 
 </maml:para>
         </maml:description>
@@ -14479,7 +14415,7 @@ sitecore\michael         sitecore     False           False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
@@ -14489,8 +14425,7 @@ sitecore\michael         sitecore     False           False
       <maml:para>The Lock-Item cmdlet unlocks the item.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14728,7 +14663,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
@@ -14739,8 +14674,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -14838,7 +14772,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
@@ -14849,8 +14783,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -14903,7 +14836,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
@@ -14914,8 +14847,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15025,7 +14957,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
@@ -15037,8 +14969,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 The Identity parameter specifies the Sitecore user to create. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15289,7 +15220,7 @@ sitecore\michael2        sitecore     False           False
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
@@ -15299,8 +15230,7 @@ sitecore\michael2        sitecore     False           False
       <maml:para>The Protect-Item cmdlet protects the item.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15538,7 +15468,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
@@ -15549,8 +15479,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15652,7 +15581,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
@@ -15664,8 +15593,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15781,7 +15709,7 @@ Represents the identity of a role.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
@@ -15791,8 +15719,7 @@ Represents the identity of a role.
       <maml:para>The Remove-Session cmdlet removes user sessions in Sitecore.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -15911,7 +15838,7 @@ Accepts a user session.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
@@ -15923,8 +15850,7 @@ Accepts a user session.
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16071,7 +15997,7 @@ Represents the instance of a user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
@@ -16083,8 +16009,7 @@ Represents the instance of a user.
 The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16415,7 +16340,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
@@ -16427,8 +16352,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16604,7 +16528,7 @@ Represents the instance of a user.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
@@ -16614,8 +16538,7 @@ Represents the instance of a user.
       <maml:para>The Unlock-Item cmdlet unlocks the item.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -16853,7 +16776,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
@@ -16866,8 +16789,7 @@ The Identity parameter specifies the Sitecore user to get. You can specify a use
 You can also specify user object variable, such as $&lt;user&gt;.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17009,7 +16931,7 @@ One or more user instances.
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
@@ -17019,8 +16941,7 @@ One or more user instances.
       <maml:para>The Unprotect-Item cmdlet protects the item.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17258,7 +17179,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Role</command:noun>
@@ -17269,8 +17190,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17487,7 +17407,7 @@ Sitecore.Security.Accounts.Role
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Role</command:noun>
@@ -17497,8 +17417,7 @@ Sitecore.Security.Accounts.Role
       <maml:para>Exports (serializes) Sitecore roles to server disk drive.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17749,7 +17668,7 @@ Sitecore.Security.Accounts.Role
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>User</command:noun>
@@ -17760,8 +17679,7 @@ Sitecore.Security.Accounts.Role
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -17977,7 +17895,7 @@ Sitecore.Security.Accounts.User
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>User</command:noun>
@@ -17995,8 +17913,7 @@ You can also pipe a user from the Get-user commandlet.
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18266,7 +18183,7 @@ Export-User -Filter "sitecore\*"
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Item</command:noun>
@@ -18282,8 +18199,7 @@ e.g.:
 Import-Item -Path "c:\project\data\serialization\master\sitecore\content\articles" -Root "c:\project\data\serialization\"
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18625,7 +18541,7 @@ Import-Item -path "c:\project\data\serialization\master\sitecore\content\article
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
@@ -18636,8 +18552,7 @@ Import-Item -path "c:\project\data\serialization\master\sitecore\content\article
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -18742,7 +18657,7 @@ AssetsOptimiser master   /sitecore/system/Modules/Optimiser
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Item</command:noun>
@@ -18763,8 +18678,7 @@ You can send more items from the pipeline to the Export-Item command, e.g. if yo
 Get-Childitem "master:\content\home" -recurse | Where-Object { $_."__Created By" -eq "sitecore\admin" } | Export-Item
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19071,7 +18985,7 @@ This command used to be named Execute-Script - a matching alias added for compat
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Script</command:noun>
@@ -19082,8 +18996,7 @@ This command used to be named Execute-Script - a matching alias added for compat
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19196,7 +19109,7 @@ PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with 
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
@@ -19206,8 +19119,7 @@ PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with 
       <maml:para>Retrieves a Sitecore cache.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19298,7 +19210,7 @@ master[data]                             True           3427    7420654   209715
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
@@ -19309,8 +19221,7 @@ master[data]                             True           3427    7420654   209715
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19449,7 +19360,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
@@ -19459,8 +19370,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       <maml:para>Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button)    
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -19515,7 +19425,7 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
@@ -19526,8 +19436,7 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -19589,7 +19498,7 @@ that was imported as a result of the execution of the following line</dev:remark
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
@@ -19599,8 +19508,7 @@ that was imported as a result of the execution of the following line</dev:remark
       <maml:para>Restarts the Sitecore Application pool.    
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax />
     <command:parameters />
@@ -19653,7 +19561,7 @@ that was imported as a result of the execution of the following line</dev:remark
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
@@ -19664,8 +19572,7 @@ that was imported as a result of the execution of the following line</dev:remark
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -19811,7 +19718,7 @@ that was imported as a result of the execution of the following line</dev:remark
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>UpdatePackage</command:noun>
@@ -19822,8 +19729,7 @@ that was imported as a result of the execution of the following line</dev:remark
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20019,7 +19925,7 @@ IMPORTANT! This functionality requires changes to web.config file on your siteco
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UpdatePackageDiff</command:noun>
@@ -20030,8 +19936,7 @@ IMPORTANT! This functionality requires changes to web.config file on your siteco
 IMPORTANT! This functionality requires changes to web.config file on your sitecore server to work. Please consult the first Example.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20187,7 +20092,7 @@ Export-UpdatePackage -Path C:\temp\SerializationDiff.update -CommandList $diff -
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
@@ -20202,8 +20107,7 @@ Install-UpdatePackage.
     -InstallMode {Install or Update}
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20346,7 +20250,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Workflow</command:noun>
@@ -20357,8 +20261,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20597,7 +20500,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
@@ -20608,8 +20511,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -20832,7 +20734,7 @@ User     : sitecore\admin
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
@@ -20843,8 +20745,7 @@ User     : sitecore\admin
 
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -21112,7 +21013,7 @@ User     : sitecore\admin
 </maml:para>
       </maml:description>
       <maml:copyright>
-        <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
@@ -21122,8 +21023,7 @@ User     : sitecore\admin
       <maml:para>The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
 
 </maml:para>
-      <maml:para>-</maml:para>
-      <maml:para>© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>

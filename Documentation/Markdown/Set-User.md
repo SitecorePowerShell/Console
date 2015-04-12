@@ -15,9 +15,7 @@ The Set-User cmdlet sets a user profile properties in Sitecore.
 
 The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

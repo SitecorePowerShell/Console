@@ -15,9 +15,7 @@ New-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;] -Destination &lt;I
  
 Creates a new item clone based on the item provided. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

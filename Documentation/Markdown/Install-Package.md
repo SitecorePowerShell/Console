@@ -12,9 +12,7 @@ Install-Package [[-Path] &lt;String&gt;] [-InstallMode &lt;Undefined | Overwrite
  
 Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Import-Package 
  

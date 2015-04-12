@@ -21,9 +21,7 @@ Get-ItemReference -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt
  
 Returns all items that the item specified with the commandlet parameters links to. if -ItemLink parameter is used the Commandlet will return links rather than items. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -16,9 +16,7 @@ Remove-ItemLanguage -Language &lt;String[]&gt; [-ExcludeLanguage &lt;String[]&gt
 Removes Language version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
 Language  parameter supports globbing so you can delete whole language groups using wildcards. 
  
-- 
- 
-© 2011-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
