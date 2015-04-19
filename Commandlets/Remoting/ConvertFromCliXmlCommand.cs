@@ -9,36 +9,33 @@ namespace Cognifide.PowerShell.Commandlets.Remoting
     [Cmdlet(VerbsData.ConvertFrom, "CliXml", SupportsShouldProcess = false)]
     public class ConvertFromCliXmlCommand : PSCmdlet
     {
-        private MethodInfo done;
-        private MethodInfo method;
-
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true), AllowNull]
         public string InputObject { get; set; }
 
         protected override void ProcessRecord()
         {
-            TextReader reader = null;
-            try
+            const BindingFlags commonBindings = BindingFlags.NonPublic | BindingFlags.Instance;
+            const BindingFlags methodBindings = BindingFlags.InvokeMethod | commonBindings;
+            var type = typeof(PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
+            var ctor = type.GetConstructor(commonBindings, null, new[] { typeof(XmlReader) }, null);
+
+            using (var sr = new StringReader(InputObject))
             {
-                reader = new StringReader(InputObject);
-                using (var xmlReader = XmlReader.Create(reader))
+                using (var xr = new XmlTextReader(sr))
                 {
-                    var type = typeof (PSObject).Assembly.GetType("System.Management.Automation.Deserializer");
-                    var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null,
-                        new[] {typeof (XmlReader)}, null);
-                    var deserializer = ctor.Invoke(new object[] {xmlReader});
-                    method = type.GetMethod("Deserialize", BindingFlags.Instance | BindingFlags.NonPublic, null,
-                        new Type[] {}, null);
-                    done = type.GetMethod("Done", BindingFlags.Instance | BindingFlags.NonPublic);
-                    while (!(bool) done.Invoke(deserializer, new object[] {}))
+                    var deserializer = ctor.Invoke(new object[] { xr });
+                    while (!(bool)type.InvokeMember("Done", methodBindings, null, deserializer, new object[] { }))
                     {
-                        WriteObject(method.Invoke(deserializer, new object[] {}));
+                        try
+                        {
+                            WriteObject(type.InvokeMember("Deserialize", methodBindings, null, deserializer, new object[] { }));
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteWarning("Could not deserialize string. Exception: " + ex.Message);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                WriteWarning("Could not deserialize string. Exception: " + ex.Message);
             }
         }
     }
