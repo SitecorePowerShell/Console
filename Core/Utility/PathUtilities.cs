@@ -24,13 +24,11 @@ namespace Cognifide.PowerShell.Core.Utility
 
         public static string GetDrive(string path, string currentDb)
         {
-            if (path.Contains(":"))
-            {
-                //path with drive
-                var drivepath = path.Split(':');
-                return drivepath[0];
-            }
-            return currentDb;
+            if (String.IsNullOrEmpty(path) || !path.Contains(":")) return currentDb;
+
+            //path with drive
+            var drivepath = path.Split(':');
+            return drivepath[0];
         }
 
         public static Item GetItem(string path, string currentDb, string currentPath)

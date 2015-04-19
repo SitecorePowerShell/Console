@@ -19,11 +19,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("Cognifide.PowerShell")]
-[assembly: AssemblyDescription("Cognifide PowerShell Console for Sitecore")]
+[assembly: AssemblyDescription("Sitecore PowerShell Extensions")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Cognifide")]
-[assembly: AssemblyProduct("Cognifide PowerShell Console for Sitecore")]
-[assembly: AssemblyCopyright("Copyright © Adam Najmanowicz 2011-2015")]
+[assembly: AssemblyCompany("Cognifide Limited")]
+[assembly: AssemblyProduct("Sitecore PowerShell Extensions")]
+[assembly: AssemblyCopyright("© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
