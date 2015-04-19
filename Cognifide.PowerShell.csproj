@@ -155,6 +155,7 @@
     <Compile Include="Client\Commands\MenuItems\EditPowerShellScript.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellScript.cs" />
+    <Compile Include="Client\Commands\MenuItems\NewItem.cs" />
     <Compile Include="Client\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />

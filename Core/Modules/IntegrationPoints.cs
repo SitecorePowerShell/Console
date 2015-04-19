@@ -10,6 +10,7 @@ namespace Cognifide.PowerShell.Core.Modules
     {
         public const string ContentEditorContextMenuFeature = "contentEditorContextMenu";
         public const string ContentEditorGuttersFeature = "contentEditorGutters";
+        public const string ContentEditorInsertItemFeature = "contentEditorInsertItem";
         public const string ContentEditorRibbonFeature = "contentEditorRibbon";
         public const string ControlPanelFeature = "controlPanel";
         public const string FunctionsFeature = "functions";

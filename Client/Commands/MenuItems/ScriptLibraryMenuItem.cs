@@ -100,7 +100,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             return menuItems.ToArray();
         }
 
-        private static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)
+        internal static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)
         {
             if (parent == null)
             {
