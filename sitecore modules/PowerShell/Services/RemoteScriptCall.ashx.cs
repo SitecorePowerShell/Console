@@ -118,6 +118,9 @@ namespace Cognifide.PowerShell.Console.Services
                 foreach (var param in HttpContext.Current.Request.Params.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.Params[param];
+                    if (String.IsNullOrEmpty(param)) continue;
+                    if (String.IsNullOrEmpty(paramValue)) continue;
+
                     if (session.GetVariable(param) == null)
                     {
                         session.SetVariable(param, paramValue);
