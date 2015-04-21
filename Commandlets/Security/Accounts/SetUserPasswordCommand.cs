@@ -3,7 +3,7 @@ using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Set, "UserPassword", DefaultParameterSetName = "Set password", SupportsShouldProcess = true)]
     public class SetUserPasswordCommand : BaseCommand

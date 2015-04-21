@@ -1,11 +1,12 @@
 ﻿using System.Management.Automation;
+using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
-    [Cmdlet(VerbsCommon.Remove, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    public class RemoveUserCommand : BaseCommand
+    [Cmdlet(VerbsLifecycle.Disable, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
+    public class DisableUserCommand : BaseCommand
     {
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
@@ -27,10 +28,14 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
-            if (ShouldProcess(name, "Remove user"))
+            var member = Membership.GetUser(name);
+            if (member == null) return;
+
+            member.IsApproved = false;
+
+            if (ShouldProcess(member.UserName, "Disable user"))
             {
-                var user = User.FromName(name, true);
-                user.Delete();
+                Membership.UpdateUser(member);
             }
         }
     }

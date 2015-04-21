@@ -4,7 +4,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Remove, "RoleMember", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class RemoveRoleMemberCommand : BaseCommand

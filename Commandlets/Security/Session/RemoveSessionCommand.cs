@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using Sitecore.Web.Authentication;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Session
 {
     [Cmdlet(VerbsCommon.Remove, "Session", DefaultParameterSetName = "InstanceId", SupportsShouldProcess = true)]
     public class RemoveSessionCommand : BaseCommand

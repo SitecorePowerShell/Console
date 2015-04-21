@@ -3,7 +3,7 @@ using System.Data;
 using System.Management.Automation;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Add, "RoleMember", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class AddRoleMemberCommand : BaseCommand

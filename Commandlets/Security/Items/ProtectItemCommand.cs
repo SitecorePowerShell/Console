@@ -2,17 +2,17 @@
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
-    [Cmdlet(VerbsSecurity.Unprotect, "Item", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsSecurity.Protect, "Item", SupportsShouldProcess = true)]
     [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class UnprotectItemCommand : BaseEditItemCommand
+    public class ProtectItemCommand : BaseEditItemCommand
     {
         protected override void EditItem(Item item)
         {
-            if (ShouldProcess(item.GetProviderPath(), "Unprotect item"))
+            if (ShouldProcess(item.GetProviderPath(), "Protect item"))
             {
-                item.Appearance.ReadOnly = false;
+                item.Appearance.ReadOnly = true;
             }
         }
     }

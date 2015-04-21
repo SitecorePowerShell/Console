@@ -3,7 +3,7 @@ using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsLifecycle.Enable, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class EnableUserCommand : BaseCommand

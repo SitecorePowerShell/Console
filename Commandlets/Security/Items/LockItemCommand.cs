@@ -2,17 +2,17 @@
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
-    [Cmdlet(VerbsCommon.Unlock, "Item", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Lock, "Item", SupportsShouldProcess = true)]
     [OutputType(typeof (bool), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
-    public class UnlockItemCommand : BaseEditItemCommand
+    public class LockItemCommand : BaseEditItemCommand
     {
         protected override void EditItem(Item item)
         {
-            if (ShouldProcess(item.GetProviderPath(), "Unlock Item"))
+            if (ShouldProcess(item.GetProviderPath(), "Lock Item"))
             {
-                item.Locking.Unlock();
+                item.Locking.Lock();
             }
         }
     }

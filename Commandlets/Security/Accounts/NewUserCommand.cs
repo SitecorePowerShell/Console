@@ -4,7 +4,7 @@ using System.Management.Automation;
 using System.Web.Security;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.New, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     [OutputType(typeof (User))]

@@ -3,10 +3,10 @@ using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
-    [Cmdlet(VerbsLifecycle.Disable, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    public class DisableUserCommand : BaseCommand
+    [Cmdlet(VerbsCommon.Unlock, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
+    public class UnlockUserCommand : BaseCommand
     {
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
@@ -31,10 +31,9 @@ namespace Cognifide.PowerShell.Commandlets.Security
             var member = Membership.GetUser(name);
             if (member == null) return;
 
-            member.IsApproved = false;
-
-            if (ShouldProcess(member.UserName, "Disable user"))
+            if (ShouldProcess(name, "Unlock User"))
             {
+                member.UnlockUser();
                 Membership.UpdateUser(member);
             }
         }

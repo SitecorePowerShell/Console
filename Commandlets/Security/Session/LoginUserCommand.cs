@@ -8,7 +8,7 @@ using Sitecore;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel.License;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Session
 {
     [Cmdlet("Login", "User", SupportsShouldProcess = true)]
     public class LoginUserCommand : BaseCommand

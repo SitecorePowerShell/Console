@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using Sitecore.Security.Authentication;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Session
 {
     [Cmdlet("Logout", "User", SupportsShouldProcess = true)]
     public class LogoutUserCommand : BaseCommand

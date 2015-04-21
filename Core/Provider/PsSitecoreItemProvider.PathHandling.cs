@@ -116,5 +116,32 @@ namespace Cognifide.PowerShell.Core.Provider
             var lastLeafIndex = path.LastIndexOf('/');
             return path.Substring(lastLeafIndex + 1);
         }
+    
+        private static bool HasRelativePathTokens(string path)
+        {
+            if ((((path.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) != 0) && !path.Contains(@"\.\")) &&
+                 (!path.Contains(@"\..\") && !path.EndsWith(@"\..", StringComparison.OrdinalIgnoreCase))) &&
+                ((!path.EndsWith(@"\.", StringComparison.OrdinalIgnoreCase) &&
+                  !path.StartsWith(@"..\", StringComparison.OrdinalIgnoreCase)) &&
+                 !path.StartsWith(@".\", StringComparison.OrdinalIgnoreCase)))
+            {
+                return path.StartsWith("~", StringComparison.OrdinalIgnoreCase);
+            }
+            return true;
+        }
+
+        private string NormalizePath(string path)
+        {
+            string normalizedPath = path;
+            if (!string.IsNullOrEmpty(path))
+            {
+                normalizedPath = path.Replace('/', '\\');
+                if (HasRelativePathTokens(path))
+                {
+                    normalizedPath = NormalizeRelativePath(normalizedPath, null);
+                }
+            }
+            return normalizedPath;
+        }
     }
 }

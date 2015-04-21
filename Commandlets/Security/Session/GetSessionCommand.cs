@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using Sitecore.Web.Authentication;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Session
 {
     [Cmdlet(VerbsCommon.Get, "Session", DefaultParameterSetName = "Id")]
     [OutputType(typeof (DomainAccessGuard.Session))]

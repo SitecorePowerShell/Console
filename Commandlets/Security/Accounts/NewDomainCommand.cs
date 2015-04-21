@@ -4,7 +4,7 @@ using System.Management.Automation;
 using Sitecore.Security.Domains;
 using Sitecore.SecurityModel;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.New, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
     [OutputType(typeof (Domain))]

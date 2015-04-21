@@ -6,7 +6,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Remove, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
     public class RemoveDomainCommand : BaseCommand

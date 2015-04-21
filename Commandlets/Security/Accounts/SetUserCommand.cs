@@ -13,7 +13,7 @@ using Sitecore.Resources;
 using Sitecore.Security.Accounts;
 using Sitecore.Text;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class SetUserCommand : BaseCommand, IDynamicParameters

@@ -1,9 +1,8 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets
+namespace Cognifide.PowerShell.Commandlets.Security
 {
     public abstract class BaseEditItemCommand : BaseGovernanceCommand
     {

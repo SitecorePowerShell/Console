@@ -4,7 +4,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Get, "Role", DefaultParameterSetName = "Id")]
     [OutputType(typeof (Role))]
