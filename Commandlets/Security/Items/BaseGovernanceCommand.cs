@@ -5,7 +5,7 @@ using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
-namespace Cognifide.PowerShell.Commandlets.Security
+namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
     public abstract class BaseGovernanceCommand : BaseItemCommand
     {

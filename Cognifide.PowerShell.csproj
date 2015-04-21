@@ -171,7 +171,7 @@
     <Compile Include="Client\Controls\SpeJobMonitor.cs" />
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
-    <Compile Include="Commandlets\Security\BaseEditItemCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\BaseEditItemCommand.cs" />
     <Compile Include="Commandlets\BaseItemCommand.cs" />
     <Compile Include="Commandlets\BaseItemRecursiveCommand.cs" />
     <Compile Include="Commandlets\BaseLanguageAgnosticItemCommand.cs" />
@@ -250,7 +250,7 @@
     <Compile Include="Commandlets\Scheduler\StartTaskScheduleCommand.cs" />
     <Compile Include="Commandlets\Security\AccountIdentity.cs" />
     <Compile Include="Commandlets\Security\Accounts\AddRoleMemberCommand.cs" />
-    <Compile Include="Commandlets\Security\BaseGovernanceCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\BaseGovernanceCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\DisableUserCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\EnableUserCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\GetDomainCommand.cs" />
