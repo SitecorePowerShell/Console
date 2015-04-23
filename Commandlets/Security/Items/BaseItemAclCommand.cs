@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 using System.Xml;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Exceptions;
-using Sitecore.Security.AccessControl;
-using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
