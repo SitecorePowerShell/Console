@@ -34,4 +34,37 @@
       </MemberSet>
     </Members>
   </Type>
-</Types>
+  <Type>
+    <Name>Sitecore.Security.AccessControl.AccessRule</Name>
+    <Members>
+      <MemberSet>
+        <Name>PsStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>AccessRight</Name>
+              <Name>Account</Name>
+              <Name>PermissionType</Name>
+              <Name>PropagationType</Name>
+              <Name>SecurityPermission</Name>
+            </ReferencedProperties>
+          </PropertySet>
+          <NoteProperty>
+            <Name>DefaultDisplayProperty</Name>
+            <Value>AccessRight</Value>
+          </NoteProperty>
+          <PropertySet>
+            <Name>DefaultKeyPropertySet</Name>
+            <ReferencedProperties>
+              <Name>AccessRight</Name>
+              <Name>Account</Name>
+              <Name>PermissionType</Name>
+              <Name>PropagationType</Name>
+              <Name>SecurityPermission</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type></Types>

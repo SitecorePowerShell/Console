@@ -171,6 +171,9 @@
     <Compile Include="Client\Controls\SpeJobMonitor.cs" />
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\NewItemAclCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\ClearItemAclCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\SetItemAclCommand.cs" />
     <Compile Include="Commandlets\Security\Items\BaseEditItemCommand.cs" />
     <Compile Include="Commandlets\BaseItemCommand.cs" />
     <Compile Include="Commandlets\BaseItemRecursiveCommand.cs" />
@@ -256,6 +259,8 @@
     <Compile Include="Commandlets\Security\Accounts\GetDomainCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\GetRoleCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\GetRoleMemberCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\AddItemAclCommand.cs" />
+    <Compile Include="Commandlets\Security\Items\BaseItemAclCommand.cs" />
     <Compile Include="Commandlets\Security\Session\GetSessionCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\GetUserCommand.cs" />
     <Compile Include="Commandlets\Security\Items\GetItemAclCommand.cs" />

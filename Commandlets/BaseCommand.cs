@@ -267,7 +267,7 @@ namespace Cognifide.PowerShell.Commandlets
         }
 
         // get a parameter of type T.  
-        protected bool TryGetParameter<T>(string name, out T value)
+        public bool TryGetParameter<T>(string name, out T value)
         {
             RuntimeDefinedParameter parameter;
 
@@ -283,7 +283,7 @@ namespace Cognifide.PowerShell.Commandlets
         }
 
         // try to get a dynamically added parameter  
-        protected bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
+        internal bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
         {
             if (_parameters.ContainsKey(name))
             {

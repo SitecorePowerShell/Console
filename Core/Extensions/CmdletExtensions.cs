@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
+using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Commandlets.Security;
 using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
+using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Core.Extensions
@@ -43,6 +45,15 @@ namespace Cognifide.PowerShell.Core.Extensions
             return false;
         }
 
+        public static bool CanAdmin(this Cmdlet command, Item item)
+        {
+            if (item.Access.CanAdmin()) return true;
+
+            var error = String.Format("Item '{0}' cannot be managed by the current user.", item.Name);
+            command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied, item));
+            return false;
+        }
+
         public static bool CanChangeLock(this Cmdlet command, Item item)
         {
             if (item.Locking.HasLock() || item.Locking.CanUnlock() ||
@@ -73,6 +84,42 @@ namespace Cognifide.PowerShell.Core.Extensions
                 return false;
             }
 
+            return true;
+        }
+
+        public static Account GetAccountFromIdentity(this Cmdlet command, AccountIdentity identity)
+        {
+            Account account = identity;
+            if (account == null)
+            {
+                var error = String.Format("Cannot find an account with identity '{0}'.", identity.Name);
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                    ErrorCategory.ObjectNotFound, identity));
+            }
+            return account;
+        }
+
+        public static bool TryGetAccessRight(this BaseCommand command, out AccessRight accessRight, bool mustDefine)
+        {
+            string accessRightName;
+            accessRight = null;
+
+            if (!command.TryGetParameter("AccessRight", out accessRightName) && mustDefine)
+            {
+                command.WriteError(new ErrorRecord(new InvalidValueException("AccessRight is not defined"),
+                    "sitecore_no_access_right_defined", ErrorCategory.InvalidArgument, null));
+                return false;
+            }
+
+            try
+            {
+                accessRight = AccessRight.FromName(accessRightName);
+            }
+            catch (Exception ex)
+            {
+                command.WriteError(new ErrorRecord(ex, "sitecore_invalid_access_right", ErrorCategory.InvalidArgument, null));
+                return false;
+            }
             return true;
         }
     }
