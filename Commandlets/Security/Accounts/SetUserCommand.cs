@@ -20,6 +20,9 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
     {
         private static readonly string[] portraits;
 
+        [Parameter]
+        public bool IsAdministrator { get; set; }
+
         public SetUserCommand()
         {
             Enabled = true;
@@ -28,14 +31,6 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             {
                 ParameterSetName = ParameterAttribute.AllParameterSets
             }, new ValidateSetAttribute(portraits));
-
-            if (User.Current.IsAdministrator)
-            {
-                AddDynamicParameter<SwitchParameter>("IsAdministrator", new ParameterAttribute
-                {
-                    ParameterSetName = ParameterAttribute.AllParameterSets
-                });
-            }
         }
 
         static SetUserCommand()
@@ -89,14 +84,13 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User))
+
+            User user = Instance;
+            if (ParameterSetName == "Id")
             {
-                return;
+                user = User.FromName(Identity.Name, true);
             }
-
-            var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
-
-            var user = User.FromName(name, true);
+            var name = user.Name;
 
             if (!ShouldProcess(name, "Set User information"))
             {
@@ -122,14 +116,9 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 }
             }
 
-            if (User.Current.IsAdministrator)
+            if (User.Current.IsAdministrator && IsParameterSpecified("IsAdministrator"))
             {
-                var isPresent = false;
-                var isAdmin = false;
-                if (TryGetSwitchParameter("IsAdministrator", out isPresent, out isAdmin))
-                {
-                    profile.IsAdministrator = isAdmin;
-                }
+                profile.IsAdministrator = IsAdministrator;
             }
 
             if (!String.IsNullOrEmpty(StartUrl))

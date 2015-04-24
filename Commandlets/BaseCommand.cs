@@ -257,7 +257,7 @@ namespace Cognifide.PowerShell.Commandlets
             if (TryGetDynamicParameter(name, out parameter))
             {
                 isPresent = parameter.IsSet;
-                value = (SwitchParameter) parameter.Value;
+                value = parameter.IsSet && (SwitchParameter) parameter.Value;
                 return true;
             }
 
