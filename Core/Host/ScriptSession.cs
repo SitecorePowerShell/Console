@@ -126,7 +126,14 @@ namespace Cognifide.PowerShell.Core.Host
 
         public string CurrentLocation
         {
-            get { return runspace.SessionStateProxy.Path.CurrentLocation.Path; }
+            get
+            {
+                if (pipeline.PipelineStateInfo.State == PipelineState.Running)
+                {
+                    return string.Empty;
+                }
+                return runspace.SessionStateProxy.Path.CurrentLocation.Path;
+            }
         }
 
         public string ApplianceType { get; set; }
