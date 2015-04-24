@@ -284,7 +284,6 @@
     <Compile Include="Commandlets\Session\GetScriptSession.cs" />
     <Compile Include="Commandlets\Session\GetUserAgent.cs" />
     <Compile Include="Commandlets\Session\ImportFunctionCommand.cs" />
-    <Compile Include="Commandlets\Session\NewScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Session\RemoveScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Session\RestartApplicationCommand.cs" />
     <Compile Include="Commandlets\Session\SetHostPropertyCommand.cs" />

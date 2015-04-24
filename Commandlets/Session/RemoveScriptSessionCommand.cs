@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
