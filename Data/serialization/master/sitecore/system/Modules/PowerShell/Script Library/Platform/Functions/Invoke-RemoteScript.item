@@ -13,7 +13,16 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1396
+content-length: 1611
+
+<#
+    .SYNOPSIS
+        Run scripts in Sitecore PowerShell Extensions via web service calls.
+
+   .NOTES
+        v1.0 - 20150427 
+#>
+
 
 function Invoke-RemoteScript {
     [CmdletBinding()]
@@ -25,6 +34,7 @@ function Invoke-RemoteScript {
         [scriptblock]$ScriptBlock,
 
         [Parameter(ParameterSetName='Session')]
+        [ValidateNotNull()]
         [pscustomobject]$Session,
 
         [Parameter(ParameterSetName='Uri')]
@@ -53,18 +63,19 @@ function Invoke-RemoteScript {
         }
 
         $proxy = New-WebServiceProxy -Uri $ConnectionUri
+        if(-not $proxy) { return $null }
+
         if($ArgumentList) {
             $parameters = ConvertTo-CliXml -InputObject $ArgumentList
         }
         $response = $proxy.ExecuteScriptBlock($Username, $Password, $ScriptBlock.ToString(), $parameters, $SessionId)
         ConvertFrom-CliXml -InputObject $response
     }
-
 }
 ----version----
 language: en
 version: 1
-revision: ec8f4e0f-bd2d-4db6-ab16-b50e06bfbf75
+revision: 00d0e394-bb89-4824-b8be-ece415e578cb
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -79,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ec8f4e0f-bd2d-4db6-ab16-b50e06bfbf75
+00d0e394-bb89-4824-b8be-ece415e578cb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150424T061521:635654529214277145Z
+20150427T211425:635657660655175031Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

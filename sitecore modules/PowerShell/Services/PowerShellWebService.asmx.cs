@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Console.Services
     ///     The service is used by Terminal/Console app and the Sitecore Rocks Visual Studio console
     ///     for all of their operations. It's also used by ISE for code completions.
     /// </summary>
-    [WebService(Namespace = "http://cognifide.powershell.com")]
+    [WebService(Namespace = "http://sitecorepowershellextensions/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
