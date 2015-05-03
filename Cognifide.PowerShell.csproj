@@ -99,6 +99,7 @@
     <Reference Include="Sitecore.Logging">
       <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
     </Reference>
+    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Sitecore.Update">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
@@ -138,14 +139,11 @@
     <Compile Include="Client\Applications\PowerShellResultViewerText.cs" />
     <Compile Include="Client\Applications\PowerShellRunner.cs" />
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
+    <Compile Include="Client\Applications\PowerShellVelociyOutput.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
     <Compile Include="Client\Applications\UploadFile\PowerShellUploadFileForm.cs" />
-    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage2.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage2.cs" />
+    <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage.cs" />
     <Compile Include="Client\Commands\AbortQueryState.cs" />
     <Compile Include="Client\Commands\EditIseSettingsCombo.cs" />
     <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
@@ -362,6 +360,13 @@
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
+    <Compile Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx.cs">
+      <DependentUpon>VelocityScriptOutput.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx.designer.cs">
+      <DependentUpon>VelocityScriptOutput.aspx</DependentUpon>
+    </Compile>
     <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -414,6 +419,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\stewie.png" />
     <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
+    <Content Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-beautify.js" />
@@ -487,6 +493,7 @@
     <Content Include="sitecore modules\Shell\PowerShell\ContextGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\DownloadFile.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellVelociyOutput.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellMultiValuePrompt.xml" />

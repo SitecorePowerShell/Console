@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8113
+content-length: 8320
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -40,6 +40,8 @@ PowerShell ISE comes with a sample scripts and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
+- 3.1 (May 2015)
+  Release Notes: http://bit.ly/ScPs31Iss
 - 3.0 (February 2015)
   Release Notes: http://bit.ly/ScPs30Iss
 - 2.8 (December 2014)
@@ -139,6 +141,9 @@ $package.Sources.Add($source);
 $source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
 $package.Sources.Add($source);
 
+$source = Get-Item 'master:\layout\Layouts\PowerShell' | New-ItemSource "Master Layouts" -InstallMode Overwrite
+$package.Sources.Add($source);
+
 # Start Menu
 $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
 $package.Sources.Add($source);
@@ -174,7 +179,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: d22e14a7-94c0-4556-aa08-6df93d74755c
+revision: 942156e5-b72a-4452-826b-ebda9697b7f4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -189,14 +194,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d22e14a7-94c0-4556-aa08-6df93d74755c
+942156e5-b72a-4452-826b-ebda9697b7f4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150222T183327:635602268078759766Z
+20150503T224227:635662897476519453Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

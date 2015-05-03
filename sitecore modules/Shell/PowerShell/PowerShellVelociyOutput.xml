@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellVelociyOutput>
+    <FormPage>
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellVelociyOutput,Cognifide.PowerShell" />
+      <!-- Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" runat="server" /-->
+      <Literal ID="velocityOutput" />
+    </FormPage>
+  </PowerShellVelociyOutput>
+</control>

@@ -14,6 +14,7 @@ using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using Page = Sitecore.Web.UI.HtmlControls.Page;
 
 namespace Cognifide.PowerShell.Client.Commands
 {

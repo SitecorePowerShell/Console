@@ -1,12 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
-using Sitecore.ContentSearch.Utilities;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
-using Sitecore.Security.Accounts;
 using AuthorizationManager = Sitecore.Security.AccessControl.AuthorizationManager;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Items

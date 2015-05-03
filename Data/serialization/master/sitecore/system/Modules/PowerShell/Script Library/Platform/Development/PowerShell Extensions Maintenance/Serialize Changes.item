@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5249
+content-length: 5130
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -76,32 +76,30 @@ Write-Progress -Activity "Serializing PowerShell Application Layouts" -PercentCo
 Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Serialize-Item -Recurse
 Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Serialize-Item -Recurse
 Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Serialize-Item -Recurse
-
+Get-Item 'master:\layout\Layouts\PowerShell' | Serialize-Item -Recurse
 # Start Menu icons
 Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE\' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console\' | Serialize-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Serialize-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Serialize-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Serialize-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
 Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
 
 # Content Editor Context Menu integration
 Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console\' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts\' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Serialize-Item
 
 # Tasks integration
 Write-Progress -Activity "Serializing Content Tasks integration" -PercentComplete 100
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Serialize-Item
-Get-Item 'master:\system\Tasks\Schedules\Test-PowerShell' | Serialize-Item
 
 #-name * -path "master:\system\Modules\PowerShell\Settings" -Exclude "sitecore" -Recurse
 ----version----
 language: en
 version: 1
-revision: 2b76c00c-9043-4df1-a841-9c09985b12d4
+revision: da995fc7-ab73-4f71-909d-1179e11dd73f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -116,14 +114,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2b76c00c-9043-4df1-a841-9c09985b12d4
+da995fc7-ab73-4f71-909d-1179e11dd73f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150222T183343:635602268230488281Z
+20150503T224012:635662896124234297Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

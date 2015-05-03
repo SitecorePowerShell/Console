@@ -154,6 +154,18 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public List<PSVariable> Variables
+        {
+            get
+            {
+                lock (this)
+                {
+                    var list = this.ExecuteScriptPart("Get-Variable", false, true).Cast<PSVariable>().ToList();
+                    return list;
+                }
+            }
+        }
+
         public void Initialize()
         {
             Initialize(false);
