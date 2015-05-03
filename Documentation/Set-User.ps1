@@ -26,7 +26,7 @@
         Specifies whether the Sitecore user should be enabled.
 
     .PARAMETER IsAdministrator
-        Specifies whether the Sitecore user should be classified as an Administrator. Parameter only available to Administrators.
+        Specifies whether the Sitecore user should be classified as an Administrator.
 
     .PARAMETER CustomProperties
         Specifies a hashtable of custom properties to assign to the Sitecore user profile.
@@ -75,7 +75,7 @@
         7/3/2014 4:40:02 PM
 
     .EXAMPLE
-        PS master:\> Set-User -Identity michael -IsAdministrator -CustomProperties @{"HireDate"="03/17/2010"}
+        PS master:\> Set-User -Identity michael -IsAdministrator $true -CustomProperties @{"HireDate"="03/17/2010"}
         PS master:\>$user = Get-User -Identity michael
         PS master:\>$user.Profile.GetCustomProperty("HireDate")
         

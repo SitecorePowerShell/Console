@@ -114,9 +114,9 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 if (ScriptSession.PsVersion == null)
                 {
-                    return "Sitecore Console Host";
+                    return "Sitecore PowerShell Extensions Host";
                 }
-                return string.Format("Sitecore Console Host {0} on Windows PowerShell {1}.{2}",
+                return string.Format("Sitecore PowerShell Extensions Host {0} on Windows PowerShell {1}.{2}",
                     GetType().Assembly.GetName().Version, ScriptSession.PsVersion.Major,
                     ScriptSession.PsVersion.Minor);
             }
