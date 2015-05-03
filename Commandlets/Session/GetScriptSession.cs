@@ -6,16 +6,17 @@ using Cognifide.PowerShell.Core.Host;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {
-    [Cmdlet("Get", "ScriptSession", DefaultParameterSetName = "All")]
+    [Cmdlet(VerbsCommon.Get, "ScriptSession", DefaultParameterSetName = "All")]
     public class GetScriptSession : BaseCommand
     {
-        [Parameter(ParameterSetName = "By ID", Mandatory = true)]
+        [Parameter(ParameterSetName = "Id", Mandatory = true)]
+        [ValidateNotNullOrEmpty]
         public string Id { get; set; }
 
-        [Parameter(ParameterSetName = "Current session", Mandatory = true)]
+        [Parameter(ParameterSetName = "Current", Mandatory = true)]
         public SwitchParameter Current { get; set; }
 
-        [Parameter(ParameterSetName = "By Type", Mandatory = true)]
+        [Parameter(ParameterSetName = "Type", Mandatory = true)]
         public string[] Type { get; set; }
 
         protected override void ProcessRecord()

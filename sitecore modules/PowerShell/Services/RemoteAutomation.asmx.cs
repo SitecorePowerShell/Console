@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Console.Services
     ///     The service is used by to execute scripts blocks from remote locations
     ///     for the purpose of BDD tests and remote integration with Windows PowerShell.
     /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
+    [WebService(Namespace = "http://sitecorepowershellextensions/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [ToolboxItem(false)]
     // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
@@ -85,15 +85,29 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
         {
+            return ExecuteScriptBlock2(userName, password, script, cliXmlArgs, null);
+        }
+
+        [WebMethod]
+        public string ExecuteScriptBlock2(string userName, string password, string script, string cliXmlArgs,
+            string sessionId)
+        {
             var requestUri = WebUtil.GetRequestUri();
             var site = SiteContextFactory.GetSiteContext(requestUri.Host, Sitecore.Context.Request.FilePath,
                 requestUri.Port);
-            return ExecuteScriptBlockinSite(userName, password, script, cliXmlArgs, site.Name);
+            return ExecuteScriptBlockinSite2(userName, password, script, cliXmlArgs, site.Name, sessionId);
         }
 
         [WebMethod]
         public string ExecuteScriptBlockinSite(string userName, string password, string script, string cliXmlArgs,
             string siteName)
+        {
+            return ExecuteScriptBlockinSite2(userName, password, script, cliXmlArgs, siteName, null);
+        }
+
+        [WebMethod]
+        public string ExecuteScriptBlockinSite2(string userName, string password, string script, string cliXmlArgs,
+            string siteName, string sessionId)
         {
             if (!WebServiceSettings.ServiceEnabledRemoting)
             {
@@ -101,22 +115,28 @@ namespace Cognifide.PowerShell.Console.Services
             }
             Login(userName, password);
 
-            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
+            var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
+
+            Sitecore.Context.SetActiveSite(siteName);
+
+            if (!String.IsNullOrEmpty(cliXmlArgs))
             {
-                Sitecore.Context.SetActiveSite(siteName);
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
                 scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript, false, true);
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
                 script = script.TrimEnd(' ', '\t', '\n');
-                var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
-                scriptSession.SetVariable("results", outObjects);
-                scriptSession.Output.Clear();
-                scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-                var result =
-                    scriptSession.Output.Select(p => p.Terminated ? p.Text + "\n" : p.Text)
-                        .Aggregate((current, next) => current + next);
-                return result;
             }
+            var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
+            scriptSession.SetVariable("results", outObjects);
+            scriptSession.Output.Clear();
+            scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+            var result = scriptSession.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
+
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                ScriptSessionManager.RemoveSession(scriptSession);
+            }
+            return result;
         }
 
         [WebMethod]
@@ -177,11 +197,11 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 var itemname = dirName + "/" + Path.GetFileNameWithoutExtension(filePath);
                 var db = Factory.GetDatabase(database);
-                var item = (MediaItem) db.GetItem(itemname);
+                var item = (MediaItem)db.GetItem(itemname);
                 using (var stream = item.GetMediaStream())
                 {
                     var result = new byte[stream.Length];
-                    stream.Read(result, 0, (int) stream.Length);
+                    stream.Read(result, 0, (int)stream.Length);
                     return result;
                 }
             }

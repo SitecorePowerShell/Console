@@ -58,18 +58,19 @@ namespace Cognifide.PowerShell.Console.Services
                     return;
             }
 
-            var authenticated = !string.IsNullOrEmpty(userName) &&
-                                !string.IsNullOrEmpty(password) &&
-                                AuthenticationManager.Login(userName, password, false);
+            if(!String.IsNullOrEmpty(userName) && !String.IsNullOrEmpty(password))
+            {
+                AuthenticationManager.Login(userName, password, false);
+            }
 
-            authenticated = Context.IsLoggedIn;
+            var authenticated = Context.IsLoggedIn;
             var scriptDb =
                 !authenticated || string.IsNullOrEmpty(scriptDbParam) || scriptDbParam == "current"
                     ? Context.Database
                     : Database.GetDatabase(scriptDbParam);
             var dbName = scriptDb.Name;
 
-            Item scriptItem = null;
+            Item scriptItem;
 
             switch (apiVersion)
             {
@@ -77,7 +78,6 @@ namespace Cognifide.PowerShell.Console.Services
                     scriptItem = scriptDb.GetItem(scriptParam) ??
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + scriptParam);
                     break;
-                case "2":
                 default:
                     UpdateCache(dbName);
                     if (!apiScripts.ContainsKey(dbName))
@@ -118,6 +118,9 @@ namespace Cognifide.PowerShell.Console.Services
                 foreach (var param in HttpContext.Current.Request.Params.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.Params[param];
+                    if (String.IsNullOrEmpty(param)) continue;
+                    if (String.IsNullOrEmpty(paramValue)) continue;
+
                     if (session.GetVariable(param) == null)
                     {
                         session.SetVariable(param, paramValue);

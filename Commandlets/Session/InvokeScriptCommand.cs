@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Settings;
@@ -11,8 +12,8 @@ namespace Cognifide.PowerShell.Commandlets.Session
     [OutputType(typeof (object))]
     public class InvokeScriptCommand : BaseShellCommand
     {
-        private const string ParameterSetNameFromItem = "From Item";
-        private const string ParameterSetNameFromFullPath = "From Full Path";
+        private const string ParameterSetNameFromItem = "Item";
+        private const string ParameterSetNameFromFullPath = "Path";
 
         [Parameter(ParameterSetName = ParameterSetNameFromItem, ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true, Mandatory = true, Position = 0)]
@@ -39,19 +40,17 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
                 if (scriptItem == null)
                 {
-                    WriteError(new ErrorRecord(
-                        new ItemNotFoundException(string.Format("Script '{0}' not found.", Path)),
-                        "sitecore_script_missing", ErrorCategory.ObjectNotFound, null));
+                    var error = String.Format("The script '{0}' is cannot be found.", Path);
+                    WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound, Path));
                     return;
                 }
                 script = scriptItem["script"];
             }
-            if (ShouldProcess(scriptItem.GetProviderPath(), "Invoke script"))
-            {
-                object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                    PipelineResultTypes.Output | PipelineResultTypes.Error, null);
-                WriteObject(sendToPipeline);
-            }
+            if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;
+            
+            object sendToPipeline = InvokeCommand.InvokeScript(script, false,
+                PipelineResultTypes.Output | PipelineResultTypes.Error, null);
+            WriteObject(sendToPipeline);
         }
     }
 }

@@ -20,9 +20,9 @@ namespace Cognifide.PowerShell.Core.Host
             return GetSession(sessionId);
         }
 
-        public static ScriptSession NewSession(string applicanceType, bool personalizedSettings)
+        public static ScriptSession NewSession(string applianceType, bool personalizedSettings)
         {
-            return GetSession(string.Empty, applicanceType, personalizedSettings);
+            return GetSession(string.Empty, applianceType, personalizedSettings);
         }
 
         public static ScriptSession GetSession(string persistentId)
@@ -59,7 +59,7 @@ namespace Cognifide.PowerShell.Core.Host
             RemoveSession(session.Key);
         }
 
-        public static ScriptSession GetSession(string persistentId, string applicanceType, bool personalizedSettings)
+        public static ScriptSession GetSession(string persistentId, string applianceType, bool personalizedSettings)
         {
             // sessions with no persistent ID, are just created new every time
             var autoDispose = string.IsNullOrEmpty(persistentId);
@@ -76,7 +76,7 @@ namespace Cognifide.PowerShell.Core.Host
                     return HttpRuntime.Cache[sessionKey] as ScriptSession;
                 }
 
-                var session = new ScriptSession(applicanceType, personalizedSettings)
+                var session = new ScriptSession(applianceType, personalizedSettings)
                 {
                     ID = persistentId,
                     AutoDispose = autoDispose
