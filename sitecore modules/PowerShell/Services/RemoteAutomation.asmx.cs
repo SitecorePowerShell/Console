@@ -83,17 +83,31 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
         [WebMethod]
-        public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs, string sessionId)
+        public string ExecuteScriptBlock(string userName, string password, string script, string cliXmlArgs)
+        {
+            return ExecuteScriptBlock2(userName, password, script, cliXmlArgs, null);
+        }
+
+        [WebMethod]
+        public string ExecuteScriptBlock2(string userName, string password, string script, string cliXmlArgs,
+            string sessionId)
         {
             var requestUri = WebUtil.GetRequestUri();
             var site = SiteContextFactory.GetSiteContext(requestUri.Host, Sitecore.Context.Request.FilePath,
                 requestUri.Port);
-            return ExecuteScriptBlockinSite(userName, password, script, cliXmlArgs, site.Name, sessionId);
+            return ExecuteScriptBlockinSite2(userName, password, script, cliXmlArgs, site.Name, sessionId);
         }
 
         [WebMethod]
         public string ExecuteScriptBlockinSite(string userName, string password, string script, string cliXmlArgs,
-            string siteName, string sessiondId)
+            string siteName)
+        {
+            return ExecuteScriptBlockinSite2(userName, password, script, cliXmlArgs, siteName, null);
+        }
+
+        [WebMethod]
+        public string ExecuteScriptBlockinSite2(string userName, string password, string script, string cliXmlArgs,
+            string siteName, string sessionId)
         {
             if (!WebServiceSettings.ServiceEnabledRemoting)
             {
@@ -101,7 +115,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             Login(userName, password);
 
-            var scriptSession = ScriptSessionManager.GetSession(sessiondId, ApplicationNames.RemoteAutomation, false);
+            var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
             Sitecore.Context.SetActiveSite(siteName);
 
@@ -117,6 +131,11 @@ namespace Cognifide.PowerShell.Console.Services
             scriptSession.Output.Clear();
             scriptSession.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
             var result = scriptSession.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
+
+            if (String.IsNullOrEmpty(sessionId))
+            {
+                ScriptSessionManager.RemoveSession(scriptSession);
+            }
             return result;
         }
 
