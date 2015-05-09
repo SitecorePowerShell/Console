@@ -173,3 +173,7 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .variableWrapperFixedHeight .scContentControlChecklist { height : 100% }
 .variableWrapperFixedHeight .scRadioGroup { height : 100% }
 .variableWrapperFixedHeight textArea { height : 100% }
+
+.rules-edit-button { float: right; margin-left: 8px !important; }
+.varRule { display: flex; border: solid 0px ButtonShadow; padding: 4px; margin-right: 8px; }
+.scRule { display: none; }

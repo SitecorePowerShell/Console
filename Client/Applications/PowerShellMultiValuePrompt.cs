@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
@@ -12,7 +14,10 @@ using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 using Sitecore.Shell.Applications.ContentEditor;
+using Sitecore.Shell.Applications.Dialogs.RulesEditor;
+using Sitecore.Shell.Applications.Rules;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -196,6 +201,36 @@ namespace Cognifide.PowerShell.Client.Applications
                     dateTimePicker.Value = value as string ?? string.Empty;
                 }
                 return dateTimePicker;
+            }
+
+            if (!string.IsNullOrEmpty(editor) && editor.IndexOf("rule", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                string editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name+"_");
+                Sitecore.Context.ClientPage.ServerProperties[editorId] = value;
+
+                var rulesBorder = new Border
+                {
+                    Class = "rulesWrapper",
+                    ID = editorId
+                };
+
+                Button rulesEditButton = new Button
+                {
+                    Header = "Edit rule",
+                    Class = "scButton edit-button rules-edit-button",
+                    Click = "EditConditionClick(\\\"" + editorId + "\\\")"
+                };
+
+                rulesBorder.Controls.Add(rulesEditButton);
+                var rulesRender = new Literal
+                {
+                    ID = editorId + "_renderer",
+                    Text = GetRuleConditionsHtml(
+                        string.IsNullOrEmpty(value as string) ? "<ruleset />" : value as string)
+                };
+                rulesRender.Class = rulesRender.Class + " varRule";
+                rulesBorder.Controls.Add(rulesRender);
+                return rulesBorder;
             }
 
             if (!string.IsNullOrEmpty(editor) &&
@@ -532,10 +567,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 controlId = control.ID;
                 if (controlId != null && controlId.StartsWith("variable_"))
                 {
-                var result = GetVariableValue(control);
-                results.Add(result);
+                    var result = GetVariableValue(control);
+                    results.Add(result);
+                }
             }
-        }
         }
 
         private object GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
@@ -571,6 +606,10 @@ namespace Cognifide.PowerShell.Client.Applications
                         }
                     }
                 }
+                else if (control is Border && (control as Border).Class == "rulesWrapper")
+                {
+                    result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
+                }                    
                 else if (control is Combobox)
                 {
                     var boolValue = (control as Combobox).Value;
@@ -690,6 +729,66 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void CancelClick()
         {
             SheerResponse.CloseWindow();
+        }
+
+        protected void EditConditionClick(string id)
+        {
+            Assert.ArgumentNotNull(id, "id");
+            NameValueCollection parameters = new NameValueCollection();
+            parameters["id"] = id;
+            Sitecore.Context.ClientPage.Start(this, "EditCondition", parameters);
+        }
+
+        protected void EditCondition(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            string id = args.Parameters["id"];
+            if (string.IsNullOrEmpty(id))
+            {
+                SheerResponse.Alert("Please select a rule", new string[0]);
+            }
+            else
+            {
+                if (!args.IsPostBack)
+                {
+                    string rule = Sitecore.Context.ClientPage.ServerProperties[id] as string;
+                    if (string.IsNullOrEmpty(rule))
+                    {
+                        rule = "<ruleset />";
+                    }
+
+                    RulesEditorOptions options = new RulesEditorOptions
+                    {
+                        IncludeCommon = true,
+                        RulesPath = "/sitecore/system/Settings/Rules/PowerShell",
+                        AllowMultiple = false,
+                        Value = rule,
+                        HideActions = true,
+                    };
+
+                    SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), "580px", "712px", string.Empty, true);
+                    args.WaitForPostBack();
+                }
+                else if (args.HasResult)
+                {
+                    var content = args.Result;
+                    Sitecore.Context.ClientPage.ServerProperties[id] = content;
+                    SheerResponse.SetInnerHtml(id + "_renderer", GetRuleConditionsHtml(content));
+                }
+            }
+        }
+
+        private static string GetRuleConditionsHtml(string rule)
+        {
+            Assert.ArgumentNotNull(rule, "rule");
+            HtmlTextWriter output = new HtmlTextWriter(new StringWriter());
+            RulesRenderer renderer2 = new RulesRenderer(rule)
+            {
+                SkipActions = true,
+                AllowMultiple = false
+            };
+            renderer2.Render(output);
+            return output.InnerWriter.ToString();
         }
     }
 }

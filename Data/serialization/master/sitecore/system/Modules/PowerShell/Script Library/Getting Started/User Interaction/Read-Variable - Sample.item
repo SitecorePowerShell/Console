@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5858
+content-length: 6121
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -22,6 +22,7 @@ $items3 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell
 $parent = get-item . |% { $_.Parent } 
 $checklistItems =  @(4,16)
 $radioListItems = 3
+$rule = (Get-Item "master:\system\Modules\PowerShell\Script Library\Task Management\Content Editor\Context Menu\Run Task Schedule").ShowRule
 
 if($PSVersionTable.PsVersion.Major -gt 2){
     # this will only work on PowerShell in version over 2.0
@@ -69,9 +70,10 @@ $result = Read-Variable -Parameters `
     @{ Variable = get-variable "Parent"; Tab="More Items" },
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"}, 
     @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
-    @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights" } `
+    @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights" }, `
+    @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"} `
     -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
-    -Title "Initialise various variable types (with tabs)" -Width 600 -Height 660 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+    -Title "Initialise various variable types (with tabs)" -Width 650 -Height 660 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
 if($result -ne "ok")
 {
     Exit
@@ -102,6 +104,8 @@ $result = Read-Variable -Parameters `
 '$role:      ' + $role
 '$userOrRole:' + $userOrRole
 '$fraction:  ' + $fraction
+'$rule:  '
+$rule
 '$items: '
 $items
 '$items2: '
@@ -114,7 +118,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: 4f940a2d-bad0-4ca7-b341-70f5543a2c8e
+revision: 2d02d27d-ddac-4664-86fe-220e6723e442
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -129,14 +133,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4f940a2d-bad0-4ca7-b341-70f5543a2c8e
+2d02d27d-ddac-4664-86fe-220e6723e442
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150222T183909:635602271498095703Z
+20150509T012217:635667313370498047Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
