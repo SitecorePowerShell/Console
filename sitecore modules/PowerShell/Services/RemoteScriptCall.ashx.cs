@@ -32,6 +32,10 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var request = HttpContext.Current.Request;
             var userName = request.Params.Get("user");
+            if (!string.IsNullOrEmpty(userName) && !userName.Contains("\\"))
+            {
+                userName = "sitecore\\" + userName;
+            }
             var password = request.Params.Get("password");
             var scriptParam = request.Params.Get("script");
             var scriptDbParam = request.Params.Get("scriptDb");

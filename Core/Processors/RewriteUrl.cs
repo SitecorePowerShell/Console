@@ -69,7 +69,7 @@ namespace Cognifide.PowerShell.Core.Processors
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
                     var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
                     var query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&sc_database={2}&apiVersion=2",
+                    query += string.Format("{0}script={1}&sc_database={2}&scriptDb={2}&apiVersion=2",
                         string.IsNullOrEmpty(query) ? "" : "&", scriptPath, sourceArray[3]);
                     WebUtil.RewriteUrl(
                         new UrlString
