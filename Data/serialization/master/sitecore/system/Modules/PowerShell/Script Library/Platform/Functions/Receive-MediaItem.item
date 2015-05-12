@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {48EA0DA6-78A6-481F-8E00-FEFB73CF1697}
+id: {0CAE5C5B-C760-4D9C-952B-88D3A90DB5F9}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Functions/Send-File
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Functions/Receive-MediaItem
 parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
-name: Send-File
+name: Receive-MediaItem
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,22 +13,22 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2222
+content-length: 2641
 
 <#
     .SYNOPSIS
-        Uploads an item to the media library in Sitecore PowerShell Extensions via web service calls.
+        Downloads an item from the media library in Sitecore PowerShell Extensions via web service calls.
 
    .NOTES
-        v1.0 - 20150427 
+        v1.0 - 20150512
 #>
 
-function Send-File {
+function Receive-MediaItem {
     [CmdletBinding()]
     param(
         [Parameter(ParameterSetName='Session')]
         [ValidateNotNull()]
-        [pscustomobject]$Session,
+        [pscustomobject[]]$Session,
 
         [Parameter(ParameterSetName='Uri')]
         [string]$ConnectionUri,
@@ -70,31 +70,39 @@ function Send-File {
             }
 
             Write-Verbose -Message "Connecting to web service."
+            
+            if(!$ConnectionUri.EndsWith(".asmx")) {
+                $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+            }
 
             $proxy = New-WebServiceProxy -Uri $ConnectionUri
             if(-not $proxy) { return $null }
+
+            Write-Verbose -Message "Downloading file content."
+            [byte[]]$response = $proxy.DownloadFile($Username, $Password, $Path, $Database, $Language)
 	
-            Write-Verbose -Message "Reading file content."
-            [byte[]]$bytes = [System.IO.File]::ReadAllBytes($Path)
+            if($response -and $response.Length -gt 0) {
+                if(-not(Test-Path $Destination))
+                {
+                    New-Item -ItemType File -Path $Destination
+                }
 
-            if($bytes -and $bytes.Length -gt 0) {
+                Write-Verbose -Message "Writing file content."
+                [System.IO.File]::WriteAllBytes((Convert-Path -Path $Destination), $response)
 
-                Write-Verbose -Message "Uploading file content."
-                $proxy.UploadFile($Username, $Password, $Destination, $bytes, $Database, $Language) | Out-Null
-
-                Write-Verbose -Message "Upload complete."
+                Write-Verbose -Message "Download complete."
             } else {
-                Write-Verbose -Message "Upload failed. No content to send to the web service."
+                Write-Verbose -Message "Download failed. No content returned from the web service."
             }
         }
     }
 }
 
-Set-Alias -Name "Upload-SitecoreFile" -Value "Send-File" -Description "SPE"
+Set-Alias -Name "Download-SitecoreFile" -Value "Receive-MediaItem" -Description "SPE"
 ----version----
 language: en
 version: 1
-revision: 26c9ad17-e1b1-428b-af22-ab3ba6b2825c
+revision: dc91bde1-6c4d-4c9e-8351-5be4579173bd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -102,21 +110,21 @@ name: __Created
 key: __created
 content-length: 16
 
-20150427T212022Z
+20150427T211724Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-26c9ad17-e1b1-428b-af22-ab3ba6b2825c
+dc91bde1-6c4d-4c9e-8351-5be4579173bd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150427T212055:635657664553699975Z
+20150512T222620:635670663806863170Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
