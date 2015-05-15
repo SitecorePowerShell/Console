@@ -551,6 +551,10 @@ namespace Cognifide.PowerShell.Client.Applications
             if (controlId != null && controlId.StartsWith("variable_"))
             {
                 control = control.Controls[0] as Sitecore.Web.UI.HtmlControls.Control;
+                if (control == null)
+                {
+                    return;
+                }
                 controlId = control.ID;
                 if (controlId != null && controlId.StartsWith("variable_"))
                 {
@@ -580,7 +584,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var context = (DataContext) DataContextPanel.FindControl(contextID);
                     result.Add("Value", context.CurrentItem);
                 }
-                else if (control is Checkbox || (control is Border && (control as Border).Class == "checkBoxWrapper"))
+                else if (control is Border && ((Border) control).Class == "checkBoxWrapper")
                 {
                     var checkboxBorder = control as Border;
                     foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))

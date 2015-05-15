@@ -80,9 +80,11 @@ namespace Cognifide.PowerShell.Client.Controls
             base.HandleMessage(message);
             if (message.Name != "pstaskmonitor:check")
                 return;
+            
             var jobHandle = JobHandle;
-            if (jobHandle == Handle.Null)
+            if (jobHandle.Equals(Handle.Null))
                 return;
+
             if (!jobHandle.IsLocal)
             {
                 ScheduleCallback();

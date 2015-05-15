@@ -177,7 +177,7 @@ namespace Cognifide.PowerShell.Client.Controls
                     : keys.Contains("Icon")
                         ? result.Display["Icon"]
                         : (result.Original is Item)
-                            ? (result.Original as Item).Appearance.Icon
+                            ? ((Item) result.Original).Appearance.Icon
                             : "Software/32x32/graph_node.png";
                 lvi.Value = result.Id.ToString(CultureInfo.InvariantCulture);
                 foreach (var column in result.Display.Keys)
