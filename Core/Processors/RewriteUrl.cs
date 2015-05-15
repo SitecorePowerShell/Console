@@ -8,16 +8,6 @@ namespace Cognifide.PowerShell.Core.Processors
 {
     public class RewriteUrl : PreprocessRequestProcessor
     {
-        private static int GetVersion(string path)
-        {
-            int num;
-            Assert.ArgumentNotNull(path, "path");
-            var str = path.TrimStart('/').Split('/')[2];
-            Assert.IsTrue(str.StartsWith("v"), "Version token is wrong.");
-            Assert.IsTrue(int.TryParse(str.Replace("v", string.Empty), out num), "Version not recognized.");
-            return num;
-        }
-
         public override void Process(PreprocessRequestArgs arguments)
         {
             Assert.ArgumentNotNull(arguments, "arguments");

@@ -28,14 +28,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         protected void EndUploading(string id)
         {
             ID realId;
-            if (ID.TryParse(id, out realId))
-            {
-                SheerResponse.SetDialogValue(id);
-            }
-            else
-            {
-                SheerResponse.SetDialogValue(HttpUtility.UrlDecode(id));
-            }
+            SheerResponse.SetDialogValue(ID.TryParse(id, out realId) ? id : HttpUtility.UrlDecode(id));
             SheerResponse.CloseWindow();
         }
 

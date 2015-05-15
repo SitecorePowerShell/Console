@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Linq;
+using System.Management.Automation;
 using Sitecore.Web.Authentication;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Session
@@ -19,27 +20,24 @@ namespace Cognifide.PowerShell.Commandlets.Security.Session
             switch (ParameterSetName)
             {
                 case "InstanceId":
-                    foreach (var instanceId in InstanceId)
+                    foreach (var result in from instanceId in InstanceId
+                        from result in WildcardFilter(instanceId, DomainAccessGuard.Sessions, s => s.SessionID)
+                        where ShouldProcess(result.SessionID, "Kill session for user '" + result.UserName + "'")
+                        select result)
                     {
-                        foreach (
-                            var result in WildcardFilter(instanceId, DomainAccessGuard.Sessions, s => s.SessionID))
-                        {
-                            if (ShouldProcess(result.SessionID, "Kill session for user '" + result.UserName + "'"))
-                            {
-                                DomainAccessGuard.Kick(result.SessionID);
-                            }
-                        }
+                        DomainAccessGuard.Kick(result.SessionID);
                     }
                     break;
                 case "Instance":
                     foreach (
                         var result in
-                            WildcardFilter(Instance.SessionID, DomainAccessGuard.Sessions, s => s.SessionID))
+                            WildcardFilter(Instance.SessionID, DomainAccessGuard.Sessions, s => s.SessionID)
+                                .Where(
+                                    result =>
+                                        ShouldProcess(result.SessionID,
+                                            "Kill session for user '" + result.UserName + "'")))
                     {
-                        if (ShouldProcess(result.SessionID, "Kill session for user '" + result.UserName + "'"))
-                        {
-                            DomainAccessGuard.Kick(result.SessionID);
-                        }
+                        DomainAccessGuard.Kick(result.SessionID);
                     }
                     break;
             }

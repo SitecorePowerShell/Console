@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
@@ -47,12 +48,8 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         var typeLoadException = ex as ReflectionTypeLoadException;
                         var loaderExceptions = typeLoadException.LoaderExceptions;
-                        var message = string.Empty;
-                        foreach (var exc in loaderExceptions)
-                        {
-                            message += exc.Message;
-                        }
-                        Log.Error("Error while loading commandlets list", ex, typeof (CognifideSitecorePowerShellSnapIn));
+                        var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
+                        Log.Error(string.Format("Error while loading commandlets list: {0}",message), ex, typeof (CognifideSitecorePowerShellSnapIn));
                     }
                 }
             }
@@ -118,10 +115,12 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 if (_providers == null)
                 {
-                    _providers = new Collection<ProviderConfigurationEntry>();
-                    _providers.Add(new ProviderConfigurationEntry("Sitecore PowerShell Provider",
-                        typeof (PsSitecoreItemProvider),
-                        @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml"));
+                    _providers = new Collection<ProviderConfigurationEntry>
+                    {
+                        new ProviderConfigurationEntry("Sitecore PowerShell Provider",
+                            typeof (PsSitecoreItemProvider),
+                            @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml")
+                    };
                 }
 
                 return _providers;

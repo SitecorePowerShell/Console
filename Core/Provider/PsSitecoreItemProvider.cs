@@ -74,11 +74,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing HasChildItems(string path='{0}')", path);
                 path = path.Replace("\\", "/");
                 var item = GetItemForPath(path);
-                if (item != null)
-                {
-                    return item.HasChildren;
-                }
-                return false;
+                return item != null && item.HasChildren;
             }
             catch (Exception ex)
             {
@@ -144,11 +140,6 @@ namespace Cognifide.PowerShell.Core.Provider
                     new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
                 WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
             }
-        }
-
-        public override string GetResourceString(string baseName, string resourceId)
-        {
-            return base.GetResourceString(baseName, resourceId);
         }
 
         protected override string GetChildName(string path)
@@ -294,14 +285,9 @@ namespace Cognifide.PowerShell.Core.Provider
         ///     not exist.
         /// </summary>
         /// <param name="path">path which is invalid</param>
-        private void ThrowTerminatingInvalidPathException(string path)
+        private static void ThrowTerminatingInvalidPathException(string path)
         {
             throw new ArgumentException("Path '{0}' does not exist", path);
-        }
-
-        protected override void InvokeDefaultAction(string path)
-        {
-            base.InvokeDefaultAction(path);
         }
 
         private void WriteMatchingItem(string language, int version, Item item)
@@ -427,7 +413,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 var outerXml = ApplicationSettings.SitecoreVersionCurrent >= ApplicationSettings.SitecoreVersion72
                     ? GetSerializedItem72(sourceItem, recurse, transferOptions)
-                    : GetSerializedItemOld(sourceItem, recurse, transferOptions);
+                    : GetSerializedItemOld(sourceItem, recurse);
                 var transferedItem = destinationItem.PasteItem(outerXml,
                     transferOptions.HasFlag(TransferOptions.ChangeID),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
@@ -452,7 +438,7 @@ namespace Cognifide.PowerShell.Core.Provider
             return sourceItem.GetOuterXml(options);
         }
 
-        private string GetSerializedItemOld(Item sourceItem, bool recurse, TransferOptions transferOptions)
+        private string GetSerializedItemOld(Item sourceItem, bool recurse)
         {
             return sourceItem.GetOuterXml(recurse);
         }
@@ -575,13 +561,14 @@ namespace Cognifide.PowerShell.Core.Provider
                     "Create item '" + GetLeafFromPath(path) + "' of type '" + itemTypeName + "'"))
                 {
                     Item createdItem = null;
-                    if (srcItem.TemplateName == "Template")
+                    switch (srcItem.TemplateName)
                     {
-                        createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
-                    }
-                    else if (srcItem.TemplateName == "Branch")
-                    {
-                        createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
+                        case "Template":
+                            createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
+                            break;
+                        case "Branch":
+                            createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
+                            break;
                     }
 
                     if (dic != null && dic[LanguageParam].IsSet)

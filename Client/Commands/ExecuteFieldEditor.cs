@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
-using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Data;
@@ -13,8 +13,8 @@ using Sitecore.Diagnostics;
 using Sitecore.Shell.Applications.WebEdit;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
+using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Page = Sitecore.Web.UI.HtmlControls.Page;
 
 namespace Cognifide.PowerShell.Client.Commands
 {
@@ -121,13 +121,10 @@ namespace Cognifide.PowerShell.Client.Commands
                     if (field != null)
                     {
                         var fieldId = field.ID;
-                        foreach (var fieldDescriptor in fieldList)
+                        foreach (var fieldDescriptor in fieldList.Where(fieldDescriptor => fieldDescriptor.FieldID == fieldId))
                         {
-                            if (fieldDescriptor.FieldID == fieldId)
-                            {
-                                fieldList.Remove(fieldDescriptor);
-                                break;
-                            }
+                            fieldList.Remove(fieldDescriptor);
+                            break;
                         }
                     }
                     continue;
@@ -141,7 +138,7 @@ namespace Cognifide.PowerShell.Client.Commands
             return fieldList;
         }
 
-        private void GetNonStandardFields(List<FieldDescriptor> fieldList)
+        private void GetNonStandardFields(ICollection<FieldDescriptor> fieldList)
         {
             var currentItem = CurrentItem;
             currentItem.Fields.ReadAll();

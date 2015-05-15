@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Cognifide.PowerShell.Core.Extensions
@@ -25,10 +24,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                 return rawString;
             }
 
-            var final = rawString;
-            List<string> parts;
-
-            parts = rawString.Split(delimiter).ToList();
+            var parts = rawString.Split(delimiter).ToList();
             var loops = 0;
             while (loops++ < 100)
             {
@@ -40,7 +36,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                 }
 
                 parts.Insert(removed, "...");
-                final = string.Join(delimiter.ToString(), parts);
+                var final = string.Join(delimiter.ToString(), parts);
                 if (final.Length < maxLength)
                 {
                     return final;

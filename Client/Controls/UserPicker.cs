@@ -1,4 +1,5 @@
-﻿using Sitecore.Security;
+﻿using System.Linq;
+using Sitecore.Security;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
@@ -11,13 +12,17 @@ namespace Cognifide.PowerShell.Client.Controls
 
         public UserPicker()
         {
-            Viewer = new Edit();
-            Viewer.ReadOnly = true;
-            Viewer.Class = "scUserPickerEdit textEdit clrString";
-            Viewer.ID = GetUniqueID("edit_");
-            PickButton = new Button();
-            PickButton.Header = "...";
-            PickButton.Class = "scUserPickerButton";
+            Viewer = new Edit
+            {
+                ReadOnly = true,
+                Class = "scUserPickerEdit textEdit clrString",
+                ID = GetUniqueID("edit_")
+            };
+            PickButton = new Button
+            {
+                Header = "...", 
+                Class = "scUserPickerButton"
+            };
             Controls.Add(Viewer);
             Controls.Add(PickButton);
         }
@@ -36,9 +41,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 Viewer.Value = string.Empty;
                 var result = string.Empty;
                 var entries = value.Split('|');
-                foreach (var entry in entries)
+                foreach (var entryParts in entries.Select(entry => entry.Split('^')))
                 {
-                    var entryParts = entry.Split('^');
                     Viewer.Value += entryParts[0] + ", ";
                     result += entryParts[0] + "|";
                 }
@@ -77,10 +81,12 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             if (!args.IsPostBack)
             {
-                var options = new SelectAccountOptions();
-                options.Multiple = Multiple;
-                options.ExcludeUsers = ExcludeUsers;
-                options.ExcludeRoles = ExcludeRoles;
+                var options = new SelectAccountOptions
+                {
+                    Multiple = Multiple,
+                    ExcludeUsers = ExcludeUsers,
+                    ExcludeRoles = ExcludeRoles
+                };
                 if (!string.IsNullOrEmpty(DomainName))
                 {
                     options.DomainName = DomainName;

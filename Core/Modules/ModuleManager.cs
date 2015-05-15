@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -104,17 +103,11 @@ namespace Cognifide.PowerShell.Core.Modules
 
             if (item.TemplateName.Equals(TemplateNames.ScriptLibraryTemplateName, StringComparison.InvariantCulture))
             {
-                if (string.Equals(item.Name, "Script Library"))
-                {
-                    return GetModule(item);
-                }
-                return GetItemModule(item.Parent);
+                return string.Equals(item.Name, "Script Library") ? GetModule(item) : GetItemModule(item.Parent);
             }
-            if (item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture))
-            {
-                return GetItemModule(item.Parent);
-            }
-            return null;
+            return item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture)
+                ? GetItemModule(item.Parent)
+                : null;
         }
 
         public static Module GetModule(string moduleName)

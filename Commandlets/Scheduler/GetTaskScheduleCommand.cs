@@ -67,23 +67,25 @@ namespace Cognifide.PowerShell.Commandlets.Scheduler
         {
             if (string.IsNullOrEmpty(Name))
             {
-                foreach (var database in databases)
+                foreach (
+                    var taskItem in
+                        databases.Select(
+                            database =>
+                                database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']"))
+                            .SelectMany(taskItems => taskItems))
                 {
-                    var taskItems =
-                        database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']");
-                    foreach (var taskItem in taskItems)
-                    {
-                        WriteObject(new ScheduleItem(taskItem));
-                    }
+                    WriteObject(new ScheduleItem(taskItem));
                 }
             }
             else
             {
-                foreach (var database in databases)
+                foreach (
+                    var taskItems in
+                        databases.Select(
+                            database =>
+                                database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']")
+                                    .Select(item => new ScheduleItem(item))))
                 {
-                    var taskItems =
-                        database.SelectItems("/sitecore/system/Tasks/Schedules//*[@@templatename='Schedule']")
-                            .Select(item => new ScheduleItem(item));
                     WildcardWrite(Name, taskItems, task => task.Name);
                 }
             }

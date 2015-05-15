@@ -160,7 +160,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 lock (this)
                 {
-                    var list = this.ExecuteScriptPart("Get-Variable", false, true).Cast<PSVariable>().ToList();
+                    var list = ExecuteScriptPart("Get-Variable", false, true).Cast<PSVariable>().ToList();
                     return list;
                 }
             }

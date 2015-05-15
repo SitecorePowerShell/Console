@@ -88,9 +88,9 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 var segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
                 var escapedPath = new StringBuilder(path.Length + segments.Length*2 + 4);
-                for (var i = 0; i < segments.Length; i++)
+                foreach (var segment in segments)
                 {
-                    escapedPath.AppendFormat("/#{0}#", segments[i]);
+                    escapedPath.AppendFormat("/#{0}#", segment);
                 }
                 parent = escapedPath.ToString();
             }

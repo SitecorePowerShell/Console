@@ -15,14 +15,8 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         protected override void ProcessItem(Item item)
         {
             AccessRight accessRight;
-            if (!this.TryGetAccessRight(out accessRight, true))
-            {
-                WriteObject(false);
-            }
-            else
-            {
-                WriteObject(AuthorizationManager.IsAllowed(item, accessRight, Identity));
-            }
+            WriteObject(this.TryGetAccessRight(out accessRight, true) &&
+                        AuthorizationManager.IsAllowed(item, accessRight, Identity));
         }
 
         public TestItemAclCommand()

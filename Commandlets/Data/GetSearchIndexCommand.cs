@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (Index))]
     public class GetSearchIndexCommand : BaseCommand
     {
-        private static SearchConfiguration _configuration;
+        private static SearchConfiguration configuration;
 
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
         [Parameter(Position = 1)]
@@ -19,8 +19,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             get
             {
-                return _configuration ??
-                       (_configuration = Factory.CreateObject("search/configuration", true) as SearchConfiguration);
+                return configuration ??
+                       (configuration = Factory.CreateObject("search/configuration", true) as SearchConfiguration);
             }
         }
 

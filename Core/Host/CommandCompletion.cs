@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Core.Host
         public static string GetPrefix(ScriptSession session, string command)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand(session, command, out lastToken);
+            TruncatedCommand(session, command, out lastToken);
             return string.IsNullOrEmpty(lastToken) ? string.Empty : lastToken;
         }
 
@@ -48,7 +48,7 @@ namespace Cognifide.PowerShell.Core.Host
             string lastToken;
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
 
-            var TabExpansionHelper =
+            const string TabExpansionHelper =
                 @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
             session.ExecuteScriptPart(TabExpansionHelper);
 
@@ -144,11 +144,9 @@ namespace Cognifide.PowerShell.Core.Host
                         case ("ProviderItem"):
                         case ("ProviderContainer"):
                             content = content.Trim('\'', ' ', '&', '"');
-                            if (IsSitecoreItem(content))
-                            {
-                                return string.Format("Item|{0}|{1}", content.Split('\\').Last(), content);
-                            }
-                            return string.Format("{0}|{1}|{2}", type, content.Split('\\').Last(), content);
+                            return IsSitecoreItem(content)
+                                ? string.Format("Item|{0}|{1}", content.Split('\\').Last(), content)
+                                : string.Format("{0}|{1}|{2}", type, content.Split('\\').Last(), content);
                         case ("ParameterName"):
                             return string.Format("Parameter|{0}", content);
                         default:
@@ -183,7 +181,7 @@ namespace Cognifide.PowerShell.Core.Host
             return false;
         }
 
-        private static string TruncatedCommand(ScriptSession session, string command, out string lastToken)
+        private static void TruncatedCommand(ScriptSession session, string command, out string lastToken)
         {
             {
                 if (_powerShellVersionMajor == 0)
@@ -195,20 +193,22 @@ namespace Cognifide.PowerShell.Core.Host
                 switch (_powerShellVersionMajor)
                 {
                     case (2):
-                        return TruncatedCommand2(command, out lastToken);
+                        TruncatedCommand2(command, out lastToken);
+                        break;
                     case (3):
                     case (4):
-                        return TruncatedCommand3(session, command, out lastToken);
+                        TruncatedCommand3(session, command, out lastToken);
+                        break;
                     default:
                         lastToken = string.Empty;
-                        return string.Empty;
+                        break;
                 }
             }
         }
 
         private static string TruncatedCommand3(ScriptSession session, string command, out string lastToken)
         {
-            var TabExpansionHelper =
+            const string TabExpansionHelper =
                 @"function ScPsReplacementIndex( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.ReplacementIndex } }";
             session.ExecuteScriptPart(TabExpansionHelper);
 
@@ -228,13 +228,12 @@ namespace Cognifide.PowerShell.Core.Host
             var tokens = PSParser.Tokenize(command, out errors);
             var truncatedCommand = string.Empty;
             lastToken = string.Empty;
-            PSToken lastPsToken;
             switch (tokens.Count)
             {
                 case (0):
                     break;
                 default:
-                    lastPsToken = tokens.Last();
+                    var lastPsToken = tokens.Last();
                     var start = lastPsToken.Start;
                     if ((lastPsToken.Content == "\\" || lastPsToken.Content == "/") && tokens.Count > 1 &
                         tokens[tokens.Count - 2].Type == PSTokenType.String)

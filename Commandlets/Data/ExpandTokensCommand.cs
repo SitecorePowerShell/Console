@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (Item))]
     public class ExpandTokenCommand : BaseItemCommand
     {
-        private static readonly MasterVariablesReplacer TokenReplacer = Factory.GetMasterVariablesReplacer();
+        private static readonly MasterVariablesReplacer tokenReplacer = Factory.GetMasterVariablesReplacer();
 
         protected override void ProcessItem(Item item)
         {
@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 Item.Editing.BeginEdit();
                 try
                 {
-                    TokenReplacer.ReplaceItem(Item);
+                    tokenReplacer.ReplaceItem(Item);
                     Item.Editing.EndEdit();
                 }
                 catch (Exception ex)

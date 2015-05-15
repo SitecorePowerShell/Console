@@ -44,7 +44,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
                 if (MediaManager.HasMediaContent(item))
                 {
-                    var media = MediaManager.GetMedia(item);
                     FileNameLabel.Text = item.Name + "." + item["Extension"];
                     long size;
                     SizeLabel.Text = Int64.TryParse(item["size"], out size) ? ToFileSize(size) : "unknown";

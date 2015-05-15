@@ -56,21 +56,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     item.Database);
             foreach (Field field in item.Fields)
             {
-                if (NameWildcardPatterns != null)
+                if (NameWildcardPatterns != null &&
+                    !NameWildcardPatterns.Any(nameWildcardPattern => nameWildcardPattern.IsMatch(field.Name)))
                 {
-                    var wildcardMatch = false;
-                    foreach (var nameWildcardPattern in NameWildcardPatterns)
-                    {
-                        if (nameWildcardPattern.IsMatch(field.Name))
-                        {
-                            wildcardMatch = true;
-                            break;
-                        }
-                    }
-                    if (!wildcardMatch)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
                 if (!IncludeStandardFields && template.ContainsField(field.ID))
                 {

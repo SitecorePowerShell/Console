@@ -64,11 +64,9 @@ namespace Cognifide.PowerShell.Client.Applications
             get
             {
                 var scriptItemId = ScriptItemId;
-                if (string.IsNullOrEmpty(scriptItemId))
-                {
-                    return null;
-                }
-                return Sitecore.Client.ContentDatabase.GetItem(new ID(scriptItemId));
+                return string.IsNullOrEmpty(scriptItemId)
+                    ? null
+                    : Sitecore.Client.ContentDatabase.GetItem(new ID(scriptItemId));
             }
         }
 
@@ -442,8 +440,6 @@ namespace Cognifide.PowerShell.Client.Applications
             EnterScriptInfo.Visible = false;
             UpdateRibbon();
 
-            ScriptSession scriptSession = null;
-
             var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
@@ -451,16 +447,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 sessionName = script != null ? script[ScriptItemFieldNames.PersistentSessionId] : string.Empty;
             }
 
-            var autoDispose = string.IsNullOrEmpty(sessionName);
+            var autoDispose = string.IsNullOrEmpty(sessionName);            
+            ScriptSession scriptSession;
 
-            if (autoDispose)
-            {
-                scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true);
-            }
-            else
-            {
-                scriptSession = ScriptSessionManager.GetSession(sessionName);
-            }
+            scriptSession = autoDispose
+                ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
+                : ScriptSessionManager.GetSession(sessionName);
 
             if (UseContext)
             {
@@ -558,7 +550,6 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
-            var handle = Monitor.JobHandle;
             var job = JobManager.GetJob(Monitor.JobHandle);
             var result = string.Empty;
             if (job != null)

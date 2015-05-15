@@ -5,7 +5,7 @@ namespace Cognifide.PowerShell.Client.Controls
 {
     public class ListViewComparer : IComparer<string>
     {
-        private static ListViewComparer _instance;
+        private static ListViewComparer instance;
 
         private ListViewComparer()
         {
@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.Client.Controls
 
         public static ListViewComparer Instance
         {
-            get { return _instance ?? (_instance = new ListViewComparer()); }
+            get { return instance ?? (instance = new ListViewComparer()); }
         }
 
         public int Compare(String str1, String str2)

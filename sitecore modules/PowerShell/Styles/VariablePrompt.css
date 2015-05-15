@@ -18,9 +18,9 @@
     color: #CBCDCB;
     display: block;
     float: right;
-    left: 0px;
+    left: 0;
     position: absolute;
-    right: 0px;
+    right: 0;
 }
 
 #Promo a { color: #ABADAB; }
@@ -106,7 +106,7 @@
     float: left;
 }
 
-.psVarPromptHeaderIcon { margin: 6px 16px 4px 0px !important; }
+.psVarPromptHeaderIcon { margin: 6px 16px 4px 0 !important; }
 
 /* 6.6 Backwards compatibility - copied from 7.2 styles */
 
@@ -175,5 +175,5 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .variableWrapperFixedHeight textArea { height : 100% }
 
 .rules-edit-button { float: right; margin-left: 8px !important; }
-.varRule { display: flex; border: solid 0px ButtonShadow; padding: 4px; margin-right: 8px; }
+.varRule { display: flex; border: solid 0 ButtonShadow; padding: 4px; margin-right: 8px; }
 .scRule { display: none; }

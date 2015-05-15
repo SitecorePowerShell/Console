@@ -39,21 +39,5 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 SheerResponse.ShowModalDialog(str.ToString(), "400", "260", "PowerShell Script Results", false),
                 "Shell");
         }
-
-        public override CommandState QueryState(CommandContext context)
-        {
-/*
-            if (context.Items.Length == 1)
-            {
-            if (!EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
-            {
-                continue;
-            }
-
-            menuItem.Disabled = !EvaluateRules(scriptItem["EnableRule"], context.Items[0]);
-            }
-*/
-            return base.QueryState(context);
-        }
     }
 }

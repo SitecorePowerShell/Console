@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Sitecore.Configuration;
@@ -30,7 +31,7 @@ namespace Cognifide.PowerShell.Core.Provider
             Log.Error(string.Format(format, args), ex);
         }
 
-        private void LogInfo(string format, params object[] args)
+        private static void LogInfo(string format, params object[] args)
         {
             // uncomment only for console diagnostics
             //Sitecore.Diagnostics.Log.Info(string.Format(format, args), this);
@@ -45,13 +46,12 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             var result = new Collection<PSDriveInfo>();
 
-            foreach (var database in Factory.GetDatabases())
+            foreach (var drive in Factory.GetDatabases().Select(database => new PSDriveInfo(database.Name,
+                providerInfo,
+                database.Name + ":", //"\\sitecore\\",
+                String.Format("Sitecore '{0}' database.", database.Name),
+                PSCredential.Empty)))
             {
-                var drive = new PSDriveInfo(database.Name,
-                    providerInfo,
-                    database.Name + ":", //"\\sitecore\\",
-                    String.Format("Sitecore '{0}' database.", database.Name),
-                    PSCredential.Empty);
                 result.Add(drive);
             }
 

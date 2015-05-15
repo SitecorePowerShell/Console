@@ -15,11 +15,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             if (context.Items.Length != 1)
                 return CommandState.Hidden;
 
-            if (context.Items[0].Template.Name.Equals("PowerShell Script", StringComparison.OrdinalIgnoreCase))
-            {
-                return CommandState.Enabled;
-            }
-            return CommandState.Hidden;
+            return context.Items[0].Template.Name.Equals("PowerShell Script", StringComparison.OrdinalIgnoreCase)
+                ? CommandState.Enabled
+                : CommandState.Hidden;
         }
 
         public override void Execute(CommandContext context)

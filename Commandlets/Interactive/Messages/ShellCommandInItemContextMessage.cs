@@ -10,7 +10,7 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessage, IMessageWithResult
+    public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessageWithResult
     {
         private readonly string command;
         private readonly string itemDb;
@@ -18,10 +18,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         private readonly Handle jobHandle;
         [NonSerialized] private readonly MessageQueue messageQueue;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public ShellCommandInItemContextMessage(Item item, string command)
         {
             if (JobContext.IsJob)
@@ -49,7 +45,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         /// </summary>
         protected override void ShowUI()
         {
-            CommandContext context = null;
+            CommandContext context;
             if (!string.IsNullOrEmpty(itemUri))
             {
                 var item = Factory.GetDatabase(itemDb).GetItem(new DataUri(itemUri));

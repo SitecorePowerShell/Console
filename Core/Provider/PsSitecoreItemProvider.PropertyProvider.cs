@@ -75,7 +75,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 var item = GetItemForPath(path);
                 if (item != null)
                 {
-                    foreach (PSMemberInfo property in propertyToSet.Properties)
+                    foreach (PSPropertyInfo property in propertyToSet.Properties)
                     {
                         if (ShouldProcess(path,
                             "Setting property '" + property.Name + "' to '" + property.Value + "'"))

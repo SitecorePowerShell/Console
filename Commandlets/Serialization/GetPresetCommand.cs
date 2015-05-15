@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             }
         }
 
-        private IEnumerable<PSObject> CreatePreset(XmlNode presetNode)
+        private static IEnumerable<PSObject> CreatePreset(XmlNode presetNode)
         {
             var presetEntries = PresetFactory.Create(presetNode);
             return presetEntries.Select(preset =>

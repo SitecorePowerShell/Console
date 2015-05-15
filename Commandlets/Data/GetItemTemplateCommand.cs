@@ -26,7 +26,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
             }
         }
 
-        private void GetBaseTemplates(TemplateItem template, Dictionary<string, TemplateItem> templates)
+        private static void GetBaseTemplates(TemplateItem template, IDictionary<string, TemplateItem> templates)
         {
             if (template != null && !templates.ContainsKey(template.FullName))
             {

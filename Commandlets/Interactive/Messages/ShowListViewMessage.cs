@@ -35,8 +35,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Property = property
                 .Select(p =>
                 {
-                    var label = string.Empty;
-                    var expression = string.Empty;
+                    string label;
+                    string expression;
                     if (p is Hashtable)
                     {
                         var h = p as Hashtable;
@@ -55,9 +55,11 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                         label = p.ToString();
                         expression = "$_." + p.ToString();
                     }
-                    var result = new Hashtable(2);
-                    result.Add("Label", label);
-                    result.Add("Expression", expression);
+                    var result = new Hashtable(2)
+                    {
+                        {"Label", label}, 
+                        {"Expression", expression}
+                    };
                     return result;
                 }).ToArray();
         }

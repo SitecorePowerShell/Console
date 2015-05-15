@@ -55,15 +55,14 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
                 foreach (DeviceDefinition aDevice in layout.Devices)
                 {
-                    foreach (RenderingDefinition aRendering in aDevice.Renderings)
+                    foreach (
+                        RenderingDefinition aRendering in
+                            aDevice.Renderings.Cast<RenderingDefinition>()
+                                .Where(aRendering => aRendering.UniqueId == Instance.UniqueId))
                     {
-                        if (aRendering.UniqueId != Instance.UniqueId) continue;
-
                         device = aDevice;
                         rendering = aRendering;
                         goto Renderingfound;
-                        // Yes I used goto, cry me a river!
-                        // http://xkcd.com/292/
                     }
                 }
 

@@ -23,9 +23,7 @@ namespace Cognifide.PowerShell.Client.Controls
             get
             {
                 var viewStateString = GetViewStateString("task");
-                if (!string.IsNullOrEmpty(viewStateString))
-                    return Handle.Parse(viewStateString);
-                return Handle.Null;
+                return !string.IsNullOrEmpty(viewStateString) ? Handle.Parse(viewStateString) : Handle.Null;
             }
             set { SetViewStateString("task", value.ToString()); }
         }
@@ -35,11 +33,7 @@ namespace Cognifide.PowerShell.Client.Controls
             get
             {
                 var sessionId = HttpContext.Current.Session[JobHandle.ToString()];
-                if (sessionId != null)
-                {
-                    return sessionId.ToString();
-                }
-                return string.Empty;
+                return sessionId != null ? sessionId.ToString() : string.Empty;
             }
             set
             {
@@ -180,7 +174,7 @@ namespace Cognifide.PowerShell.Client.Controls
             /// <summary>
             ///     Task to execute
             /// </summary>
-            private readonly ThreadStart _task;
+            private readonly ThreadStart task;
 
             /// <summary>
             ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.JobMonitor.TaskRunner" /> class.
@@ -189,7 +183,7 @@ namespace Cognifide.PowerShell.Client.Controls
             public TaskRunner(ThreadStart task)
             {
                 Assert.ArgumentNotNull(task, "task");
-                _task = task;
+                this.task = task;
             }
 
             /// <summary>
@@ -197,7 +191,7 @@ namespace Cognifide.PowerShell.Client.Controls
             /// </summary>
             public void Run()
             {
-                _task();
+                task();
                 JobContext.MessageQueue.PutMessage(new CompleteMessage());
                 JobContext.MessageQueue.GetResult();
             }

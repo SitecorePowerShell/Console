@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Management.Automation;
 using System.Web;
-using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
 using Sitecore.Configuration;

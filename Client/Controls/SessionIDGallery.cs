@@ -45,7 +45,6 @@ namespace Cognifide.PowerShell.Client.Controls
                     Assert.IsNotNull(control, typeof (XmlControl), "Xml Control \"{0}\" not found",
                         "Gallery.Versions.Option");
                     Context.ClientPage.AddControl(Sessions, control);
-                    var culture = Context.User.Profile.Culture;
 
                     var icon = session.ApplianceType == ApplicationNames.AjaxConsole
                         ? "powershell/16x16/console.png"

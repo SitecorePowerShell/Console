@@ -20,15 +20,13 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     renderings.Select(r => r.ItemID.ToString()).Aggregate((seed, curr) => seed + ", " + curr),
                     Device.Name)))
             {
-                foreach (var rendering in renderings)
+                foreach (
+                    var instanceRendering in
+                        renderings.Select(rendering => device.Renderings.Cast<RenderingDefinition>()
+                            .FirstOrDefault(r => r.UniqueId == rendering.UniqueId))
+                            .Where(instanceRendering => instanceRendering != null))
                 {
-                    var instanceRendering =
-                        device.Renderings.Cast<RenderingDefinition>()
-                            .FirstOrDefault(r => r.UniqueId == rendering.UniqueId);
-                    if (instanceRendering != null)
-                    {
-                        device.Renderings.Remove(instanceRendering);
-                    }
+                    device.Renderings.Remove(instanceRendering);
                 }
 
                 item.Edit(p =>

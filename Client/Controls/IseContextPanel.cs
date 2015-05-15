@@ -26,13 +26,11 @@ namespace Cognifide.PowerShell.Client.Controls
             Assert.ArgumentNotNull(button, "button");
             Assert.ArgumentNotNull(context, "context");
 
-            var contextDB = context.Parameters["contextDB"];
+            var contextDb = context.Parameters["contextDB"];
             var contextItemId = context.Parameters["contextItem"];
-            var currentSessionId = context.Parameters["currentSessionId"];
             var currentSessionName = context.Parameters["currentSessionName"];
-            var persistentSessionId = context.Parameters["persistentSessionId"];
-            var contextItem = !string.IsNullOrEmpty(contextDB) && !string.IsNullOrEmpty(contextItemId)
-                ? Factory.GetDatabase(contextDB).GetItem(contextItemId)
+            var contextItem = !string.IsNullOrEmpty(contextDb) && !string.IsNullOrEmpty(contextItemId)
+                ? Factory.GetDatabase(contextDb).GetItem(contextItemId)
                 : null;
 
             output.Write("<div class=\"iseRibbonContextPanel {0}\">",
@@ -47,8 +45,6 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write(Translate.Text("Session"));
             output.Write("</div>");
             output.Write("</div>");
-            var contextEnabled = string.IsNullOrEmpty(persistentSessionId);
-            //RenderContext(output, contextItem, ribbon, contextEnabled);
             var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
             var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
             var icon = contextItem != null ? contextItem.Appearance.Icon : "Office/32x32/sign_forbidden.png";
@@ -58,7 +54,7 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("</div>");
         }
 
-        private void RenderSmallGalleryButton(HtmlTextWriter output, Item button, CommandContext commandContext,
+        private static void RenderSmallGalleryButton(HtmlTextWriter output, Item button, CommandContext commandContext,
             Ribbon ribbon, string title, string overrideIcon)
         {
             Assert.ArgumentNotNull(output, "output");
@@ -88,8 +84,7 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             var itemArray = (commandContext == null) ? new Item[0] : commandContext.Items;
             var item = (itemArray.Length > 0) ? itemArray[0] : null;
-            UrlString itemUrl = null;
-            itemUrl = GetItemUrl(item, (commandContext != null) ? commandContext.Parameters : null);
+            var itemUrl = GetItemUrl(item, (commandContext != null) ? commandContext.Parameters : null);
             var smallButton = new SmallGalleryButton
             {
                 ID = "B" + button.ID.ToShortID()
@@ -109,10 +104,7 @@ namespace Cognifide.PowerShell.Client.Controls
             smallButton.Gallery = GetFieldValue(button, "Gallery");
             smallButton.GalleryHeight = height;
             smallButton.GalleryWidth = width;
-            if (itemUrl != null)
-            {
-                smallButton.GalleryUrl = itemUrl.ToString();
-            }
+            smallButton.GalleryUrl = itemUrl.ToString();
             smallButton.Enabled = enabled != CommandState.Disabled;
             smallButton.AccessKey = str6;
             smallButton.ToolTip = str7;
@@ -128,11 +120,7 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             Assert.ArgumentNotNullOrEmpty(click, "click");
             var index = click.IndexOf('(');
-            if (index >= 0)
-            {
-                return StringUtil.Left(click, index);
-            }
-            return click;
+            return index >= 0 ? StringUtil.Left(click, index) : click;
         }
 
         private static string GetFieldValue(Item item, string fieldName)
@@ -172,6 +160,7 @@ namespace Cognifide.PowerShell.Client.Controls
         private static string GetClick(string click, CommandContext commandContext)
         {
             Assert.ArgumentNotNull(click, "click");
+            Assert.ArgumentNotNull(commandContext, "commandContext");
             var itemArray = (commandContext == null) ? new Item[0] : commandContext.Items;
             if (itemArray.Length == 1)
             {

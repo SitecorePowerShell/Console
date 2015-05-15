@@ -21,11 +21,11 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public class BaseCommand : PSCmdlet
     {
-        private readonly RuntimeDefinedParameterDictionary _parameters;
+        private readonly RuntimeDefinedParameterDictionary parameters;
 
         public BaseCommand()
         {
-            _parameters = new RuntimeDefinedParameterDictionary();
+            parameters = new RuntimeDefinedParameterDictionary();
         }
 
         protected bool IsCurrentDriveSitecore
@@ -114,12 +114,9 @@ namespace Cognifide.PowerShell.Commandlets
         {
             var matchingItems = new Dictionary<string, T>();
             var itemsList = items.ToList();
-            foreach (var filter in filters)
+            foreach (var matchingItem in filters.SelectMany(filter => WildcardFilter(filter, itemsList, propertyName)))
             {
-                foreach (var matchingItem in WildcardFilter(filter, itemsList, propertyName))
-                {
-                    matchingItems[propertyName(matchingItem)] = matchingItem;
-                }
+                matchingItems[propertyName(matchingItem)] = matchingItem;
             }
             return matchingItems.Values;
         }
@@ -241,7 +238,7 @@ namespace Cognifide.PowerShell.Commandlets
                 }
             }
 
-            _parameters.Add(name, parameter);
+            parameters.Add(name, parameter);
         }
 
         protected bool TryGetSwitchParameter(string name, out bool isPresent)
@@ -285,9 +282,9 @@ namespace Cognifide.PowerShell.Commandlets
         // try to get a dynamically added parameter  
         internal bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
         {
-            if (_parameters.ContainsKey(name))
+            if (parameters.ContainsKey(name))
             {
-                value = _parameters[name];
+                value = parameters[name];
                 return true;
             }
 
@@ -299,7 +296,7 @@ namespace Cognifide.PowerShell.Commandlets
 
         public object GetDynamicParameters()
         {
-            return _parameters;
+            return parameters;
         }
 
         protected bool IsParameterSpecified(string name)

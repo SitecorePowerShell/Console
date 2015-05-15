@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Management.Automation;
 using Sitecore.ContentSearch.Utilities;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
 

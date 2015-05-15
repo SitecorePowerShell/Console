@@ -92,14 +92,7 @@ namespace Cognifide.PowerShell.Client.Applications
         private void AddControls(object[] variables)
         {
             var tabs = new Dictionary<string, GridPanel>(StringComparer.OrdinalIgnoreCase);
-            foreach (Hashtable variable in variables)
-            {
-                var tabName = variable["Tab"] as string;
-                if (string.IsNullOrEmpty(tabName) || Tabstrip.Visible) continue;
-
-                Tabstrip.Visible = true;
-                break;
-            }
+            Tabstrip.Visible = variables.Cast<Hashtable>().Select(variable => variable["Tab"] as string).Any(tabName => !string.IsNullOrEmpty(tabName));
 
             foreach (Hashtable variable in variables)
             {
@@ -146,7 +139,7 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.Eval("ResizeDialogControls();");
         }
 
-        private WebControl GetContainer(Dictionary<string, GridPanel> tabs, string tabName)
+        private WebControl GetContainer(IDictionary<string, GridPanel> tabs, string tabName)
         {
             if (!Tabstrip.Visible)
             {
@@ -167,7 +160,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return tabs[tabName];
         }
 
-        private Control GetVariableEditor(Hashtable variable)
+        private Control GetVariableEditor(IDictionary variable)
         {
             var value = variable["Value"];
             var name = (string) variable["Name"];
@@ -302,9 +295,6 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var item = (Item) value;
                 var source = variable["Source"] as string;
-                var sourceDB = string.IsNullOrEmpty(source)
-                    ? Sitecore.Context.ContentDatabase.Name
-                    : StringUtil.ExtractParameter("databasename", source);
                 var root = variable["Root"] as string;
                 var sourceRoot = string.IsNullOrEmpty(source)
                     ? "/sitecore"
@@ -316,7 +306,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Parameters = string.IsNullOrEmpty(source) ? "databasename=" + item.Database.Name : source,
                     DataViewName = "Master",
                     Root = string.IsNullOrEmpty(root) ? sourceRoot : root,
-                    Database = item != null ? item.Database.Name : sourceDB,
+                    Database = item.Database.Name,
                     Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
                     Folder = item.ID.ToString(),
                     Language = item.Language,
@@ -337,17 +327,19 @@ namespace Cognifide.PowerShell.Client.Applications
             if (type == typeof (bool) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
-                var checkboxBorder = new Border();
-                checkboxBorder.Class = "checkBoxWrapper";
-                checkboxBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+                var checkboxBorder = new Border
+                {
+                    Class = "checkBoxWrapper",
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_")
+                };
                 var checkBox = new Checkbox
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Header = (string) variable["Title"],
                     HeaderStyle = "display:inline-block;",
-                    Checked = (bool) value
+                    Checked = (bool) value,
+                    Class = "varCheckbox"
                 };
-                checkBox.Class = "varCheckbox";
                 checkboxBorder.Controls.Add(checkBox);
                 return checkboxBorder;
             }
@@ -444,40 +436,35 @@ namespace Cognifide.PowerShell.Client.Applications
                         var checkList = new PSCheckList
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                            //Header = (string)variable["Title"],                    
                             HeaderStyle = "margin-top:20px; display:inline-block;",
                             ItemID = "{11111111-1111-1111-1111-111111111111}"
                         };
                         checkList.SetItemLanguage(Sitecore.Context.Language.Name);
-                        var values = new string[0];
+                        string[] values;
                         if (value is string)
                         {
                             values = value.ToString().Split('|');
                         }
                         else if (value is IEnumerable)
                         {
-                            var valueList = new List<string>();
-                            foreach (var s in value as IEnumerable)
-                            {
-                                valueList.Add(s.ToString());
-                            }
-                            values = valueList.ToArray();
+                            values = ((value as IEnumerable).Cast<object>().Select(s => s.ToString())).ToArray();
                         }
                         else
                         {
                             values = new[] {value.ToString()};
                         }
-                        foreach (var option in options.Keys)
-                        {
-                            var optionName = option.ToString();
-                            var optionValue = options[optionName].ToString();
-                            var item = new ChecklistItem
+                        foreach (var item in from object option in options.Keys
+                            select option.ToString()
+                            into optionName
+                            let optionValue = options[optionName].ToString()
+                            select new ChecklistItem
                             {
                                 ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(checkList.ID),
                                 Header = optionName,
                                 Value = optionValue,
                                 Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
-                            };
+                            })
+                        {
                             checkList.Controls.Add(item);
                         }
 
@@ -558,7 +545,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return results.ToArray();
         }
 
-        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control control, List<object> results)
+        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control control, ICollection<object> results)
         {
             var controlId = control.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
@@ -578,8 +565,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var controlId = control.ID;
             var parts = controlId.Split('_');
 
-            var result = new Hashtable(2);
-            result.Add("Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray()));
+            var result = new Hashtable(2) {{"Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray())}};
 
             var controlValue = control.Value;
             if (controlValue != null)
@@ -597,19 +583,15 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (control is Checkbox || (control is Border && (control as Border).Class == "checkBoxWrapper"))
                 {
                     var checkboxBorder = control as Border;
-                    foreach (var ctl in checkboxBorder.Controls)
+                    foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))
                     {
-                        if (ctl is Checkbox)
-                        {
-                            var boolValue = (ctl as Checkbox).Checked;
-                            result.Add("Value", boolValue);
-                        }
+                        result.Add("Value", boolValue);
                     }
                 }
                 else if (control is Border && (control as Border).Class == "rulesWrapper")
                 {
                     result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
-                }                    
+                }
                 else if (control is Combobox)
                 {
                     var boolValue = (control as Combobox).Value;
@@ -654,17 +636,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
                 {
-                    foreach (var item in control.Controls)
+                    foreach (
+                        var radioItem in
+                            control.Controls.OfType<Radiobutton>()
+                                .Select(item => item)
+                                .Where(radioItem => radioItem.Checked))
                     {
-                        if (item is Radiobutton)
-                        {
-                            var radioItem = item as Radiobutton;
-                            if (radioItem.Checked)
-                            {
-                                result.Add("Value", radioItem.Value);
-                                break;
-                            }
-                        }
+                        result.Add("Value", radioItem.Value);
+                        break;
                     }
                 }
                 else if (control is Edit || control is Memo)
@@ -719,11 +698,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected string GetClrTypeName(string classNames)
         {
             var typeMatch = typeRegex.Match(classNames);
-            if (typeMatch.Success)
-            {
-                return typeMatch.Groups["type"].Value;
-            }
-            return string.Empty;
+            return typeMatch.Success ? typeMatch.Groups["type"].Value : string.Empty;
         }
 
         protected void CancelClick()
@@ -745,7 +720,7 @@ namespace Cognifide.PowerShell.Client.Applications
             string id = args.Parameters["id"];
             if (string.IsNullOrEmpty(id))
             {
-                SheerResponse.Alert("Please select a rule", new string[0]);
+                SheerResponse.Alert("Please select a rule");
             }
             else
             {
@@ -757,7 +732,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         rule = "<ruleset />";
                     }
 
-                    RulesEditorOptions options = new RulesEditorOptions
+                    var options = new RulesEditorOptions
                     {
                         IncludeCommon = true,
                         RulesPath = "/sitecore/system/Settings/Rules/PowerShell",

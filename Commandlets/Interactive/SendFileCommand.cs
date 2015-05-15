@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 AssertDefaultSize(700, 140);
 
-                string response = null;
+                string response;
                 var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
                 if (Item != null)
                 {

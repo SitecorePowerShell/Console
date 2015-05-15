@@ -48,22 +48,19 @@ namespace Cognifide.PowerShell.Client.Controls
         public void RenderLargeButton(HtmlTextWriter output, Ribbon ribbon, string id, string header, string icon,
             string tooltip, string command, bool enabled, bool down, CommandContext context)
         {
-            var largeButton = new LargeButton();
-            largeButton.ID = Control.GetUniqueID("script");
-            largeButton.Header = header;
-            largeButton.Icon = icon;
-            largeButton.Command = GetClick(command, context, largeButton.ID);
-            largeButton.Down = down;
-            largeButton.Enabled = enabled;
-            //button2.AccessKey = "";
-            largeButton.ToolTip = tooltip;
-            //button2.KeyCode = "";
-            largeButton.RenderControl(output);
-/*            if (enabled)
+            var buttonId = Control.GetUniqueID("script");
+            var largeButton = new LargeButton
             {
-                Context.ClientPage.RegisterKey(commandParameters.KeyCode, commandParameters.Click, ribbon.ID);
-            }
- */
+                ID = buttonId,
+                Header = header,
+                Icon = icon,
+                Down = down,
+                Enabled = enabled,
+                ToolTip = tooltip,
+                Command = GetClick(command, context, buttonId),
+            };
+
+            largeButton.RenderControl(output);
         }
 
         private static string GetClick(string click, CommandContext commandContext, string buttonId)

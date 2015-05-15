@@ -222,17 +222,21 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (ListViewer.GetSelectedItems().Length <= 0) return;
             var clickedId = Int32.Parse(ListViewer.GetSelectedItems()[0].Value);
-            var originalData = ListViewer.Data.Data.Where(p => p.Id == clickedId).FirstOrDefault().Original;
-            if (originalData is Item)
+            var firstDataItem = ListViewer.Data.Data.FirstOrDefault(p => p.Id == clickedId);
+            if (firstDataItem != null)
             {
-                var clickedItem = originalData as Item;
-                var urlParams = new UrlString();
-                urlParams.Add("id", clickedItem.ID.ToString());
-                urlParams.Add("fo", clickedItem.ID.ToString());
-                urlParams.Add("la", clickedItem.Language.Name);
-                urlParams.Add("vs", clickedItem.Version.Number.ToString(CultureInfo.InvariantCulture));
-                urlParams.Add("sc_content", clickedItem.Database.Name);
-                Windows.RunApplication("Content editor", urlParams.ToString());
+                var originalData = firstDataItem.Original;
+                var item = originalData as Item;
+                if (item != null)
+                {
+                    var urlParams = new UrlString();
+                    urlParams.Add("id", item.ID.ToString());
+                    urlParams.Add("fo", item.ID.ToString());
+                    urlParams.Add("la", item.Language.Name);
+                    urlParams.Add("vs", item.Version.Number.ToString(CultureInfo.InvariantCulture));
+                    urlParams.Add("sc_content", item.Database.Name);
+                    Windows.RunApplication("Content editor", urlParams.ToString());
+                }
             }
             ListViewer.Refresh();
         }

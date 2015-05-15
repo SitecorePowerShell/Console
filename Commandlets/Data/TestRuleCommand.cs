@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
-using Cognifide.PowerShell.Core.Extensions;
-using Sitecore.Data;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {

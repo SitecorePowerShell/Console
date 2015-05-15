@@ -9,15 +9,11 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class DownloadMessage : BasePipelineMessage, IMessage
+    public class DownloadMessage : BasePipelineMessage
     {
         [NonSerialized] private readonly string fileName;
         [NonSerialized] private readonly Item item;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public DownloadMessage(Item item)
         {
             this.item = item;

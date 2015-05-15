@@ -8,7 +8,7 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowResultsMessage : BasePipelineMessage, IMessage
+    public class ShowResultsMessage : BasePipelineMessage
     {
         public ShowResultsMessage(string html, string width, string height)
         {
@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             HttpContext.Current.Session[resultSig] = Html;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerText"));
             urlString.Add("sid", resultSig);
-            var response = SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
+            SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
         }
     }
 }

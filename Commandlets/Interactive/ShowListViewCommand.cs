@@ -47,7 +47,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 if (Data != null)
                 {
-                    PutMessage(new ShowListViewMessage(cumulativeData, pageSize, Title ?? "PowerShell Script Results",
+                    PutMessage(new ShowListViewMessage(CumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
                         ActionData, Property, ViewName, MissingDataMessage));

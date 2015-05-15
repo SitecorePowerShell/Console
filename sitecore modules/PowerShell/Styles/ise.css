@@ -186,16 +186,16 @@ a.ps-link {
     -moz-border-radius-bottomleft: 9px;
     -moz-border-radius-bottomright: 9px;
     -moz-border-radius-topleft: 9px;
-    -moz-border-radius-topright: 0px;
-    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    -moz-border-radius-topright: 0;
+    -moz-box-shadow: inset 0 1px 0 0 #ffffff;
     background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
     background-color: #ededed;
     border: 1px solid #dcdcdc;
     border-bottom-left-radius: 9px;
     border-bottom-right-radius: 9px;
     border-top-left-radius: 9px;
-    border-top-right-radius: 0px;
-    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    border-top-right-radius: 0;
+    box-shadow: inset 0 1px 0 0 #ffffff;
     color: #777777;
     display: inline-block;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
@@ -211,7 +211,7 @@ a.ps-link {
     text-align: center;
     text-decoration: none;
     text-indent: 0;
-    text-shadow: 1px 1px 0px #ffffff;
+    text-shadow: 1px 1px 0 #ffffff;
     width: 24px;
 }
 

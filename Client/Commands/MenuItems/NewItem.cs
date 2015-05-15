@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using Cognifide.PowerShell.Core.Modules;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.Client.Commands.MenuItems
 {

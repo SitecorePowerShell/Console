@@ -25,18 +25,14 @@ namespace Cognifide.PowerShell.Client.Applications
         private Item GetCurrentItem(Message message)
         {
             Assert.ArgumentNotNull(message, "message");
-            var str = message["id"];
+            var id = message["id"];
             var language = Context.Language;
             var folder = ScriptDataContext.GetFolder();
             if (folder != null)
             {
                 language = folder.Language;
             }
-            if (!string.IsNullOrEmpty(str))
-            {
-                return Context.ContentDatabase.Items[str, language];
-            }
-            return folder;
+            return !string.IsNullOrEmpty(id) ? Context.ContentDatabase.Items[id, language] : folder;
         }
 
         public override void HandleMessage(Message message)

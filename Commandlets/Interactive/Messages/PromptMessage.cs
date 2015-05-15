@@ -5,7 +5,7 @@ using Sitecore.Jobs.AsyncUI;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class PromptMessage : BasePipelineMessage, IMessage
+    public class PromptMessage : BasePipelineMessage
     {
         private readonly string defaultValue;
         private readonly int maxLength;
@@ -14,10 +14,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         private readonly string validation;
         private readonly string validationText;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Sitecore.Jobs.AsyncUI.ConfirmMessage" /> class.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public PromptMessage(string text, string defaultValue, string validation, string validationText, int maxLength)
         {
             this.text = text;

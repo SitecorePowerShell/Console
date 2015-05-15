@@ -67,7 +67,6 @@ namespace Cognifide.PowerShell.Commandlets.Session
         // Methods
         protected override void ProcessRecord()
         {
-            var script = string.Empty;
             string name;
             if (TryGetParameter("Name", out name))
             {
@@ -82,7 +81,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
             if (name != null)
             {
-                var functions = new List<Item>();
+                var functionItems = new List<Item>();
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
 
                 string module;
@@ -105,21 +104,21 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
                     if (string.IsNullOrEmpty(library))
                     {
-                        functions.AddRange(root.Database.SelectItems(
+                        functionItems.AddRange(root.Database.SelectItems(
                             string.Format(
                                 "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{1}\"]",
                                 path, name)));
                     }
                     else
                     {
-                        functions.AddRange(root.Database.SelectItems(
+                        functionItems.AddRange(root.Database.SelectItems(
                             string.Format(
                                 "{0}/#{1}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{2}\"]",
                                 path, library, name)));
                     }
                 }
 
-                if (functions.Count > 1)
+                if (functionItems.Count > 1)
                 {
                     WriteError(new ErrorRecord(new AmbiguousMatchException(
                         string.Format(
@@ -128,7 +127,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     return;
                 }
 
-                if (functions.Count == 0)
+                if (functionItems.Count == 0)
                 {
                     WriteError(new ErrorRecord(new AmbiguousMatchException(
                         string.Format(
@@ -137,8 +136,8 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     return;
                 }
 
-                script = functions[0]["script"];
-                if (ShouldProcess(functions[0].GetProviderPath(), "Import functions"))
+                var script = functionItems[0]["script"];
+                if (ShouldProcess(functionItems[0].GetProviderPath(), "Import functions"))
                 {
                     object sendToPipeline = InvokeCommand.InvokeScript(script, false,
                         PipelineResultTypes.Output | PipelineResultTypes.Error, null);
@@ -170,24 +169,12 @@ namespace Cognifide.PowerShell.Commandlets.Session
             }
             functions = localFunctions.ToArray();
 
-            var localLibraries = new List<string>();
-            foreach (var root in roots)
-            {
-                foreach (Item library in root.GetChildren())
-                {
-                    if (library.TemplateName == TemplateNames.ScriptLibraryTemplateName)
-                        localLibraries.Add(library.Name);
-                }
-            }
-            libraries = localLibraries.ToArray();
+            libraries = (from root in roots
+                from Item library in root.GetChildren()
+                where library.TemplateName == TemplateNames.ScriptLibraryTemplateName
+                select library.Name).ToArray();
 
-            var localModules = new List<string>();
-            foreach (var module in ModuleManager.Modules)
-            {
-                if (module.Enabled)
-                    localModules.Add(module.Name);
-            }
-            modules = localModules.ToArray();
+            modules = (from module in ModuleManager.Modules where module.Enabled select module.Name).ToArray();
         }
 
         public static void InvalidateCache(object sender, EventArgs e)

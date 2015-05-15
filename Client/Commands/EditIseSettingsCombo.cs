@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.Client.Commands
             SheerResponse.ShowContextMenu(menuItemId, "down", subMenu);
         }
 
-        private static void GetMenuItems(List<Control> menuItems, Item parent)
+        private static void GetMenuItems(ICollection<Control> menuItems, Item parent)
         {
             if (parent == null)
             {

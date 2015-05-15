@@ -16,7 +16,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             Collection<PSParseError> errors;
             var tokens = PSParser.Tokenize(command, out errors);
-            var lastPsToken = tokens.Where(t => t.Type == PSTokenType.Command).LastOrDefault();
+            var lastPsToken = tokens.LastOrDefault(t => t.Type == PSTokenType.Command);
             if (lastPsToken != null)
             {
                 session.Output.Clear();

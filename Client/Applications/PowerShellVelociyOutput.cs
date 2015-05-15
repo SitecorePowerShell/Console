@@ -2,23 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
-using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using NVelocity;
 using NVelocity.App;
+using NVelocity.Exception;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Framework;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -28,13 +22,13 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellVelociyOutput : BaseForm //, IPowerShellRunner
     {
-        protected VelocityContext velocityContext;
-        protected Literal velocityOutput;
+        protected VelocityContext VelocityContext;
+        protected Literal VelocityOutput;
 
         protected override void OnLoad(EventArgs e)
         {
             Velocity.Init();
-            velocityContext = new VelocityContext();
+            VelocityContext = new VelocityContext();
             Item currentItem;
             Item scriptItem = null;
             var scriptId = WebUtil.SafeEncode(WebUtil.GetQueryString("scriptId"));
@@ -43,13 +37,13 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
             }
-            if (scriptItem == null && Sitecore.Context.Item.TemplateName == TemplateNames.ScriptTemplateName)
+            if (scriptItem == null && Context.Item.TemplateName == TemplateNames.ScriptTemplateName)
             {
-                scriptItem = Sitecore.Context.Item;
+                scriptItem = Context.Item;
             }
             if (scriptItem == null)
             {
-                velocityOutput.Text = "Could not resolve PowerShell script or no script item specified.";
+                VelocityOutput.Text = "Could not resolve PowerShell script or no script item specified.";
                 return;
             }
             var script = scriptItem["script"];
@@ -59,10 +53,10 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var db =
                     WebUtil.SafeEncode(WebUtil.GetQueryString("db",
-                        WebUtil.GetQueryString("database", (Sitecore.Context.ContentDatabase ?? Sitecore.Context.Database).Name)));
+                        WebUtil.GetQueryString("database", (Context.ContentDatabase ?? Context.Database).Name)));
                 var la =
                     WebUtil.SafeEncode(WebUtil.GetQueryString("la",
-                        WebUtil.GetQueryString("language", (Sitecore.Context.ContentDatabase ?? Sitecore.Context.Database).Name)));
+                        WebUtil.GetQueryString("language", (Context.ContentDatabase ?? Context.Database).Name)));
                 var vs =
                     WebUtil.SafeEncode(WebUtil.GetQueryString("vs",
                         WebUtil.GetQueryString("version", Version.Latest.Number.ToString())));
@@ -71,7 +65,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                currentItem = Sitecore.Context.Item;
+                currentItem = Context.Item;
             }
 
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
@@ -91,30 +85,30 @@ namespace Cognifide.PowerShell.Client.Applications
                             .Aggregate((current, next) => current + next)
                         );
                 }
-                velocityContext.Put("scriptOutput", output);
+                VelocityContext.Put("scriptOutput", output);
 
                 // add variables
                 List<string> variableNames = new List<string>();
                 foreach (var variable in scriptSession.Variables)
                 {
-                    velocityContext.Put(variable.Name, variable.Value);
+                    VelocityContext.Put(variable.Name, variable.Value);
                     variableNames.Add(variable.Name);
                 }
 
-                velocityContext.Put("variableNames", variableNames);
+                VelocityContext.Put("variableNames", variableNames);
 
                 StringWriter result = new StringWriter();
                 try
                 {
-                    Velocity.Evaluate(velocityContext, result, "PowerShell Script",
+                    Velocity.Evaluate(VelocityContext, result, "PowerShell Script",
                         scriptItem["VelocityTemplate"]);
                 }
-                catch (NVelocity.Exception.ParseErrorException ex)
+                catch (ParseErrorException ex)
                 {
                     Log.Error(string.Format("Error parsing template for the {0} item \n {1}",
-                        currentItem.Paths.Path, ex.ToString()), this);
+                        currentItem.Paths.Path, ex), this);
                 }
-                velocityOutput.Text = result.GetStringBuilder().ToString();
+                VelocityOutput.Text = result.GetStringBuilder().ToString();
             }
             //litResult.
         }

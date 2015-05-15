@@ -4,7 +4,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Xml;
 using Cognifide.PowerShell.Commandlets.Packages;
-using log4net;
 using log4net.Config;
 using Sitecore.Update.Commands;
 using Sitecore.Update.Configuration;
@@ -26,7 +25,6 @@ namespace Cognifide.PowerShell.Commandlets.UpdatePackages
         protected override void ProcessRecord()
         {
             // Use default logger
-            var log = LogManager.GetLogger("root");
             XmlConfigurator.Configure((XmlElement) ConfigurationManager.GetSection("log4net"));
 
             PerformInstallAction("admin",

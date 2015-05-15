@@ -7,7 +7,7 @@ using Sitecore.Shell.Framework;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class CloseWindowMessage : BasePipelineMessage, IMessage
+    public class CloseWindowMessage : BasePipelineMessage
     {
         /// <summary>
         ///     Shows a confirmation dialog.

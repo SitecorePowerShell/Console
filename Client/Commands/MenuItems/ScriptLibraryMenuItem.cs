@@ -117,9 +117,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     Header = scriptItem.DisplayName,
                     Icon = scriptItem.Appearance.Icon,
-                    ID = scriptItem.ID.ToShortID().ToString()
+                    ID = scriptItem.ID.ToShortID().ToString(),
+                    Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem)
                 };
-                menuItem.Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem);
 
                 if (scriptItem.TemplateName == "PowerShell Script")
                 {

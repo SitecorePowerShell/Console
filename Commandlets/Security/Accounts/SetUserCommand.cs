@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
-using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Resources;
@@ -35,16 +33,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         static SetUserCommand()
         {
-            var validValues = new List<string>();
             // Extracted example from Sitecore.Shell.Applications.Security.EditUser.EditUserPage.cs in Sitecore.Client.dll
-            foreach (XmlNode xmlNode in Factory.GetConfigNodes("portraits/collection"))
-            {
-                foreach (var src in new ListString(xmlNode.InnerText))
-                {
-                    validValues.Add(ImageBuilder.ResizeImageSrc(src, 16, 16).Trim());
-                }
-            }
-            portraits = validValues.ToArray();
+            portraits = (Factory.GetConfigNodes("portraits/collection")
+                .Cast<XmlNode>()
+                .SelectMany(xmlNode => new ListString(xmlNode.InnerText),
+                    (xmlNode, src) => ImageBuilder.ResizeImageSrc(src, 16, 16).Trim())).ToArray();
         }
 
         [Alias("Name")]
@@ -107,7 +100,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 profile.Comment = Comment;
             }
 
-            var portrait = String.Empty;
+            string portrait;
             if (TryGetParameter("Portrait", out portrait))
             {
                 if (!String.IsNullOrEmpty(portrait))

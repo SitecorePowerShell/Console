@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     public class BaseListViewCommand : BaseFormCommand
     {
-        protected readonly List<DataObject> cumulativeData = new List<DataObject>();
+        protected readonly List<DataObject> CumulativeData = new List<DataObject>();
 
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Data { get; set; }
@@ -47,11 +47,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
                 var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
-                var properties = new List<object>(propResult.Count + 1);
-                properties.Add(propDefault.ToString());
-                if (propResult.Count() > 0)
+                var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
+                if (propResult.Any())
                 {
-                    properties.AddRange(propResult.Where(p => p != null).Cast<object>());
+                    properties.AddRange(propResult.Where(p => p != null));
                 }
                 Property = properties.ToArray();
                 SessionState.PSVariable.Set("ScPsSlvProperties", Property);
@@ -67,21 +66,21 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 var scriptBlock = InvokeCommand.NewScriptBlock(script);
                 var result = InvokeCommand.InvokeScript(SessionState, scriptBlock);
 
-                if (result.Count() > 0)
+                if (result.Any())
                 {
                     var varValue = Data.BaseObject();
 
                     var slvDataObject = new DataObject
                     {
                         Original = varValue,
-                        Id = cumulativeData.Count
+                        Id = CumulativeData.Count
                     };
 
                     foreach (var psPropertyInfo in result[0].Properties)
                     {
                         slvDataObject.Display.Add(psPropertyInfo.Name, (psPropertyInfo.Value ?? string.Empty).ToString());
                     }
-                    cumulativeData.Add(slvDataObject);
+                    CumulativeData.Add(slvDataObject);
                 }
             });
             SessionState.PSVariable.Remove("ScPsSlvPipelineObject");
