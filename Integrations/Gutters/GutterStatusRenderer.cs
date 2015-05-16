@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Integrations.Gutters
         // We override the GetIconDescriptor so a script can be called in it's place.
         protected override GutterIconDescriptor GetIconDescriptor(Item item)
         {
-            return SpeTimer.Measure("gutter timing", () =>
+            return SpeTimer.Measure("gutter script execution", () =>
             {
                 // The scriptId parameter is configured when we create a new gutter
                 // here /sitecore/content/Applications/Content Editor/Gutters
