@@ -519,6 +519,9 @@
   <ItemGroup>
     <Content Include="Release process.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Config\Include\Cognifide.PowerShell.Events.config.disabled" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <CallTarget Targets="DeployToWeb" Condition="$(SitecorePath) != ''" />
