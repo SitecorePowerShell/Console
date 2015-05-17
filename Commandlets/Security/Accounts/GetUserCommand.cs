@@ -1,6 +1,8 @@
 ﻿using System.Management.Automation;
+using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Common;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
@@ -33,18 +35,29 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                     break;
                 case "Filter":
                     var filter = Filter;
-                    if (!filter.Contains("?") && !filter.Contains("*")) return;
 
-                    var users = WildcardFilter(filter, UserManager.GetUsers(), user => user.Name);
-                    WriteObject(users, true);
+                    if (filter.Contains("?") || filter.Contains("*"))
+                    {
+                        if (filter.Contains("@"))
+                        {
+                            var pattern = filter.Replace("*", "%").Replace("?", "%");
+                            var emailUsers =
+                                new Enumerable<User>(() => Membership.FindUsersByEmail(pattern).GetEnumerator(),
+                                    o => User.FromName(((MembershipUser) o).UserName, false));
+                            WriteObject(emailUsers, true);
+                        }
+                        else
+                        {
+                            var users = WildcardFilter(filter, UserManager.GetUsers(), user => user.Name);
+                            WriteObject(users, true);
+                        }
+                    }
                     break;
                 default:
-                    if (!this.CanFindAccount(Identity, AccountType.User))
+                    if (this.CanFindAccount(Identity, AccountType.User))
                     {
-                        return;
+                        WriteObject(User.FromName(Identity.Name, Authenticated));
                     }
-
-                    WriteObject(User.FromName(Identity.Name, Authenticated));
                     break;
             }
         }
