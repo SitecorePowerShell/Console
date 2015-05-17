@@ -85,4 +85,11 @@
         extranet\Anonymous       extranet     False           False
         sitecore\Admin           sitecore     True            False
         sitecore\michael         sitecore     False           False
+
+    .EXAMPLE
+        PS master:\> Get-User -Filter "michaellwest@*.com"
+ 
+        Name                     Domain       IsAdministrator IsAuthenticated
+        ----                     ------       --------------- ---------------
+        sitecore\michael         sitecore     False           False
 #>
