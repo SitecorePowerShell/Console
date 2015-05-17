@@ -226,3 +226,4 @@ deploy.targets
 web.Debug.config
 web.Release.config
 web.config
+Tests/
