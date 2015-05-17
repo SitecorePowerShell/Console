@@ -3,7 +3,7 @@ $documentation = Split-Path $Invocation
 $rootDirectory = Split-Path $documentation -Parent
 
 $help = Join-Path -Path $rootDirectory -ChildPath "sitecore modules\PowerShell\Assets"
-$moduleLibraryPath = (Join-Path -Path $rootDirectory -ChildPath "Website\bin\Cognifide.PowerShell.dll")
+$moduleLibraryPath = (Join-Path -Path $rootDirectory -ChildPath "bin\Debug\Cognifide.PowerShell.dll")
 if(!(Test-Path -Path $moduleLibraryPath)) {
     Write-Error "Module Library Path not found"
 }
@@ -16,3 +16,5 @@ $files = [System.IO.Directory]::GetFiles($documentation, "*.ps1")
 Add-Type -Path $helpLibraryPath
 
 [PowerShell.MamlGenerator.CmdletHelpGenerator]::GenerateHelp($moduleLibraryPath, $help, $files)
+Remove-Item "$help/*.maml" -Force
+Get-Item "$help/*.xml" | Rename-Item -NewName { $_.name -replace '\.xml','.maml' }

@@ -175,5 +175,5 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .variableWrapperFixedHeight textArea { height : 100% }
 
 .rules-edit-button { float: right; margin-left: 8px !important; }
-.varRule { display: flex; border: solid 0 ButtonShadow; padding: 4px; margin-right: 8px; }
+.varRule { display: flex; border: solid 0 ButtonShadow; border: solid 1px #DDD; padding: 4px 4px 10px 0px; margin-right: 8px; }
 .scRule { display: none; }

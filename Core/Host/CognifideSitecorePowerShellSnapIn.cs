@@ -119,7 +119,7 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         new ProviderConfigurationEntry("Sitecore PowerShell Provider",
                             typeof (PsSitecoreItemProvider),
-                            @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml")
+                            @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml")
                     };
                 }
 
@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Core.Host
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
         {
             var helpPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.PrivateBinPath) +
-                           @"\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml";
+                           @"\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml";
             foreach (var type in assembly.GetTypes())
             {
                 if (type.GetCustomAttributes(typeof (CmdletAttribute), true).Length > 0 &&

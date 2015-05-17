@@ -406,7 +406,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
     <Content Include="sitecore modules\PowerShell\Assets\coglogo.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.xml" />
+    <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_middle.gif" />
