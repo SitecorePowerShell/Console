@@ -2,7 +2,7 @@
 version: 1
 id: {8A03D17C-9FC0-4D18-B231-7F1309BA5E87}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Gutter/Content Editor/Gutters/Publishing Status
+path: /sitecore/system/Modules/PowerShell/Script Library/Publishing Status Gutter/Content Editor/Gutters/Publishing Status
 parent: {DFB9F219-44A0-4E62-A3F9-832DE0BC478C}
 name: Publishing Status
 master: {00000000-0000-0000-0000-000000000000}

@@ -2,9 +2,9 @@
 version: 1
 id: {D9B152A2-0503-45EF-ACE0-AAFE117120A7}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Editor Gutter
+path: /sitecore/system/Modules/PowerShell/Script Library/Publishing Status Gutter
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Content Editor Gutter
+name: Publishing Status Gutter
 master: {00000000-0000-0000-0000-000000000000}
 template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
 templatekey: PowerShell Script Module
@@ -41,7 +41,7 @@ Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: 81653b91-e469-420b-98e6-bca26c9bd164
+revision: f18108d6-2d1d-410a-88ec-43ef195d1c41
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -56,14 +56,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-81653b91-e469-420b-98e6-bca26c9bd164
+f18108d6-2d1d-410a-88ec-43ef195d1c41
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150516T001440:635673320809961380Z
+20150517T012832:635674229120844458Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
