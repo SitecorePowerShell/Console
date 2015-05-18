@@ -273,7 +273,8 @@ namespace Cognifide.PowerShell.Core.Host
                 return null;
             }
 
-            Log.Info("Executing script:\n" + script, this);
+            Log.Info("Executing a Sitecore PowerShell Extensions script.", this);
+            Log.Debug(script, this);
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.

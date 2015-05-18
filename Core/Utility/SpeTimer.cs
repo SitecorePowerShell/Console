@@ -16,7 +16,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                Log.Info(string.Format("Timer {0} finished at {1}ms", message, stopWatch.ElapsedMilliseconds), action);
+                Log.Info(string.Format("The {0} completed in {1} ms.", message, stopWatch.ElapsedMilliseconds), action);
                 return result;
             }
             catch (Exception ex)
