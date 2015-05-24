@@ -3,6 +3,7 @@ using Sitecore.Install;
 using Sitecore.Install.Serialization;
 using Sitecore.Install.Zip;
 using Sitecore.IO;
+using Sitecore.Shell.Applications.ContentEditor;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
@@ -18,6 +19,9 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         [Parameter]
         public SwitchParameter Zip { get; set; }
+
+        [Parameter]
+        public SwitchParameter NoClobber { get; set; }
 
         [Parameter]
         public SwitchParameter IncludeProject { get; set; }
@@ -48,6 +52,11 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     if (!System.IO.Path.HasExtension(fileName))
                     {
                         fileName = fileName + ".xml";
+                    }
+
+                    if (NoClobber.IsPresent)
+                    {
+                        fileName = GetTargetFileName(fileName);
                     }
 
                     if (ShouldProcess(fileName, "Export package project"))
@@ -83,6 +92,11 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                             fileName = fileName + ".zip";
                         }
 
+                        if (NoClobber.IsPresent)
+                        {
+                            fileName = GetTargetFileName(fileName);
+                        }
+
                         if (ShouldProcess(fileName, "Export package"))
                         {
                             using (var writer = new PackageWriter(fileName))
@@ -93,6 +107,22 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         }
                     });
             }
+        }
+
+        public string GetTargetFileName(string filename)
+        {
+            var directory = System.IO.Path.GetDirectoryName(filename);
+            var name = System.IO.Path.GetFileNameWithoutExtension(filename);
+            var extension = System.IO.Path.GetExtension(filename);
+            var path = System.IO.Path.Combine(directory, (name + extension));
+
+            var num = 1;
+            while (System.IO.File.Exists(path))
+            {
+                path = System.IO.Path.Combine(directory, (name + " (" + num + ")" + extension));
+            }
+
+            return path;
         }
     }
 }
