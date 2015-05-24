@@ -45,9 +45,9 @@
     margin-top: 20px;
 }
 
-.scContentControl {
-    border: solid 1px ButtonShadow;
-    padding-left: 2px;
+.scContentControl, .scRadioGroup {
+    border: 1px solid #ccc;
+    padding-left: 4px;
 }
 
 .wk .scComboboxEdit { padding-left: 2px; }
@@ -158,9 +158,9 @@
     width: 100%;
 }
 
-.scContentControlChecklist { border: solid 1px ButtonShadow; }
+.scContentControlChecklist { border: 1px solid #ccc; }
 
-.scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker, .scRadioGroup { border: ButtonShadow solid 1px; }
+.scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker { border: 1px solid #fff; }
 
 fieldset label { font: 8pt tahoma; }
 
