@@ -1,4 +1,6 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.IO;
+using System.Management.Automation;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;
 using Sitecore.Install.Zip;
@@ -54,9 +56,10 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         fileName = fileName + ".xml";
                     }
 
-                    if (NoClobber.IsPresent)
+                    if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
                     {
-                        fileName = GetTargetFileName(fileName);
+                        var error = String.Format("The file '{0}' already exists.", fileName);
+                        WriteError(new ErrorRecord(new IOException(error), error, ErrorCategory.ResourceExists, fileName));
                     }
 
                     if (ShouldProcess(fileName, "Export package project"))
@@ -92,9 +95,10 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                             fileName = fileName + ".zip";
                         }
 
-                        if (NoClobber.IsPresent)
+                        if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
                         {
-                            fileName = GetTargetFileName(fileName);
+                            var error = String.Format("The file '{0}' already exists.", fileName);
+                            WriteError(new ErrorRecord(new IOException(error), error, ErrorCategory.ResourceExists, fileName));
                         }
 
                         if (ShouldProcess(fileName, "Export package"))
@@ -107,23 +111,6 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         }
                     });
             }
-        }
-
-        private string GetTargetFileName(string filename)
-        {
-            var directory = System.IO.Path.GetDirectoryName(filename);
-            var name = System.IO.Path.GetFileNameWithoutExtension(filename);
-            var extension = System.IO.Path.GetExtension(filename);
-            var path = System.IO.Path.Combine(directory, (name + extension));
-
-            var num = 1;
-            while (System.IO.File.Exists(path))
-            {
-                path = System.IO.Path.Combine(directory, (name + " (" + num + ")" + extension));
-                num++;
-            }
-
-            return path;
         }
     }
 }
