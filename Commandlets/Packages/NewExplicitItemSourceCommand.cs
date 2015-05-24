@@ -9,7 +9,7 @@ using Sitecore.Install.Utils;
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
     [Cmdlet(VerbsCommon.New, "ExplicitItemSource")]
-    [OutputType(typeof (ExplicitItemSource))]
+    [OutputType(typeof(ExplicitItemSource))]
     public class NewExplicitItemSourceCommand : BasePackageCommand
     {
         private ExplicitItemSource source;
@@ -31,9 +31,13 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         protected override void BeginProcessing()
         {
-            source = new ExplicitItemSource {Name = Name, SkipVersions = SkipVersions.IsPresent};
-            source.Converter.Transforms.Add(
-                new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+            source = new ExplicitItemSource { Name = Name, SkipVersions = SkipVersions.IsPresent };
+            
+            if (InstallMode != InstallMode.Undefined)
+            {
+                source.Converter.Transforms.Add(
+                    new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+            }
         }
 
         protected override void ProcessRecord()

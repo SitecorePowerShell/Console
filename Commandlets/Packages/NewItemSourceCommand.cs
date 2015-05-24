@@ -47,8 +47,12 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                 source.Root = Root;
             }
             source.SkipVersions = SkipVersions.IsPresent;
-            source.Converter.Transforms.Add(
-                new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+
+            if (InstallMode != InstallMode.Undefined)
+            {
+                source.Converter.Transforms.Add(
+                    new InstallerConfigurationTransform(new BehaviourOptions(InstallMode, MergeMode)));
+            }
         }
 
         protected override void EndProcessing()

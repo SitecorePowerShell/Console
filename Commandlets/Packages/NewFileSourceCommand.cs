@@ -1,11 +1,14 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
+using Sitecore.Install.Configuration;
 using Sitecore.Install.Files;
 using Sitecore.Install.Filters;
+using Sitecore.Install.Utils;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
     [Cmdlet(VerbsCommon.New, "FileSource")]
-    [OutputType(typeof (FileSource))]
+    [OutputType(typeof(FileSource))]
     public class NewFileSourceCommand : BasePackageCommand
     {
         private FileSource source;
@@ -22,9 +25,21 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         [Parameter(Position = 3)]
         public string ExcludeFilter { get; set; }
 
+        [Parameter]
+        [ValidateSet("Undefined", "Overwrite", "Skip")]
+        public string InstallMode { get; set; }
+
         protected override void ProcessRecord()
         {
-            source = new FileSource {Name = Name, Root = Root, Converter = new FileToEntryConverter()};
+            source = new FileSource { Name = Name, Root = Root, Converter = new FileToEntryConverter() };
+
+            var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
+            if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
+            {
+                source.Converter.Transforms.Add(
+                    new InstallerConfigurationTransform(
+                        new BehaviourOptions(mode, MergeMode.Undefined)));
+            }
 
             if (string.IsNullOrEmpty(IncludeFilter))
             {
