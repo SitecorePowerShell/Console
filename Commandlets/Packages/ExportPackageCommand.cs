@@ -109,7 +109,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             }
         }
 
-        public string GetTargetFileName(string filename)
+        private string GetTargetFileName(string filename)
         {
             var directory = System.IO.Path.GetDirectoryName(filename);
             var name = System.IO.Path.GetFileNameWithoutExtension(filename);
@@ -120,6 +120,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             while (System.IO.File.Exists(path))
             {
                 path = System.IO.Path.Combine(directory, (name + " (" + num + ")" + extension));
+                num++;
             }
 
             return path;
