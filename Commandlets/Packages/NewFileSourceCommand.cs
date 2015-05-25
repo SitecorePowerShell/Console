@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Install.Configuration;
 using Sitecore.Install.Files;
 using Sitecore.Install.Filters;
@@ -16,8 +18,8 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         [Parameter(Position = 0, Mandatory = true)]
         public string Name { get; set; }
 
-        [Parameter(Position = 1)]
-        public string Root { get; set; }
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
+        public DirectoryInfo Root { get; set; }
 
         [Parameter(Position = 2)]
         public string IncludeFilter { get; set; }
@@ -31,14 +33,17 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         protected override void ProcessRecord()
         {
-            source = new FileSource { Name = Name, Root = Root, Converter = new FileToEntryConverter() };
+            source = new FileSource { Name = Name, Root = PathUtilities.GetRelativePath(Root.FullName), Converter = new FileToEntryConverter()};
 
-            var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
-            if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
+            if (!String.IsNullOrEmpty(InstallMode))
             {
-                source.Converter.Transforms.Add(
-                    new InstallerConfigurationTransform(
-                        new BehaviourOptions(mode, MergeMode.Undefined)));
+                var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
+                if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
+                {
+                    source.Converter.Transforms.Add(
+                        new InstallerConfigurationTransform(
+                            new BehaviourOptions(mode, MergeMode.Undefined)));
+                }
             }
 
             if (string.IsNullOrEmpty(IncludeFilter))

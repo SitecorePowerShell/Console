@@ -4,7 +4,7 @@ using System.Management.Automation;
 using Sitecore.Install.Configuration;
 using Sitecore.Install.Files;
 using Sitecore.Install.Utils;
-using Sitecore.IO;
+using Cognifide.PowerShell.Core.Utility;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
@@ -27,13 +27,16 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         protected override void BeginProcessing()
         {
             source = new ExplicitFileSource { Name = Name };
-            
-            var mode = (InstallMode)Enum.Parse(typeof(InstallMode), InstallMode);
-            if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
+
+            if (!String.IsNullOrEmpty(InstallMode))
             {
-                source.Converter.Transforms.Add(
-                    new InstallerConfigurationTransform(
-                        new BehaviourOptions(mode, MergeMode.Undefined)));
+                var mode = (InstallMode) Enum.Parse(typeof (InstallMode), InstallMode);
+                if (mode != Sitecore.Install.Utils.InstallMode.Undefined)
+                {
+                    source.Converter.Transforms.Add(
+                        new InstallerConfigurationTransform(
+                            new BehaviourOptions(mode, MergeMode.Undefined)));
+                }
             }
         }
 
@@ -41,13 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         {
             if (!(File is FileInfo)) return;
 
-            var siteRoot = FileUtil.MapPath("/");
-            var fullName = ((FileInfo) File).FullName;
-            if (fullName.StartsWith(siteRoot, StringComparison.OrdinalIgnoreCase))
-            {
-                fullName = fullName.Substring(siteRoot.Length - 1).Replace('\\', '/');
-            }
-            source.Entries.Add(fullName);
+            source.Entries.Add(PathUtilities.GetRelativePath(File.FullName));
         }
 
         protected override void EndProcessing()
