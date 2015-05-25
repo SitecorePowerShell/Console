@@ -170,6 +170,7 @@
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
+    <Compile Include="Commandlets\Packages\NewSecuritySourceCommand.cs" />
     <Compile Include="Commandlets\Security\Items\TestItemAclCommand.cs" />
     <Compile Include="Commandlets\Security\Items\NewItemAclCommand.cs" />
     <Compile Include="Commandlets\Security\Items\ClearItemAclCommand.cs" />
