@@ -2,6 +2,7 @@
 using System.Text;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.IO;
 
 namespace Cognifide.PowerShell.Core.Utility
 {
@@ -83,6 +84,18 @@ namespace Cognifide.PowerShell.Core.Utility
                 }
             }
             return sb.ToString();
+        }
+
+        public static string GetRelativePath(string absolutePath)
+        {
+            var siteRoot = FileUtil.MapPath("/");
+            var relativePath = absolutePath;
+            if (relativePath.StartsWith(siteRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                relativePath = relativePath.Substring(siteRoot.Length - 1).Replace('\\', '/');
+            }
+
+            return relativePath;
         }
     }
 }
