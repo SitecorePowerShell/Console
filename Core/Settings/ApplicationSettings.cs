@@ -7,6 +7,7 @@ using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Settings
 {
@@ -186,21 +187,24 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             var db = Factory.GetDatabase(SettingsDb);
             var appSettingsPath = AppSettingsPath;
-            var currentUserItem = db.GetItem(CurrentUserSettingsPath);
-            if (currentUserItem == null)
+            using (new SecurityDisabler())
             {
-                var settingsRootItem = db.GetItem(appSettingsPath);
-                if (settingsRootItem == null)
+                var currentUserItem = db.GetItem(CurrentUserSettingsPath);
+                if (currentUserItem == null)
                 {
-                    return null;
+                    var settingsRootItem = db.GetItem(appSettingsPath);
+                    if (settingsRootItem == null)
+                    {
+                        return null;
+                    }
+                    var folderTemplateItem = db.GetItem(FolderTemplatePath);
+                    var currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
+                        folderTemplateItem);
+                    var defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
+                    currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
                 }
-                var folderTemplateItem = db.GetItem(FolderTemplatePath);
-                var currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
-                    folderTemplateItem);
-                var defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
-                currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
+                return currentUserItem;
             }
-            return currentUserItem;
         }
 
         public void Save()
@@ -208,18 +212,21 @@ namespace Cognifide.PowerShell.Core.Settings
             var configuration = GetSettingsDtoForSave();
             if (configuration != null)
             {
-                configuration.Edit(
-                    p =>
-                    {
-                        configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
-                        ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
-                        ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
-                        configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
-                        configuration["ForegroundColor"] = ForegroundColor.ToString();
-                        configuration["BackgroundColor"] = BackgroundColor.ToString();
-                        configuration["FontSize"] = FontSize.ToString();
-                        configuration["FontFamily"] = FontFamily;
-                    });
+                using (new SecurityDisabler())
+                {
+                    configuration.Edit(
+                        p =>
+                        {
+                            configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
+                            ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
+                            ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
+                            configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
+                            configuration["ForegroundColor"] = ForegroundColor.ToString();
+                            configuration["BackgroundColor"] = BackgroundColor.ToString();
+                            configuration["FontSize"] = FontSize.ToString();
+                            configuration["FontFamily"] = FontFamily;
+                        });
+                }
             }
         }
 
