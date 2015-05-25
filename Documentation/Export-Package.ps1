@@ -18,6 +18,9 @@
 
     .PARAMETER IncludeProject
         Specify this parameter if exporting the zip file and when you want it to contain the project definitnion xml file in it.
+
+    .PARAMETER NoClobber
+        Do not overwrite (replace the contents) of an existing file. By default, if a file exists in the specified path, Export-Package overwrites the file without warning.
     
     .INPUTS
         Sitecore.Install.PackageProject
