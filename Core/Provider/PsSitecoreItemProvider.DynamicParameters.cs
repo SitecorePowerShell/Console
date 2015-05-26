@@ -27,6 +27,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string VersionParam = "Version";
         private const string StartWorkflowParam = "StartWorkflow";
         private const string PermanentlyParam = "Permanently";
+        private const string ItemParam = "Item";
         private const string IdParam = "ID";
         private const string DatabaseParam = "Database";
         private const string UriParam = "Uri";
@@ -131,6 +132,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             var paramAdded = FailSilentlyDynamicParameters(ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), PermanentlyParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             return paramAdded ? dic : null;
         }
 
@@ -145,6 +147,15 @@ namespace Cognifide.PowerShell.Core.Provider
             var paramAdded = false;
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), FailSilentlyParam, ref dic);
             return paramAdded;
+        }
+
+        private bool TryGetDynamicParam<T>(string paramName, out T result)
+        {
+            // language selection
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            bool defined = (dic != null && dic[paramName].IsSet);
+            result = defined ? (T)dic[paramName].Value : default(T);
+            return defined;
         }
 
         private void GetVersionAndLanguageParams(out int version, out string language)

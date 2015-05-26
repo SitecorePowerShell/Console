@@ -41,7 +41,11 @@ namespace Cognifide.PowerShell.Core.Provider
             try
             {
                 LogInfo("Executing ConvertPath(string path='{0}', string recurse='{1}')", path, recurse);
-                var item = GetItemForPath(path);
+                Item item;
+                if (!TryGetDynamicParam(ItemParam, out item))
+                {
+                    item = GetItemForPath(path);
+                }
                 if (item != null)
                 {
                     CheckOperationAllowed("remove", item.Access.CanDelete(), item.Uri.ToString());
