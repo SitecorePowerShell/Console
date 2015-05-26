@@ -136,9 +136,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             else
             {
-                Exception exception =
-                    new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
-                WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+                WriteInvalidPathError(path);
             }
         }
 
@@ -270,7 +268,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    ThrowTerminatingInvalidPathException(path);
+                    WriteInvalidPathError(path);
                 }
             }
             catch (Exception ex)
@@ -285,9 +283,11 @@ namespace Cognifide.PowerShell.Core.Provider
         ///     not exist.
         /// </summary>
         /// <param name="path">path which is invalid</param>
-        private static void ThrowTerminatingInvalidPathException(string path)
+        private void WriteInvalidPathError(string path)
         {
-            throw new ArgumentException("Path '{0}' does not exist", path);
+            Exception exception =
+                new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
+            WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
         }
 
         private void WriteMatchingItem(string language, int version, Item item)
