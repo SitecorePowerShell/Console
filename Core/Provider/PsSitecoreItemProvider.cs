@@ -96,7 +96,26 @@ namespace Cognifide.PowerShell.Core.Provider
                 string language;
                 int version;
                 GetVersionAndLanguageParams(out version, out language);
-                GetChildItemsHelper(path, recurse, wildcard, language, version);
+
+                Item item;
+                if (!TryGetDynamicParam(ItemParam, out item))
+                {
+                    path = path.Replace("\\", "/");
+                    if (path.Contains("../"))
+                    {
+                        path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
+                    }
+                    item = GetItemForPath(path);
+                }
+
+                if (item == null)
+                {
+                    WriteInvalidPathError(VirtualPathUtility.AppendTrailingSlash(item.GetProviderPath()));
+                }
+                else
+                {
+                    GetChildItemsHelper(item, recurse, wildcard, language, version);
+                }
             }
             catch (Exception ex)
             {
@@ -107,40 +126,22 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        protected void GetChildItemsHelper(string path, bool recurse, WildcardPattern wildcard, string language,
+        protected void GetChildItemsHelper(Item item, bool recurse, WildcardPattern wildcard, string language,
             int version)
-
         {
-            path = path.Replace("\\", "/");
-            if (path.Contains("../"))
+            var children = item.GetChildren();
+            foreach (Item childItem in children)
             {
-                path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
-            }
-            var pageRef = GetItemForPath(path);
-            //Language lang = LanguageManager.GetLanguage(language);
-            if (pageRef != null)
-            {
-                var children = pageRef.GetChildren();
-                foreach (Item childItem in children)
+                var child = childItem;
+                if (wildcard.IsMatch(child.Name))
                 {
-                    var child = childItem;
-                    if (wildcard.IsMatch(child.Name))
-                    {
-                        WriteMatchingItem(language, version, child);
-                    }
-                    var childUrl = VirtualPathUtility.AppendTrailingSlash(path) + child.Name;
-
-                    // if the specified item exists and recurse has been set then 
-                    // all child items within it have to be obtained as well
-                    if (ItemExists(path) && recurse)
-                    {
-                        GetChildItemsHelper(childUrl, true, wildcard, language, version);
-                    }
+                    WriteMatchingItem(language, version, child);
                 }
-            }
-            else
-            {
-                WriteInvalidPathError(path);
+
+                if (recurse)
+                {
+                    GetChildItemsHelper(child, true, wildcard, language, version);
+                }
             }
         }
 
@@ -356,15 +357,25 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing CopyItem(string path='{0}', string destination='{1}', bool recurse={2}", path,
                     destination, recurse);
-                var sourceItem = GetItemForPath(path);
+
+                Item sourceItem;
+                if (!TryGetDynamicParam(ItemParam, out sourceItem))
+                {
+                    sourceItem = GetItemForPath(path);
+                }
 
                 if (sourceItem == null)
                 {
-                    SignalPathDoesNotExistError(path);
+                    WriteInvalidPathError(path);
                     return;
                 }
 
-                var destinationItem = GetItemForPath(destination);
+                Item destinationItem;
+                if (!TryGetDynamicParam(DestinationItemParam, out destinationItem))
+                {
+                    destinationItem = GetItemForPath(destination);
+                }
+
                 var leafName = sourceItem.Name;
 
                 if (destinationItem == null)
@@ -374,7 +385,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     destinationItem = GetItemForPath(destination);
                     if (destinationItem == null)
                     {
-                        SignalPathDoesNotExistError(destination);
+                        WriteInvalidPathError(destination);
                         return;
                     }
                 }
@@ -453,19 +464,29 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing MoveItem(string path='{0}', string destination='{1}')",
                     path, destination);
-                var sourceItem = GetItemForPath(path);
+                
+                Item sourceItem;
+                if (!TryGetDynamicParam(ItemParam, out sourceItem))
+                {
+                    sourceItem = GetItemForPath(path);
+                }
 
                 if (sourceItem == null)
                 {
-                    SignalPathDoesNotExistError(path);
+                    WriteInvalidPathError(path);
                     return;
                 }
 
-                if (destination.IndexOf(':') < 0 && path.IndexOf(':') > 0)
+                Item destinationItem;
+                if (!TryGetDynamicParam(DestinationItemParam, out destinationItem))
                 {
-                    destination = path.Substring(0, path.IndexOf(':') + 1) + destination;
+                    if (destination.IndexOf(':') < 0 && path.IndexOf(':') > 0)
+                    {
+                        destination = path.Substring(0, path.IndexOf(':') + 1) + destination;
+                    }
+                    destinationItem = GetItemForPath(destination);
                 }
-                var destinationItem = GetItemForPath(destination);
+
                 var leafName = sourceItem.Name;
 
                 if (destinationItem == null)
@@ -476,7 +497,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
                     if (destinationItem == null)
                     {
-                        SignalPathDoesNotExistError(destination);
+                        WriteInvalidPathError(destination);
+                        return;
                     }
                 }
 

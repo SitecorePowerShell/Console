@@ -28,6 +28,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string StartWorkflowParam = "StartWorkflow";
         private const string PermanentlyParam = "Permanently";
         private const string ItemParam = "Item";
+        private const string DestinationItemParam = "DestinationItem";
         private const string IdParam = "ID";
         private const string DatabaseParam = "Database";
         private const string UriParam = "Uri";
@@ -123,6 +124,26 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 paramAdded |= AddDynamicParameter(typeof (TransferOptions), TransferOptionsParam, ref dic);
             }
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
+            paramAdded |= AddDynamicParameter(typeof(Item), DestinationItemParam, ref dic, false);
+            return paramAdded ? dic : null;
+        }
+
+        protected override object MoveItemDynamicParameters(string path, string destination)
+        {
+            LogInfo("Executing MoveItemDynamicParameters(string path='{0}', destination='{1}')",
+                path, destination);
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            var paramAdded = FailSilentlyDynamicParameters(ref dic);
+            var sourceDrive = PathUtilities.GetDrive(path, SessionState.Drive.Current.Name);
+            var destinationDrive = PathUtilities.GetDrive(destination, SessionState.Drive.Current.Name);
+            if (!string.Equals(sourceDrive, destination, StringComparison.OrdinalIgnoreCase) &&
+                Factory.GetDatabase(sourceDrive) != null && Factory.GetDatabase(destinationDrive) != null)
+            {
+                paramAdded |= AddDynamicParameter(typeof (TransferOptions), TransferOptionsParam, ref dic);
+            }
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
+            paramAdded |= AddDynamicParameter(typeof(Item), DestinationItemParam, ref dic, false);
             return paramAdded ? dic : null;
         }
 
@@ -195,6 +216,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
 
             return paramAdded ? dic : null;
         }
@@ -219,12 +241,6 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
 
             return paramAdded ? dic : null;
-        }
-
-        private static void SignalPathDoesNotExistError(string path)
-        {
-            throw new ObjectNotFoundException(string.Format("Cannot find path '{0}' because it does not exist.",
-                path));
         }
 
         private void CheckOperationAllowed(string operation, bool isOperationAllowed, string path)
