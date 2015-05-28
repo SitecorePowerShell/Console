@@ -9,7 +9,6 @@ $sites = @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
 
 
 
-
 # --------------------------------------------------------------
 # Ignore everything after this - all you need to provide is above
 # --------------------------------------------------------------
@@ -27,12 +26,14 @@ function Create-Junction{
 		[string]$path,
 		[string]$source
 		)
+	Write-Host "$path --> $source"
 	if(Test-Path "$path"){
 	  cmd.exe /c "rmdir `"$path`" /Q" 
 	}
 	cmd.exe /c "mklink /J `"$path`" `"$source`""
 		
 }
+
 function Create-ProjectJunctions{
     [cmdletbinding(
         DefaultParameterSetName = 'Directory',
@@ -42,12 +43,25 @@ function Create-ProjectJunctions{
 		[string]$path, 
 		[int]$version
 		)
+
+	Write-Host "$project\$version --> $path"
 	
 	Create-Junction "$path\Data\serialization" "$projectPath\Cognifide.PowerShell.Sitecore$version\Data\serialization"
-	Create-Junction  "$path\Website\sitecore modules\PowerShell" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell"
-	Create-Junction  "$path\Website\sitecore modules\Shell\PowerShell" "$projectPath\Cognifide.PowerShell\sitecore modules\Shell\PowerShell"
+	if(Test-Path "$path\Website\sitecore modules\PowerShell"){
+	  cmd.exe /c "rmdir `"$path\Website\sitecore modules\PowerShell`" /Q /S" 
+	}
+	if(-not (Test-Path "$path\Website\sitecore modules")){
+	  New-Item  "$path\Website" -Name "sitecore modules" -ItemType Directory | Out-Null
+	}
+	New-Item  "$path\Website\sitecore modules" -Name "PowerShell" -ItemType Directory 
+	Create-Junction "$path\Website\sitecore modules\PowerShell\Assets" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Assets"
+	Create-Junction "$path\Website\sitecore modules\PowerShell\Layouts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Layouts"
+	Create-Junction "$path\Website\sitecore modules\PowerShell\Scripts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Scripts"
+	Create-Junction "$path\Website\sitecore modules\PowerShell\Services" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Services"
+	Create-Junction "$path\Website\sitecore modules\PowerShell\Styles" "$projectPath\Cognifide.PowerShell.Sitecore$version\sitecore modules\PowerShell\Styles"
+	Create-Junction "$path\Website\sitecore modules\Shell\PowerShell" "$projectPath\Cognifide.PowerShell\sitecore modules\Shell\PowerShell"
 }
 
-foreach($sitecoreSite in $sitecoreSites){
+foreach($sitecoreSite in $sites){
 	Create-ProjectJunctions @sitecoreSite
 }

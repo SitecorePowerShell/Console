@@ -1,0 +1,154 @@
+﻿.done {
+    -webkit-animation-duration: 3s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: greenPulse;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: greenPulse;
+}
+
+.status {
+    display: block;
+    margin-bottom: 6px;
+}
+
+#Title {
+    display: block;
+    margin-bottom: 6px;
+}
+
+#Copyright {
+    float: left;
+    margin-left: 6px;
+    margin-top: 4px;
+}
+
+.qtip { max-width: 355px; }
+
+#PromoLiteral { display: none; }
+
+#Result_ { display: none; }
+
+#Promo {
+    border-top: #E3E3E3 solid 1px;
+    bottom: 4px;
+    color: #CBCDCB;
+    display: block;
+    float: right;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+
+#HeaderTextContainer { display: inline-block; }
+
+#Promo a { color: #ABADAB; }
+
+.timeRemaining {
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.operation {
+    display: inline-block;
+    margin-top: 3px;
+}
+
+#AbortButton, #OkButton {
+    display: block;
+    float: right;
+    height: 24px;
+    margin-right: 4px;
+    margin-top: 4px;
+    padding: 0 8px;
+    vertical-align: middle;
+}
+
+a#ViewButton {
+    color: green;
+    display: none;
+    float: left;
+    margin: auto;
+    padding: 0 20px;
+    text-decoration: underline;
+    width: 200px;
+}
+
+a#ViewErrorsButton {
+    color: red;
+    display: none;
+    float: left;
+    margin: auto;
+    padding: 0 20px;
+    text-decoration: underline;
+    width: 200px;
+}
+
+@keyframes greenPulse {
+    from { box-shadow: 0 0 19px #fff; }
+
+    50% { box-shadow: 0 0 18px #06B025; }
+
+    to { box-shadow: 0 0 19px #fff; }
+}
+
+@-webkit-keyframes greenPulse {
+    from { -webkit-box-shadow: 0 0 19px #fff; }
+
+    50% { -webkit-box-shadow: 0 0 19px #06B025; }
+
+    to { -webkit-box-shadow: 0 0 19px #fff; }
+}
+
+.progressbar_bg_middle {
+    background-image: url(../Assets/bg_middle.gif);
+    background-repeat: repeat-x;
+    overflow: hidden;
+}
+
+.progressbar_bg_right {
+    background-image: url(../Assets/bg_right.gif);
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
+.progressbar_bg_left {
+    background-image: url(../Assets/bg_left.gif);
+    background-position: left;
+    background-repeat: no-repeat;
+    padding: 1px;
+}
+
+.progressbar_fg {
+    background-image: url(../Assets/fg_middle.gif);
+    background-repeat: repeat-x;
+    overflow: hidden;
+    width: 0;
+}
+
+.progressbar_fg_right {
+    background-image: url(../Assets/fg_right.gif);
+    background-position: right;
+    background-repeat: no-repeat;
+}
+
+.progressbar_fg_left {
+    background-image: url(../Assets/fg_left.gif);
+    background-position: left;
+    background-repeat: no-repeat;
+    height: 14px;
+}
+
+.progressbar_highlight {
+    background-image: url(../Assets/highlight.png);
+    height: 14px;
+    margin-left: -120px;
+    width: 120px;
+}
+
+.progressbar_highlight_ind {
+    background-image: url(../Assets/ind-highlight.png);
+    height: 14px;
+    margin-left: -120px;
+    width: 120px;
+}

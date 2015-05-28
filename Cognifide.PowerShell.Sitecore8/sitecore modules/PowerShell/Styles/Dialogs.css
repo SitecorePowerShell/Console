@@ -1,0 +1,9 @@
+.scFormDialogFooter .footerOkCancel {
+    display: block;
+    float: right;
+    margin-right: 12px;
+    position: relative;
+    right: 0;
+    text-align: right;
+    white-space: nowrap;
+}
