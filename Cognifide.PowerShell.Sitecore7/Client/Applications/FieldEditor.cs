@@ -19,7 +19,7 @@ using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 using Page = Sitecore.Web.UI.HtmlControls.Page;
 
-namespace Cognifide.PowerShell.Sitecore8.Client.Applications
+namespace Cognifide.PowerShell.Sitecore7.Client.Applications
 {
     [Serializable]
     public class FieldEditor : Command
