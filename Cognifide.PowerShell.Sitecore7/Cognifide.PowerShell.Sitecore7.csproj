@@ -95,6 +95,25 @@
       <Name>Cognifide.PowerShell</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App_Config\Include\Cognifide.PowerShell.Sitecore7.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\flex.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.all.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.autocomplete.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.base.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.core.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\jquery.ui.theme.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\ListView.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Runner.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y

@@ -31,7 +31,6 @@ function Create-Junction{
 	  cmd.exe /c "rmdir `"$path`" /Q" 
 	}
 	cmd.exe /c "mklink /J `"$path`" `"$source`""
-		
 }
 
 function Create-ProjectJunctions{
