@@ -225,5 +225,12 @@ deploy.targets
 /Data/serialization/security/
 web.Debug.config
 web.Release.config
-web.config
 Tests/
+
+# Project Split
+Cognifide.PowerShell/bin/
+Cognifide.PowerShell.Sitecore7/bin/
+Cognifide.PowerShell.Sitecore8/bin/
+Cognifide.PowerShell/obj/
+Cognifide.PowerShell.Sitecore7/obj/
+Cognifide.PowerShell.Sitecore8/obj/
