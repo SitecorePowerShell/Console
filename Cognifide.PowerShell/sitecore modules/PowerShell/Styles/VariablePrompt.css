@@ -59,6 +59,7 @@
     padding-left: 2px;
     position: relative;
     width: 90% !important;
+    background-color: #f4f4f4 !important;
 }
 
 .scComboboxEdit, .scDateTimePickerContainer {
