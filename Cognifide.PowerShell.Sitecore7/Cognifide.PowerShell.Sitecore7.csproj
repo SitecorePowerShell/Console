@@ -97,8 +97,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy %25TargetDir%25Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
-IF %25USERDOMAIN%25==WIN123 xcopy %25TargetDir%25Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
+    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
+IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
+IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore75\Website\App_Config\Include\*.* /s /e /c /y
+IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore70\Website\App_Config\Include\*.* /s /e /c /y
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
