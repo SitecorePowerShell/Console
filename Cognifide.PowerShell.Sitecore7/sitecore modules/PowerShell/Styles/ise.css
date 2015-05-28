@@ -15,7 +15,7 @@
 
 #StatusBar {
     height: 20px;
-    margin: 2px 5px 0 8px;
+    margin: 0px 2px 0 2px;
     overflow: hidden;
     padding: 0 0 3px 0;
 }
@@ -186,16 +186,16 @@ a.ps-link {
     -moz-border-radius-bottomleft: 9px;
     -moz-border-radius-bottomright: 9px;
     -moz-border-radius-topleft: 9px;
-    -moz-border-radius-topright: 0;
-    -moz-box-shadow: inset 0 1px 0 0 #ffffff;
+    -moz-border-radius-topright: 0px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
     background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%);
     background-color: #ededed;
     border: 1px solid #dcdcdc;
     border-bottom-left-radius: 9px;
     border-bottom-right-radius: 9px;
     border-top-left-radius: 9px;
-    border-top-right-radius: 0;
-    box-shadow: inset 0 1px 0 0 #ffffff;
+    border-top-right-radius: 0px;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
     color: #777777;
     display: inline-block;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
@@ -206,12 +206,12 @@ a.ps-link {
     font-weight: normal;
     height: 24px;
     line-height: 16px;
-    margin: 1px 4px 0 0;
+    margin: 1px 2px 0 0;
     padding: 7px 5px 4px 6px;
     text-align: center;
     text-decoration: none;
     text-indent: 0;
-    text-shadow: 1px 1px 0 #ffffff;
+    text-shadow: 1px 1px 0px #ffffff;
     width: 24px;
 }
 
@@ -355,10 +355,17 @@ a.ps-link {
 }
 
 .iseRibbonContextPanelLabel {
-    padding: 4px 0;
+    padding: 4px 10px;
     text-align: right;
 }
 
 .iseRibbonContextPanel .scRibbonToolbarSmallButtons.scRibbonContextLabels { padding-right: 0; }
 
 .iseRibbonContextPanel.disabled { color: #d6d6d6 }
+
+.scRibbon {
+    background: #4A4D4A url(/sitecore/shell/themes/standard/gradients/gray1.gif) 50% 0 repeat-y;
+    padding-top: 4px;
+}
+
+.scRibbonNavigatorButtonsGroupHeader { display: none; }

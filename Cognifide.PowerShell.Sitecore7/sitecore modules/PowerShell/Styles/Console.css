@@ -58,10 +58,10 @@ html {
 
 #ScriptResult {
     height: 100%;
-    left: 0;
+    left: 0px;
     overflow: auto;
     position: absolute;
-    top: 0;
+    top: 0px;
     width: 100%;
 }
 

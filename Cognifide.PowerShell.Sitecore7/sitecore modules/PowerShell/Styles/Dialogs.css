@@ -7,3 +7,17 @@
     text-align: right;
     white-space: nowrap;
 }
+
+.scFormDialogHeader {
+    border-bottom: solid 1px #dbdbdb;
+    display: none;
+    min-height: 40px;
+}
+
+.scFormDialogHeader div { padding-top: 12px; }
+
+.scFormDialogFooter { height: 44px; }
+
+.scHorizontalLine { display: none; }
+
+.ff .scScrollbox, .scScrollbox { min-height: 50px !important; }
