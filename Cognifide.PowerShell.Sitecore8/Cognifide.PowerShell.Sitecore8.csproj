@@ -7,8 +7,8 @@
     <ProjectGuid>{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cognifide.PowerShell.Sitecore8</RootNamespace>
-    <AssemblyName>Cognifide.PowerShell.Sitecore8</AssemblyName>
+    <RootNamespace>Cognifide.PowerShell.VersionSpecific</RootNamespace>
+    <AssemblyName>Cognifide.PowerShell.VersionSpecific</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

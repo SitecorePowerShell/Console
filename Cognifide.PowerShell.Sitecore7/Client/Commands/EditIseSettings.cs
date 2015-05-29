@@ -6,7 +6,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.Sitecore7.Client.Commands
+namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
 {
     [Serializable]
     public class EditIseSettings : ExecuteFieldEditor

@@ -19,7 +19,7 @@ using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 using Page = Sitecore.Web.UI.HtmlControls.Page;
 
-namespace Cognifide.PowerShell.Sitecore8.Client.Applications
+namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
 {
     [Serializable]
     public class FieldEditor : Command
@@ -72,7 +72,7 @@ namespace Cognifide.PowerShell.Sitecore8.Client.Applications
         {
             var path = args.Parameters[PathParameter];
             var currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
-            currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
+            currentItem = string.IsNullOrEmpty(path) ? currentItem : global::Sitecore.Client.ContentDatabase.GetItem(path);
             Assert.IsNotNull(currentItem, CurrentItemIsNull);
             CurrentItem = currentItem;
             IncludeStandardFields = args.Parameters[IncludeStandardFieldsParameter] == "1";

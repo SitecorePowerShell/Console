@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 
-namespace Cognifide.PowerShell.Sitecore8.Utility
+namespace Cognifide.PowerShell.VersionSpecific.Utility
 {
     class DateConverter : IDateConverter
     {
