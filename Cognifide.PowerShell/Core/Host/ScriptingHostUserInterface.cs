@@ -186,7 +186,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 lineHeight += 1 + line.Length/strLineWidth;
             }
-            lineHeight = lineHeight*21 + 130;
+            lineHeight = Math.Max(lineHeight*21 + 160,190);
             var dialogResult = JobContext.ShowModalDialog(parameters, "ConfirmChoice",
                 lineWidth.ToString(CultureInfo.InvariantCulture), lineHeight.ToString(CultureInfo.InvariantCulture));
 

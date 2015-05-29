@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                AssertDefaultSize(700, 140);
+                AssertDefaultSize(700, 180);
 
                 string response;
                 var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
@@ -83,7 +83,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     hashParams,
                     "DownloadFile",
                     Width == 0 ? "600" : WidthString,
-                    Height == 0 ? "140" : HeightString);
+                    Height == 0 ? "200" : HeightString);
                 WriteObject(response);
             });
         }

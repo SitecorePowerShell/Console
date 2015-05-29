@@ -45,7 +45,7 @@
         <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
             <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
-              <ThemedImage class="scConfirmationIcon" Src="Images/warning.png" />
+              <Image class="scConfirmationIcon" src="/sitecore modules/PowerShell/Assets/warning.png" Alt="Warning icon"/>
               <Literal id="Text" class="scDialogMessage"></Literal>
             </GridPanel>
           </Scrollbox>

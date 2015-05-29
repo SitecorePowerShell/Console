@@ -61,6 +61,7 @@ body.ie { overflow: hidden; }
     left: 0;
     padding-left: 2px;
     position: relative;
+    width: 90%
 }
 
 .scComboboxEdit, .scDateTimePickerContainer {
@@ -70,7 +71,7 @@ body.ie { overflow: hidden; }
 }
 
 .scUserPickerButton {
-    float: left;
+    float: right;
     height: 24px;
     margin-left: 8px;
     vertical-align: top;
@@ -95,6 +96,7 @@ body.ie { overflow: hidden; }
 .scTabPage {
     padding: 12px;
     width: 100%;
+    box-sizing: border-box;
 }
 
 .scContentControl.treePicker td { padding: 2px 0 2px 0; }
@@ -189,11 +191,19 @@ fieldset { padding: 6px 8px 8px 10px; }
     min-height: 64px;
 }
 
+.ff .scButton {
+    margin-left: 6px;
+}
+
+#CancelButton {
+    float: right;
+}
+
 #ValuePanel {
     background: #e9e9e9;
     border-bottom: 1px solid #8C8A8C;
     border-top: 1px solid #DEDFDE;
-    padding: 8px 0 0 8px !important;
+    padding: 8px !important;
     width: 100%;
 }
 

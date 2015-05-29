@@ -100,9 +100,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App_Config\Include\Cognifide.PowerShell.Sitecore8.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
     <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
@@ -119,9 +116,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo $(ProjectDir)App_Config\Include\*.*
-IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
-IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
+    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
