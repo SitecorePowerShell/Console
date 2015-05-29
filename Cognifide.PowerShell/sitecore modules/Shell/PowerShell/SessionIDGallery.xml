@@ -92,6 +92,21 @@
         .ff .scScrollbox, .scScrollbox {
         min-height: 50px !important;
         }
+        .scGalleryContent13 {
+        position: absolute;
+        top: 0;
+        bottom: 13px;
+        right: 0;
+        left: 0;
+        overflow: auto;
+        }
+        .scGalleryBottom13 {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 13px;
+        }
       </Stylesheet>
 
       <div class="scStretch">
