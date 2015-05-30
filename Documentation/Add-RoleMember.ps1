@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Adds one or more Sitecore users to the specified role.
 

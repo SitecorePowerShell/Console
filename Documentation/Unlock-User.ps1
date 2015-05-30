@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
-        Unlocks the specified Sitecore user.
+        Unlocks a Sitecore user using the specified criteria.
 
     .DESCRIPTION
-        The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
+        The Unlock-User command gets a user and unlocks the account in Sitecore.
 
         The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
         You can also specify user object variable, such as $<user>.

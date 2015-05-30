@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Locks the Sitecore item by the current or specified user.
 
     .DESCRIPTION
-        The Lock-Item cmdlet unlocks the item.
+        The Lock-Item command unlocks the item.
 
     .INPUTS
         Sitecore.Data.Items.Item

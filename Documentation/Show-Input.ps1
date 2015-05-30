@@ -55,7 +55,7 @@
         PS master:\> Show-Input "Please provide your email" -DefaultValue "my@email.com"  -Validation "^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$" -ErrorMessage "Not a proper email!"
 
     .EXAMPLE
-        # Uses Show-Input commandlet to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)
+        # Uses Show-Input command to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)
         PS master:\> $contentItem = get-item master:\content
         PS master:\> $newName = Show-Input "Please provide the new name for the '$($contentItem.Name)' Item" -DefaultValue $contentItem.Name  -Validation "^[\w\*\$][\w\s\-\$]*(\(\d{1,}\)){0,1}$" -ErrorMessage "Invalid characters in the name"
 

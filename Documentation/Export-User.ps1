@@ -10,7 +10,7 @@
 
         To search for and retrieve more than one user, use the Filter parameter.
 
-	You can also pipe a user from the Get-user commandlet.
+	You can also pipe a user from the Get-user command.
 
 
     .PARAMETER Identity
@@ -34,7 +34,7 @@
         Export-User -Filter "sitecore\*"
 
     .PARAMETER User
-        User object retrieved from the Sitecore API or using the Get-User commandlet.
+        User object retrieved from the Sitecore API or using the Get-User command.
 
     .PARAMETER Current
         Specifies that the current user should be serialized.

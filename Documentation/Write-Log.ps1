@@ -3,7 +3,7 @@
         Writes text to the Sitecore event log.
 
     .DESCRIPTION
-        The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level.
+        The Write-Log command writes text to the Sitecore event log with the specified logging level.
 
     .PARAMETER Log
         Specifies the Sitecore logging level.

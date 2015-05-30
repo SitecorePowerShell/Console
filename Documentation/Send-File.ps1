@@ -3,7 +3,7 @@
         Allows users to download files from server and file items from media library.
 
     .DESCRIPTION
-        Executing this commandlet with file path on the server provides script users with means to download a file to their computer.
+        Executing this command with file path on the server provides script users with means to download a file to their computer.
 	Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
 	If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned.
 

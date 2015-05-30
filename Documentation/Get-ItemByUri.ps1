@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        This commandlet has been obsoleted - use "Get-Item -Uri" instead.
+        This command has been obsoleted - use "Get-Item -Uri" instead.
 
     .DESCRIPTION
-        This commandlet has been obsoleted - use "Get-Item -Uri" instead.
+        This command has been obsoleted - use "Get-Item -Uri" instead.
 
 
     .PARAMETER ItemUri

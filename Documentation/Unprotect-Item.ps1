@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Unprotects the Sitecore item by the current or specified user.
 
     .DESCRIPTION
-        The Unprotect-Item cmdlet protects the item.
+        The Unprotect-Item command protects the item.
 
     .INPUTS
         Sitecore.Data.Items.Item

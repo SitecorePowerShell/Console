@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Returns one or more Sitecore users using the specified criteria.
 

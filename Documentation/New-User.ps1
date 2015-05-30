@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Creates a new Sitecore user.
 
     .DESCRIPTION
-        The New-User cmdlet creates a new user in Sitecore.
+        The New-User command creates a new user in Sitecore.
 
         The Identity parameter specifies the Sitecore user to create. You can specify a user by its local name or fully qualified name.
 

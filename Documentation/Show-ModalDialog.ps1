@@ -3,7 +3,7 @@
         Shows Sitecore Sheer control as a modal dialog.
 
     .DESCRIPTION
-        Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution.
+        Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the command execution.
 
     .PARAMETER Control
         Name of the Sitecore Sheer control to show

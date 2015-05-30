@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Sets the Sitecore user properties.
 
     .DESCRIPTION
-        The Set-User cmdlet sets a user profile properties in Sitecore.
+        The Set-User command sets a user profile properties in Sitecore.
 
         The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name.
 

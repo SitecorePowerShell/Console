@@ -9,7 +9,7 @@
         Name of the file source.
 
     .PARAMETER File
-        Path to the file to be included. this can be automatically discovered if a stream of files is piped to the commandlet.
+        Path to the file to be included. this can be automatically discovered if a stream of files is piped to the command.
     
     .INPUTS
     

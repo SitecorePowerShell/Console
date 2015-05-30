@@ -3,10 +3,10 @@
         Updates List View (created by Show-ListView) data.
 
     .DESCRIPTION
-        This commandlet updates the data displayed by List View that called the script the commandlet is part of.
-        Calling this commandlet makes sense only when it's being used in script exposed as Action on the Show-ListView window.
+        This command updates the data displayed by List View that called the script the command is part of.
+        Calling this command makes sense only when it's being used in script exposed as Action on the Show-ListView window.
         For example the main script might be listing all logged in users. And than the "Kick" action might be closing sessions for selected rows and refreshing the List view to take into account that the sessions are no longer connected.
-        Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView commandlet will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
+        Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView command will later be called to update the data to account for the fact that the task's "Last Run" date has been updated.
 
     .PARAMETER Data
         Data that you want to be sent to the list view for display.

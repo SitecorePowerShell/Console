@@ -9,7 +9,7 @@
         Name of the database to be returned.
 
     .PARAMETER Item
-        Database returned will be taken from the item passed to the commandlet.
+        Database returned will be taken from the item passed to the command.
     
     .INPUTS
         Sitecore.Data.Items.Item

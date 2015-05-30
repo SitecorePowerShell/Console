@@ -3,7 +3,7 @@
         Creates a new domain with the specified name.
 
     .DESCRIPTION
-        The New-Domain cmdlet creates a domain if it does not exist.
+        The New-Domain command creates a domain if it does not exist.
 
 
     .PARAMETER Name

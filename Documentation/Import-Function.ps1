@@ -26,7 +26,7 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-	# The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" commandlet 
+	# The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" command 
         # that was imported as a result of the execution of the following line
         PS master:\> Import-Function -Name Resolve-Error
 #>

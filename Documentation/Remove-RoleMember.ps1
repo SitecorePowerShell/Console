@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Removes one or more Sitecore users from the specified role.
 
     .DESCRIPTION
-        The Remove-RoleMember cmdlet gets a role and removes members of the Sitecore role.
+        The Remove-RoleMember command gets a role and removes members of the Sitecore role.
 
         The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 

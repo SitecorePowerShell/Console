@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Sets the Sitecore user password.
 
     .DESCRIPTION
-        The Set-UserPassword cmdlet resets or changes a user password.
+        The Set-UserPassword command resets or changes a user password.
 
         The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 

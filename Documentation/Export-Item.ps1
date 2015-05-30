@@ -20,7 +20,7 @@
         The item to be serialized.
 
     .PARAMETER Entry
-        Serialization preset to be serialized. Obtain the preset through the use of Get-Preset commandlet
+        Serialization preset to be serialized. Obtain the preset through the use of Get-Preset command.
 
     .PARAMETER Path
         Path to the item to be processed - can work with Language parameter to narrow the publication scope.

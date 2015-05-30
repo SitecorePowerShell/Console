@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Publishes a Sitecore item.
 
     .DESCRIPTION
-        The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
+        The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
 
     .PARAMETER Target
         Specifies the publishing targets. The default target database is "web".

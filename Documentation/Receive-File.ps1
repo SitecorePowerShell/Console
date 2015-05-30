@@ -3,7 +3,7 @@
         Shows a dialog to users allowing to upload files to either server file system or items in media library.
 
     .DESCRIPTION
-        Executing this commandlet with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
+        Executing this command with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
 	Executing it for an Item located in Sitecore Media library (provided as -ParentItem) allows the user to upload the file as a child to that item.
 	If the file has been uploaded the dialog returns path to the file (in case of file system storage) or Item that has been created if the file was uplaoded to media library.
 

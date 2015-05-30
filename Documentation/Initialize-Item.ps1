@@ -4,14 +4,14 @@
 
     .DESCRIPTION
         The Initialize-Item command wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
-        This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item commandlet into full Sitecore Items.
+        This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item command into full Sitecore Items.
         The alias for the command is Wrap-Item.
 
     .PARAMETER Item
         The item to be wrapped/initialized.
 
     .PARAMETER SearchResultItem
-        The item obtained from Find-Item commandlet to be translated into a sitecore item.
+        The item obtained from Find-Item command to be translated into a sitecore item.
     
     .INPUTS
         Sitecore.Data.Items.Item

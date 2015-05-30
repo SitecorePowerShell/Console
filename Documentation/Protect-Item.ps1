@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Protects the Sitecore item by the current or specified user.
 
     .DESCRIPTION
-        The Protect-Item cmdlet protects the item.
+        The Protect-Item command protects the item.
 
     .INPUTS
         Sitecore.Data.Items.Item

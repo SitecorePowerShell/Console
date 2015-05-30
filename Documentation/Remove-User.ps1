@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Removes the Sitecore user.
 
     .DESCRIPTION
-        The Remove-User cmdlet removes a user from Sitecore.
+        The Remove-User command removes a user from Sitecore.
 
         The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name.
 

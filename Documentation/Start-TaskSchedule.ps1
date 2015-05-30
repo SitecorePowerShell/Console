@@ -7,7 +7,7 @@
 
 
     .PARAMETER Schedule
-        ScheduleItem most conveniently obtained from Get-Schedule commandlet.
+        ScheduleItem most conveniently obtained from Get-Schedule command.
 
     .PARAMETER Item
         Schedule item - if Item is of wrong template - an appropriate error will be written to teh host.

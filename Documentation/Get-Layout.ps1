@@ -7,7 +7,7 @@
 
     .PARAMETER Device
         Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
-        If Device is specified but no layout is specified the commandlet will return an error that can be silenced
+        If Device is specified but no layout is specified the command will return an error that can be silenced
 
     .PARAMETER Item
         The item to be processed.

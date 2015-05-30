@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Disables the specified Sitecore user.
 

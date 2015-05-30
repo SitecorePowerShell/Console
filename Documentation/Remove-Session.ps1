@@ -1,9 +1,9 @@
-﻿<#
+<#
     .SYNOPSIS
         Removes one or more Sitecore user sessions.
 
     .DESCRIPTION
-        The Remove-Session cmdlet removes user sessions in Sitecore.
+        The Remove-Session command removes user sessions in Sitecore.
 
     .PARAMETER InstanceId
         Specifies the Sitecore SessionID.

@@ -4,7 +4,7 @@
 
     .DESCRIPTION
         Creates a version of the item in a new language based on an existing language version. 
-        Based on parameters you can make the commandlet bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
+        Based on parameters you can make the command bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
 
     .PARAMETER Recurse
         Process the item and all of its children.

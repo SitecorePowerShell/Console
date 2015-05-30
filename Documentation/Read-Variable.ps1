@@ -4,8 +4,8 @@
 
     .DESCRIPTION
         Prompts user to provide values for variables required by the script to perform its operation.
-        If user selects the "OK" button the commandlet will return 'ok' as its value.
-        If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value.
+        If user selects the "OK" button the command will return 'ok' as its value.
+        If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the command will return 'cancel' as its value.
 
     .PARAMETER Parameters
         Specifies the variables that value should be provided by the user. Each variable definition can have the following structure:
@@ -72,7 +72,7 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        # For a good understanding of all the Property types the Read-Variable commandlet accepts open the script located in the following item:
+        # For a good understanding of all the Property types the Read-Variable command accepts open the script located in the following item:
         # /Examples/User Interaction/Read-Variable - Sample
         # the script is located in the Script Library in the Master database.
 

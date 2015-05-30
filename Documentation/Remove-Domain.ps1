@@ -3,7 +3,7 @@
         Removes the specified domain.
 
     .DESCRIPTION
-        The Remove-Domain cmdlet removes the specified domain.
+        The Remove-Domain command removes the specified domain.
 
 
     .PARAMETER Name

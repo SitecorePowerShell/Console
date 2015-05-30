@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Returns one or more Sitecore user sessions using the specified criteria.
 

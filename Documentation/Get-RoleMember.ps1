@@ -1,4 +1,4 @@
-﻿<#
+<#
     .SYNOPSIS
         Returns the Sitecore users in the specified role.
 

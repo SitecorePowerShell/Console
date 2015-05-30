@@ -26,7 +26,7 @@
         Import-User -Filter "sitecore\*"
 
     .PARAMETER User
-        User object retrieved from the Sitecore API or using the Get-User commandlet identifying the user account to be deserialized.
+        User object retrieved from the Sitecore API or using the Get-User command identifying the user account to be deserialized.
 
     .PARAMETER Path
         Path to the file the user should be loaded from.
