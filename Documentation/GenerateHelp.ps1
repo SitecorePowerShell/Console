@@ -1,4 +1,4 @@
-$Invocation = Resolve-Path ($MyInvocation.MyCommand.Definition)
+﻿$Invocation = Resolve-Path ($MyInvocation.MyCommand.Definition)
 $documentation = Split-Path $Invocation
 $rootDirectory = Split-Path $documentation -Parent
 
@@ -15,6 +15,6 @@ if(!(Test-Path -Path $helpLibraryPath)) {
 $files = [System.IO.Directory]::GetFiles($documentation, "*.ps1")
 Add-Type -Path $helpLibraryPath
 
-[PowerShell.MamlGenerator.commandHelpGenerator]::GenerateHelp($moduleLibraryPath, $help, $files)
+[PowerShell.MamlGenerator.CmdletHelpGenerator]::GenerateHelp($moduleLibraryPath, $help, $files)
 Remove-Item "$help/*.maml" -Force
 Get-Item "$help/*.xml" | Rename-Item -NewName { $_.name -replace '\.xml','.maml' }

@@ -13,12 +13,12 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1031
+content-length: 1028
 
 # Requests that the user provides an email, validates it against a regular expression snd whows an allert if the format is not valid
 Show-Input "Please provide your email" -DefaultValue "my@email.com"  -Validation "^[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$" -ErrorMessage "Not a proper email!"
 
-# Uses Show-Input commandlet to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)
+# Uses Show-Input command to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed)
 $contentItem = get-item master:\content
 $newName = Show-Input "Please provide the new name for the '$($contentItem.Name)' Item" -DefaultValue $contentItem.Name  -Validation "^[\w\*\$][\w\s\-\$]*(\(\d{1,}\)){0,1}$" -ErrorMessage "Invalid characters in the name"
 
@@ -31,7 +31,7 @@ Show-Input "Please provide 5 characters at most" -MaxLength 5
 ----version----
 language: en
 version: 1
-revision: 5c43e9ca-2606-4795-9f3f-033218de1883
+revision: 49352cc5-2a69-4216-9d72-26aed76cf524
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -46,14 +46,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5c43e9ca-2606-4795-9f3f-033218de1883
+49352cc5-2a69-4216-9d72-26aed76cf524
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20141227T175158:635552995189373750Z
+20150530T213337:635686184177709732Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
