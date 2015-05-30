@@ -11,13 +11,15 @@ html { overflow-y: hidden; }
     animation-name: greenPulse;
 }
 
+form > div.scFlexColumnContainer.scStretch {
+    height: 100%
+}
+
 .status {
     color: black;
     display: block;
     margin-bottom: 6px;
-    /*    font: normal 9pt tahoma;
-    line-height: 31px;
-    padding-left: 21px; */
+    font: 8pt tahoma;
 }
 
 #Title {
@@ -55,18 +57,20 @@ html { overflow-y: hidden; }
 
 #HeaderTextContainer { display: inline-block; }
 
-.scDialogHeader {
+.DialogHeader {
     background: #f0f0f0;
     border-bottom: solid 1px #dfdfdf;
-}
-
-.DialogHeader {
     color: black;
     font: normal 11pt tahoma;
     height: 34px;
     line-height: 34px;
     padding-bottom: 6px;
     padding-top: 8px;
+    border-bottom: solid 1px #dfdfdf;
+}
+
+.DialogHeaderDescription {
+    color: white;
 }
 
 #DialogHeader { padding: 0 0 4px 6px; }

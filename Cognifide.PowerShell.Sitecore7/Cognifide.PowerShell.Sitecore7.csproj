@@ -99,6 +99,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\Console.css" />
     <Content Include="sitecore modules\PowerShell\Styles\Dialogs.css" />
     <Content Include="sitecore modules\PowerShell\Styles\flex.css" />
+    <Content Include="sitecore modules\PowerShell\Styles\Gallery.css" />
     <Content Include="sitecore modules\PowerShell\Styles\ise.css" />
     <Content Include="sitecore modules\PowerShell\Styles\jquery.qtip.min.css" />
     <Content Include="sitecore modules\PowerShell\Styles\jquery.terminal.css" />

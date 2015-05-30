@@ -15,6 +15,7 @@ body.ie { overflow: hidden; }
 
 #Result_ { display: none; }
 
+#Tabstrip { height: 100% }
 #Promo {
     border-top: #E3E3E3 solid 1px;
     bottom: 4px;
@@ -204,7 +205,7 @@ fieldset { padding: 6px 8px 8px 10px; }
     border-bottom: 1px solid #8C8A8C;
     border-top: 1px solid #DEDFDE;
     padding: 8px !important;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .scFormDialogFooter {
@@ -212,6 +213,10 @@ fieldset { padding: 6px 8px 8px 10px; }
     border-top: 1px solid #DEDFDE;
     min-height: 40px;
     padding: 6px 16px 0 16px;
+}
+
+form > div.scFlexColumnContainer.scStretch {
+    height: 100%
 }
 
 .scFormDialogFooter > .scButton { margin-top: 4px; }
@@ -272,3 +277,7 @@ fieldset { padding: 6px 8px 8px 10px; }
     position: relative;
     width: 100%;
 }
+
+.scConfirmChoiceHeader {
+  display:none;
+ }

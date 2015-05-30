@@ -12,5 +12,10 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
         public static Version SitecoreVersion72 = new Version(7, 2);
         public static Version SitecoreVersion75 = new Version(7, 5);
         public static Version SitecoreVersion80 = new Version(8, 0);
+
+        public static bool IsVersionHigherOrEqual(Version version)
+        {
+            return version <= SitecoreVersionCurrent;
+        }
     }
 }

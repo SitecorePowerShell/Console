@@ -6,6 +6,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -116,9 +117,14 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     return "Sitecore PowerShell Extensions Host";
                 }
-                return string.Format("Sitecore PowerShell Extensions Host {0} on Windows PowerShell {1}.{2}",
-                    GetType().Assembly.GetName().Version, ScriptSession.PsVersion.Major,
-                    ScriptSession.PsVersion.Minor);
+                return
+                    string.Format(
+                        "Sitecore PowerShell Extensions Host {0} on Windows PowerShell {1}.{2} & Sitecore {3}.{4}",
+                        GetType().Assembly.GetName().Version, ScriptSession.PsVersion.Major,
+                        ScriptSession.PsVersion.Minor,
+                        VersionResolver.SitecoreVersionCurrent.Major, 
+                        VersionResolver.SitecoreVersionCurrent.Minor
+                        );
             }
         }
 

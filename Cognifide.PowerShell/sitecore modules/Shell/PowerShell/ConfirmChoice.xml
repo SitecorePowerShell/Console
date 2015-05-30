@@ -30,7 +30,7 @@
       </Stylesheet>
 
       <Border class="scFlexColumnContainer scStretch">
-        <Border class="scDialogHeader">
+        <Border class="scDialogHeader scConfirmChoiceHeader">
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
           <Border>
             <Border Class="DialogHeader">

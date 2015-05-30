@@ -14,6 +14,7 @@
         .scConfirmationContainer td:last-child{
         padding-left: 15px;
         }
+        form > table > tbody > tr:nth-child(1) > td > div {  display: none; }
       </Stylesheet>
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
 

@@ -1,7 +1,7 @@
 .scFormDialogFooter .footerOkCancel {
     display: block;
     float: right;
-    margin-right: 12px;
+    margin-left: 8px;
     position: relative;
     right: 0;
     text-align: right;
@@ -14,10 +14,22 @@
     min-height: 40px;
 }
 
-.scFormDialogHeader div { padding-top: 12px; }
+    .scFormDialogHeader div {
+        padding-top: 12px;
+    }
 
-.scFormDialogFooter { height: 44px; }
+.scFormDialogFooter {
+    height: 44px;
+}
 
-.scHorizontalLine { display: none; }
+.scHorizontalLine {
+    display: none;
+}
 
-.ff .scScrollbox, .scScrollbox { min-height: 50px !important; }
+.ff .scScrollbox, .scScrollbox {
+    min-height: 50px !important;
+}
+
+#CancelButton {
+    float: right;
+}

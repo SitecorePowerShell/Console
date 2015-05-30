@@ -5,6 +5,7 @@ using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -41,6 +42,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal ProgressBar;
         protected Literal PsProgress;
         protected Literal PsProgressStatus;
+        protected Literal Subtitle;
         protected Literal Result;
         protected Literal Title;
         public SpeJobMonitor Monitor { get; private set; }
@@ -256,7 +258,15 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
-            PsProgressStatus.Text = "<span class='status'> </span><br/>";
+            if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80))
+            {
+                PsProgressStatus.Text = "<span class='status'> </span><br/>";
+            }
+            else
+            {
+                Subtitle.Text = "<span class='status'> </span><br/>";
+            }
+            
             if (result != null)
             {
                 SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
@@ -332,11 +342,23 @@ namespace Cognifide.PowerShell.Client.Applications
 
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
-            PsProgressStatus.Visible = showStatus;
-            PsProgressStatus.Text = showStatus
+
+            bool isSitecore8 = VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80);
+            PsProgressStatus.Visible = showStatus && isSitecore8;
+            Subtitle.Visible = showStatus && !isSitecore8;
+
+            if (isSitecore8)
+            {
+                PsProgressStatus.Text = showStatus
                 ? string.Format("<span class='status'>{0}</span><br/>", status)
                 : "<span class='status'> </span><br/>";
-
+            }
+            else
+            {
+                Subtitle.Text = showStatus
+                ? string.Format("<span class='status'>Status: {0}</span>", status)
+                : "<span class='status'> </span>";
+            }
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {
                 PsProgress.Text = string.Empty;

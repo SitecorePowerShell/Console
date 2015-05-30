@@ -10,7 +10,9 @@
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js" runat="server"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery.VistaProgressBar-0.6.js" runat="server"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js" runat="server"></Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Runner.css" />
       <Stylesheet Src="/sitecore/shell/applications/dialogs/progress/ProgressDialog.css" />
@@ -38,14 +40,14 @@
         <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
 
-            <ThemedImage runat="server" ID="TitleIcon" Src="powershell/32x32/powershell.png" Visible="false" />
-            <Border runat="server" ID="LogContainer" style="display:none">
-              <Literal ID="Log" runat="server" />
+            <ThemedImage ID="TitleIcon" Src="powershell/32x32/powershell.png" Visible="false" />
+            <Border ID="LogContainer" style="display:none">
+              <Literal ID="Log"/>
             </Border>
-            <Literal runat="server" Style="white-space:nowrap;" ID="Title" Text="Running script..." />
-            <Literal runat="server" ID="Subtitle" Visible="false" />
+            <Literal Style="white-space:nowrap;" ID="Title" Text="Running script..." />
+            <Literal ID="Subtitle" Visible="false" />
 
-            <Border runat="server" ID="Progress">
+            <Border ID="Progress">
 
               <Literal ID="ProgressBar" Text="&lt;div id='progressbar'&gt;&lt;/div&gt;" />
               <Literal ID="PsProgress" />
