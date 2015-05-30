@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Converts item from clone to fully independent item.
+        Converts an item from a clone to a fully independent item.
 
     .DESCRIPTION
-        Converts item from clone to fully independent item.
-
+        Converts an item from a clone to a fully independent item.
 
     .PARAMETER Item
         The item to be converted.

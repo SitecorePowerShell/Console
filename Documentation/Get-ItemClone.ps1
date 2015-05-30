@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Returns clones of item provided.
+        Returns all the clones for the specified item.
 
     .DESCRIPTION
-        Gets all clones of item provided.
+        The Get-ItemClone command returns all the clones for the specified item.
 
 
     .PARAMETER Item

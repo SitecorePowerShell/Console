@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
+        Installs a Sitecore update package from the specified path.
 
     .DESCRIPTION
-        Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
+        The Install-UpdatePackage command installs update packages that are used created by Sitecore CMS updates, TDS, and Courier.
 
         Install-UpdatePackage.
             Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 

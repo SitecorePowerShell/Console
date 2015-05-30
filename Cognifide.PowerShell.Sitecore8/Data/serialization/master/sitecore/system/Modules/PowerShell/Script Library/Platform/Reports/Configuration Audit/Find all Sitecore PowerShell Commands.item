@@ -13,24 +13,26 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 702
+content-length: 955
 
 <#
     This report will display all custom powershell commandlets made for Sitecore. 
     
-    Note:
-    In order to get help to format correctly you must allow remote script. 
-    Open PS ISE on host in Admin mode. Run Set-ExecutionPolicy -ExecutionPolicy RemoteSigned. Enter Y. 
+    .NOTES
+        In order to get help to format correctly you must allow remote script. 
+        Step 1 : Open Windows PowerShell with elevated privileges.
+        Step 2 : Run Set-ExecutionPolicy -ExecutionPolicy RemoteSigned. Enter Y. 
     
     http://blog.najmanowicz.com/2011/11/18/sample-scripts-for-sitecore-powershell-console/
 #>
 
 
-$cmds = Get-Help * | Where-Object description -like "*sitecore*" | Sort-Object Name
+#$cmds = Get-Help -Name * | Where-Object Description -like "*sitecore*" | Sort-Object -Property Name
+$cmds = Get-Command | Where-Object { $_.ModuleName -eq "" -and $_.CommandType -eq "cmdlet" } | % { Get-Help $_.Name | Select-Object -Property Name, Synopsis } | Sort-Object -Property Name
 
 $props = @{
-    InfoTitle = "Sitecore PowerShell Commandlets"
-    InfoDescription = "Lists the sitecore power shell commands"
+    InfoTitle = "Sitecore PowerShell Commands"
+    InfoDescription = "Lists the Sitecore PowerShell commands"
     PageSize = 25
 }
 
@@ -54,7 +56,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 57168a72-1428-4f58-92e8-49af39aa6d06
+revision: d79e42c1-4b64-4b92-b340-add8fcacaff9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -69,14 +71,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-57168a72-1428-4f58-92e8-49af39aa6d06
+d79e42c1-4b64-4b92-b340-add8fcacaff9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150216T022226:635596501469790233Z
+20150525T183202:635681755226265522Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

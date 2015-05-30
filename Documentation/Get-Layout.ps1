@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Retrieves Layout of an item.
+        Returns the layout for the specified item.
 
     .DESCRIPTION
-        Returns a Layout set on an item for a specific device.
+        The Get-Layout command returns the layout for the specified item.
 
     .PARAMETER Device
         Layout Device for which the item should be returned. If not specified All layouts used will be returned. 

@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Returns a serialization preset for use with Serialize-Item.
+        Returns a serialization preset for use with Export-Item.
 
     .DESCRIPTION
-        Returns a serialization preset for use with Serialize-Item.
-
+        The Get-Preset command returns a serialization preset for use with Export-Item.
 
     .PARAMETER Name
         Name of the serialization preset.

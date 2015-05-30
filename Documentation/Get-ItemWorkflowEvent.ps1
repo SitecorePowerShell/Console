@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Retrieves entries from the history store notifying of workflow state change of a specific item.
+        Returns entries from the history store notifying of workflow state change for the specified item.
 
     .DESCRIPTION
-        Retrieves entries from the history store notifying of workflow state change of a specific item.
-
+        The Get-ItemWorkflowEvent command returns entries from the history store notifying of workflow state change for the specified item.
 
     .PARAMETER Identity
         User that has been associated with the enteries. Wildcards are supported.

@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
+        Returns the library item or path to the library where scripts for a particular integration point should be located for a specific module.
 
     .DESCRIPTION
-        Returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
+        The Get-SpeModuleFeatureRoot command returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
 
     .PARAMETER Module
         Module for which the feature root library should be returned. 

@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Imports (deserializes) Sitecore roles from the Sitecore server disk drive.
+        Imports (deserializes) Sitecore roles from the Sitecore server filesystem.
 
     .DESCRIPTION
-        Imports (deserializes) Sitecore roles from the Sitecore server disk drive.
+        The Import-Role command imports (deserializes) Sitecore roles from the Sitecore server filesystem.
 
 
     .PARAMETER Identity

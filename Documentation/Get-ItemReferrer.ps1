@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Get other items linking to the provided item.
+        Returns all the items referring to the specified item.
 
     .DESCRIPTION
-        Returns all items that link to the item specified with the commandlet parameters. if -ItemLink parameter is used the Commandlet will return links rather than items.
-
+        The Get-ItemReferrer command returns all items referring to the specified item. If -ItemLink parameter is used the command will return links rather than items.
 
     .PARAMETER ItemLink
         Return ItemLink that define both source and target of a link rather than items linking to the specified item.

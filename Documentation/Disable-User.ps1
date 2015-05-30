@@ -3,7 +3,7 @@
         Disables the specified Sitecore user.
 
     .DESCRIPTION
-        The Disable-User cmdlet gets a user and disables the account in Sitecore.
+        The Disable-User command gets a user and disables the account in Sitecore.
 
         The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
         You can also specify user object variable, such as $<user>.

@@ -3,8 +3,7 @@
         Gets all available domains or the specified domain.
 
     .DESCRIPTION
-        The Get-Domain cmdlet returns all the domains or the specified domain.
-
+        The Get-Domain command returns all the domains or the specified domain.
 
     .PARAMETER Name
         The name of the domain    

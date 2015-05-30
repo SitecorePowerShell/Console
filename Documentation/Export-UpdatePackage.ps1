@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Saves a sitecore serialization diff list as a Sitecore Update Package.
+        Exports a Sitecore update package containing a serialization diff list.
 
     .DESCRIPTION
-        Saves a sitecore serialization diff list as a Sitecore Update Package.
+        The Export-UpdatePackage command generates a Sitecore update package containing a serialization diff list.
 
 
     .PARAMETER Name

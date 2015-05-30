@@ -1,11 +1,13 @@
 <#
     .SYNOPSIS
-        Deserializes sitecore item from server disk drive. This command used to be named Deserialize-Item - a matching alias added for compatibility with older scripts.
+        Imports (deserializes) the specified path from the filesystem on the server as a Sitecore item.
 
     .DESCRIPTION
-        Deserialization of items with Sitecore Powershell Extensions uses Import-Item command. The simplest syntax requires 2 parameters:
-        -Path - which is a path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
-	-Root - the directory which is the root of serialization. Trailing slash \ character is required, 
+        The Import-Item command deserializes the specified items. 
+        
+        The simplest syntax requires 2 parameters:
+        - -Path : which is a path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
+	    - -Root : the directory which is the root of serialization. Trailing slash \ character is required, 
 	
 	e.g.:
 	

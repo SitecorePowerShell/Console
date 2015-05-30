@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Exports (serializes) Sitecore roles to server disk drive.
+        Exports (serializes) Sitecore roles to the filesystem on the server.
 
     .DESCRIPTION
-        Exports (serializes) Sitecore roles to server disk drive.
+        The Export-Role command exports (serializes) Sitecore roles to the filesystem on the server.
 
     .PARAMETER Filter
         Specifies a simple pattern to match Sitecore roles.

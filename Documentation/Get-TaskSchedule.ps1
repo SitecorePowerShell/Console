@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Returns task schedule item.
+        Returns one or more task schedule items using the specified criteria.
 
     .DESCRIPTION
-        Returns task schedule item, based on name/database filter, path or simply converting a Sitecore item.
-
+        The Get-TaskSchedule command returns one or more task schedule items, based on name/database filter, path or simply converting a Sitecore item.
 
     .PARAMETER Item
         Task item to be converted.

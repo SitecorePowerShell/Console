@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Returns the list of PowerShell Extension Sessions running in background.
+        Returns the list of PowerShell Extension Sessions running in the background.
 
     .DESCRIPTION
-        Returns the list of PowerShell Extension Sessions running in background.
-
+        The Get-ScriptSession command returns the list of PowerShell Extension Sessions running in background.
 
     .PARAMETER Id
         Id of the session.

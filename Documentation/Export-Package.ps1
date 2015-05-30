@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Exports Sitecore installation package project.
+        Exports a Sitecore installation package and project.
 
     .DESCRIPTION
-        Exports Sitecore installation package project as either zip containing all items and files or .xml with project definition.
+        The Export-Package command creates a Sitecore installation package as either a .zip containing all items and files or .xml with project definition.
 
 
     .PARAMETER Path

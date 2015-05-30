@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Returns current user's browser user agent.
+        Returns the current user's browser user agent.
 
     .DESCRIPTION
         Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button)    

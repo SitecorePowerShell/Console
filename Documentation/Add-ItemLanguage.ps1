@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Creates a version of the item in a new language based on a language version already existing.
+        Creates a version of the item in a new language based on an existing language version.
 
     .DESCRIPTION
-        Creates a version of the item in a new language based on a language version already existing. 
+        Creates a version of the item in a new language based on an existing language version. 
         Based on parameters you can make the commandlet bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language.
 
     .PARAMETER Recurse
@@ -22,10 +22,20 @@
         Creates a version in the target language but does not copy field values from the original language
 
     .PARAMETER IgnoredFields
-        List of fields that should not be copied over from original item this can contain e.g. "__Security" if you don't want the new version to have the same restrictions as the original version.
-        On top of the ignored fields in the -IgnoredFields the following fields are ignored as configured within the Cognifide.PowerShell.config file in the following location:
+        List of fields that should not be copied over from original item. As an example, use "__Security" if you don't want the new version to have the same restrictions as the original version.
+        
+        In addition to the fields in -IgnoredFields the following fields are ignored as configured in Cognifide.PowerShell.config file in the following location:
 	configuration/sitecore/powershell/translation/ignoredFields.
-	Fields ignored out of the box include:__Archive date, __Archive Version date, __Lock, __Owner, __Page Level Test Set Definition, __Reminder date, __Reminder recipients, __Reminder text
+	
+    Fields ignored out of the box include:
+    - __Archive date
+    - __Archive Version date
+    - __Lock
+    - __Owner
+    - __Page Level Test Set Definition
+    - __Reminder date
+    - __Reminder recipients
+    - __Reminder text
 
     .PARAMETER Item
         The item to be processed.

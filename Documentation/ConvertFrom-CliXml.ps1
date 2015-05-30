@@ -1,12 +1,12 @@
 <#
     .SYNOPSIS
-        Imports a CLIXML string and creates corresponding objects within PowerShell.
+        Imports a CliXml string with data that represents Microsoft .NET objects and creates the objects within PowerShell.
 
     .DESCRIPTION
-        The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
+        The ConvertFrom-CliXml command imports a CliXml string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
 
     .PARAMETER InputObject
-        String containing the XML with serialized objects.
+        String containing the Xml with serialized objects.
     
     .INPUTS
         System.String

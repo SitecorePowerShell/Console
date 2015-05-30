@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Imports (deserializes) Sitecore users from the Sitecore server disk drive.
+        Imports (deserializes) Sitecore users from the Sitecore server filesystem.
 
     .DESCRIPTION
-        Imports (deserializes) Sitecore users from the Sitecore server disk drive.
-
+        The Import-User command imports (deserializes) Sitecore users from the Sitecore server filesystem.
 
     .PARAMETER Identity
         Specifies the Sitecore user to be deserialized by providing one of the following values.

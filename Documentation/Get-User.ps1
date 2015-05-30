@@ -1,9 +1,9 @@
 ﻿<#
     .SYNOPSIS
-        Gets one or more Sitecore users.
+        Returns one or more Sitecore users using the specified criteria.
 
     .DESCRIPTION
-        The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
+        The Get-User command returns a user or performs a search to retrieve multiple users from Sitecore.
 
         The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
         You can also specify user object variable, such as $<user>.

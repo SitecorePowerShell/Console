@@ -1,13 +1,11 @@
 <#
     .SYNOPSIS
-        Wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
-        This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item commandlet into full Sitecore Items.
-
-        This command used to be named Wrap-Item - a matching alias added for compatibility with older scripts.
+        Initializes items with the PowerShell automatic properties for each field.
 
     .DESCRIPTION
-        Wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
+        The Initialize-Item command wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
         This command can also be used to translate the the "Sitecore.ContentSearch.SearchTypes.SearchResultItem" items obtained from the Find-Item commandlet into full Sitecore Items.
+        The alias for the command is Wrap-Item.
 
     .PARAMETER Item
         The item to be wrapped/initialized.

@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Adds Rendering to Item.
+        Adds a rendering to a chosen device for the presentation of an item.
 
     .DESCRIPTION
-        Adds rendering to a chosen device for the presentation of an item.
+        Adds a rendering to a chosen device for the presentation of an item.
 
     .PARAMETER Instance
         Rendering definition to be added to the item

@@ -1,12 +1,9 @@
 <#
     .SYNOPSIS
-        Returns an XML-based representation of an object or objects.
+        Exports Microsoft .NET objects froms PowerShell to a CliXml string.
 
     .DESCRIPTION
-        The ConvertTo-CliXml cmdlet returns an XML-based representation of an object or objects provided as InputObject parameter. You can then use the ConvertFrom-CliXml cmdlet to re-create the saved object based on the contents of that XML.
-
-	This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the resulting XML in a string. ConvertTo-XML returns the XML, so you can continue to process it in Windows PowerShell.
-
+        The ConvertTo-CliXml command exports Microsoft .NET Framework objects from PowerShell to a CliXml string.
 
     .PARAMETER InputObject
         Specifies the object to be converted. Enter a variable that contains the objects, or type a command or expression that gets the objects. You can also pipe objects to ConvertTo-CliXml.

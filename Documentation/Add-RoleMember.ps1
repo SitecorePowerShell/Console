@@ -3,7 +3,7 @@
         Adds one or more Sitecore users to the specified role.
 
     .DESCRIPTION
-        The Add-RoleMember cmdlet gets a role and assigns users as members of the Sitecore role.
+        The Add-RoleMember command assigns Sitecore users as members of the specified role.
 
         The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 

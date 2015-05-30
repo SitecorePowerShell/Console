@@ -1,9 +1,9 @@
 ﻿<#
     .SYNOPSIS
-        Gets one or more Sitecore user sessions.
+        Returns one or more Sitecore user sessions using the specified criteria.
 
     .DESCRIPTION
-        The Get-Session cmdlet gets user sessions in Sitecore.
+        The Get-Session command returns one or more Sitecore user sessions using the specified criteria.
 
         The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 

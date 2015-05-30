@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Returns RenderingDefinition from an item based on provided filtering parameters.
+        Returns a RenderingDefinition for an item using the filtering parameters.
 
     .DESCRIPTION
-        Returns RenderingDefinition from an item based on provided filtering parameters.
+        The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters.
 
     .PARAMETER Item
         The item to be processed.

@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Serializes sitecore item to server disk drive. This command used to be named Serialize-Item - a matching alias added for compatibility with older scripts.
+        Exports (serializes) the Sitecore item to the filesystem.
 
     .DESCRIPTION
-        Serializes sitecore item to server disk drive.
+        The Export-Item command serializes Sitecore items to the filesystem. The alias for the command is Serialize-Item.
 	The simplest command syntax is:
 	Export-Item -path "master:\content"
 	

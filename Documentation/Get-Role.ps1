@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Gets one or more Sitecore roles.
+        Returns one or more Sitecore roles using the specified criteria.
 
     .DESCRIPTION
-        The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
+        The Get-Role command returns one or more Sitecore roles using the specified criteria.
 
         The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
         You can also specify role object variable, such as $<role>.

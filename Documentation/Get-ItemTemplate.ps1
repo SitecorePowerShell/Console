@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Retrieves item template and its base templates.
+        Returns the item template and its base templates.
 
     .DESCRIPTION
-        Retrieves item template and its base templates.
-
+        The Get-ItemTemplate command returns the item template and its base templates.
 
     .PARAMETER Item
         The item to be analysed.

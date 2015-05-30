@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Export-User.
+        Export (serialize) a Sitecore user to the filesystem on the server.
 
     .DESCRIPTION
-        The Export-User cmdlet serializes a user to a disk drive on the Sitecore server.
+        The Export-User command serializes a Sitecore user to the filesystem on the server.
 
         The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
         You can also specify user object variable, such as $<user>.

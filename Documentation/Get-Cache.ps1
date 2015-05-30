@@ -3,7 +3,7 @@
         Retrieves a Sitecore cache.
 
     .DESCRIPTION
-        Retrieves a Sitecore cache.
+        The Get-Cache command retrieves a Sitecore cache.
 
     .PARAMETER Name
         Name of the cache to retrieve. Supports wildcards.

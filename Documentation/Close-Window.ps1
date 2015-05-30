@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Closes runner job  window after the script finishes.
+        Closes the runner job window after the script completes.
 
     .DESCRIPTION
         Ensures the runner proces window is closed after the script finishes execution.    

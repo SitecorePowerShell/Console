@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Retrieves the object that describes a Sitecore PowerShell Extensions Module
+        Returns the object that describes a Sitecore PowerShell Extensions Module
 
     .DESCRIPTION
-        Retrieves the object that describes a Sitecore PowerShell Extensions Module.
-
+        The Get-SpeModule command returns the object that describes a Sitecore PowerShell Extensions Module.
 
     .PARAMETER Item
         A script or library item that is defined within the module to be returned.

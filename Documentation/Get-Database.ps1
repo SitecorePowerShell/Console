@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Retrieve Sitecore Database.
+        Retrieves a Sitecore Database.
 
     .DESCRIPTION
-        Retrieves Sitecore Database object based on name or item passed to it.
+        The Get-Database command retrieves one or more Sitecore Database objects based on name or item passed to it.
 
     .PARAMETER Name
         Name of the database to be returned.

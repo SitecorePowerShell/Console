@@ -1,9 +1,9 @@
 ﻿<#
     .SYNOPSIS
-        Gets the Sitecore users in the role.
+        Returns the Sitecore users in the specified role.
 
     .DESCRIPTION
-        The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
+        The Get-RoleMember command returns the Sitecore users in the specified role.
 
         The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 

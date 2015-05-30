@@ -3,8 +3,7 @@
         Imports a function script from the script library's "Functions" folder.
 
     .DESCRIPTION
-        Imports a function script from the script library's "Functions" folder.
-
+        The Import-Function command imports a function script from the script library's "Functions" folder.
 
     .PARAMETER Name
         Name of the script in the "Functions" library or one of its sub-libraries.

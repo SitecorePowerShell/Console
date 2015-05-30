@@ -1,9 +1,13 @@
 <#
     .SYNOPSIS
-        Expands tokens on items.
+        Expands tokens in fields for items.
 
     .DESCRIPTION
-        Expands tokens like $name in fields on items.
+        The Expand-Token command expands the tokens in fields for items.
+        
+        Some example of tokens include:
+        - $name
+        - $time
 
     .PARAMETER Item
         The item to be processed.    

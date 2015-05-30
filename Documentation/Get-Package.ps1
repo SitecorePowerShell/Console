@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Loads package from the package definition (xml file).
+        Loads the package definition (xml) from the specified path.
 
     .DESCRIPTION
-        Loads package from the package definition (xml file). Package definitions can be created by PowerShell scripts by using Export-Package commandlet (without the -Zip parameter)
-
+        The Get-Package commands loads the package definition (xml) and returns the package project. Package definitions can be created by PowerShell scripts using the Export-Package command (without the -Zip parameter)
 
     .PARAMETER Path
         Path to the package file. If the path is not absolute the path needs to be relative to the Sitecore Package path defined in the "PackagePath" setting and later exposed in the Sitecore.Shell.Applications.Install.PackageProjectPath

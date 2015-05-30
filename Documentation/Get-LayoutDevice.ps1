@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-        Returns Sitecore Layout device.
+        Returns the layout for the specified device.
 
     .DESCRIPTION
-        Returns Sitecore Layout device associated with a name or a default instance layout device/
+        The Get-LayoutDevice command returns the layout for the specified device.
 
 
     .PARAMETER Name

@@ -1,11 +1,9 @@
 <#
     .SYNOPSIS
-        Installs Sitecore package.
-        This command used to be named Import-Package - a matching alias added for compatibility with older scripts.
+        Installs a Sitecore package from the specified path.
 
     .DESCRIPTION
-        Installs Sitecore package with the ability to provide default responses for merge and overwrite actions.
-
+        Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. The alias for the command is Import-Package.
 
     .PARAMETER Path
         Path to the package file.
@@ -15,7 +13,7 @@
         - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
     	- Overwrite - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one.
     	- Merge - merge with existing item. How the item will be merged is defined with MergeMode parameter
-	- Skip - All versions remains unchanged. Other languages remains unchanged. All children remains unchanged.
+	    - Skip - All versions remains unchanged. Other languages remains unchanged. All children remains unchanged.
     	- SideBySide - all new item will be created.
 
     .PARAMETER MergeMode

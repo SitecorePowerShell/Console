@@ -1,10 +1,9 @@
 <#
     .SYNOPSIS
-        Allows to find items using the Sitecore Content Search API.
+        Finds items using the Sitecore Content Search API.
 
     .DESCRIPTION
-        Allows to find items using the Sitecore Content Search API.
-
+        The Find-Item command searches for items using the Sitecore Content Search API.
 
     .PARAMETER Criteria
         simple search criteria in the following example form:

@@ -3,7 +3,7 @@
         Returns Sitecore database archives.
 
     .DESCRIPTION
-        Returns Sitecore archives in context of a particular database.
+        The Get-Archive command returns Sitecore archives in context of the specified database.
 
     .PARAMETER Name
         Name of the archive to retrieve.
