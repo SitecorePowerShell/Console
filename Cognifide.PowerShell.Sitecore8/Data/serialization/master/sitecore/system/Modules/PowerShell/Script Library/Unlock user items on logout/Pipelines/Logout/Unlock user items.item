@@ -2,8 +2,8 @@
 version: 1
 id: {8D7EA08A-651B-4A33-89F8-C85B5C1E38B3}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/User Session Management/Pipelines/Logout/Unlock user items
-parent: {C451CEDE-1EEE-42E5-B788-3E5D72F65515}
+path: /sitecore/system/Modules/PowerShell/Script Library/Unlock user items on logout/Pipelines/Logout/Unlock user items
+parent: {E4F9A04E-AC8B-4CBC-8C10-B46EF88A4F17}
 name: Unlock user items
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
@@ -30,7 +30,7 @@ Write-Log "Unlocking items for $($username)"
 ----version----
 language: en
 version: 1
-revision: c3471712-7d99-4caf-b00c-7c77418ddf65
+revision: 806bc7f3-9029-4de7-b754-06888538fbc8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -45,14 +45,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c3471712-7d99-4caf-b00c-7c77418ddf65
+806bc7f3-9029-4de7-b754-06888538fbc8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T220614:635584251744551630Z
+20150530T172741:635686036618881549Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {C451CEDE-1EEE-42E5-B788-3E5D72F65515}
+id: {5F248B98-6205-424A-8F2C-0784DE120C14}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/User Session Management/Pipelines/Logout
-parent: {9278D73B-3F06-4AEE-87C2-3AE527D7ACEC}
-name: Logout
+path: /sitecore/system/Modules/PowerShell/Script Library/Random desktop background/Pipelines/LoggedIn
+parent: {31DF585C-2FEB-4942-9CF0-9A5CD4968473}
+name: LoggedIn
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
@@ -12,7 +12,7 @@ templatekey: PowerShell Script Library
 ----version----
 language: en
 version: 1
-revision: 6aadaf15-67d5-4d8c-9c8f-23e62d69dabc
+revision: 364831a4-ee12-4736-8b40-1dfc55ad591a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -20,21 +20,21 @@ name: __Created
 key: __created
 content-length: 16
 
-20150201T155308Z
+20150530T164427Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-6aadaf15-67d5-4d8c-9c8f-23e62d69dabc
+364831a4-ee12-4736-8b40-1dfc55ad591a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T155308:635584027882710982Z
+20150530T164427:635686010674848451Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

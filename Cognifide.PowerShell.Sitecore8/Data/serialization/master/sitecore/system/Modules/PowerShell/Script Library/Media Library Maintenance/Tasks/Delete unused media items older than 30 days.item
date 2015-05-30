@@ -2,8 +2,8 @@
 version: 1
 id: {86FBEE0D-6190-40BA-B045-511969B65745}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Tasks/Delete unused media items older than 30 days
-parent: {8CBF1E18-06EE-49E3-9C30-FB3DE16E96F3}
+path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Tasks/Delete unused media items older than 30 days
+parent: {B9A75C9F-B578-4833-99FB-C4158BC8768B}
 name: Delete unused media items older than 30 days
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
@@ -51,7 +51,7 @@ Applications/32x32/garbage_warning.png
 ----version----
 language: en
 version: 1
-revision: c3e3dc58-ed4c-42a0-aec4-e8d74ec97f58
+revision: c528dfbc-de56-446e-b1eb-35279f3b1d74
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -66,14 +66,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c3e3dc58-ed4c-42a0-aec4-e8d74ec97f58
+c528dfbc-de56-446e-b1eb-35279f3b1d74
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150215T040822:635595701020491335Z
+20150530T173342:635686040227494859Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

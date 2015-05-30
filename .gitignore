@@ -221,7 +221,7 @@ deploy.targets
 /Data/*/
 /Data/*
 !/Data/packages/
-!/Data/serialization/
+/Data/serialization/
 /Data/serialization/security/
 web.Debug.config
 web.Release.config
@@ -234,3 +234,4 @@ Cognifide.PowerShell.Sitecore8/bin/
 Cognifide.PowerShell/obj/
 Cognifide.PowerShell.Sitecore7/obj/
 Cognifide.PowerShell.Sitecore8/obj/
+Data/serialization/

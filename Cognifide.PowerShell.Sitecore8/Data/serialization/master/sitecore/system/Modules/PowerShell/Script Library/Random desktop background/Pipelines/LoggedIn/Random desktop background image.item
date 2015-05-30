@@ -2,8 +2,8 @@
 version: 1
 id: {B71A37C2-7673-44C8-9C58-0E923552DB04}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/User Session Management/Pipelines/LoggedIn/Random desktop background image
-parent: {695B5ACF-7667-4E02-8C57-CAF1117C5557}
+path: /sitecore/system/Modules/PowerShell/Script Library/Random desktop background/Pipelines/LoggedIn/Random desktop background image
+parent: {5F248B98-6205-424A-8F2C-0784DE120C14}
 name: Random desktop background image
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
@@ -44,7 +44,7 @@ $user.Profile.Save();
 ----version----
 language: en
 version: 1
-revision: d85bdd0f-9926-4658-bef1-ab5e6dd858ac
+revision: cfea13b0-9a11-4294-a46e-080811c7b3ec
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -59,14 +59,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d85bdd0f-9926-4658-bef1-ab5e6dd858ac
+cfea13b0-9a11-4294-a46e-080811c7b3ec
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150201T220549:635584251494486634Z
+20150530T164440:635686010807268078Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

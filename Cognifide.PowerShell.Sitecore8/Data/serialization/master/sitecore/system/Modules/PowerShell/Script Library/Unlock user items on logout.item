@@ -1,36 +1,22 @@
 ----item----
 version: 1
-id: {9F3EEA96-CEC8-4C7D-B26B-6D15AB654AF1}
+id: {65CA4381-8667-43D2-A723-0D8672DF3708}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform
+path: /sitecore/system/Modules/PowerShell/Script Library/Unlock user items on logout
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Platform
+name: Unlock user items on logout
 master: {00000000-0000-0000-0000-000000000000}
 template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
 templatekey: PowerShell Script Module
 
 ----field----
-field: {218CA464-CB77-4C97-B141-34871ECAE00B}
-name: Enabled
-key: enabled
-content-length: 1
-
-1
-----field----
 field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
 name: Description
 key: description
-content-length: 349
+content-length: 62
 
-Platform module - This module should NEVER be disabled or parts of the Sitecore PowerShell Extensions might stop functioning.
-
-Provides the following Context Menu items:
-- Create libraries for integration points
-- Create module
-- Purge Empty libraries
-
-Provides a variety of reports for configuration, content, media, and solution auditing.
-
+Provides the following pipeline function:
+- Unlock user items
 ----field----
 field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
 name: Version
@@ -39,38 +25,38 @@ content-length: 3
 
 1.0
 ----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 27
+field: {53996CFF-BB46-498C-AE54-5D8C6AA7B6A4}
+name: Author
+key: author
+content-length: 56
 
-Software/32x32/jar_bean.png
+Michael West - adapted from a prototype by Mike Reynolds
 ----version----
 language: en
 version: 1
-revision: 0cad55b5-d11d-437d-a3a0-04df736cc96e
+revision: e75df6ea-47cf-4258-a5c4-c5cea477c48c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20141203T025000
+20150530T172638Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-0cad55b5-d11d-437d-a3a0-04df736cc96e
+e75df6ea-47cf-4258-a5c4-c5cea477c48c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150530T180106:635686056669926476Z
+20150530T172728:635686036484457760Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
