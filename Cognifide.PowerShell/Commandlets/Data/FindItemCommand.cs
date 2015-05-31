@@ -61,11 +61,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 // get all items in medialibrary
                 var query = context.GetQueryable<SearchResultItem>();
 
-                if (this.ParameterVersionSupportThreshold("Where", VersionResolver.SitecoreVersion75))
+                if (!String.IsNullOrEmpty(Where))
                 {
-                    query = FilterIfSupported(query);
+                    if (this.ParameterVersionSupportThreshold("Where", VersionResolver.SitecoreVersion75))
+                    {
+                        query = FilterIfSupported(query);
+                    }
                 }
-
                 if (Criteria != null)
                     foreach (var filter in Criteria)
                     {
@@ -90,9 +92,12 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         }
                     }
 
-                if (this.ParameterVersionSupportThreshold("OrderBy", VersionResolver.SitecoreVersion75))
+                if (!String.IsNullOrEmpty(OrderBy))
                 {
-                    query = OrderIfSupported(query);
+                    if (this.ParameterVersionSupportThreshold("OrderBy", VersionResolver.SitecoreVersion75))
+                    {
+                        query = OrderIfSupported(query);
+                    }
                 }
 
                 WriteObject(FilterByPosition(query), true);
@@ -101,19 +106,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         private IQueryable<SearchResultItem> FilterIfSupported(IQueryable<SearchResultItem> query)
         {
-            if (!String.IsNullOrEmpty(Where))
-            {
-                query = query.Where(Where, WhereValues.BaseArray());
-            }
+            query = query.Where(Where, WhereValues.BaseArray());
             return query;
         }
 
         private IQueryable<SearchResultItem> OrderIfSupported(IQueryable<SearchResultItem> query)
         {
-            if (!String.IsNullOrEmpty(OrderBy))
-            {
-                query = query.OrderBy(OrderBy);
-            }
+            query = query.OrderBy(OrderBy);
             return query;
         }
 
