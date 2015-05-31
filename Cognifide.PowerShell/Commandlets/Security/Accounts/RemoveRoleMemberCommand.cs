@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 if (User.Exists(member.Name))
                 {
                     var user = User.FromName(member.Name, false);
-                    if (user.IsInRole(targetRole)) continue;
+                    if (!user.IsInRole(targetRole)) continue;
 
                     var profile = UserRoles.FromUser(user);
                     if (ShouldProcess(targetRole.Name, string.Format("Remove user '{0}' from role", user.Name)))
