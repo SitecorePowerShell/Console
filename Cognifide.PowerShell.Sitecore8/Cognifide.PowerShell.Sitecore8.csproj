@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
+  <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" /> 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -60,7 +61,10 @@
     <Reference Include="Sitecore.Logging">
       <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Sitecore.NVelocity">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SitecorePath)\bin\Sitecore.NVelocity.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Update">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
