@@ -1,0 +1,83 @@
+----item----
+version: 1
+id: {ABFF7575-E042-4E83-B073-CCC079F0C6E3}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/License Expiration/Tasks/License Expiration Notification
+parent: {464A8F5E-4C92-49DC-BD1C-1962FD56BF43}
+name: License Expiration Notification
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 933
+
+param([string]$name="Good morning")
+$license = [Sitecore.Reflection.Nexus]::LicenseApi
+$date = [Sitecore.DateUtil]::IsoDateToDateTime($license.Expiration)
+
+$PSEmailServer = [Sitecore.Configuration.Settings]::MailServer
+
+$email = @{
+    To = "Michael West < michaellwest@gmail.com >"
+    From = "SPE Team < noreply@spe.com >"
+    Subject = "Sitecore license expiration : $($date.ToString('MM/dd/yyyy'))"
+    BodyAsHtml = $true
+    Body = ""
+}
+
+$head = @"
+<style>
+    body{font-family:'Calibri',sans-serif;font-size:14px;margin:0} 
+</style>
+"@
+
+$body = @"
+$($name),<br/>
+Your Sitecore license will expire on <strong>$($date.ToLongDateString())</strong>.<br/>
+<br/>
+Make sure you update the license to your Sitecore environment to keep it up and running.<br/>
+<br/>
+Sincerely,<br/>
+The SPE Team
+"@
+
+$email.Body = ConvertTo-Html -Head $head -Body $body | Out-String
+
+Send-MailMessage @email -Encoding UTF8
+----version----
+language: en
+version: 1
+revision: f5734c95-3408-4d6d-b8f7-bf5bea63c25d
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20150531T224821Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+f5734c95-3408-4d6d-b8f7-bf5bea63c25d
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20150601T022923:635687225638123704Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

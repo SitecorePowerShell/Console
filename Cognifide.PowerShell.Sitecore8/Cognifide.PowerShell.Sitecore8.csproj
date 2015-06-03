@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" /> 
+  <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -121,7 +121,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
+    <PostBuildEvent>echo "Copy build for Adam"
+IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
+echo "Copy build for Mikey"
+IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -355,6 +355,7 @@
     <Compile Include="Core\VersionDecoupling\TypeResolver.cs" />
     <Compile Include="Core\VersionDecoupling\VersionResolver.cs" />
     <Compile Include="Integrations\Gutters\GutterStatusRenderer.cs" />
+    <Compile Include="Integrations\Pipelines\ContentEditorWarningScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggedInScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggingInScript.cs" />
     <Compile Include="Integrations\Pipelines\LogoutScript.cs" />
@@ -529,13 +530,16 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
+    <PostBuildEvent>echo "Copy build for Adam"
+IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==WIN123 xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore75\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==WIN123 xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore70\Website\App_Config\Include\*.* /s /e /c /y
-</PostBuildEvent>
+echo "Copy build for Mikey"
+IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
+IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Console\Website\App_Config\Include\*.* /s /e /c /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

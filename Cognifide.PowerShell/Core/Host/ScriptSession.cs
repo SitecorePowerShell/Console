@@ -318,6 +318,14 @@ namespace Cognifide.PowerShell.Core.Host
             // execute the commands in the pipeline now
             var execResults = pipeline.Invoke();
 
+            if (execResults != null && execResults.Any())
+            {
+                foreach (var record in execResults.Select(p=> p.BaseObject).OfType<ErrorRecord>().Select(result => result))
+                {
+                    Log.Error(record + record.InvocationInfo.PositionMessage, this);
+                }
+            }
+
             //Output = host.Output;
             return marshallResults
                 ? execResults.Select(p => p.BaseObject).ToList()
