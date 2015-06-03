@@ -13,7 +13,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Find, "Item")]
-    [OutputType(typeof (Item))]
+    [OutputType(typeof(Item))]
     public class FindItemCommand : BaseCommand, IDynamicParameters
     {
         private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
@@ -81,7 +81,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 query = query.Where(i => i[criteria.Field].StartsWith(criteria.Value, comparer));
                                 break;
                             case (FilterType.Contains):
-                                query = query.Where(i => i[criteria.Field].IndexOf(criteria.Value, 0, comparer) > -1);
+                                if (comparer == StringComparison.OrdinalIgnoreCase)
+                                {
+                                    WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                                }
+                                query = query.Where(i => i[criteria.Field].Contains(criteria.Value));
                                 break;
                             case (FilterType.EndsWith):
                                 query = query.Where(i => i[criteria.Field].EndsWith(criteria.Value, comparer));
