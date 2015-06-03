@@ -13,7 +13,22 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5130
+content-length: 5400
+
+function Process-Item {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, Position=0,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$Item,
+        
+        [switch]$Recurse)
+
+    process {
+        Write-Host "$($item.ProviderPath), $Recurse"
+        Serialize-Item -Item $Item -Recurse:$Recurse
+    }
+}
+
 
 Write-Progress -Activity "Deleting old serialized item"
 get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
@@ -21,85 +36,85 @@ Write-Progress -Activity "Serializing items"
 
 #Item templates
 Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
-Get-Item 'master:\templates\Modules' | Serialize-Item
-Get-Item 'master:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
-Get-Item 'core:\templates\Modules' | Serialize-Item
-Get-Item 'core:\templates\Modules\PowerShell Console' | Serialize-Item -Recurse
+Get-Item 'master:\templates\Modules' | Process-Item
+Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Recurse
+Get-Item 'core:\templates\Modules' | Process-Item
+Get-Item 'core:\templates\Modules\PowerShell Console' | Process-Item -Recurse
 
 # Module Root
 Write-Progress -Activity "Serializing Module Root" -PercentComplete 35
-Get-Item 'master:\system\Modules\PowerShell' | Serialize-Item
-Get-Item 'core:\system\Modules\PowerShell' | Serialize-Item
+Get-Item 'master:\system\Modules\PowerShell' | Process-Item
+Get-Item 'core:\system\Modules\PowerShell' | Process-Item
 
 # Colors
 Write-Progress -Activity "Serializing Console Colors" -PercentComplete 40
-Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Serialize-Item -Recurse
-Get-Item 'core:\system\Modules\PowerShell\Console Colors' | Serialize-Item -Recurse
+Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Recurse
+Get-Item 'core:\system\Modules\PowerShell\Console Colors' | Process-Item -Recurse
 
 # Fonts
 Write-Progress -Activity "Serializing Console Fonts" -PercentComplete 43
-Get-Item 'master:\system\Modules\PowerShell\Fonts' | Serialize-Item -Recurse
+Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse
 
 # Rules Engine Rules
 Write-Progress -Activity "Serializing Rules Engine Rules" -PercentComplete 45
-Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Serialize-Item -Recurse
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Serialize-Item -Recurse
-Get-Item "master:/system/Settings/Rules/PowerShell" | Serialize-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse
+Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 
 # Script Library
 Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
-Get-Item 'master:\system\Modules\PowerShell\Script Library' | Serialize-Item
-Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
-Get-Item 'core:\system\Modules\PowerShell\Script Library' | Serialize-Item -Recurse
-Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Serialize-Item
+Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item
+Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
+Get-Item 'core:\system\Modules\PowerShell\Script Library' | Process-Item -Recurse
+Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
 
 # Settings
 Write-Progress -Activity "Serializing Settings" -PercentComplete 80
-Get-Item master:\system\Modules\PowerShell\Settings | Serialize-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Console | Serialize-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Console\All Users' | Serialize-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Context | Serialize-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Context\All Users' | Serialize-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Default | Serialize-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Default\All Users' | Serialize-Item
-Get-Item master:\system\Modules\PowerShell\Settings\ISE | Serialize-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\ISE\All Users' | Serialize-Item
-Get-Item master:\system\Modules\PowerShell\Settings\RemoteAutomation | Serialize-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\RemoteAutomation\All Users' | Serialize-Item
+Get-Item master:\system\Modules\PowerShell\Settings | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings\Console | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Settings\Console\All Users' | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings\Context | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Settings\Context\All Users' | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings\Default | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Settings\Default\All Users' | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings\ISE | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Settings\ISE\All Users' | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings\RemoteAutomation | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Settings\RemoteAutomation\All Users' | Process-Item
 
 # PowerShell Applications
 Write-Progress -Activity "Serializing PowerShell Applications" -PercentComplete 85
-Get-Item core:\content\Applications\PowerShell | Serialize-Item -Recurse
+Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse
 
 # PowerShell Application Layouts
 Write-Progress -Activity "Serializing PowerShell Application Layouts" -PercentComplete 87
-Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Serialize-Item -Recurse
-Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Serialize-Item -Recurse
-Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Serialize-Item -Recurse
-Get-Item 'master:\layout\Layouts\PowerShell' | Serialize-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Process-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Process-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Process-Item -Recurse
+Get-Item 'master:\layout\Layouts\PowerShell' | Process-Item -Recurse
 # Start Menu icons
 Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Serialize-Item
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
-Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Serialize-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Process-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Process-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Process-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
+Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
 
 # Content Editor Context Menu integration
 Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Serialize-Item
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Serialize-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Process-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Process-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
 
 # Tasks integration
 Write-Progress -Activity "Serializing Content Tasks integration" -PercentComplete 100
-Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Serialize-Item
+Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item
 
 #-name * -path "master:\system\Modules\PowerShell\Settings" -Exclude "sitecore" -Recurse
 ----version----
 language: en
 version: 1
-revision: da995fc7-ab73-4f71-909d-1179e11dd73f
+revision: a815f691-85a6-4890-a838-88e1c35f634f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -114,14 +129,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-da995fc7-ab73-4f71-909d-1179e11dd73f
+a815f691-85a6-4890-a838-88e1c35f634f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150503T224012:635662896124234297Z
+20150603T130605:635689335658671875
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

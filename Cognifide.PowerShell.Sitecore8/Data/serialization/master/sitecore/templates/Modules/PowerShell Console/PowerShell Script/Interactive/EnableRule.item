@@ -40,7 +40,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 8486e3df-745c-4a45-887f-5b0066bf56e8
+revision: 3754b0c0-5e0e-4314-a5ca-6504f8c06434
 
 ----field----
 field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
@@ -76,18 +76,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8486e3df-745c-4a45-887f-5b0066bf56e8
+3754b0c0-5e0e-4314-a5ca-6504f8c06434
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141102T234058:635505684582640925
+20150501T220658:635661148182470703
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
-content-length: 16
+content-length: 14
 
-sitecore\adamnaj
+sitecore\admin
