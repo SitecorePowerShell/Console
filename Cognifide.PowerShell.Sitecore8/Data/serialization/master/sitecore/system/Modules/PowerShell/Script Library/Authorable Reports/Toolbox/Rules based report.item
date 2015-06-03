@@ -13,22 +13,21 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4538
+content-length: 4564
+
+# Set defaults
 
 $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
     "__Controller Action", "__Insert Rules", "__Preview", "__Originator", "__Quick Action Bar Validation Rules", "__Validate Button Validation Rules",
     "__Validator Bar Validation Rules", "__Skin", "__Icon", "__Enabled Views", "__Default View", "__Context Menu", "__Revision", "__Quick Actions"
     
 
-$standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (gi .).Database).GetFields() | % { $_.Name };
-                    
+$standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (gi master:\).Database).GetFields() | % { $_.Name };
+
 $rule = '<ruleset>
   <rule uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}">
     <conditions>
-      <and uid="1A5916F4291F460FBC8D26530D51E760">
-        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="6C620AC228E84465BF237924D9023D77" templateid="{76036F5E-CBCE-46D1-AF0A-4143F9B557AA}" />
         <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="ED10990E15EB4E1E8FCFD33F441588A1" />
-      </and>
     </conditions>
   </rule>
 </ruleset>'
@@ -36,6 +35,8 @@ $rule = '<ruleset>
 $root = Get-Item master:\content\
 $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root" }
 $include = @("Recurse", "Root")
+
+# Setup the report parameters with user
 
 $result = Read-Variable -Parameters `
     @{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
@@ -48,13 +49,15 @@ if($result -eq "cancel"){
     exit;
 }
 
-$templateFields = Find-Item -Index sitecore_master_index -Where "path.StartsWith(@0)" -WhereValues $root.Paths.Path  | 
+# Lookup all fields for the content used.
+
+$templateFields = Find-Item -Index sitecore_master_index -Criteria @{Filter = "StartsWith"; Field = "_fullpath"; Value = "$($root.Paths.Path)"} | 
     Initialize-Item |
     ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
     Select -ExpandProperty TemplateId -Unique |  
     %{ New-Object Sitecore.Data.Items.TemplateItem (Get-Item master:\ -ID "$_") } | %{ $_.Fields } | 
-    ?{ $ignoredFields -notcontains $_.Name } |
-    select Name, Title  -Unique 
+    ?{ $ignoredFields -notcontains $_.Name } | 
+    select Name, Title, Type -Unique 
 
 if($templateFields.Count -eq 0){
     Show-Alert "No Items matching your rule!"
@@ -74,6 +77,7 @@ $customFields = @();
 
 foreach($field in $templateFields){
     $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
+    $title = "$title [$($field.Type)]"
     if($standardFields -contains $field.Name){
         $stdOptions[$title] = $field.Name
     } else {
@@ -103,20 +107,32 @@ if($result -eq "cancel"){
 $properties = @();
 $fields = $fields + $stdFields;
 
+function RenderField($item, $fieldName){
+    $item.$FieldName
+}
+
 foreach($field in $fields){
-    $scr = [scriptblock]::Create('$_."' + $field + '"')
+    $scr = [scriptblock]::Create('RenderField $_ "' + $field + '"')
     $properties += @{Label=$titles[$field]; Expression=$scr}
 }
 
 $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule };
 $items = Get-ChildItem $root.ProviderPath -Recurse | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
 $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData
-$properties
 
+Close-Window
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 23
+
+Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 6359e7c7-ac5a-45c0-ad9e-4e694d1e4d8a
+revision: 2ca9c9f1-ce5c-4f73-9851-403994ef4ad9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -131,14 +147,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6359e7c7-ac5a-45c0-ad9e-4e694d1e4d8a
+2ca9c9f1-ce5c-4f73-9851-403994ef4ad9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150530T231122:635686242824533826Z
+20150603T114452:635689286924394531Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
