@@ -15,7 +15,7 @@ name: Icon
 key: icon
 content-length: 30
 
-office/32x32/control_panel.png
+Office/32x32/control_panel.png
 ----field----
 field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
 name: Click

@@ -15,7 +15,7 @@ name: Icon
 key: icon
 content-length: 27
 
-office/32x32/media_play.png
+Office/32x32/media_play.png
 ----field----
 field: {FC6B80F1-406D-47F0-A2B3-FCD7A8EA9D74}
 name: Click
