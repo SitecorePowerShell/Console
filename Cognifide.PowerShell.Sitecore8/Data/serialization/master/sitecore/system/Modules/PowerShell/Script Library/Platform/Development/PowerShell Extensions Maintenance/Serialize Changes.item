@@ -13,8 +13,48 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5400
+content-length: 6869
 
+$dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
+
+
+function Convert-ToOldDate {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, Position=0,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$Item,
+        
+        [switch]$Recurse)
+
+    process {
+        $needsFixing = $false
+        foreach($field in $dateFields){
+            if($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+            {
+                $needsFixing = $true;
+                break;
+            }
+        }
+        if ($needsFixing){
+            $item.Editing.BeginEdit();
+            foreach($field in $dateFields){
+                if($item.Fields[$field].Value.EndsWith("Z"))
+                {
+                    Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value)" -f Green
+                    $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
+                    
+                }
+            }
+            $item.Editing.EndEdit($false, $false);
+        }
+        Serialize-Item $Item
+        if($Recurse){
+            Write-Host "$($item.ProviderPath), Going deep" -f Cyan
+            Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
+        }
+
+    }
+}
 function Process-Item {
     [CmdletBinding()]
     param(
@@ -25,6 +65,7 @@ function Process-Item {
 
     process {
         Write-Host "$($item.ProviderPath), $Recurse"
+        Convert-ToOldDate -Item $Item -Recurse:$Recurse
         Serialize-Item -Item $Item -Recurse:$Recurse
     }
 }
@@ -114,7 +155,7 @@ Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item
 ----version----
 language: en
 version: 1
-revision: a815f691-85a6-4890-a838-88e1c35f634f
+revision: 1452332e-afd9-4524-897e-c89497e9f187
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -129,14 +170,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a815f691-85a6-4890-a838-88e1c35f634f
+1452332e-afd9-4524-897e-c89497e9f187
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T130605:635689335658671875
+20150603T133303:635689351835312500
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
