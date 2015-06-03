@@ -13,10 +13,11 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7097
+content-length: 7533
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
-
+$dryRun = $false
+$officeIcons = @{};
 
 function Convert-ToOldDate {
     [CmdletBinding()]
@@ -47,20 +48,25 @@ function Convert-ToOldDate {
             }
             $item.Editing.EndEdit($false, $false);
         }
-        if($item.Fields["__Final Renderings"].HasValue){
+        if((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue){
             $item.Editing.BeginEdit();
             $item.Fields["__Final Renderings"].Reset() 
             $item.Editing.EndEdit($false, $false);
         }
-        
-        Serialize-Item $Item
+        if($item.ProviderPath.StartsWith("core:") -and $item.__Icon.Contains("Office")){
+            $officeIcons[$item.ProviderPath] = $item.__Icon; 
+        }
+        if(-not $dryRun){
+            Serialize-Item $Item
+        }
         if($Recurse){
-            Write-Host "$($item.ProviderPath), Going deep" -f Cyan
+            #Write-Host "$($item.ProviderPath), Going deep" -f Cyan
             Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
         }
 
     }
 }
+
 function Process-Item {
     [CmdletBinding()]
     param(
@@ -70,17 +76,18 @@ function Process-Item {
         [switch]$Recurse)
 
     process {
-        Write-Host "$($item.ProviderPath), $Recurse"
+        #Write-Host "$($item.ProviderPath), $Recurse"
         Convert-ToOldDate -Item $Item -Recurse:$Recurse
-        Serialize-Item -Item $Item -Recurse:$Recurse
     }
 }
 
 
-Write-Progress -Activity "Deleting old serialized item"
-get-childitem $SitecoreSerializationFolder | Remove-item -Recurse
-Write-Progress -Activity "Serializing items"
+if(-not $dryRun){
+    Write-Progress -Activity "Deleting old serialized item"
+    get-childitem "$SitecoreSerializationFolder" | Remove-item -Recurse
+}
 
+Write-Progress -Activity "Serializing items"
 #Item templates
 Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
 Get-Item 'master:\templates\Modules' | Process-Item
@@ -158,10 +165,19 @@ Write-Progress -Activity "Serializing Content Tasks integration" -PercentComplet
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item
 
 #-name * -path "master:\system\Modules\PowerShell\Settings" -Exclude "sitecore" -Recurse
+
+if($officeIcons.Keys.Count -gt 0){
+    Write-Host "`$icons = @{"
+    foreach($path in $officeIcons.Keys){
+        Write-Host "'$path' = '$($officeIcons[$path])';"
+    }
+    Write-Host "}"
+}
+
 ----version----
 language: en
 version: 1
-revision: 0c6fb52a-e6eb-41af-932a-6363da09186a
+revision: 81c131f9-2ca0-4589-b2a4-c79408a2c525
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -176,14 +192,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0c6fb52a-e6eb-41af-932a-6363da09186a
+81c131f9-2ca0-4589-b2a4-c79408a2c525
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T135336:635689364168681641
+20150603T152802:635689420824296875
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
