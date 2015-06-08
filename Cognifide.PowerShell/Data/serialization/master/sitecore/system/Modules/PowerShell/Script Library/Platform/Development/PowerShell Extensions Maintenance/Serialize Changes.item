@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7533
+content-length: 7568
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
 $dryRun = $false
@@ -39,7 +39,7 @@ function Convert-ToOldDate {
         if ($needsFixing){
             $item.Editing.BeginEdit();
             foreach($field in $dateFields){
-                if($item.Fields[$field].Value.EndsWith("Z"))
+                if($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
                 {
                     Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value)" -f Green
                     $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
@@ -177,7 +177,7 @@ if($officeIcons.Keys.Count -gt 0){
 ----version----
 language: en
 version: 1
-revision: 81c131f9-2ca0-4589-b2a4-c79408a2c525
+revision: 95f6fb26-c78c-4d28-b330-56554cd817f9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -192,14 +192,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-81c131f9-2ca0-4589-b2a4-c79408a2c525
+95f6fb26-c78c-4d28-b330-56554cd817f9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T152802:635689420824296875
+20150608T182609:635693847699521485
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
