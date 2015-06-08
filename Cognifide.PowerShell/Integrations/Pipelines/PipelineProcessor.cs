@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                         var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                             ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                             : String.Empty;
-                        session.SetVariable("args", args);
+                        session.SetVariable("pipelineArgs", args);
 
                         try
                         {
