@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Integrations.Workflows
 
             var dataItem = args.DataItem;
 
-            if (string.IsNullOrEmpty(actionItem["Script"]))
+            if (string.IsNullOrEmpty(actionItem[ScriptItemFieldNames.Script]))
             {
                 return;
             }

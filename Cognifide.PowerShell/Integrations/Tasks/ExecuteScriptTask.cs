@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
             {
                 foreach (var item in items)
                 {
-                    var script = item["Script"];
+                    var script = item[ScriptItemFieldNames.Script];
                     if (!String.IsNullOrEmpty(script))
                     {
                         session.SetExecutedScript(item);

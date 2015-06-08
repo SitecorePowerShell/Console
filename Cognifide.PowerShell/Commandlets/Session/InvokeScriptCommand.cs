@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             var scriptItem = Item;
             if (Item != null)
             {
-                script = Item["script"];
+                script = Item[ScriptItemFieldNames.Script];
             }
             else if (Path != null)
             {
@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound, Path));
                     return;
                 }
-                script = scriptItem["script"];
+                script = scriptItem[ScriptItemFieldNames.Script];
             }
             if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;
             

@@ -136,7 +136,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     return;
                 }
 
-                var script = functionItems[0]["script"];
+                var script = functionItems[0][ScriptItemFieldNames.Script];
                 if (ShouldProcess(functionItems[0].GetProviderPath(), "Import functions"))
                 {
                     object sendToPipeline = InvokeCommand.InvokeScript(script, false,
