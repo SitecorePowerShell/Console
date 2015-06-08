@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2288
+content-length: 2283
 
 $contentEditorLibraryName = "Content Editor" 
 $ribbonLibraryName = "Ribbon" 
@@ -36,40 +36,41 @@ if($module -eq $null){
 
 
 $contentEditorlibraryPath = "$($module.Paths.Path)\$contentEditorLibraryPath"; 
-$contentEditorlibrary = Get-Item $contentEditorlibraryPath
 
 
-if($contentEditorlibrary -eq $null){
+if(-not (Test-Path $contentEditorlibraryPath) ){
     $contentEditorlibrary = New-Item -Path "$($module.Paths.Path)" -Name $contentEditorLibraryName -ItemType $libraryTemplatePath
+}
+else {
+    $contentEditorlibrary = Get-Item $contentEditorlibraryPath
 }
 
 $ribbonLibraryPath = "$($module.Paths.Path)\$ribbonLibraryPath"; 
-$ribbonLibrary = Get-Item $ribbonLibraryPath
-if($ribbonLibrary -eq $null){
+if(-not (Test-Path $ribbonLibraryPath) ){
     $ribbonLibrary = New-Item -Path "$($contentEditorlibrary.Paths.Path)" -Name $ribbonLibraryName -ItemType $libraryTemplatePath
+}
+else {
+    $ribbonLibrary = Get-Item $ribbonLibraryPath
 }
 
 foreach($strip in $strips.Children)
 {
-    if(-not (Test-Path "($ribbonLibraryPath)\$($strip.Name)"))
+    if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)"))
     {
-        $ribbonLibraryPath
-        $strip.Name
-        $libraryTemplatePath
         New-Item -Path $ribbonLibraryPath -Name $strip.Name -ItemType $libraryTemplatePath
-        foreach($chunk in $strip.Children)
+    }
+    foreach($chunk in $strip.Children)
+    {
+        if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)\$($chunk.Name)"))
         {
-            if(-not (Test-Path "$ribbonLibraryPath\$($strip.Name)\$($chunk.Name)"))
-            {
-                New-Item -Path "$ribbonLibraryPath/$($strip.Name)" -Name "$($chunk.Name)" -ItemType $libraryTemplatePath
-            }
+            New-Item -Path "$ribbonLibraryPath/$($strip.Name)" -Name "$($chunk.Name)" -ItemType $libraryTemplatePath
         }
     }
 }
 ----version----
 language: en
 version: 1
-revision: b916704c-a9a8-4428-94b7-cecabe979fb9
+revision: 79069113-6edb-45c3-b45c-375290622a29
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -84,14 +85,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b916704c-a9a8-4428-94b7-cecabe979fb9
+79069113-6edb-45c3-b45c-375290622a29
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141227T175200:635552995205155000
+20150608T204612:635693931729902344
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
