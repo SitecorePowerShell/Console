@@ -9,6 +9,7 @@ using System.Web;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -209,6 +210,8 @@ namespace Cognifide.PowerShell.Core.Host
                     Sitecore.Configuration.Settings.SerializationFolder);
                 runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",
                     Sitecore.Configuration.Settings.TempFolderPath);
+                runspace.SessionStateProxy.SetVariable("SitecoreVersion",
+                    VersionResolver.SitecoreVersionCurrent);
 
                 try
                 {
