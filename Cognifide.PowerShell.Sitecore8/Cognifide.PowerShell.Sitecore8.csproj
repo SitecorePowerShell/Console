@@ -94,6 +94,7 @@
     <Compile Include="Client\Applications\FieldEditor.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
+    <Compile Include="Integrations\Pipelines\PageEditorNotificationScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DateConverter.cs" />
   </ItemGroup>
