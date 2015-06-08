@@ -9,7 +9,7 @@ using Sitecore.Pipelines.GetContentEditorWarnings;
 
 namespace Cognifide.PowerShell.Integrations.Pipelines
 {
-    public class ContentEditorWarningScript// : PipelineProcessor<GetContentEditorWarningsArgs>
+    public class ContentEditorWarningScript
     {
         public string IntegrationPoint
         {
@@ -31,32 +31,13 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                         var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                             ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                             : String.Empty;
-                        session.SetVariable("args", args);
+                        session.SetVariable("pipelineArgs", args);
 
                         try
                         {
                             session.SetExecutedScript(scriptItem);
-                            var output = session.ExecuteScriptPart(script, false);
-                            foreach (var result in output)
-                            {
-                                if (result is GetContentEditorWarningsArgs.ContentEditorWarning)
-                                {
-                                    var warning = result as GetContentEditorWarningsArgs.ContentEditorWarning;
-                                    var addedWarning = args.Add();
-                                    addedWarning.Title = warning.Title;
-                                    addedWarning.Text = warning.Text;
-                                    addedWarning.Icon = warning.Icon;
-                                    addedWarning.HideFields = warning.HideFields;
-                                    addedWarning.IsExclusive = warning.IsExclusive;
-                                    addedWarning.IsFullscreen = warning.IsFullscreen;
-                                    addedWarning.Key = warning.Key;
-
-                                    foreach (var option in warning.Options)
-                                    {
-                                        addedWarning.AddOption(option.Part1, option.Part2);
-                                    }
-                                }
-                            }
+                            session.SetItemLocationContext(args.Item);
+                            session.ExecuteScriptPart(script, false);
                         }
                         catch (Exception ex)
                         {

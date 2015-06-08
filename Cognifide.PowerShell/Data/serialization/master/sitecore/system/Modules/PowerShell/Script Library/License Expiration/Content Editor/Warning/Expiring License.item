@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 491
+content-length: 364
 
 $license = [Sitecore.Reflection.Nexus]::LicenseApi
 $date = [Sitecore.DateUtil]::IsoDateToDateTime($license.Expiration)
@@ -22,15 +22,13 @@ $title = "Your Sitecore license is about to expire!"
 $text = "Your Sitecore license will expire on $($date.ToLongDateString())"
 $icon = "Office/32x32/information.png"
 
-$warningArg = [Sitecore.Pipelines.GetContentEditorWarnings.GetContentEditorWarningsArgs]::Empty
-$warningArg.Add($title, $text)
-$warning = $warningArg.Warnings[0]
+$warning = $pipelineArgs.Add($title, $text);
 $warning.Icon = $icon
-$warning
+
 ----version----
 language: en
 version: 1
-revision: 7a618dff-a817-4c8a-8753-063e527bf703
+revision: beab7f2f-410d-4060-8c2e-b2fb6240623f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -45,14 +43,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7a618dff-a817-4c8a-8753-063e527bf703
+beab7f2f-410d-4060-8c2e-b2fb6240623f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T154812:635689432922363281
+20150608T202125:635693916854433594
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
