@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Management.Automation;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -28,16 +27,12 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                 {
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {
-                        var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                            ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                            : String.Empty;
                         session.SetVariable("pipelineArgs", args);
 
                         try
                         {
-                            session.SetExecutedScript(scriptItem);
                             session.SetItemLocationContext(args.Item);
-                            session.ExecuteScriptPart(script, false);
+                            session.ExecuteScriptPart(scriptItem, false);
                         }
                         catch (Exception ex)
                         {
