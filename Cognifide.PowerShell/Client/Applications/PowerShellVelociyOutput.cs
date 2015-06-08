@@ -71,7 +71,6 @@ namespace Cognifide.PowerShell.Client.Applications
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.SetItemLocationContext(currentItem);
-                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(script);
 
                 // add output

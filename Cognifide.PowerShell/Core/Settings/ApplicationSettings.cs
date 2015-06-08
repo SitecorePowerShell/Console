@@ -60,7 +60,6 @@ namespace Cognifide.PowerShell.Core.Settings
         }
 
         protected bool Loaded { get; private set; }
-        public string Prescript { get; set; }
         public string LastScript { get; set; }
         public bool SaveLastScript { get; set; }
         public bool UseTypeInfo { get; set; }
@@ -233,7 +232,6 @@ namespace Cognifide.PowerShell.Core.Settings
 
             if (configuration != null)
             {
-                Prescript = HttpUtility.HtmlDecode(configuration["PreScript"]);
                 LastScript = HttpUtility.HtmlDecode(configuration["LastScript"]);
                 SaveLastScript = ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked;
                 UseTypeInfo = ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked;
@@ -264,7 +262,6 @@ namespace Cognifide.PowerShell.Core.Settings
             }
             else
             {
-                Prescript = String.Empty;
                 LastScript = String.Empty;
                 SaveLastScript = false;
                 UseTypeInfo = false;

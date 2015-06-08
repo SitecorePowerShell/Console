@@ -400,7 +400,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 EnterScriptInfo.Visible = false;
                 try
                 {
-                    scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                     if (UseContext)
                     {
                         scriptSession.SetItemLocationContext(DataContext.CurrentItem);
@@ -501,7 +500,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
             try
             {
-                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(Editor.Value);
                 if (Context.Job != null)
                 {

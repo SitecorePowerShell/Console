@@ -57,7 +57,6 @@ namespace Cognifide.PowerShell.Console.Services
             Login(userName, password);
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
-                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript);
                 scriptSession.ExecuteScriptPart(script);
 
                 var result = new List<NameValue>();
@@ -122,7 +121,6 @@ namespace Cognifide.PowerShell.Console.Services
             if (!String.IsNullOrEmpty(cliXmlArgs))
             {
                 scriptSession.SetVariable("cliXmlArgs", cliXmlArgs);
-                scriptSession.ExecuteScriptPart(scriptSession.Settings.Prescript, false, true);
                 scriptSession.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
                 script = script.TrimEnd(' ', '\t', '\n');
             }

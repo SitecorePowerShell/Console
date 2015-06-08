@@ -88,7 +88,6 @@ namespace Cognifide.PowerShell.Core.Host
                 session.ID = persistentId;
                 session.Key = sessionKey;
                 session.Initialize();
-                session.ExecuteScriptPart(session.Settings.Prescript);
                 return session;
             }
         }

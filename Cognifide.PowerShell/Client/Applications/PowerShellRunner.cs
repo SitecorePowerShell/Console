@@ -172,15 +172,11 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
-            var contextScript = string.Format("Set-HostProperty -HostWidth {0}\n{1}",
-                scriptSession.Settings.HostWidth,
-                scriptSession.Settings.Prescript);
 
             scriptSession.SetExecutedScript(ScriptDb, ScriptId);
             var parameters = new object[]
             {
                 scriptSession,
-                contextScript,
                 ScriptContent
             };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
@@ -191,17 +187,15 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void ExecuteInternal(params object[] parameters)
         {
             var scriptSession = parameters[0] as ScriptSession;
-            var contextScript = parameters[1] as string;
-            var script = parameters[2] as string;
+            var script = parameters[1] as string;
 
-            if (scriptSession == null || contextScript == null)
+            if (scriptSession == null)
             {
                 return;
             }
 
             try
             {
-                scriptSession.ExecuteScriptPart(contextScript);
                 scriptSession.ExecuteScriptPart(script);
                 if (Context.Job == null) return;
 

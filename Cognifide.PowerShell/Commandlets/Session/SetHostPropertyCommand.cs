@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (MyInvocation.BoundParameters.ContainsKey("ForegroundColor"))
             {
                 Host.UI.RawUI.ForegroundColor = ForegroundColor;
-                if (Persist.IsPresent)
+                if (Persist)
                 {
                     settings.ForegroundColor = ForegroundColor;
                 }
@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (MyInvocation.BoundParameters.ContainsKey("BackgroundColor"))
             {
                 Host.UI.RawUI.BackgroundColor = BackgroundColor;
-                if (Persist.IsPresent)
+                if (Persist)
                 {
                     settings.BackgroundColor = BackgroundColor;
                 }
@@ -50,13 +50,13 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (MyInvocation.BoundParameters.ContainsKey("HostWidth"))
             {
                 Host.UI.RawUI.BufferSize = new Size(HostWidth, Int32.MaxValue);
-                if (Persist.IsPresent)
+                if (Persist)
                 {
                     settings.HostWidth = HostWidth;
                 }
             }
 
-            if (Persist.IsPresent)
+            if (Persist)
             {
                 settings.Save();
             }
