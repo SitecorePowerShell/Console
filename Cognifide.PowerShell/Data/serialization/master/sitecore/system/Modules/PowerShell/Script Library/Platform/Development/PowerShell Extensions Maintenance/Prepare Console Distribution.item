@@ -13,17 +13,33 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8320
+content-length: 9461
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
+
+if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion71)){
+  $sitecore7Warning = ""
+} else {
+  $sitecore7Warning = @"
+
+******************************************************
+If you are on Sitecore 7.0 or lower - after installing 
+the package please run the script located under 
+the following path in your Script Library:
+
+'Platform/Development/PowerShell Extensions Maintenance/Restore Rules on Sitecore 7dot0'
+******************************************************
+
+"@;
+}
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
 $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
 $package.Metadata.Publisher = "Cognifide Limited";
-$package.Metadata.Version = "3.0";
+$package.Metadata.Version = "3.1";
 $package.Metadata.Readme = '
 This module provides 2 immediately usable interfaces 
 The "PowerShell Console" available from the "Sitecore"
@@ -31,16 +47,17 @@ menu and the "PowerShell ISE" available from the
 "Developer Tools" sub-menu as well as Reports 
 in the Sitecore -> Reporting Tools menu.
 
-******************************************************
+------------------------------------------------------
 BEFORE UPGRADING THE MODULE from previous version, 
 please back-up your script library!
-******************************************************
+------------------------------------------------------
 
+' + $sitecore7Warning + '
 PowerShell ISE comes with a sample scripts and
 Script Library for you to experiment with. Enjoy!
 
 Most Recent Releases:
-- 3.1 (May 2015)
+- 3.1 (June 2015)
   Release Notes: http://bit.ly/ScPs31Iss
 - 3.0 (February 2015)
   Release Notes: http://bit.ly/ScPs30Iss
@@ -83,6 +100,13 @@ $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSour
 $package.Sources.Add($source);
 $source = Get-Item 'core:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Core Item Templates' -InstallMode Overwrite
 $package.Sources.Add($source);
+
+# Rules engine taxonomy templates for Sitecore 7.0 that misses it
+if(-not [Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+  $source = Get-Item 'master:\templates\System\Rules\Taxonomy' | New-ItemSource -Name 'Rules Engine Taxonomy' -InstallMode Skip -SkipVersions
+  $package.Sources.Add($source);
+  Write-Host "Adding rules engine taxonomy templates" -ForegroundColor Green
+}
 
 # Module Root
 $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
@@ -157,8 +181,8 @@ $package.Sources.Add($source);
 # Task Integration
 $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
 $package.Sources.Add($source);
-$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Skip
-$package.Sources.Add($source);
+#$source = Get-Item master:\system\Tasks\Schedules\Test-PowerShell | New-ItemSource -Name "Task Integration - Schedule" -InstallMode Skip
+#$package.Sources.Add($source);
 
 # Files
 $source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell.config" | New-ExplicitFileSource -Name "Configuration File"
@@ -179,7 +203,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 942156e5-b72a-4452-826b-ebda9697b7f4
+revision: 283f9c06-3c15-4191-b6ef-32ed24348ea4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -194,14 +218,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-942156e5-b72a-4452-826b-ebda9697b7f4
+283f9c06-3c15-4191-b6ef-32ed24348ea4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150503T224227:635662897476519453
+20150609T220350:635694842304794922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

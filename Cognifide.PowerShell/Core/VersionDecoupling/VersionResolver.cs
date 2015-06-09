@@ -10,6 +10,7 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
     public class VersionResolver
     {
         public static Version SitecoreVersionCurrent = GetVersionNumber();
+        public static Version SitecoreVersion71 = new Version(7, 1);
         public static Version SitecoreVersion72 = new Version(7, 2);
         public static Version SitecoreVersion75 = new Version(7, 5);
         public static Version SitecoreVersion80 = new Version(8, 0);
