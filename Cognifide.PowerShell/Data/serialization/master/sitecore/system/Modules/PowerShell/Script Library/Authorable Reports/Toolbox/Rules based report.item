@@ -13,13 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4564
+content-length: 5570
 
 # Set defaults
 
 $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
     "__Controller Action", "__Insert Rules", "__Preview", "__Originator", "__Quick Action Bar Validation Rules", "__Validate Button Validation Rules",
-    "__Validator Bar Validation Rules", "__Skin", "__Icon", "__Enabled Views", "__Default View", "__Context Menu", "__Revision", "__Quick Actions"
+    "__Validator Bar Validation Rules", "__Skin", "__Icon", "__Enabled Views", "__Default View", "__Context Menu", "__Revision", "__Quick Actions",
+    "__Display Name"
     
 
 $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (gi master:\).Database).GetFields() | % { $_.Name };
@@ -32,8 +33,8 @@ $rule = '<ruleset>
   </rule>
 </ruleset>'
 
-$root = Get-Item master:\content\
-$includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root" }
+$root = Get-Item master:\content\home\
+$includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
 $include = @("Recurse", "Root")
 
 # Setup the report parameters with user
@@ -41,13 +42,15 @@ $include = @("Recurse", "Root")
 $result = Read-Variable -Parameters `
     @{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
     @{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."}, `
-    @{Name="include"; title="Include"; editor="checklist"; Options=$includes} `
+    @{Name="include"; title="Additional Options"; editor="checklist"; Options=$includes} `
     -Description "This dialog shows editor how a rule can be taken from an item and edited using the Read-Variable cmdlet." `
     -Title "Sample rule editing" -Width 600 -Height 600 -ShowHints
 
 if($result -eq "cancel"){
     exit;
 }
+
+$rawValues = $include.Contains("Raw")
 
 # Lookup all fields for the content used.
 
@@ -57,7 +60,7 @@ $templateFields = Find-Item -Index sitecore_master_index -Criteria @{Filter = "S
     Select -ExpandProperty TemplateId -Unique |  
     %{ New-Object Sitecore.Data.Items.TemplateItem (Get-Item master:\ -ID "$_") } | %{ $_.Fields } | 
     ?{ $ignoredFields -notcontains $_.Name } | 
-    select Name, Title, Type -Unique 
+    select Name, Title, Type -Unique | sort Name
 
 if($templateFields.Count -eq 0){
     Show-Alert "No Items matching your rule!"
@@ -72,7 +75,7 @@ $stdOptions["Template"] = "TemplateName"
 
 $customOptions = New-Object System.Collections.Specialized.OrderedDictionary
 
-$stdFields = @("Name", "ProviderPath", "TemplateName");
+$stdFields = @("DisplayName", "TemplateName");
 $customFields = @();
 
 foreach($field in $templateFields){
@@ -105,10 +108,26 @@ if($result -eq "cancel"){
 }
 
 $properties = @();
-$fields = $fields + $stdFields;
+$fields = $stdFields + $fields;
 
 function RenderField($item, $fieldName){
-    $item.$FieldName
+
+    if($rawValues){
+        return [System.Web.HttpUtility]::HtmlEncode($item.$fieldName);
+    }
+    $field = $item.Fields[$fieldName];
+    if($field -eq $null){
+        return $item.$fieldName;
+    }
+    $typedField = [Sitecore.Data.Fields.FieldTypeManager]::GetField($field);
+    if ($typedField -is [Sitecore.Data.Fields.ImageField]){
+        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field, "mh=64&mw=64");
+    } elseif ($typedField -is [Sitecore.Data.Fields.MultilistField]){
+        return $typedField.GetItems().DisplayName -join ", ";
+    } elseif ([Cognifide.PowerShell.Core.Extensions.FieldExtensions]::ShouldRender($field)) {
+        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field);
+    }
+    return $item.$fieldName;
 }
 
 foreach($field in $fields){
@@ -117,7 +136,12 @@ foreach($field in $fields){
 }
 
 $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule };
-$items = Get-ChildItem $root.ProviderPath -Recurse | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+$items = Get-ChildItem $root.ProviderPath -Recurse:$include.Contains("Recurse")
+if($include.Contains("Root")){
+    $items = @($root) + $items
+}
+$items = $items | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+
 $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData
 
 Close-Window
@@ -132,7 +156,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 2ca9c9f1-ce5c-4f73-9851-403994ef4ad9
+revision: d83a2517-19ea-47fa-9678-09efefc0497a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -147,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2ca9c9f1-ce5c-4f73-9851-403994ef4ad9
+d83a2517-19ea-47fa-9678-09efefc0497a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T114452:635689286924394531
+20150610T195350:635695628303109297
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

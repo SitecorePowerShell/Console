@@ -347,6 +347,7 @@
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\WebServiceSettings.cs" />
+    <Compile Include="Core\Extensions\FieldExtensions.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />
     <Compile Include="Core\Utility\RulesUtils.cs" />
     <Compile Include="Core\Utility\SpeTimer.cs" />
