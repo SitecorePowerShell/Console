@@ -1,0 +1,260 @@
+----item----
+version: 1
+id: {D977A9DF-B38D-490F-A490-CBA48AA37F09}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Toolbox/Create Anti-Package
+parent: {A5481454-0C2C-4A54-8BEB-1B51030C40C0}
+name: Create Anti-Package
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 7220
+
+$path = "C:\inetpub\wwwroot\Console\Data\packages\Sample Package-1.0.zip"
+
+function Get-PackageProject {
+    param (
+        [Sitecore.Zip.ZipEntry]$Entry
+    )
+
+    [Sitecore.Install.Serialization.IOUtils]::LoadSolution([Sitecore.Install.StreamUtil]::LoadString($Entry.GetStream()))
+}
+
+function Get-PackageItem {
+    param(
+        [string]$Entry
+    ) 
+    
+    $pi = @{}
+    $split = $Entry -split "/"
+    $pi["Database"] = $split[1]
+    $pi["Name"] = $split[$split.Length - 4]
+    $pi["ID"] = $split[$split.Length - 3]
+    $pi["ItemPath"] = ({
+        $path = ""
+        for ($index = 2; $index -lt $split.Length - 3; ++$index) {
+            $path = $path + "/" + $split[$index]
+        }
+        $path
+    }.Invoke())
+    
+    [pscustomobject]$pi
+}
+
+function Get-PackageFile {
+    param (
+        [string]$Entry
+    )
+    
+    $pf = @{}
+    
+    $filename = $Entry
+    $pf["FileName"] = $filename
+    
+    [pscustomobject]$pf
+}
+
+function New-PackagePostStep {
+    param(
+        $PackageItems,
+        $PackageFiles
+    )
+    
+    $writer = New-Object System.IO.StringWriter
+    $output = New-Object System.Xml.XmlTextWriter([System.IO.TextWriter]$writer)
+    $output.Formatting = [System.Xml.Formatting]::Indented
+    $output.WriteStartElement("uninstall")
+    
+    if($PackageItems) {
+        $output.WriteStartElement("items")
+        foreach($packageItem in $PackageItems) {
+            $output.WriteStartElement("item")
+            $output.WriteAttributeString("database", $packageItem.Database)
+            $output.WriteAttributeString("id", $packageItem.ID.ToString())
+            $output.WriteEndElement()
+        }
+        $output.WriteEndElement()
+    }
+    if($PackageFiles) {
+        $output.WriteStartElement("files")
+        foreach($packageFile in $PackageFiles) {
+            $output.WriteStartElement("file")
+            $output.WriteAttributeString("filename", $packageFile.FileName)
+            $output.WriteEndElement()
+        }
+        $output.WriteEndElement()            
+    }
+
+    $output.WriteEndElement()
+    $writer.ToString()
+}
+
+$packageItems = @()
+$packageFiles = @()
+
+$name = [System.IO.Path]::GetFileNameWithoutExtension($path)
+$packageReader = New-Object Sitecore.Zip.ZipReader $path
+$entry = $packageReader.GetEntry("package.zip")
+
+$ms = New-Object System.IO.MemoryStream
+[Sitecore.Zip.Utils.StreamUtils]::CopyStream($entry.GetStream(), $ms, 0x4000)
+$ms.Seek(0, [System.IO.SeekOrigin]::Begin) | Out-Null
+$reader = New-Object Sitecore.Zip.ZipReader $ms
+foreach($entry in $reader.Entries) {
+    $name = $entry.Name
+    if($name -like "installer/project") {
+        $project = (Get-PackageProject -Entry $entry)
+    }
+}
+$reader.Dispose()
+$ms.Dispose()
+$packageReader.Dispose()
+
+# Create the new anti-package
+$packagePath = [System.IO.Path]::GetFileNameWithoutExtension($path) + ".anti" + [System.IO.Path]::GetExtension($path)
+$package = New-Package -Name ("Anti Package for " + $project.Metadata.PackageName)
+$package.Sources.Clear()
+
+$readMe = [string]::Format("Anti Package for {0}. Created {1} by {2}.", $project.Metadata.PackageName, [datetime]::Now.ToString(), [Sitecore.Context]::GetUserName())
+if($project.Metadata.PostStep) {
+    $readMe += "$([Environment]::NewLine + [Environment]::NewLine)WARNING:$([Environment]::NewLine)The original package contains a poststep which may have made modifications that is not known to this antipackage."
+}
+$package.Metadata.ReadMe = $readMe
+$package.Metadata.Publisher = $project.Metadata.Publisher
+
+# Sources
+$newPackageItems = @()
+$newPackageFiles = @()
+foreach($source in $project.Sources) {
+    $items = @()
+    $files = @()
+    $installMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+    $mergeMode = [Sitecore.Install.Utils.MergeMode]::Undefined
+    
+    $sourceTypeName = $source.GetType().Name
+    $isItemSource = $sourceTypeName -like "*ItemSource"
+    $isFileSource = $sourceTypeName -like "*FileSource"
+    $isExplicit = "ExplicitItemSource","ExplicitFileSource" -contains $sourceTypeName
+    
+    Write-Verbose "Processing $($sourceTypeName) : $($source.Name)"
+    if($isExplicit) {
+        foreach($entry in $source.Entries) {
+            Write-Verbose "Processing entry : $($entry)"
+            
+            if($isItemSource) {
+                $packageItem = Get-PackageItem -Entry $entry
+                $database = Get-Database -Name $packageItem.Database
+                if($database) {
+                    $item = $database.GetItem($packageItem.ID)
+                    if(!$item) {
+                        $newPackageItems += $packageItem
+                    } else {
+                        $items += $item
+                    }   
+                } else {
+                    Write-Verbose "Skipping item because the database $($packageItem.Database) does not exist."
+                }
+            } elseif ($isFileSource) {
+                $packageFile = Get-PackageFile -Entry $entry
+                $filename = $packageFile.FileName
+                $path = Join-Path -Path $AppPath -ChildPath $filename
+                if(!(Test-Path -Path $path)) {
+                    $newPackageFiles += $packageFile
+                } else {
+                    $files += Get-Item -Path $path
+                } 
+            }
+        }
+    } else {
+        if($isItemSource) {
+            $itemRoot = Get-Item -Path "$($source.Database):" -ID $source.Root
+            $items = @($itemRoot) + (Get-ChildItem -Path $itemRoot.ItemPath -Recurse)
+        } elseif($isFileSource) {
+            $fileRoot = Get-Item -Path "$AppPath\$($source.Root)"
+            $files = @($fileRoot)
+        }
+    }
+    
+    if($source.TransForms) {
+        $installMode = $source.TransForms.Options.ItemMode
+        $mergeMode = $source.TransForms.Options.ItemMergeMode
+    }
+    
+    $props = @{
+        "Name" = $source.Name
+        "InstallMode" = $installMode
+    }
+        
+    if($isItemSource -and $items) {
+        $props["MergeMode"] = $mergeMode
+        if($source.SkipVersions) {
+            $props["SkipVersions"] = $source.SkipVersions
+        }
+        if($isExplicit) {
+            $package.Sources.Add(($items | New-ExplicitItemSource @props))
+        } else {
+            $package.Sources.Add(($items | New-ItemSource @props))
+        }
+    } elseif($isFileSource -and $files) {
+        if($isExplicit) {
+            $package.Sources.Add(($files | New-ExplicitFileSource @props))
+        } else {
+            $package.Sources.Add(($files | New-FileSource @props))
+        }
+    }
+}
+
+$source = Get-Item "$AppPath\bin\Cognifide.PowerShell.Package.dll" | New-ExplicitFileSource -Name "PowerShell PostStep Binary"
+$package.Sources.Add($source)
+
+$package.Metadata.PostStep = "Cognifide.PowerShell.Package.Install.PackagePostStep, Cognifide.PowerShell.Package"
+$package.Metadata.Comment = New-PackagePostStep -PackageItems $newPackageItems -PackageFiles $newPackageFiles
+
+# TODO: I think SkipVersions is never set in the UI. Should we still handle it?
+# TODO: Handle security.
+Export-Package -Project $package -Path $packagePath -Zip
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 23
+
+Apps/32x32/Packager.png
+----version----
+language: en
+version: 1
+revision: e015d511-8553-461a-b8f7-03ecef2b9280
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20150520T013818Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+e015d511-8553-461a-b8f7-03ecef2b9280
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20150611T063753:635696014735535444Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
