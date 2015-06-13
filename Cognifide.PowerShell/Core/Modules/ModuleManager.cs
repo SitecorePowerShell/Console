@@ -27,7 +27,6 @@ namespace Cognifide.PowerShell.Core.Modules
                         {
                             modulesListDirty = false;
                             var newModulesList = GetDbModules(ApplicationSettings.ScriptLibraryDb);
-                            newModulesList.AddRange(GetDbModules("core"));
                             modules = newModulesList;
                         }
                     }

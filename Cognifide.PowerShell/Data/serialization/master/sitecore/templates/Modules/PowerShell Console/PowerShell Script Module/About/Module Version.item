@@ -2,9 +2,9 @@
 version: 1
 id: {9911A28E-2120-4AB0-9113-5BAE386769C1}
 database: master
-path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/Version
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Module/About/Module Version
 parent: {FD7499D7-532C-443D-AC8F-F34F9D9CD8B9}
-name: Version
+name: Module Version
 master: {00000000-0000-0000-0000-000000000000}
 template: {455A3E98-A627-4B40-8035-E683A0331AC7}
 templatekey: Template field
@@ -33,7 +33,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 26beee92-d9a2-42bd-ae2d-023e49ac3f31
+revision: 68f48a8a-bd8f-4877-8ccc-36e4fdc6cdde
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-26beee92-d9a2-42bd-ae2d-023e49ac3f31
+68f48a8a-bd8f-4877-8ccc-36e4fdc6cdde
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141125T030229:635524813496512889
+20150610T202619:635695647791292891
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

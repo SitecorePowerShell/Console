@@ -45,9 +45,9 @@ namespace Cognifide.PowerShell.Core.Modules
             if (Enabled)
             {
                 Description = moduleItem["Description"];
-                WhatsNew = moduleItem["WhatsNew"];
+                WhatsNew = moduleItem["Whats new"];
                 History = moduleItem["History"];
-                Version = moduleItem["Version"];
+                Version = moduleItem["Module Version"];
                 Author = moduleItem["Author"];
                 Url = moduleItem["Url"];
                 Email = moduleItem["Email"];

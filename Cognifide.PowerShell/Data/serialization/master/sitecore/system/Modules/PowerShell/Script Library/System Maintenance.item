@@ -37,8 +37,8 @@ Provides the following scripts available for scheduled tasks:
 - Rebuild search indexes
 ----field----
 field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
-name: Version
-key: version
+name: Module Version
+key: module version
 content-length: 3
 
 1.0
