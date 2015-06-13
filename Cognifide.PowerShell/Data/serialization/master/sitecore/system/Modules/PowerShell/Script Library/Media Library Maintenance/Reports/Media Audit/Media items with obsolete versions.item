@@ -2,7 +2,7 @@
 version: 1
 id: {0C204443-C3D1-4AB7-A79A-52180E76060C}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reports/Media Audit/Media items with obsolete versions
+path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Reports/Media Audit/Media items with obsolete versions
 parent: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
 name: Media items with obsolete versions
 master: {00000000-0000-0000-0000-000000000000}

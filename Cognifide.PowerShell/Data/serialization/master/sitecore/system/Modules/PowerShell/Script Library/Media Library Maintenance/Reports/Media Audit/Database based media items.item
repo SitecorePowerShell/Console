@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {9052B33D-52DD-4C99-BE20-5D0ED2135ECF}
+id: {46137F1E-0987-4B6E-AE82-02B71F3BFCEF}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reports/Media Audit/Media items not used by content items
+path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Reports/Media Audit/Database based media items
 parent: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
-name: Media items not used by content items
+name: Database based media items
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,54 +13,41 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1663
+content-length: 1302
 
 <#
     .SYNOPSIS
-        Lists all media items that are not linked to content items.
-        
+        Lists all media items that are database based.
+    
     .NOTES
         Michael West
 #>
-function HasContentReference {
+function IsNotFileBased {
     param(
         $Item
     )
     
-    $linkDb = [Sitecore.Globals]::LinkDatabase
-    $links = $linkDb.GetReferrers($Item)
-    
-    $result = $false
-    
-    foreach($link in $links) {
-        $path = New-Object Sitecore.Data.ItemPath ($link.GetSourceItem())
-        if($path.IsContentItem) {
-            $result = $true
-            break
-        }
-    }
-    
-    $result
+    !(New-Object Sitecore.Data.Items.MediaItem $item).FileBased
 }
 
-function Get-MediaItemWithNoReference {
+function Get-MediaItemNotFileBased {
     $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
     
     foreach($item in $items) {
-        if(!(HasContentReference($item))) {
+        if(IsNotFileBased($item)) {
             $item
         }
     }
 }
 
-$items = Get-MediaItemWithNoReference 
+$items = Get-MediaItemNotFileBased
 
-if($items.Count -eq 0) {
-    Show-Alert "There are no media items not used by content items"
+if($items.Count -eq 0){
+    Show-Alert "There are no database based media items"
 } else {
     $props = @{
-        InfoTitle = "Media items not used by content items"
-        InfoDescription = "Lists all media items that are not linked to content items."
+        InfoTitle = "Database based media items"
+        InfoDescription = "Lists all media items that are database based."
         PageSize = 25
     }
     
@@ -72,19 +59,18 @@ if($items.Count -eq 0) {
             @{Label="Created by"; Expression={$_."__Created by"} },
             @{Label="Path"; Expression={$_.ItemPath} }
 }
-
 Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 29
+content-length: 35
 
-Network/16x16/link_delete.png
+Business/16x16/data_information.png
 ----version----
 language: en
 version: 1
-revision: 642f07cc-f4c3-4deb-a6cb-60529f28f41c
+revision: 2893f534-cfbb-4d3e-a7e2-0abd10b1dbb9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -92,21 +78,21 @@ name: __Created
 key: __created
 content-length: 15
 
-20140405T001346
+20140407T192245
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-642f07cc-f4c3-4deb-a6cb-60529f28f41c
+2893f534-cfbb-4d3e-a7e2-0abd10b1dbb9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20140408T090837:635325449179434769
+20140408T090802:635325448826475785
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

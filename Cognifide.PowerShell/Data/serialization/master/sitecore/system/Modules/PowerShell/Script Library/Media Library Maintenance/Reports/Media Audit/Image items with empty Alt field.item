@@ -2,7 +2,7 @@
 version: 1
 id: {3C3CEE69-83B7-4629-A7A6-1A8145C3E101}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reports/Media Audit/Image items with empty Alt field
+path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Reports/Media Audit/Image items with empty Alt field
 parent: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
 name: Image items with empty Alt field
 master: {00000000-0000-0000-0000-000000000000}

@@ -2,7 +2,7 @@
 version: 1
 id: {6192B98A-E907-440B-9E46-15E09759DAD9}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reports/Media Audit/Media items without associated files
+path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Reports/Media Audit/Media items without associated files
 parent: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
 name: Media items without associated files
 master: {00000000-0000-0000-0000-000000000000}
