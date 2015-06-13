@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2092
+content-length: 2038
 
 <#
     Adapted from:
@@ -21,7 +21,7 @@ content-length: 2092
 #>
  
 # The $item variable is populated in the GutterStatusRenderer class using session.SetVariable.
-$item = Get-Item -Path .
+$item = get-item .
 if(-not $item) {
     Write-Log "The item is null."
     return $null
@@ -48,21 +48,19 @@ foreach($publishingTargetDatabase in $publishingTargetsFolder.GetChildren()) {
         $existsInAll = $false
     }
 }
-
-# Better performance and readability if we don't show any flag if there is nothing to be concerned about.
-if ($existsInAll) {
-    Write-Log "Exists in all"
-    return $null
-}
  
 # Return descriptor with tooltip and icon
-if ($existsInOne) {
+$tooltip = [Sitecore.Globalization.Translate]::Text("This item has not yet been published")
+$icon = "People/16x16/flag_red.png"
+ 
+if ($existsInAll) {
+    $tooltip = [Sitecore.Globalization.Translate]::Text("This item has been published to all targets")
+    $icon = "People/16x16/flag_green.png"
+    Write-Log "Exists in all"
+} elseif ($existsInOne) {
     $tooltip = [Sitecore.Globalization.Translate]::Text("This item has been published to at least one target")
     $icon = "People/16x16/flag_yellow.png"
     Write-Log "Exists in one"
-} else {
-    $tooltip = [Sitecore.Globalization.Translate]::Text("This item has not yet been published")
-    $icon = "People/16x16/flag_red.png"    
 }
  
 $gutter = New-Object Sitecore.Shell.Applications.ContentEditor.Gutters.GutterIconDescriptor
@@ -73,7 +71,7 @@ $gutter
 ----version----
 language: en
 version: 1
-revision: 0e16e58a-9553-4c25-b5da-586f1272d4a4
+revision: d978e276-2147-4bf0-8b70-afa9be118f4e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -88,14 +86,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0e16e58a-9553-4c25-b5da-586f1272d4a4
+d978e276-2147-4bf0-8b70-afa9be118f4e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 35
+content-length: 34
 
-20150613T185302:635698183829643950Z
+20141227T175154:635552995146678437
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
