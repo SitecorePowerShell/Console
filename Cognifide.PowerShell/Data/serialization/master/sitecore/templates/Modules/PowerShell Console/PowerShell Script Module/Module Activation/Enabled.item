@@ -33,8 +33,22 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 248fbf61-c03a-4d70-b0c7-df3179e5d9cb
+revision: 2a148a96-057f-4730-bfbf-7680136b5eef
 
+----field----
+field: {577F1689-7DE4-4AD2-A15F-7FDC1759285F}
+name: __Long description
+key: __long description
+content-length: 219
+
+A rebuild of the SPE integrations may be required after changing the enabled state. Open the ISE, select the Settings tab, then Rebuild All. Integrations such as the Control Panel, Gutters, and Ribbon require a rebuild.
+----field----
+field: {9541E67D-CE8C-4225-803D-33F7F29F09EF}
+name: __Short description
+key: __short description
+content-length: 61
+
+After changing remember to rebuild integrations from the ISE.
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -46,9 +60,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20141101T104402
+20141101T154402Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -62,14 +76,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-248fbf61-c03a-4d70-b0c7-df3179e5d9cb
+2a148a96-057f-4730-bfbf-7680136b5eef
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141125T030229:635524813496063670
+20150613T190816:635698192964653600Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
