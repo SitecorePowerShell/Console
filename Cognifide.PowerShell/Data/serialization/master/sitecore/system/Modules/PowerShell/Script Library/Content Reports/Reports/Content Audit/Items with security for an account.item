@@ -1,0 +1,84 @@
+----item----
+version: 1
+id: {C05DB55E-CAEF-40B8-9F46-7195339B51B7}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Items with security for an account
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Items with security for an account
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1074
+
+$item = get-item master:\content\
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Start Item"; Tooltip="Branch you want to analyse."}, `
+    @{ Name = "user"; Title="Select User"; Tooltip="Tooltip for user"; Editor="user role"} `
+    -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
+    -Title "Security for a user" -Width 600 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+$user = $user.Replace("\","\\")
+if("$user" -eq ""){
+    $user="\|"
+}
+
+gci $item.ProviderPath -r -Version * -Language * | Where-Object {$_.__Security -match $user } | `
+    Show-ListView -Property @{Label="Name"; Expression={$_.DisplayName} }, Version, Language, `
+        @{Label="Updated"; Expression={$_.__Updated} }, `
+        @{Label="Created"; Expression={$_.__Created} }, `
+        @{Label="Path"; Expression={$_.ItemPath} }, `
+        @{Label="Security"; Expression={$_.__Security} } `
+        -PageSize 30
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 41
+
+Applications/32x32/document_forbidden.png
+----version----
+language: en
+version: 1
+revision: e59567e9-152e-4b51-baae-e4083312f53c
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130911T003914
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+e59567e9-152e-4b51-baae-e4083312f53c
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140413T132911:635329925517301250
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

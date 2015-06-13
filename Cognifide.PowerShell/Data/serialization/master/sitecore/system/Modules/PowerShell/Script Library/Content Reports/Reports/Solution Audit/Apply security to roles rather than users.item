@@ -1,0 +1,96 @@
+----item----
+version: 1
+id: {CA464755-FCD5-434B-A989-054C512E2DEE}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Apply security to roles rather than users
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Apply security to roles rather than users
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1857
+
+# Do my items assign rights to users?
+#
+# Sitecore recommendation:
+#    Apply security to roles rather than users — 
+#      We recommend that you configure security rights for a role security account rather than a user account. 
+#      Even if there is only one user in the system with this unique access level, 
+#      it is still better to have permissions configured for a role account. 
+#      It is much easier to maintain a security system in which all the security configuration is set on role security accounts.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "/sitecore/content/My Site"
+#
+# How to read this report?
+# ------------------------
+# The report will show you all items that restrict rights rather than break inheritance, potantially breaking this recommendation.
+# It does not necessarily mean that the approach is wrong, but you should consider restructuring your security setting 
+# according to the Sitecore best practice.
+#
+
+$item = get-item master:\
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
+    -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
+    -Title "Find items with security set for a user instead of role" -Width 600 -Height 200 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+get-childitem "$($item.ProviderPath)/" -recurse  | `
+    where-object { $_.__Security -match "au\|" } |  `
+    Show-ListView -Property `
+        @{Name="Item assigning rights to users"; Expression={$_.ItemPath}}, `
+        @{Name="Security setting"; Expression={$_.__Security}} `
+        -Title "Items with rights assigned to a user"
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 27
+
+People/32x32/user1_lock.png
+----version----
+language: en
+version: 1
+revision: fee97970-92a3-40bc-9d55-369d3542cb9a
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130207T151257
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+fee97970-92a3-40bc-9d55-369d3542cb9a
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130911T234543:635145399435341250
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

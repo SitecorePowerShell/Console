@@ -1,0 +1,103 @@
+----item----
+version: 1
+id: {DE79022D-391F-4EE5-AF89-22AA6A6FE311}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Image Fields
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Image Fields
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2078
+
+# What "Image" type fields do I have and in which template? Do they have Source defined?
+#
+# Sitecore recommendation:
+#    Image Fields — Define the source field to show the point 
+#                   in the media library that is relevant to the item being created.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+# How to read this report?
+# ------------------------
+# The report will show all fields of type "Image" and a path ot a template it's defined in.
+# Just because field does not define Source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide.
+#
+
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
+    -Description "The report will show all fields of type 'Image' and a path ot a template it's defined in." `
+    -Title "What Image fields do I have and in which template? Do they have Source defined?" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+get-childitem $item.ProviderPath -recurse | `
+  where-object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Image" } | `
+  Show-ListView -Property `
+    @{Name="Field Name"; Expression={$_.Name }}, `
+    @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
+    @{Name="Source"; Expression={$_._Source }},
+    @{Name="__Icon"; Expression={ if($_._Source -eq "") { "Imaging/32x32/shapes_d.png" } else { "Imaging/32x32/shapes.png" }  }} `
+    -Title "Templates with Image fields." `
+    -InfoTitle "The report will show all fields of type Image and a path ot a template it's defined in." `
+    -InfoDescription "Just because field does not define Source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide." `
+    -PageSize 100
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 24
+
+Imaging/32x32/shapes.png
+----version----
+language: en
+version: 1
+revision: 733e2638-39da-416b-a9a0-c24c35941459
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 120
+
+Image Fields - define the source field to show the point in the media library that is relevant to the item being created
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130205T193340
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+733e2638-39da-416b-a9a0-c24c35941459
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140222T093420:635286584603450313
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

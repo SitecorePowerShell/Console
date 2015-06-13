@@ -1,0 +1,95 @@
+----item----
+version: 1
+id: {89EA962C-DA7D-4316-A492-CACA879CA5DC}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Limit the number of items under any given node
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Limit the number of items under any given node
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2476
+
+# Which of my items have most children? Are there too many?
+#
+# Sitecore recommendation:
+#    Limit the number of items under any given node that share the same parent, to 100 items or less for performance and usability.
+#
+# Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
+#
+# How to read this report?
+# ------------------------
+# The report will show you all the nodes that have more than 50 direct descendants to allow you to address any potential issues arising. 
+# If the list is empty (no results shown) it means your solution is not even close to violating the recommendation and you can give yourself a pat on the back.
+#
+
+$item = gi master:\content
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
+    @{ Name = "maxCount"; Value=50; Title="Children number threshhold"; Tooltip="List items with more than this number of children.";} `
+    -Description "The report will show you all the nodes that have more than your selected number of direct descendants to allow you to address any potential issues arising. " `
+    -Title "Which of my items have most children? Are there too many?" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+#get-childitem -recurse | select-object ItemPath, @{Name="ChildrenCount"; Expression={$_.Children.Count;} } | where-object { $_.ChildrenCount -gt 50 } | sort ChildrenCount -descending
+get-childitem $item.ProviderPath -recurse | where-object { $_.Children.Count -gt $maxCount } | Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} | `
+    Show-ListView -Property Name, `
+        @{Name="Children"; Expression={$_.Children.Count}}, `
+        @{Name="Path"; Expression={$_.ItemPath}} `
+        -Title "Which of my items have the most children?" `
+        -InfoTitle "Sitecore recommendation: Limit the number of items under any given node that share the same parent, to 100 items or less for performance and usability." `
+        -InfoDescription "The report shows all nodes that have more than $maxCount direct descendants to allow you to address any potential issues arising. <br>
+                          If the list is empty (no results shown) it means your solution is not even close to violating the recommendation and you can give yourself a pat on the back."
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 40
+
+WordProcessing/32x32/sort_descending.png
+----version----
+language: en
+version: 1
+revision: 59b3da70-ef4b-4b7f-bb15-47da72200876
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130206T171604
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+59b3da70-ef4b-4b7f-bb15-47da72200876
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130913T211218:635147035388384765
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -1,0 +1,104 @@
+----item----
+version: 1
+id: {2C3337FF-E4D2-4281-A250-97383D75338F}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Media Audit/File based media items
+parent: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
+name: File based media items
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1371
+
+<#
+    .SYNOPSIS
+        Lists all media items that are file system based.
+    
+    .NOTES
+        Michael West
+#>
+function IsFileBased {
+    param(
+        $Item
+    )
+    
+    (New-Object Sitecore.Data.Items.MediaItem $item).FileBased
+}
+
+function Get-MediaItemFileBased {
+    $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
+    
+    foreach($item in $items) {
+        if(IsFileBased($item)) {
+            $item
+        }
+    }
+}
+
+$items = Get-MediaItemFileBased
+
+if($items.Count -eq 0) {
+    Show-Alert "There are no file based media items"
+} else {
+    $props = @{
+        InfoTitle = "File based media items"
+        InfoDescription = "Lists all media items that are file system based."
+        PageSize = 25
+    }
+    
+    Get-MediaItemFileBased |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} },
+            @{Label="File Path"; Expression={$_."File Path"} }
+}
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 43
+
+Applications/16x16/harddisk_information.png
+----version----
+language: en
+version: 1
+revision: ce805685-c3ce-48f3-b4a6-319e3b6237a6
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20140407T191241
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+ce805685-c3ce-48f3-b4a6-319e3b6237a6
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140408T090820:635325449006505082
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

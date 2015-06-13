@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {9F3EEA96-CEC8-4C7D-B26B-6D15AB654AF1}
+id: {482BE2EB-5CCD-4E6F-A63C-51FAC5B34B7A}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports
 parent: {A3572733-5062-43E9-A447-54698BC1C637}
-name: Platform
+name: Content Reports
 master: {00000000-0000-0000-0000-000000000000}
 template: {6D82FCD8-C379-443C-97A9-C6423C71E7D5}
 templatekey: PowerShell Script Module
@@ -20,22 +20,9 @@ content-length: 1
 field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
 name: Description
 key: description
-content-length: 258
+content-length: 87
 
-Platform module - This module should NEVER be disabled or parts of the Sitecore PowerShell Extensions might stop functioning.
-
-Provides the following Context Menu items:
-- Create libraries for integration points
-- Create module
-- Purge Empty libraries
-
-----field----
-field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
-name: Version
-key: version
-content-length: 3
-
-1.0
+Provides a variety of reports for configuration, content, media, and solution auditing.
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -46,7 +33,7 @@ Software/32x32/jar_bean.png
 ----version----
 language: en
 version: 1
-revision: acb0c4f2-0655-4f9d-965b-9677cc251157
+revision: 2705282a-2d6c-45c5-b83f-d1a12f0abd6f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -54,21 +41,21 @@ name: __Created
 key: __created
 content-length: 16
 
-20141203T085000Z
+20150613T214704Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-acb0c4f2-0655-4f9d-965b-9677cc251157
+2705282a-2d6c-45c5-b83f-d1a12f0abd6f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150613T214726:635698288464194871Z
+20150613T214738:635698288580073758Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

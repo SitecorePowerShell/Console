@@ -1,0 +1,120 @@
+----item----
+version: 1
+id: {5E0F7528-C46F-417A-8402-FD0C2C6E482D}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Use the Help and Title for fields
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Use the Help and Title for fields
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 3330
+
+# How many of my template fields define Help and Title?
+#
+# Sitecore recommendation:
+#    Use the Help option in the individual field definition items to provide extra information to users about fields. 
+#    Also consider using the Title field of the definition item to present a different name for the field to the user.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+# How to read this report?
+# ------------------------
+# The report will show you all template fields in your solution and whether or not they have User Friendly strings defined.
+#
+
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
+    -Description "<b>Sitecore recommendation:</b>
+                  Use the Help option in the individual field definition items to provide extra information to users about fields. 
+                  Also consider using the Title field of the definition item to present a different name for the field to the user." `
+    -Title "How many of my template fields define Help and Title?" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+$fields = 
+  get-childitem $item.ProviderPath -recurse | `
+    where-object { $_.TemplateName -eq "Template Field"};
+    
+$checks = $fields | select-object Name, `
+      @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
+      @{Name="Help Defined"; Expression={$_."__Long description" -ne "" -or $_."__Short description" -ne "" -or $_."__Help link" -ne "" }},
+      @{Name="Title Specified"; Expression={$_.Title -ne "" }}
+
+$has_no_title = $checks | Group-Object "Title Specified" | Where-Object {$_.Name -eq "False" } | Select-object Count;
+$has_no_help = $checks | Group-Object "Help Defined" | Where-Object {$_.Name -eq "False" } | Select-object Count;
+
+Write-host -f Yellow "Found $($fields.Count) template fields. $($has_no_title.Count) of those have no user friendly Title. $($has_no_help.Count) of those have no Help information defined."
+
+#$fields | format-table -auto
+$fields | ` 
+  where-object { $_."__Long description" -eq "" -or $_."__Short description" -eq "" -or $_."__Help link" -eq "" -or $_.Title -eq ""} | `
+    Show-ListView -Property DisplayName, 
+        @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
+        Title, `
+        @{Name="Short Description"; Expression={$_."__Long description" }}, `
+        @{Name="Help Link"; Expression={$_."__Long description" }}, `
+        @{Name="Long Description"; Expression={$_."__Long description" }} `
+        -Title "Template fields not providing user friendly information." `
+        -InfoTitle "Sitecore recommendation:" `
+        -InfoDescription "Use the Help option in the individual field definition items to provide extra information to users about fields. <br/>
+                          Also consider using the Title field of the definition item to present a different name for the field to the user. <br/><br/>
+                          Fields below fail to deliver on this recomendation."
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 28
+
+Applications/32x32/about.png
+----version----
+language: en
+version: 1
+revision: 525256c9-fa47-4b32-8ce8-05c71b674dbf
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 64
+
+Use the Help and Title option in the individual field definition
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130205T202005
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+525256c9-fa47-4b32-8ce8-05c71b674dbf
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140222T093641:635286586014651485
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

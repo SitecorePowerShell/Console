@@ -1,0 +1,100 @@
+----item----
+version: 1
+id: {3BE04279-3707-4D78-ACC9-D1AFB33D19E6}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Items have no publishable version
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Items have no publishable version
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1308
+
+<#
+    .SYNOPSIS
+        Lists the items with no publishable version.
+        
+    .NOTES
+        Michael West
+        Adapted from the Advanced System Reporter module.
+#>
+
+filter NoPublishableVersions {
+    param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$Item
+    )
+    
+    if($Item) {
+        $isValid = $item.Publishing.GetValidVersion([datetime]::Now, $true, $false)
+	    if($isValid -eq $null) {
+	        $Item
+	    }   
+    }
+}
+
+$items = Get-ChildItem -Path "master:\sitecore\" -Recurse | NoPublishableVersions
+
+if($items.Count -eq 0){
+    Show-Alert "There are no items found which are non-publishable."
+} else {
+    $props = @{
+        InfoTitle = "Non-publishable items"
+        InfoDescription = "Lists the items with no publishable version."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} }
+}
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+Network/32x32/earth_delete.png
+----version----
+language: en
+version: 1
+revision: ea197742-7946-4ca4-866c-1b141037b0f2
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20140408T205542
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+ea197742-7946-4ca4-866c-1b141037b0f2
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140413T132902:635329925428756328
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

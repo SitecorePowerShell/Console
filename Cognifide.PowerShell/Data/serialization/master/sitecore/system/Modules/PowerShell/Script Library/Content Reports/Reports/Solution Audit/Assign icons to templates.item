@@ -1,0 +1,97 @@
+----item----
+version: 1
+id: {E3BFF71B-2E1E-4DC4-BA01-7746F621CDAA}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Assign icons to templates
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Assign icons to templates
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2103
+
+# How many of my templates define or no an icon? Which templates I need to examine to check if adding an icon would benefit my users?
+#
+# Sitecore recommendation:
+#    Assign icons to templates — 
+#      This provides a visual clue to the type of item that will be created.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
+    -Description "This report will analyse the template branch and will tell you which templates do not have any icon assigned." `
+    -Title "Find templates without an icon" -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+$template_icons = get-childitem $item.ProviderPath -recurse | `
+  where-object { $_.TemplateName -eq "Template" } |  `
+  select-object @{ Name="HasIcon"; Expression={-not [string]::IsNullOrEmpty($_.__Icon)} } | `
+  group-object HasIcon;
+
+$has_icon = $template_icons | where-object {$_.Name -eq "True" } | Select-object Count;
+$has_no_icon = $template_icons | where-object {$_.Name -eq "False" } | Select-object Count;
+$title = "Found $($has_icon.Count + $has_no_icon.Count) templates. $($has_icon.Count) of those have icons defined while $($has_no_icon.Count) don't specify an icon."
+Write-host -f Yellow $title
+
+get-childitem $item.ProviderPath -recurse | `
+    where-object { $_.TemplateName -eq "Template" -and $_.__icon -eq ""} |  `
+        Show-ListView -Property Name, `
+            @{Name="Path"; Expression={$_.ItemPath}} `
+            -Title "Found $($has_icon.Count + $has_no_icon.Count) templates." `
+            -InfoTitle "Found $($has_icon.Count + $has_no_icon.Count) templates." `
+            -InfoDescription "$($has_icon.Count) templates have icons defined while $($has_no_icon.Count) do not specify an icon. Double click on a template to open it."
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 36
+
+People/32x32/palette_preferences.png
+----version----
+language: en
+version: 1
+revision: 88feef12-b94a-43a5-9c92-9d20f761891b
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130205T141957
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+88feef12-b94a-43a5-9c92-9d20f761891b
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130915T215515:635148789151962891
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
