@@ -1,0 +1,106 @@
+----item----
+version: 1
+id: {7AE883C7-E0DC-4C87-BF57-15558ADF1A2B}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Use special tree syntax
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Use special tree syntax
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2816
+
+# Do my tree/list/link selection fields narrow selection?
+#
+# Sitecore recommendation:
+#    Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx 
+#    to make sure users can only select the appropriate items, or Sitecore query in the other selection fields.
+#
+# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#
+# How to read this report?
+# ------------------------
+# The report will show you all template fields in your solution and whether or not they define the Source query.
+# Just because a field does not define source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience.
+#
+
+$item = gi master:\templates
+$result = Read-Variable -Parameters `
+    @{ Name="item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"}, `
+    @{ Name="showAll"; Value=$false; Title="Include items even if they define their source"; Tooltip="Include items with Source defined.";} `
+    -Description "Sitecore recommendation:" `
+    -Title "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx 
+            to make sure users can only select the appropriate items, or Sitecore query in the other selection fields." -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+get-childitem $item.ProviderPath -recurse | `
+  where-object { $_.TemplateName -eq "Template Field" } |  `
+  where-object { $_.Type -match "Drop" -or $_.Type -match "Tree" -or $_.Type -match "list"  } |  `
+  where-object { $_._Source -eq "" -or $showAll } |  `
+    Show-ListView -Property Name, Type, `
+        @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", ""}}, `
+        @{Name="Source"; Expression={$_._Source}}, `
+        @{Name="Icon"; Expression={if($_._Source -eq "") {"Business/32x32/funnel_delete.png"} else {"Business/32x32/funnel_add.png"} }} `
+        -Title "Templates inheriting directly from Standard Item template" `
+        -InfoTitle "Sitecore recommendation:" `
+        -InfoDescription "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx to make sure users can only select the appropriate items, or Sitecore query in the other selection fields. <br/>
+                          The report will show you all link template fields in your solution and whether or not they define the Source query.Just because a field does not define source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience."
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 25
+
+Business/32x32/funnel.png
+----version----
+language: en
+version: 1
+revision: 7965809c-a8b2-4726-978a-e5c082804439
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 80
+
+Use source query to restrict the results on Treelists, DropTrees, and TreelistEx
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130207T142030
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+7965809c-a8b2-4726-978a-e5c082804439
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20130914T173246:635147767665919375
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

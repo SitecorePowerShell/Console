@@ -1,0 +1,137 @@
+----item----
+version: 1
+id: {A068E625-4CB9-4BF9-BFED-F8D93225E6C9}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Stale workflow items
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Stale workflow items
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2547
+
+<#
+    .SYNOPSIS
+        Lists the items with items in a workflow for several days.
+        
+    .NOTES
+        Michael West
+        Adapted from the Advanced System Reporter module.
+#>
+
+filter HasStaleWorkflow {
+    param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$Item,
+        [int]$Age=14
+    )
+    
+    if($Item) {
+        $wf = [Sitecore.Context]::Workflow.GetWorkflow($item)
+        if ($wf) {
+            $state = $wf.GetState($item)
+            if ($state -ne $null -and !$state.FinalState) {
+                $wevents = $wf.GetHistory($item);
+                if ($wevents -ne $null -and $wevents.Length -gt 0) {
+                    $difference = ([datetime]::Now - $wevents[$wevents.Length - 1].Date).Days
+                    write-log $difference
+                    if($difference -gt $age) {
+                        $Item | Add-Member -MemberType NoteProperty -Name Age -Value $difference
+                        $Item
+                    }
+                }
+            }
+        }
+    }
+}
+
+$rootnode = Get-Item -Path "master:\sitecore\content"
+
+$settings = @{
+    Title = "Report Filter"
+    Width = "350"
+    Height = "450"
+    OkButtonName = "Proceed"
+    CancelButtonName = "Abort"
+    Description = "Filter the results for items using the specified tree path."
+    Parameters = @{ 
+        Variable = (Get-Variable "rootnode")
+        Title = "Search Path"
+    }, @{
+        Name = "age"
+        Options = "1|1|3|3|7|7|14|14|30|30"
+        Title = "Age"
+    }
+}
+
+$result = Read-Variable @settings
+if($result -ne "ok") {
+    Exit
+}
+
+$items = Get-ChildItem -Path "master:$($rootnode.Paths.Path)" -Recurse | HasStaleWorkflow -Age $age
+
+if($items.Count -eq 0){
+    Show-Alert "There are no items found which have a stale workflow"
+} else {
+    $props = @{
+        InfoTitle = "Items with a stale workflow"
+        InfoDescription = "Lists the items with items in a workflow for several days."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} },
+            @{Label="Age"; Expression={$_.Age} }
+}
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+applications/32x32/history.png
+----version----
+language: en
+version: 1
+revision: 098651e1-40aa-4c61-ad4f-53a1c9530025
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20140408T221336
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+098651e1-40aa-4c61-ad4f-53a1c9530025
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140413T132927:635329925675309062
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

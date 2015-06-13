@@ -1,0 +1,106 @@
+----item----
+version: 1
+id: {410774B5-4162-43A1-8A0C-53CEFFB81638}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Limit number of versions
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: Limit number of versions
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2751
+
+# Which of my items have most children? Are there too many?
+#
+# Sitecore recommendation:
+#    Limit the number of versions of any item to the fewest possible. 
+#    Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number. 
+#    There is a shared source module, Version Manager, available at: 
+#    http://marketplace.sitecore.net/en/Modules/Version_Manager.aspx to help manage versions.
+#
+# Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
+#
+# How to read this report?
+# ------------------------
+# The report will show you all the nodes that have more than 10 versions. 
+# If the list is empty (no results shown) it means your solution is not violating the recommendation and you can give yourself a pat on the back.
+#
+
+$item = gi master:\content
+$result = Read-Variable -Parameters `
+    @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
+    @{ Name = "count"; Value=10; Title="Show if over this number of versions"; Tooltip="Show if over this number of versions."} `
+    -Description "Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number." `
+    -Title "Limit the number of versions of any item to the fewest possible." -Width 500 -Height 280 `
+    -OkButtonName "Proceed" -CancelButtonName "Abort" 
+
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+#get-childitem $item.ProviderPath -recurse | select-object ItemPath, @{Name="Versions"; Expression={$_.Versions.Count;} } | where-object { $_.Versions -gt $count } | sort Versions -descending
+get-childitem $item.ProviderPath -recurse | where-object { $_.Versions.Count -gt $count } | Sort-Object -Property @{Expression={$_.Versions.Count}; Descending=$true} | `
+    Show-ListView -Property DisplayName, `
+        @{Name="Versions"; Expression={$_.Versions.Count}}, `
+        @{Name="Path"; Expression={$_.ItemPath}} `
+        -Title "Which of my items have the most versions?" `
+        -InfoTitle "Sitecore recommendation: Limit the number of versions of any item to the fewest possible." `
+        -InfoDescription "The report shows all items that have more than <b>$count versions</b> to allow you to address any potential issues arising. <br>
+                          Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number.  <br> <br>
+                          There is a shared source module, <a href='http://marketplace.sitecore.net/en/Modules/Version_Manager.aspx' style='text-decoration:underline' target='_blank'>Version Manager - available at Sitecore Marketplace</a> to help manage versions."
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 25
+
+Software/32x32/branch.png
+----version----
+language: en
+version: 1
+revision: 1f8369e8-dd36-4259-8df6-53d57733d7fd
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 63
+
+Limit the number of versions of any item to the fewest possible
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20130206T173118
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+1f8369e8-dd36-4259-8df6-53d57733d7fd
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20140222T093702:635286586227297969
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

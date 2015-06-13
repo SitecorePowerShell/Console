@@ -1,0 +1,87 @@
+----item----
+version: 1
+id: {29F0D26E-69AF-4A1D-B83B-58D3A9BB3B20}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Configuration Audit/Find all Sitecore PowerShell Commands
+parent: {0ACBFEA0-C6B1-4263-993F-5BCB231A1FFF}
+name: Find all Sitecore PowerShell Commands
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 850
+
+<#
+    This report will display all custom powershell commands made for Sitecore. 
+    
+    .NOTES
+        In order to get help to format correctly you must allow remote script. 
+        Step 1 : Open Windows PowerShell with elevated privileges.
+        Step 2 : Run Set-ExecutionPolicy -ExecutionPolicy RemoteSigned. Enter Y. 
+    
+    http://blog.najmanowicz.com/2011/11/18/sample-scripts-for-sitecore-powershell-console/
+#>
+
+
+$cmds = Get-Command | Where-Object { $_.ModuleName -eq "" -and $_.CommandType -eq "cmdlet" } | % { Get-Help $_.Name | Select-Object -Property Name, Synopsis } | Sort-Object -Property Name
+
+$props = @{
+    InfoTitle = "Sitecore PowerShell Commands"
+    InfoDescription = "Lists the Sitecore PowerShell commands"
+    PageSize = 25
+}
+
+$cmds | Show-ListView @props -Property Name, Synopsis
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+Applications/32x32/unknown.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 3
+
+150
+----version----
+language: en
+version: 1
+revision: 2e0864f1-d099-4749-8565-df4b1e797de6
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20141230T171152
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+2e0864f1-d099-4749-8565-df4b1e797de6
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 35
+
+20150608T234616:635694039769194351Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
