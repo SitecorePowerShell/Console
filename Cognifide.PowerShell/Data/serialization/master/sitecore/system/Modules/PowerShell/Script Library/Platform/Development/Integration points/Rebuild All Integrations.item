@@ -1,9 +1,9 @@
 ----item----
 version: 1
 id: {07C20F9F-7C76-4C13-8166-427A57002FF8}
-database: core
-path: /sitecore/system/Modules/PowerShell/Script Library/Internal/Rebuild All Integrations
-parent: {47AF36D6-DEAB-4075-BFDE-EA637CD7BF73}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Rebuild All Integrations
+parent: {5398F7EA-3ECB-4C84-946E-49C63ECD8DCD}
 name: Rebuild All Integrations
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}

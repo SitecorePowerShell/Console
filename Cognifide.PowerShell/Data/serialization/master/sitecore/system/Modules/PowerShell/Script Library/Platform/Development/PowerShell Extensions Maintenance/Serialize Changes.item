@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7568
+content-length: 7272
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
 $dryRun = $false
@@ -92,8 +92,6 @@ Write-Progress -Activity "Serializing items"
 Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
 Get-Item 'master:\templates\Modules' | Process-Item
 Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Recurse
-Get-Item 'core:\templates\Modules' | Process-Item
-Get-Item 'core:\templates\Modules\PowerShell Console' | Process-Item -Recurse
 
 # Module Root
 Write-Progress -Activity "Serializing Module Root" -PercentComplete 35
@@ -103,7 +101,6 @@ Get-Item 'core:\system\Modules\PowerShell' | Process-Item
 # Colors
 Write-Progress -Activity "Serializing Console Colors" -PercentComplete 40
 Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Recurse
-Get-Item 'core:\system\Modules\PowerShell\Console Colors' | Process-Item -Recurse
 
 # Fonts
 Write-Progress -Activity "Serializing Console Fonts" -PercentComplete 43
@@ -119,7 +116,6 @@ Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item
 Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
-Get-Item 'core:\system\Modules\PowerShell\Script Library' | Process-Item -Recurse
 Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
 
 # Settings
@@ -177,7 +173,7 @@ if($officeIcons.Keys.Count -gt 0){
 ----version----
 language: en
 version: 1
-revision: 95f6fb26-c78c-4d28-b330-56554cd817f9
+revision: 48df3c07-7535-40fd-b3a7-6fccd6a9409d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -192,14 +188,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-95f6fb26-c78c-4d28-b330-56554cd817f9
+48df3c07-7535-40fd-b3a7-6fccd6a9409d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150608T182609:635693847699521485
+20150613T210510:635698263100270469
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
