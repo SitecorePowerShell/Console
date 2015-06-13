@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework;
@@ -21,6 +23,9 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border NamePanel;
         protected DataContext ScriptDataContext;
         protected TreeviewEx Treeview;
+        protected Combobox Databases;
+        protected string InitialDatabase;
+
         // Methods
         private Item GetCurrentItem(Message message)
         {
@@ -49,18 +54,24 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!Context.ClientPage.IsEvent)
             {
                 ScriptDataContext.GetFromQueryString();
-                var queryString = WebUtil.GetQueryString("db");
-                if (queryString.Length > 0)
+                var db = WebUtil.GetQueryString("db");
+
+                InitialDatabase = string.IsNullOrEmpty(db) ? ApplicationSettings.ScriptLibraryDb : db;
+
+                BuildDatabases();
+
+                if (db.Length > 0)
                 {
                     if (!string.IsNullOrEmpty(ScriptDataContext.Parameters))
                     {
-                        ScriptDataContext.Parameters = ScriptDataContext.Parameters + "&databaseName=" + queryString;
+                        ScriptDataContext.Parameters = ScriptDataContext.Parameters + "&databaseName=" + db;
                     }
                     else
                     {
-                        ScriptDataContext.Parameters = "databaseName=" + queryString;
+                        ScriptDataContext.Parameters = "databaseName=" + db;
                     }
                 }
+
                 Context.ClientPage.ServerProperties["id"] = WebUtil.GetQueryString("id");
                 var icon = WebUtil.GetQueryString("ic");
                 if (icon.Length > 0)
@@ -108,7 +119,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    Context.ClientPage.ClientResponse.SetDialogValue(selectedItem.Paths.Path);
+                    Context.ClientPage.ClientResponse.SetDialogValue(selectedItem.Database.Name + ":" +
+                                                                     selectedItem.Paths.Path);
                     SheerResponse.CloseWindow();
                 }
             }
@@ -132,7 +144,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else
                 {
-                    var fullPath = selectedItem.Paths.Path + "/" + Filename.Value;
+                    var fullPath = selectedItem.Database.Name + ":" + selectedItem.Paths.Path + "/" + Filename.Value;
                     if (selectedItem.Children[scriptName] != null)
                     {
                         var parameters = new NameValueCollection();
@@ -178,5 +190,32 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             OnOK(this, EventArgs.Empty);
         }
+
+        private void BuildDatabases()
+        {
+            foreach (var str in Factory.GetDatabaseNames())
+            {
+                if (!string.Equals(str, "core", StringComparison.OrdinalIgnoreCase) &&
+                    !Sitecore.Client.GetDatabaseNotNull(str).ReadOnly)
+                {
+                    var child = new ListItem();
+                    Databases.Controls.Add(child);
+                    child.ID = Control.GetUniqueID("ListItem");
+                    child.Header = str;
+                    child.Value = str;
+                    child.Selected = str.Equals(InitialDatabase, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+        }
+
+        protected void ChangeDatabase()
+        {
+            var name = Databases.SelectedItem.Value;
+            ScriptDataContext.BeginUpdate();
+            ScriptDataContext.Parameters = "databasename=" + name;
+            ScriptDataContext.EndUpdate();
+            Treeview.RefreshRoot();
+        }
+
     }
 }

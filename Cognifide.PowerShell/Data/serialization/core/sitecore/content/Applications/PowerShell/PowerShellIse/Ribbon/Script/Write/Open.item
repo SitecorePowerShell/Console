@@ -1,35 +1,49 @@
 ----item----
 version: 1
-id: {800CD2BC-F8A1-4635-BC7B-A96058B1F47E}
+id: {E439A715-F0E9-4064-9E08-995253361BB0}
 database: core
 path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/Open
 parent: {D6C55BB3-43D3-4516-A1A9-9836702B29FE}
 name: Open
 master: {00000000-0000-0000-0000-000000000000}
-template: {97B61451-9A75-4F59-93A5-DBD8D4F44421}
-templatekey: Large Menu Combo Button
+template: {8A63ABCF-1CA6-4FD2-ABEE-5DFC2D7B0C75}
+templatekey: Large Combo Button
 
 ----field----
-field: {F5A07916-7BCA-4FBA-857C-A5D166C332D4}
+field: {4CC38D95-0C13-48A1-820B-904C9966C0F1}
 name: Icon
 key: icon
 content-length: 27
 
 Office/32x32/folder_out.png
 ----field----
-field: {FC6B80F1-406D-47F0-A2B3-FCD7A8EA9D74}
+field: {65B60C8C-D114-49E0-A897-1F64DAA7409E}
 name: Click
 key: click
 content-length: 8
 
 ise:open
 ----field----
-field: {3F5BD18E-8CEE-4CD5-9EE3-77863947B312}
-name: Menu
-key: menu
-content-length: 39
+field: {3B269BC4-FE34-4FB6-97A2-2BB02A346BF5}
+name: Gallery
+key: gallery
+content-length: 18
 
-/sitecore/system/Modules/PowerShell/MRU
+Gallery.MruGallery
+----field----
+field: {B79A37FF-1255-4FCC-9CEC-423DF792B0DE}
+name: Gallery Width
+key: gallery width
+content-length: 3
+
+500
+----field----
+field: {35E17D86-CA92-4903-AA4F-951B4B4795B9}
+name: Gallery Height
+key: gallery height
+content-length: 3
+
+500
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -43,68 +57,54 @@ name: __Sortorder
 key: __sortorder
 content-length: 3
 
-200
-----field----
-field: {A4F985D9-98B3-4B52-AAAF-4344F6E747C6}
-name: __Workflow
-key: __workflow
-content-length: 0
-
-
+300
 ----version----
 language: en
 version: 1
-revision: 6aeb5640-a3ab-4887-badc-3cf8a1415784
+revision: 294f44ed-d398-4d01-a493-2a39a078d156
 
 ----field----
-field: {B11F9F5F-88FC-48C5-9501-2E827EF40EAD}
+field: {FACECAC8-C923-4847-834C-C917268F8F6B}
 name: Header
 key: header
 content-length: 4
 
 Open
 ----field----
-field: {DB8C4E34-586C-4DED-BC95-B993FC3A01A8}
-name: Tooltip
-key: tooltip
-content-length: 34
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
 
-Open a script from script library.
-----field----
-field: {C8F93AFE-BFD4-4E8F-9C61-152559854661}
-name: __Valid from
-key: __valid from
-content-length: 15
-
-20060320T112000
+sitecore\admin
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20060721T115600
+20150612T220456
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
 key: __created by
 content-length: 14
 
-sitecore\Admin
+sitecore\admin
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-6aeb5640-a3ab-4887-badc-3cf8a1415784
+294f44ed-d398-4d01-a493-2a39a078d156
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141223T190628:635549583886403203
+20150612T231049:635697474494120703
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -112,10 +112,3 @@ key: __updated by
 content-length: 14
 
 sitecore\admin
-----field----
-field: {3E431DE1-525E-47A3-B6B0-1CCBEC3A8C98}
-name: __Workflow state
-key: __workflow state
-content-length: 0
-
-

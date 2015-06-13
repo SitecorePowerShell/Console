@@ -8,6 +8,7 @@
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellScriptBrowser,Cognifide.PowerShell" />
 
       <DataContext ID="ScriptDataContext" />
+      <Combobox ID="Databases" Change="ChangeDatabase" />
 
       <GridPanel Width="100%" Height="100%" Style="table-layout:fixed">
         <Scrollbox Height="100%" Class="scScrollbox scFixSize scFixSize4 scInsetBorder" Background="white"

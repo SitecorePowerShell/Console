@@ -50,6 +50,12 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["ItemID"] = value; }
         }
 
+        public static string ScriptItemDb
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemDb"]); }
+            set { Context.ClientPage.ServerProperties["ItemDb"] = value; }
+        }
+
         public static bool UseContext
         {
             get
@@ -66,7 +72,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var scriptItemId = ScriptItemId;
                 return string.IsNullOrEmpty(scriptItemId)
                     ? null
-                    : Sitecore.Client.ContentDatabase.GetItem(new ID(scriptItemId));
+                    : Factory.GetDatabase(ScriptItemDb).GetItem(new ID(scriptItemId));
             }
         }
 
@@ -126,10 +132,12 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             var itemId = WebUtil.GetQueryString("id");
+            var itemDb = WebUtil.GetQueryString("db");
             if (itemId.Length > 0)
             {
                 ScriptItemId = itemId;
-                LoadItem(WebUtil.GetQueryString("db"), itemId);
+                ScriptItemDb = itemDb;
+                LoadItem(itemDb, itemId);
             }
 
             Monitor.JobFinished += MonitorJobFinished;
@@ -154,10 +162,9 @@ namespace Cognifide.PowerShell.Client.Applications
         public override void HandleMessage(Message message)
         {
             Error.AssertObject(message, "message");
-            var item = ScriptItemId == null ? null : Sitecore.Client.ContentDatabase.GetItem(ScriptItemId);
-
             base.HandleMessage(message);
 
+            var item = ScriptItem;
             var context = new CommandContext(item);
             foreach (var key in message.Arguments.AllKeys)
             {
@@ -180,7 +187,8 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (!args.HasResult)
                     return;
-                LoadItem(Sitecore.Client.ContentDatabase.Name, args.Result);
+                var path = args.Result.Split(':');
+                LoadItem(path[0], path[1]);
                 UpdateRibbon();
             }
             else
@@ -243,9 +251,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var scriptName = scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length);
             ScriptName.Text = scriptName;
             SheerResponse.Eval(string.Format("cognifide.powershell.changeWindowTitle('{0}', false);", scriptName));
-            var mruMenu = Sitecore.Client.CoreDatabase.GetItem("/sitecore/system/Modules/PowerShell/MRU") ??
-                          Sitecore.Client.CoreDatabase.CreateItemPath("/sitecore/system/Modules/PowerShell/MRU");
-
+            var mruMenu = ApplicationSettings.GetIseMruContainerItem();
             var mruItems = mruMenu.Children;
             if (mruItems.Count == 0 || !(mruItems[0]["Message"].Contains(id)))
             {
@@ -256,6 +262,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     openedScript["Message"] = string.Format("ise:mruopen(id={0},db={1})", id, db);
                     openedScript["Icon"] = icon;
+                    openedScript["__Icon"] = icon;
                     openedScript["Display name"] = name;
                     openedScript["__Display name"] = name;
                     openedScript[FieldIDs.Sortorder] = "0";
@@ -287,6 +294,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             ScriptItemId = string.Empty;
+            ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = string.Empty;
@@ -312,6 +320,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var scriptItem = Context.ContentDatabase.CreateItemPath(args.Result, libraryTemplate, itemTemplate);
                 DataContext.EnableEvents();
                 ScriptItemId = scriptItem.ID.ToString();
+                ScriptItemDb = scriptItem.Database.Name;
                 SaveItem(new ClientPipelineArgs());
                 MruUpdate(scriptItem);
                 UpdateRibbon();
@@ -366,7 +375,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:reload", true)]
         protected void ReloadItem(ClientPipelineArgs args)
         {
-            LoadItem(Sitecore.Client.ContentDatabase.Name, ScriptItemId);
+            LoadItem(ScriptItemDb, ScriptItemId);
         }
 
         private void LoadItem(string db, string id)
@@ -382,12 +391,13 @@ namespace Cognifide.PowerShell.Client.Applications
                 Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
                 SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
+                ScriptItemDb = scriptItem.Database.Name;
                 MruUpdate(scriptItem);
                 UpdateRibbon();
             }
             else
             {
-                SheerResponse.Alert("The item cannot contain a script.", true);
+                SheerResponse.Alert("The item is not a script.", true);
             }
         }
 
@@ -404,7 +414,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     {
                         scriptSession.SetItemLocationContext(DataContext.CurrentItem);
                     }
-                    scriptSession.SetExecutedScript(Sitecore.Client.ContentDatabase.Name, ScriptItemId);
+                    scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
 
                     if (scriptSession.Output != null)
@@ -458,11 +468,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptSession.SetItemLocationContext(DataContext.CurrentItem);
             }
 
-            scriptSession.SetExecutedScript(Sitecore.Client.ContentDatabase.Name, ScriptItemId);
+            scriptSession.SetExecutedScript(ScriptItem);
             var parameters = new object[]
             {
-                scriptSession,
-                ScriptItemId
+                scriptSession
             };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, autoDispose);
@@ -618,7 +627,7 @@ namespace Cognifide.PowerShell.Client.Applications
         private void UpdateRibbon()
         {
             var ribbon = new Ribbon {ID = "PowerShellRibbon"};
-            var item = ScriptItemId == null ? null : Sitecore.Client.ContentDatabase.GetItem(ScriptItemId);
+            var item = ScriptItem;
             ribbon.CommandContext = new CommandContext(item);
             ribbon.ShowContextualTabs = false;
             ribbon.CommandContext.Parameters["HasFile"] = HasFile.Disabled ? "0" : "1";

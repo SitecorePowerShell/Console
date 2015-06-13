@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
+using Sitecore;
+using Sitecore.Collections;
 using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Security.Accounts;
@@ -203,6 +206,13 @@ namespace Cognifide.PowerShell.Core.Settings
             }
         }
 
+        public static Item GetIseMruContainerItem()
+        {
+            var currentUserItem = GetInstance(ApplicationNames.IseConsole).GetSettingsDtoForSave();
+            return currentUserItem.Children["MRU"] ??
+                          currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
+        }
+
         public void Save()
         {
             var configuration = GetSettingsDtoForSave();
@@ -272,6 +282,12 @@ namespace Cognifide.PowerShell.Core.Settings
                 FontFamily = "Monaco";
                 Loaded = true;
             }
+        }
+
+        public static Item ScriptLibraryRoot()
+        {
+            var db = Factory.GetDatabase(ScriptLibraryDb);
+            return db.GetItem(ScriptLibraryPath);
         }
     }
 }
