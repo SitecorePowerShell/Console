@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9461
+content-length: 9413
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -150,11 +150,8 @@ Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | ? { 
 Get-Item 'core:\system\Modules\PowerShell\Script Library' | Serialize-Item -Recurse
 Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | ? { -not ($_.Name -match "(Test)") } | Serialize-Item
 
-# Prepare settings - cleanup
-$settingsToCleanup = get-childitem sitecore -Path master:\system\Modules\PowerShell\Settings\ -recurse | remove-item -recurse
-
 # Settings
-$source = Get-Item master:\system\Modules\PowerShell\Settings | New-ItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
+$source = (get-childitem -Path master:\system\Modules\PowerShell\Settings\) + (get-childitem "All Users" -Path master:\system\Modules\PowerShell\Settings\ -recurse) | New-ExplicitItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
 # Applications
@@ -203,7 +200,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Versi
 ----version----
 language: en
 version: 1
-revision: 283f9c06-3c15-4191-b6ef-32ed24348ea4
+revision: f079b101-58af-42b0-b65e-d62f6cb6031a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -218,14 +215,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-283f9c06-3c15-4191-b6ef-32ed24348ea4
+f079b101-58af-42b0-b65e-d62f6cb6031a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150609T220350:635694842304794922
+20150612T211759:635697406791298438
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
