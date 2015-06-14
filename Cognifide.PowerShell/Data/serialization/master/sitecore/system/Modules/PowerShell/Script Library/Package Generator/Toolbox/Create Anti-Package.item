@@ -13,9 +13,23 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7220
+content-length: 7652
 
-$path = "C:\inetpub\wwwroot\Console\Data\packages\Sample Package-1.0.zip"
+$response = Show-ModalDialog -HandleParameters @{
+    "h"="Create an Anti-Package"; 
+    "t" = "Select a package that needs an anti-package"; 
+    "ic"="People/16x16/box.png"; 
+    "ok"="Pick";
+    "ask"="";
+    "path"= "packPath:$SitecorePackageFolder";
+    "mask"="*.zip";
+} -Control "Installer.Browse"
+
+if(!$response -or $response -eq "undetermined") {
+    Write-Verbose "Operation cancelled by user."
+    return $null
+}
+$path = Join-Path -Path $SitecorePackageFolder -ChildPath $response
 
 function Get-PackageProject {
     param (
@@ -228,7 +242,7 @@ Apps/32x32/Packager.png
 ----version----
 language: en
 version: 1
-revision: e015d511-8553-461a-b8f7-03ecef2b9280
+revision: 542587df-edb5-40cb-bade-59ec844db533
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -243,14 +257,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e015d511-8553-461a-b8f7-03ecef2b9280
+542587df-edb5-40cb-bade-59ec844db533
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150611T063753:635696014735535444Z
+20150614T161821:635698955012614643Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
