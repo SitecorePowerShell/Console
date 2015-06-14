@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Management.Automation;
 using System.Web;
 using Sitecore.Data;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Pipelines.SaveLayout;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
+using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
@@ -13,8 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     [Serializable]
     public class ShowApplicationMessage : IMessage
     {
-        public ShowApplicationMessage(string application, string title, string icon, string width, string height,
-            bool modal, Hashtable parameters)
+        public ShowApplicationMessage(string application, string title, string icon, string width, string height, bool modal, Hashtable parameters)
         {
             Title = title;
             Width = width;
@@ -40,6 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 var urlString = new UrlString();
                 AddParameters(urlString);
+
                 var appItem =
                     Database.GetDatabase("core").GetItem("/sitecore/content/Applications/" + AppName);
                 Windows.RunApplication(appItem, Icon ?? appItem["Icon"], Title ?? appItem["Display name"],

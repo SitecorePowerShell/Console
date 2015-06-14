@@ -1,6 +1,11 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Management.Automation;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Sitecore;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Pipelines.SaveLayout;
+using Sitecore.Text;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
@@ -18,27 +23,35 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Dialog from control name")]
         public Hashtable Parameters { get; set; }
 
+        [Parameter]
+        public Hashtable HandleParameters { get; set; }
+
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
                 string response = null;
-                if (Parameters != null)
-                {
-                    var hashParams = new Hashtable(Parameters.Count);
-                    foreach (string key in Parameters.Keys)
-                    {
-                        hashParams.Add(key, WebUtil.SafeEncode(Parameters[key].ToString()));
-                    }
-                    response = JobContext.ShowModalDialog(hashParams, Control, WidthString, HeightString);
-                }
-                else if (!string.IsNullOrEmpty(Url))
+                if (!string.IsNullOrEmpty(Url))
                 {
                     response = JobContext.ShowModalDialog(Url, WidthString, HeightString);
                 }
                 else if (!string.IsNullOrEmpty(Control))
                 {
-                    response = JobContext.ShowModalDialog(Title ?? "Sitecore", Control, WidthString, HeightString);
+                    UrlString url = new UrlString(UIUtil.GetUri("control:" + Control));
+                    url["te"] = Title ?? "Sitecore";
+
+                    if (Parameters != null)
+                    {
+                        foreach (string key in Parameters.Keys)
+                        {
+                            url.Add(key, WebUtil.SafeEncode(Parameters[key].ToString()));
+                        }
+                    }
+
+                    var message = new ShowModalDialogPsMessage(url.ToString(), WidthString, HeightString, HandleParameters);
+                    PutMessage(message);
+                    response = (string)GetSheerResult(message);
+
                 }
                 WriteObject(response);
             });
