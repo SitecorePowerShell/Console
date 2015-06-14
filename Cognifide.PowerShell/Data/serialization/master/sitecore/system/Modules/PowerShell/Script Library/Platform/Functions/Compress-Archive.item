@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1604
+content-length: 2053
 
 <#
     .SYNOPSIS
@@ -48,57 +48,63 @@ function Compress-Archive {
         $level = [System.IO.Compression.CompressionLevel]::Optimal
         
         if($Name -notmatch "zip$") {
+            Write-Verbose "Adding the extension .zip to the filename."
             $Name += ".zip"
         }
         
         if(!(Test-Path -Path $OutputPath)) {
+            Write-Verbose "Creating a new directory at the specified path $($OutputPath)"
             New-Item -Path $OutputPath -ItemType directory
         }
         
         $zipPath = (Join-Path -Path $OutputPath -ChildPath $Name)
         if(Test-Path -Path $zipPath) {
+            Write-Verbose "Removing the old archive at the path $($zipPath)"
             Remove-Item -Path $zipPath
         }
         
+        Write-Verbose "Opening the archive at the path $($zipPath)"
         $zipFile = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
     }
     
     process {
         if($File) {
+            Write-Verbose "Adding the file $($File.Name) to the archive."
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipFile, $File.FullName, $File.Name, $level) | Out-Null
         }
     }
     
     end {
+        Write-Verbose "Completed adding files to the archive."
         $zipFile.Dispose()
     }
 }
 ----version----
 language: en
 version: 1
-revision: 5d9cd461-5b2d-407c-ba9a-72bbd7433d14
+revision: 5502d14e-808f-437c-bb70-9202d4130801
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20140428T210908
+20140429T020908Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-5d9cd461-5b2d-407c-ba9a-72bbd7433d14
+5502d14e-808f-437c-bb70-9202d4130801
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141227T175204:635552995242557343
+20150614T193434:635699072749499241Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
