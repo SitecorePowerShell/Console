@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7652
+content-length: 7650
 
 $response = Show-ModalDialog -HandleParameters @{
     "h"="Create an Anti-Package"; 
@@ -187,7 +187,7 @@ foreach($source in $project.Sources) {
     } else {
         if($isItemSource) {
             $itemRoot = Get-Item -Path "$($source.Database):" -ID $source.Root
-            $items = @($itemRoot) + (Get-ChildItem -Path $itemRoot.ItemPath -Recurse)
+            $items = @($itemRoot) + (Get-ChildItem -Path $itemRoot.PSPath -Recurse)
         } elseif($isFileSource) {
             $fileRoot = Get-Item -Path "$AppPath\$($source.Root)"
             $files = @($fileRoot)
@@ -242,7 +242,7 @@ Apps/32x32/Packager.png
 ----version----
 language: en
 version: 1
-revision: 542587df-edb5-40cb-bade-59ec844db533
+revision: ea8027aa-a9a2-48c4-becc-f2800598e8a8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -257,14 +257,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-542587df-edb5-40cb-bade-59ec844db533
+ea8027aa-a9a2-48c4-becc-f2800598e8a8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150614T161821:635698955012614643Z
+20150614T163920:635698967601111346Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
