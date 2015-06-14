@@ -13,14 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1611
+content-length: 1808
 
 <#
     .SYNOPSIS
         Run scripts in Sitecore PowerShell Extensions via web service calls.
 
    .NOTES
-        v1.0 - 20150427 
+        v1.0 - 20150503 
 #>
 
 
@@ -52,14 +52,18 @@ function Invoke-RemoteScript {
         [hashtable]$ArgumentList
     )
 
-    if($PSCmdlet.ParameterSetName -eq "InProcess") {
+    if($PScommand.ParameterSetName -eq "InProcess") {
         $ScriptBlock.Invoke()
     } else {
-        if($PSCmdlet.ParameterSetName -eq "Session") {
+        if($PScommand.ParameterSetName -eq "Session") {
             $ConnectionUri = $Session.ConnectionUri
             $Username = $Session.Username
             $Password = $Session.Password
             $SessionId = $Session.SessionId
+        }
+        
+        if(!$ConnectionUri.EndsWith(".asmx")) {
+            $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
         }
 
         $proxy = New-WebServiceProxy -Uri $ConnectionUri
@@ -68,36 +72,36 @@ function Invoke-RemoteScript {
         if($ArgumentList) {
             $parameters = ConvertTo-CliXml -InputObject $ArgumentList
         }
-        $response = $proxy.ExecuteScriptBlock($Username, $Password, $ScriptBlock.ToString(), $parameters, $SessionId)
+        $response = $proxy.ExecuteScriptBlock2($Username, $Password, $ScriptBlock.ToString(), $parameters, $SessionId)
         ConvertFrom-CliXml -InputObject $response
     }
 }
 ----version----
 language: en
 version: 1
-revision: 00d0e394-bb89-4824-b8be-ece415e578cb
+revision: f5004e1a-3472-4e48-9721-b1e81dc384c3
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20150424T061455
+20150424T061455Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-00d0e394-bb89-4824-b8be-ece415e578cb
+f5004e1a-3472-4e48-9721-b1e81dc384c3
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150427T211425:635657660655175031
+20150614T194027:635699076274001475Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

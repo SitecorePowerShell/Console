@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 35317
+content-length: 35326
 
 # requires -Version 2
 # requires .Net Version 3.0
@@ -27,7 +27,7 @@ content-length: 35317
 	.DESCRIPTION
 		(This script will by referenced with the name: Export-XLSX)
 	
-		These script cmdlet creates a Excel XLSX workbook file and stores the data of the objects that you submit in a worksheet within the workbook.
+		These script command creates a Excel XLSX workbook file and stores the data of the objects that you submit in a worksheet within the workbook.
 		Each object is represented as a row of cells (line) in a worksheet within the workbook.
 		The row consists of a number of Text typed worksheet cells. Each cell will contain the value of a property of the object (property column).
 		Each property is converted into its string representation and stored as type of text inline into the Excel worksheet XML.
@@ -48,7 +48,7 @@ content-length: 35317
 		NOTE:
 		Do not format objects before sending them to this script.
 		If you do, the format properties are represented in the Excel file, instead of the properties of the original objects.
-		To export only selected properties of an object, use the Select-Object cmdlet.
+		To export only selected properties of an object, use the Select-Object command.
 
 	.PARAMETER Append
 		Adds a worksheet (and data) to the end of the specified workbook file.
@@ -156,7 +156,7 @@ function Export-Xlsx {
 		$target = 'C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\WindowsBase.dll'
 		$errorRecord = New-Object Management.Automation.ErrorRecord $exception,$errorID,$errorCategory,$target
 		# throw terminating error
-		$PSCmdlet.ThrowTerminatingError($errorRecord)
+		$PScommand.ThrowTerminatingError($errorRecord)
 		# leave script
 		return
 	}
@@ -314,7 +314,7 @@ function Export-Xlsx {
 
 			# test if File is locked
 			If($ErrorRecord = Test-FileLocked 'D:\temp\PSExcel.xlsx' -PassThru){
-				$PSCmdlet.WriteError($ErrorRecord)
+				$PScommand.WriteError($ErrorRecord)
 				return
 			}
 			
@@ -328,7 +328,7 @@ function Export-Xlsx {
 				# recreate an ErrorRecord Object with the invocation info from this function from catched translated ErrorRecord Object
 				$NewError = New-Object System.Management.Automation.ErrorRecord -ArgumentList $_.Exception,$_.FullyQualifiedErrorId,$_.CategoryInfo.Category,$_.TargetObject
 				# throw the ErrorRecord Object
-				$PSCmdlet.WriteError($NewError)
+				$PScommand.WriteError($NewError)
 				# leave Function
 				Return
 			}
@@ -591,7 +591,7 @@ function Export-Xlsx {
 				# recreate an ErrorRecord Object with the invocation info from this function from catched translated ErrorRecord Object
 				$NewError = New-Object System.Management.Automation.ErrorRecord -ArgumentList $_.Exception,$_.FullyQualifiedErrorId,$_.CategoryInfo.Category,$_.TargetObject
 				# throw the ErrorRecord Object
-				$PSCmdlet.WriteError($NewError)
+				$PScommand.WriteError($NewError)
 				# leave Function
 				Return
 			}
@@ -650,7 +650,7 @@ function Export-Xlsx {
 			NOTE: Do not format objects before sending them to the Export-WorkSheet function.
 			If you do, the format properties are represented in the worksheet,
 			instead of the properties of the original objects.
-			To export only selected properties of an object, use the Select-Object cmdlet.
+			To export only selected properties of an object, use the Select-Object command.
 
 		.PARAMETER  Path
 			Path to the existing Excel .xlsx workbook
@@ -813,7 +813,7 @@ function Export-Xlsx {
 			# append is not given or the file does not exist so we create a new file 
 			Try {
 				# test for errors
-				# we misuse Out-File cmdlet to test if the file could be created or overridden and to create better errorrecords then [System.IO.Packaging.Package]::Open creates. 
+				# we misuse Out-File command to test if the file could be created or overridden and to create better errorrecords then [System.IO.Packaging.Package]::Open creates. 
 				# Out-File generates an ErrorRecord Object which is automaticly translated in other languages by the Microsoft mechanism 
 				Out-File -InputObject "" -FilePath $Path -NoClobber:$NoClobber.IsPresent -Force:$Force.IsPresent -ErrorAction stop
 				Remove-Item $Path -Force
@@ -823,7 +823,7 @@ function Export-Xlsx {
 				# recreate an ErrorRecord Object with the invocation info from this script from the catched ErrorRecord Object
 				$NewError = New-Object System.Management.Automation.ErrorRecord -ArgumentList $_.Exception,$_.FullyQualifiedErrorId,$_.CategoryInfo.Category,$_.TargetObject
 				# throw the ErrorRecord Object
-				$PSCmdlet.WriteError($NewError)
+				$PScommand.WriteError($NewError)
 				# leave script
 				Return
 			}
@@ -854,29 +854,29 @@ function Export-Xlsx {
 ----version----
 language: en
 version: 1
-revision: 3ee35be3-eecd-47d1-be68-ff7a03facf5c
+revision: c38064db-34d0-490b-8cfd-d587e2c15f75
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20140611T204311
+20140612T014311Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-3ee35be3-eecd-47d1-be68-ff7a03facf5c
+c38064db-34d0-490b-8cfd-d587e2c15f75
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20141227T175204:635552995246746797
+20150614T193931:635699075717877947Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
