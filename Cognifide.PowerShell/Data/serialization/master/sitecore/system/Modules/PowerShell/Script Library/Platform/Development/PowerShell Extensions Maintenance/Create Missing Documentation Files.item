@@ -13,12 +13,12 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2487
+content-length: 2592
 
 $DocumentationFolder = "C:\Projects\sitecorepowershell\Trunk\Documentation"
 
 $documented = Get-ChildItem $DocumentationFolder | % { $_.BaseName } 
-$undocumented = get-command | ? { $_.DLL -match "Cognifide"}  | ? { "$($_.Verb)-$($_.Noun)" -Notin $documented } | %{ "$($_.Verb)-$($_.Noun)" }
+$undocumented = get-command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"}  | ? { "$($_.Verb)-$($_.Noun)" -Notin $documented } | %{ "$($_.Verb)-$($_.Noun)" }
 
 $commonParameters = 
     @{ Path = "Path to the item to be processed - can work with Language parameter to narrow the publication scope.";
@@ -104,7 +104,7 @@ foreach($parameter in $parameters){
 ----version----
 language: en
 version: 1
-revision: 83c97f49-77b4-4ffe-86ca-0f55b719b435
+revision: a69bef99-b1ad-461f-8205-a24ad579a265
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -119,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-83c97f49-77b4-4ffe-86ca-0f55b719b435
+a69bef99-b1ad-461f-8205-a24ad579a265
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141227T175203:635552995231297578
+20150614T163913:635698967538678672
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
