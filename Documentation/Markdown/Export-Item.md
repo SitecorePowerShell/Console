@@ -1,6 +1,6 @@
-# Export-Item 
+﻿# Export-Item 
  
-Serializes sitecore item to server disk drive. This command used to be named Serialize-Item - a matching alias added for compatibility with older scripts. 
+Exports (serializes) the Sitecore item to the filesystem. 
  
 ## Syntax 
  
@@ -15,7 +15,7 @@ Export-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-ItemPat
  
 ## Detailed Description 
  
-Serializes sitecore item to server disk drive.
+The Export-Item command serializes Sitecore items to the filesystem. The alias for the command is Serialize-Item.
 The simplest command syntax is:
 Export-Item -path "master:\content"
 
@@ -36,7 +36,7 @@ The following abbreviations are aliases for this cmdlet:
  
 ### -Entry&nbsp; &lt;IncludeEntry&gt; 
  
-Serialization preset to be serialized. Obtain the preset through the use of Get-Preset commandlet 
+Serialization preset to be serialized. Obtain the preset through the use of Get-Preset command. 
  
 <table>
     <thead></thead>
@@ -321,12 +321,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Data.Items.Item 
- 
 ## Notes 
  
 Help Author: Marek Musielak, Adam Najmanowicz, Michael West 
@@ -345,14 +339,4 @@ PS master:\> Export-Item -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-Preset
-* Import-Item
-* <a href='http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/' target='_blank'>http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/</a><br/>
-* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>
-* <a href='https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f' target='_blank'>https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f</a><br/>
-* <a href='http://stackoverflow.com/questions/20266841/sitecore-powershell-deserialization' target='_blank'>http://stackoverflow.com/questions/20266841/sitecore-powershell-deserialization</a><br/>
-* <a href='http://stackoverflow.com/questions/20195718/sitecore-serialization-powershell' target='_blank'>http://stackoverflow.com/questions/20195718/sitecore-serialization-powershell</a><br/>
-* <a href='http://stackoverflow.com/questions/20283438/sitecore-powershell-deserialization-core-db' target='_blank'>http://stackoverflow.com/questions/20283438/sitecore-powershell-deserialization-core-db</a><br/>
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Preset* Import-Item* <a href='http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/' target='_blank'>http://www.cognifide.com/blogs/sitecore/serialization-and-deserialization-with-sitecore-powershell-extensions/</a><br/>* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>* <a href='https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f' target='_blank'>https://gist.github.com/AdamNaj/6c86f61510dc3d2d8b2f</a><br/>* <a href='http://stackoverflow.com/questions/20266841/sitecore-powershell-deserialization' target='_blank'>http://stackoverflow.com/questions/20266841/sitecore-powershell-deserialization</a><br/>* <a href='http://stackoverflow.com/questions/20195718/sitecore-serialization-powershell' target='_blank'>http://stackoverflow.com/questions/20195718/sitecore-serialization-powershell</a><br/>* <a href='http://stackoverflow.com/questions/20283438/sitecore-powershell-deserialization-core-db' target='_blank'>http://stackoverflow.com/questions/20283438/sitecore-powershell-deserialization-core-db</a><br/>

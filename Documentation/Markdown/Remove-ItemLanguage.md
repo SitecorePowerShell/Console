@@ -1,12 +1,12 @@
-# Remove-ItemLanguage 
+﻿# Remove-ItemLanguage 
  
 Removes Language from a single item or a branch of items 
  
 ## Syntax 
  
-Remove-ItemLanguage -Language &lt;String[]&gt; [-ExcludeLanguage &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] 
- 
 Remove-ItemLanguage -Language &lt;String[]&gt; [-ExcludeLanguage &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] 
+ 
+Remove-ItemLanguage -Language &lt;String[]&gt; [-ExcludeLanguage &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] 
  
 Remove-ItemLanguage -Language &lt;String[]&gt; [-ExcludeLanguage &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] 
  
@@ -270,12 +270,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Data.Items.Item 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -314,8 +308,4 @@ PS master:\> Remove-ItemLanguage -Path master:\content\home -ExcludeLanguage "en
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-ItemLanguage
-* Remove-Item
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-ItemLanguage* Remove-Item

@@ -1,6 +1,6 @@
-# Import-Role 
+﻿# Import-Role 
  
-Imports (deserializes) Sitecore roles from the Sitecore server disk drive. 
+Imports (deserializes) Sitecore roles from the Sitecore server filesystem. 
  
 ## Syntax 
  
@@ -15,7 +15,7 @@ Import-Role -Path &lt;String&gt;
  
 ## Detailed Description 
  
-Imports (deserializes) Sitecore roles from the Sitecore server disk drive. 
+The Import-Role command imports (deserializes) Sitecore roles from the Sitecore server filesystem. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -212,13 +212,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
 * System.String
 Sitecore.Security.Accounts.Role 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* System.String
-Sitecore.Security.Accounts.Role 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -268,5 +261,3 @@ PS master:\> Import-Role -Path C:\my\Serialization\Folder\Admins.role
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

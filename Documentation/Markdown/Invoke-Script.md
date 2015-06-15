@@ -1,4 +1,4 @@
-# Invoke-Script 
+﻿# Invoke-Script 
  
 Executes a script from Sitecore PowerShell Extensions Script Library.
 This command used to be named Execute-Script - a matching alias added for compatibility with older scripts. 
@@ -102,7 +102,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.Object 
  
 ## Notes 
  
@@ -122,7 +122,4 @@ PS master:\> Invoke-Script 'Examples\Script Testing\Long Running Script with Pro
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Import-Function
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Import-Function

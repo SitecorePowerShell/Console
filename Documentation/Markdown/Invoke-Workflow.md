@@ -1,15 +1,15 @@
-# Invoke-Workflow 
+﻿# Invoke-Workflow 
  
 Executes Workflow action for an item.
 This command used to be named Execute-Workflow - a matching alias added for compatibility with older scripts. 
  
 ## Syntax 
  
-Invoke-Workflow [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
+Invoke-Workflow [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
  
 Invoke-Workflow [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
  
-Invoke-Workflow [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
+Invoke-Workflow [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -92,7 +92,7 @@ Comment to be saved in the history table for the action.
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported. 
+Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -160,7 +160,7 @@ The item to have the workflow action executed.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to have the workflow action executed - can work with Language parameter to narrow the publication scope. 
+Path to the item to have the workflow action executed - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -194,7 +194,7 @@ Path to the item to have the workflow action executed - can work with Language p
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to have the workflow action executed - can work with Language parameter to narrow the publication scope. 
+Id of the the item to have the workflow action executed - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -266,12 +266,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Data.Items.Item 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -301,5 +295,3 @@ PS master:\> Get-Item master:/content/home | Invoke-Workflow -CommandName "Rejec
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

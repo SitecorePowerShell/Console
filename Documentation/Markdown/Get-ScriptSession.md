@@ -1,6 +1,6 @@
-# Get-ScriptSession 
+﻿# Get-ScriptSession 
  
-Returns the list of PowerShell Extension Sessions running in background. 
+Returns the list of PowerShell Extension Sessions running in the background. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Get-ScriptSession -Type &lt;String[]&gt;
  
 ## Detailed Description 
  
-Returns the list of PowerShell Extension Sessions running in background. 
+The Get-ScriptSession command returns the list of PowerShell Extension Sessions running in background. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -121,6 +121,12 @@ Returns current script session if the session is run in a background job.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Cognifide.PowerShell.PowerShellIntegrations.Host.ScriptSessio 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -159,6 +165,4 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* Remove-ScriptSession

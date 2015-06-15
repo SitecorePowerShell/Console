@@ -1,4 +1,4 @@
-# Remove-Rendering 
+﻿# Remove-Rendering 
  
 Removes renderings from an item. 
  
@@ -6,21 +6,21 @@ Removes renderings from an item.
  
 Remove-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
-Remove-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
- 
 Remove-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
+ 
+Remove-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
 Remove-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
-Remove-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
- 
 Remove-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
  
-Remove-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Remove-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
 Remove-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
 Remove-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
+ 
+Remove-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
  
 ## Detailed Description 
@@ -449,7 +449,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.Void 
  
 ## Notes 
  
@@ -489,13 +489,4 @@ PS master:\> Remove-Rendering -Path master:\content\home -PlaceHolder "main*" -D
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-Rendering
-* New-Rendering
-* Set-Rendering
-* Get-Rendering
-* Get-LayoutDevice
-* Get-Layout
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Get-Layout* Set-Layout

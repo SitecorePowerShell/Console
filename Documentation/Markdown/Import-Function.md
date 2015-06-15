@@ -1,4 +1,4 @@
-# Import-Function 
+﻿# Import-Function 
  
 Imports a function script from the script library's "Functions" folder. 
  
@@ -7,7 +7,7 @@ Imports a function script from the script library's "Functions" folder.
  
 ## Detailed Description 
  
-Imports a function script from the script library's "Functions" folder. 
+The Import-Function command imports a function script from the script library's "Functions" folder. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -23,7 +23,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.Object 
  
 ## Notes 
  
@@ -33,7 +33,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 
  
-The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" commandlet 
+The following imports a Resolve-Error function that you may later use to get a deeper understanding of a problem with script should one occur by xecuting the "Resolve-Error" command 
 that was imported as a result of the execution of the following line 
  
 ```powershell   
@@ -44,7 +44,4 @@ PS master:\> Import-Function -Name Resolve-Error
  
 ## Related Topics 
  
-* Invoke-Script
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Invoke-Script* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

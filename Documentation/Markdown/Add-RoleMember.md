@@ -1,4 +1,4 @@
-# Add-RoleMember 
+﻿# Add-RoleMember 
  
 Adds one or more Sitecore users to the specified role. 
  
@@ -9,7 +9,7 @@ Add-RoleMember [-Identity] &lt;AccountIdentity&gt; -Members &lt;AccountIdentity[
  
 ## Detailed Description 
  
-The Add-RoleMember cmdlet gets a role and assigns users as members of the Sitecore role.
+The Add-RoleMember command assigns Sitecore users as members of the specified role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
@@ -101,8 +101,7 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* None. 
  
 ## Notes 
  
@@ -122,8 +121,4 @@ PS master:\> Add-RoleMember -Identity developer -Members "michael","adam","mike"
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-RoleMember
-* Remove-RoleMember
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-RoleMember* Remove-RoleMember

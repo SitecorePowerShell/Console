@@ -1,4 +1,4 @@
-# Send-File 
+﻿# Send-File 
  
 Allows users to download files from server and file items from media library. 
  
@@ -11,7 +11,7 @@ Send-File [-Message &lt;String&gt;] [-Item] &lt;Item&gt; [-NoDialog] [-Title &lt
  
 ## Detailed Description 
  
-Executing this commandlet with file path on the server provides script users with means to download a file to their computer.
+Executing this command with file path on the server provides script users with means to download a file to their computer.
 Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
 If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned. 
  
@@ -269,7 +269,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.String 
  
 ## Notes 
  
@@ -300,5 +300,3 @@ PS master:\> Get-Item "master:/media library/Showcase/cognifide_logo" | Send-Fil
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

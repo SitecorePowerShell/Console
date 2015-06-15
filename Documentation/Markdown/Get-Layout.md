@@ -1,6 +1,6 @@
-# Get-Layout 
+﻿# Get-Layout 
  
-Retrieves Layout of an item. 
+Returns the layout for the specified item. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Get-Layout -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Device &lt;DeviceIt
  
 ## Detailed Description 
  
-Returns a Layout set on an item for a specific device. 
+The Get-Layout command returns the layout for the specified item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -22,7 +22,7 @@ Returns a Layout set on an item for a specific device.
 ### -Device&nbsp; &lt;DeviceItem&gt; 
  
 Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
-If Device is specified but no layout is specified the commandlet will return an error that can be silenced 
+If Device is specified but no layout is specified the command will return an error that can be silenced 
  
 <table>
     <thead></thead>
@@ -220,13 +220,4 @@ PS master:\> Get-Layout -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-Rendering
-* New-Rendering
-* Set-Rendering
-* Get-Rendering
-* Get-LayoutDevice
-* Remove-Rendering
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Set-Layout

@@ -1,4 +1,4 @@
-# Get-SearchIndex 
+﻿# Get-SearchIndex 
  
 Returns sitecore Search indices. 
  
@@ -49,6 +49,12 @@ Name of the index to return.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Search.Index 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -73,5 +79,3 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

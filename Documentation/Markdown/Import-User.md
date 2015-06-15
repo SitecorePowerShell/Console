@@ -1,6 +1,6 @@
-# Import-User 
+﻿# Import-User 
  
-Imports (deserializes) Sitecore users from the Sitecore server disk drive. 
+Imports (deserializes) Sitecore users from the Sitecore server filesystem. 
  
 ## Syntax 
  
@@ -15,7 +15,7 @@ Import-User -Path &lt;String&gt;
  
 ## Detailed Description 
  
-Imports (deserializes) Sitecore users from the Sitecore server disk drive. 
+The Import-User command imports (deserializes) Sitecore users from the Sitecore server filesystem. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -105,7 +105,7 @@ Import-User -Filter "sitecore\*"
  
 ### -User&nbsp; &lt;User&gt; 
  
-User object retrieved from the Sitecore API or using the Get-User commandlet identifying the user account to be deserialized. 
+User object retrieved from the Sitecore API or using the Get-User command identifying the user account to be deserialized. 
  
 <table>
     <thead></thead>
@@ -212,13 +212,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
 * System.String
 Sitecore.Security.Accounts.User 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* System.String
-Sitecore.Security.Accounts.User 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -268,5 +261,3 @@ PS master:\> Import-User -Path C:\my\Serialization\Folder\Admin.user
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

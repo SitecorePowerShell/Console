@@ -1,25 +1,25 @@
-﻿# Remove-Session 
+﻿# Remove-ScriptSession 
  
-Removes one or more Sitecore user sessions. 
+Removes a persistent Script Session from memory. 
  
 ## Syntax 
  
-Remove-Session -InstanceId &lt;String[]&gt; 
+Remove-ScriptSession -Id &lt;String&gt; 
  
-Remove-Session [-Instance] &lt;Session&gt; 
+Remove-ScriptSession -Session &lt;ScriptSession&gt; 
  
  
 ## Detailed Description 
  
-The Remove-Session command removes user sessions in Sitecore. 
+Removes a persistent Script Session from memory. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -InstanceId&nbsp; &lt;String[]&gt; 
+### -Id&nbsp; &lt;String&gt; 
  
-Specifies the Sitecore SessionID. 
+Id of the PowerShell session to be removed from memory. 
  
 <table>
     <thead></thead>
@@ -42,7 +42,7 @@ Specifies the Sitecore SessionID.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -51,9 +51,9 @@ Specifies the Sitecore SessionID.
     </tbody>
 </table> 
  
-### -Instance&nbsp; &lt;Session&gt; 
+### -Session&nbsp; &lt;ScriptSession&gt; 
  
-Specifies the Sitecore user sessions. 
+Session to be removed. 
  
 <table>
     <thead></thead>
@@ -68,7 +68,7 @@ Specifies the Sitecore user sessions.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -89,13 +89,7 @@ Specifies the Sitecore user sessions.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Accepts a user session.* Sitecore.Web.Authentication.DomainAccessGuard.Sessio 
- 
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* None. 
+* Resident Script Session obtained through Get-ScriptSessio* Id of a resident Script Sessio* Cognifide.PowerShell.Core.Host.ScriptSessio* System.String 
  
 ## Notes 
  
@@ -103,26 +97,16 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
  
  
 ```powershell   
  
-PS master:\> Remove-Session -InstanceId tekipna1lk0ccr2z1bdjsua2,wq4bfivfm2tbgkgdccpyzczp 
- 
-``` 
- 
-### EXAMPLE 2 
- 
- 
- 
-```powershell   
- 
-PS master:\> Get-Session -Identity michael | Remove-Session 
+PS master:\> Remove-ScriptSession -Path master:\content\home 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Session
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* Get-ScriptSession

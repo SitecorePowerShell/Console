@@ -1,23 +1,57 @@
-# Set-User 
+﻿# Set-User 
  
 Sets the Sitecore user properties. 
  
 ## Syntax 
  
-Set-User [-Identity] &lt;AccountIdentity&gt; [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Set-User [-Identity] &lt;AccountIdentity&gt; [-IsAdministrator &lt;Boolean&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
-Set-User -Instance &lt;User&gt; [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Set-User -Instance &lt;User&gt; [-IsAdministrator &lt;Boolean&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
  
 ## Detailed Description 
  
-The Set-User cmdlet sets a user profile properties in Sitecore.
+The Set-User command sets a user profile properties in Sitecore.
 
 The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+### -IsAdministrator&nbsp; &lt;Boolean&gt; 
+ 
+Specifies whether the Sitecore user should be classified as an Administrator. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
@@ -345,11 +379,7 @@ Represents the instance of a user.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-Represents the instance of a user. 
+* None. 
  
 ## Notes 
  
@@ -406,7 +436,7 @@ PS master:\>(Get-User michael).Profile.GetCustomProperty("Date")
  
 ```powershell   
  
-PS master:\> Set-User -Identity michael -IsAdministrator -CustomProperties @{"HireDate"="03/17/2010"}
+PS master:\> Set-User -Identity michael -IsAdministrator $true -CustomProperties @{"HireDate"="03/17/2010"}
 PS master:\>$user = Get-User -Identity michael
 PS master:\>$user.Profile.GetCustomProperty("HireDate")
 
@@ -416,10 +446,4 @@ PS master:\>$user.Profile.GetCustomProperty("HireDate")
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-User
-* New-User
-* Remove-User
-* Unlock-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Remove-User* Unlock-User

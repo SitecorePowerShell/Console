@@ -1,31 +1,31 @@
-# Get-Rendering 
+﻿# Get-Rendering 
  
-Returns RenderingDefinition from an item based on provided filtering parameters. 
+Returns a RenderingDefinition for an item using the filtering parameters. 
  
 ## Syntax 
  
 Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
- 
 Get-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
+ 
+Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
 Get-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
- 
 Get-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
 Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
 Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
  
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+ 
  
 ## Detailed Description 
  
-Returns RenderingDefinition from an item based on provided filtering parameters. 
+The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -449,7 +449,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Layouts.RenderingDefinitio 
  
 ## Notes 
  
@@ -469,13 +469,4 @@ PS master:\> Get-Item master:\content\home | Get-Rendering -Placeholder "*main*"
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-Rendering
-* New-Rendering
-* Set-Rendering
-* Get-LayoutDevice
-* Remove-Rendering
-* Get-Layout
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout

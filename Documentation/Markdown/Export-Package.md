@@ -1,15 +1,15 @@
-# Export-Package 
+﻿# Export-Package 
  
-Exports Sitecore installation package project. 
+Exports a Sitecore installation package and project. 
  
 ## Syntax 
  
-Export-Package [[-Path] &lt;String&gt;] [[-Project] &lt;PackageProject&gt;] [-Zip] [-IncludeProject] 
+Export-Package [[-Path] &lt;String&gt;] [[-Project] &lt;PackageProject&gt;] [-Zip] [-NoClobber] [-IncludeProject] 
  
  
 ## Detailed Description 
  
-Exports Sitecore installation package project as either zip containing all items and files or .xml with project definition. 
+The Export-Package command creates a Sitecore installation package as either a .zip containing all items and files or .xml with project definition. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -118,6 +118,40 @@ If this parameter is missing only Xml file with the package project definition w
     </tbody>
 </table> 
  
+### -NoClobber&nbsp; &lt;SwitchParameter&gt; 
+ 
+Do not overwrite (replace the contents) of an existing file. By default, if a file exists in the specified path, Export-Package overwrites the file without warning. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
 ### -IncludeProject&nbsp; &lt;SwitchParameter&gt; 
  
 Specify this parameter if exporting the zip file and when you want it to contain the project definitnion xml file in it. 
@@ -155,12 +189,6 @@ Specify this parameter if exporting the zip file and when you want it to contain
 ## Inputs 
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
- 
-* Sitecore.Install.PackageProject 
- 
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
  
 * Sitecore.Install.PackageProject 
  
@@ -202,16 +230,4 @@ $package.Sources.Add($source);
  
 ## Related Topics 
  
-* Get-Package
-* Import-Package
-* Install-UpdatePackage
-* New-ExplicitFileSource
-* New-ExplicitItemSource
-* New-FileSource
-* New-ItemSource
-* New-Package
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>
-* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>
-
-
+* Get-Package* Import-Package* Install-UpdatePackage* New-ExplicitFileSource* New-ExplicitItemSource* New-FileSource* New-ItemSource* New-Package* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>

@@ -1,4 +1,4 @@
-# Get-UpdatePackageDiff 
+﻿# Get-UpdatePackageDiff 
  
 Performs a diff operation between the Source and taget path akin to Sitecore Courier. The diff is the difference that takes the content of Source folder and transforms it to Target.
 IMPORTANT! This functionality requires changes to web.config file on your sitecore server to work. Please consult the first Example. 
@@ -85,6 +85,12 @@ Path containing the desired serialization state that the Source needs to be tran
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Update.Interfaces.ICommand 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -147,10 +153,4 @@ Export-UpdatePackage -Path C:\temp\SerializationDiff.update -CommandList $diff -
  
 ## Related Topics 
  
-* Export-UpdatePackage
-* Install-UpdatePackage
-* <a href='http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html' target='_blank'>http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html</a><br/>
-* <a href='https://github.com/adoprog/Sitecore-Courier' target='_blank'>https://github.com/adoprog/Sitecore-Courier</a><br/>
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Export-UpdatePackage* Install-UpdatePackage* <a href='http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html' target='_blank'>http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html</a><br/>* <a href='https://github.com/adoprog/Sitecore-Courier' target='_blank'>https://github.com/adoprog/Sitecore-Courier</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

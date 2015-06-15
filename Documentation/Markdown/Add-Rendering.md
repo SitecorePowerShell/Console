@@ -1,6 +1,6 @@
-# Add-Rendering 
+﻿# Add-Rendering 
  
-Adds Rendering to Item. 
+Adds a rendering to a chosen device for the presentation of an item. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Add-Rendering -Id &lt;String&gt; [-Database &lt;Database&gt;] -Instance &lt;Rend
  
 ## Detailed Description 
  
-Adds rendering to a chosen device for the presentation of an item. 
+Adds a rendering to a chosen device for the presentation of an item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -369,7 +369,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Layouts.RenderingDefinitio 
  
 ## Notes 
  
@@ -393,13 +393,4 @@ PS master:\> Add-Rendering -Item $item -PlaceHolder "main" -Rendering $rendering
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* New-Rendering
-* Set-Rendering
-* Get-Rendering
-* Get-LayoutDevice
-* Remove-Rendering
-* Get-Layout
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout

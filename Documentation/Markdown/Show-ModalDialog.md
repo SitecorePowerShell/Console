@@ -1,17 +1,17 @@
-# Show-ModalDialog 
+﻿# Show-ModalDialog 
  
 Shows Sitecore Sheer control as a modal dialog. 
  
 ## Syntax 
  
-Show-ModalDialog -Control &lt;String&gt; [-Parameters &lt;Hashtable&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Show-ModalDialog -Control &lt;String&gt; [-Parameters &lt;Hashtable&gt;] [-HandleParameters &lt;Hashtable&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
-Show-ModalDialog -Url &lt;String&gt; [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Show-ModalDialog -Url &lt;String&gt; [-HandleParameters &lt;Hashtable&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
  
-Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the commandlet execution. 
+Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the command execution. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -88,6 +88,40 @@ A fully formed URL that constitutes a control execution request.
 ### -Parameters&nbsp; &lt;Hashtable&gt; 
  
 Hashtable of parameters to pass to the control in the url. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -HandleParameters&nbsp; &lt;Hashtable&gt; 
+ 
+ 
  
 <table>
     <thead></thead>
@@ -231,7 +265,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.String 
  
 ## Notes 
  
@@ -251,15 +285,4 @@ PS master:\> Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Yes 
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-Input
-* Show-ListView
-* Show-Result
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

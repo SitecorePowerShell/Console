@@ -1,4 +1,4 @@
-# Remove-RoleMember 
+﻿# Remove-RoleMember 
  
 Removes one or more Sitecore users from the specified role. 
  
@@ -9,7 +9,7 @@ Remove-RoleMember [-Identity] &lt;AccountIdentity&gt; -Members &lt;AccountIdenti
  
 ## Detailed Description 
  
-The Remove-RoleMember cmdlet gets a role and removes members of the Sitecore role.
+The Remove-RoleMember command gets a role and removes members of the Sitecore role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
@@ -101,8 +101,7 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* None. 
  
 ## Notes 
  
@@ -122,8 +121,4 @@ PS master:\> Remove-RoleMember -Identity developer -Members "michael","adam","mi
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-RoleMember
-* Get-RoleMember
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-RoleMember* Get-RoleMember

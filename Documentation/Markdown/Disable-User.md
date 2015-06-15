@@ -1,4 +1,4 @@
-# Disable-User 
+﻿# Disable-User 
  
 Disables the specified Sitecore user. 
  
@@ -11,7 +11,7 @@ Disable-User -Instance &lt;User&gt;
  
 ## Detailed Description 
  
-The Disable-User cmdlet gets a user and disables the account in Sitecore.
+The Disable-User command gets a user and disables the account in Sitecore.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;. 
@@ -107,11 +107,7 @@ One or more user instances.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-One or more user instances. 
+* None. 
  
 ## Notes 
  
@@ -142,5 +138,3 @@ PS master:\> Get-User -Filter * | Disable-User
 ## Related Topics 
  
 * <a href='http://michaellwest.blogspot.com' target='_blank'>http://michaellwest.blogspot.com</a><br/>
-
-

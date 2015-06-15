@@ -1,6 +1,6 @@
-# Find-Item 
+﻿# Find-Item 
  
-Allows to find items using the Sitecore Content Search API. 
+Finds items using the Sitecore Content Search API. 
  
 ## Syntax 
  
@@ -9,7 +9,7 @@ Find-Item [-Criteria &lt;SearchCriteria[]&gt;] [-Where &lt;String&gt;] [-WhereVa
  
 ## Detailed Description 
  
-Allows to find items using the Sitecore Content Search API. 
+The Find-Item command searches for items using the Sitecore Content Search API. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -285,6 +285,12 @@ Number of search results to be skipped skip before returning the results commenc
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.ContentSearch.SearchTypes.SearchResultItem 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -332,11 +338,4 @@ Find-Item `
  
 ## Related Topics 
  
-* Initialize-Item
-* Get-Item
-* Get-ChildItem
-* <a href='https://gist.github.com/AdamNaj/273458beb3f2b179a0b6' target='_blank'>https://gist.github.com/AdamNaj/273458beb3f2b179a0b6</a><br/>
-* <a href='http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library' target='_blank'>http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library</a><br/>
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Initialize-Item* Get-Item* Get-ChildItem* <a href='https://gist.github.com/AdamNaj/273458beb3f2b179a0b6' target='_blank'>https://gist.github.com/AdamNaj/273458beb3f2b179a0b6</a><br/>* <a href='http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library' target='_blank'>http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

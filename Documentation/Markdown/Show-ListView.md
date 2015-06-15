@@ -1,4 +1,4 @@
-# Show-ListView 
+﻿# Show-ListView 
  
 Sends output to an interactive table in a separate window. 
  
@@ -9,8 +9,8 @@ Show-ListView [-PageSize &lt;Int32&gt;] [-Icon &lt;String&gt;] [-InfoTitle &lt;S
  
 ## Detailed Description 
  
-The Show-ListView cmdlet sends the output from a command to a grid view window where the output is displayed in an interactive table.
-Because this cmdlet requires a user interface, it does not work in a non-interactive scenarios like within web service calls.
+The Show-ListView command sends the output from a command to a grid view window where the output is displayed in an interactive table.
+Because this command requires a user interface, it does not work in a non-interactive scenarios like within web service calls.
 You can use the following features of the table to examine your data:
 -- Sort. To sort the data, click a column header. Click again to toggle from ascending to descending order.
 -- Quick Filter. Use the "Filter" box at the top of the window to search the text in the table. You can search for text in a particular column, search for literals, and search for multiple words.
@@ -227,7 +227,7 @@ Additional data what will be passed to the view. All actions that are executed f
  
 ### -ViewName&nbsp; &lt;String&gt; 
  
-View signature name - this can be used by action commandlets to determine whether to show an action or not using the Show/Enable rules. 
+View signature name - this can be used by action commands to determine whether to show an action or not using the Show/Enable rules. 
  
 <table>
     <thead></thead>
@@ -295,7 +295,7 @@ If no Items were provided for -Data parameter the message provided in this param
  
 ### -ActionsInSession&nbsp; &lt;SwitchParameter&gt; 
  
-If this parameter is specified actions will be executed in the same session as the one in which the commandlet is executed. 
+If this parameter is specified actions will be executed in the same session as the one in which the command is executed. 
  
 <table>
     <thead></thead>
@@ -511,7 +511,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.Management.Automation.PSObject 
+* System.String 
  
 ## Notes 
  
@@ -521,7 +521,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
-This command formats information about Sitecore items in a table. The Get-ChildItem cmdlet gets objects representing the items. 
+This command formats information about Sitecore items in a table. The Get-ChildItem command gets objects representing the items. 
 The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table. 
  
 ```powershell   
@@ -532,7 +532,7 @@ PS master:\> Get-Item -path master:\* | Show-ListView -Property Name, DisplayNam
  
 ### EXAMPLE 2 
  
-This command formats information about Sitecore items in a table. The Get-ItemReferrer cmdlet gets all references of the "Sample Item" template. 
+This command formats information about Sitecore items in a table. The Get-ItemReferrer command gets all references of the "Sample Item" template. 
 The pipeline operator (|) passes the object to the Show-ListView command. Show-ListView displays the objects in a table.
 The Properties are not displaying straight properties but use the Name/Expression scheme to provide a nicely named values that 
 like in the case of languages which are aggregarde form the "Languages" property. 
@@ -549,21 +549,4 @@ PS master:\> Get-ItemReferrer -path 'master:\templates\Sample\Sample Item' |
  
 ## Related Topics 
  
-* Update-ListView
-* Out-GridView
-* Format-Table
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-Input
-* Show-ModalDialog
-* Show-Result
-* Show-YesNoCancel
-* <a href='http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/' target='_blank'>http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/</a><br/>
-* <a href='http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html' target='_blank'>http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html</a><br/>
-* <a href='http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/' target='_blank'>http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/</a><br/>
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Update-ListView* Out-GridView* Format-Table* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/' target='_blank'>http://blog.najmanowicz.com/2014/10/25/creating-beautiful-sitecore-reports-easily-with-powershell-extensions/</a><br/>* <a href='http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html' target='_blank'>http://michaellwest.blogspot.com/2014/04/reports-with-sitecore-powershell.html</a><br/>* <a href='http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/' target='_blank'>http://sitecorejunkie.com/2014/05/28/create-a-custom-report-in-sitecore-powershell-extensions/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

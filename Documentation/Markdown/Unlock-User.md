@@ -1,6 +1,6 @@
-# Unlock-User 
+﻿# Unlock-User 
  
-Unlocks the specified Sitecore user. 
+Unlocks a Sitecore user using the specified criteria. 
  
 ## Syntax 
  
@@ -11,7 +11,7 @@ Unlock-User -Instance &lt;User&gt;
  
 ## Detailed Description 
  
-The Unlock-User cmdlet gets a user and unlocks the account in Sitecore.
+The Unlock-User command gets a user and unlocks the account in Sitecore.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;. 
@@ -22,12 +22,7 @@ You can also specify user object variable, such as $&lt;user&gt;.
  
 ### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-Specifies the Sitecore user by providing one of the following values.
-
-    Local Name
-        Example: michael
-    Fully Qualified Name
-        Example: sitecore\michael 
+ 
  
 <table>
     <thead></thead>
@@ -107,11 +102,7 @@ One or more user instances.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-One or more user instances. 
+* None. 
  
 ## Notes 
  
@@ -141,10 +132,4 @@ PS master:\> Get-User -Filter * | Unlock-User
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-User
-* New-User
-* Remove-User
-* Set-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Remove-User* Set-User

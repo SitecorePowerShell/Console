@@ -1,6 +1,6 @@
-# Get-ItemReferrer 
+﻿# Get-ItemReferrer 
  
-Get other items linking to the provided item. 
+Returns all the items referring to the specified item. 
  
 ## Syntax 
  
@@ -8,18 +8,18 @@ Get-ItemReferrer -Item &lt;Item&gt;
  
 Get-ItemReferrer -Item &lt;Item&gt; -ItemLink 
  
-Get-ItemReferrer -Path &lt;String&gt; [-Language &lt;String[]&gt;] -ItemLink 
- 
 Get-ItemReferrer -Path &lt;String&gt; [-Language &lt;String[]&gt;] 
  
-Get-ItemReferrer -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt;String[]&gt;] -ItemLink 
+Get-ItemReferrer -Path &lt;String&gt; [-Language &lt;String[]&gt;] -ItemLink 
  
 Get-ItemReferrer -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt;String[]&gt;] 
+ 
+Get-ItemReferrer -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt;String[]&gt;] -ItemLink 
  
  
 ## Detailed Description 
  
-Returns all items that link to the item specified with the commandlet parameters. if -ItemLink parameter is used the Commandlet will return links rather than items. 
+The Get-ItemReferrer command returns all items referring to the specified item. If -ItemLink parameter is used the command will return links rather than items. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -61,7 +61,7 @@ The item to be analysed.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to be analysed - can work with Language parameter to narrow the publication scope. 
+Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -95,7 +95,7 @@ Path to the item to be analysed - can work with Language parameter to narrow the
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to be analysed - can work with Language parameter to narrow the publication scope. 
+Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -129,7 +129,7 @@ Id of the item to be analysed - can work with Language parameter to narrow the p
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database containing the item to be analysed - can work with Language parameter to narrow the publication scope. 
+Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -163,7 +163,7 @@ Database containing the item to be analysed - can work with Language parameter t
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If you need the item in specific Language you can specify it with this parameter. Globbing/wildcard supported. 
+Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -239,7 +239,8 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Data.Items.Item
+Sitecore.Links.ItemLink 
  
 ## Notes 
  
@@ -287,7 +288,4 @@ TargetPath         : /sitecore/content/Home
  
 ## Related Topics 
  
-* Get-ItemReference
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Get-ItemReference* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

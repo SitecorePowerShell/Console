@@ -1,6 +1,6 @@
-# Get-Role 
+﻿# Get-Role 
  
-Gets one or more Sitecore roles. 
+Returns one or more Sitecore roles using the specified criteria. 
  
 ## Syntax 
  
@@ -11,7 +11,7 @@ Get-Role -Filter &lt;String&gt;
  
 ## Detailed Description 
  
-The Get-Role cmdlet gets a role or performs a search to retrieve multiple roles from Sitecore.
+The Get-Role command returns one or more Sitecore roles using the specified criteria.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name.
 You can also specify role object variable, such as $&lt;role&gt;.
@@ -115,8 +115,8 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* Sitecore.Security.Accounts.Role
+Returns one or more roles. 
  
 ## Notes 
  
@@ -170,7 +170,4 @@ sitecore\Developer                       sitecore     False
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-RoleMember
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-RoleMember

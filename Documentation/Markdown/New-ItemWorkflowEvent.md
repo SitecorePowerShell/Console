@@ -1,14 +1,14 @@
-# New-ItemWorkflowEvent 
+﻿# New-ItemWorkflowEvent 
  
 Creates new entry in the history store notifying of workflow state change. 
  
 ## Syntax 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
  
 New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -123,7 +123,7 @@ Action comment.
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported. 
+Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -191,7 +191,7 @@ The item to have the history event attached.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to have the history event attached - can work with Language parameter to narrow the publication scope. 
+Path to the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -225,7 +225,7 @@ Path to the item to have the history event attached - can work with Language par
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to have the history event attached - can work with Language parameter to narrow the publication scope. 
+Id of the the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -297,12 +297,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Data.Items.Item 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -321,8 +315,4 @@ PS master:\> New-ItemWorkflowEvent -Path master:\content\home -lanuage "en" -Tex
  
 ## Related Topics 
  
-* Get-ItemWorkflowEvent
-* Execute-Workflow
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Get-ItemWorkflowEvent* Execute-Workflow* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

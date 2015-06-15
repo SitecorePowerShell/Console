@@ -1,23 +1,23 @@
-# Export-Role 
+﻿# Export-Role 
  
-Exports (serializes) Sitecore roles to server disk drive. 
+Exports (serializes) Sitecore roles to the filesystem on the server. 
  
 ## Syntax 
  
-Export-Role [-Identity] &lt;AccountIdentity&gt; [-Root &lt;String&gt;] 
- 
 Export-Role [-Identity] &lt;AccountIdentity&gt; -Path &lt;String&gt; 
+ 
+Export-Role [-Identity] &lt;AccountIdentity&gt; [-Root &lt;String&gt;] 
  
 Export-Role -Filter &lt;String&gt; [-Root &lt;String&gt;] 
  
-Export-Role [-Role] &lt;Role&gt; -Path &lt;String&gt; 
- 
 Export-Role [-Role] &lt;Role&gt; [-Root &lt;String&gt;] 
+ 
+Export-Role [-Role] &lt;Role&gt; -Path &lt;String&gt; 
  
  
 ## Detailed Description 
  
-Exports (serializes) Sitecore roles to server disk drive. 
+The Export-Role command exports (serializes) Sitecore roles to the filesystem on the server. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -218,8 +218,7 @@ Sitecore.Security.Accounts.Role
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Sitecore.Security.Accounts.Role 
+* System.String 
  
 ## Notes 
  
@@ -269,11 +268,4 @@ PS master:\> Export-Role -Path C:\my\Serialization\Folder\Authors.role -Identity
  
 ## Related Topics 
  
-* Import-Role
-* Export-User
-* Import-User
-* Export-Item
-* Import-Item
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Import-Role* Export-User* Import-User* Export-Item* Import-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

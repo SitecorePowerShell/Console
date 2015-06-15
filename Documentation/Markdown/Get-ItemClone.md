@@ -1,6 +1,6 @@
-# Get-ItemClone 
+﻿# Get-ItemClone 
  
-Returns clones of item provided. 
+Returns all the clones for the specified item. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Get-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;]
  
 ## Detailed Description 
  
-Gets all clones of item provided. 
+The Get-ItemClone command returns all the clones for the specified item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -185,10 +185,4 @@ PS master:\> Get-ItemClone -Path master:\content\home
  
 ## Related Topics 
  
-* New-ItemClone
-* ConvertFrom-ItemClone
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
-* Get-Item
-
-
+* New-ItemClone* ConvertFrom-ItemClone* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>* Get-Item

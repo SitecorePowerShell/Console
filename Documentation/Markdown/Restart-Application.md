@@ -1,4 +1,4 @@
-# Restart-Application 
+﻿# Restart-Application 
  
 Restarts the Sitecore Application pool. 
  
@@ -32,5 +32,3 @@ PS master:\> Restart-Application
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

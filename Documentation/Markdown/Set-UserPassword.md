@@ -1,17 +1,17 @@
-# Set-UserPassword 
+﻿# Set-UserPassword 
  
 Sets the Sitecore user password. 
  
 ## Syntax 
  
-Set-UserPassword [-Identity] &lt;AccountIdentity&gt; -Reset [-NewPassword &lt;String&gt;] 
- 
 Set-UserPassword [-Identity] &lt;AccountIdentity&gt; -OldPassword &lt;String&gt; [-NewPassword &lt;String&gt;] 
+ 
+Set-UserPassword [-Identity] &lt;AccountIdentity&gt; -Reset [-NewPassword &lt;String&gt;] 
  
  
 ## Detailed Description 
  
-The Set-UserPassword cmdlet resets or changes a user password.
+The Set-UserPassword command resets or changes a user password.
 
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name. 
  
@@ -174,11 +174,7 @@ Represents the instance of a user.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-Represents the instance of a user. 
+* None. 
  
 ## Notes 
  
@@ -208,8 +204,4 @@ PS master:\> "michael","adam","mike" | Set-UserPassword -NewPassword b -Reset
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-User
-* Set-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* Set-User

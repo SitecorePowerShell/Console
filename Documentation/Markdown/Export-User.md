@@ -1,6 +1,6 @@
-# Export-User 
+﻿# Export-User 
  
-Export-User. 
+Export (serialize) a Sitecore user to the filesystem on the server. 
  
 ## Syntax 
  
@@ -21,14 +21,14 @@ Export-User -Current -Path &lt;String&gt;
  
 ## Detailed Description 
  
-The Export-User cmdlet serializes a user to a disk drive on the Sitecore server.
+The Export-User command serializes a Sitecore user to the filesystem on the server.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;.
 
 To search for and retrieve more than one user, use the Filter parameter.
 
-You can also pipe a user from the Get-user commandlet. 
+You can also pipe a user from the Get-user command. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -118,7 +118,7 @@ Export-User -Filter "sitecore\*"
  
 ### -User&nbsp; &lt;User&gt; 
  
-User object retrieved from the Sitecore API or using the Get-User commandlet. 
+User object retrieved from the Sitecore API or using the Get-User command. 
  
 <table>
     <thead></thead>
@@ -258,12 +258,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Security.Accounts.User 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Security.Accounts.User 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -282,12 +276,4 @@ PS master:\> Export-User -Identify sitecore\admin
  
 ## Related Topics 
  
-* Export-Role
-* Import-User
-* Export-Item
-* Import-Role
-* Import-Item
-* Get-User
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Export-Role* Import-User* Export-Item* Import-Role* Import-Item* Get-User* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -1,6 +1,6 @@
-# Get-ItemTemplate 
+﻿# Get-ItemTemplate 
  
-Retrieves item template and its base templates. 
+Returns the item template and its base templates. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Get-ItemTemplate -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse]
  
 ## Detailed Description 
  
-Retrieves item template and its base templates. 
+The Get-ItemTemplate command returns the item template and its base templates. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -199,7 +199,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Data.Items.TemplateItem 
  
 ## Notes 
  
@@ -260,7 +260,4 @@ PS master:\> Get-Item -Path master:/content/Home | Get-ItemTemplate -Recurse | f
  
 ## Related Topics 
  
-* Get-ItemField
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

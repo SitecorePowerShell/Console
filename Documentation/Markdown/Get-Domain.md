@@ -1,4 +1,4 @@
-# Get-Domain 
+﻿# Get-Domain 
  
 Gets all available domains or the specified domain. 
  
@@ -9,7 +9,7 @@ Get-Domain [-Name &lt;String&gt;]
  
 ## Detailed Description 
  
-The Get-Domain cmdlet returns all the domains or the specified domain. 
+The Get-Domain command returns all the domains or the specified domain. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -59,7 +59,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Security.Domains.Domai 
  
 ## Notes 
  
@@ -79,8 +79,4 @@ PS master:\> Get-Domain -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Remove-Domain
-* New-Domain
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-Domain* New-Domain

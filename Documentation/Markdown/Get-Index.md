@@ -1,4 +1,4 @@
-# Get-Index 
+﻿# Get-Index 
  
 Returns Sitecore database indices. 
  
@@ -93,7 +93,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Database 
+* Sitecore.Data.Indexing.Index 
  
 ## Notes 
  
@@ -114,5 +114,3 @@ PS master:\> Get-Index -Database "master"
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

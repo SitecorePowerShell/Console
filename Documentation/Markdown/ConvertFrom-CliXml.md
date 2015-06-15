@@ -1,6 +1,6 @@
-# ConvertFrom-CliXml 
+﻿# ConvertFrom-CliXml 
  
-Imports a CLIXML string and creates corresponding objects within PowerShell. 
+Imports a CliXml string with data that represents Microsoft .NET objects and creates the objects within PowerShell. 
  
 ## Syntax 
  
@@ -9,7 +9,7 @@ ConvertFrom-CliXml [-InputObject] &lt;String&gt;
  
 ## Detailed Description 
  
-The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell. 
+The ConvertFrom-CliXml command imports a CliXml string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -17,7 +17,7 @@ The ConvertFrom-CliXml cmdlet imports a CLIXML string with data that represents 
  
 ### -InputObject&nbsp; &lt;String&gt; 
  
-String containing the XML with serialized objects. 
+String containing the Xml with serialized objects. 
  
 <table>
     <thead></thead>
@@ -59,7 +59,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String 
+* object 
  
 ## Notes 
  
@@ -84,12 +84,4 @@ PS master:\> $myCliXmlItem | ConvertFrom-CliXml
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* ConvertTo-CliXml
-* ConvertTo-Xml
-* ConvertFrom-Xml
-* Export-CliXml
-* Import-CliXml
-* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* ConvertTo-CliXml* ConvertTo-Xml* ConvertFrom-Xml* Export-CliXml* Import-CliXml* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>

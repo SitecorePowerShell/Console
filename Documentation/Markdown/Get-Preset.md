@@ -1,6 +1,6 @@
-# Get-Preset 
+﻿# Get-Preset 
  
-Returns a serialization preset for use with Serialize-Item. 
+Returns a serialization preset for use with Export-Item. 
  
 ## Syntax 
  
@@ -9,7 +9,7 @@ Get-Preset [[-Name] &lt;String[]&gt;]
  
 ## Detailed Description 
  
-Returns a serialization preset for use with Serialize-Item. 
+The Get-Preset command returns a serialization preset for use with Export-Item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -49,6 +49,12 @@ Name of the serialization preset.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Data.Serialization.Presets.IncludeEntry 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -86,8 +92,4 @@ AssetsOptimiser master   /sitecore/system/Modules/Optimiser
  
 ## Related Topics 
  
-* Serialize-Item
-* Deserialize-Item
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Serialize-Item* Deserialize-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -1,19 +1,19 @@
-# Receive-File 
+﻿# Receive-File 
  
 Shows a dialog to users allowing to upload files to either server file system or items in media library. 
  
 ## Syntax 
  
-Receive-File [-Description &lt;String&gt;] [-ParentItem] &lt;Item&gt; [-Title &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-Versioned] [-Language &lt;String&gt;] [-Overwrite] [-Unpack] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
- 
 Receive-File [-Description &lt;String&gt;] [-Path] &lt;String&gt; [-Title &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-Overwrite] [-Unpack] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+ 
+Receive-File [-Description &lt;String&gt;] [-ParentItem] &lt;Item&gt; [-Title &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-Versioned] [-Language &lt;String&gt;] [-Overwrite] [-Unpack] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
 Receive-File [-ParentItem] &lt;Item&gt; -AdvancedDialog [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
  
-Executing this commandlet with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
+Executing this command with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
 Executing it for an Item located in Sitecore Media library (provided as -ParentItem) allows the user to upload the file as a child to that item.
 If the file has been uploaded the dialog returns path to the file (in case of file system storage) or Item that has been created if the file was uplaoded to media library. 
  
@@ -538,5 +538,3 @@ text False    {en, da}  {307BCF7D-27FD-46FC-BE83-D9ED640CB09F} File
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

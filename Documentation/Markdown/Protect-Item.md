@@ -1,19 +1,19 @@
-# Protect-Item 
+﻿# Protect-Item 
  
-Protects the Sitecore item by the current or specified user. 
+Protects the Sitecore item. 
  
 ## Syntax 
  
-Protect-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Protect-Item [-Item] &lt;Item&gt; [-PassThru] 
  
-Protect-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Protect-Item [-Path] &lt;String&gt; [-PassThru] 
  
-Protect-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Protect-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] 
  
  
 ## Detailed Description 
  
-The Protect-Item cmdlet protects the item. 
+The Protect-Item command protects the item by making it read-only. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -21,75 +21,7 @@ The Protect-Item cmdlet protects the item.
  
 ### -PassThru&nbsp; &lt;SwitchParameter&gt; 
  
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Language&nbsp; &lt;String[]&gt; 
- 
- 
+Passes the processed item back into the pipeline. 
  
 <table>
     <thead></thead>
@@ -123,7 +55,7 @@ The Protect-Item cmdlet protects the item.
  
 ### -Item&nbsp; &lt;Item&gt; 
  
- 
+The item to be processed. 
  
 <table>
     <thead></thead>
@@ -157,7 +89,7 @@ The Protect-Item cmdlet protects the item.
  
 ### -Path&nbsp; &lt;String&gt; 
  
- 
+Path to the item to be processed - can work with Language parameter to specify the language other than current session language. 
  
 <table>
     <thead></thead>
@@ -191,7 +123,7 @@ The Protect-Item cmdlet protects the item.
  
 ### -Id&nbsp; &lt;String&gt; 
  
- 
+Id of the item to be processed. 
  
 <table>
     <thead></thead>
@@ -225,7 +157,7 @@ The Protect-Item cmdlet protects the item.
  
 ### -Database&nbsp; &lt;Database&gt; 
  
- 
+Database containing the item to be fetched with Id parameter. 
  
 <table>
     <thead></thead>
@@ -261,13 +193,13 @@ The Protect-Item cmdlet protects the item.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* can be piped from another cmdlet* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Only if -PassThru is used* Sitecore.Data.Items.Item 
  
 ## Notes 
  
@@ -301,8 +233,4 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Unprotect-Item
-* Get-Item
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Unprotect-Item* Get-Item

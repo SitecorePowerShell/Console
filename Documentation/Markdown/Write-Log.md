@@ -1,4 +1,4 @@
-# Write-Log 
+﻿# Write-Log 
  
 Writes text to the Sitecore event log. 
  
@@ -9,7 +9,7 @@ Write-Log [[-Object] &lt;Object&gt;] [-Separator &lt;Object&gt;] [-Log &lt;Debug
  
 ## Detailed Description 
  
-The Write-Log cmdlet writes text to the Sitecore event log with the specified logging level. 
+The Write-Log command writes text to the Sitecore event log with the specified logging level. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -128,8 +128,7 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* None. 
  
 ## Notes 
  
@@ -150,5 +149,3 @@ PS master:\> Write-Log "Information."
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

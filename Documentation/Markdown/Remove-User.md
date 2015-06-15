@@ -1,4 +1,4 @@
-# Remove-User 
+﻿# Remove-User 
  
 Removes the Sitecore user. 
  
@@ -11,7 +11,7 @@ Remove-User -Instance &lt;User&gt;
  
 ## Detailed Description 
  
-The Remove-User cmdlet removes a user from Sitecore.
+The Remove-User command removes a user from Sitecore.
 
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name. 
  
@@ -106,11 +106,7 @@ Represents the instance of a user.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-Represents the instance of a user. 
+* None. 
  
 ## Notes 
  
@@ -150,10 +146,4 @@ PS master:\> Get-User -Filter sitecore\m* | Remove-User
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-User
-* New-User
-* Set-User
-* Unlock-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Set-User* Unlock-User

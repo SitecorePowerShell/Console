@@ -1,4 +1,4 @@
-# Start-TaskSchedule 
+﻿# Start-TaskSchedule 
  
 Executes a task schedule. 
  
@@ -23,7 +23,7 @@ Executes a task schedule either passed from Get-Schedule, based on Item or Sched
  
 ### -Schedule&nbsp; &lt;ScheduleItem&gt; 
  
-ScheduleItem most conveniently obtained from Get-Schedule commandlet. 
+ScheduleItem most conveniently obtained from Get-Schedule command. 
  
 <table>
     <thead></thead>
@@ -202,8 +202,7 @@ Sitecore.Data.Items.Item
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Tasks.ScheduleItem
-Sitecore.Data.Items.Item 
+* Sitecore.Tasks.ScheduleItem 
  
 ## Notes 
  
@@ -241,8 +240,4 @@ Check Bounced Messages           master          True     False        False    
  
 ## Related Topics 
  
-* Get-TaskSchedule
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* <a href='https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9' target='_blank'>https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9</a><br/>
-
-
+* Get-TaskSchedule* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9' target='_blank'>https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9</a><br/>

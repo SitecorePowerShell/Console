@@ -1,19 +1,19 @@
-# Get-RoleMember 
+﻿# Get-RoleMember 
  
-Gets the Sitecore users in the role. 
+Returns the Sitecore users in the specified role. 
  
 ## Syntax 
+ 
+Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive] 
  
 Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-UsersOnly] [-Recursive] 
  
 Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-Recursive] 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive] 
- 
  
 ## Detailed Description 
  
-The Get-RoleMember cmdlet gets a role and returns the members of the Sitecore role.
+The Get-RoleMember command returns the Sitecore users in the specified role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
@@ -173,8 +173,11 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* Sitecore.Security.Accounts.User
+Returns one or more users.
+
+Sitecore.Security.Accounts.Role
+Returns one or more roles. 
  
 ## Notes 
  
@@ -221,9 +224,4 @@ Name        : sitecore\Developer
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-Role
-* Remove-RoleMember
-* Add-RoleMember
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Role* Remove-RoleMember* Add-RoleMember

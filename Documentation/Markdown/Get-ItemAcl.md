@@ -1,27 +1,46 @@
-﻿# New-ItemClone 
+﻿# Get-ItemAcl 
  
-Creates a new item clone based on the item provided. 
+Retrieves security access rules from an item. 
  
 ## Syntax 
  
-New-ItemClone [-Item] &lt;Item&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Item &lt;Item&gt; 
  
-New-ItemClone [-Path] &lt;String&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] 
  
-New-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;] -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Path &lt;String&gt; 
+ 
+Get-ItemAcl -Filter &lt;String&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+ 
+Get-ItemAcl -Filter &lt;String&gt; -Path &lt;String&gt; 
+ 
+Get-ItemAcl -Filter &lt;String&gt; -Item &lt;Item&gt; 
+ 
+Get-ItemAcl -Item &lt;Item&gt; 
+ 
+Get-ItemAcl -Path &lt;String&gt; 
+ 
+Get-ItemAcl -Id &lt;String&gt; 
  
  
 ## Detailed Description 
  
-Creates a new item clone based on the item provided. 
+Retrieves security access rules from an item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Destination&nbsp; &lt;Item&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-Parent item under which the clone should be created. 
+User name including domain for which the access rule is being created. If no domain is specified - 'sitecore' will be used as the default domain.
+
+Specifies the Sitecore user by providing one of the following values.
+
+    Local Name
+        Example: adam
+    Fully Qualified Name
+        Example: sitecore\adam 
  
 <table>
     <thead></thead>
@@ -53,43 +72,18 @@ Parent item under which the clone should be created.
     </tbody>
 </table> 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Filter&nbsp; &lt;String&gt; 
  
-Name of the item clone. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Recursive&nbsp; &lt;SwitchParameter&gt; 
- 
-Add the parameter to clone thw whole branch rather than a single item. 
+Specifies a simple pattern to match Sitecore roles &amp; users.
+
+Examples:
+The following examples show how to use the filter syntax.
+
+To get security for all roles, use the asterisk wildcard:
+Get-ItemAcl -Filter *
+
+To security got all roles in a domain use the following command:
+Get-ItemAcl -Filter "sitecore\*" 
  
 <table>
     <thead></thead>
@@ -100,7 +94,7 @@ Add the parameter to clone thw whole branch rather than a single item.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -123,7 +117,7 @@ Add the parameter to clone thw whole branch rather than a single item.
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-The item to be cloned. 
+The item from which the security rules should be taken. 
  
 <table>
     <thead></thead>
@@ -138,7 +132,7 @@ The item to be cloned.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -146,7 +140,7 @@ The item to be cloned.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -157,7 +151,7 @@ The item to be cloned.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to be cloned. 
+Path to the item from which the security rules should be taken. 
  
 <table>
     <thead></thead>
@@ -172,7 +166,7 @@ Path to the item to be cloned.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -191,7 +185,7 @@ Path to the item to be cloned.
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to be cloned 
+Id of the item from which the security rules should be taken. 
  
 <table>
     <thead></thead>
@@ -225,7 +219,7 @@ Id of the item to be cloned
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database of the item to be cloned if item is specified through its ID. 
+Database containing the item to be fetched with Id parameter containing the security rules that should be returned. 
  
 <table>
     <thead></thead>
@@ -267,7 +261,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Security.AccessControl.AccessRule 
  
 ## Notes 
  
@@ -275,17 +269,28 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 
+### EXAMPLE 1 
  
-Clone /sitecore/content/home/ under /sitecore/content/new-target/ with the "New Home" name. 
+Take the security information from the Home item and apply it to the Settings item 
  
 ```powershell   
  
-PS master:\> $newTarget = Get-Item master:\content\new-target\
-PS master:\> New-ItemClone -Path master:\content\home -Destination $newTarget -Name "New Home" 
+$acl = Get-ItemAcl -Path master:\content\home
+Set-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru 
+ 
+``` 
+ 
+### EXAMPLE 2 
+ 
+Take the security information from the Home item and add it to the access rules on the Settings item 
+ 
+```powershell   
+ 
+$acl = Get-ItemAcl -Path master:\content\home
+Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru 
  
 ``` 
  
 ## Related Topics 
  
-* Get-ItemClone* ConvertFrom-ItemClone* New-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
+* Add-ItemAcl* Clear-ItemAcl* Set-ItemAcl* New-ItemAcl* Test-ItemAcl* <a href='https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf</a><br/>* <a href='http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx' target='_blank'>http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx</a><br/>* <a href='https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/' target='_blank'>https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/</a><br/>

@@ -1,7 +1,6 @@
-# Install-Package 
+﻿# Install-Package 
  
-Installs Sitecore package.
-This command used to be named Import-Package - a matching alias added for compatibility with older scripts. 
+Installs a Sitecore package from the specified path. 
  
 ## Syntax 
  
@@ -10,7 +9,7 @@ Install-Package [[-Path] &lt;String&gt;] [-InstallMode &lt;Undefined | Overwrite
  
 ## Detailed Description 
  
-Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. 
+Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. The alias for the command is Import-Package. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
@@ -138,17 +137,4 @@ PS master:\> Install-Package -Path SitecorePowerShellConsole.zip - InstallMode M
  
 ## Related Topics 
  
-* Export-Package
-* Get-Package
-* Install-UpdatePackage
-* New-ExplicitFileSource
-* New-ExplicitItemSource
-* New-FileSource
-* New-ItemSource
-* New-Package
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>
-* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>
-* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>
-
-
+* Export-Package* Get-Package* Install-UpdatePackage* New-ExplicitFileSource* New-ExplicitItemSource* New-FileSource* New-ItemSource* New-Package* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>

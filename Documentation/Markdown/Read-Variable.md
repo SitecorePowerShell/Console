@@ -1,4 +1,4 @@
-# Read-Variable 
+﻿# Read-Variable 
  
 Prompts user to provide values for variables required by the script to perform its operation. 
  
@@ -10,8 +10,8 @@ Read-Variable [-Parameters &lt;Object[]&gt;] [-Description &lt;String&gt;] [-Can
 ## Detailed Description 
  
 Prompts user to provide values for variables required by the script to perform its operation.
-If user selects the "OK" button the commandlet will return 'ok' as its value.
-If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the commandlet will return 'cancel' as its value. 
+If user selects the "OK" button the command will return 'ok' as its value.
+If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the command will return 'cancel' as its value. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -311,7 +311,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.String 
  
 ## Notes 
  
@@ -321,7 +321,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
-For a good understanding of all the Property types the Read-Variable commandlet accepts open the script located in the following item:
+For a good understanding of all the Property types the Read-Variable command accepts open the script located in the following item:
 /Examples/User Interaction/Read-Variable - Sample
 the script is located in the Script Library in the Master database. 
  
@@ -394,14 +394,4 @@ if($result -ne "ok")
  
 ## Related Topics 
  
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-Input
-* Show-ListView
-* Show-ModalDialog
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

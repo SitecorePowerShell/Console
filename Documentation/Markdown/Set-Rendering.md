@@ -1,4 +1,4 @@
-# Set-Rendering 
+﻿# Set-Rendering 
  
 Updates rendering with new values. 
  
@@ -331,12 +331,6 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* Sitecore.Data.Items.Item 
- 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -356,13 +350,4 @@ PS master:\> Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object { $_
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-Rendering
-* New-Rendering
-* Get-Rendering
-* Get-LayoutDevice
-* Remove-Rendering
-* Get-Layout
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout

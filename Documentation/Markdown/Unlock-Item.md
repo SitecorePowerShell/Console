@@ -1,19 +1,19 @@
-# Unlock-Item 
+﻿# Unlock-Item 
  
-Unlocks the Sitecore item by the current or specified user. 
+Unlocks the specified Sitecore item. 
  
 ## Syntax 
  
-Unlock-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Unlock-Item [-Item] &lt;Item&gt; [-PassThru] 
  
-Unlock-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Unlock-Item [-Path] &lt;String&gt; [-PassThru] 
  
-Unlock-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Unlock-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] 
  
  
 ## Detailed Description 
  
-The Unlock-Item cmdlet unlocks the item. 
+The Unlock-Item command unlocks the item specified with parameters. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -21,75 +21,7 @@ The Unlock-Item cmdlet unlocks the item.
  
 ### -PassThru&nbsp; &lt;SwitchParameter&gt; 
  
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Language&nbsp; &lt;String[]&gt; 
- 
- 
+Passes the unlocked item back into the pipeline. 
  
 <table>
     <thead></thead>
@@ -123,7 +55,7 @@ The Unlock-Item cmdlet unlocks the item.
  
 ### -Item&nbsp; &lt;Item&gt; 
  
- 
+The item to be unlocked. 
  
 <table>
     <thead></thead>
@@ -157,7 +89,7 @@ The Unlock-Item cmdlet unlocks the item.
  
 ### -Path&nbsp; &lt;String&gt; 
  
- 
+Path to the item to be unlocked - can work with Language parameter to specify the language other than current session language. 
  
 <table>
     <thead></thead>
@@ -191,7 +123,7 @@ The Unlock-Item cmdlet unlocks the item.
  
 ### -Id&nbsp; &lt;String&gt; 
  
- 
+Id of the item to be unlocked. 
  
 <table>
     <thead></thead>
@@ -225,7 +157,7 @@ The Unlock-Item cmdlet unlocks the item.
  
 ### -Database&nbsp; &lt;Database&gt; 
  
- 
+Database containing the item to be fetched with Id parameter. 
  
 <table>
     <thead></thead>
@@ -261,13 +193,13 @@ The Unlock-Item cmdlet unlocks the item.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* can be piped from another cmdlet* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Only if -PassThru is used* Sitecore.Data.Items.Item 
  
 ## Notes 
  
@@ -277,7 +209,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
- 
+Unlock the Home item providing its path 
  
 ```powershell   
  
@@ -287,22 +219,18 @@ PS master:\> Unlock-Item -Path master:\content\home
  
 ### EXAMPLE 2 
  
- 
+Unlock the Home item providing it from the pipeline and passing it back to the pipeline 
  
 ```powershell   
  
 PS master:\> Get-Item -Path master:\content\home | Unlock-Item -PassThru
 
-Name                             Children Languages                Id                                     TemplateName
-----                             -------- ---------                --                                     ------------
-Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item 
+Name   Children Languages                Id                                     TemplateName
+----   -------- ---------                --                                     ------------
+Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Lock-Item
-* Get-Item
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Lock-Item* Get-Item

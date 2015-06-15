@@ -1,14 +1,14 @@
-# Get-ItemField 
+﻿# Get-ItemField 
  
 Retrieves item fields as either names or fields or template fields. 
  
 ## Syntax 
  
-Get-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
  
 Get-ItemField [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
  
-Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -126,7 +126,7 @@ Array of names to include - supports wildcards.
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
- 
+Language that will be analysed. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -262,7 +262,7 @@ Id of the item to be analysed.
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database containing the item to be analysed - required if item is specified with Id. 
+Database containing the item to be analysed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -304,7 +304,9 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Data.Items.Item
+Sitecore.Data.Templates.TemplateField
+Sitecore.Data.Fields.Field 
  
 ## Notes 
  
@@ -401,7 +403,4 @@ __Preview                           __Preview                          Appearanc
  
 ## Related Topics 
  
-* Get-ItemTemplate
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Get-ItemTemplate* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

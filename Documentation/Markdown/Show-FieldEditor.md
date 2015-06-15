@@ -1,4 +1,4 @@
-# Show-FieldEditor 
+﻿# Show-FieldEditor 
  
 Shows Field editor for a provided item. 
  
@@ -238,7 +238,7 @@ The item to be edited.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to be edited - can work with Language parameter to narrow the publication scope. 
+Path to the item to be edited - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -272,7 +272,7 @@ Path to the item to be edited - can work with Language parameter to narrow the p
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to be edited - can work with Language parameter to narrow the publication scope. 
+Id of the the item to be edited - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -340,7 +340,7 @@ Database containing the item to be edited - can work with Language parameter to 
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported. 
+Language that will be edited. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -484,7 +484,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.String 
  
 ## Notes 
  
@@ -516,15 +516,4 @@ PS master:\> Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -Inclu
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-Input
-* Show-ListView
-* Show-ModalDialog
-* Show-Result
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-Input* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

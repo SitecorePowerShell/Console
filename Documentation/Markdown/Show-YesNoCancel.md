@@ -1,4 +1,4 @@
-# Show-YesNoCancel 
+﻿# Show-YesNoCancel 
  
 Shows Yes/No/Cancel dialog to the user and returns user choice. 
  
@@ -122,6 +122,12 @@ Height of the dialog.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* System.String 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -142,16 +148,4 @@ cancel
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-Input
-* Show-ListView
-* Show-ModalDialog
-* Show-Result
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

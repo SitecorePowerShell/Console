@@ -1,15 +1,15 @@
-# Invoke-ShellCommand 
+﻿# Invoke-ShellCommand 
  
 Executes Sitecore Shell command for an item.
 This command used to be named Execute-ShellCommand - a matching alias added for compatibility with older scripts. 
  
 ## Syntax 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Name] &lt;String&gt; 
+Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &lt;String&gt; 
  
 Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Name] &lt;String&gt; 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &lt;String&gt; 
+Invoke-ShellCommand [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Name] &lt;String&gt; 
  
  
 ## Detailed Description 
@@ -58,7 +58,7 @@ Name of the sitecore command e.g. "item:publishingviewer"
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If specified - language that will be used as source language. 
+Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -92,7 +92,7 @@ If specified - language that will be used as source language.
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-The item to be processed. 
+The item to be sent to the command. 
  
 <table>
     <thead></thead>
@@ -126,7 +126,7 @@ The item to be processed.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
+Path to the item to be sent to the command - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -160,7 +160,7 @@ Path to the item to be processed - can work with Language parameter to narrow th
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
+Id of the the item to be sent to the command - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -194,7 +194,7 @@ Id of the item to be processed - can work with Language parameter to narrow the 
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
+Database containing the item to be sent to the command - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -277,5 +277,3 @@ PS master:\> Get-Item master:/content/home | Invoke-ShellCommand "contenteditor:
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

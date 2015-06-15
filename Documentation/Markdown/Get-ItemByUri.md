@@ -1,6 +1,6 @@
-# Get-ItemByUri 
+﻿# Get-ItemByUri 
  
-This commandlet has been obsoleted - use "Get-Item -Uri" instead. 
+This command has been obsoleted - use "Get-Item -Uri" instead. 
  
 ## Syntax 
  
@@ -9,7 +9,7 @@ Get-ItemByUri [-ItemUri &lt;String&gt;]
  
 ## Detailed Description 
  
-This commandlet has been obsoleted - use "Get-Item -Uri" instead. 
+This command has been obsoleted - use "Get-Item -Uri" instead. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -49,6 +49,12 @@ This commandlet has been obsoleted - use "Get-Item -Uri" instead.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Data.Items.Item 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -68,5 +74,3 @@ PS master:\> Get-Item -Path master: -Uri "sitecore://master/{658017A8-F2D9-45C2-
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

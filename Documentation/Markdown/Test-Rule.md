@@ -1,57 +1,23 @@
-﻿# Get-Database 
+﻿# Test-Rule 
  
-Retrieves a Sitecore Database. 
+Tests item against a sitecore serialized rules engine rule set. 
  
 ## Syntax 
  
-Get-Database [[-Name] &lt;String&gt;] [-Item &lt;Item&gt;] 
+Test-Rule [-Rule &lt;String&gt;] [-InputObject &lt;PSObject&gt;] 
  
  
 ## Detailed Description 
  
-The Get-Database command retrieves one or more Sitecore Database objects based on name or item passed to it. 
+Tests item or a stream of items against a sitecore serialized rules engine rule set. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Rule&nbsp; &lt;String&gt; 
  
-Name of the database to be returned. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Item&nbsp; &lt;Item&gt; 
- 
-Database returned will be taken from the item passed to the command. 
+Serialized sitecore rules engine rule. Such rules can be read from rule fields or created by user with the Read-Variable cmdlet. 
  
 <table>
     <thead></thead>
@@ -74,7 +40,41 @@ Database returned will be taken from the item passed to the command.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -InputObject&nbsp; &lt;PSObject&gt; 
+ 
+Item to be tested 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -87,14 +87,13 @@ Database returned will be taken from the item passed to the command.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item
-System.String 
+* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Database 
+* System.Boolea 
  
 ## Notes 
  
@@ -104,45 +103,42 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
- 
+Specifies a rule as "items that have layout" and runs the rule againste all items under the ome Item 
  
 ```powershell   
  
-PS master:\> Get-Database
-Name                 Languages                      Protected  Read Only
-----                 ---------                      ---------  ---------
-core                 {da, pl-PL, ja-JP, en...}      False      False
-master               {en, de-DE, es-ES, pt-BR...}   False      False
-web                  {es-ES, de-DE, pt-BR, pl-PL... False      False
-filesystem           {en, en-US}                    False      True 
+$rule = '<ruleset>
+<rule uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}">
+<conditions>
+<condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="ED10990E15EB4E1E8FCFD33F441588A1" />
+</conditions>
+</rule>
+</ruleset>'
+
+Get-ChildItem master:\content\Home -Recurse | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} 
  
 ``` 
  
 ### EXAMPLE 2 
  
- 
- 
-```powershell   
- 
-PS master:\> Get-Database -Name "master"
-
-Name                 Languages                      Protected  Read Only
-----                 ---------                      ---------  ---------
-master               {en, de-DE, es-ES, pt-BR...}   False      False 
- 
-``` 
- 
-### EXAMPLE 3 
- 
- 
+Asks user for the rule and root under which items should be filtered, and lists all items fulfilling the rule under the selected path 
  
 ```powershell   
  
-PS master:\> Get-Item . | Get-Database
+$rule = '<ruleset></ruleset>'
+$root = Get-Item master:\content\home\ 
 
-Name                 Languages                      Protected  Read Only
-----                 ---------                      ---------  ---------
-master               {en, de-DE, es-ES, pt-BR...}   False      False 
+$result = Read-Variable -Parameters `
+@{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
+@{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."} `
+-Description "This dialog shows editor how a rule can be taken from an item and edited using the Read-Variable cmdlet." `
+-Title "Sample rule editing" -Width 600 -Height 600 -ShowHints
+
+if($result -eq "cancel"){
+exit;
+}
+
+Get-ChildItem $root.ProviderPath | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} 
  
 ``` 
  

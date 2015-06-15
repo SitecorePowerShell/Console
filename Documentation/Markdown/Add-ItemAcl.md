@@ -1,99 +1,43 @@
-﻿# Add-ItemLanguage 
+﻿# Add-ItemAcl 
  
-Creates a version of the item in a new language based on an existing language version. 
+Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user. 
  
 ## Syntax 
  
-Add-ItemLanguage [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemAcl -PropagationType &lt;Unknown | Descendants | Entity | Any&gt; -SecurityPermission &lt;NotSet | AllowAccess | DenyAccess | AllowInheritance | DenyInheritance&gt; -Identity &lt;AccountIdentity&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] 
  
-Add-ItemLanguage [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemAcl -PropagationType &lt;Unknown | Descendants | Entity | Any&gt; -SecurityPermission &lt;NotSet | AllowAccess | DenyAccess | AllowInheritance | DenyInheritance&gt; -Identity &lt;AccountIdentity&gt; -Item &lt;Item&gt; [-PassThru] 
  
-Add-ItemLanguage [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemAcl -PropagationType &lt;Unknown | Descendants | Entity | Any&gt; -SecurityPermission &lt;NotSet | AllowAccess | DenyAccess | AllowInheritance | DenyInheritance&gt; -Identity &lt;AccountIdentity&gt; -Path &lt;String&gt; [-PassThru] 
+ 
+Add-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; -Id &lt;String&gt; [-PassThru] 
+ 
+Add-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; -Path &lt;String&gt; [-PassThru] 
+ 
+Add-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; -Item &lt;Item&gt; [-PassThru] 
+ 
+Add-ItemAcl -Item &lt;Item&gt; [-PassThru] 
+ 
+Add-ItemAcl -Path &lt;String&gt; [-PassThru] 
+ 
+Add-ItemAcl -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] 
  
  
 ## Detailed Description 
  
-Creates a version of the item in a new language based on an existing language version. 
-Based on parameters you can make the command bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language. 
+Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user.
+The new rules will be appended to the existing security descriptors on the item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Recurse&nbsp; &lt;SwitchParameter&gt; 
+### -PropagationType&nbsp; &lt;PropagationType&gt; 
  
-Process the item and all of its children. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -IfExist&nbsp; &lt;ActionIfExists&gt; 
- 
-Accepts one of 3 pretty self explanatory actions: 
-- Skip - if language version exists don't do anything
-- Append - if language version exists create a new version with values copied from the original language
-- OverwriteLatest - if language version exists overwrite the last version with values copied from the original language 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -TargetLanguage&nbsp; &lt;String[]&gt; 
- 
-Language or a list of languages that should be created 
+The PropagationType enumeration determines which items will be granted the access right.
+ - Any - the item and all items inheriting
+ - Descendants - applies rights to inheriting children only
+ - Entity - applies right to the item only 
  
 <table>
     <thead></thead>
@@ -125,9 +69,82 @@ Language or a list of languages that should be created
     </tbody>
 </table> 
  
-### -DoNotCopyFields&nbsp; &lt;SwitchParameter&gt; 
+### -SecurityPermission&nbsp; &lt;SecurityPermission&gt; 
  
-Creates a version in the target language but does not copy field values from the original language 
+The SecurityPermission determines whether to grant (allow) or deny the access right, and deny or allow inheritance of the right.
+       - AllowAccess - 
+       - DenyAccess - 
+       - AllowInheritance - 
+       - DenyInheritance - 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -AccessRules&nbsp; &lt;AccessRuleCollection&gt; 
+ 
+A single or multiple access rules created e.g. through the New-ItemAcl or obtained from other item using the Get-ItemAcl cmdlet.
+This information will be appended to the existing security descriptors on the item. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -PassThru&nbsp; &lt;SwitchParameter&gt; 
+ 
+ 
  
 <table>
     <thead></thead>
@@ -159,22 +176,16 @@ Creates a version in the target language but does not copy field values from the
     </tbody>
 </table> 
  
-### -IgnoredFields&nbsp; &lt;String[]&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-List of fields that should not be copied over from original item. As an example, use "__Security" if you don't want the new version to have the same restrictions as the original version.
+User name including domain for which the access rule is being created. If no domain is specified - 'sitecore' will be used as the default domain.
 
-In addition to the fields in -IgnoredFields the following fields are ignored as configured in Cognifide.PowerShell.config file in the following location:
-configuration/sitecore/powershell/translation/ignoredFields.
+Specifies the Sitecore user by providing one of the following values.
 
-Fields ignored out of the box include:
-- __Archive date
-- __Archive Version date
-- __Lock
-- __Owner
-- __Page Level Test Set Definition
-- __Reminder date
-- __Reminder recipients
-- __Reminder text 
+    Local Name
+        Example: adam
+    Fully Qualified Name
+        Example: sitecore\adam 
  
 <table>
     <thead></thead>
@@ -185,41 +196,7 @@ Fields ignored out of the box include:
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Language&nbsp; &lt;String[]&gt; 
- 
-Language that will be used as source language. If not specified the current user language will be used. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -257,7 +234,7 @@ The item to be processed.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -265,7 +242,7 @@ The item to be processed.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -276,7 +253,7 @@ The item to be processed.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
+Path to the item to be processed. 
  
 <table>
     <thead></thead>
@@ -291,7 +268,7 @@ Path to the item to be processed - additionally specify Language parameter to fe
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -310,7 +287,7 @@ Path to the item to be processed - additionally specify Language parameter to fe
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
+Id of the item to be processed. Requires Database parameter to be specified 
  
 <table>
     <thead></thead>
@@ -344,7 +321,7 @@ Id of the the item to be processed - additionally specify Language parameter to 
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
+Database containing the item to be fetched using the Id Parameter. 
  
 <table>
     <thead></thead>
@@ -380,13 +357,13 @@ Database containing the item to be processed - can work with Language parameter 
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* can be piped from another cmdlet* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Only if -PassThru is used* Sitecore.Data.Items.Item 
  
 ## Notes 
  
@@ -396,27 +373,33 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
-Translate the Home Item from English to US and Polish leaving the "Title" field blank. If a version exists don't do anything 
+allows the "sitecore\adam" user to rename the Home item and all of its childre 
  
 ```powershell   
  
-PS master:\> Add-ItemLanguage -Path "master:\content\home" -Language "en" -TargetLanguage "pl-pl", "en-us" -IfExist Skip -IgnoredFields "Title" 
+PS master:\> Add-ItemAcl -Path master:\content\Home -AccessRight "item:rename" -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\admin" 
  
 ``` 
  
 ### EXAMPLE 2 
  
-Translate the children of Home item (but only those of Template Name "Sample Item") from English to US and Polish. If a version exists create a new version for that language. Display results in a table listing item name, language and created version number. 
+Allows the "sitecore\adam" user to delete the Home item and all of its children.
+Denies the "sitecore\mikey" user reading the descendants of the Home item. ;P
+The security info is created prior to adding it to the item.
+The item is delivered to the Add-ItemAcl from the pipeline and returned to the pipeline after processing due to the -PassThru parameter. 
  
 ```powershell   
  
-Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
-    Where-Object { $_.TemplateName -eq "Sample Item" } | `
-    Add-ItemLanguage -TargetLanguage "pl-pl" -IfExist Append | `
-    Format-Table Name, Language, Version -auto 
+$acl1 = New-ItemAcl -AccessRight item:delete -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\admin"
+$acl2 = New-ItemAcl -AccessRight item:read -PropagationType Descendants -SecurityPermission DenyAccess -Identity "sitecore\mikey"
+Get-Item -Path master:\content\home | Add-ItemAcl -AccessRules $acl1, $acl2 -PassThru
+
+Name   Children Languages                Id                                     TemplateName
+----   -------- ---------                --                                     ------------
+Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-ItemLanguage* New-Item
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-ItemAcl* Clear-ItemAcl* Get-ItemAcl* New-ItemAcl* Set-ItemAcl* Test-ItemAcl* <a href='https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf</a><br/>* <a href='http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx' target='_blank'>http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx</a><br/>* <a href='https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/' target='_blank'>https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/</a><br/>

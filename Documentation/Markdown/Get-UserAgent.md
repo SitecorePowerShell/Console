@@ -1,6 +1,6 @@
-# Get-UserAgent 
+﻿# Get-UserAgent 
  
-Returns current user's browser user agent. 
+Returns the current user's browser user agent. 
  
 ## Syntax 
  
@@ -12,6 +12,12 @@ Returns current user's browser user agent. Works only if Console is running outs
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* System.String 
  
 ## Notes 
  
@@ -34,5 +40,3 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

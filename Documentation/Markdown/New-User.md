@@ -1,4 +1,4 @@
-# New-User 
+﻿# New-User 
  
 Creates a new Sitecore user. 
  
@@ -9,7 +9,7 @@ New-User [-Identity] &lt;AccountIdentity&gt; [-Password &lt;String&gt;] [-Email 
  
 ## Detailed Description 
  
-The New-User cmdlet creates a new user in Sitecore.
+The New-User command creates a new user in Sitecore.
 
 The Identity parameter specifies the Sitecore user to create. You can specify a user by its local name or fully qualified name. 
  
@@ -305,8 +305,7 @@ Represents the identity of a role.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a role. 
+* None. 
  
 ## Notes 
  
@@ -350,10 +349,4 @@ sitecore\michael2        sitecore     False           False
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Get-User
-* Set-User
-* Remove-User
-* Unlock-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* Set-User* Remove-User* Unlock-User

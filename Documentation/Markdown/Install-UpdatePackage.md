@@ -1,6 +1,6 @@
-# Install-UpdatePackage 
+﻿# Install-UpdatePackage 
  
-Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier 
+Installs a Sitecore update package from the specified path. 
  
 ## Syntax 
  
@@ -9,7 +9,7 @@ Install-UpdatePackage [-Path] &lt;String&gt; [[-RollbackPackagePath] &lt;String&
  
 ## Detailed Description 
  
-Installs .update that are used by Sitecore CMS updates, TDS and are created by Courier
+The Install-UpdatePackage command installs update packages that are used created by Sitecore CMS updates, TDS, and Courier.
 
 Install-UpdatePackage.
     Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.update" 
@@ -156,6 +156,12 @@ Install / Update
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Update.Installer.ContingencyEntry 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -174,8 +180,4 @@ PS master:\> Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.u
  
 ## Related Topics 
  
-* Export-UpdatePackage
-* Get-UpdatePackageDiff
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Export-UpdatePackage* Get-UpdatePackageDiff* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

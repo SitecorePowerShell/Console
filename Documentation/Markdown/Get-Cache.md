@@ -1,4 +1,4 @@
-# Get-Cache 
+﻿# Get-Cache 
  
 Retrieves a Sitecore cache. 
  
@@ -9,7 +9,7 @@ Get-Cache [[-Name] &lt;String&gt;]
  
 ## Detailed Description 
  
-Retrieves a Sitecore cache. 
+The Get-Cache command retrieves a Sitecore cache. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -49,6 +49,12 @@ Name of the cache to retrieve. Supports wildcards.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Caching.Cache 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -80,5 +86,3 @@ master[data]                             True           3427    7420654   209715
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

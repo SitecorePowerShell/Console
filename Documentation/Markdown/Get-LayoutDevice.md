@@ -1,6 +1,6 @@
-# Get-LayoutDevice 
+﻿# Get-LayoutDevice 
  
-Returns Sitecore Layout device. 
+Returns the layout for the specified device. 
  
 ## Syntax 
  
@@ -11,7 +11,7 @@ Get-LayoutDevice [-Default]
  
 ## Detailed Description 
  
-Returns Sitecore Layout device associated with a name or a default instance layout device/ 
+The Get-LayoutDevice command returns the layout for the specified device. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -95,7 +95,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Data.Items.DeviceItem 
  
 ## Notes 
  
@@ -135,13 +135,4 @@ PS master:\> Get-LayoutDevice *
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Add-Rendering
-* New-Rendering
-* Set-Rendering
-* Get-Rendering
-* Remove-Rendering
-* Get-Layout
-* Set-Layout
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Remove-Rendering* Get-Layout* Set-Layout

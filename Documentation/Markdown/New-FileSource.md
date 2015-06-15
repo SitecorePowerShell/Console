@@ -1,10 +1,10 @@
-# New-FileSource 
+﻿# New-FileSource 
  
 Creates new File source that can be added to a Sitecore package. 
  
 ## Syntax 
  
-New-FileSource [-Name] &lt;String&gt; [[-Root] &lt;String&gt;] [[-IncludeFilter] &lt;String&gt;] [[-ExcludeFilter] &lt;String&gt;] 
+New-FileSource [-Name] &lt;String&gt; [-Root] &lt;DirectoryInfo&gt; [[-IncludeFilter] &lt;String&gt;] [[-ExcludeFilter] &lt;String&gt;] [-InstallMode &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -49,7 +49,7 @@ Name of the file source.
     </tbody>
 </table> 
  
-### -Root&nbsp; &lt;String&gt; 
+### -Root&nbsp; &lt;DirectoryInfo&gt; 
  
 Root folder to include in the package 
  
@@ -62,7 +62,7 @@ Root folder to include in the package
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -74,7 +74,7 @@ Root folder to include in the package
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -151,6 +151,46 @@ Filter that defines which files will NOT be included.
     </tbody>
 </table> 
  
+### -InstallMode&nbsp; &lt;String&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Sitecore.Install.Files.FileSource 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -189,17 +229,4 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
  
 ## Related Topics 
  
-* Export-Package
-* Get-Package
-* Import-Package
-* Install-UpdatePackage
-* New-ExplicitFileSource
-* New-ExplicitItemSource
-* New-ItemSource
-* New-Package
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>
-* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>
-* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>
-
-
+* Export-Package* Get-Package* Import-Package* Install-UpdatePackage* New-ExplicitFileSource* New-ExplicitItemSource* New-ItemSource* New-Package* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/' target='_blank'>http://blog.najmanowicz.com/2011/12/19/continuous-deployment-in-sitecore-with-powershell/</a><br/>* <a href='https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae' target='_blank'>https://gist.github.com/AdamNaj/f4251cb2645a1bfcddae</a><br/>* <a href='https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7' target='_blank'>https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7</a><br/>

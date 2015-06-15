@@ -1,6 +1,6 @@
-# Get-Session 
+﻿# Get-Session 
  
-Gets one or more Sitecore user sessions. 
+Returns one or more Sitecore user sessions using the specified criteria. 
  
 ## Syntax 
  
@@ -11,7 +11,7 @@ Get-Session -InstanceId &lt;String[]&gt;
  
 ## Detailed Description 
  
-The Get-Session cmdlet gets user sessions in Sitecore.
+The Get-Session command returns one or more Sitecore user sessions using the specified criteria.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name. 
  
@@ -102,7 +102,8 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* None. 
+* Sitecore.Web.Authentication.DomainAccessGuard.Session
+Returns one or more user sessions. 
  
 ## Notes 
  
@@ -155,7 +156,4 @@ Created                LastRequest            SessionID                  UserNam
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Remove-Session
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-Session

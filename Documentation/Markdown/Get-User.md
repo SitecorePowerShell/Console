@@ -1,6 +1,6 @@
-# Get-User 
+﻿# Get-User 
  
-Gets one or more Sitecore users. 
+Returns one or more Sitecore users using the specified criteria. 
  
 ## Syntax 
  
@@ -13,7 +13,7 @@ Get-User -Current
  
 ## Detailed Description 
  
-The Get-User cmdlet gets a user or performs a search to retrieve multiple users from Sitecore.
+The Get-User command returns a user or performs a search to retrieve multiple users from Sitecore.
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;.
@@ -190,8 +190,8 @@ Represents the identity of a user.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* System.String
-Represents the identity of a user. 
+* Sitecore.Security.Accounts.User
+Returns one or more users. 
  
 ## Notes 
  
@@ -245,12 +245,20 @@ sitecore\michael         sitecore     False           False
  
 ``` 
  
+### EXAMPLE 4 
+ 
+ 
+ 
+```powershell   
+ 
+PS master:\> Get-User -Filter "michaellwest@*.com"
+
+Name                     Domain       IsAdministrator IsAuthenticated
+----                     ------       --------------- ---------------
+sitecore\michael         sitecore     False           False 
+ 
+``` 
+ 
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* Set-User
-* New-User
-* Remove-User
-* Unlock-User
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Set-User* New-User* Remove-User* Unlock-User

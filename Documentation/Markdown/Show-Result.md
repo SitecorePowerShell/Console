@@ -1,4 +1,4 @@
-# Show-Result 
+﻿# Show-Result 
  
 Shows a Sheer dialog with text results showing the output of the script or another control selected by the user based on either control name or Url to the control. 
  
@@ -267,7 +267,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* System.String 
  
 ## Notes 
  
@@ -318,15 +318,4 @@ Show-Result -Url "/sitecore/shell/Applications/PowerShell/PowerShellIse"
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-Input
-* Show-ListView
-* Show-ModalDialog
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

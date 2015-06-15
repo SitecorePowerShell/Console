@@ -1,4 +1,4 @@
-# Get-Archive 
+﻿# Get-Archive 
  
 Returns Sitecore database archives. 
  
@@ -9,7 +9,7 @@ Get-Archive [[-Database] &lt;Database&gt;] [[-Name] &lt;String&gt;]
  
 ## Detailed Description 
  
-Returns Sitecore archives in context of a particular database. 
+The Get-Archive command returns Sitecore archives in context of the specified database. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -93,7 +93,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Database 
+* Sitecore.Data.Archiving.Archive 
  
 ## Notes 
  
@@ -119,5 +119,3 @@ recyclebin                                   1950
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

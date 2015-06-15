@@ -1,6 +1,6 @@
-# ConvertTo-CliXml 
+﻿# ConvertTo-CliXml 
  
-Returns an XML-based representation of an object or objects. 
+Exports Microsoft .NET objects froms PowerShell to a CliXml string. 
  
 ## Syntax 
  
@@ -9,9 +9,7 @@ ConvertTo-CliXml [-InputObject] &lt;PSObject&gt;
  
 ## Detailed Description 
  
-The ConvertTo-CliXml cmdlet returns an XML-based representation of an object or objects provided as InputObject parameter. You can then use the ConvertFrom-CliXml cmdlet to re-create the saved object based on the contents of that XML.
-
-This cmdlet is similar to ConvertTo-XML, except that ConvertTo-CliXml stores the resulting XML in a string. ConvertTo-XML returns the XML, so you can continue to process it in Windows PowerShell. 
+The ConvertTo-CliXml command exports Microsoft .NET Framework objects from PowerShell to a CliXml string. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -61,7 +59,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* object 
+* System.String 
  
 ## Notes 
  
@@ -86,11 +84,4 @@ PS master:\> $myCliXmlItem | ConvertFrom-CliXml
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-* ConvertFrom-CliXml
-* ConvertFrom-Xml
-* ConvertTo-Xml
-* Export-CliXml
-* Import-CliXml
-
-
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* ConvertFrom-CliXml* ConvertFrom-Xml* ConvertTo-Xml* Export-CliXml* Import-CliXml

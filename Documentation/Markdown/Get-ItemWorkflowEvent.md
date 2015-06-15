@@ -1,19 +1,19 @@
-# Get-ItemWorkflowEvent 
+﻿# Get-ItemWorkflowEvent 
  
-Retrieves entries from the history store notifying of workflow state change of a specific item. 
+Returns entries from the history store notifying of workflow state change for the specified item. 
  
 ## Syntax 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] 
  
 Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Identity &lt;String&gt;] 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Identity &lt;String&gt;] 
  
  
 ## Detailed Description 
  
-Retrieves entries from the history store notifying of workflow state change of a specific item. 
+The Get-ItemWorkflowEvent command returns entries from the history store notifying of workflow state change for the specified item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -55,7 +55,7 @@ User that has been associated with the enteries. Wildcards are supported.
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported. 
+Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -123,7 +123,7 @@ The item to have its history items returned.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item to have its history items returned - can work with Language parameter to narrow the publication scope. 
+Path to the item to have its history items returned - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -157,7 +157,7 @@ Path to the item to have its history items returned - can work with Language par
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item have its history items returned - can work with Language parameter to narrow the publication scope. 
+Id of the the item to have its history items returned - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -233,7 +233,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* Sitecore.Workflows.WorkflowEvent 
  
 ## Notes 
  
@@ -264,8 +264,4 @@ User     : sitecore\admin
  
 ## Related Topics 
  
-* New-ItemWorkflowEvent
-* Execute-Workflow
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* New-ItemWorkflowEvent* Execute-Workflow* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

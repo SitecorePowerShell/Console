@@ -1,4 +1,4 @@
-# Show-Confirm 
+﻿# Show-Confirm 
  
 Shows a user a confirmation request message box. 
  
@@ -51,6 +51,12 @@ Text to show the user in the dialog.
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* System.String 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -71,15 +77,4 @@ yes
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-FieldEditor
-* Show-Input
-* Show-ListView
-* Show-ModalDialog
-* Show-Result
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

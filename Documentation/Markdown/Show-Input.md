@@ -1,4 +1,4 @@
-# Show-Input 
+﻿# Show-Input 
  
 Shows prompt message box asking user to provide a text string. 
  
@@ -185,6 +185,12 @@ Maximum length of the string returned. If user enters a longer value - en error 
     </tbody>
 </table> 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* System.String 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
@@ -203,7 +209,7 @@ PS master:\> Show-Input "Please provide your email" -DefaultValue "my@email.com"
  
 ### EXAMPLE 2 
  
-Uses Show-Input commandlet to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed) 
+Uses Show-Input command to request user a new name for the content item validating the proper characters are used and assigns the result to $newName variable (nothing gets changed) 
  
 ```powershell   
  
@@ -227,15 +233,4 @@ Show-Input "Please provide 5 characters at most" -MaxLength 5
  
 ## Related Topics 
  
-* Read-Variable
-* Show-Alert
-* Show-Application
-* Show-Confirm
-* Show-FieldEditor
-* Show-ListView
-* Show-ModalDialog
-* Show-Result
-* Show-YesNoCancel
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-
+* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

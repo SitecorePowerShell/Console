@@ -1,19 +1,19 @@
-# Publish-Item 
+﻿# Publish-Item 
  
 Publishes a Sitecore item. 
  
 ## Syntax 
  
-Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
  
 Publish-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
  
  
 ## Detailed Description 
  
-The Publish-Item cmdlet publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing. 
+The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -306,7 +306,7 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item 
+* None. 
  
 ## Notes 
  
@@ -347,5 +347,3 @@ PS master:\> Get-Item -Path master:\content\home | Publish-Item -Recurse -Langua
 ## Related Topics 
  
 * <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
-
-

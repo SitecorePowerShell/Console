@@ -1,23 +1,25 @@
-﻿# Get-SpeModule 
+﻿# Test-ItemAcl 
  
-Returns the object that describes a Sitecore PowerShell Extensions Module 
+Tests a specific access right for a specified user against the provided item 
  
 ## Syntax 
  
-Get-SpeModule -Item &lt;Item&gt; 
+Test-ItemAcl -Item &lt;Item&gt; -Identity &lt;AccountIdentity&gt; 
  
-Get-SpeModule -Path &lt;String&gt; 
+Test-ItemAcl -Item &lt;Item&gt; 
  
-Get-SpeModule -Id &lt;String&gt; -Database &lt;Database&gt; 
+Test-ItemAcl -Path &lt;String&gt; -Identity &lt;AccountIdentity&gt; 
  
-Get-SpeModule [-Database &lt;Database&gt;] -Name &lt;String&gt; 
+Test-ItemAcl -Path &lt;String&gt; 
  
-Get-SpeModule -Database &lt;Database&gt; 
+Test-ItemAcl -Id &lt;String&gt; 
+ 
+Test-ItemAcl -Id &lt;String&gt; [-Database &lt;Database&gt;] -Identity &lt;AccountIdentity&gt; 
  
  
 ## Detailed Description 
  
-The Get-SpeModule command returns the object that describes a Sitecore PowerShell Extensions Module. 
+Checks if a user can perform an operation on an item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -25,7 +27,7 @@ The Get-SpeModule command returns the object that describes a Sitecore PowerShel
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-A script or library item that is defined within the module to be returned. 
+The item to be tested against. 
  
 <table>
     <thead></thead>
@@ -48,7 +50,7 @@ A script or library item that is defined within the module to be returned.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -59,7 +61,7 @@ A script or library item that is defined within the module to be returned.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to a script or library item that is defined within the module to be returned. 
+Path to the item to be tested against. 
  
 <table>
     <thead></thead>
@@ -93,7 +95,7 @@ Path to a script or library item that is defined within the module to be returne
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of a script or library item that is defined within the module to be returned. 
+Id of the item to be tested against. Requires the Database parameter to be specified. 
  
 <table>
     <thead></thead>
@@ -127,7 +129,7 @@ Id of a script or library item that is defined within the module to be returned.
  
 ### -Database&nbsp; &lt;Database&gt; 
  
-Database containing the module to be returned. 
+Database containing the item to be fetched with Id parameter. 
  
 <table>
     <thead></thead>
@@ -150,7 +152,7 @@ Database containing the module to be returned.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -159,9 +161,16 @@ Database containing the module to be returned.
     </tbody>
 </table> 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-Name fo the module to return. Supports wildcards. 
+User name including domain for which the access rule is being created. If no domain is specified - 'sitecore' will be used as the default domain.
+
+Specifies the Sitecore user by providing one of the following values.
+
+    Local Name
+        Example: adam
+    Fully Qualified Name
+        Example: sitecore\adam 
  
 <table>
     <thead></thead>
@@ -197,14 +206,13 @@ Name fo the module to return. Supports wildcards.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item
-System.String 
+* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Cognifide.PowerShell.Core.Modules.Module 
+* System.Boolea 
  
 ## Notes 
  
@@ -212,36 +220,26 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
-Return all modules defined in the provided database 
- 
-```powershell   
- 
-PS master:\> Get-SpeModule -Database (Get-Database "master") 
- 
-``` 
- 
-### EXAMPLE 2 
- 
-Return all modules defined in the master database Matching the "Content*" wildcard 
+Denies the "sitecore\author2" user renaming the descendants of the Home item.
+The security info is created prior to adding it to the item.
+The item is delivered to the Add-ItemAcl from the pipeline and returned to the pipeline after processing due to the -PassThru parameter. 
  
 ```powershell   
  
-PS master:\> Get-SpeModule -Database (Get-Database "master") 
- 
-``` 
- 
-### EXAMPLE 3 
- 
-Return the module the piped script belongs to 
- 
-```powershell   
- 
-PS master:\> Get-item "master:\system\Modules\PowerShell\Script Library\Copy Renderings\Content Editor\Context Menu\Layout\Copy Renderings" |  Get-SpeModule 
+PS master:\> $acl = New-ItemAcl -AccessRight item:rename -PropagationType Descendants -SecurityPermission AllowAccess -Identity "sitecore\author2"
+PS master:\> Get-Item -Path master:\content\home | Set-ItemAcl -AccessRules $acl
+
+# Assuming the Home item has one child and author2 does not have rename rights granted above in the tree and is not an administrator
+PS master:\> Get-Item master:\content\home | Test-ItemAcl -Identity "sitecore\author2" -AccessRight item:rename
+False
+
+PS master:\> Get-ChildItem master:\content\home | Test-ItemAcl -Identity "sitecore\author2" -AccessRight item:rename
+True 
  
 ``` 
  
 ## Related Topics 
  
-* Get-SpeModuleFeatureRoot* <a href='http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/' target='_blank'>http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-ItemAcl* Clear-ItemAcl* Get-ItemAcl* New-ItemAcl* Set-ItemAcl* <a href='https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/security_administrators_cookbook_a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/61/security_reference-a4.pdf</a><br/>* <a href='https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf' target='_blank'>https://sdn.sitecore.net/upload/sitecore6/64/content_api_cookbook_sc64_and_later-a4.pdf</a><br/>* <a href='http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx' target='_blank'>http://www.sitecore.net/learn/blogs/technical-blogs/john-west-sitecore-blog/posts/2013/01/sitecore-security-access-rights.aspx</a><br/>* <a href='https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/' target='_blank'>https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/</a><br/>
