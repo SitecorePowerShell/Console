@@ -311,13 +311,13 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (!args.HasResult)
                     return;
-                var itemTemplate =
-                    Context.ContentDatabase.GetItem("/sitecore/templates/Modules/PowerShell Console/PowerShell Script");
-                var libraryTemplate =
-                    Context.ContentDatabase.GetItem(
-                        "/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library");
+                
+                var path = args.Result.Split(':');
+                var db = Factory.GetDatabase(path[0]);
+                var itemTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script");
+                var libraryTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script Library");
                 DataContext.DisableEvents();
-                var scriptItem = Context.ContentDatabase.CreateItemPath(args.Result, libraryTemplate, itemTemplate);
+                var scriptItem = db.CreateItemPath(path[1], libraryTemplate, itemTemplate);
                 DataContext.EnableEvents();
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;

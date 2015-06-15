@@ -84,7 +84,10 @@ namespace Cognifide.PowerShell.Client.Controls
 
                 var db = WebUtil.GetQueryString("contextDb");
                 var itemId = WebUtil.GetQueryString("contextItem");
-                InitialDatabase = string.IsNullOrEmpty(db) ? ApplicationSettings.ScriptLibraryDb : db;
+                InitialDatabase =
+                    string.IsNullOrEmpty(db) || "core".Equals(db, StringComparison.OrdinalIgnoreCase)
+                        ? ApplicationSettings.ScriptLibraryDb
+                        : db;
 
                 BuildDatabases();
 
