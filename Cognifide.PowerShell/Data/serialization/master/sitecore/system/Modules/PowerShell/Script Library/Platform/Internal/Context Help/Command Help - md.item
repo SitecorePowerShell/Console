@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8670
+content-length: 8705
 
 $builder = New-Object System.Text.StringBuilder
 
@@ -243,11 +243,13 @@ if($links) {
     }
 }
 
-Write-Output $builder.ToString()
+if($hideOutput -eq $null){
+    Write-Output $builder.ToString()
+}
 ----version----
 language: en
 version: 1
-revision: 86db0a07-82c8-4267-ac8a-b902fa8d0834
+revision: f594e1c3-98a7-415e-b222-3020661d29aa
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -262,14 +264,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-86db0a07-82c8-4267-ac8a-b902fa8d0834
+f594e1c3-98a7-415e-b222-3020661d29aa
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150412T202019:635644668197015955
+20150615T084639:635699547992344922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
