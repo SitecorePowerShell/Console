@@ -1,14 +1,9 @@
 <#
     .SYNOPSIS
-        Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user.
+        Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
 
     .DESCRIPTION
-        Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user.
-        The new rules will be appended to the existing security descriptors on the item.
-
-    .PARAMETER AccessRules
-        A single or multiple access rules created e.g. through the New-ItemAcl or obtained from other item using the Get-ItemAcl cmdlet.
-        This information will be appended to the existing security descriptors on the item.
+        Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
 
     .PARAMETER PropagationType
        The PropagationType enumeration determines which items will be granted the access right.
@@ -59,32 +54,11 @@
                 Example: adam
             Fully Qualified Name
                 Example: sitecore\adam
-
-    .PARAMETER Item
-        The item to be processed.
-
-    .PARAMETER Path
-        Path to the item to be processed.
-
-    .PARAMETER Id
-        Id of the item to be processed.
-
-    .PARAMETER Database
-        Database containing the item to be processed.
     
-    .PARAMETER Confirm
-	Prompts you for confirmation before running the cmdlet.
-
-    .PARAMETER WhatIf
-	Shows what would happen if the cmdlet runs. The cmdlet is not run.
-
     .INPUTS
-        Sitecore.Data.Items.Item
-        # can be piped from another cmdlet
     
     .OUTPUTS
-        Sitecore.Data.Items.Item
-        # Only if -PassThru is used
+        Sitecore.Security.AccessControl.AccessRule
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -100,9 +74,6 @@
 
     .LINK
 	Get-ItemAcl
-
-    .LINK
-	New-ItemAcl
 
     .LINK
 	Set-ItemAcl
@@ -126,19 +97,39 @@
 	https://briancaos.wordpress.com/2009/10/02/assigning-security-to-items-in-sitecore-6-programatically/
 
     .EXAMPLE
-        # allows the "sitecore\adam" user to rename the Home item and all of its children
-        PS master:\> Add-ItemAcl -Path master:\content\Home -AccessRight "item:rename" -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\admin"
+        # Creates an access rule that allows the "sitecore\adam" user to delete the item to which it will be applied and all of its children
+        PS master:\> New-ItemAcl -AccessRight item:delete -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\adam"
+
+        Account           AccessRight    PermissionType   PropagationType  SecurityPermission
+	-------           -----------    --------------   ---------------  ------------------
+	sitecore\admin    item:delete    Access           Any              AllowAccess
 
     .EXAMPLE
         # Allows the "sitecore\adam" user to delete the Home item and all of its children.
         # Denies the "sitecore\mikey" user reading the descendants of the Home item. ;P
         # The security info is created prior to adding it to the item.
         # The item is delivered to the Add-ItemAcl from the pipeline and returned to the pipeline after processing due to the -PassThru parameter.
-	$acl1 = New-ItemAcl -AccessRight item:delete -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\admin"
+        #The security information is added to the previously existing security qualifiers.
+	$acl1 = New-ItemAcl -AccessRight item:delete -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\adam"
 	$acl2 = New-ItemAcl -AccessRight item:read -PropagationType Descendants -SecurityPermission DenyAccess -Identity "sitecore\mikey"
 	Get-Item -Path master:\content\home | Add-ItemAcl -AccessRules $acl1, $acl2 -PassThru
 
         Name   Children Languages                Id                                     TemplateName
         ----   -------- ---------                --                                     ------------
         Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item
+
+    .EXAMPLE
+        # Allows the "sitecore\adam" user to delete the Home item and all of its children.
+        # Denies the "sitecore\mikey" user reading the descendants of the Home item. ;P
+        # The security info is created prior to setting it to the item.
+        # The item is delivered to the Set-ItemAcl from the pipeline and returned to the pipeline after processing due to the -PassThru parameter.
+        # Any previuous security information on the item is removed.
+	$acl1 = New-ItemAcl -AccessRight item:delete -PropagationType Any -SecurityPermission AllowAccess -Identity "sitecore\adam"
+	$acl2 = New-ItemAcl -AccessRight item:read -PropagationType Descendants -SecurityPermission DenyAccess -Identity "sitecore\mikey"
+	Get-Item -Path master:\content\home | Set-ItemAcl -AccessRules $acl1, $acl2 -PassThru
+
+        Name   Children Languages                Id                                     TemplateName
+        ----   -------- ---------                --                                     ------------
+        Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item
+
 #>

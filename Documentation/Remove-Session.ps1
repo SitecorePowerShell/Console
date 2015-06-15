@@ -13,7 +13,7 @@
 
     .INPUTS
         Sitecore.Web.Authentication.DomainAccessGuard.Session
-        Accepts a user session.
+        #Accepts a user session.
     
     .OUTPUTS
         None.

@@ -1,15 +1,42 @@
 <#
     .SYNOPSIS
-        Protects the Sitecore item by the current or specified user.
+        Protects the Sitecore item.
 
     .DESCRIPTION
-        The Protect-Item command protects the item.
+        The Protect-Item command protects the item by making it read-only.
+
+    .PARAMETER Id
+        Id of the item to be processed.
+
+    .PARAMETER PassThru
+        Passes the processed item back into the pipeline.   
+
+    .PARAMETER Item
+        The item to be processed.
+
+    .PARAMETER Path
+        Path to the item to be processed - can work with Language parameter to specify the language other than current session language.
+
+    .PARAMETER Id
+        Id of the item to be processed - can work with Language parameter to specify the language other than current session language.
+
+    .PARAMETER Database
+        Database containing the item to be fetched with Id parameter.
+
+    .PARAMETER Confirm
+	Prompts you for confirmation before running the cmdlet.
+
+    .PARAMETER WhatIf
+	Shows what would happen if the cmdlet runs. The cmdlet is not run.
 
     .INPUTS
         Sitecore.Data.Items.Item
+        # can be piped from another cmdlet
     
     .OUTPUTS
-        None.
+        Sitecore.Data.Items.Item
+        # Only if -PassThru is used
+
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West

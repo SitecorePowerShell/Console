@@ -22,6 +22,12 @@
     .LINK
         https://github.com/SitecorePowerShell/Console/
 
+    .LINK
+        http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
+
+    .LINK
+        Remove-ScriptSession
+
     .EXAMPLE
         PS master:\>Get-ScriptSession
          

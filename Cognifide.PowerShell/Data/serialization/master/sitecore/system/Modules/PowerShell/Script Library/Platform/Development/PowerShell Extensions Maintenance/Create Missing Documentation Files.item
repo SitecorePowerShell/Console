@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2592
+content-length: 2856
 
 $DocumentationFolder = "C:\Projects\sitecorepowershell\Trunk\Documentation"
 
@@ -22,8 +22,8 @@ $undocumented = get-command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"}
 
 $commonParameters = 
     @{ Path = "Path to the item to be processed - can work with Language parameter to narrow the publication scope.";
-       Id="Id of the item to be processed - can work with Language parameter to narrow the publication scope.";
-       Database="Database containing the item to be processed - can work with Language parameter to narrow the publication scope.";
+       Id="Id of the item to be processed - can work with Language parameter to specify the language other than current session language. Requires the Database parameter to be specified.";
+       Database="Database containing the item to be fetched with Id parameter.";
        Language="If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.";
        Recurse="Process the item and all of its children.";
        Item="The item to be processed.";
@@ -36,7 +36,10 @@ $commonParameters =
        PipelineVariable = "#skip#";
        Verbose = "#skip#";
        WarningAction = "#skip#";
-       WarningVariable = "#skip#"
+       WarningVariable = "#skip#";
+       Confirm = "Prompts you for confirmation before running the cmdlet.";
+       WhatIf = "Shows what would happen if the cmdlet runs. The cmdlet is not run.";
+       PassThru = "Passes the processed object back into the pipeline."
        };
        
 
@@ -104,7 +107,7 @@ foreach($parameter in $parameters){
 ----version----
 language: en
 version: 1
-revision: a69bef99-b1ad-461f-8205-a24ad579a265
+revision: 0c4e0eeb-090d-43f8-bcc5-3077b41664bf
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -119,14 +122,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a69bef99-b1ad-461f-8205-a24ad579a265
+0c4e0eeb-090d-43f8-bcc5-3077b41664bf
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150614T163913:635698967538678672
+20150614T223720:635699182404225547
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
