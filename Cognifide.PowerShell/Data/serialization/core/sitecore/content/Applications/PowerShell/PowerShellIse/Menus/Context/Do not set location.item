@@ -23,6 +23,13 @@ key: message
 content-length: 27
 
 ise:setcontextitem(id=,db=)
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 31
+
+Office/32x32/sign_forbidden.png
 ----version----
 language: en
 version: 1

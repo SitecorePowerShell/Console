@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7213
+content-length: 7559
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
 $dryRun = $false
@@ -53,9 +53,17 @@ function Convert-ToOldDate {
             $item.Fields["__Final Renderings"].Reset() 
             $item.Editing.EndEdit($false, $false);
         }
-        if($item.ProviderPath.StartsWith("core:") -and $item.__Icon.Contains("Office")){
+        if($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")){
             $officeIcons[$item.ProviderPath] = $item.__Icon; 
         }
+        if($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")){
+            $officeIcons[$item.ProviderPath] = $item.Icon; 
+        }
+        
+        if($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")){
+            $officeIcons[$item.ProviderPath] = $item.Icon; 
+        }
+        
         if(-not $dryRun){
             Serialize-Item $Item
         }
@@ -163,7 +171,7 @@ Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item
 
 if($officeIcons.Keys.Count -gt 0){
     Write-Host "`$icons = @{"
-    foreach($path in $officeIcons.Keys){
+    foreach($path in ($officeIcons.Keys |sort)){
         Write-Host "'$path' = '$($officeIcons[$path])';"
     }
     Write-Host "}"
@@ -172,7 +180,7 @@ if($officeIcons.Keys.Count -gt 0){
 ----version----
 language: en
 version: 1
-revision: 9bd5c2a8-7ed3-4f63-9921-c6978b18de69
+revision: 0e1dcbb0-7e82-4460-b30a-dc662ba10c9b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -187,14 +195,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9bd5c2a8-7ed3-4f63-9921-c6978b18de69
+0e1dcbb0-7e82-4460-b30a-dc662ba10c9b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T074541:635699511416300000
+20150615T204234:635699977549509296
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

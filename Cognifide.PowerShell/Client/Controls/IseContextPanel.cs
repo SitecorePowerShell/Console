@@ -47,7 +47,7 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("</div>");
             var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
             var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
-            var icon = contextItem != null ? contextItem.Appearance.Icon : "Office/32x32/sign_forbidden.png";
+            var icon = contextItem != null ? contextItem.Appearance.Icon : contextButton.Appearance.Icon;
             RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon);
             var sessionButton = Factory.GetDatabase("core").GetItem("{0C784F54-2B46-4EE2-B0BA-72384125E123}");
             RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName, string.Empty);

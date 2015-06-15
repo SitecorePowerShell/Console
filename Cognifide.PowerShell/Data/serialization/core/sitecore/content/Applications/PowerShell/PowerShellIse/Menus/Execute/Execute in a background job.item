@@ -1,10 +1,10 @@
 ----item----
 version: 1
-id: {FDDE4730-06FA-46EA-AAD5-DB3C225E3851}
+id: {B8B685AD-C208-444B-A5E7-F8B9F48431CE}
 database: core
-path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Execute/Save As
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Execute/Execute in a background job
 parent: {A30764F4-6ECA-4EE2-9235-39E3D4F8E7F6}
-name: Save As
+name: Execute in a background job
 master: {00000000-0000-0000-0000-000000000000}
 template: {998B965E-6AB8-4568-810F-8101D60D0CC3}
 templatekey: Menu item
@@ -13,42 +13,42 @@ templatekey: Menu item
 field: {335C6760-6C0E-4C6C-814C-A53D203F553E}
 name: Icon
 key: icon
-content-length: 35
+content-length: 27
 
-Office/32x32/media_fast_forward.png
+office/32x32/media_play.png
 ----field----
 field: {CAB694FC-E37C-44EB-9012-488B775CF638}
 name: Message
 key: message
-content-length: 7
+content-length: 11
 
-ise:run
+ise:execute
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 35
+content-length: 27
 
-Office/32x32/media_fast_forward.png
+office/32x32/media_play.png
 ----version----
 language: en
 version: 1
-revision: 9c14465e-94c4-4d6b-a47f-bb29f8982bfa
+revision: 5a8b5597-f0eb-4501-83f5-5e52aef38090
 
 ----field----
 field: {9B72A62B-2775-423D-B17A-EC34A9F31AF8}
 name: Display name
 key: display name
-content-length: 31
+content-length: 27
 
-Execute in http request context
+Execute in a background job
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 31
+content-length: 27
 
-Execute in http request context
+Execute in a background job
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9c14465e-94c4-4d6b-a47f-bb29f8982bfa
+5a8b5597-f0eb-4501-83f5-5e52aef38090
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141223T193057:635549598570309453
+20150615T201621:635699961816970234
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

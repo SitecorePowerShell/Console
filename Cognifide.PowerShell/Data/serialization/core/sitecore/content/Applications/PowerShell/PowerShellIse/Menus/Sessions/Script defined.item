@@ -23,6 +23,13 @@ key: message
 content-length: 41
 
 ise:setsessionid(id=$PersistentSessionId)
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 34
+
+Office/32x32/selection_refresh.png
 ----version----
 language: en
 version: 1

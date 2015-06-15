@@ -13,20 +13,26 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2900
+content-length: 4882
 
 $icons8 = @{
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Office/32x32/floppy_disks.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in a background job' = 'office/32x32/media_play.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in http request context' = 'Office/32x32/media_fast_forward.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'Office/32x32/selection_delete.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'Office/32x32/selection_refresh.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Office/32x32/reticle.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'Office/32x32/reticle.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Office/32x32/sign_stop.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Office/32x32/media_play.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Office/32x32/control_panel.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Office/32x32/insert_option.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Office/32x32/folder_out.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Save As' = 'Office/32x32/media_fast_forward.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Office/32x32/arrow_mix.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Office/32x32/sign_stop.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Office/32x32/refresh.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Office/32x32/window_gear.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save' = 'Office/32x32/floppy_disk.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Office/32x32/control_panel.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Office/32x32/media_play.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Office/32x32/floppy_disks.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Office/32x32/arrow_mix.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Office/32x32/window_gear.png';
 }
 
 $icons7 = @{
@@ -34,6 +40,8 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Applications/32x32/document_plain_new.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Core3/24x24/open_document.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Save As' = 'Software/32x32/bug_green.png'
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in a background job' = 'Software/32x32/console_run.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in http request context' = 'Software/32x32/bug_green.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Software/32x32/console_run.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Software/32x32/console_stop.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Applications/32x32/refresh.png'
@@ -41,7 +49,26 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Applications/32x32/gear_run.png'
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save' = 'Applications/32x32/disk_blue.png'
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Core2/32x32/cross.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'Applications/32x32/document_forbidden.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'Applications/32x32/document_pinned.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Business/32x32/paperclip.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'Business/32x32/paperclip.png';
+
 }
+
+
+Write-Host "`$icons7 = @{"
+foreach($path in ($icons8.Keys |sort)){
+    if($icons7[$path] -ne $null){
+        Write-Host " 7  - '$path' = '$($icons7[$path])';"
+    } else {
+        Write-Host ">8< - '$path' = '$($icons8[$path])';"
+    }
+}
+Write-Host "}"
+
+exit
 
 $icons = $icons8
 foreach($path in $icons.Keys){
@@ -54,7 +81,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: be24dd76-e163-4c16-9256-2f5d14649a54
+revision: d9a230f2-b74e-4489-9fb9-0cc1d50bf669
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -69,14 +96,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-be24dd76-e163-4c16-9256-2f5d14649a54
+d9a230f2-b74e-4489-9fb9-0cc1d50bf669
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150603T154452:635689430922109375
+20150615T203058:635699970582380390
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
