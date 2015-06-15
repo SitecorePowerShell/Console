@@ -8,8 +8,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
     [Cmdlet(VerbsCommon.Clear, "ItemAcl", SupportsShouldProcess = true)]
     [OutputType(typeof (Item))]
-    public class ClearItemAclCommand : BaseItemCommand
+    public class ClearItemAclCommand : BaseLanguageAgnosticItemCommand
     {
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
+
         protected override void ProcessItem(Item item)
         {
             if (!this.CanAdmin(item)) { return; }
@@ -18,6 +21,12 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
             {
                 item.Security.SetAccessRules(new AccessRuleCollection());
             }
+
+            if (PassThru)
+            {
+                WriteItem(item);
+            }
+
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
     {
         [Alias("User")]
         [Parameter]
-        public AccountIdentity Identity { get; set; }
+        public virtual AccountIdentity Identity { get; set; }
 
         protected override void BeginProcessing()
         {

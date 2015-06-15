@@ -7,7 +7,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
-    public abstract class BaseItemAclCommand : BaseItemCommand
+    public abstract class BaseItemAclCommand : BaseLanguageAgnosticItemCommand
     {
         public static readonly string[] WellKnownRights =
             Factory.GetConfigNode("accessRights/rights")
@@ -48,10 +48,6 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account ID, Item from ID")]
         [Parameter(ParameterSetName = "Account Filter, Item from ID")]
         public override Database Database { get; set; }
-
-        [Alias("Languages")]
-        [Parameter]
-        public override string[] Language { get; set; }
 
     }
 }

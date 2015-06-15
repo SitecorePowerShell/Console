@@ -8,6 +8,10 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
     [OutputType(typeof (bool), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class LockItemCommand : BaseEditItemCommand
     {
+
+        // remove from parameters list
+        public override string[] Language { get; set; }
+
         protected override void EditItem(Item item)
         {
             if (ShouldProcess(item.GetProviderPath(), "Lock Item"))

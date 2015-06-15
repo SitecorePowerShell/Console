@@ -28,6 +28,9 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Item from Pipeline", Mandatory = true, ValueFromPipeline = true)]
         public virtual AccessRuleCollection AccessRules { get; set; }
 
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
+
         protected override void ProcessItem(Item item)
         {
             var accessRules = item.Security.GetAccessRules();
@@ -58,7 +61,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
                     accessRules.AddRange(AccessRules);
                     item.Security.SetAccessRules(accessRules);
                 }
+            }
 
+            if (PassThru)
+            {
+                WriteItem(item);
             }
         }
 
