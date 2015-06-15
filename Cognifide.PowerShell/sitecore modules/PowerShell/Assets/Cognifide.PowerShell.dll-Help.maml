@@ -5,7 +5,9 @@
       <command:name>Test-Rule</command:name>
       <gl:group>Rule</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Tests item against a sitecore serialized rules engine rule set.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -15,7 +17,9 @@
       <dev:version>3.1.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Tests item or a stream of items against a sitecore serialized rules engine rule set.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -35,7 +39,9 @@
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Rule</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Serialized sitecore rules engine rule. Such rules can be read from rule fields or created by user with the Read-Variable cmdlet.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -49,7 +55,9 @@
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>InputObject</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Item to be tested
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">PSObject</command:parameterValue>
         <dev:type>
@@ -61,24 +69,100 @@
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.Data.Items.Item
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Boolean
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>$rule = '&lt;ruleset&gt;
+&lt;rule uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}"&gt;
+&lt;conditions&gt;
+&lt;condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="ED10990E15EB4E1E8FCFD33F441588A1" /&gt;
+&lt;/conditions&gt;
+&lt;/rule&gt;
+&lt;/ruleset&gt;'
+
+Get-ChildItem master:\content\Home -Recurse | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+
+</dev:code>
+        <dev:remarks>Specifies a rule as "items that have layout" and runs the rule againste all items under the ome Item</dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>$rule = '&lt;ruleset&gt;&lt;/ruleset&gt;'
+$root = Get-Item master:\content\home\ 
+
+$result = Read-Variable -Parameters `
+@{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
+@{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."} `
+-Description "This dialog shows editor how a rule can be taken from an item and edited using the Read-Variable cmdlet." `
+-Title "Sample rule editing" -Width 600 -Height 600 -ShowHints
+
+if($result -eq "cancel"){
+exit;
+}
+
+Get-ChildItem $root.ProviderPath | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+
+
+</dev:code>
+        <dev:remarks>Asks user for the rule and root under which items should be filtered, and lists all items fulfilling the rule under the selected path</dev:remarks>
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>New-SecuritySource</command:name>
       <gl:group>SecuritySource</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates new User &amp; Role source that can be added to a Sitecore package.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -88,7 +172,9 @@
       <dev:version>3.1.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>Creates new User &amp; Role source that can be added to a Sitecore package.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -108,6 +194,10 @@
         <command:parameter required="true" parameterSetName="Id" position="2">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Id" position="3">
+          <maml:name>AccountType</maml:name>
+          <command:parameterValue required="true">Unknown | Role | User</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
           <maml:name>Name</maml:name>
@@ -134,7 +224,9 @@
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
         <maml:name>Account</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>User or Role provided from e.g. Get-Role or Get-User Cmdlet.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Account</command:parameterValue>
         <dev:type>
@@ -148,7 +240,19 @@
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
         <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>User or role name including domain for which the access rule is being created. If no domain is specified - 'sitecore' will be used as the default domain.
+
+Specifies the Sitecore user by providing one of the following values.
+
+    Local Name
+        Example: adam
+    Fully Qualified Name
+        Example: sitecore\adam
+
+if -AccountType parameter is specified as Role - only roles will be taken into consideration.
+if -AccountType parameter is specified as User - only users will be taken into consideration.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">AccountIdentity</command:parameterValue>
         <dev:type>
@@ -162,7 +266,21 @@
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="true">
         <maml:name>Filter</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies a simple pattern to match Sitecore roles &amp; users.
+
+Examples:
+The following examples show how to use the filter syntax.
+
+To get security for all roles, use the asterisk wildcard:
+Get-ItemAcl -Filter *
+
+To security got all roles in a domain use the following command:
+Get-ItemAcl -Filter "sitecore\*"
+
+if -AccountType parameter is specified as Role - only roles will be taken into consideration.
+if -AccountType parameter is specified as User - only users will be taken into consideration.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
         <dev:type>
@@ -176,7 +294,11 @@
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="3" variableLength="false">
         <maml:name>AccountType</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>- Unknown - Both Roles and users will be taken into consideration when looking for accounts through either -Identity or -Filter parameters
+- Role - Only Roles will be taken into consideration when looking for accounts through either -Identity or -Filter parameters
+- User - Only Users will be taken into consideration when looking for accounts through either -Identity or -Filter parameters
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">AccountType</command:parameterValue>
         <dev:type>
@@ -190,7 +312,9 @@
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the security source.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -202,17 +326,112 @@
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.Security.Accounts.Account
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Sitecore.Install.Security.SecuritySource
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+       # Create security source with Sitecore Administrator only
+       $source = New-SecuritySource -Identity sitecore\admin -Name "Sitecore Admin" 
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+</dev:code>
+        <dev:remarks>Following example creates a new package, adds sitecore\admin user to it and 
+saves it in the Sitecore Package folder+ gives you an option to download the saved package.</dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>
+# Create package
+       $package = new-package "Sitecore PowerShell Extensions";
+
+# Set package metadata
+       $package.Sources.Clear();
+
+       $package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+       $package.Metadata.Publisher = "Cognifide Limited";
+       $package.Metadata.Version = "2.7";
+       $package.Metadata.Readme = 'This text will be visible to people installing your package'
+       
+       # Create security source with all roles within the sitecore domain
+       $source = New-SecuritySource -Filter sitecore\* -Name "Sitecore Roles" -AccountType Role
+$package.Sources.Add($source);
+
+# Save package
+       Export-Package -Project $package -Path "$($package.Name)-$($package.Metadata.Version).zip" -Zip
+
+# Offer the user to download the package
+       Download-File "$SitecorePackageFolder\$($package.Name)-$($package.Metadata.Version).zip"
+
+
+</dev:code>
+        <dev:remarks>Following example creates a new package, adds all roles within the "sitecore" domain to it and 
+saves it in the Sitecore Package folder+ gives you an option to download the saved package.</dev:remarks>
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
