@@ -21,11 +21,11 @@
         Examples:
         The following examples show how to use the filter syntax.
 
-        To get all the roles, use the asterisk wildcard:
-        Export-Role -Filter *
+        To get security for all roles, use the asterisk wildcard:
+        Get-ItemAcl -Filter *
 
-        To get all the roles in a domain use the following command:
-        Export-Role -Filter "sitecore\*"
+        To security got all roles in a domain use the following command:
+        Get-ItemAcl -Filter "sitecore\*"
 
     .PARAMETER Item
         The item from which the security rules should be taken.

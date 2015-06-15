@@ -11,16 +11,16 @@
         The item to be edited.
 
     .PARAMETER Path
-        Path to the item to be edited - can work with Language parameter to narrow the publication scope.
+        Path to the item to be edited - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Id
-        Id of the item to be edited - can work with Language parameter to narrow the publication scope.
+        Id of the the item to be edited - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Database
         Database containing the item to be edited - can work with Language parameter to narrow the publication scope.
 
     .PARAMETER Language
-        If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.
+        Language that will be edited. If not specified the current user language will be used. Globbing/wildcard supported.
 
     .PARAMETER PreserveSections
         If added this parameter tells editor to preserve the original item field sections, otherwise all fields are placed in a single section Named by SectionTitle parameter and having the SectionIcon icon.

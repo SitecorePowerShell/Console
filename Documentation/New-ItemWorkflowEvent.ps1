@@ -19,16 +19,17 @@
         The item to have the history event attached.
 
     .PARAMETER Path
-        Path to the item to have the history event attached - can work with Language parameter to narrow the publication scope.
+        Path to the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Id
-        Id of the item to have the history event attached - can work with Language parameter to narrow the publication scope.
+        Id of the the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Database
         Database containing the item to have the history event attached - can work with Language parameter to narrow the publication scope.
 
     .PARAMETER Language
-        If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.
+        Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
+
     
     .INPUTS
         Sitecore.Data.Items.Item

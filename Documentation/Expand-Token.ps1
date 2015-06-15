@@ -11,7 +11,19 @@
 
     .PARAMETER Item
         The item to be processed.    
-    
+
+    .PARAMETER Path
+        Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
+
+    .PARAMETER Id
+        Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
+
+    .PARAMETER Database
+        Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
+
+    .PARAMETER Language
+        Language that will be processed. If not specified the current user language will be used. Globbing/wildcard supported.
+        
     .INPUTS
         Sitecore.Data.Items.Item
     

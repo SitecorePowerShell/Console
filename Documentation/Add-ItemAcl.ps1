@@ -67,10 +67,10 @@
         Path to the item to be processed.
 
     .PARAMETER Id
-        Id of the item to be processed.
+        Id of the item to be processed. Requires Database parameter to be specified
 
     .PARAMETER Database
-        Database containing the item to be processed.
+        Database containing the item to be fetched using the Id Parameter.
     
     .PARAMETER Confirm
 	Prompts you for confirmation before running the cmdlet.

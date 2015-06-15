@@ -12,9 +12,6 @@
     .PARAMETER PassThru
         Passes the processed object back into the pipeline.
 
-    .PARAMETER Language
-        If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.
-
     .PARAMETER Item
         The item to be processed.
 

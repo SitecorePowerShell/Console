@@ -1707,7 +1707,7 @@ Fields ignored out of the box include:
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If specified - language that will be used as source language.
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used.
 
 </maml:para>
         </maml:description>
@@ -1739,7 +1739,7 @@ Fields ignored out of the box include:
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to be processed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -1755,7 +1755,7 @@ Fields ignored out of the box include:
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be processed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -2110,7 +2110,9 @@ Some example of tokens include:
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Language that will be processed. If not specified the current user language will be used. Globbing/wildcard supported.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="true">String[]</command:parameterValue>
         <dev:type>
@@ -2140,7 +2142,9 @@ Some example of tokens include:
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -2154,7 +2158,9 @@ Some example of tokens include:
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -2168,7 +2174,9 @@ Some example of tokens include:
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
         <dev:type>
@@ -3103,7 +3111,9 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Language that will be analysed. If not specified the current user language will be used. Globbing/wildcard supported.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="true">String[]</command:parameterValue>
         <dev:type>
@@ -3165,7 +3175,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para>Database containing the item to be analysed - required if item is specified with Id.
+          <maml:para>Database containing the item to be analysed - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
@@ -3439,7 +3449,7 @@ __Preview                           __Preview                          Appearanc
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -3455,7 +3465,7 @@ __Preview                           __Preview                          Appearanc
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -3471,7 +3481,7 @@ __Preview                           __Preview                          Appearanc
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para>Database containing the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
@@ -3487,7 +3497,7 @@ __Preview                           __Preview                          Appearanc
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language you can specify it with this parameter. Globbing/wildcard supported.    
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -3724,7 +3734,7 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -3740,7 +3750,7 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -3756,7 +3766,7 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para>Database containing the item to be analysed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
@@ -3772,7 +3782,7 @@ TargetPath         : /sitecore/content/Home
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language you can specify it with this parameter. Globbing/wildcard supported.    
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -6410,7 +6420,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If specified - language that will be used as source language.
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -6426,7 +6436,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
-          <maml:para>The item to be processed.
+          <maml:para>The item to be sent to the command.
 
 </maml:para>
         </maml:description>
@@ -6442,7 +6452,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to be processed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to be sent to the command - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -6458,7 +6468,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be processed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to be sent to the command - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -6474,7 +6484,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para>Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Database containing the item to be sent to the command - can work with Language parameter to narrow the publication scope.
 
 </maml:para>
         </maml:description>
@@ -7943,7 +7953,7 @@ Show-FieldEditor -Path "master:\content\home" -Name "*", "-Title"
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to be edited - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to be edited - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -7959,7 +7969,7 @@ Show-FieldEditor -Path "master:\content\home" -Name "*", "-Title"
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be edited - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to be edited - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -7991,7 +8001,7 @@ Show-FieldEditor -Path "master:\content\home" -Name "*", "-Title"
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.
+          <maml:para>Language that will be edited. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -16768,7 +16778,7 @@ Specifies the Sitecore user by providing one of the following values.
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to be processed.
+          <maml:para>Id of the item to be processed. Requires Database parameter to be specified
 
 </maml:para>
         </maml:description>
@@ -16784,7 +16794,7 @@ Specifies the Sitecore user by providing one of the following values.
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Database</maml:name>
         <maml:description>
-          <maml:para>Database containing the item to be processed.
+          <maml:para>Database containing the item to be fetched using the Id Parameter.
 
 </maml:para>
         </maml:description>
@@ -17486,11 +17496,11 @@ Specifies the Sitecore user by providing one of the following values.
 Examples:
 The following examples show how to use the filter syntax.
 
-To get all the roles, use the asterisk wildcard:
-Export-Role -Filter *
+To get security for all roles, use the asterisk wildcard:
+Get-ItemAcl -Filter *
 
-To get all the roles in a domain use the following command:
-Export-Role -Filter "sitecore\*"
+To security got all roles in a domain use the following command:
+Get-ItemAcl -Filter "sitecore\*"
 
 </maml:para>
         </maml:description>
@@ -24098,7 +24108,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.    
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -24130,7 +24140,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to have the workflow action executed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to have the workflow action executed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -24146,7 +24156,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to have the workflow action executed - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to have the workflow action executed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -24331,7 +24341,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.    
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
 
 </maml:para>
         </maml:description>
@@ -24363,7 +24373,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to have its history items returned - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to have its history items returned - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -24379,7 +24389,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item have its history items returned - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to have its history items returned - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -24635,7 +24645,8 @@ User     : sitecore\admin
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Language</maml:name>
         <maml:description>
-          <maml:para>If you need the item in specific Language You can specify it with this parameter. Globbing/wildcard supported.
+          <maml:para>Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
+
 
 </maml:para>
         </maml:description>
@@ -24667,7 +24678,7 @@ User     : sitecore\admin
       <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
-          <maml:para>Path to the item to have the history event attached - can work with Language parameter to narrow the publication scope.
+          <maml:para>Path to the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -24683,7 +24694,7 @@ User     : sitecore\admin
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the item to have the history event attached - can work with Language parameter to narrow the publication scope.
+          <maml:para>Id of the the item to have the history event attached - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>

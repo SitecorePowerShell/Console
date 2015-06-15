@@ -12,17 +12,17 @@
         The item to be analysed.
 
     .PARAMETER Path
-        Path to the item to be analysed - can work with Language parameter to narrow the publication scope.
+        Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Id
-        Id of the item to be analysed - can work with Language parameter to narrow the publication scope.
+        Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Database
-        Database containing the item to be analysed - can work with Language parameter to narrow the publication scope.
+        Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
 
     .PARAMETER Language
-        If you need the item in specific Language you can specify it with this parameter. Globbing/wildcard supported.    
-    
+        Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported.
+        
     .INPUTS
         Sitecore.Data.Items.Item
     
