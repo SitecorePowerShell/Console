@@ -1,4 +1,4 @@
-﻿# Get-ItemField 
+# Get-ItemField 
  
 Retrieves item fields as either names or fields or template fields. 
  

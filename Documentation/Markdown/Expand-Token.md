@@ -1,4 +1,4 @@
-﻿# Expand-Token 
+# Expand-Token 
  
 Expands tokens in fields for items. 
  

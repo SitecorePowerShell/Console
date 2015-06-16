@@ -1,4 +1,4 @@
-﻿# Get-Archive 
+# Get-Archive 
  
 Returns Sitecore database archives. 
  

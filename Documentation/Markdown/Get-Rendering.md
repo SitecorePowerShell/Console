@@ -1,4 +1,4 @@
-﻿# Get-Rendering 
+# Get-Rendering 
  
 Returns a RenderingDefinition for an item using the filtering parameters. 
  

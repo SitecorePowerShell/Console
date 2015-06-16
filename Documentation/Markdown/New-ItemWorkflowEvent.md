@@ -1,4 +1,4 @@
-﻿# New-ItemWorkflowEvent 
+# New-ItemWorkflowEvent 
  
 Creates new entry in the history store notifying of workflow state change. 
  

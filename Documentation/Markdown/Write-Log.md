@@ -1,4 +1,4 @@
-﻿# Write-Log 
+# Write-Log 
  
 Writes text to the Sitecore event log. 
  

@@ -1,4 +1,4 @@
-﻿# Set-Rendering 
+# Set-Rendering 
  
 Updates rendering with new values. 
  

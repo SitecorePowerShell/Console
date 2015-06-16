@@ -1,4 +1,4 @@
-﻿# Test-ItemAcl 
+# Test-ItemAcl 
  
 Tests a specific access right for a specified user against the provided item 
  

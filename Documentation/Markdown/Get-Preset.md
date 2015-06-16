@@ -1,4 +1,4 @@
-﻿# Get-Preset 
+# Get-Preset 
  
 Returns a serialization preset for use with Export-Item. 
  

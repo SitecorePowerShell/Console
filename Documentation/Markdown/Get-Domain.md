@@ -1,4 +1,4 @@
-﻿# Get-Domain 
+# Get-Domain 
  
 Gets all available domains or the specified domain. 
  

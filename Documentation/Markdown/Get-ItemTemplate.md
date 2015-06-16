@@ -1,4 +1,4 @@
-﻿# Get-ItemTemplate 
+# Get-ItemTemplate 
  
 Returns the item template and its base templates. 
  

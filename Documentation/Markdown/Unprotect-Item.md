@@ -1,4 +1,4 @@
-﻿# Unprotect-Item 
+# Unprotect-Item 
  
 Unprotects the specified Sitecore item. 
  

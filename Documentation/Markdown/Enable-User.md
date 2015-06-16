@@ -1,4 +1,4 @@
-﻿# Enable-User 
+# Enable-User 
  
 Enables the specified Sitecore user. 
  

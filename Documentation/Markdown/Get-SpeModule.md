@@ -1,4 +1,4 @@
-﻿# Get-SpeModule 
+# Get-SpeModule 
  
 Returns the object that describes a Sitecore PowerShell Extensions Module 
  

@@ -1,4 +1,4 @@
-﻿# New-Package 
+# New-Package 
  
 Creates a new Sitecore install package object. 
  

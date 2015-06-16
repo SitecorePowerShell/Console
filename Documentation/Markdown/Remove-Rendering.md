@@ -1,4 +1,4 @@
-﻿# Remove-Rendering 
+# Remove-Rendering 
  
 Removes renderings from an item. 
  

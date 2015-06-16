@@ -1,4 +1,4 @@
-﻿# Test-Rule 
+# Test-Rule 
  
 Tests item against a sitecore serialized rules engine rule set. 
  

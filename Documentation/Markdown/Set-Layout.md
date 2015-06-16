@@ -1,4 +1,4 @@
-﻿# Set-Layout 
+# Set-Layout 
  
 Sets item layout for a device. 
  

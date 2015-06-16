@@ -1,4 +1,4 @@
-﻿# Get-SpeModuleFeatureRoot 
+# Get-SpeModuleFeatureRoot 
  
 Returns the library item or path to the library where scripts for a particular integration point should be located for a specific module. 
  

@@ -1,4 +1,4 @@
-﻿# Install-UpdatePackage 
+# Install-UpdatePackage 
  
 Installs a Sitecore update package from the specified path. 
  

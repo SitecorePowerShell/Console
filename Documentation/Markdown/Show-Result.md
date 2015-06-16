@@ -1,4 +1,4 @@
-﻿# Show-Result 
+# Show-Result 
  
 Shows a Sheer dialog with text results showing the output of the script or another control selected by the user based on either control name or Url to the control. 
  

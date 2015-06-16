@@ -1,4 +1,4 @@
-﻿# Get-LayoutDevice 
+# Get-LayoutDevice 
  
 Returns the layout for the specified device. 
  

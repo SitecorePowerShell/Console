@@ -1,4 +1,4 @@
-﻿# New-User 
+# New-User 
  
 Creates a new Sitecore user. 
  

@@ -1,4 +1,4 @@
-﻿# Show-Application 
+# Show-Application 
  
 Executes Sitecore Sheer application. 
  

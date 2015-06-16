@@ -1,4 +1,4 @@
-﻿# New-ItemAcl 
+# New-ItemAcl 
  
 Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets. 
  

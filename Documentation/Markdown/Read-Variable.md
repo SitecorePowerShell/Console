@@ -1,4 +1,4 @@
-﻿# Read-Variable 
+# Read-Variable 
  
 Prompts user to provide values for variables required by the script to perform its operation. 
  

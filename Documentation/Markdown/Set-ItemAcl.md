@@ -1,4 +1,4 @@
-﻿# Set-ItemAcl 
+# Set-ItemAcl 
  
 Sets new security information on an item overwriting the previous settings. 
  

@@ -1,4 +1,4 @@
-﻿# Find-Item 
+# Find-Item 
  
 Finds items using the Sitecore Content Search API. 
  

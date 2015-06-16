@@ -1,4 +1,4 @@
-﻿# Get-Cache 
+# Get-Cache 
  
 Retrieves a Sitecore cache. 
  

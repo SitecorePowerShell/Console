@@ -1,4 +1,4 @@
-﻿# Remove-Session 
+# Remove-Session 
  
 Removes one or more Sitecore user sessions. 
  

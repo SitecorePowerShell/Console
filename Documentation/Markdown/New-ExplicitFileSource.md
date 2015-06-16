@@ -1,4 +1,4 @@
-﻿# New-ExplicitFileSource 
+# New-ExplicitFileSource 
  
 Creates new File source that can be added to a Sitecore package. 
  

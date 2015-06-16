@@ -1,4 +1,4 @@
-﻿# Get-UserAgent 
+# Get-UserAgent 
  
 Returns the current user's browser user agent. 
  

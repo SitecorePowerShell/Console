@@ -1,4 +1,4 @@
-﻿# Get-ItemWorkflowEvent 
+# Get-ItemWorkflowEvent 
  
 Returns entries from the history store notifying of workflow state change for the specified item. 
  

@@ -1,4 +1,4 @@
-﻿# New-FileSource 
+# New-FileSource 
  
 Creates new File source that can be added to a Sitecore package. 
  

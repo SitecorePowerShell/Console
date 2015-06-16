@@ -1,4 +1,4 @@
-﻿# Import-Role 
+# Import-Role 
  
 Imports (deserializes) Sitecore roles from the Sitecore server filesystem. 
  

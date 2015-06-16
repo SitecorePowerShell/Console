@@ -1,4 +1,4 @@
-﻿# Add-ItemLanguage 
+# Add-ItemLanguage 
  
 Creates a version of the item in a new language based on an existing language version. 
  

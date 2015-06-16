@@ -1,4 +1,4 @@
-﻿# Export-Item 
+# Export-Item 
  
 Exports (serializes) the Sitecore item to the filesystem. 
  

@@ -1,4 +1,4 @@
-﻿# ConvertFrom-ItemClone 
+# ConvertFrom-ItemClone 
  
 Converts an item from a clone to a fully independent item. 
  

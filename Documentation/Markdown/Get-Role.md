@@ -1,4 +1,4 @@
-﻿# Get-Role 
+# Get-Role 
  
 Returns one or more Sitecore roles using the specified criteria. 
  

@@ -1,4 +1,4 @@
-﻿# Show-Alert 
+# Show-Alert 
  
 Pauses the script and shows an alert to the user. 
  

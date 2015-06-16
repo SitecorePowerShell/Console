@@ -1,4 +1,4 @@
-﻿# Show-Confirm 
+# Show-Confirm 
  
 Shows a user a confirmation request message box. 
  

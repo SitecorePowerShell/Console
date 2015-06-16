@@ -1,4 +1,4 @@
-﻿# Remove-Domain 
+# Remove-Domain 
  
 Removes the specified domain. 
  

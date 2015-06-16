@@ -1,4 +1,4 @@
-﻿# Get-Layout 
+# Get-Layout 
  
 Returns the layout for the specified item. 
  

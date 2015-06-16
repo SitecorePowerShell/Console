@@ -1,4 +1,4 @@
-﻿# Invoke-ShellCommand 
+# Invoke-ShellCommand 
  
 Executes Sitecore Shell command for an item.
 This command used to be named Execute-ShellCommand - a matching alias added for compatibility with older scripts. 

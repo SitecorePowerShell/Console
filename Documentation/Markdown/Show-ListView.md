@@ -1,4 +1,4 @@
-﻿# Show-ListView 
+# Show-ListView 
  
 Sends output to an interactive table in a separate window. 
  

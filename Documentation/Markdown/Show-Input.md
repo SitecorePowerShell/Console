@@ -1,4 +1,4 @@
-﻿# Show-Input 
+# Show-Input 
  
 Shows prompt message box asking user to provide a text string. 
  

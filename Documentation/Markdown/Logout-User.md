@@ -1,4 +1,4 @@
-﻿# Logout-User 
+# Logout-User 
  
 Logs the current user out. 
  

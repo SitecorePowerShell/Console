@@ -1,4 +1,4 @@
-﻿# Get-RoleMember 
+# Get-RoleMember 
  
 Returns the Sitecore users in the specified role. 
  

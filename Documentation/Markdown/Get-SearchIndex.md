@@ -1,4 +1,4 @@
-﻿# Get-SearchIndex 
+# Get-SearchIndex 
  
 Returns sitecore Search indices. 
  

@@ -1,4 +1,4 @@
-﻿# Get-ItemReferrer 
+# Get-ItemReferrer 
  
 Returns all the items referring to the specified item. 
  

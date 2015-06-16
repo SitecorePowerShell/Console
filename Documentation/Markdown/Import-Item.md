@@ -1,4 +1,4 @@
-﻿# Import-Item 
+# Import-Item 
  
 Imports (deserializes) the specified path from the filesystem on the server as a Sitecore item. 
  

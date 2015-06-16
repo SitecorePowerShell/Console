@@ -1,4 +1,4 @@
-﻿# Import-User 
+# Import-User 
  
 Imports (deserializes) Sitecore users from the Sitecore server filesystem. 
  

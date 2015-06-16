@@ -1,4 +1,4 @@
-﻿# Export-User 
+# Export-User 
  
 Export (serialize) a Sitecore user to the filesystem on the server. 
  

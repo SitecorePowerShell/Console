@@ -1,4 +1,4 @@
-﻿# Invoke-Workflow 
+# Invoke-Workflow 
  
 Executes Workflow action for an item.
 This command used to be named Execute-Workflow - a matching alias added for compatibility with older scripts. 

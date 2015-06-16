@@ -1,4 +1,4 @@
-﻿# Initialize-Item 
+# Initialize-Item 
  
 Initializes items with the PowerShell automatic properties for each field. 
  

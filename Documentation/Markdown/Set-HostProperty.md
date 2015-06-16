@@ -1,4 +1,4 @@
-﻿# Set-HostProperty 
+# Set-HostProperty 
  
 Sets the current host property. 
  

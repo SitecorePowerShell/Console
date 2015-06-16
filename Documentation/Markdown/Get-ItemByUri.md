@@ -1,4 +1,4 @@
-﻿# Get-ItemByUri 
+# Get-ItemByUri 
  
 This command has been obsoleted - use "Get-Item -Uri" instead. 
  

@@ -1,4 +1,4 @@
-﻿# Export-Package 
+# Export-Package 
  
 Exports a Sitecore installation package and project. 
  

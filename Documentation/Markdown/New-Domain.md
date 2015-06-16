@@ -1,4 +1,4 @@
-﻿# New-Domain 
+# New-Domain 
  
 Creates a new domain with the specified name. 
  

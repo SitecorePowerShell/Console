@@ -1,4 +1,4 @@
-﻿# Export-Role 
+# Export-Role 
  
 Exports (serializes) Sitecore roles to the filesystem on the server. 
  

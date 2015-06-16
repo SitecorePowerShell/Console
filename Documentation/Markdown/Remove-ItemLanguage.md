@@ -1,4 +1,4 @@
-﻿# Remove-ItemLanguage 
+# Remove-ItemLanguage 
  
 Removes Language from a single item or a branch of items 
  

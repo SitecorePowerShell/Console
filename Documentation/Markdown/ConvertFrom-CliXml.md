@@ -1,4 +1,4 @@
-﻿# ConvertFrom-CliXml 
+# ConvertFrom-CliXml 
  
 Imports a CliXml string with data that represents Microsoft .NET objects and creates the objects within PowerShell. 
  

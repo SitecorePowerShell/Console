@@ -1,4 +1,4 @@
-﻿# Protect-Item 
+# Protect-Item 
  
 Protects the Sitecore item. 
  

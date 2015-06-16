@@ -1,4 +1,4 @@
-﻿# Disable-User 
+# Disable-User 
  
 Disables the specified Sitecore user. 
  

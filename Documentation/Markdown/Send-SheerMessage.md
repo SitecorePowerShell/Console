@@ -1,4 +1,4 @@
-﻿# Send-SheerMessage 
+# Send-SheerMessage 
  
 Sends a sheer message to the app in which context the script is executing. 
  

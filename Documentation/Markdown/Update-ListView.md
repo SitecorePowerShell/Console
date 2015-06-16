@@ -1,4 +1,4 @@
-﻿# Update-ListView 
+# Update-ListView 
  
 Updates List View (created by Show-ListView) data. 
  

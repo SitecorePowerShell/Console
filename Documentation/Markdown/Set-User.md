@@ -1,4 +1,4 @@
-﻿# Set-User 
+# Set-User 
  
 Sets the Sitecore user properties. 
  

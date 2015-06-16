@@ -1,4 +1,4 @@
-﻿# Receive-File 
+# Receive-File 
  
 Shows a dialog to users allowing to upload files to either server file system or items in media library. 
  

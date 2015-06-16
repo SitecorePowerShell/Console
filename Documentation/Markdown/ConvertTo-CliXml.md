@@ -1,4 +1,4 @@
-﻿# ConvertTo-CliXml 
+# ConvertTo-CliXml 
  
 Exports Microsoft .NET objects froms PowerShell to a CliXml string. 
  

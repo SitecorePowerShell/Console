@@ -1,4 +1,4 @@
-﻿# Clear-ItemAcl 
+# Clear-ItemAcl 
  
 Removes all security information from the item specified. 
  

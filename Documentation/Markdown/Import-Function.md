@@ -1,4 +1,4 @@
-﻿# Import-Function 
+# Import-Function 
  
 Imports a function script from the script library's "Functions" folder. 
  

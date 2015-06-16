@@ -1,4 +1,4 @@
-﻿# Remove-User 
+# Remove-User 
  
 Removes the Sitecore user. 
  

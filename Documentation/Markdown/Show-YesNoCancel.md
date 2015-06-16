@@ -1,4 +1,4 @@
-﻿# Show-YesNoCancel 
+# Show-YesNoCancel 
  
 Shows Yes/No/Cancel dialog to the user and returns user choice. 
  

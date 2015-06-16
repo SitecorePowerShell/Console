@@ -1,4 +1,4 @@
-﻿# Get-Package 
+# Get-Package 
  
 Loads the package definition (xml) from the specified path. 
  

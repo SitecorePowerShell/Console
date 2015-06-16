@@ -1,4 +1,4 @@
-﻿# New-ExplicitItemSource 
+# New-ExplicitItemSource 
  
 Creates new Explicit Item Source that can be added to a Sitecore package. 
  

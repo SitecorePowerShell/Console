@@ -1,4 +1,4 @@
-﻿# New-ItemSource 
+# New-ItemSource 
  
 Creates new Item source that can be added to a Sitecore package. 
  

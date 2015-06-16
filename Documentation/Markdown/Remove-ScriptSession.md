@@ -1,4 +1,4 @@
-﻿# Remove-ScriptSession 
+# Remove-ScriptSession 
  
 Removes a persistent Script Session from memory. 
  

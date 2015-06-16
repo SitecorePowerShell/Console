@@ -1,4 +1,4 @@
-﻿# Unlock-User 
+# Unlock-User 
  
 Unlocks a Sitecore user using the specified criteria. 
  

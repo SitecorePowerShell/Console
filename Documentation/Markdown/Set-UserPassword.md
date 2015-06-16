@@ -1,4 +1,4 @@
-﻿# Set-UserPassword 
+# Set-UserPassword 
  
 Sets the Sitecore user password. 
  

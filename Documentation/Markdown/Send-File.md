@@ -1,4 +1,4 @@
-﻿# Send-File 
+# Send-File 
  
 Allows users to download files from server and file items from media library. 
  

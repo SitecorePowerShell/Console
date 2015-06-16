@@ -1,4 +1,4 @@
-﻿# Login-User 
+# Login-User 
  
 Logs a user in and performs further script instructions in the context of the user. 
  

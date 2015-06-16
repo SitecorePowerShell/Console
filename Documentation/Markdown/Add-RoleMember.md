@@ -1,4 +1,4 @@
-﻿# Add-RoleMember 
+# Add-RoleMember 
  
 Adds one or more Sitecore users to the specified role. 
  

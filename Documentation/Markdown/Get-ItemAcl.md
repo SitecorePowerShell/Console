@@ -1,4 +1,4 @@
-﻿# Get-ItemAcl 
+# Get-ItemAcl 
  
 Retrieves security access rules from an item. 
  

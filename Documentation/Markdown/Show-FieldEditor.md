@@ -1,4 +1,4 @@
-﻿# Show-FieldEditor 
+# Show-FieldEditor 
  
 Shows Field editor for a provided item. 
  

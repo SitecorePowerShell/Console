@@ -1,4 +1,4 @@
-﻿# Get-TaskSchedule 
+# Get-TaskSchedule 
  
 Returns one or more task schedule items using the specified criteria. 
  

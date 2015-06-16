@@ -1,4 +1,4 @@
-﻿# Add-ItemAcl 
+# Add-ItemAcl 
  
 Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user. 
  

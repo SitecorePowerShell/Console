@@ -1,4 +1,4 @@
-﻿# New-SecuritySource 
+# New-SecuritySource 
  
 Creates new User & Role source that can be added to a Sitecore package. 
  

@@ -1,4 +1,4 @@
-﻿# Start-TaskSchedule 
+# Start-TaskSchedule 
  
 Executes a task schedule. 
  

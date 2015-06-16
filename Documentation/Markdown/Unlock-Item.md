@@ -1,4 +1,4 @@
-﻿# Unlock-Item 
+# Unlock-Item 
  
 Unlocks the specified Sitecore item. 
  

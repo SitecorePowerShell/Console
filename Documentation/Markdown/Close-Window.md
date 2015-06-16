@@ -1,4 +1,4 @@
-﻿# Close-Window 
+# Close-Window 
  
 Closes the runner job window after the script completes. 
  

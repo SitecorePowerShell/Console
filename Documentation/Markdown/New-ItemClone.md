@@ -1,4 +1,4 @@
-﻿# New-ItemClone 
+# New-ItemClone 
  
 Creates a new item clone based on the item provided. 
  

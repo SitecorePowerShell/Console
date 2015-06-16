@@ -1,4 +1,4 @@
-﻿# Get-User 
+# Get-User 
  
 Returns one or more Sitecore users using the specified criteria. 
  

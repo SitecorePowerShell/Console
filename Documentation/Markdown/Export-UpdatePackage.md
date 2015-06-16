@@ -1,4 +1,4 @@
-﻿# Export-UpdatePackage 
+# Export-UpdatePackage 
  
 Exports a Sitecore update package containing a serialization diff list. 
  

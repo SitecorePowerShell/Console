@@ -1,4 +1,4 @@
-﻿# Publish-Item 
+# Publish-Item 
  
 Publishes a Sitecore item. 
  

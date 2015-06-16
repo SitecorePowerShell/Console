@@ -1,4 +1,4 @@
-﻿# Get-ScriptSession 
+# Get-ScriptSession 
  
 Returns the list of PowerShell Extension Sessions running in the background. 
  

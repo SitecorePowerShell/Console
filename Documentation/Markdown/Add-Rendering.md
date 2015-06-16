@@ -1,4 +1,4 @@
-﻿# Add-Rendering 
+# Add-Rendering 
  
 Adds a rendering to a chosen device for the presentation of an item. 
  

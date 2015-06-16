@@ -1,4 +1,4 @@
-﻿# Get-ItemReference 
+# Get-ItemReference 
  
 Returns all the items linked to the specified item.. 
  

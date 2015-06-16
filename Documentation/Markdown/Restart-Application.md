@@ -1,4 +1,4 @@
-﻿# Restart-Application 
+# Restart-Application 
  
 Restarts the Sitecore Application pool. 
  

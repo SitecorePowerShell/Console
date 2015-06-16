@@ -1,4 +1,4 @@
-﻿# New-Rendering 
+# New-Rendering 
  
 Creates new rendering definition that can later be added to an item. 
  

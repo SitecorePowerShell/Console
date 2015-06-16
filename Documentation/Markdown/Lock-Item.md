@@ -1,4 +1,4 @@
-﻿# Lock-Item 
+# Lock-Item 
  
 Locks the Sitecore item by the current or specified user. 
  

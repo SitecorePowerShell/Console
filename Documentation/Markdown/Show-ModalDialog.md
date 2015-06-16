@@ -1,4 +1,4 @@
-﻿# Show-ModalDialog 
+# Show-ModalDialog 
  
 Shows Sitecore Sheer control as a modal dialog. 
  

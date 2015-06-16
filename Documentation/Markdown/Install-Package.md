@@ -1,4 +1,4 @@
-﻿# Install-Package 
+# Install-Package 
  
 Installs a Sitecore package from the specified path. 
  

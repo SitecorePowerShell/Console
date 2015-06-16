@@ -1,4 +1,4 @@
-﻿# Get-Index 
+# Get-Index 
  
 Returns Sitecore database indices. 
  

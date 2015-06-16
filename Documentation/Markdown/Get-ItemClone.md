@@ -1,4 +1,4 @@
-﻿# Get-ItemClone 
+# Get-ItemClone 
  
 Returns all the clones for the specified item. 
  

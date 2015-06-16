@@ -1,4 +1,4 @@
-﻿# Get-Database 
+# Get-Database 
  
 Retrieves a Sitecore Database. 
  
