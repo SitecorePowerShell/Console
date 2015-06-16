@@ -5,19 +5,19 @@ The Sitecore PowerShell Extensions module (SPE) provides a robust environment fo
 
 Consider some of the following examples of how SPE can improve your quality of life as a Sitecore developer/administrator:
 - Make changes to a large number of pages:
-```
+```powershell
 Get-ChildItem -Path master:\content\home -Recurse | % { $_.Text += "<p>Updated with SPE</p>"  }
 ```
 - Find the oldest page on your site:
-```
+```powershell
 gci master:\content\home -Recurse | select Name,Id,"__Updated" | sort "__Updated"
 ```
 - Remove a file from the Data directory:
-```
+```powershell
 gci $SitecoreDataFolder\packages -Filter "readme.txt" | ri
 ```
 - Rename items in the Media Library:
-```
+```powershell
 gci "master:\media library\Images" | % { rni $_.ItemPath -NewName ($_.Name + "-old") }
 ```
 
