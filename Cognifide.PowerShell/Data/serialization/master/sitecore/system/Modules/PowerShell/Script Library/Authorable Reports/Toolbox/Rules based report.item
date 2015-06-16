@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5570
+content-length: 5564
 
 # Set defaults
 
@@ -33,7 +33,7 @@ $rule = '<ruleset>
   </rule>
 </ruleset>'
 
-$root = Get-Item master:\content\home\
+$root = Get-Item -Path master:\content\home\
 $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
 $include = @("Recurse", "Root")
 
@@ -43,8 +43,8 @@ $result = Read-Variable -Parameters `
     @{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
     @{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."}, `
     @{Name="include"; title="Additional Options"; editor="checklist"; Options=$includes} `
-    -Description "This dialog shows editor how a rule can be taken from an item and edited using the Read-Variable cmdlet." `
-    -Title "Sample rule editing" -Width 600 -Height 600 -ShowHints
+    -Description "This dialog shows editor parameters used in determining which items to include in the report." `
+    -Title "Rules based report" -Width 600 -Height 600 -ShowHints
 
 if($result -eq "cancel"){
     exit;
@@ -101,7 +101,7 @@ $result = Read-Variable -Parameters `
     @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="550px"; Tab="Custom Fields"}, `
     @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="550px"; Tab="Standard Fields"} `
     -Description "This dialog shows fields to be displayed in the report." `
-    -Title "Report fields" -Width 600 -Height 800    
+    -Title "Report fields" -Width 600 -Height 600    
 
 if($result -eq "cancel"){
     exit;
@@ -156,7 +156,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: d83a2517-19ea-47fa-9678-09efefc0497a
+revision: f9f301db-69ca-4ef0-8fcf-67e608f0e81c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d83a2517-19ea-47fa-9678-09efefc0497a
+f9f301db-69ca-4ef0-8fcf-67e608f0e81c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150610T195350:635695628303109297
+20150616T000356:635700098362918304Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
