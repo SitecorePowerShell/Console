@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8025
+content-length: 7452
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -55,34 +55,12 @@ please back-up your script library!
 ------------------------------------------------------
 
 ' + $sitecore7Warning + '
-PowerShell ISE comes with a sample scripts and
+
+PowerShell ISE comes with tutorial scripts and
 Script Library for you to experiment with. Enjoy!
 
-Most Recent Releases:
-- 3.1 (June 2015)
-  Release Notes: http://bit.ly/ScPs31Iss
-- 3.0 (February 2015)
-  Release Notes: http://bit.ly/ScPs30Iss
-- 2.8 (December 2014)
-  Release Notes: http://bit.ly/ScPs28Iss
-- 2.7.5 (November 2014)
-  Release Notes: http://bit.ly/ScPs275Iss
-- 2.7.1 (September 2014)
-  Release Notes: http://bit.ly/ScPs271Iss
-- 2.7 (August 2014)
-  Release Notes: http://bit.ly/ScPs27Iss
-- 2.6 (April 2014)
-  Release Notes: http://bit.ly/ScPs26Iss
-- 2.5 (28 October 2013)
-  Release Notes: http://bit.ly/ScPs25Iss
-- 2.4 (23 September 2013)
-  Release Notes: http://bit.ly/ScPs24Iss
-- 2.3.1 (1 September 2013)
-  Release Notes: http://bit.ly/ScPs23Iss
-- 2.2 (30 July 2013)
-  Release Notes: http://bit.ly/ScPs22Iss
-- 2.1 (15 July 2013)
-  Release Notes: http://bit.ly/ScPs21Iss
+You can find a fairly detailed release notes here:
+http://bit.ly/speReleaseNotes
 
 Please report any problems in our issue tracker:
 http://bit.ly/ScPsIss
@@ -168,7 +146,8 @@ $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-I
 $package.Sources.Add($source);
 
 # Files
-$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell.config" | New-ExplicitFileSource -Name "Configuration File"
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.config" | New-ExplicitFileSource -Name "Configuration Files"
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.config.disabled" | New-ExplicitFileSource -Name "Disabled Configuration Files"
 $package.Sources.Add($source);
 $source = Get-Item "$AppPath\bin\Cognifide.PowerShell*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
 $package.Sources.Add($source);
@@ -186,7 +165,7 @@ Download-File "$SitecorePackageFolder\$($package.Name)-$Version.zip"
 ----version----
 language: en
 version: 1
-revision: b9064b43-326c-49bf-b190-c84ab5de3028
+revision: 24cbe85b-48d0-4bfe-b63b-3de618df650a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -201,14 +180,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b9064b43-326c-49bf-b190-c84ab5de3028
+24cbe85b-48d0-4bfe-b63b-3de618df650a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T073754:635699506747276563
+20150616T131421:635700572616981953
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

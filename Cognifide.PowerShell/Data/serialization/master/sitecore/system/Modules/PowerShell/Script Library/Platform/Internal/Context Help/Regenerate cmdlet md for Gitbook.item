@@ -13,23 +13,24 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 474
+content-length: 531
 
 $names = Get-Command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"} | % {$_.Name}
 $hideOutput = $true
+$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
 foreach($name in $names)
 {
     $helpFor = "$name"
     $path = "C:\Projects\sitecorepowershell\Trunk\Documentation\Markdown/$name.md"
     Invoke-Script "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Context Help\Command Help - md"
-    $builder.ToString() | %{ $_ -replace "©", "©" } | Set-Content -Path $path -Encoding UTF8
+    [System.IO.File]::WriteAllLines($path, $builder.ToString(), $Utf8NoBomEncoding)
     $path
 }
 
 ----version----
 language: en
 version: 1
-revision: a8b1e2c4-ebff-434d-a339-32e294a40949
+revision: 4409c5fb-8ad5-417c-9ecd-cf6e8034601c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -44,14 +45,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a8b1e2c4-ebff-434d-a339-32e294a40949
+4409c5fb-8ad5-417c-9ecd-cf6e8034601c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T090930:635699561708682813
+20150616T154950:635700665906688984
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
