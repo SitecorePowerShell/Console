@@ -14,6 +14,7 @@ using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.Sites;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -25,8 +26,6 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellIse : BaseForm, IHasCommandContext, IPowerShellRunner
     {
-        protected DataContext DataContext;
-        protected TreePicker DataSource;
         protected Memo Editor;
         protected Border EnterScriptInfo;
         protected Action HasFile;
@@ -56,6 +55,18 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["ItemDb"] = value; }
         }
 
+        public static string ContextItemId
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemID"]); }
+            set { Context.ClientPage.ServerProperties["ContextItemID"] = value; }
+        }
+
+        public static string ContextItemDb
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemDb"]); }
+            set { Context.ClientPage.ServerProperties["ContextItemDb"] = value; }
+        }
+
         public static bool UseContext
         {
             get
@@ -73,6 +84,17 @@ namespace Cognifide.PowerShell.Client.Applications
                 return string.IsNullOrEmpty(scriptItemId)
                     ? null
                     : Factory.GetDatabase(ScriptItemDb).GetItem(new ID(scriptItemId));
+            }
+        }
+
+        public static Item ContextItem
+        {
+            get
+            {
+                var contextItemId = ContextItemId;
+                return string.IsNullOrEmpty(contextItemId)
+                    ? null
+                    : Factory.GetDatabase(ContextItemDb).GetItem(new ID(contextItemId));
             }
         }
 
@@ -143,7 +165,8 @@ namespace Cognifide.PowerShell.Client.Applications
             Monitor.JobFinished += MonitorJobFinished;
             Monitor.JobDisappeared += MonitorJobFinished;
 
-            DataContext.Parameters = "databasename=" + Sitecore.Client.ContentDatabase.Name;
+            ContextItemDb = Context.ContentDatabase.Name;
+            ContextItemId = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath).ID.ToString();
 
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
@@ -226,7 +249,6 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             LoadItem(args.Parameters["db"], args.Parameters["id"]);
-            UpdateRibbon();
         }
 
         [HandleMessage("item:load", true)]
@@ -316,9 +338,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var db = Factory.GetDatabase(path[0]);
                 var itemTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script");
                 var libraryTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script Library");
-                DataContext.DisableEvents();
                 var scriptItem = db.CreateItemPath(path[1], libraryTemplate, itemTemplate);
-                DataContext.EnableEvents();
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
                 SaveItem(new ClientPipelineArgs());
@@ -412,7 +432,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     if (UseContext)
                     {
-                        scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                        scriptSession.SetItemLocationContext(ContextItem);
                     }
                     scriptSession.SetExecutedScript(ScriptItem);
                     scriptSession.ExecuteScriptPart(Editor.Value);
@@ -465,7 +485,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (UseContext)
             {
-                scriptSession.SetItemLocationContext(DataContext.CurrentItem);
+                scriptSession.SetItemLocationContext(ContextItem);
             }
 
             scriptSession.SetExecutedScript(ScriptItem);
@@ -655,10 +675,8 @@ namespace Cognifide.PowerShell.Client.Applications
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
 
-            ribbon.CommandContext.Parameters.Add("contextDB",
-                UseContext ? DataContext.CurrentItem.Database.Name : string.Empty);
-            ribbon.CommandContext.Parameters.Add("contextItem",
-                UseContext ? DataContext.CurrentItem.ID.ToString() : string.Empty);
+            ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
+            ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
 
 
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
@@ -692,10 +710,11 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             UseContext = true;
-            var newCurrentItem = Factory.GetDatabase(contextDb).GetItem(contextId);
-
-            DataContext.Parameters = "databasename=" + newCurrentItem.Database.Name;
-            DataContext.SetFolder(newCurrentItem.Uri);
+            if (Factory.GetDatabase(contextDb).GetItem(contextId) != null)
+            {
+                ContextItemDb = contextDb;
+                ContextItemId = contextId;
+            }
             UpdateRibbon();
         }
 

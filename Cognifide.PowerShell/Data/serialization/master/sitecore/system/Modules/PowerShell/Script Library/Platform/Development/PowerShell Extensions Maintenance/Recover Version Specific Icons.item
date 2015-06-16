@@ -13,12 +13,15 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4882
+content-length: 5408
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in a background job' = 'office/32x32/media_play.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in http request context' = 'Office/32x32/media_fast_forward.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Gutter' = 'Apps/32x32/Pencil.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Ribbon' = 'apps/32x32/pencil.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Control Panel' = 'Apps/48x48/Setting.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'Office/32x32/selection_delete.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'Office/32x32/selection_refresh.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Office/32x32/reticle.png';
@@ -36,39 +39,37 @@ $icons8 = @{
 }
 
 $icons7 = @{
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Applications/32x32/disk_blue_add.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Applications/32x32/document_plain_new.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Core3/24x24/open_document.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Save As' = 'Software/32x32/bug_green.png'
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Core2/32x32/cross.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in a background job' = 'Software/32x32/console_run.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Execute\Execute in http request context' = 'Software/32x32/bug_green.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Software/32x32/console_run.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Software/32x32/console_stop.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Applications/32x32/refresh.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Applications/32x32/gears.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Applications/32x32/gear_run.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save' = 'Applications/32x32/disk_blue.png'
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Core2/32x32/cross.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'Applications/32x32/document_forbidden.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'Applications/32x32/document_pinned.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Business/32x32/paperclip.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'Business/32x32/paperclip.png';
-
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Gutter' = 'People/16x16/cubes_blue.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Ribbon' = 'People/16x16/cubes_blue.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Control Panel' = 'Applications/32x32/preferences.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'people/32x32/cpu_delete.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'People/32x32/cpu_run.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Core2/32x32/cross.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'People/32x32/cpu.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Software/32x32/console_stop.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Software/32x32/console_run.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Applications/32x32/gear_run.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Applications/32x32/document_plain_new.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Core3/24x24/open_document.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Applications/32x32/refresh.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save' = 'Applications/32x32/disk_blue.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Applications/32x32/disk_blue_add.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Applications/32x32/gears.png';
 }
 
 
-Write-Host "`$icons7 = @{"
+<#Write-Host "`$icons7 = @{"
 foreach($path in ($icons8.Keys |sort)){
     if($icons7[$path] -ne $null){
-        Write-Host " 7  - '$path' = '$($icons7[$path])';"
-    } else {
-        Write-Host ">8< - '$path' = '$($icons8[$path])';"
+        Write-Host "'$path' = '$($icons7[$path])';"
     }
 }
 Write-Host "}"
-
-exit
+exit#>
 
 $icons = $icons8
 foreach($path in $icons.Keys){
@@ -81,7 +82,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: d9a230f2-b74e-4489-9fb9-0cc1d50bf669
+revision: 061c9fe2-5360-4a62-aa66-14a5a302367a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -96,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d9a230f2-b74e-4489-9fb9-0cc1d50bf669
+061c9fe2-5360-4a62-aa66-14a5a302367a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T203058:635699970582380390
+20150615T205405:635699984456589375
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
