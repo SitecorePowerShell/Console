@@ -13,12 +13,13 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7033
+content-length: 7060
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
 $dryRun = $false;
 $officeIcons = @{};
 $updateItems = $false;
+$showIcons = $false;
 
 function Convert-ToOldDate {
     [CmdletBinding()]
@@ -41,12 +42,12 @@ function Convert-ToOldDate {
             foreach($field in $dateFields){
                 if($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
                 {
-                    Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value)" -f Green
+                    Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
                     $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
                     
                 }
             }
-            $item.Editing.EndEdit($false, $false);
+            $item.Editing.EndEdit($false, $false) | Out-Null
         }
         if((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue){
             $item.Editing.BeginEdit();
@@ -137,7 +138,7 @@ Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 50
 $libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
 $i=0;
-$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library $($_.Name)" -PercentComplete (50+30/$libraries.Count*$i) }
+$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (50+30/$libraries.Count*$i) }
 
 # Settings
 Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
@@ -166,7 +167,7 @@ Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Conte
 # Tasks integration
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
-if(-not $updateItems){
+if($showIcons){
     if($officeIcons.Keys.Count -gt 0){
         Write-Host "`$icons = @{"
         foreach($path in ($officeIcons.Keys |sort)){
@@ -178,7 +179,7 @@ if(-not $updateItems){
 ----version----
 language: en
 version: 1
-revision: eb5eb48f-6c9e-43e4-b2d1-f4887f90a1a7
+revision: 35c540ac-0fbf-4976-9420-09d7c362dc28
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -193,14 +194,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-eb5eb48f-6c9e-43e4-b2d1-f4887f90a1a7
+35c540ac-0fbf-4976-9420-09d7c362dc28
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150617T070327:635701214076989219
+20150617T103901:635701343411513203
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
