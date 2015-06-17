@@ -14,14 +14,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Database")]
         public Database Database { get; set; }
 
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Item", Mandatory = true, Position = 0)]
         public Item Item { get; set; }
 
         [Alias("Entry")]
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Preset")]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Preset", Mandatory = true, Position = 0)]
         public IncludeEntry Preset { get; set; }
 
-        [Parameter(ParameterSetName = "Path")]
+        [Parameter(ParameterSetName = "Path", Mandatory = true, Position = 0)]
         [Alias("FullName")]
         public string Path { get; set; }
 

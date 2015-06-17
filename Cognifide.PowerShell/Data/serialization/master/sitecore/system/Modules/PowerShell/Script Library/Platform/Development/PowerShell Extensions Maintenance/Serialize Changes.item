@@ -13,18 +13,18 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7559
+content-length: 7033
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
-$dryRun = $false
+$dryRun = $false;
 $officeIcons = @{};
+$updateItems = $false;
 
 function Convert-ToOldDate {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0,ValueFromPipeline=$true)]
         [Sitecore.Data.Items.Item]$Item,
-        
         [switch]$Recurse)
 
     process {
@@ -64,123 +64,121 @@ function Convert-ToOldDate {
             $officeIcons[$item.ProviderPath] = $item.Icon; 
         }
         
-        if(-not $dryRun){
-            Serialize-Item $Item
-        }
         if($Recurse){
             #Write-Host "$($item.ProviderPath), Going deep" -f Cyan
             Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
         }
-
     }
 }
 
 function Process-Item {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, Position=0,ValueFromPipeline=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [Sitecore.Data.Items.Item]$Item,
-        
-        [switch]$Recurse)
+
+        [Parameter()]
+        [string]$Activity,
+
+        [Parameter()]
+        [int]$PercentComplete,
+
+        [Parameter()]
+        [switch]$Recurse 
+        )
 
     process {
+        
+        if($PercentComplete -ne 0){
+            
+            $TheActivity = @{$true='Deserializing '; $false='Serializing '}[$updateItems] + "$Activity"
+            #Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
+            Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
+        }
         #Write-Host "$($item.ProviderPath), $Recurse"
         Convert-ToOldDate -Item $Item -Recurse:$Recurse
+
+        if(-not $dryRun){
+            if($updateItems){
+                Import-Item $Item -Recurse:$Recurse -ForceUpdate
+            } else {
+                Export-Item $Item -Recurse:$Recurse
+            }
+        }
+        
     }
 }
 
 
-if(-not $dryRun){
+if(-not $dryRun -and -not $updateItems){
     Write-Progress -Activity "Deleting old serialized item"
     get-childitem "$SitecoreSerializationFolder" | Remove-item -Recurse
 }
 
-Write-Progress -Activity "Serializing items"
 #Item templates
-Write-Progress -Activity "Serializing Item templates" -PercentComplete 30
-Get-Item 'master:\templates\Modules' | Process-Item
-Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Recurse
+Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates "  -PercentComplete 5
+Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
 
 # Module Root
-Write-Progress -Activity "Serializing Module Root" -PercentComplete 35
-Get-Item 'master:\system\Modules\PowerShell' | Process-Item
+Get-Item 'master:\system\Modules\PowerShell' | Process-Item -Activity "Module Root" -PercentComplete 35
 
 # Colors
-Write-Progress -Activity "Serializing Console Colors" -PercentComplete 40
-Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Recurse
+Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Activity "Console Colors" -PercentComplete 40 -Recurse
 
 # Fonts
-Write-Progress -Activity "Serializing Console Fonts" -PercentComplete 43
-Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse
+Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
 
 # Rules Engine Rules
-Write-Progress -Activity "Serializing Rules Engine Rules" -PercentComplete 45
-Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse 
 Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 
 # Script Library
-Write-Progress -Activity "Serializing Script Library" -PercentComplete 50
-Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item
-Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
-Get-ChildItem 'core:\system\Modules\PowerShell\Script Library' -recurse | Process-Item
+Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 50
+$libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
+$i=0;
+$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library $($_.Name)" -PercentComplete (50+30/$libraries.Count*$i) }
 
 # Settings
-Write-Progress -Activity "Serializing Settings" -PercentComplete 80
-Get-Item master:\system\Modules\PowerShell\Settings | Process-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Console | Process-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Console\All Users' | Process-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Context | Process-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Context\All Users' | Process-Item
-Get-Item master:\system\Modules\PowerShell\Settings\Default | Process-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\Default\All Users' | Process-Item
-Get-Item master:\system\Modules\PowerShell\Settings\ISE | Process-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\ISE\All Users' | Process-Item
-Get-Item master:\system\Modules\PowerShell\Settings\RemoteAutomation | Process-Item
-Get-Item 'master:\system\Modules\PowerShell\Settings\RemoteAutomation\All Users' | Process-Item
+Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
+Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
+Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
 
 # PowerShell Applications
-Write-Progress -Activity "Serializing PowerShell Applications" -PercentComplete 85
-Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse
+Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse  -Activity "PowerShell Applications" -PercentComplete 85
 
 # PowerShell Application Layouts
-Write-Progress -Activity "Serializing PowerShell Application Layouts" -PercentComplete 87
-Get-Item 'core:\layout\Layouts\Applications\PowerShell Console' | Process-Item -Recurse
-Get-Item 'core:\layout\Layouts\Applications\PowerShell ISE Sheer' | Process-Item -Recurse
-Get-Item 'core:\layout\Layouts\Applications\PowerShell ListView' | Process-Item -Recurse
+Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse  -Activity "PowerShell Application Layouts" -PercentComplete 87
 Get-Item 'master:\layout\Layouts\PowerShell' | Process-Item -Recurse
+
 # Start Menu icons
-Write-Progress -Activity "Serializing Start Menu icons" -PercentComplete 90
-Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Process-Item
+Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Process-Item -Activity "Start Menu icons" -PercentComplete 90
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Process-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Process-Item
 Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
 Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
 
 # Content Editor Context Menu integration
-Write-Progress -Activity "Serializing Content Editor Context Menu integration" -PercentComplete 92
-Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Process-Item
+Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Process-Item -Activity "Content Editor Context Menu integration" -PercentComplete 92
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Process-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
 
 # Tasks integration
-Write-Progress -Activity "Serializing Content Tasks integration" -PercentComplete 100
-Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item
+Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
-#-name * -path "master:\system\Modules\PowerShell\Settings" -Exclude "sitecore" -Recurse
-
-if($officeIcons.Keys.Count -gt 0){
-    Write-Host "`$icons = @{"
-    foreach($path in ($officeIcons.Keys |sort)){
-        Write-Host "'$path' = '$($officeIcons[$path])';"
+if(-not $updateItems){
+    if($officeIcons.Keys.Count -gt 0){
+        Write-Host "`$icons = @{"
+        foreach($path in ($officeIcons.Keys |sort)){
+            Write-Host "'$path' = '$($officeIcons[$path])';"
+        }
+        Write-Host "}"
     }
-    Write-Host "}"
 }
-
 ----version----
 language: en
 version: 1
-revision: 0e1dcbb0-7e82-4460-b30a-dc662ba10c9b
+revision: eb5eb48f-6c9e-43e4-b2d1-f4887f90a1a7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -195,14 +193,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0e1dcbb0-7e82-4460-b30a-dc662ba10c9b
+eb5eb48f-6c9e-43e4-b2d1-f4887f90a1a7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T204234:635699977549509296
+20150617T070327:635701214076989219
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
