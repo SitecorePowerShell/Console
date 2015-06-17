@@ -232,6 +232,8 @@ form > div.scFlexColumnContainer.scStretch {
 
 .scContentControlSelectedList { bottom: 0px; }
 
+.scScrollbox.scContentControlTree {  margin-bottom: 18px; border: solid 1px #B4B4B4; }
+
 /* Sitecore 7.0 */
 
 .scScrollbox {

@@ -76,14 +76,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 handle.Add(urlString);
             }
 
-            ModalDialogOptions options = new ModalDialogOptions(urlString.ToString())
-            {
-                Width = Width,
-                Height = Height,
-                Response = true,
-                AutoIncreaseHeight = true
-            };
-            Context.ClientPage.ClientResponse.ShowModalDialog(options);
+            Context.ClientPage.ClientResponse.ShowModalDialog(urlString.ToString(), Width, Height, string.Empty, true);
+
         }
 
         /// <summary>

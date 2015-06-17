@@ -1,35 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
+         xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellScriptBrowser>
     <FormDialog ID="Dialog" Icon="Applications/32x32/folder_out.png" Header="Item browser"
                 Text="Select the item that you want to open." OKButton="Open">
 
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellScriptBrowser,Cognifide.PowerShell" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/ScriptBrowser.css" x:placeholder="Stylesheets" />
 
-      <DataContext ID="ScriptDataContext" />
-      <Combobox ID="Databases" Change="ChangeDatabase" />
+      <DataContext ID="ScriptDataContext" Root="/sitecore/system/Modules/PowerShell/Script Library"/>
+        <GridPanel Width="100%" Height="100%" Style="table-layout:fixed">
+          <Combobox ID="Databases" Change="ChangeDatabase" />
+          <Scrollbox Width="100%" Height="100%" Class="scScrollbox scFixSize scInsetBorder" Background="white" Padding="0" GridPanel.Height="100%">
+        	  <TreeviewEx ID="Treeview" Click="SelectTreeNode" DblClick="TreeviewDblClick" DataContext="ScriptDataContext" ContextMenu='Treeview.GetContextMenu("contextmenu")' />
+            <!--TreeviewEx ID="Treeview" DataContext="DataContext" Click="SelectTreeNode" ContextMenu='Treeview.GetContextMenu("contextmenu")' /-->
+          </Scrollbox>
 
-      <GridPanel Width="100%" Height="100%" Style="table-layout:fixed">
-        <Scrollbox Height="100%" Class="scScrollbox scFixSize scFixSize4 scInsetBorder" Background="white"
-                   Padding="0px" GridPanel.Height="100%">
-          <TreeviewEx ID="Treeview" Click="SelectTreeNode" DblClick="TreeviewDblClick" DataContext="ScriptDataContext"
-                      ShowRoot="true" ContextMenu='Treeview.GetContextMenu("contextmenu")' />
-        </Scrollbox>
+          <Border Padding="4px 0px 4px 0px" ID="NamePanel">
+            <GridPanel Width="100%" Columns="2">
 
-        <Border Padding="4px 0px 4px 0px" ID="NamePanel">
-          <GridPanel Width="100%" Columns="2">
+              <Border Padding="0px 4px 0px 0px" Class="scDialogNoWrap">
+                <Literal Text="Name:"/>
+              </Border>
 
-            <Border Padding="0px 4px 0px 0px">
-              <Literal Text="Name:" />
-            </Border>
+              <Edit ID="Filename" Width="100%" GridPanel.Width="100%"/>
+            </GridPanel>
+          </Border>
 
-            <Edit ID="Filename" Width="100%" GridPanel.Width="100%" Style="margin-right:4px" />
-          </GridPanel>
-        </Border>
-
-      </GridPanel>
-
+        </GridPanel>
     </FormDialog>
   </PowerShellScriptBrowser>
 </control>
