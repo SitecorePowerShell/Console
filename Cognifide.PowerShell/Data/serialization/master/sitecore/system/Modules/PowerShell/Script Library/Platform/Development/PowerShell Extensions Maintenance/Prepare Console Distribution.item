@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7497
+content-length: 7623
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -54,7 +54,9 @@ BEFORE UPGRADING THE MODULE from previous version,
 please back-up your script library!
 ------------------------------------------------------
 
-' + $sitecore7Warning + '
+' + 
+$sitecore7Warning + 
+'
 
 PowerShell ISE comes with tutorial scripts and
 Script Library for you to experiment with. Enjoy!
@@ -76,6 +78,7 @@ http://michaellwest.blogspot.com/
 http://sitecorejunkie.com/category/powershell/'
 
 # Item templates
+$source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Overwrite
 $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
 $package.Sources.Add($source);
 
@@ -146,8 +149,8 @@ $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-I
 $package.Sources.Add($source);
 
 # Files
-$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.config" | New-ExplicitFileSource -Name "Configuration Files"
-$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.config.disabled" | New-ExplicitFileSource -Name "Disabled Configuration Files"
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell.config" | New-ExplicitFileSource -Name "Configuration Files"
+$source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.disabled" | New-ExplicitFileSource -Name "Disabled Configuration Files"
 $package.Sources.Add($source);
 $source = Get-Item "$AppPath\bin\Cognifide.PowerShell*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
 $package.Sources.Add($source);
@@ -166,7 +169,7 @@ Download-File "$SitecorePackageFolder\$packageName.zip"
 ----version----
 language: en
 version: 1
-revision: 464177bf-087c-4d5d-9318-c2aec30cda21
+revision: c6e1b794-9010-4a66-b416-4d580ada2853
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -181,14 +184,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-464177bf-087c-4d5d-9318-c2aec30cda21
+c6e1b794-9010-4a66-b416-4d580ada2853
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150617T071445:635701220857243125
+20150617T221338:635701760186676484
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

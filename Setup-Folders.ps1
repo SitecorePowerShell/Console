@@ -8,7 +8,7 @@ $sites = @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"};
 
 #Set the below to true to remove jusction points only and not set them back
-$removeOnly = $true
+$removeOnly = $false
 
 # --------------------------------------------------------------
 # Ignore everything after this - all you need to provide is above
