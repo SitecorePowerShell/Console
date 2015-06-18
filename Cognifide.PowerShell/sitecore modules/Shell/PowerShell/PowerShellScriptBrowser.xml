@@ -14,7 +14,6 @@
           <Combobox ID="Databases" Change="ChangeDatabase" />
           <Scrollbox Width="100%" Height="100%" Class="scScrollbox scFixSize scInsetBorder" Background="white" Padding="0" GridPanel.Height="100%">
         	  <TreeviewEx ID="Treeview" Click="SelectTreeNode" DblClick="TreeviewDblClick" DataContext="ScriptDataContext" ContextMenu='Treeview.GetContextMenu("contextmenu")' />
-            <!--TreeviewEx ID="Treeview" DataContext="DataContext" Click="SelectTreeNode" ContextMenu='Treeview.GetContextMenu("contextmenu")' /-->
           </Scrollbox>
 
           <Border Padding="4px 0px 4px 0px" ID="NamePanel">

@@ -53,7 +53,7 @@
 .wk .scComboboxEdit { padding-left: 2px; }
 
 .scUserPickerEdit {
-    border: solid 1px ButtonShadow;
+    border: solid 1px #e8e8e8 !important;
     float: left;
     left: 0;
     padding-left: 2px;
@@ -178,3 +178,5 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .rules-edit-button { float: right; margin-left: 8px !important; }
 .varRule { display: flex; border: solid 0 ButtonShadow; border: solid 1px #DDD; padding: 4px 4px 10px 0px; margin-right: 8px; }
 .scRule { display: none; }
+.scContentControlMultilistBox { padding-bottom: 0; border: 1px solid #e3e3e3;}
+.scContentControlMultilistHelp { border: 1px solid #e3e3e3;}
