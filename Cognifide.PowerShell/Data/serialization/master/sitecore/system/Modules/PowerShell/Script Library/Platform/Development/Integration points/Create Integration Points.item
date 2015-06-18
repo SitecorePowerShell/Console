@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2310
+content-length: 2326
 
 $integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
@@ -26,9 +26,9 @@ if($module -eq $null){
     $result = Read-Variable -Parameters `
         @{ Name = "moduleName"; Title="Name of the module"; Root="/sitecore/system/Modules/PowerShell/Script Library" },
         @{ Name = "moduleEnabled"; Title="Enable module" },
-        @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."} `
+        @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."; Height="330px"} `
         -Description "Pick the settings for the module that you will be creating and the integration points to include in it." `
-        -Title "Create a new module" -Width 500 -Height 500 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+        -Title "Create a new module" -Width 500 -Height 630 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
 
     if($result -ne "ok")
     {
@@ -63,7 +63,7 @@ foreach($pointToCreate in $pointsToCreate){
 ----version----
 language: en
 version: 1
-revision: d03a3f14-159e-4abd-9071-c266a779ecdd
+revision: 32f01af0-e9d0-46c1-82af-8773d443723b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -78,14 +78,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d03a3f14-159e-4abd-9071-c266a779ecdd
+32f01af0-e9d0-46c1-82af-8773d443723b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150210T175834:635591879145273438
+20150618T094616:635702175762043282
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

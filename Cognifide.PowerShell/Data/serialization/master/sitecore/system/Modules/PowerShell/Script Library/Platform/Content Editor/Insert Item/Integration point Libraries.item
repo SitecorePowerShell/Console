@@ -2,9 +2,9 @@
 version: 1
 id: {5945F6DC-A29D-4A8D-A29D-860693F08241}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Content Editor/Insert Item/Libraries for integration points
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Content Editor/Insert Item/Integration point Libraries
 parent: {685709C4-D6D9-46A6-8A9D-DF689292DAA9}
-name: Libraries for integration points
+name: Integration point Libraries
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -40,7 +40,7 @@ Software/32x32/jar_edit.png
 ----version----
 language: en
 version: 1
-revision: bc7c3d2c-918f-42f8-8851-82e60214d366
+revision: e37826d6-e419-4f64-9312-69af1b25a1a9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-bc7c3d2c-918f-42f8-8851-82e60214d366
+e37826d6-e419-4f64-9312-69af1b25a1a9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150419T210917:635650745573311797
+20150618T092905:635702165458508125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
