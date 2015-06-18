@@ -236,13 +236,13 @@ Export-Package -Project $package -Path $packagePath -Zip
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
-content-length: 23
+content-length: 31
 
-Apps/32x32/Packager.png
+People/32x32/package_delete.png
 ----version----
 language: en
 version: 1
-revision: ea8027aa-a9a2-48c4-becc-f2800598e8a8
+revision: 6157e32a-edc9-406b-9a99-fc24c0063d1a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -257,14 +257,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ea8027aa-a9a2-48c4-becc-f2800598e8a8
+6157e32a-edc9-406b-9a99-fc24c0063d1a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150614T163920:635698967601111346
+20150618T092111:635702160710461250
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
