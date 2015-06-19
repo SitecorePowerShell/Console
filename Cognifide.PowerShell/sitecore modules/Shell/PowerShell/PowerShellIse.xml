@@ -33,8 +33,8 @@
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
-      <GridPanel Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
-        <Border ID="RibbonPanel" />
+      <GridPanel ID="Wrapper" Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
+        <Border ID="RibbonPanel"/>
         <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%">
           <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
             <GridPanel Columns="1" Height="100%" GridPanel.Height="200px" Width="100%" GridPanel.ID="ScriptPane">

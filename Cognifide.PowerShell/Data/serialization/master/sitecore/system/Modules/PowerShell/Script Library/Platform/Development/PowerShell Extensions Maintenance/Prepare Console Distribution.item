@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7481
+content-length: 7718
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -142,6 +142,11 @@ $package.Sources.Add($source);
 $source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
 
+# LaunchPad
+$source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+
 # Task Integration
 $source = Get-Item master:\system\Tasks\Commands\PowerShellScriptCommand | New-ItemSource -Name "Task Integration - Command" -InstallMode Overwrite
 $package.Sources.Add($source);
@@ -166,7 +171,7 @@ Download-File "$SitecorePackageFolder\$packageName.zip"
 ----version----
 language: en
 version: 1
-revision: 8255fab2-eafa-4685-af7f-ddbf10f81583
+revision: 3734c856-aca5-44b1-8795-65ffb0b294b7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -181,14 +186,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8255fab2-eafa-4685-af7f-ddbf10f81583
+3734c856-aca5-44b1-8795-65ffb0b294b7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150618T094911:635702177510939766
+20150619T212236:635703457561728499
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
