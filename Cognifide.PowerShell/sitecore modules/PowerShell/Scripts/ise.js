@@ -54,11 +54,21 @@ extend(cognifide, "powershell");
             $("#Editor").focus();
             ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("Editor");
         }
+		
+		function getQueryStringValue(key) {
+			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); 
+			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+		}
 
         $("body").on("click", "#HelpClose", function() {
             $("#ajax-dialog").dialog("close");
         });
-
+		
+		if(getQueryStringValue("sc_bw") === "1"){			
+			$("#RibbonPanel").css("padding-top","50px");
+			$("#Wrapper").css("padding-top","0px");
+		}
         setTimeout(setFocusOnConsole, 1000);
 
         var guid = "ISE Editing Session";
@@ -235,7 +245,10 @@ extend(cognifide, "powershell");
             }
             newTitle = replaceAll(newTitle, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
             //.replace('/','</i>/<i style="font-style: italic; color: #bbb;">');
-            $ise("#WindowCaption", window.parent.document)[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> - ";
+            var windowCaption = $ise("#WindowCaption", window.parent.document);
+            if (windowCaption.length > 0) {
+                windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> - ";
+            }
         };
 
         cognifide.powershell.resizeEditor = function() {

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7060
+content-length: 7252
 
 $dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
 $dryRun = $false;
@@ -164,6 +164,9 @@ Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit 
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Process-Item
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
 
+# LaunchPad
+Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE' | Process-Item -Activity "Launchpad Integration" -PercentComplete 95
+
 # Tasks integration
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
@@ -179,7 +182,7 @@ if($showIcons){
 ----version----
 language: en
 version: 1
-revision: 35c540ac-0fbf-4976-9420-09d7c362dc28
+revision: da0f05f8-c3dd-4522-9966-7f7f5882a245
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -194,14 +197,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-35c540ac-0fbf-4976-9420-09d7c362dc28
+da0f05f8-c3dd-4522-9966-7f7f5882a245
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150617T103901:635701343411513203
+20150621T193050:635705118503593750
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

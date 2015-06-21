@@ -169,7 +169,9 @@ namespace Cognifide.PowerShell.Client.Applications
             Monitor.JobDisappeared += MonitorJobFinished;
 
             ContextItemDb = Context.ContentDatabase.Name;
-            ContextItemId = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath).ID.ToString();
+            var contextItem = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath);
+            ContextItemId = contextItem != null ? contextItem.ID.ToString() : String.Empty;
+
             CurrentSessionId = DefaultSessionName;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
