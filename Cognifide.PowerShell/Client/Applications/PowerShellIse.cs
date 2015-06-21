@@ -26,6 +26,8 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellIse : BaseForm, IHasCommandContext, IPowerShellRunner
     {
+        public const string DefaultSessionName = "ISE Editing Session";
+
         protected Memo Editor;
         protected Border EnterScriptInfo;
         protected Action HasFile;
@@ -168,7 +170,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             ContextItemDb = Context.ContentDatabase.Name;
             ContextItemId = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath).ID.ToString();
-
+            CurrentSessionId = DefaultSessionName;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
         }
@@ -683,8 +685,11 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters["persistentSessionId"] = persistentSessionId;
             ribbon.CommandContext.Parameters["currentSessionName"] = string.IsNullOrEmpty(sessionName)
                 ? "One-time session"
-                : sessionName;
-
+                : (sessionName == DefaultSessionName)
+                    ? Factory.GetDatabase("core")
+                        .GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
+                        .DisplayName
+                    : sessionName;
             var obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
@@ -706,7 +711,9 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void SetCurrentSessionId(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            CurrentSessionId = args.Parameters["id"];
+            var sessionId = args.Parameters["id"];
+            CurrentSessionId = sessionId;
+            SheerResponse.Eval(string.Format("cognifide.powershell.changeSessionId('{0}');", sessionId));
             UpdateRibbon();
         }
 

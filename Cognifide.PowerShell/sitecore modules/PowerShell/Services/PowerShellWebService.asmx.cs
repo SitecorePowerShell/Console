@@ -303,15 +303,35 @@ namespace Cognifide.PowerShell.Console.Services
             }
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
-            var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
-            return result;
+            try
+            {
+                var result = serializer.Serialize(CommandCompletion.GetPrefix(session, command));
+                return result;
+            }
+            finally
+            {
+                if (string.IsNullOrEmpty(guid))
+                {
+                    ScriptSessionManager.RemoveSession(session);
+                }
+            }
         }
 
         public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
         {
             var session = GetScriptSession(guid);
-            var result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
-            return result.ToArray();
+            try
+            {
+                var result = CommandCompletion.FindMatches(session, command, lastTokenOnly);
+                return result.ToArray();
+            }
+            finally
+            {
+                if (string.IsNullOrEmpty(guid))
+                {
+                    ScriptSessionManager.RemoveSession(session);
+                }
+            }
         }
 
         [WebMethod(EnableSession = true)]
@@ -330,8 +350,18 @@ namespace Cognifide.PowerShell.Console.Services
         public static string[] GetHelpOutputs(string guid, string command)
         {
             var session = GetScriptSession(guid);
-            var result = CommandHelp.GetHelp(session, command);
-            return result.ToArray();
+            try
+            {
+                var result = CommandHelp.GetHelp(session, command);
+                return result.ToArray();
+            }
+            finally
+            {
+                if (string.IsNullOrEmpty(guid))
+                {
+                    ScriptSessionManager.RemoveSession(session);
+                }
+            }
         }
 
         public static string GetJobId(string sessionGuid, string handle)

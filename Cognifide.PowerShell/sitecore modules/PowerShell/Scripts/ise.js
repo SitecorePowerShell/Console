@@ -61,7 +61,7 @@ extend(cognifide, "powershell");
 
         setTimeout(setFocusOnConsole, 1000);
 
-        var guid = "ECBC33D9-A623-4A97-888B-375B627B4189";
+        var guid = "ISE Editing Session";
 
         var editor = $($("#Editor")[0]);
         editor.hide();
@@ -87,7 +87,7 @@ extend(cognifide, "powershell");
             $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
             var range = codeeditor.getSelectionRange();
 		});
-		
+
         ace.config.loadModule("ace/ext/emmet", function() {
             ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function() {
                 codeeditor.setOption("enableEmmet", true);
@@ -205,6 +205,10 @@ extend(cognifide, "powershell");
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
+        };
+
+        cognifide.powershell.changeSessionId = function (sessionId) {
+            guid = sessionId;
         };
 
         window.scForm.postRequest("", "", "", "ise:updatesettings");
