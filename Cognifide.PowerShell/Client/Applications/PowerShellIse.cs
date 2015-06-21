@@ -36,6 +36,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal ScriptName;
         protected Border ScriptResult;
         protected bool ScriptRunning { get; set; }
+        protected Memo SelectionText;
 
         public string ParentFrameName
         {
@@ -465,6 +466,17 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:execute", true)]
         protected virtual void JobExecute(ClientPipelineArgs args)
         {
+            JobExecuteScript(args, Editor.Value);
+        }
+
+        [HandleMessage("ise:executeselection", true)]
+        protected virtual void JobExecuteSelection(ClientPipelineArgs args)
+        {
+            JobExecuteScript(args, SelectionText.Value);
+        }
+
+        protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute)
+        {
             ScriptRunning = true;
             EnterScriptInfo.Visible = false;
             UpdateRibbon();
@@ -491,7 +503,8 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetExecutedScript(ScriptItem);
             var parameters = new object[]
             {
-                scriptSession
+                scriptSession,
+                scriptToExecute
             };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, autoDispose);
@@ -521,6 +534,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void ExecuteInternal(params object[] parameters)
         {
             var scriptSession = parameters[0] as ScriptSession;
+            string script = parameters[1] as string;
 
             if (scriptSession == null)
             {
@@ -529,7 +543,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             try
             {
-                scriptSession.ExecuteScriptPart(Editor.Value);
+                scriptSession.ExecuteScriptPart(script);
                 if (Context.Job != null)
                 {
                     Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());

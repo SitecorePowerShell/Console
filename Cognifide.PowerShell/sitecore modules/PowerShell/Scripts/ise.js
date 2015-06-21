@@ -83,6 +83,11 @@ extend(cognifide, "powershell");
             posy.text((position.row + 1));
         });
 
+        $("#CodeEditor").on("keyup mouseup", function() {
+            $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
+            var range = codeeditor.getSelectionRange();
+		});
+		
         ace.config.loadModule("ace/ext/emmet", function() {
             ace.require("ace/lib/net").loadScript("/sitecore modules/PowerShell/Scripts/ace/emmet-core/emmet.js", function() {
                 codeeditor.setOption("enableEmmet", true);
