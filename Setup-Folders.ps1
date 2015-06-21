@@ -46,7 +46,9 @@ function Create-ProjectJunctions{
         [int]$version
         )
 
+    Write-Host "--------------------------------------------------------------------------------------------"
     Write-Host "$project\$version --> $path"
+    Write-Host "--------------------------------------------------------------------------------------------"
 
     Create-Junction "$path\Data\serialization" "$projectPath\Cognifide.PowerShell\Data\serialization"
 
@@ -56,13 +58,17 @@ function Create-ProjectJunctions{
     if(-not (Test-Path "$path\Website\sitecore modules")){
         New-Item  "$path\Website" -Name "sitecore modules" -ItemType Directory | Out-Null
     }
-
+	
     New-Item  "$path\Website\sitecore modules" -Name "PowerShell" -ItemType Directory 
     Create-Junction "$path\Website\sitecore modules\PowerShell\Assets" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Assets"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Layouts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Layouts"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Scripts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Scripts"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Services" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Services"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Styles" "$projectPath\Cognifide.PowerShell.Sitecore$version\sitecore modules\PowerShell\Styles"
+
+    if(-not (Test-Path "$path\Website\sitecore modules\Shell")){
+        New-Item  "$path\Website\sitecore modules" -Name "Shell" -ItemType Directory | Out-Null
+    }
     Create-Junction "$path\Website\sitecore modules\Shell\PowerShell" "$projectPath\Cognifide.PowerShell\sitecore modules\Shell\PowerShell"
 }
 
