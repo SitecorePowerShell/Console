@@ -10360,16 +10360,6 @@ ace.define("ace/commands/default_commands", ["require", "exports", "module", "ac
             },
             readOnly: true
         }, {
-            name: "goToNextError",
-            bindKey: bindKey("Alt-E", "Ctrl-E"),
-            exec: function(editor) {
-                config.loadModule("ace/ext/error_marker", function(module) {
-                    module.showErrorMarker(editor, 1);
-                });
-            },
-            scrollIntoView: "animate",
-            readOnly: true
-        }, {
             name: "goToPreviousError",
             bindKey: bindKey("Alt-Shift-E", "Ctrl-Shift-E"),
             exec: function(editor) {
