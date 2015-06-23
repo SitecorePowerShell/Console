@@ -1,6 +1,5 @@
 ﻿body {
     bottom: 1px;
-    position: absolute;
 }
 
 #Filter label {
@@ -9,13 +8,9 @@
     margin-top: 8px;
 }
 
-.scListView {
-    bottom: 0;
-    left: 0;
-    overflow: auto;
-    position: relative !important;
-    right: 0;
-    top: 0;
+.scListview {
+    overflow: initial;
+    height: auto !important;
 }
 
 .lvProgressbar {
