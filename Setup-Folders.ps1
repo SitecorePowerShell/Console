@@ -29,7 +29,7 @@ function Create-Junction{
         )
     Write-Host "$path --> $source"
     if(Test-Path "$path"){
-        cmd.exe /c "rmdir `"$path`" /Q" 
+        cmd.exe /c "rmdir `"$path`" /Q /S" 
     }
     if(-not $removeOnly){
         cmd.exe /c "mklink /J `"$path`" `"$source`""
