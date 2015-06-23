@@ -527,11 +527,12 @@ namespace Cognifide.PowerShell.Client.Applications
             Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("cognifide.powershell.restoreResults();");
 
-            if (scriptSession.Settings.SaveLastScript)
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            if (settings.SaveLastScript)
             {
-                scriptSession.Settings.Load();
-                scriptSession.Settings.LastScript = Editor.Value;
-                scriptSession.Settings.Save();
+                settings.Load();
+                settings.LastScript = Editor.Value;
+                settings.Save();
             }
         }
 
