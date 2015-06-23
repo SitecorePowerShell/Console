@@ -103,7 +103,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Remove-ScriptSession -Path master:\content\home 
+PS master:\> Remove-ScriptSession -Id "ECBC33D9-A623-4A97-888B-375B627B4189" 
  
 ``` 
  

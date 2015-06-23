@@ -9,7 +9,8 @@
         The name of the domain    
     
     .INPUTS
-        Sitecore.Data.Items.Item
+        System.String
+        Represents the name of a domain. 
     
     .OUTPUTS
         Sitecore.Security.Domains.Domain
@@ -27,5 +28,17 @@
         New-Domain
 
     .EXAMPLE
-        PS master:\> Get-Domain -Path master:\content\home
+        PS master:\> Get-Domain -Name sitecore
+        Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+        ----            -------------   -------------------    --------------
+        sitecore        sitecore\       False                  False
+    
+	.EXAMPLE
+        PS master:\> Get-Domain
+		
+		Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+		----            -------------   -------------------    --------------
+		sitecore        sitecore\       False                  False
+		extranet        extranet\       True                   False
+		default         default\        True                   False		
 #>

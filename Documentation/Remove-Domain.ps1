@@ -13,7 +13,8 @@
         Indicates that the domain should be removed although it contains users in that domain.
     
     .INPUTS
-        Sitecore.Data.Items.Item
+        System.String
+        Represents the name of a domain.        
     
     .OUTPUTS
         None.
@@ -25,5 +26,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Remove-Domain -Path master:\content\home
+        PS master:\> Remove-Domain -Name "domainName" 
 #>

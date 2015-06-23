@@ -477,6 +477,13 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Test-ItemAcl</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Test-ItemAcl</maml:name>
         <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -484,13 +491,6 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
         <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Test-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -1222,13 +1222,13 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>AccessRules</maml:name>
           <command:parameterValue required="true">AccessRuleCollection</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Path" position="1">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PassThru</maml:name>
@@ -1256,13 +1256,13 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>AccessRules</maml:name>
           <command:parameterValue required="true">AccessRuleCollection</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Path" position="1">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PassThru</maml:name>
@@ -1511,13 +1511,17 @@ Based on parameters you can make the command bahave differently when a version i
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Add-ItemLanguage</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -1573,17 +1577,13 @@ Based on parameters you can make the command bahave differently when a version i
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-ItemLanguage</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -1755,7 +1755,7 @@ Fields ignored out of the box include:
       <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Id</maml:name>
         <maml:description>
-          <maml:para>Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
+          <maml:para>Id of the item to be processed - additionally specify Language parameter to fetch different item language than the current user language.
 
 </maml:para>
         </maml:description>
@@ -2070,13 +2070,17 @@ Some example of tokens include:
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Expand-Token</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -2092,17 +2096,13 @@ Some example of tokens include:
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Expand-Token</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -2984,13 +2984,17 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemField</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>IncludeStandardFields</maml:name>
@@ -3030,17 +3034,13 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemField</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>IncludeStandardFields</maml:name>
@@ -3352,6 +3352,13 @@ __Preview                           __Preview                          Appearanc
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReference</maml:name>
         <command:parameter required="true" parameterSetName="Item from Pipeline, return ItemLink" position="named">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
@@ -3363,9 +3370,13 @@ __Preview                           __Preview                          Appearanc
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Pipeline, return Item" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Path, return Item" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -3381,17 +3392,6 @@ __Preview                           __Preview                          Appearanc
         <command:parameter required="true" parameterSetName="Item from Path, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReference</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path, return Item" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -3681,21 +3681,6 @@ TargetPath         : /sitecore/content/Home
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemReferrer</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemReferrer</maml:name>
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -3711,6 +3696,21 @@ TargetPath         : /sitecore/content/Home
         <command:parameter required="true" parameterSetName="Item from ID, return ItemLink" position="named">
           <maml:name>ItemLink</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemReferrer</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, return Item" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -4552,13 +4552,17 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -4598,17 +4602,13 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -4853,6 +4853,25 @@ Language  parameter supports globbing so you can delete whole language groups us
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Remove-ItemLanguage</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from Path" position="named">
+          <maml:name>ExcludeLanguage</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from Path" position="1">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Recurse</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-ItemLanguage</maml:name>
         <command:parameter required="true" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
@@ -4887,25 +4906,6 @@ Language  parameter supports globbing so you can delete whole language groups us
         <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Database</maml:name>
           <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Recurse</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-ItemLanguage</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path" position="named">
-          <maml:name>ExcludeLanguage</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Path" position="1">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Recurse</maml:name>
@@ -6352,13 +6352,17 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Invoke-ShellCommand</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
           <maml:name>Name</maml:name>
@@ -6382,17 +6386,13 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Invoke-ShellCommand</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
           <maml:name>Name</maml:name>
@@ -7693,41 +7693,6 @@ Otherwise "cancel" will be returned.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Show-FieldEditor</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>Language</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Path, Preserve Sections" position="named">
-          <maml:name>PreserveSections</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Name</maml:name>
-          <command:parameterValue required="true">String[]</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Title</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Width</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Height</maml:name>
-          <command:parameterValue required="true">Int32</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>IncludeStandardFields</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Show-FieldEditor</maml:name>
         <command:parameter required="true" parameterSetName="Item from Path, Named Section" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -7767,19 +7732,15 @@ Otherwise "cancel" will be returned.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Show-FieldEditor</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>Id</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path, Preserve Sections" position="named">
+          <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
+        <command:parameter required="false" parameterSetName="Item from Path, Preserve Sections" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path, Preserve Sections" position="named">
           <maml:name>PreserveSections</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
@@ -7825,6 +7786,45 @@ Otherwise "cancel" will be returned.
         <command:parameter required="false" parameterSetName="Item from ID, Named Section" position="named">
           <maml:name>SectionIcon</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Title</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Width</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Height</maml:name>
+          <command:parameterValue required="true">Int32</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IncludeStandardFields</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Show-FieldEditor</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>Language</maml:name>
+          <command:parameterValue required="true">String[]</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Item from ID, Preserve Sections" position="named">
+          <maml:name>PreserveSections</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Name</maml:name>
@@ -12796,6 +12796,36 @@ If Device is specified but no layout is specified the command will return an err
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+          <maml:name>Instance</maml:name>
+          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -12827,28 +12857,17 @@ If Device is specified but no layout is specified the command will return an err
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Instance</maml:name>
           <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -12884,25 +12903,6 @@ If Device is specified but no layout is specified the command will return an err
         <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Instance</maml:name>
-          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -13778,6 +13778,36 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
+          <maml:name>UniqueId</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-Rendering</maml:name>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+          <maml:name>Instance</maml:name>
+          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Device</maml:name>
+          <command:parameterValue required="true">DeviceItem</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-Rendering</maml:name>
         <command:parameter required="true" parameterSetName="Rendering by filter, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
@@ -13809,28 +13839,17 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from Path" position="named">
+        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
           <maml:name>Instance</maml:name>
           <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by unique ID, Item from Path" position="named">
-          <maml:name>UniqueId</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -13866,25 +13885,6 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
         <command:parameter required="false" parameterSetName="Rendering by filter, Item from ID" position="named">
           <maml:name>Parameter</maml:name>
           <command:parameterValue required="true">Hashtable</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>Device</maml:name>
-          <command:parameterValue required="true">DeviceItem</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Remove-Rendering</maml:name>
-        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Rendering by instance, Item from ID" position="named">
-          <maml:name>Instance</maml:name>
-          <command:parameterValue required="true">RenderingDefinition</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Device</maml:name>
@@ -15995,7 +15995,8 @@ One or more user instances.
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>Sitecore.Data.Items.Item
+          <maml:name>System.String
+Represents the name of a domain. 
 
 </maml:name>
           <maml:uri />
@@ -16035,8 +16036,24 @@ One or more user instances.
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt; Get-Domain -Path master:\content\home
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Domain -Name sitecore
+Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+----            -------------   -------------------    --------------
+sitecore        sitecore\       False                  False
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>PS master:\&gt; Get-Domain
+
+Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+----            -------------   -------------------    --------------
+sitecore        sitecore\       False                  False
+extranet        extranet\       True                   False
+default         default\        True                   False		
 
 </dev:code>
         <dev:remarks />
@@ -16266,12 +16283,12 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="RolesOnly" position="1">
+        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="RolesOnly" position="named">
-          <maml:name>RolesOnly</maml:name>
+        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
+          <maml:name>UsersOnly</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -16281,12 +16298,12 @@ The Identity parameter specifies the Sitecore role to get. You can specify a rol
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-RoleMember</maml:name>
-        <command:parameter required="true" parameterSetName="UsersOnly" position="1">
+        <command:parameter required="true" parameterSetName="RolesOnly" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="UsersOnly" position="named">
-          <maml:name>UsersOnly</maml:name>
+        <command:parameter required="false" parameterSetName="RolesOnly" position="named">
+          <maml:name>RolesOnly</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -16568,12 +16585,12 @@ The new rules will be appended to the existing security descriptors on the item.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
           <maml:name>AccessRules</maml:name>
           <command:parameterValue required="true">AccessRuleCollection</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
+        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+          <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -16583,12 +16600,12 @@ The new rules will be appended to the existing security descriptors on the item.
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Add-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
           <maml:name>AccessRules</maml:name>
           <command:parameterValue required="true">AccessRuleCollection</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Path" position="named">
-          <maml:name>Path</maml:name>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
@@ -17370,6 +17387,17 @@ sitecore\michael         sitecore     False           False
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemAcl</maml:name>
+        <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
+          <maml:name>Identity</maml:name>
+          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
+          <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemAcl</maml:name>
         <command:parameter required="true" parameterSetName="Account ID, Item from Pipeline" position="named">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
@@ -17396,11 +17424,22 @@ sitecore\michael         sitecore     False           False
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
-          <maml:name>Identity</maml:name>
-          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Account Filter, Item from Pipeline" position="named">
+          <maml:name>Filter</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Account ID, Item from Path" position="named">
+        <command:parameter required="true" parameterSetName="Account Filter, Item from Pipeline" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-ItemAcl</maml:name>
+        <command:parameter required="true" parameterSetName="Account Filter, Item from Path" position="named">
+          <maml:name>Filter</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Account Filter, Item from Path" position="named">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -17418,28 +17457,6 @@ sitecore\michael         sitecore     False           False
         <command:parameter required="false" parameterSetName="Account Filter, Item from ID" position="named">
           <maml:name>Database</maml:name>
           <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Account Filter, Item from Path" position="named">
-          <maml:name>Filter</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Account Filter, Item from Path" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Get-ItemAcl</maml:name>
-        <command:parameter required="true" parameterSetName="Account Filter, Item from Pipeline" position="named">
-          <maml:name>Filter</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Account Filter, Item from Pipeline" position="named">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
@@ -18209,7 +18226,8 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>Sitecore.Data.Items.Item
+          <maml:name>System.String
+Represents the name of a domain.
 
 </maml:name>
           <maml:uri />
@@ -18250,7 +18268,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt; New-Domain -Path master:\content\home
+        <dev:code>PS master:\&gt; New-Domain -Name "domainName"
 
 </dev:code>
         <dev:remarks />
@@ -18841,7 +18859,8 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>Sitecore.Data.Items.Item
+          <maml:name>System.String
+Represents the name of a domain.        
 
 </maml:name>
           <maml:uri />
@@ -18882,7 +18901,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt; Remove-Domain -Path master:\content\home
+        <dev:code>PS master:\&gt; Remove-Domain -Name "domainName" 
 
 </dev:code>
         <dev:remarks />
@@ -19750,13 +19769,13 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Set-UserPassword</maml:name>
-        <command:parameter required="true" parameterSetName="Set password" position="1">
+        <command:parameter required="true" parameterSetName="Reset password" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Set password" position="named">
-          <maml:name>OldPassword</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Reset password" position="named">
+          <maml:name>Reset</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>NewPassword</maml:name>
@@ -19765,13 +19784,13 @@ The Identity parameter specifies the Sitecore user to remove. You can specify a 
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Set-UserPassword</maml:name>
-        <command:parameter required="true" parameterSetName="Reset password" position="1">
+        <command:parameter required="true" parameterSetName="Set password" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Reset password" position="named">
-          <maml:name>Reset</maml:name>
-          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Set password" position="named">
+          <maml:name>OldPassword</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>NewPassword</maml:name>
@@ -20783,23 +20802,23 @@ Sitecore.Security.Accounts.Role
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Export-Role</maml:name>
-        <command:parameter required="true" parameterSetName="Path Id" position="1">
-          <maml:name>Identity</maml:name>
-          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="true" parameterSetName="Path Id" position="named">
-          <maml:name>Path</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Export-Role</maml:name>
         <command:parameter required="true" parameterSetName="Id" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="Id" position="named">
           <maml:name>Root</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Export-Role</maml:name>
+        <command:parameter required="true" parameterSetName="Path Id" position="1">
+          <maml:name>Identity</maml:name>
+          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="true" parameterSetName="Path Id" position="named">
+          <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
@@ -20816,23 +20835,23 @@ Sitecore.Security.Accounts.Role
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Export-Role</maml:name>
-        <command:parameter required="true" parameterSetName="Role" position="1">
-          <maml:name>Role</maml:name>
-          <command:parameterValue required="true">Role</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Role" position="named">
-          <maml:name>Root</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Export-Role</maml:name>
         <command:parameter required="true" parameterSetName="Path Role" position="1">
           <maml:name>Role</maml:name>
           <command:parameterValue required="true">Role</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="Path Role" position="named">
           <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Export-Role</maml:name>
+        <command:parameter required="true" parameterSetName="Role" position="1">
+          <maml:name>Role</maml:name>
+          <command:parameterValue required="true">Role</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Role" position="named">
+          <maml:name>Root</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
@@ -21302,23 +21321,23 @@ You can also pipe a user from the Get-user command.
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Export-User</maml:name>
-        <command:parameter required="true" parameterSetName="Id" position="1">
-          <maml:name>Identity</maml:name>
-          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Id" position="named">
-          <maml:name>Root</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-      <command:syntaxItem>
-        <maml:name>Export-User</maml:name>
         <command:parameter required="true" parameterSetName="Path Id" position="1">
           <maml:name>Identity</maml:name>
           <command:parameterValue required="true">AccountIdentity</command:parameterValue>
         </command:parameter>
         <command:parameter required="true" parameterSetName="Path Id" position="named">
           <maml:name>Path</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Export-User</maml:name>
+        <command:parameter required="true" parameterSetName="Id" position="1">
+          <maml:name>Identity</maml:name>
+          <command:parameterValue required="true">AccountIdentity</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Id" position="named">
+          <maml:name>Root</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
@@ -21625,7 +21644,7 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Import-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Item" position="named">
+        <command:parameter required="true" parameterSetName="Item" position="1">
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
@@ -21652,7 +21671,7 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Import-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Preset" position="named">
+        <command:parameter required="true" parameterSetName="Preset" position="1">
           <maml:name>Preset</maml:name>
           <command:parameterValue required="true">IncludeEntry</command:parameterValue>
         </command:parameter>
@@ -21675,7 +21694,7 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Import-Item</maml:name>
-        <command:parameter required="false" parameterSetName="Path" position="named">
+        <command:parameter required="true" parameterSetName="Path" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -21718,14 +21737,14 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Item</maml:name>
         <maml:description>
           <maml:para>The item to be serialized.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">Item</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
         <dev:type>
           <maml:name>Item</maml:name>
           <maml:uri />
@@ -21734,14 +21753,14 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Preset</maml:name>
         <maml:description>
           <maml:para>Name of the preset to be deserialized.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">IncludeEntry</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">IncludeEntry</command:parameterValue>
         <dev:type>
           <maml:name>IncludeEntry</maml:name>
           <maml:uri />
@@ -21750,14 +21769,14 @@ Import-Item -Path "c:\project\data\serialization\master\sitecore\content\article
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
         <maml:name>Path</maml:name>
         <maml:description>
           <maml:para>Path to the item on the drive but without .item extension. If the item does not exist in the Sitecore tree yet, you need to pass the parent item path.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -24012,13 +24031,17 @@ This command used to be named Execute-Workflow - a matching alias added for comp
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Invoke-Workflow</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>CommandName</maml:name>
@@ -24050,17 +24073,13 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Invoke-Workflow</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>CommandName</maml:name>
@@ -24273,13 +24292,17 @@ This command used to be named Execute-Workflow - a matching alias added for comp
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Identity</maml:name>
@@ -24303,17 +24326,13 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Get-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Identity</maml:name>
@@ -24521,13 +24540,17 @@ User     : sitecore\admin
     <command:syntax>
       <command:syntaxItem>
         <maml:name>New-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
-          <maml:name>Item</maml:name>
-          <command:parameterValue required="true">Item</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from ID" position="named">
+          <maml:name>Id</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+          <maml:name>Database</maml:name>
+          <command:parameterValue required="true">Database</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>OldState</maml:name>
@@ -24567,17 +24590,13 @@ User     : sitecore\admin
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>New-ItemWorkflowEvent</maml:name>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
+        <command:parameter required="false" parameterSetName="Item from Pipeline" position="named">
           <maml:name>Language</maml:name>
           <command:parameterValue required="true">String[]</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="Item from ID" position="named">
-          <maml:name>Id</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="Item from ID" position="named">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
+        <command:parameter required="true" parameterSetName="Item from Pipeline" position="1">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>OldState</maml:name>

@@ -87,7 +87,9 @@ Indicates that the domain should be removed although it contains users in that d
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* System.String
+Represents the name of a domain.
+ 
  
 ## Outputs 
  
@@ -107,7 +109,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Remove-Domain -Path master:\content\home 
+PS master:\> Remove-Domain -Name "domainName" 
  
 ``` 
  

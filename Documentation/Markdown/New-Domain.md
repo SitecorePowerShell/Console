@@ -87,7 +87,8 @@ TODO: Provide description for this parameter
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* System.String
+Represents the name of a domain. 
  
 ## Outputs 
  
@@ -107,7 +108,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> New-Domain -Path master:\content\home 
+PS master:\> New-Domain -Name "domainName" 
  
 ``` 
  

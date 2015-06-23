@@ -19,7 +19,7 @@ The process of generating a maml xml file has never been easier. The following i
       + Cognifide.PowerShell.dll
       + Required Sitecore files are copied here during compilation
 ```
-2. Ensure the Documentation filder has the ps1 documentation files.
+2. Ensure the Documentation folder has the ps1 documentation files.
 3. The ps1 files should be named after the intended command (i.e. Get-Role.ps1) and the content of the file follows the comment based help like you would write for functions. Execute the following command to learn about the format:
 ```
 help about_Comment_Based_Help

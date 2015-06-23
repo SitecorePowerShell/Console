@@ -53,7 +53,8 @@ The name of the domai
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* System.String
+Represents the name of a domain. 
  
 ## Outputs 
  
@@ -66,15 +67,35 @@ The output type is the type of the objects that the cmdlet emits.
 Help Author: Adam Najmanowicz, Michael West 
  
 ## Examples 
- 
-### EXAMPLE 
- 
+
+### EXAMPLE 1 
  
  
 ```powershell   
  
-PS master:\> Get-Domain -Path master:\content\home 
+PS master:\> Get-Domain -Name sitecore
+
+Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+----            -------------   -------------------    --------------
+sitecore        sitecore\       False                  False 
  
+``` 
+
+ 
+### EXAMPLE 2
+ 
+ 
+```powershell   
+ 
+PS master:\> Get-Domain
+
+		
+Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
+----            -------------   -------------------    --------------
+sitecore        sitecore\       False                  False
+extranet        extranet\       True                   False
+default         default\        True                   False		
+		
 ``` 
  
 ## Related Topics 

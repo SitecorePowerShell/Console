@@ -16,7 +16,8 @@
         Specifies the new domain should be passed into the pipeline.   
     
     .INPUTS
-        Sitecore.Data.Items.Item
+        System.String
+        Represents the name of a domain.
     
     .OUTPUTS
         None.
@@ -34,5 +35,5 @@
         Remove-Domain
 
     .EXAMPLE
-        PS master:\> New-Domain -Path master:\content\home
+        PS master:\> New-Domain -Name "domainName"
 #>
