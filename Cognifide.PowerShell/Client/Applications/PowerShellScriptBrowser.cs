@@ -138,7 +138,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (selectedItem.TemplateName == "PowerShell Script") // selected existing script.
                 {
                     var parameters = new NameValueCollection();
-                    parameters["fullPath"] = selectedItem.Paths.Path;
+                    parameters["fullPath"] = String.Format("{0}:{1}", selectedItem.Database.Name, selectedItem.Paths.Path);
                     parameters["message"] = "Are you sure you want to overwrite the selected script?";
                     Context.ClientPage.Start(this, "OverwriteScript", parameters);
                 }
