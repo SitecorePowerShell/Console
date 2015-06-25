@@ -25,6 +25,7 @@ namespace Cognifide.PowerShell.Core.Modules
         public const string EventHandlersFeature = "eventHandlers";
         public const string WebApi = "webAPI";
         public const string PageEditorNotificationFeature = "pageEditorNotification";
+        public const string IsePluginFeature = "isePlugin";
 
         private static SortedList<string, IntegrationPoint> libraries;
 

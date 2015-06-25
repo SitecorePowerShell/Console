@@ -159,6 +159,8 @@
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
+    <Compile Include="Client\Controls\IsePluginPanel.cs" />
+    <Compile Include="Client\Controls\IsePluginStrip.cs" />
     <Compile Include="Client\Controls\MruGallery.cs" />
     <Compile Include="Client\Controls\ContextGallery.cs" />
     <Compile Include="Client\Controls\IseContextPanel.cs" />

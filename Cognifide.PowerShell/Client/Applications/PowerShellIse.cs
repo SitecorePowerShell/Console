@@ -481,10 +481,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute)
         {
-            ScriptRunning = true;
-            EnterScriptInfo.Visible = false;
-            UpdateRibbon();
-
             var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
@@ -492,10 +488,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 sessionName = script != null ? script[ScriptItemFieldNames.PersistentSessionId] : string.Empty;
             }
 
-            var autoDispose = string.IsNullOrEmpty(sessionName);            
-            ScriptSession scriptSession;
-
-            scriptSession = autoDispose
+            var autoDispose = string.IsNullOrEmpty(sessionName);
+            ScriptSession scriptSession = autoDispose
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
                 : ScriptSessionManager.GetSession(sessionName);
 
@@ -503,6 +497,16 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 scriptSession.SetItemLocationContext(ContextItem);
             }
+
+            JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose);
+        }
+
+        protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute,
+            ScriptSession scriptSession, bool autoDispose)
+        {
+            ScriptRunning = true;
+            EnterScriptInfo.Visible = false;
+            UpdateRibbon();
 
             scriptSession.SetExecutedScript(ScriptItem);
             var parameters = new object[]
@@ -534,6 +538,19 @@ namespace Cognifide.PowerShell.Client.Applications
                 settings.LastScript = Editor.Value;
                 settings.Save();
             }
+        }
+
+        [HandleMessage("ise:runplugin", true)]
+        protected void RunPlugin(ClientPipelineArgs args)
+        {
+            ScriptSession scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true);
+            string scriptDb = args.Parameters["scriptDb"];
+            string scriptItem = args.Parameters["scriptId"];
+            Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
+            scriptSession.SetVariable("script",Editor.Value);
+            scriptSession.SetVariable("selection", SelectionText.Value);
+            JobExecuteScript(args,script[ScriptItemFieldNames.Script],scriptSession,true);
+
         }
 
         protected void ExecuteInternal(params object[] parameters)
@@ -699,6 +716,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
             ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
+            ribbon.CommandContext.Parameters.Add("scriptDB", ScriptItemDb);
+            ribbon.CommandContext.Parameters.Add("scriptItem", ScriptItemId);
 
 
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
