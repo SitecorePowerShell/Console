@@ -1,4 +1,6 @@
-﻿using System.Management.Automation;
+﻿using System.Collections;
+using System.Collections.Specialized;
+using System.Management.Automation;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 
@@ -13,10 +15,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public SwitchParameter GetResult { get; set; }
 
+        [Parameter]
+        public Hashtable Parameters { get; set; }
+
         protected override void ProcessRecord()
         {
             var message = Message.Parse(null, Name);
             message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
+            if (Parameters != null)
+            {
+                foreach (var key in Parameters.Keys)
+                {
+                    message.Arguments.Add(key.ToString(), Parameters[key].ToString());
+                }
+            }
             var msgHandler = new SendMessageMessage(message, GetResult.IsPresent);
             LogErrors(() => PutMessage(msgHandler));
             if (JobContext.IsJob && GetResult.IsPresent)
