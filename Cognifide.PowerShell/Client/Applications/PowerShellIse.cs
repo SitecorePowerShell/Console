@@ -550,7 +550,13 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetVariable("script",Editor.Value);
             scriptSession.SetVariable("selection", SelectionText.Value);
             JobExecuteScript(args,script[ScriptItemFieldNames.Script],scriptSession,true);
+        }
 
+        [HandleMessage("ise:pluginupdate", true)]
+        protected void ConsumePluginResult(ClientPipelineArgs args)
+        {
+            Editor.Value = args.Parameters["script"];
+            SheerResponse.Eval("cognifide.powershell.updateEditor();");
         }
 
         protected void ExecuteInternal(params object[] parameters)
