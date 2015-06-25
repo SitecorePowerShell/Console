@@ -13,111 +13,111 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7252
+content-length: 6843
 
-$dateFields = "__Created", "__Updated", "__Valid from", "__Valid to", "__Publish", "__Unpublish", "__Archive date", "__Reminder date", "__Archive Version date"
+$dateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
 $officeIcons = @{};
 $updateItems = $false;
 $showIcons = $false;
 
 function Convert-ToOldDate {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true, Position=0,ValueFromPipeline=$true)]
-        [Sitecore.Data.Items.Item]$Item,
-        [switch]$Recurse)
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true,Position = 0,ValueFromPipeline = $true)]
+    [Sitecore.Data.Items.Item]$Item,
+    [switch]$Recurse)
 
-    process {
-        $needsFixing = $false
-        foreach($field in $dateFields){
-            if($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
-            {
-                $needsFixing = $true;
-                break;
-            }
-        }
-        if ($needsFixing){
-            $item.Editing.BeginEdit();
-            foreach($field in $dateFields){
-                if($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
-                {
-                    Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
-                    $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
-                    
-                }
-            }
-            $item.Editing.EndEdit($false, $false) | Out-Null
-        }
-        if((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue){
-            $item.Editing.BeginEdit();
-            $item.Fields["__Final Renderings"].Reset() 
-            $item.Editing.EndEdit($false, $false);
-        }
-        if($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")){
-            $officeIcons[$item.ProviderPath] = $item.__Icon; 
-        }
-        if($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")){
-            $officeIcons[$item.ProviderPath] = $item.Icon; 
-        }
-        
-        if($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")){
-            $officeIcons[$item.ProviderPath] = $item.Icon; 
-        }
-        
-        if($Recurse){
-            #Write-Host "$($item.ProviderPath), Going deep" -f Cyan
-            Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
-        }
+  process {
+    $needsFixing = $false
+    foreach ($field in $dateFields) {
+      if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+      {
+        $needsFixing = $true;
+        break;
+      }
     }
+    if ($needsFixing) {
+      $item.Editing.BeginEdit();
+      foreach ($field in $dateFields) {
+        if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+        {
+          Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
+          $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
+
+        }
+      }
+      $item.Editing.EndEdit($false,$false) | Out-Null
+    }
+    if ((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue) {
+      $item.Editing.BeginEdit();
+      $item.Fields["__Final Renderings"].Reset()
+      $item.Editing.EndEdit($false,$false);
+    }
+    if ($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")) {
+      $officeIcons[$item.ProviderPath] = $item.__Icon;
+    }
+    if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")) {
+      $officeIcons[$item.ProviderPath] = $item.Icon;
+    }
+
+    if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")) {
+      $officeIcons[$item.ProviderPath] = $item.Icon;
+    }
+
+    if ($Recurse) {
+      #Write-Host "$($item.ProviderPath), Going deep" -f Cyan
+      Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
+    }
+  }
 }
 
 function Process-Item {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [Sitecore.Data.Items.Item]$Item,
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+    [Sitecore.Data.Items.Item]$Item,
 
-        [Parameter()]
-        [string]$Activity,
+    [Parameter()]
+    [string]$Activity,
 
-        [Parameter()]
-        [int]$PercentComplete,
+    [Parameter()]
+    [int]$PercentComplete,
 
-        [Parameter()]
-        [switch]$Recurse 
-        )
+    [Parameter()]
+    [switch]$Recurse
+  )
 
-    process {
-        
-        if($PercentComplete -ne 0){
-            
-            $TheActivity = @{$true='Deserializing '; $false='Serializing '}[$updateItems] + "$Activity"
-            #Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
-            Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
-        }
-        #Write-Host "$($item.ProviderPath), $Recurse"
-        Convert-ToOldDate -Item $Item -Recurse:$Recurse
+  process {
 
-        if(-not $dryRun){
-            if($updateItems){
-                Import-Item $Item -Recurse:$Recurse -ForceUpdate
-            } else {
-                Export-Item $Item -Recurse:$Recurse
-            }
-        }
-        
+    if ($PercentComplete -ne 0) {
+
+      $TheActivity = @{ $true = 'Deserializing '; $false = 'Serializing ' }[$updateItems] + "$Activity"
+      #Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
+      Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
     }
+    #Write-Host "$($item.ProviderPath), $Recurse"
+    Convert-ToOldDate -Item $Item -Recurse:$Recurse
+
+    if (-not $dryRun) {
+      if ($updateItems) {
+        Import-Item $Item -Recurse:$Recurse -ForceUpdate
+      } else {
+        Export-Item $Item -Recurse:$Recurse
+      }
+    }
+
+  }
 }
 
 
-if(-not $dryRun -and -not $updateItems){
-    Write-Progress -Activity "Deleting old serialized item"
-    get-childitem "$SitecoreSerializationFolder" | Remove-item -Recurse
+if (-not $dryRun -and -not $updateItems) {
+  Write-Progress -Activity "Deleting old serialized item"
+  Get-ChildItem "$SitecoreSerializationFolder" | Remove-Item -Recurse
 }
 
 #Item templates
-Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates "  -PercentComplete 5
+Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates " -PercentComplete 5
 Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
 
 # Module Root
@@ -131,14 +131,14 @@ Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Acti
 
 # Rules Engine Rules
 Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse 
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse
 Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 
 # Script Library
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 50
 $libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
-$i=0;
-$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (50+30/$libraries.Count*$i) }
+$i = 0;
+$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (50 + 30 / $libraries.Count * $i) }
 
 # Settings
 Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
@@ -146,10 +146,10 @@ Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
 Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
 
 # PowerShell Applications
-Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse  -Activity "PowerShell Applications" -PercentComplete 85
+Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
 
 # PowerShell Application Layouts
-Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse  -Activity "PowerShell Application Layouts" -PercentComplete 87
+Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse -Activity "PowerShell Application Layouts" -PercentComplete 87
 Get-Item 'master:\layout\Layouts\PowerShell' | Process-Item -Recurse
 
 # Start Menu icons
@@ -170,19 +170,20 @@ Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/Cont
 # Tasks integration
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
-if($showIcons){
-    if($officeIcons.Keys.Count -gt 0){
-        Write-Host "`$icons = @{"
-        foreach($path in ($officeIcons.Keys |sort)){
-            Write-Host "'$path' = '$($officeIcons[$path])';"
-        }
-        Write-Host "}"
+if ($showIcons) {
+  if ($officeIcons.Keys.Count -gt 0) {
+    Write-Host "`$icons = @{"
+    foreach ($path in ($officeIcons.Keys | sort)) {
+      Write-Host "'$path' = '$($officeIcons[$path])';"
     }
+    Write-Host "}"
+  }
 }
+
 ----version----
 language: en
 version: 1
-revision: da0f05f8-c3dd-4522-9966-7f7f5882a245
+revision: 83e0f929-688f-4e1d-876a-e4d131ee9855
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -197,14 +198,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-da0f05f8-c3dd-4522-9966-7f7f5882a245
+83e0f929-688f-4e1d-876a-e4d131ee9855
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150621T193050:635705118503593750
+20150625T112738:635708284580009765
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
