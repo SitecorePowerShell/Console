@@ -77,21 +77,25 @@ namespace Cognifide.PowerShell.Commandlets.Data
                             : StringComparison.OrdinalIgnoreCase;
                         switch (criteria.Filter)
                         {
+                            case (FilterType.DescendantOf):
+                                string ancestorId = (criteria.Value as Item).ID.ToShortID().ToString();
+                                query = query.Where(i => i["_path"].Contains(ancestorId));
+                                break;
                             case (FilterType.StartsWith):
-                                query = query.Where(i => i[criteria.Field].StartsWith(criteria.Value, comparer));
+                                query = query.Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Contains):
                                 if (comparer == StringComparison.OrdinalIgnoreCase)
                                 {
                                     WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
-                                query = query.Where(i => i[criteria.Field].Contains(criteria.Value));
+                                query = query.Where(i => i[criteria.Field].Contains(criteria.StringValue));
                                 break;
                             case (FilterType.EndsWith):
-                                query = query.Where(i => i[criteria.Field].EndsWith(criteria.Value, comparer));
+                                query = query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Equals):
-                                query = query.Where(i => i[criteria.Field].Equals(criteria.Value, comparer));
+                                query = query.Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
                                 break;
                         }
                     }
@@ -157,14 +161,16 @@ namespace Cognifide.PowerShell.Commandlets.Data
         Equals,
         StartsWith,
         Contains,
-        EndsWith
+        EndsWith,
+        DescendantOf
     }
 
     public class SearchCriteria
     {
         public FilterType Filter { get; set; }
         public string Field { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
         public bool CaseSensitive { get; set; }
+        internal string StringValue { get { return Value.ToString(); } }
     }
 }
