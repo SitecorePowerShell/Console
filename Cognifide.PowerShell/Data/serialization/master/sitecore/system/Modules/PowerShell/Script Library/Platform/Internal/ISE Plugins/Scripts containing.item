@@ -1,0 +1,64 @@
+----item----
+version: 1
+id: {DC057106-E746-42E3-9ADA-2A5215C00F85}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/ISE Plugins/Scripts containing
+parent: {5500D03F-9545-4E46-91BC-DEBAFD00D392}
+name: Scripts containing
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 417
+
+$scripts = Find-Item `
+   -Index sitecore_master_index `
+   -Criteria @{ Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/system/modules/PowerShell/" },
+    @{ Filter = "Equals"; Field = "_templatename"; Value = "PowerShell Script" },
+    @{ Filter = "Contains"; Field = "script"; Value = "$selectionText"; CaseSensitive = $true } | Initialize-Item
+
+$scripts | Show-ListView -Property ProviderPath
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 27
+
+Software/32x32/war_view.png
+----version----
+language: en
+version: 1
+revision: 18cd0e04-b11b-4cf5-bafd-be029c240a2c
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20150625T161456
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+18cd0e04-b11b-4cf5-bafd-be029c240a2c
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20150626T004845:635708765258662109
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
