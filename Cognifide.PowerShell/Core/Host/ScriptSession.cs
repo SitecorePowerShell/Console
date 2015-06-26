@@ -15,6 +15,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.IO;
 using Sitecore.Security.Accounts;
 using Version = System.Version;
 
@@ -193,23 +194,23 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 runspace.SessionStateProxy.SetVariable("ClientData", Context.ClientData);
                 runspace.SessionStateProxy.SetVariable("SitecoreDataFolder",
-                    Sitecore.Configuration.Settings.DataFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.DataFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreDebugFolder",
-                    Sitecore.Configuration.Settings.DebugFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.DebugFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreIndexFolder",
-                    Sitecore.Configuration.Settings.IndexFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.IndexFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreLayoutFolder",
-                    Sitecore.Configuration.Settings.LayoutFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.LayoutFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreLogFolder",
-                    Sitecore.Configuration.Settings.LogFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.LogFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder",
-                    Sitecore.Configuration.Settings.MediaFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.MediaFolder));
                 runspace.SessionStateProxy.SetVariable("SitecorePackageFolder",
-                    Sitecore.Configuration.Settings.PackagePath);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.PackagePath));
                 runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder",
-                    Sitecore.Configuration.Settings.SerializationFolder);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.SerializationFolder));
                 runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",
-                    Sitecore.Configuration.Settings.TempFolderPath);
+                    FileUtil.MapPath(Sitecore.Configuration.Settings.TempFolderPath));
                 runspace.SessionStateProxy.SetVariable("SitecoreVersion",
                     VersionResolver.SitecoreVersionCurrent);
 
