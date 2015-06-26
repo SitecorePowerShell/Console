@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Cognifide.PowerShell.Client.Controls;
@@ -547,15 +548,20 @@ namespace Cognifide.PowerShell.Client.Applications
             string scriptDb = args.Parameters["scriptDb"];
             string scriptItem = args.Parameters["scriptId"];
             Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
-            scriptSession.SetVariable("script",Editor.Value);
-            scriptSession.SetVariable("selection", SelectionText.Value);
-            JobExecuteScript(args,script[ScriptItemFieldNames.Script],scriptSession,true);
+            scriptSession.SetVariable("scriptText",Editor.Value);
+            scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
+            scriptSession.SetVariable("scriptItem", ScriptItem);
+            JobExecuteScript(args, script[ScriptItemFieldNames.Script], scriptSession, true);
         }
 
         [HandleMessage("ise:pluginupdate", true)]
         protected void ConsumePluginResult(ClientPipelineArgs args)
         {
-            Editor.Value = args.Parameters["script"];
+            var script = args.Parameters["script"];
+            if (!string.IsNullOrEmpty(script))
+            {
+                Editor.Value = args.Parameters["script"];
+            }
             SheerResponse.Eval("cognifide.powershell.updateEditor();");
         }
 
