@@ -13,25 +13,20 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 746
+content-length: 310
 
 Import-Function -Name Edit-DTWCleanScript
-if (-not (Test-Path variable:global:script)){
-$script = 
-@"
+if (-not (Test-Path variable:global:scriptText)) {
+  $scriptText =
+  '
     $a = 1
     $b = "something";
-"@;
+';
 }
-$source = [System.IO.Path]::Combine([Sitecore.MainUtil]::MapPath($SitecoreTempFolder), [System.IO.Path]::GetRandomFileName());
-$destination = [System.IO.Path]::Combine([Sitecore.MainUtil]::MapPath($SitecoreTempFolder), [System.IO.Path]::GetRandomFileName()); 
-Set-Content $source -Value $script
-Edit-DTWCleanScript -SourcePath $source -DestinationPath $destination
 
-$script = Get-Content $destination -Raw
-Remove-Item $source -ErrorAction SilentlyContinue
-Remove-Item $destination -ErrorAction SilentlyContinue
-Send-SheerMessage -Name "ise:pluginupdate" -Parameters @{"script"="$script"}
+$formatted = Edit-DTWCleanScriptInMemory -Source $scriptText
+
+Send-SheerMessage -Name "ise:pluginupdate" -Parameters @{ "script" = "$formatted" }
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -43,7 +38,7 @@ Software/32x32/text_code_colored.png
 ----version----
 language: en
 version: 1
-revision: ff117ed8-143d-4ac3-bb62-b751e2379558
+revision: 7ea1be9b-726e-434b-bce8-71d2effca86f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -58,14 +53,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ff117ed8-143d-4ac3-bb62-b751e2379558
+7ea1be9b-726e-434b-bce8-71d2effca86f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150625T112543:635708283432871094
+20150626T004715:635708764357138671
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

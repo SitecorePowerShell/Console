@@ -13,9 +13,8 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 61909
+content-length: 54577
 
-Import-Function Get-DTWFileEncoding
 <#
 PowerShell Pretty Printer V1 by Dan Ward (dtward@gmail.com)
 See dtwconsulting.com or DansPowerShellStuff.blogspot.com for more 
@@ -140,15 +139,6 @@ function Initialize-ProcessVariables {
     # initialize and checked at beginning of main function
     [bool]$script:ModuleInitialized = $false
 
-    # make sure required functions are loaded
-    # Get-DTWFileEncoding is required for get encoding function
-    [string]$RequiredFunctionName = "DTW.PS.FileSystem"
-    $RequiredFunction = Get-Command -Name Get-DTWFileEncoding -ErrorAction SilentlyContinue
-    if ($null -eq $RequiredFunction) {
-      Write-Error -Message "$($MyInvocation.MyCommand.Name):: Required function $RequiredFunctionName is not loaded; cannot process files."
-      return
-    }
-
     #region Initialize process variables
     # indent text; use two spaces by default, change to `t for tabs
     [string]$script:IndentText = "  "
@@ -168,7 +158,7 @@ function Initialize-ProcessVariables {
     [System.Management.Automation.PSToken[]]$script:SourceTokens = $null
 
     # initialize destination storage
-    [System.IO.StreamWriter]$script:DestinationStreamWriter = $null
+    [System.IO.TextWriter]$script:DestinationStreamWriter = $null
     #endregion
 
     # if got this far, everything is good
@@ -723,44 +713,6 @@ function Copy-ArrayContentFromSourceArrayToDestinationFileStreamWriter {
 }
 #endregion
 
-#region Load content functions
-
-<#
-.SYNOPSIS
-Reads content from source script into memory
-.DESCRIPTION
-Reads content from source script into memory
-#>
-function Import-ScriptContent {
-  #region Function parameters
-  [CmdletBinding()]
-  param()
-  #endregion
-  process {
-    # get the file encoding of the file; it will be a type defined at System.Text.Encoding
-    [System.Text.Encoding]$script:SourceFileEncoding = Get-DTWFileEncoding -Path $SourcePath
-
-    # paths have already been validated so no testing of paths here
-    # first load file as string array for use with Tokenize method
-    $script:SourceScriptStringArray = [string[]](Get-Content -Path $SourcePath)
-    # get error variable; works a bit differently in V3 CTP 2
-    $ErrInfo = Get-Variable | Where-Object { $_.Name -eq "?" }
-    if ($ErrInfo -ne $null -and $ErrInfo -eq $false) {
-      Write-Error -Message "$($MyInvocation.MyCommand.Name):: error occurred getting content for SourceScriptStringArray with file: $SourcePath"
-      return
-    }
-    # load file as a single String to access characters by original index
-    $script:SourceScriptString = [System.IO.File]::ReadAllText($SourcePath)
-    # get error variable; works a bit differently in V3 CTP 2
-    $ErrInfo = Get-Variable | Where-Object { $_.Name -eq "?" }
-    if ($ErrInfo -ne $null -and $ErrInfo -eq $false) {
-      Write-Error -Message "$($MyInvocation.MyCommand.Name):: error occurred reading all text for getting content for SourceScriptString with file: $SourcePath"
-      return
-    }
-  }
-}
-#endregion
-
 #region Tokenize source script content
 
 <#
@@ -777,7 +729,8 @@ function Tokenize-SourceScriptContent {
   #endregion
   process {
     $Err = $null
-    $script:SourceTokens = [System.Management.Automation.PSParser]::Tokenize($SourceScriptStringArray,[ref]$Err)
+    $script:SourceTokens = [System.Management.Automation.PSParser]::Tokenize($SourceScriptString,[ref]$Err)
+    #$script:SourceTokens
     if ($null -ne $Err -and $Err.Count) {
       Write-Error -Message "$($MyInvocation.MyCommand.Name):: error occurred tokenizing source content"
       $Err | ForEach-Object {
@@ -1013,6 +966,7 @@ function Write-TokenContent_Comment {
   process {
     # add Comment Content as-is to destination
     Add-StringContentToDestinationFileStreamWriter $Token.Content
+    #Copy-ArrayContentFromSourceArrayToDestinationFileStreamWriter -StartSourceIndex $Token.Start -StartSourceLength $Token.Length
   }
 }
 #endregion
@@ -1386,91 +1340,14 @@ function Test-AddSpaceFollowingToken {
 #endregion
 #endregion
 
-#region Function: Edit-DTWCleanScript
 
-<#
-.SYNOPSIS
-Cleans PowerShell script: indents code blocks, cleans/rearranges all 
-whitespace, replaces aliases with commands, etc.
-.DESCRIPTION
-Cleans PowerShell script: indents code blocks, cleans/rearranges all 
-whitespace, replaces aliases with commands, replaces parameter names with
-proper casing, fixes case for [types], etc.  More specifically it:
- - properly indents code inside {}, [], () and $() groups
- - replaces aliases with the command names (dir -> Get-ChildItem)
- - fixes command name casing (get-childitem -> Get-ChildItem)
- - fixes parameter name casing (Test-Path -path -> Test-Path -Path)
- - fixes [type] casing
-     changes all PowerShell shortcuts to lower ([STRING] -> [string])
-     changes other types ([system.exception] -> [System.Exception]
-       only works for types loaded into memory
- - cleans/rearranges all whitespace within a line
-     many rules - see Test-AddSpaceFollowingToken to tweak
-
-*****IMPORTANT NOTE: before running this on any script make sure you back
-it up, commit any changes you have or run this on a copy of your script.
-In the event this script screws up or the get encoding is incorrect (say
-you have non-ANSI characters at the end of a long file with no BOM), I 
-don't want your script to be damaged!
-
-This version has been tested in PowerShell V2 and in V3 CTP 2.  Let me
-know if you encounter any issues.
-
-For all the alias and casing replacement rules above, the function works
-on all items in memory, so it cleans your scripts using your own custom
-function/parameter names and aliases as well.  The module caches all the
-commands, aliases and parameter names when the module first loads.  If
-you've added new commands to memory since loading the pretty printer 
-module, you may want to reload it.
-
-Also, this uses two spaces as an indent step.  To change this, edit the
-line: [string]$script:IndentText = "  "
-
-There are many rules when it comes to adding whitespace or not (see 
-Test-AddSpaceFollowingToken).  Feel free to tweak this code and let me
-know what you think is wrong or, at the very least, what should be 
-configurable.  In version 2 I will expose configuration settings for
-the items people feel strongly about.
-
-This pretty printer module doesn't do everything - it's version 1.  
-Version 2 (using PowerShell 3's new tokenizing/AST functionality) should
-allow me to fix most of the deficiencies. But just so you know, here's
-what it doesn't do:
- - change location of group openings, say ( or {, from same line to new
-   line and vice-versa;
- - expand param names (Test-Path -Inc -> Test-Path -Include);
- - offer user options to control how space is reformatted.
-
-See dtwconsulting.com or DansPowerShellStuff.blogspot.com for more 
-information. And stay tuned for Pretty Printer version 2!
-
--Dan Ward dtward@gmail.com
-
-.PARAMETER SourcePath
-Path to the source PowerShell file
-.PARAMETER DestinationPath
-Path to write reformatted PowerShell.  If not specified rewrites file
-in place.
-.PARAMETER Quiet
-If specified, does not output status text.
-.EXAMPLE
-Edit-DTWCleanScript -Source c:\P\S1.ps1 -Destination c:\P\S1_New.ps1
-Gets content from c:\P\S1.ps1, cleans and writes to c:\P\S1_New.ps1
-.EXAMPLE
-Edit-DTWCleanScript -SourcePath c:\P\S1.ps1
-Writes cleaned script results back into c:\P\S1.ps1
-.EXAMPLE
-dir c:\CodeFiles -Include *.ps1,*.psm1 -Recurse | Edit-DTWCleanScript
-For each .ps1 and .psm1 file, cleans and rewrites back into same file
-#>
-function Edit-DTWCleanScript {
+function Edit-DTWCleanScriptInMemory {
   #region Function parameters
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true,ValueFromPipeline = $true,ValueFromPipelineByPropertyName = $true)]
     [Alias("FullName")]
-    [string]$SourcePath,
-    [string]$DestinationPath,
+    [string]$Source,
     [switch]$Quiet
   )
   #endregion
@@ -1478,48 +1355,19 @@ function Edit-DTWCleanScript {
     # initialize all script-level variables used in a cleaning process
     Initialize-ProcessVariables
 
-    # if not initialize properly, exit
-    if ($false -eq $ModuleInitialized) {
-      Write-Error -Message "$($MyInvocation.MyCommand.Name):: Module not properly initialized; exiting."
-      return
-    }
-
-    #region Parameter validation
-    #region SourcePath must exist; if not, exit
-    if ($false -eq (Test-Path -Path $SourcePath)) {
-      Write-Error -Message "$($MyInvocation.MyCommand.Name) :: SourcePath does not exist: $SourcePath"
-      return
-    }
-    #endregion
-
-    # resolve path name so make sure we have full name
-    $SourcePath = Resolve-Path -Path $SourcePath
-
-    #region Source file must contain content
-    if ((Get-Item -Path $SourcePath).Length -eq 0 -or ([System.IO.File]::ReadAllText($SourcePath)).Trim() -eq "") {
-      Write-Host "File contains no content: $SourcePath"
-      return
-    }
-    #endregion
-    #endregion
 
     [datetime]$StartTime = Get-Date
-
-    #region Set source, destination and temp file paths
-    $script:PathSource = $SourcePath
-    # if no destination passed, use source
-    if ($DestinationPath -eq "") {
-      $script:PathDestination = $PathSource
-    } else {
-      $script:PathDestination = $DestinationPath
-    }
-    $script:PathDestinationTemp = $PathDestination + ".pspp"
-    #endregion
 
     #region Read source script content into memory
     if (!$Quiet) { Write-Host "Reading source: $PathSource" }
     $Err = $null
-    Import-ScriptContent -EV $Err
+    
+    # paths have already been validated so no testing of paths here
+    # first load file as string array for use with Tokenize method
+    $script:SourceScriptStringArray = $source -split "`n"
+    $script:SourceScriptString = $source
+    
+    
     # if an error occurred importing content, it will be written from Import-ScriptContent
     # so in this case just exit
     if ($null -ne $Err) { return }
@@ -1528,7 +1376,7 @@ function Edit-DTWCleanScript {
     #region Tokenize source script content
     $Err = $null
     if (!$Quiet) { Write-Host "Tokenizing script content" }
-    Tokenize-SourceScriptContent -EV Err
+    Tokenize-SourceScriptContent -EV $Err
     # if an error occurred tokenizing content, it will be written from Tokenize-SourceScriptContent
     # so in this case just initialize the process variables and exit
     if ($null -ne $Err -and $Err.Count) {
@@ -1538,20 +1386,9 @@ function Edit-DTWCleanScript {
     #endregion
 
     # create stream writer in try/catch so can dispose if error
+    $stringBuilder = New-Object System.Text.StringBuilder
     try {
-      #region
-      # Destination content is stored in a stream which is written to the file at the end.
-      # It has to be a stream; storing it in a string or string builder loses the original
-      # values (with regard to escaped characters).
-
-      # if parent destination folder doesn't exist, create
-      [string]$Folder = Split-Path -Path $PathDestinationTemp -Parent
-      if ($false -eq (Test-Path -Path $Folder)) { New-Item -Path $Folder -ItemType Directory > $null }
-
-      # create file stream writer, overwrite - don't append, and use same encoding as source file
-      $script:DestinationStreamWriter = New-Object System.IO.StreamWriter $PathDestinationTemp,$false,$SourceFileEncoding
-      #endregion
-      # create new tokens for destination script content
+      $script:DestinationStreamWriter = New-Object System.IO.StringWriter $stringBuilder
       if (!$Quiet) { Write-Host "Migrate source content to destination format" }
       Migrate-SourceContentToDestinationStream
     } catch {
@@ -1562,30 +1399,32 @@ function Edit-DTWCleanScript {
       #region Flush and close file stream writer
       if (!$Quiet) { Write-Host "Write destination file: $PathDestination" }
       if ($null -ne $script:DestinationStreamWriter) {
-        $script:DestinationStreamWriter.Flush()
-        $script:DestinationStreamWriter.Close()
-        $script:DestinationStreamWriter.Dispose()
-        #region Replace destination file with destination temp (which has updated content)
-        # if destination file already exists, remove it
-        if ($true -eq (Test-Path -Path $PathDestination)) { Remove-Item -Path $PathDestination -Force }
-        # rename destination temp to destination
-        Rename-Item -Path $PathDestinationTemp -NewName (Split-Path -Path $PathDestination -Leaf)
-        #endregion
+        $script:DestinationStreamWriter.Flush() | out-null
+        $script:DestinationStreamWriter.Close() | out-null
+        $script:DestinationStreamWriter.Dispose() | out-null
       }
       #endregion
       if (!$Quiet) { Write-Host ("Finished in {0:0.000} seconds.`n" -f ((Get-Date) - $StartTime).TotalSeconds) }
     }
+    $result = $stringBuilder.ToString()
+    return $result;
   }
 }
-#endregion
 
 # 'main'; initialize the module, initial load of lookup table values, etc.
 Initialize-Module
+<#
+$scriptText = '$a = 1; 
+$b = "something";';
 
+$script2 = Edit-DTWCleanScriptInMemory -Source $scriptText
+
+Write-Host "$script2" -fo Yellow -ba Black
+#>
 ----version----
 language: en
 version: 1
-revision: 020c03eb-1769-4282-9834-c7c363a24c49
+revision: dc55918b-e6bd-44a0-8ea7-63cae8957886
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -1600,14 +1439,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-020c03eb-1769-4282-9834-c7c363a24c49
+dc55918b-e6bd-44a0-8ea7-63cae8957886
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150625T105744:635708266645996094
+20150626T004252:635708761727988281
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
