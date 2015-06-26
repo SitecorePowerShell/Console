@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5564
+content-length: 5529
 
 # Set defaults
 
@@ -54,7 +54,7 @@ $rawValues = $include.Contains("Raw")
 
 # Lookup all fields for the content used.
 
-$templateFields = Find-Item -Index sitecore_master_index -Criteria @{Filter = "StartsWith"; Field = "_fullpath"; Value = "$($root.Paths.Path)"} | 
+$templateFields = Find-Item -Index sitecore_master_index -Criteria @{Filter = "DescendantOf"; Value = $root} | 
     Initialize-Item |
     ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
     Select -ExpandProperty TemplateId -Unique |  
@@ -156,7 +156,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: f9f301db-69ca-4ef0-8fcf-67e608f0e81c
+revision: 8238b8f5-dd0c-4557-96fa-664be46b6c09
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f9f301db-69ca-4ef0-8fcf-67e608f0e81c
+8238b8f5-dd0c-4557-96fa-664be46b6c09
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150616T000356:635700098362918304
+20150626T161720:635709322402529297
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
