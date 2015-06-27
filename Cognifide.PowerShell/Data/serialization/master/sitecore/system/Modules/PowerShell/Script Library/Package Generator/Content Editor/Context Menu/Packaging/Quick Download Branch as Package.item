@@ -29,9 +29,10 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1356
+content-length: 1311
 
-Execute-Script 'master:\system\Modules\PowerShell\Script Library\Functions\Resolve-Error - Shows Last Error Details'
+Import-Function Resolve-Error
+
 $item = Get-Item .
 $path = $item.ProviderPath
 $packageName = $item.Name
@@ -47,6 +48,7 @@ $result = Read-Variable -Parameters `
     @{ Name = "Readme"; Title="Read me"; Lines=10} `
     -Description "This Tool allows you to download the item branch as a package quickly." `
     -Title "Download Branch as package" -Width 600 -Height 600
+
 Resolve-Error
 if($result -ne "ok")
 {
@@ -80,7 +82,7 @@ Software/16x16/compress.png
 ----version----
 language: en
 version: 1
-revision: 7f9f8606-1e4a-40ab-803e-437a406d2f53
+revision: 6719a553-1dc2-4a6d-9c37-b3b1b8ea973f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7f9f8606-1e4a-40ab-803e-437a406d2f53
+6719a553-1dc2-4a6d-9c37-b3b1b8ea973f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20130919T180007:635152104071343360
+20150626T164820:635709341002929688
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
