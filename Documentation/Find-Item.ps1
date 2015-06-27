@@ -9,14 +9,18 @@
         simple search criteria in the following example form:
         
         @{
-            Filter = "Equals"
-            Field = "_templatename"
-            Value = "PowerShell Script"
+            Filter = "Equals";
+            Field = "_templatename";
+            Value = "PowerShell Script";
         }, 
         @{
-            Filter = "StartsWith"
-            Field = "_fullpath"
-            Value = "/sitecore/system/Modules/PowerShell/Script Library/System Maintenance"
+            Filter = "StartsWith";
+            Field = "_fullpath";
+            Value = "/sitecore/system/Modules/PowerShell/Script Library/System Maintenance";
+        },
+        @{
+            Filter = "DescendantOf";
+            Value = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
         }
 
         Where "Filter" is one of the following values:
@@ -24,6 +28,7 @@
         - StartsWith,
         - Contains,
         - EndsWith
+        - DescendantOf
         
         Fields by which you can filter can be discovered using the following script:
 
@@ -90,6 +95,13 @@
                   -Criteria @{Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/content/" } `
                   -First 1 | 
             select -expand "Fields"
+
+    .EXAMPLE
+        # Find all children of a specific item including that item - return Sitecore items
+        $root = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
+        Find-Item -Index sitecore_master_index `
+                  -Criteria @{Filter = "DescendantOf"; Field = $root } |
+            Initialize-Item
 
     .EXAMPLE
         # Find all Template Fields using Dynamic LINQ syntax 

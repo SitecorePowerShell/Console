@@ -8,6 +8,7 @@ using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
@@ -78,7 +79,25 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         switch (criteria.Filter)
                         {
                             case (FilterType.DescendantOf):
-                                string ancestorId = (criteria.Value as Item).ID.ToShortID().ToString();
+                                string ancestorId = string.Empty;
+                                if (criteria.Value is Item)
+                                {
+                                    ancestorId = (criteria.Value as Item).ID.ToShortID().ToString();
+                                }
+                                if (criteria.Value is ID)
+                                {
+                                    ancestorId = (criteria.Value as ID).ToShortID().ToString();
+                                }
+                                if (string.IsNullOrEmpty(ancestorId))
+                                {
+                                    WriteError(
+                                        new ErrorRecord(
+                                            new Exception(
+                                                "The root for DescendantOf criteria has to be an Item or an ID"),
+                                            "sitecore_find_item_invalid_parameter", ErrorCategory.InvalidArgument,
+                                            criteria.Value));
+                                    return;
+                                }
                                 query = query.Where(i => i["_path"].Contains(ancestorId));
                                 break;
                             case (FilterType.StartsWith):
@@ -87,7 +106,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
                             case (FilterType.Contains):
                                 if (comparer == StringComparison.OrdinalIgnoreCase)
                                 {
-                                    WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                                    WriteWarning(
+                                        "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
                                 query = query.Where(i => i[criteria.Field].Contains(criteria.StringValue));
                                 break;
