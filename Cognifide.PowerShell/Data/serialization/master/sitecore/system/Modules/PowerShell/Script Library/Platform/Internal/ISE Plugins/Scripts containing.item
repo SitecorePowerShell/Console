@@ -13,8 +13,12 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 417
+content-length: 618
 
+if([string]::IsNullOrWhiteSpace($selectionText)){
+    Show-Alert "No text selected. To find scripts containing a phrase please select a block of text in ISE and press the button again."
+    exit
+}
 $scripts = Find-Item `
    -Index sitecore_master_index `
    -Criteria @{ Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/system/modules/PowerShell/" },
@@ -32,7 +36,7 @@ Software/32x32/war_view.png
 ----version----
 language: en
 version: 1
-revision: 18cd0e04-b11b-4cf5-bafd-be029c240a2c
+revision: f98cd8cb-d5e6-42fe-85e9-740fb5d5a442
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +51,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-18cd0e04-b11b-4cf5-bafd-be029c240a2c
+f98cd8cb-d5e6-42fe-85e9-740fb5d5a442
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150626T004845:635708765258662109
+20150626T095353:635709092338413594
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
