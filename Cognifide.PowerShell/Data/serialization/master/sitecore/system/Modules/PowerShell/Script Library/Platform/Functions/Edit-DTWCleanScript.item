@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 54577
+content-length: 53873
 
 <#
 PowerShell Pretty Printer V1 by Dan Ward (dtward@gmail.com)
@@ -1353,32 +1353,22 @@ function Edit-DTWCleanScriptInMemory {
   #endregion
   process {
     # initialize all script-level variables used in a cleaning process
-    Initialize-ProcessVariables
+    if (!$Quiet) {
+      Write-Host "PowerShell Pretty Printer V1 by Dan Ward (dtward@gmail.com)`nSee dtwconsulting.com or DansPowerShellStuff.blogspot.com for more information.`n"
+      write-host "`n"
+    }
 
+    Initialize-ProcessVariables
 
     [datetime]$StartTime = Get-Date
 
-    #region Read source script content into memory
-    if (!$Quiet) { Write-Host "Reading source: $PathSource" }
-    $Err = $null
-    
-    # paths have already been validated so no testing of paths here
-    # first load file as string array for use with Tokenize method
     $script:SourceScriptStringArray = $source -split "`n"
     $script:SourceScriptString = $source
-    
-    
-    # if an error occurred importing content, it will be written from Import-ScriptContent
-    # so in this case just exit
-    if ($null -ne $Err) { return }
-    #endregion
 
     #region Tokenize source script content
     $Err = $null
-    if (!$Quiet) { Write-Host "Tokenizing script content" }
     Tokenize-SourceScriptContent -EV $Err
     # if an error occurred tokenizing content, it will be written from Tokenize-SourceScriptContent
-    # so in this case just initialize the process variables and exit
     if ($null -ne $Err -and $Err.Count) {
       Initialize-ProcessVariables
       return
@@ -1389,7 +1379,6 @@ function Edit-DTWCleanScriptInMemory {
     $stringBuilder = New-Object System.Text.StringBuilder
     try {
       $script:DestinationStreamWriter = New-Object System.IO.StringWriter $stringBuilder
-      if (!$Quiet) { Write-Host "Migrate source content to destination format" }
       Migrate-SourceContentToDestinationStream
     } catch {
       Write-Error -Message "$($MyInvocation.MyCommand.Name) :: error occurred during processing"
@@ -1397,11 +1386,10 @@ function Edit-DTWCleanScriptInMemory {
       return
     } finally {
       #region Flush and close file stream writer
-      if (!$Quiet) { Write-Host "Write destination file: $PathDestination" }
       if ($null -ne $script:DestinationStreamWriter) {
-        $script:DestinationStreamWriter.Flush() | out-null
-        $script:DestinationStreamWriter.Close() | out-null
-        $script:DestinationStreamWriter.Dispose() | out-null
+        $script:DestinationStreamWriter.Flush() | Out-Null
+        $script:DestinationStreamWriter.Close() | Out-Null
+        $script:DestinationStreamWriter.Dispose() | Out-Null
       }
       #endregion
       if (!$Quiet) { Write-Host ("Finished in {0:0.000} seconds.`n" -f ((Get-Date) - $StartTime).TotalSeconds) }
@@ -1412,19 +1400,11 @@ function Edit-DTWCleanScriptInMemory {
 }
 
 # 'main'; initialize the module, initial load of lookup table values, etc.
-Initialize-Module
-<#
-$scriptText = '$a = 1; 
-$b = "something";';
-
-$script2 = Edit-DTWCleanScriptInMemory -Source $scriptText
-
-Write-Host "$script2" -fo Yellow -ba Black
-#>
+Initialize-Module 
 ----version----
 language: en
 version: 1
-revision: dc55918b-e6bd-44a0-8ea7-63cae8957886
+revision: 2666a766-815e-4330-a770-7782f17916fc
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -1439,14 +1419,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-dc55918b-e6bd-44a0-8ea7-63cae8957886
+2666a766-815e-4330-a770-7782f17916fc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150626T004252:635708761727988281
+20150626T100759:635709100796382344
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
