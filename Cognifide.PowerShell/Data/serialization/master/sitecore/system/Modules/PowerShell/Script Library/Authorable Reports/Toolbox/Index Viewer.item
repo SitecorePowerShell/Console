@@ -13,20 +13,48 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 281
+content-length: 1333
+
+$indexOptions = @{}
+foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
+    $indexOptions[$index.Name] = $index.Name
+}
+
+$root = Get-Item -Path (@{$true="master:\content\home\"; $false="master:\content\"}[(Test-Path -Path master:\content\home)])
+
+$props = @{
+    Parameters = @(
+        @{Name="index"; Title="Choose the report index"; Value="sitecore_master_index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
+    )
+    Title = "Index Viewer Report"
+    Description = "Choose the criteria for the report."
+    Width = 600
+    Height = 300
+    ShowHints = $true
+}
+
+$result = Read-Variable @props
+
+if($result -eq "cancel"){
+    exit
+}
 
 $data = @{
-    Index = "sitecore_master_index"
+    Index = $index
     Criteria = @{
         Filter = "StartsWith"
         Field = "_fullpath"
-        Value = "/sitecore/content/home"
+        Value = $root.ItemPath
     }
 }
 
-Find-Item @data | Show-ListView -Property * -Title "Master Index" -ActionData $data
+$details = @"
+Documents: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::GetIndexNumberOfDocuments($data.Index)),
+Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($data.Index)),
+Modified: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::LastModified($data.Index))
+"@
 
-Close-Window
+Find-Item @data | Show-ListView -Property * -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -37,7 +65,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: b65a4bd2-1f07-43cd-b62c-89a805dffd5e
+revision: 1f8ec114-0b7f-4f2c-8c8e-821fbcbcba69
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -52,14 +80,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b65a4bd2-1f07-43cd-b62c-89a805dffd5e
+1f8ec114-0b7f-4f2c-8c8e-821fbcbcba69
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150627T230542:635710431425026594
+20150629T114130:635711748906516562Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

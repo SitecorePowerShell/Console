@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5529
+content-length: 5609
 
 # Set defaults
 
@@ -33,7 +33,7 @@ $rule = '<ruleset>
   </rule>
 </ruleset>'
 
-$root = Get-Item -Path master:\content\home\
+$root = Get-Item -Path (@{$true="master:\content\home\"; $false="master:\content\"}[(Test-Path -Path master:\content\home)])
 $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
 $include = @("Recurse", "Root")
 
@@ -156,7 +156,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 8238b8f5-dd0c-4557-96fa-664be46b6c09
+revision: 9b101499-eb50-4a82-b2cf-846e1bbb31d7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8238b8f5-dd0c-4557-96fa-664be46b6c09
+9b101499-eb50-4a82-b2cf-846e1bbb31d7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150626T161720:635709322402529297
+20150629T113956:635711747966711918Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
