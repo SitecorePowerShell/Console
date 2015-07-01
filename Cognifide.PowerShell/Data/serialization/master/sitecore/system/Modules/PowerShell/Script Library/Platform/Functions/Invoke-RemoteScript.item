@@ -13,14 +13,41 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1808
+content-length: 3573
 
 <#
     .SYNOPSIS
         Run scripts in Sitecore PowerShell Extensions via web service calls.
 
-   .NOTES
-        v1.0 - 20150503 
+    .EXAMPLE
+        The following example remotely executes a script in Sitecore using a reusable session.
+
+        $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+        Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
+
+        Name                     Domain       IsAdministrator IsAuthenticated
+        ----                     ------       --------------- ---------------
+        sitecore\admin           sitecore     True            False
+
+    .EXAMPLE
+        The following remotely executes a script in Sitecore with arguments.
+        
+        $script = {
+            [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin
+            $user
+            $params.date.ToString()
+        }
+
+        $args = @{
+            "date" = [datetime]::Now
+        }
+
+        Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
+
+        Name                     Domain       IsAdministrator IsAuthenticated
+        ----                     ------       --------------- ---------------
+        sitecore\admin           sitecore     True            False          
+        6/25/2015 11:09:17 AM
 #>
 
 
@@ -49,24 +76,43 @@ function Invoke-RemoteScript {
         [Parameter(ParameterSetName='Uri')]
         [string]$Password,
 
+        [Parameter(ParameterSetName='Uri')]
+        [System.Management.Automation.PSCredential]
+        $Credential,
+
         [hashtable]$ArgumentList
     )
 
-    if($PScommand.ParameterSetName -eq "InProcess") {
+    if($PSCmdlet.ParameterSetName -eq "InProcess") {
         $ScriptBlock.Invoke()
     } else {
-        if($PScommand.ParameterSetName -eq "Session") {
+        if($PSCmdlet.ParameterSetName -eq "Session") {
             $ConnectionUri = $Session.ConnectionUri
             $Username = $Session.Username
             $Password = $Session.Password
             $SessionId = $Session.SessionId
+            $Credential = $Session.Credential
+            $Proxy = $Session.Proxy
         }
         
         if(!$ConnectionUri.EndsWith(".asmx")) {
             $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
         }
 
-        $proxy = New-WebServiceProxy -Uri $ConnectionUri
+        if(!$Proxy) {
+            $proxyProps = @{
+                Uri = $ConnectionUri
+            }
+
+            if($Credential) {
+                $proxyProps["Credential"] = $Credential
+            }
+
+            $proxy = New-WebServiceProxy @proxyProps
+            if($Credential) {
+                $proxy.Credentials = $Credential
+            }
+        }
         if(-not $proxy) { return $null }
 
         if($ArgumentList) {
@@ -79,7 +125,7 @@ function Invoke-RemoteScript {
 ----version----
 language: en
 version: 1
-revision: f5004e1a-3472-4e48-9721-b1e81dc384c3
+revision: 42b9b8e1-ee7d-4029-a552-849e00f1d572
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -94,14 +140,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f5004e1a-3472-4e48-9721-b1e81dc384c3
+42b9b8e1-ee7d-4029-a552-849e00f1d572
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150614T194027:635699076274001475
+20150701T194143:635713765039425948
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
