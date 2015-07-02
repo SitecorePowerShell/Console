@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
@@ -17,6 +18,11 @@ namespace Cognifide.PowerShell.Commandlets.Security
             {
                 domain = StringUtil.GetPrefix(name, '\\');
                 account = StringUtil.GetPostfix(name, '\\');
+            }
+            
+            if (!Regex.IsMatch(account, "^\\w[\\w\\s]*$", RegexOptions.Compiled))
+            {
+                throw new ArgumentException("The name \"{0}\" contains illegal characters.\n\nThe name can only contain the following characters: A-Z, a-z, 0-9 and space.", name);
             }
 
             Domain = domain;
