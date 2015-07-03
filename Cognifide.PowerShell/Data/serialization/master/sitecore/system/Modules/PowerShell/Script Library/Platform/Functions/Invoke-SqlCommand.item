@@ -1,0 +1,254 @@
+----item----
+version: 1
+id: {9DC741A7-FFF1-493D-A3A5-E3964E087A9E}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Functions/Invoke-SqlCommand
+parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
+name: Invoke-SqlCommand
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 7507
+
+function Invoke-SqlCommand {
+    <#
+        .SYNOPSIS
+            Executes an SQL statement. Executes using Windows Authentication unless the Username and Password are provided.
+
+        .PARAMETER Server
+            The SQL Server instance name.
+
+        .PARAMETER Database
+            The SQL Server database name where the query will be executed.
+
+        .PARAMETER Timeout
+            The connection timeout.
+
+        .PARAMETER Connection
+            The System.Data.SqlClient.SQLConnection instance used to connect.
+
+        .PARAMETER Username
+            The SQL Authentication Username.
+
+        .PARAMETER Password
+            The SQL Authentication Password.
+
+        .PARAMETER CommandType
+            The System.Data.CommandType value specifying Text or StoredProcedure.
+
+        .PARAMETER Query
+            The SQL query to execute.
+
+         .PARAMETER Path
+            The path to an SQL script.
+
+        .PARAMETER Parameters
+            Hashtable containing the key value pairs used to generate as collection of System.Data.SqlParameter.
+
+        .PARAMETER As
+            Specifies how to return the result.
+
+            PSCustomObject
+             - Returns the result set as an array of System.Management.Automation.PSCustomObject objects.
+            DataSet
+             - Returns the result set as an System.Data.DataSet object.
+            DataTable
+             - Returns the result set as an System.Data.DataTable object.
+            DataRow
+             - Returns the result set as an array of System.Data.DataRow objects.
+            Scalar
+             - Returns the first column of the first row in the result set. Should be used when a value with no column name is returned (i.e. SELECT COUNT(*) FROM Test.Sample).
+            NonQuery
+             - Returns the number of rows affected. Should be used for INSERT, UPDATE, and DELETE.
+
+        .EXAMPLE
+            PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT TOP 1 * FROM Test.Sample"
+
+            datetime2         : 1/17/2013 8:46:22 AM
+            ID                : 202507
+            uniqueidentifier1 : 1d0cf1c0-9fb1-4e21-9d5a-b8e9365400fc
+            bool1             : False
+            datetime1         : 1/17/2013 12:00:00 AM
+            double1           : 1
+            varchar1          : varchar11
+            decimal1          : 1
+            int1              : 1
+
+            Returned the first row as a System.Management.Automation.PSCustomObject.
+
+        .EXAMPLE
+            PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT COUNT(*) FROM Test.Sample" -As Scalar
+
+            9544            
+    #>
+    [CmdletBinding(DefaultParameterSetName="Default")]
+    param(
+        [Parameter(Mandatory=$true, Position=0,ParameterSetName="Server")]
+        [string]$Server,
+
+        [Parameter(Mandatory=$true, Position=1,ParameterSetName="Server")]
+        [string]$Database,
+
+        [Parameter(Mandatory=$false, Position=2,ParameterSetName="Server")]
+        [int]$Timeout=30,
+        
+        [Parameter(Mandatory=$true,ParameterSetName="Connection")]
+        [System.Data.SqlClient.SQLConnection]$Connection,
+
+        [string]$Username,
+
+        [string]$Password,
+
+        [System.Data.CommandType]$CommandType = [System.Data.CommandType]::Text,
+
+        [string]$Query,
+
+        [ValidateScript({ Test-Path -Path $_ })]
+        [string]$Path,
+
+        [hashtable]$Parameters,
+
+        [ValidateSet("DataSet", "DataTable", "DataRow", "PSCustomObject", "Scalar", "NonQuery")]
+        [string]$As="PSCustomObject"
+    )
+
+    begin {
+        if($Path) {
+            $Query = [System.IO.File]::ReadAllText("$((Resolve-Path -Path $Path).Path)")
+        } else {
+            if(-not $Query) {
+                throw (New-Object System.ArgumentNullException -ArgumentList "Query","The query statement is missing.")
+            }
+        }
+
+        $createConnection = (-not $Connection)
+
+        if($createConnection) {
+            $Connection = New-Object System.Data.SqlClient.SQLConnection
+            if($Username -and $Password) {
+                $Connection.ConnectionString = "Server=$($Server);Database=$($Database);User Id=$($Username);Password=$($Password);"
+            } else {
+                $Connection.ConnectionString = "Server=$($Server);Database=$($Database);Integrated Security=SSPI;"
+            }
+            if($PSBoundParameters.Verbose) {
+                $Connection.FireInfoMessageEventOnUserErrors=$true
+                $Connection.Add_InfoMessage([System.Data.SqlClient.SqlInfoMessageEventHandler] { Write-Verbose "$($_)"} )
+            }
+        }
+
+        if(-not ($Connection.State -like "Open")) { try { $Connection.Open() } catch [Exception] { throw $_ } }
+    }
+
+    process {
+        $command = New-Object System.Data.SqlClient.SqlCommand ($query, $Connection)
+        $command.CommandTimeout = $Timeout
+        $command.CommandType = $CommandType
+        if($Parameters) {
+            foreach ($p in $Parameters.Keys) {
+                $command.Parameters.AddWithValue($p, $Parameters[$p]) | Out-Null
+            }
+        }
+
+        $scriptBlock = {
+            $result = @()
+            $reader = $command.ExecuteReader()
+            if($reader) {
+                $counter = $reader.FieldCount
+                $columns = @()
+                for ($i = 0; $i -lt $counter; $i++) {
+                    $columns += $reader.GetName($i)
+                }
+
+                if($reader.HasRows) {
+                    while ($reader.Read()) {
+                        $row = @{}
+                        for ($i = 0; $i -lt $counter; $i++) {
+                            $row[$columns[$i]] = $reader.GetValue($i)
+                        }
+                        $result += [PSCustomObject]$row
+                    }
+                }
+            }
+            $result
+        }
+
+        if($As) {
+            switch($As) {
+                "Scalar" {
+                    $scriptBlock = {
+                        $result = $command.ExecuteScalar()
+                        $result
+                    }
+                }
+                "NonQuery" {
+                    $scriptBlock = {
+                        $result = $command.ExecuteNonQuery()
+                        $result
+                    }
+                }
+                default {
+                    if("DataSet", "DataTable", "DataRow" -contains $As) {
+                        $scriptBlock = {
+                            $ds = New-Object System.Data.DataSet
+                            $da = New-Object System.Data.SqlClient.SqlDataAdapter($command)
+                            $da.Fill($ds) | Out-Null
+                            switch($As) {
+                                "DataSet" { $result = $ds }
+                                "DataTable" { $result = $ds.Tables }
+                                default { $result = $ds.Tables | ForEach-Object -Process { $_.Rows } }
+                            }                            
+                            $result
+                        }
+                    }
+                }
+            }
+        }
+
+        $result = Invoke-Command -ScriptBlock $ScriptBlock
+        $command.Parameters.Clear()
+    }
+
+    end {
+        if($createConnection) { $Connection.Close() }
+
+        $result
+    }
+}
+----version----
+language: en
+version: 1
+revision: 56b35199-3774-4644-969f-51f1a2fa4857
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20150703T004942
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+56b35199-3774-4644-969f-51f1a2fa4857
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20150703T005930:635714819708020603
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
