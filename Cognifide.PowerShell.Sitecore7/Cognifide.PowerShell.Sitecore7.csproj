@@ -50,9 +50,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ExperienceEditor">
-      <HintPath>..\Libraries\Sitecore.ExperienceEditor.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>

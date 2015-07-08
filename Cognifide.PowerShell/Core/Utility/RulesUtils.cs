@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Core.Utility
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
 
-        public static bool EvaluateRules(string strRules, Item item, string viewName)
+        public static bool EvaluateRules(string strRules, RuleContext ruleContext)
         {
             if (string.IsNullOrEmpty(strRules) || strRules.Length < 20)
             {
@@ -32,11 +32,6 @@ namespace Cognifide.PowerShell.Core.Utility
             }
             // hacking the rules xml
             var rules = RuleFactory.ParseRules<RuleContext>(Factory.GetDatabase(ApplicationSettings.RulesDb), strRules);
-            var ruleContext = new RuleContext
-            {
-                Item = item
-            };
-            ruleContext.Parameters["ViewName"] = viewName;
             return !rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext));
         }
     }

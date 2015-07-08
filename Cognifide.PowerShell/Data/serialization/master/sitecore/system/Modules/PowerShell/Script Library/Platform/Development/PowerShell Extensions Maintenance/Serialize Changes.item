@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6843
+content-length: 7218
 
 $dateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -130,8 +130,11 @@ Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Acti
 Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
 
 # Rules Engine Rules
+# Rules Engine Rules
 Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse
+Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
 Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 
 # Script Library
@@ -183,7 +186,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: 83e0f929-688f-4e1d-876a-e4d131ee9855
+revision: 5569d2db-24a0-4269-ad68-27976bfcd523
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -198,14 +201,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-83e0f929-688f-4e1d-876a-e4d131ee9855
+5569d2db-24a0-4269-ad68-27976bfcd523
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150625T112738:635708284580009765
+20150708T154623:635719671839628906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

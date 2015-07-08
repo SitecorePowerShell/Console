@@ -4,6 +4,7 @@ using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
@@ -17,6 +18,12 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             var typeName = context.Parameters["type"];
             var viewName = context.Parameters["viewName"];
+            var ruleContext = new RuleContext
+            {
+                Item = context.CustomData as Item
+            };
+            ruleContext.Parameters["ViewName"] = viewName;
+
             if (!string.IsNullOrEmpty(typeName))
             {
                 foreach (
@@ -27,9 +34,8 @@ namespace Cognifide.PowerShell.Client.Controls
                             .SelectMany(scriptLibrary => scriptLibrary.Children,
                                 (scriptLibrary, scriptItem) => new {scriptLibrary, scriptItem})
                             .Where(
-                                @t =>
-                                    RulesUtils.EvaluateRules(@t.scriptItem["ShowRule"], context.CustomData as Item,
-                                        viewName))
+                                @t => RulesUtils.EvaluateRules(@t.scriptItem["ShowRule"], ruleContext)
+                                )
                             .Select(@t => @t.scriptItem))
                 {
                     RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
@@ -37,7 +43,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         scriptItem["__Icon"], string.Empty,
                         string.Format("listview:action(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                             scriptItem.ID),
-                        RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item, viewName) &&
+                        RulesUtils.EvaluateRules(scriptItem["EnableRule"], ruleContext) &&
                         context.Parameters["ScriptRunning"] == "0",
                         false);
                 }

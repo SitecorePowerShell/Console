@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Cognifide.PowerShell.Client.Controls;
@@ -15,13 +14,12 @@ using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Sites;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using Action = Sitecore.Web.UI.HtmlControls.Action;
+//using Action = Sitecore.Web.UI.HtmlControls.Action;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -31,7 +29,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected Memo Editor;
         protected Border EnterScriptInfo;
-        protected Action HasFile;
         protected Literal Progress;
         protected Border ProgressOverlay;
         protected Border Result;
@@ -69,6 +66,12 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ContextItemDb"]); }
             set { Context.ClientPage.ServerProperties["ContextItemDb"] = value; }
+        }
+
+        public static bool ScriptModified
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptModified"]) == "1"; }
+            set { Context.ClientPage.ServerProperties["ScriptModified"] = value ? "1" : string.Empty; }
         }
 
         public static bool UseContext
@@ -683,6 +686,15 @@ namespace Cognifide.PowerShell.Client.Applications
             Progress.Text = sb.ToString();
         }
 
+        [HandleMessage("ise:scriptchanged")]
+        protected void NotifyScriptModified(Message message)
+        {
+            bool modified;
+            Boolean.TryParse(message.Arguments["modified"], out modified);
+            ScriptModified = modified;
+            UpdateRibbon();
+        }
+
         [HandleMessage("ise:updateribbon")]
         protected void UpdateRibbon(Message message)
         {
@@ -698,9 +710,12 @@ namespace Cognifide.PowerShell.Client.Applications
             var item = ScriptItem;
             ribbon.CommandContext = new CommandContext(item);
             ribbon.ShowContextualTabs = false;
-            ribbon.CommandContext.Parameters["HasFile"] = HasFile.Disabled ? "0" : "1";
             ribbon.CommandContext.Parameters["ScriptRunning"] = ScriptRunning ? "1" : "0";
             ribbon.CommandContext.Parameters["currentSessionId"] = CurrentSessionId ?? string.Empty;
+            ribbon.CommandContext.Parameters["scriptLength"] = Editor.Value.Length.ToString();
+            ribbon.CommandContext.Parameters["selectionLength"] = SelectionText.Value.Trim().Length.ToString();
+            ribbon.CommandContext.Parameters["modified"] = ScriptModified.ToString();
+            
             var sessionName = CurrentSessionId ?? string.Empty;
             var persistentSessionId = sessionName;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))

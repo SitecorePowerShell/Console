@@ -10,6 +10,13 @@ template: {1A9B6300-4652-477C-A4B5-B2A64E86B29F}
 templatekey: Tag
 
 ----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 4
+
+2400
+----field----
 field: {F6D8A61C-2F84-4401-BD24-52D2068172BC}
 name: __Originator
 key: __originator
@@ -127,7 +134,7 @@ sitecore\admin
 ----version----
 language: en
 version: 1
-revision: 3d08907f-9494-4bf8-8ba2-553d0827cfb0
+revision: ef88b895-ae00-4a15-85b1-14bb999194c5
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -156,14 +163,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3d08907f-9494-4bf8-8ba2-553d0827cfb0
+ef88b895-ae00-4a15-85b1-14bb999194c5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20131231T141935:635240963753942240
+20150628T014737:635710528574208984
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

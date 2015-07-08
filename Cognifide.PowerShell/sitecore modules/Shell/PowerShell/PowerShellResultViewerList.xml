@@ -4,7 +4,6 @@
   <PowerShellResultViewerList>
     <FormPage Application="PowerShell/PowerShellListView">
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
-      <Action ID="HasFile" Disabled="true" />
 
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />

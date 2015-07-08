@@ -339,6 +339,8 @@
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Maintenance.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider.PathHandling.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider.PropertyProvider.cs" />
+    <Compile Include="Core\Rules\PowerShellIseSessionState.cs" />
+    <Compile Include="Core\Rules\PowerShellIseSelectionLength.cs" />
     <Compile Include="Core\Rules\PowerShellListViewNameMatch.cs" />
     <Compile Include="Core\Rules\PowerShellSessionExists.cs" />
     <Compile Include="Core\Rules\PowerShellSessionExistsWithVariable.cs" />
@@ -496,9 +498,13 @@
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellVelociyOutput.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellMultiValuePrompt.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerList.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerList.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerText.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />

@@ -10,6 +10,19 @@ template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
 
 ----field----
+field: {F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}
+name: EnableRule
+key: enablerule
+content-length: 354
+
+<ruleset>
+  <rule uid="{9F9D81E1-F8F9-4BD7-9744-ED1E8A83082B}">
+    <conditions>
+      <condition id="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" uid="7B22D50923CD4F7ABED478787FB7D7E0" MeasuredLength="{22BE997D-B182-4C9B-888B-FB543D79E7BE}" operatorid="{B88CD556-082E-4385-BB76-E4D1B565F290}" DesiredLength="3" />
+    </conditions>
+  </rule>
+</ruleset>
+----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
@@ -34,7 +47,7 @@ Software/32x32/text_code_colored.png
 ----version----
 language: en
 version: 1
-revision: fa209602-a2f7-4723-8e93-8fabb0684cd2
+revision: 7e7ee68e-1c8c-4ff3-8a36-bbb8fa8a82f7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -49,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fa209602-a2f7-4723-8e93-8fabb0684cd2
+7e7ee68e-1c8c-4ff3-8a36-bbb8fa8a82f7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150626T095658:635709094183647969
+20150629T232122:635712168829003906
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

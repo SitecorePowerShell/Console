@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
@@ -25,6 +27,10 @@ namespace Cognifide.PowerShell.Client.Controls
             Assert.ArgumentNotNull(ribbon, "ribbon");
             Assert.ArgumentNotNull(button, "button");
             Assert.ArgumentNotNull(context, "context");
+            var parameters = new NameValueCollection();
+
+            context.Parameters.AllKeys.Where(key => !key.StartsWith("$"))
+                .ForEach(key => parameters.Add(key, context.Parameters[key]));
 
             var contextDb = context.Parameters["contextDB"];
             var contextItemId = context.Parameters["contextItem"];
@@ -48,14 +54,14 @@ namespace Cognifide.PowerShell.Client.Controls
             var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
             var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
             var icon = contextItem != null ? contextItem.Appearance.Icon : contextButton.Appearance.Icon;
-            RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon);
+            RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon, parameters);
             var sessionButton = Factory.GetDatabase("core").GetItem("{0C784F54-2B46-4EE2-B0BA-72384125E123}");
-            RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName, string.Empty);
+            RenderSmallGalleryButton(output, sessionButton, context, ribbon, currentSessionName, string.Empty, parameters);
             output.Write("</div>");
         }
 
         private static void RenderSmallGalleryButton(HtmlTextWriter output, Item button, CommandContext commandContext,
-            Ribbon ribbon, string title, string overrideIcon)
+            Ribbon ribbon, string title, string overrideIcon, NameValueCollection parameters)
         {
             Assert.ArgumentNotNull(output, "output");
             Assert.ArgumentNotNull(button, "button");

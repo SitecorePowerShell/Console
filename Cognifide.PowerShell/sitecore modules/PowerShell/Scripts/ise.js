@@ -54,9 +54,9 @@ extend(cognifide, "powershell");
             $("#Editor").focus();
             ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("Editor");
         }
-		
+
 		function getQueryStringValue(key) {
-			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); 
+			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
 			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
 			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 		}
@@ -64,8 +64,8 @@ extend(cognifide, "powershell");
         $("body").on("click", "#HelpClose", function() {
             $("#ajax-dialog").dialog("close");
         });
-		
-		if(getQueryStringValue("sc_bw") === "1"){			
+
+		if(getQueryStringValue("sc_bw") === "1"){
 			$("#RibbonPanel").css("padding-top","50px");
 			$("#Wrapper").css("padding-top","0px");
 		}
@@ -91,6 +91,7 @@ extend(cognifide, "powershell");
             var position = codeeditor.getCursorPosition();
             posx.text(position.column);
             posy.text((position.row + 1));
+            cognifide.powershell.updateRibbonNeeded();
         });
 
         $("#CodeEditor").on("keyup mouseup", function() {
@@ -230,6 +231,17 @@ extend(cognifide, "powershell");
         cognifide.powershell.clearEditor = function() {
             codeeditor.getSession().setValue("");
         };
+
+		var typingTimer;
+		
+        cognifide.powershell.updateRibbonNeeded = function() {
+			clearTimeout(typingTimer);
+			typingTimer = setTimeout(cognifide.powershell.updateRibbon, 2000);
+        };
+
+		cognifide.powershell.updateRibbon = function() {
+			window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean()+ ")");
+		};
 
         function escapeRegExp(string) {
             return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");

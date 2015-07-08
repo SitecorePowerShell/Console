@@ -5,6 +5,7 @@ using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.Sheer;
@@ -24,9 +25,19 @@ namespace Cognifide.PowerShell.Client.Controls
                 contextChunks.RemoveAt(0);
                 var psButtons = chunk.Children;
                 var contextItem = context.Items.Length > 0 ? context.Items[0] : null;
+
+                var ruleContext = new RuleContext
+                {
+                    Item = contextItem
+                };
+                foreach (var parameter in context.Parameters.AllKeys)
+                {
+                    ruleContext.Parameters[parameter] = context.Parameters[parameter];
+                }
+
                 foreach (Item psButton in psButtons)
                 {
-                    if (!RulesUtils.EvaluateRules(psButton["ShowRule"], contextItem))
+                    if (!RulesUtils.EvaluateRules(psButton["ShowRule"], ruleContext))
                     {
                         continue;
                     }
@@ -35,7 +46,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         Translate.Text(psButton.DisplayName),
                         psButton["__Icon"], string.Empty,
                         string.Format("ise:runplugin(scriptDb={0},scriptId={1})", psButton.Database.Name, psButton.ID),
-                        RulesUtils.EvaluateRules(psButton["EnableRule"], contextItem),
+                        RulesUtils.EvaluateRules(psButton["EnableRule"], ruleContext),
                         false, context);
                 }
             }
