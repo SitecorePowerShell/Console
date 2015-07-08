@@ -9,6 +9,7 @@
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
               x:placeholder="Scripts">
       </Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
