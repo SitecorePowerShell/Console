@@ -1,0 +1,97 @@
+----item----
+version: 1
+id: {2805C06C-F17D-4C8E-813D-7304564078EB}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Index Viewer
+parent: {B85E2336-26AB-47A7-B2BF-91CDE1A7E3BA}
+name: Index Viewer
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1333
+
+$indexOptions = @{}
+foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
+    $indexOptions[$index.Name] = $index.Name
+}
+
+$root = Get-Item -Path (@{$true="master:\content\home\"; $false="master:\content\"}[(Test-Path -Path master:\content\home)])
+
+$props = @{
+    Parameters = @(
+        @{Name="index"; Title="Choose the report index"; Value="sitecore_master_index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
+    )
+    Title = "Index Viewer Report"
+    Description = "Choose the criteria for the report."
+    Width = 600
+    Height = 300
+    ShowHints = $true
+}
+
+$result = Read-Variable @props
+
+if($result -eq "cancel"){
+    exit
+}
+
+$data = @{
+    Index = $index
+    Criteria = @{
+        Filter = "StartsWith"
+        Field = "_fullpath"
+        Value = $root.ItemPath
+    }
+}
+
+$details = @"
+Documents: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::GetIndexNumberOfDocuments($data.Index)),
+Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($data.Index)),
+Modified: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::LastModified($data.Index))
+"@
+
+Find-Item @data | Show-ListView -Property * -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 23
+
+Office/32x32/index2.png
+----version----
+language: en
+version: 1
+revision: 1f8ec114-0b7f-4f2c-8c8e-821fbcbcba69
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20150626T235351
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+1f8ec114-0b7f-4f2c-8c8e-821fbcbcba69
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20150629T114130:635711748906516562
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
