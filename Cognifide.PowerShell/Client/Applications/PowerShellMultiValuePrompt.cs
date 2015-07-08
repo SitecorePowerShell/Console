@@ -99,7 +99,7 @@ namespace Cognifide.PowerShell.Client.Applications
             foreach (Hashtable variable in variables)
             {
                 var tabName = (variable["Tab"] as string) ?? "Other";
-                var name = variable["Title"] as string;
+                var name = (variable["Title"] as string) ?? (variable["Name"] as string);
                 var hint = (variable["Tip"] as string) ??
                            (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
                 var container = GetContainer(tabs, tabName);
@@ -234,18 +234,16 @@ namespace Cognifide.PowerShell.Client.Applications
                  (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 Item item = null;
-                //List<Item> items = null;
                 var strValue = string.Empty;
                 if (value is Item)
                 {
                     item = (Item) value;
-                    //items = new List<Item> {item};
                     strValue = item.ID.ToString();
                 }
                 else if (value is IEnumerable<object>)
                 {
                     List<Item> items = (value as IEnumerable<object>).Cast<Item>().ToList();
-                    item = items.First();
+                    item = items.FirstOrDefault();
                     strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
 
@@ -295,32 +293,42 @@ namespace Cognifide.PowerShell.Client.Applications
             if (type == typeof (Item) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
-                var item = (Item) value;
+                var item = value as Item;
                 var source = variable["Source"] as string;
                 var root = variable["Root"] as string;
                 var sourceRoot = string.IsNullOrEmpty(source)
                     ? "/sitecore"
                     : StringUtil.ExtractParameter("DataSource", source);
-                var dataContext = new DataContext
-                {
-                    DefaultItem = item.Paths.Path,
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
-                    Parameters = string.IsNullOrEmpty(source) ? "databasename=" + item.Database.Name : source,
-                    DataViewName = "Master",
-                    Root = string.IsNullOrEmpty(root) ? sourceRoot : root,
-                    Database = item.Database.Name,
-                    Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
-                    Folder = item.ID.ToString(),
-                    Language = item.Language,
-                    Version = item.Version
-                };
+                var dataContext = item != null
+                    ? new DataContext
+                    {
+                        DefaultItem = item.Paths.Path,
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
+                        Parameters = string.IsNullOrEmpty(source) ? "databasename=" + item.Database.Name : source,
+                        DataViewName = "Master",
+                        Root = string.IsNullOrEmpty(root) ? sourceRoot : root,
+                        Database = item.Database.Name,
+                        Selected = new[] {new DataUri(item.ID, item.Language, item.Version)},
+                        Folder = item.ID.ToString(),
+                        Language = item.Language,
+                        Version = item.Version
+                    }
+                    : new DataContext
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("dataContext"),
+                        Parameters = string.IsNullOrEmpty(source) ? "databasename=master" : source,
+                        DataViewName = "Master",
+                        Root = string.IsNullOrEmpty(root) ? sourceRoot : root
+                    };
+
                 DataContextPanel.Controls.Add(dataContext);
 
                 var treePicker = new TreePicker
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Value = item.ID.ToString(),
-                    DataContext = dataContext.ID
+                    Value = item != null ? item.ID.ToString() : string.Empty,
+                    DataContext = dataContext.ID,
+                    AllowNone = !string.IsNullOrEmpty(editor) && (editor.IndexOf("allownone", StringComparison.OrdinalIgnoreCase) > -1)
                 };
                 treePicker.Class += " treePicker";
                 return treePicker;
