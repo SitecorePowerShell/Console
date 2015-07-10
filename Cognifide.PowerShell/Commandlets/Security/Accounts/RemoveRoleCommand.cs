@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Web;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Utility;
-using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Security.Accounts;
 
