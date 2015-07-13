@@ -36,7 +36,7 @@ name: Gallery Width
 key: gallery width
 content-length: 3
 
-500
+950
 ----field----
 field: {35E17D86-CA92-4903-AA4F-951B4B4795B9}
 name: Gallery Height
@@ -61,7 +61,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 294f44ed-d398-4d01-a493-2a39a078d156
+revision: c37b3034-cd0c-40d3-8623-236a2c45bc55
 
 ----field----
 field: {FACECAC8-C923-4847-834C-C917268F8F6B}
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-294f44ed-d398-4d01-a493-2a39a078d156
+c37b3034-cd0c-40d3-8623-236a2c45bc55
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150612T231049:635697474494120703
+20150711T213913:635722475535690781
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
