@@ -13,20 +13,41 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 864
+content-length: 2525
 
 <#
+    .EXAMPLE
+        PS master:\> Import-Function Invoke-ApiScript
+        PS master:\> Invoke-ApiScript -ScriptBlock { @(Get-Item -Path master:\content\home) + @(Get-ChildItem -Path master:\content\home -Recurse) } -Arguments @{limit=2;fields="name","id"}
+                
+        {
+            "Status":  "Success",
+            "Message":  "The request completed successfully.",
+            "Timespan":  "0:00:00.057338",
+            "Timestamp":  "2015-07-12T03:19:17.9633436-05:00",
+            "Results":  [
+                            {
+                                "Name":  "Home",
+                                "ID":  "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+                            },
+                            {
+                                "Name":  "sample item 1",
+                                "ID":  "{39A657C0-103A-4EDD-89C6-D0C3AFACA192}"
+                            }
+                        ]
+        }
+    
     .LINK
         http://blog.najmanowicz.com/2015/04/13/rapid-api-prototyping-for-sitecore-with-powershell-extensions/
 #>
 
-#$url = "http://console/-/script/v2/master/ChildrenAsJson?item=content&user=admin&password=b"
-#Invoke-RestMethod -Uri $url -Method GET -ContentType application/json
-
 function Invoke-ApiScript {
     param(
         [Parameter(Mandatory=$true, Position=0)]
-        [scriptblock]$ScriptBlock
+        [scriptblock]$ScriptBlock,
+        
+        [Parameter()]
+        [hashtable]$Arguments
     )
     
     $watch = New-Object System.Diagnostics.Stopwatch
@@ -34,6 +55,36 @@ function Invoke-ApiScript {
     $watch.Start()
     $items = $ScriptBlock.Invoke()
     $watch.Stop()
+    
+    $fields = "*"
+    $offset = 0
+    $limit = 0
+    
+    if($arguments) {
+        if($arguments["fields"]) {
+            $fields = $arguments["fields"].Trim('(',')').Split(',')
+        }
+        
+        if($arguments["offset"]) {
+            [int]::TryParse($arguments["offset"], [ref]$offset) | Out-Null
+        }
+        
+        if($arguments["limit"]) {
+            [int]::TryParse($arguments["limit"], [ref]$limit) | Out-Null
+        }
+        
+        if($fields -gt 0) {
+            $items = $items | Select-Object -Property $fields
+        }
+        
+        if($Offset -gt 0) {
+            $items = $items | Select-Object -Skip $Offset
+        }
+        
+        if($Limit -gt 0) {
+            $items = $items | Select-Object -First $Limit
+        }
+    }
     
     [ordered]@{
         Status = "Success"
@@ -46,7 +97,7 @@ function Invoke-ApiScript {
 ----version----
 language: en
 version: 1
-revision: d3b06b0f-fca7-4cd7-b5a8-4c6418a669d6
+revision: 22e41a8b-5a34-4fe5-9f3e-2b51de315d00
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -61,14 +112,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d3b06b0f-fca7-4cd7-b5a8-4c6418a669d6
+22e41a8b-5a34-4fe5-9f3e-2b51de315d00
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150420T013254:635650903746326400
+20150712T032036:635722680366792114Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

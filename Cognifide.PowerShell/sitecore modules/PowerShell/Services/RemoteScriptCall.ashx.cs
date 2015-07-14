@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.SessionState;
@@ -119,6 +120,17 @@ namespace Cognifide.PowerShell.Console.Services
 
                 context.Response.ContentType = "text/plain";
 
+                var scriptArguments = new Hashtable();
+
+                foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
+                {
+                    var paramValue = HttpContext.Current.Request.QueryString[param];
+                    if (String.IsNullOrEmpty(param)) continue;
+                    if (String.IsNullOrEmpty(paramValue)) continue;
+
+                    scriptArguments[param] = paramValue;
+                }
+
                 foreach (var param in HttpContext.Current.Request.Params.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.Params[param];
@@ -130,6 +142,8 @@ namespace Cognifide.PowerShell.Console.Services
                         session.SetVariable(param, paramValue);
                     }
                 }
+
+                session.SetVariable("scriptArguments", scriptArguments);
 
                 session.ExecuteScriptPart(script, true);
 
