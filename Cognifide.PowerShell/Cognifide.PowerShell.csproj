@@ -499,6 +499,8 @@
     <Content Include="sitecore modules\Shell\PowerShell\ContextGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\DownloadFile.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\MruGallery.SearchItem.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\MruGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellVelociyOutput.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml">
