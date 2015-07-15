@@ -119,7 +119,15 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void GetPlainTextLine(StringBuilder output)
         {
-            output.AppendLine(Text);
+            if (Terminated)
+            {
+                output.AppendLine(Text);
+            }
+            else
+            {
+                output.Append(Text);
+            }
+            
         }
 
         public void GetLine(StringBuilder temp, string stringFormat)
