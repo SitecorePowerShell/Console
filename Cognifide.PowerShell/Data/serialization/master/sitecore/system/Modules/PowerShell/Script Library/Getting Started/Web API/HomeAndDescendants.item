@@ -13,18 +13,25 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 255
+content-length: 577
+
+<#
+    .EXAMPLE
+        The following returns the home item and hits children. This assumes you have published the this item to the web database.
+        Use user and password arguments to interact with the master database.
+        
+        Invoke-RestMethod -Uri "http://console/-/script/v2/master/HomeAndDescendants?offset=3&limit=2&fields=(Name,ItemPath,Id)"
+#>
 
 Import-Function -Name Invoke-ApiScript
 
-Invoke-ApiScript -ScriptBlock { 
-    Get-Item -Path master:\content\home | Select-Object -Property Name, ItemPath
-    Get-ChildItem -Path master:\content\home -Recurse | Select-Object -Property Name, ItemPath
-}
+Invoke-ApiScript -ScriptBlock {
+    @(Get-Item -Path master:\content\home) + @(Get-ChildItem -Path master:\content\home -Recurse)
+} -Arguments $scriptArguments
 ----version----
 language: en
 version: 1
-revision: 6fccc0d8-998f-4465-869d-8d4d3630b433
+revision: 56b5c1e0-568f-4b85-b71a-864c5cd937b2
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -39,14 +46,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6fccc0d8-998f-4465-869d-8d4d3630b433
+56b5c1e0-568f-4b85-b71a-864c5cd937b2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150420T013330:635650904104050838
+20150712T032101:635722680610151135Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
