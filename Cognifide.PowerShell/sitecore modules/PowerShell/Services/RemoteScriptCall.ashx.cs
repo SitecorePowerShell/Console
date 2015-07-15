@@ -171,14 +171,14 @@ namespace Cognifide.PowerShell.Console.Services
         {
             if (apiScripts == null)
             {
-                apiScripts = new SortedDictionary<string, SortedDictionary<string, ApiScript>>();
+                apiScripts = new SortedDictionary<string, SortedDictionary<string, ApiScript>>(StringComparer.OrdinalIgnoreCase);
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
                 BuildCache(roots);
             }
 
             if (!apiScripts.ContainsKey(dbName))
             {
-                apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>());
+                apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi, dbName);
                 BuildCache(roots);
             }
@@ -202,7 +202,7 @@ namespace Cognifide.PowerShell.Console.Services
                         var dbName = result.Database.Name;
                         if (!apiScripts.ContainsKey(dbName))
                         {
-                            apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>());
+                            apiScripts.Add(dbName, new SortedDictionary<string, ApiScript>(StringComparer.OrdinalIgnoreCase));
                         }
                         apiScripts[dbName].Add(scriptPath, new ApiScript
                         {
