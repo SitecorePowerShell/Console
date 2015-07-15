@@ -27,7 +27,6 @@
                   <TreeviewEx ID="ContentTreeview" Style="width: 0px" DataContext="ContentDataContext"
                               Click="ContentTreeview_Click" />
                 </Tab>
-
               </Tabstrip>
             </MenuPanel>
             <MenuHeader Header="Other" />
