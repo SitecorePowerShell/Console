@@ -13,16 +13,22 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 18002
+content-length: 21694
 
 <#
     .SYNOPSIS
         Sitecore PowerShell Extensions Remoting v2. 
-        The contents of this script are the same scripts found in the SPE Remoting package for use outside of Sitecore.
+        Use the SPE Remoting module found as a separate download and install in your module path.
         
     .DESCRIPTION
         The second version of the SPE remoting. This version uses a session object with a cached version of the web service proxy.
         The session object is also Windows security aware. Each function below contains help documentation.
+    
+    .LINK
+        https://msdn.microsoft.com/en-us/library/dd878350(v=vs.85).aspx
+        
+    .LINK
+        https://msdn.microsoft.com/en-us/library/dd878326(v=vs.85).aspx
 #>
 
 function New-ScriptSession {
@@ -53,23 +59,34 @@ function New-ScriptSession {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string[]]$ConnectionUri = $null,
+        [Uri[]]$ConnectionUri = $null,
 
         [Parameter(Mandatory = $false)]
         [System.Management.Automation.PSCredential]
         $Credential
     )
+    
+    begin {
+        $sessionId = [guid]::NewGuid()
+        $session = @{
+            "Username" = [string]$Username
+            "Password" = [string]$Password
+            "SessionId" = [string]$sessionId
+            "Credential" = [System.Management.Automation.PSCredential]$Credential
+            "Connection" = @()
+        }
+    }
 
     process {
 
         foreach($uri in $ConnectionUri) {
 
             $script = {
-                [Cognifide.PowerShell.Core.Host.ScriptSessionManager]::NewSession([Cognifide.PowerShell.Core.Settings.ApplicationNames]::RemoteAutomation, $false);
+                Get-ScriptSession -Current
             }
-            
-            if(!$uri.EndsWith(".asmx")) {
-                $uri = "$($uri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+
+            if(!$uri.AbsoluteUri.EndsWith(".asmx")) {
+                $uri = "$($uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
             }
 
             $proxyProps = @{
@@ -87,23 +104,22 @@ function New-ScriptSession {
             if(-not $proxy) { return $null }
 
             $response = $proxy.ExecuteScriptBlock2($Username, $Password, $script.ToString(), $null, $SessionId)
-            $session = ConvertFrom-CliXml -InputObject $response
-    
-            $sessionId = [guid]::Empty
+            $serverSession = ConvertFrom-CliXml -InputObject $response
 
-            if([guid]::TryParse($session.ID, [ref] $sessionId)) {
-                [PSCustomObject]@{
-                    "Username" = [string]$Username
-                    "Password" = [string]$Password
-                    "ConnectionUri" = [string]$uri
-                    "SessionId" = [string]$SessionId
-                    "Credential" = [System.Management.Automation.PSCredential]$Credential
-                    "Proxy" = [PSObject]$proxy
-                }
+            if([guid]::TryParse($serverSession.ID, [ref] $sessionId)) {
+                $session["Connection"] += @(
+                    [PSCustomObject]@{
+                        Uri = [Uri]$uri
+                        Proxy = [PSObject]$proxy
+                    })
             } else {
                 Write-Error -Message "There was a problem creating a new script session."
             }
         }
+    }
+    
+    end {
+        [PSCustomObject]$session
     }
 }
 
@@ -142,7 +158,8 @@ function Invoke-RemoteScript {
             sitecore\admin           sitecore     True            False          
             6/25/2015 11:09:17 AM
     #>
-    [CmdletBinding()]
+    
+    [CmdletBinding(DefaultParameterSetName="InProcess")]
     param(
         
         [Parameter(ParameterSetName='InProcess')]
@@ -155,7 +172,7 @@ function Invoke-RemoteScript {
         [pscustomobject]$Session,
 
         [Parameter(ParameterSetName='Uri')]
-        [string]$ConnectionUri,
+        [Uri[]]$ConnectionUri,
 
         [Parameter(ParameterSetName='Uri')]
         [string]$SessionId,
@@ -169,47 +186,55 @@ function Invoke-RemoteScript {
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
-
-        [hashtable]$ArgumentList
+        
+        [Parameter()]
+        [Alias("ArgumentList")]
+        [hashtable]$Arguments
     )
 
     if($PSCmdlet.ParameterSetName -eq "InProcess") {
         $ScriptBlock.Invoke()
     } else {
         if($PSCmdlet.ParameterSetName -eq "Session") {
-            $ConnectionUri = $Session.ConnectionUri
             $Username = $Session.Username
             $Password = $Session.Password
             $SessionId = $Session.SessionId
             $Credential = $Session.Credential
-            $Proxy = $Session.Proxy
+            $Connection = $Session.Connection
+        } else {
+            $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
         }
         
-        if(!$ConnectionUri.EndsWith(".asmx")) {
-            $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
-        }
-
-        if(!$Proxy) {
-            $proxyProps = @{
-                Uri = $ConnectionUri
+        foreach($singleConnection in $Connection) {
+            if(!$singleConnection.Uri.AbsoluteUri.EndsWith(".asmx")) {
+                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
             }
-
-            if($Credential) {
-                $proxyProps["Credential"] = $Credential
+    
+            if(!$singleConnection.Proxy) {
+                $proxyProps = @{
+                    Uri = $singleConnection.Uri
+                }
+    
+                if($Credential) {
+                    $proxyProps["Credential"] = $Credential
+                }
+    
+                $singleConnection.Proxy = New-WebServiceProxy @proxyProps
+                if($Credential) {
+                    $singleConnection.Proxy.Credentials = $Credential
+                }
             }
-
-            $proxy = New-WebServiceProxy @proxyProps
-            if($Credential) {
-                $proxy.Credentials = $Credential
+            if(-not $singleConnection.Proxy) { return $null }
+    
+            if($Arguments) {
+                $parameters = ConvertTo-CliXml -InputObject $Arguments
+            }
+            
+            $response = $singleConnection.Proxy.ExecuteScriptBlock2($Username, $Password, $ScriptBlock.ToString(), $parameters, $SessionId)
+            if($response) {
+                ConvertFrom-CliXml -InputObject $response
             }
         }
-        if(-not $proxy) { return $null }
-
-        if($ArgumentList) {
-            $parameters = ConvertTo-CliXml -InputObject $ArgumentList
-        }
-        $response = $proxy.ExecuteScriptBlock2($Username, $Password, $ScriptBlock.ToString(), $parameters, $SessionId)
-        ConvertFrom-CliXml -InputObject $response
     }
 }
 
@@ -237,7 +262,7 @@ function Send-MediaItem {
         [pscustomobject]$Session,
 
         [Parameter(ParameterSetName='Uri')]
-        [string]$ConnectionUri,
+        [Uri[]]$ConnectionUri,
 
         [Parameter(ParameterSetName='Uri')]
         [string]$SessionId,
@@ -270,38 +295,37 @@ function Send-MediaItem {
     )
 
     process {
+        
+        if($PSCmdlet.ParameterSetName -eq "Session") {
+            $Username = $Session.Username
+            $Password = $Session.Password
+            $SessionId = $Session.SessionId
+            $Credential = $Session.Credential
+            $Connection = $Session.Connection
+        } else {
+            $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
+        }
 
-        foreach($s in $Session) {
-
-            if($PSCmdlet.ParameterSetName -eq "Session") {
-                $ConnectionUri = $s.ConnectionUri
-                $Username = $s.Username
-                $Password = $s.Password
-                $SessionId = $s.SessionId
-                $Proxy = $s.Proxy
+        foreach($singleConnection in $Connection) {
+            if(!$singleConnection.Uri.AbsoluteUri.EndsWith(".asmx")) {
+                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
             }
-
-            Write-Verbose -Message "Connecting to web service."
-            
-            if(!$ConnectionUri.EndsWith(".asmx")) {
-                $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
-            }
-
-            if(!$Proxy) {
+    
+            if(!$singleConnection.Proxy) {
                 $proxyProps = @{
-                    Uri = $ConnectionUri
+                    Uri = $singleConnection.Uri
                 }
-
+    
                 if($Credential) {
                     $proxyProps["Credential"] = $Credential
                 }
-
-                $proxy = New-WebServiceProxy @proxyProps
+    
+                $singleConnection.Proxy = New-WebServiceProxy @proxyProps
                 if($Credential) {
-                    $proxy.Credentials = $Credential
+                    $singleConnection.Proxy.Credentials = $Credential
                 }
             }
-            if(-not $proxy) { return $null }
+            if(-not $singleConnection.Proxy) { return $null }
 
             $output = $Destination
             $extension = [System.IO.Path]::GetExtension($Path)
@@ -313,13 +337,12 @@ function Send-MediaItem {
                 $output += [System.IO.Path]::GetFileName($Path)
             }
 	
-            Write-Verbose -Message "Reading file content."
             [byte[]]$bytes = [System.IO.File]::ReadAllBytes($Path)
 
             if($bytes -and $bytes.Length -gt 0) {
 
-                Write-Verbose -Message "Uploading file content."
-                $proxy.UploadFile($Username, $Password, $output, $bytes, $Database, $Language) | Out-Null
+                Write-Verbose -Message "Uploading $($Path)"
+                $singleConnection.Proxy.UploadFile($Username, $Password, $output, $bytes, $Database, $Language) | Out-Null
 
                 Write-Verbose -Message "Upload complete."
             } else {
@@ -359,10 +382,10 @@ function Receive-MediaItem {
     param(
         [Parameter(ParameterSetName='Session')]
         [ValidateNotNull()]
-        [pscustomobject[]]$Session,
+        [pscustomobject]$Session,
 
         [Parameter(ParameterSetName='Uri')]
-        [string]$ConnectionUri,
+        [string[]]$ConnectionUri,
 
         [Parameter(ParameterSetName='Uri')]
         [string]$SessionId,
@@ -440,45 +463,47 @@ function Receive-MediaItem {
 
     process {
 
-        foreach($s in $Session) {
+        if($PSCmdlet.ParameterSetName -eq "Session") {
+            $Username = $Session.Username
+            $Password = $Session.Password
+            $SessionId = $Session.SessionId
+            $Credential = $Session.Credential
+            $Connection = $Session.Connection
+        } else {
+            $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
+        }
 
-            if($PSCmdlet.ParameterSetName -eq "Session") {
-                $ConnectionUri = $s.ConnectionUri
-                $Username = $s.Username
-                $Password = $s.Password
-                $SessionId = $s.SessionId
-                $Proxy = $s.Proxy
+        foreach($singleConnection in $Connection) {
+            if(!$singleConnection.Uri.AbsoluteUri.EndsWith(".asmx")) {
+                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
             }
-
-            Write-Verbose -Message "Connecting to web service."
-            
-            if(!$ConnectionUri.EndsWith(".asmx")) {
-                $ConnectionUri = "$($ConnectionUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
-            }
-
-            if(!$Proxy) {
+    
+            if(!$singleConnection.Proxy) {
                 $proxyProps = @{
-                    Uri = $ConnectionUri
+                    Uri = $singleConnection.Uri
                 }
-
+    
                 if($Credential) {
                     $proxyProps["Credential"] = $Credential
                 }
-
-                $proxy = New-WebServiceProxy @proxyProps
+    
+                $singleConnection.Proxy = New-WebServiceProxy @proxyProps
                 if($Credential) {
-                    $proxy.Credentials = $Credential
+                    $singleConnection.Proxy.Credentials = $Credential
                 }
             }
-            if(-not $proxy) { return $null }
+            if(-not $singleConnection.Proxy) { return $null }
 
-            Write-Verbose -Message "Downloading file content."
-            [byte[]]$response = $proxy.DownloadFile($Username, $Password, $Path, $Database, $Language)
+            Write-Verbose -Message "Downloading $($Path)"
+            [byte[]]$response = $singleConnection.Proxy.DownloadFile($Username, $Password, $Path, $Database, $Language)
 	
             if($response -and $response.Length -gt 0) {
                 
                 $directory = [System.IO.Path]::GetDirectoryName($Destination)
-
+                if(!$directory) {
+                    $directory = $Destination
+                }
+                
                 if(!(Test-Path $directory -PathType Container)) {
                     Write-Verbose "Creating a new directory $($directory)"
                     New-Item -ItemType Directory -Path $directory | Out-Null
@@ -501,16 +526,83 @@ function Receive-MediaItem {
                 } else {
                     Write-Verbose "Skipping the save of $($output) because it already exists."
                 }
+                
+                Write-Verbose "Download complete."
             } else {
                 Write-Verbose -Message "Download failed. No content returned from the web service."
             }
         }
     }
 }
+
+function ConvertFrom-CliXml {
+    param(
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String[]]$InputObject
+    )
+    begin
+    {
+        $OFS = "`n"
+        [String]$xmlString = ""
+    }
+    process
+    {
+        $xmlString += $InputObject
+    }
+    end
+    {
+        $type = [PSObject].Assembly.GetType('System.Management.Automation.Deserializer')
+        $ctor = $type.GetConstructor('instance,nonpublic', $null, @([xml.xmlreader]), $null)
+        $sr = New-Object System.IO.StringReader $xmlString
+        $xr = New-Object System.Xml.XmlTextReader $sr
+        $deserializer = $ctor.Invoke($xr)
+        $done = $type.GetMethod('Done', [System.Reflection.BindingFlags]'nonpublic,instance')
+        while (!$type.InvokeMember("Done", "InvokeMethod,NonPublic,Instance", $null, $deserializer, @()))
+        {
+            try {
+                $type.InvokeMember("Deserialize", "InvokeMethod,NonPublic,Instance", $null, $deserializer, @())
+            } catch {
+                Write-Warning "Could not deserialize ${string}: $_"
+            }
+        }
+        $xr.Close()
+        $sr.Dispose()
+    }
+}
+
+function ConvertTo-CliXml {
+    param(
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [ValidateNotNullOrEmpty()]
+        [PSObject[]]$InputObject
+    )
+    begin {
+        $type = [PSObject].Assembly.GetType('System.Management.Automation.Serializer')
+        $ctor = $type.GetConstructor('instance,nonpublic', $null, @([System.Xml.XmlWriter]), $null)
+        $sw = New-Object System.IO.StringWriter
+        $xw = New-Object System.Xml.XmlTextWriter $sw
+        $serializer = $ctor.Invoke($xw)
+        #$method = $type.GetMethod('Serialize', 'nonpublic,instance', $null, [type[]]@([object]), $null)
+    }
+    process {
+        try {
+            [void]$type.InvokeMember("Serialize", "InvokeMethod,NonPublic,Instance", $null, $serializer, [object[]]@($InputObject))
+        } catch {
+            Write-Warning "Could not serialize $($InputObject.GetType()): $_"
+        }
+    }
+    end {    
+        [void]$type.InvokeMember("Done", "InvokeMethod,NonPublic,Instance", $null, $serializer, @())
+        $sw.ToString()
+        $xw.Close()
+        $sw.Dispose()
+    }
+}
 ----version----
 language: en
 version: 1
-revision: 0bbb61b5-a4c2-4039-b4f3-6ca8bee574ea
+revision: 29d30039-b9c8-445b-98af-b344f1b3e139
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -525,14 +617,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0bbb61b5-a4c2-4039-b4f3-6ca8bee574ea
+29d30039-b9c8-445b-98af-b344f1b3e139
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20150713T170916:635724041563348931Z
+20150715T044944:635725325845298453Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
