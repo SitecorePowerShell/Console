@@ -130,7 +130,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 SheerResponse.Download(FileName);
                 Hidden.Value = "downloaded";
             }
-            Context.ClientPage.ClientResponse.SetDialogValue("downloaded");
+            Hidden.Value = "downloaded";
+            Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             //base.OnCancel(sender, args);
         }
     }
