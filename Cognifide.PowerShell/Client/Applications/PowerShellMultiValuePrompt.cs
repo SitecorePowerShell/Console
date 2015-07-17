@@ -376,6 +376,11 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             Sitecore.Web.UI.HtmlControls.Control edit;
+            if (!string.IsNullOrEmpty(editor) && editor.IndexOf("info", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                return new Literal {Text = value.ToString()};
+            }
+
             if (variable["lines"] != null && ((int) variable["lines"] > 1))
             {
                 edit = new Memo();
