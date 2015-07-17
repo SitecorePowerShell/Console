@@ -13,18 +13,18 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1347
+content-length: 1931
 
 $indexOptions = @{}
 foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
     $indexOptions[$index.Name] = $index.Name
 }
 
-$root = Get-Item -Path (@{$true="master:\content\home\"; $false="master:\content\"}[(Test-Path -Path master:\content\home)])
+$index="sitecore_master_index";
 
 $props = @{
     Parameters = @(
-        @{Name="index"; Title="Choose the report index"; Value="sitecore_master_index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
+        @{Name="index"; Title="Choose the report index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
     )
     Title = "Index Viewer Report"
     Description = "Choose the criteria for the report."
@@ -39,12 +39,17 @@ if($result -eq "cancel"){
     exit
 }
 
+
+$database = Find-Item -Index $index -First 1 | % { $_.DatabaseName } 
+$root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+$props.Parameters = @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."}
+$result = Read-Variable @props
+
 $data = @{
     Index = $index
     Criteria = @{
-        Filter = "StartsWith"
-        Field = "_fullpath"
-        Value = $root.ItemPath
+        Filter = "DescendantOf"
+        Value = $root
     }
 }
 
@@ -54,7 +59,10 @@ Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($
 Modified: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::LastModified($data.Index))
 "@
 
-Find-Item @data | Show-ListView -Property * -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
+Find-Item @data | 
+    Show-ListView -Property Name, Language, Version, Url, Path,  
+        @{Label="Fields"; Expression={ "<a href='#' style='color:#f00' onclick=`"javascript:return scForm.postEvent(this,event,'listview:action(scriptDb=master,scriptID={EE75FFCF-7B3A-46CD-86AB-6536AD8675AA},index=$index,id=$([System.Web.HttpUtility]::UrlEncode($_.Fields["_uniqueid"])))')`">Show Full Info</a>" } } `
+        -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
 Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -66,7 +74,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: 4f89970e-42cd-4430-98c7-c960919bee84
+revision: c6598084-ba82-4ebf-a5a2-0b60f204faa5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -81,14 +89,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4f89970e-42cd-4430-98c7-c960919bee84
+c6598084-ba82-4ebf-a5a2-0b60f204faa5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150717T134512:635727375121992188
+20150717T142054:635727396545078125
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
