@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.SearchTypes;
@@ -98,10 +97,14 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                             criteria.Value));
                                     return;
                                 }
-                                query = query.Where(i => i["_path"].Contains(ancestorId));
+                                query = query = criteria.Invert
+                                    ? query.Where(i => !i["_path"].Contains(ancestorId))
+                                    : query.Where(i => i["_path"].Contains(ancestorId));
                                 break;
                             case (FilterType.StartsWith):
-                                query = query.Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
+                                query = criteria.Invert
+                                    ? query.Where(i => !i[criteria.Field].StartsWith(criteria.StringValue, comparer))
+                                    : query.Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Contains):
                                 if (comparer == StringComparison.OrdinalIgnoreCase)
@@ -109,13 +112,19 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                     WriteWarning(
                                         "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
-                                query = query.Where(i => i[criteria.Field].Contains(criteria.StringValue));
+                                query = criteria.Invert
+                                    ? query.Where(i => !i[criteria.Field].Contains(criteria.StringValue))
+                                    : query.Where(i => i[criteria.Field].Contains(criteria.StringValue));
                                 break;
                             case (FilterType.EndsWith):
-                                query = query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
+                                query = criteria.Invert
+                                    ? query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
+                                    : query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Equals):
-                                query = query.Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
+                                query = criteria.Invert
+                                    ? query.Where(i => !i[criteria.Field].Equals(criteria.StringValue, comparer))
+                                    : query.Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
                                 break;
                         }
                     }
@@ -192,5 +201,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public object Value { get; set; }
         public bool CaseSensitive { get; set; }
         internal string StringValue { get { return Value.ToString(); } }
+        public bool Invert { get; set; }
     }
 }
