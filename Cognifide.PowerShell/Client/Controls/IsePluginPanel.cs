@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         Translate.Text(psButton.DisplayName),
                         psButton["__Icon"], string.Empty,
                         string.Format("ise:runplugin(scriptDb={0},scriptId={1})", psButton.Database.Name, psButton.ID),
-                        RulesUtils.EvaluateRules(psButton["EnableRule"], ruleContext),
+                        context.Parameters["ScriptRunning"] == "0" && RulesUtils.EvaluateRules(psButton["EnableRule"], ruleContext),
                         false, context);
                 }
             }

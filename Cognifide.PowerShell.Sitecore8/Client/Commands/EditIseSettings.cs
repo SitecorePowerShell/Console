@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
 
         public override CommandState QueryState(CommandContext context)
         {
-            return CommandState.Enabled;
+            return context.Parameters["ScriptRunning"] != "1" ? CommandState.Enabled : CommandState.Disabled;
         }
 
         public override bool CanExecute(CommandContext context)
