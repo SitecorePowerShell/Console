@@ -35,9 +35,13 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border RibbonPanel;
         protected Literal ScriptName;
         protected Border ScriptResult;
-        protected bool ScriptRunning { get; set; }
         protected Memo SelectionText;
 
+        protected bool ScriptRunning
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptRunning"]) == "1"; }
+            set { Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty; }
+        }
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -150,6 +154,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
 
+            Monitor.JobFinished += MonitorJobFinished;
+            Monitor.JobDisappeared += MonitorJobFinished;
+
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -168,9 +175,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 ScriptItemDb = itemDb;
                 LoadItem(itemDb, itemId);
             }
-
-            Monitor.JobFinished += MonitorJobFinished;
-            Monitor.JobDisappeared += MonitorJobFinished;
 
             ContextItemDb = Context.ContentDatabase.Name;
             var contextItem = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath);
