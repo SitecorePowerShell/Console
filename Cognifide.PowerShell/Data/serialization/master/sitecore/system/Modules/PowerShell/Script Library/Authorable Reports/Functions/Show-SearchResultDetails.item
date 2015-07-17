@@ -1,0 +1,96 @@
+----item----
+version: 1
+id: {EE75FFCF-7B3A-46CD-86AB-6536AD8675AA}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Functions/Show-SearchResultDetails
+parent: {90B71926-6FC4-41E1-BFDB-828D6F9E243B}
+name: Show-SearchResultDetails
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1252
+
+function Show-SearchResultDetails { 
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$Index,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$Uri
+        )
+        process {
+            Find-Item -Index $index -Criteria @{Filter = "Equals"; Field = "_uniqueid"; Value = "$Uri"}
+        }
+}
+
+if($id -eq $null)
+{
+    $id = (gi master:\content).Uri
+    $index = "sitecore_master_index" 
+}
+
+$item = Show-SearchResultDetails  $index $id
+
+$info = "" <#+ 
+    "<b>Name: </b> $($item.Name)<br/>" + 
+    "<b>Url: </b> $($item.Url)<br/>"+
+    "<b>Path: </b> $($item.Path)<br/>"+
+    "<b>Language: </b> $($item.Language)<br/>"+
+    "<b>Template: </b> $($item.TemplateName) - $($item.TemplateId)<br/><br/><br/>"+
+    "<h1>Fields:</h1>"#>
+    
+foreach($fieldKey in ($item.Fields.Keys | sort)){
+  $info += "<b>$($fieldKey): </b> $($item.Fields[$fieldKey])<br/>"
+}
+    
+
+$props = @{
+    Parameters = @(
+        @{Name="info"; Title=""; editor="info"}
+    )
+    Title = "'$($item.Name)' Fields Viewer"
+    Description = "Details fo the index item at $($item.DatabaseName):$($item.Path)."
+    Width = 900
+    Height = 800
+}
+
+$result = Read-Variable @props
+
+----version----
+language: en
+version: 1
+revision: 63f3357b-be4c-4354-a64f-5241cda8d473
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20150717T111816
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+63f3357b-be4c-4354-a64f-5241cda8d473
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20150717T123457:635727332978575546
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
