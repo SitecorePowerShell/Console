@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense"
          xmlns:shell="http://www.sitecore.net/shell" xmlns:x="http://www.sitecore.net/xaml">
   <Gallery.MruGallery>
@@ -30,13 +29,13 @@
           .scClickFont,  .scClick_Hover{ width: 40px; clear: both;}
           .versionNum, .versionNumSelected { padding: 4px 0; width: 30px; float: left; }
           .scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
+          .selected.scMenuPanelItem { background: #D0EBF6 }
           .scInitialHeight { height: initial; width: 100%; }
         </Stylesheet>
 
       <div class="scStretch">
         <div class="scGalleryContent13">
           <GalleryMenu ID="Options" Class="scStretch">
-
             <MenuPanel Height="100%">
               <Tabstrip ID="Tabs">
                 <Tab ID="SearchTab" Header="Recent">
@@ -57,7 +56,6 @@
                 </Tab>
               </Tabstrip>
             </MenuPanel>
-            <!--MenuHeader Header="Other" /-->
           </GalleryMenu>
         </div>
         <div class="scGalleryBottom13">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
   <MruGallery.SearchItem>
-    <Border RollOver="true" Class="scMenuPanelItem" Click="$Click">
+    <Border RollOver="true" Class="$Class scMenuPanelItem" Click="$Click">
         <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top" Gridpanel.Width="64px">
           <Literal Text="$ScriptIcon"/>
         </Border>

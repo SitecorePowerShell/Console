@@ -22,8 +22,6 @@ using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.XmlControls;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
-using Menu = Sitecore.Web.UI.HtmlControls.Menu;
-using MenuItem = Sitecore.Web.UI.HtmlControls.MenuItem;
 
 namespace Cognifide.PowerShell.Client.Controls
 {
@@ -34,17 +32,16 @@ namespace Cognifide.PowerShell.Client.Controls
         protected TreeviewEx ContentTreeview;
         protected Combobox Databases;
         protected string InitialDatabase;
-        protected GalleryMenu Options;
-        protected Menu RecentMenu;
-        protected Tab RecentTab;
         protected Scrollbox Scripts;
         protected Edit SearchPhrase;
-        protected MenuHeader RecentHeader;
         protected GalleryMenu SearchResults;
+        public Item ItemFromQueryString { get; set; }
+
         public override void HandleMessage(Message message)
         {
             Assert.ArgumentNotNull(message, "message");
-            if (message.Name != "event:click" && message.Name != "datacontext:changed" && message.Name != "event:change" && message.Name != "event:keypress")
+            if (message.Name != "event:click" && message.Name != "datacontext:changed" && message.Name != "event:change" &&
+                message.Name != "event:keypress")
             {
                 Invoke(message, true);
             }
@@ -90,13 +87,14 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
+            ItemFromQueryString = UIUtil.GetItemFromQueryString(Context.ContentDatabase);
             if (!Context.ClientPage.IsEvent)
             {
                 Item item;
                 Item item2;
                 Item[] itemArray;
                 ChangeSearchPhrase();
-                
+
                 var db = WebUtil.GetQueryString("contextDb");
                 var itemId = WebUtil.GetQueryString("contextItem");
                 InitialDatabase =
@@ -105,6 +103,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         : db;
 
                 BuildDatabases();
+
 
                 ContentDataContext.GetFromQueryString();
                 ContentDataContext.BeginUpdate();
@@ -133,7 +132,7 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             foreach (var str in Factory.GetDatabaseNames())
             {
-                if (!string.Equals(str,"core",StringComparison.OrdinalIgnoreCase) && 
+                if (!string.Equals(str, "core", StringComparison.OrdinalIgnoreCase) &&
                     !Sitecore.Client.GetDatabaseNotNull(str).ReadOnly)
                 {
                     var child = new ListItem();
@@ -160,14 +159,14 @@ namespace Cognifide.PowerShell.Client.Controls
             var parts = (SearchPhrase.Value ?? string.Empty).Split(':');
             var database = parts.Length > 1 ? parts[0] : string.Empty;
             var phrase = parts.Length > 1 ? parts[1] : parts[0];
-            RecentHeader = new MenuHeader();
-            SearchResults.Controls.AddAt(0,RecentHeader);
+            var recentHeader = new MenuHeader();
+            SearchResults.Controls.AddAt(0, recentHeader);
             Scripts.Controls.Clear();
             Scripts.Class = Scripts.Class + " scDontStretch";
             SearchResults.Class = Scripts.Class + " scDontStretch";
             if (string.IsNullOrEmpty(phrase))
             {
-                RecentHeader.Header = "Most Recently opened scripts:";
+                recentHeader.Header = "Most Recently opened scripts:";
                 foreach (Item item in ApplicationSettings.GetIseMruContainerItem().Children)
                 {
                     var messageString = item["Message"];
@@ -180,14 +179,14 @@ namespace Cognifide.PowerShell.Client.Controls
                         RenderRecent(scriptItem);
                     }
                 }
-                
+
             }
             else if (database.Length > 0)
             {
-                RecentHeader.Header = "Scripts matching: '" + phrase + "' in '" + database + "*' database";
+                recentHeader.Header = "Scripts matching: '" + phrase + "' in '" + database + "*' database";
                 foreach (var index in ContentSearchManager.Indexes)
                 {
-                    if (index.Name.StartsWith("sitecore_"+database) &&
+                    if (index.Name.StartsWith("sitecore_" + database) &&
                         index.Name.EndsWith("_index"))
                     {
                         SearchDatabase(index.Name, phrase);
@@ -196,12 +195,13 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else
             {
-                RecentHeader.Header = "Scripts matching: '" + phrase + "' in all databases";
+                recentHeader.Header = "Scripts matching: '" + phrase + "' in all databases";
                 var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
                 SearchDatabase(masterIndex, phrase);
                 foreach (var index in ContentSearchManager.Indexes)
                 {
-                    if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) && index.Name.StartsWith("sitecore_") &&
+                    if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) &&
+                        index.Name.StartsWith("sitecore_") &&
                         index.Name.EndsWith("_index"))
                     {
                         SearchDatabase(index.Name, phrase);
@@ -245,35 +245,32 @@ namespace Cognifide.PowerShell.Client.Controls
             var control = ControlFactory.GetControl("MruGallery.SearchItem") as XmlControl;
             Assert.IsNotNull(control, typeof (XmlControl), "Xml Control \"{0}\" not found",
                 "MruGallery.SearchItem");
+
             Context.ClientPage.AddControl(Scripts, control);
-            var icon = scriptItem.Appearance.Icon;
-            var iconUrl = string.Empty;
-            if (!string.IsNullOrWhiteSpace(icon))
+
+            var iconUrl = scriptItem.Appearance.Icon;
+            if (!string.IsNullOrWhiteSpace(iconUrl))
             {
                 var builder = new ImageBuilder
                 {
-                    Src = Images.GetThemedImageSource(icon, ImageDimension.id16x16),
+                    Src = Images.GetThemedImageSource(iconUrl, ImageDimension.id16x16),
                     Class = "scRibbonToolbarSmallGalleryButtonIcon",
                     Alt = scriptItem.DisplayName
                 };
                 iconUrl = builder.ToString();
             }
-            if (false) //session.ID == CurrenSession)
-            {
-                iconUrl = "<div class=\"versionNumSelected\">" + iconUrl + "</div>";
-            }
-            else
-            {
-                iconUrl = "<div class=\"versionNum\">" + iconUrl + "</div>";
-            }
 
-            control["ScriptIcon"] = iconUrl;
+            var currentScript = ItemFromQueryString != null && ItemFromQueryString.ID == scriptItem.ID &&
+                                ItemFromQueryString.Database.Name == scriptItem.Database.Name;
+
+            control["ScriptIcon"] = "<div class=\"versionNum\">" + iconUrl + "</div>";
             control["Location"] = Translate.Text("{0}",
                 scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length));
             control["Database"] = Translate.Text("{0}", scriptItem.Database.Name);
             control["Name"] = Translate.Text("{0}", scriptItem.DisplayName);
             control["Click"] = string.Format("ExecuteMruItem(\"ise:mruopen(id={0},db={1})\")", scriptItem.ID,
                 scriptItem.Database.Name);
+            control["Class"] = currentScript ? "selected" : string.Empty;
         }
     }
 }
