@@ -314,14 +314,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                     ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                     : string.Empty;
-                SetVariables(session);
+                SetVariables(session, message);
                 session.SetExecutedScript(scriptItem);
                 var result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }
         }
 
-        private void SetVariables(ScriptSession session)
+        private void SetVariables(ScriptSession session, Message message)
         {
             //visible objects in string form for export
             var export = ListViewer.FilteredItems.Select(p =>
@@ -356,6 +356,13 @@ namespace Cognifide.PowerShell.Client.Applications
             session.SetVariable("formatProperty", ListViewer.Data.Property.Cast<object>().ToArray());
             session.SetVariable("formatPropertyStr", ListViewer.Data.FormatProperty);
             session.SetVariable("exportProperty", ListViewer.Data.ExportProperty);
+            if (message != null)
+            {
+                foreach (var key in message.Arguments.AllKeys)
+                {
+                    session.SetVariable(key, message.Arguments[key]);
+                }
+            }
         }
 
         private void ChangePage(int newPage)
@@ -411,7 +418,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                 : string.Empty;
-            SetVariables(scriptSession);
+            SetVariables(scriptSession, message);
             scriptSession.SetExecutedScript(scriptItem);
 
             ScriptSessionId = scriptSession.ID;
