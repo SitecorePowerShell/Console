@@ -122,7 +122,8 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteVerboseLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, message, RawUI, true);
+            var splitter = new BufferSplitterCollection(OutputLineType.Verbose, "VERBOSE: " + message, RawUI.WindowSize.Width,
+                ConsoleColor.Yellow, ConsoleColor.Black, true);
             Output.AddRange(splitter);
         }
 
