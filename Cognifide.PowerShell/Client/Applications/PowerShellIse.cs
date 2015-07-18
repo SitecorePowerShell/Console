@@ -19,7 +19,6 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
-//using Action = Sitecore.Web.UI.HtmlControls.Action;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -131,12 +130,6 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Monitor.Active = value; }
         }
 
-        /// <summary>
-        ///     Raises the load event.
-        /// </summary>
-        /// <param name="e">
-        ///     The <see cref="T:System.EventArgs" /> instance containing the event data.
-        /// </param>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -191,10 +184,6 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
         }
 
-        /// <summary>
-        ///     Handles the message.
-        /// </summary>
-        /// <param name="message">The message.</param>
         public override void HandleMessage(Message message)
         {
             Error.AssertObject(message, "message");
