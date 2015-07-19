@@ -488,7 +488,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var autoDispose = string.IsNullOrEmpty(sessionName);
             ScriptSession scriptSession = autoDispose
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
-                : ScriptSessionManager.GetSession(sessionName);
+                : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
 
             if (UseContext)
             {
