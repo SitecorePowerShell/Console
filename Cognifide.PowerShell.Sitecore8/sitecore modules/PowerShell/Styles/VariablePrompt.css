@@ -180,3 +180,15 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .scRule { display: none; }
 .scContentControlMultilistBox { padding-bottom: 0; border: 1px solid #e3e3e3;}
 .scContentControlMultilistHelp { border: 1px solid #e3e3e3;}
+.grid-1 { width: 8.33333333%; }
+.grid-2 { width: 16.66666667%; }
+.grid-3 { width: 25%; }
+.grid-4 { width: 33.33333333%; }
+.grid-5 { width: 41.66666667%; }
+.grid-6 { width: 50%; }
+.grid-7 { width: 58.33333333%; }
+.grid-8 { width: 66.66666667%; }
+.grid-9 { width: 75%; }
+.grid-10 { width: 83.33333333%; }
+.grid-11 { width: 91.66666667%; }
+.grid-12 { width: 100%; }

@@ -102,22 +102,34 @@ namespace Cognifide.PowerShell.Client.Applications
                 var name = (variable["Title"] as string) ?? (variable["Name"] as string);
                 var hint = (variable["Tip"] as string) ??
                            (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
-                var container = GetContainer(tabs, tabName);
-                if (variable["Value"] == null || variable["Value"].GetType() != typeof (bool))
+                var columns =  12;
+                if (int.TryParse((variable["Columns"] as string ?? "12"), out columns))
                 {
-                    var label = new Literal {Text = name, Class = "varTitle"};
-                    container.Controls.Add(label);
-                    if (ShowHints && !string.IsNullOrEmpty(hint))
+                    if (columns > 12 && columns < 0)
                     {
-                        label = new Literal {Text = hint, Class = "varHint"};
-                        container.Controls.Add(label);
+                        columns = 12;
                     }
                 }
+
+                var container = GetContainer(tabs, tabName);
                 var input = GetVariableEditor(variable);
 
                 var variableBorder = new Border();
+
+                if (variable["Value"] == null || variable["Value"].GetType() != typeof(bool))
+                {
+                    var label = new Literal { Text = name, Class = "varTitle" };
+                    variableBorder.Controls.Add(label);
+                    if (ShowHints && !string.IsNullOrEmpty(hint))
+                    {
+                        label = new Literal { Text = hint, Class = "varHint" };
+                        variableBorder.Controls.Add(label);
+                    }
+                }
+
                 name = (string)variable["Name"];
                 variableBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+
                 variableBorder.Controls.Add(input);
                 var height = variable["Height"] as string;
                 if (!string.IsNullOrEmpty(height))
@@ -129,6 +141,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     variableBorder.Class = "variableWrapper";
                 }
+                variableBorder.Class += " grid-" + columns;
                 container.Controls.Add(variableBorder);
             }
 
@@ -560,21 +573,19 @@ namespace Cognifide.PowerShell.Client.Applications
             return results.ToArray();
         }
 
-        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control control, ICollection<object> results)
+        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control parent, ICollection<object> results)
         {
-            var controlId = control.ID;
+            var controlId = parent.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
             {
-                control = control.Controls[0] as Sitecore.Web.UI.HtmlControls.Control;
-                if (control == null)
+                foreach (Sitecore.Web.UI.HtmlControls.Control control in parent.Controls)
                 {
-                    return;
-                }
-                controlId = control.ID;
-                if (controlId != null && controlId.StartsWith("variable_"))
-                {
-                    var result = GetVariableValue(control);
-                    results.Add(result);
+                    controlId = control.ID;
+                    if (controlId != null && controlId.StartsWith("variable_"))
+                    {
+                        var result = GetVariableValue(control);
+                        results.Add(result);
+                    }
                 }
             }
         }

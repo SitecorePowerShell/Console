@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1931
+content-length: 3401
 
 $indexOptions = @{}
 foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
@@ -39,15 +39,47 @@ if($result -eq "cancel"){
     exit
 }
 
-
 $database = Find-Item -Index $index -First 1 | % { $_.DatabaseName } 
 $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
-$props.Parameters = @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."}
+
+$propertyOptions = [ordered]@{}
+$searchResultItem = New-Object Sitecore.ContentSearch.SearchTypes.SearchResultItem
+$properties = $searchResultItem.GetType().GetProperties() | Sort-Object -Property Name
+foreach($property in $properties) {
+    $attribute = $property.GetCustomAttributes($false) | Where-Object { $_.IndexFieldName } | Select-Object -First 1
+    if($attribute) {
+        $propertyOptions[$property.Name] = $attribute.IndexFieldName
+    }
+}
+
+$topOptions = [ordered]@{"All"=0;"25"=25;"100"=100;"1000"=100}
+
+$filterOptions = [ordered]@{"DecendentOf"="DecendentOf"; "Equals"="Equals"; "StartsWith"="StartsWith"; "Contains"="Contains"; "EndsWith"="EndsWith"}
+$props.Parameters = @(
+    @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."},
+    @{Name="topCount"; Value="25"; Title="Choose how much to return"; Options=$topOptions; Tooltip="Only the top results will be returned.";},
+    @{Name="searchField"; Value="_language"; Title="Search Field"; Options=$propertyOptions; Tooltip=""; Columns="3"},
+    @{Name="searchOperator"; Value="Equals"; Title="Search Filter"; Options=$filterOptions; Tooltip=""; Columns="3"},
+    @{Name="searchText"; Value=""; Title="Search Value"; Tooltip=""; Columns="6"}
+)
 $result = Read-Variable @props
+
+if($result -eq "cancel"){
+    exit
+}
 
 $data = @{
     Index = $index
-    Criteria = @{
+}
+
+if($searchText) {
+    $data.Criteria = @{
+        Field = $searchField
+        Filter = $searchOperator
+        Value = $searchText
+    }
+} else {
+    $data.Criteria = @{
         Filter = "DescendantOf"
         Value = $root
     }
@@ -58,6 +90,10 @@ Documents: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::GetIndexNumbe
 Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($data.Index)),
 Modified: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::LastModified($data.Index))
 "@
+if($topCount -gt 0) {
+    $data.First = $topCount
+    $details += ", Showing the top $($topCount)"
+}
 
 Find-Item @data | 
     Show-ListView -Property Name, Language, Version, Url, Path,  
@@ -74,7 +110,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: c6598084-ba82-4ebf-a5a2-0b60f204faa5
+revision: aebb6ef3-dfa2-40d6-a781-c785fa327315
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -89,14 +125,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c6598084-ba82-4ebf-a5a2-0b60f204faa5
+aebb6ef3-dfa2-40d6-a781-c785fa327315
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150717T142054:635727396545078125
+20150719T151845:635729159252575810Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
