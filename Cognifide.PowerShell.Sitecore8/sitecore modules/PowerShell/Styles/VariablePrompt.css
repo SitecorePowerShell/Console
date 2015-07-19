@@ -180,6 +180,7 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .scRule { display: none; }
 .scContentControlMultilistBox { padding-bottom: 0; border: 1px solid #e3e3e3;}
 .scContentControlMultilistHelp { border: 1px solid #e3e3e3;}
+.scContentControlMultilistContainer { padding: 0 5px; }
 .grid-1 { width: 8.33333333%; }
 .grid-2 { width: 16.66666667%; }
 .grid-3 { width: 25%; }

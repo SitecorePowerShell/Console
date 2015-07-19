@@ -93,7 +93,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         private void AddControls(object[] variables)
         {
-            var tabs = new Dictionary<string, GridPanel>(StringComparer.OrdinalIgnoreCase);
+            var tabs = new Dictionary<string, Border>(StringComparer.OrdinalIgnoreCase);
             Tabstrip.Visible = variables.Cast<Hashtable>().Select(variable => variable["Tab"] as string).Any(tabName => !string.IsNullOrEmpty(tabName));
 
             foreach (Hashtable variable in variables)
@@ -103,7 +103,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var hint = (variable["Tip"] as string) ??
                            (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
                 var columns =  12;
-                if (int.TryParse((variable["Columns"] as string ?? "12"), out columns))
+                if (variable["Columns"] != null && int.TryParse((variable["Columns"].ToString()), out columns))
                 {
                     if (columns > 12 && columns < 0)
                     {
@@ -154,7 +154,7 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.Eval("ResizeDialogControls();");
         }
 
-        private WebControl GetContainer(IDictionary<string, GridPanel> tabs, string tabName)
+        private WebControl GetContainer(IDictionary<string, Border> tabs, string tabName)
         {
             if (!Tabstrip.Visible)
             {
@@ -163,14 +163,12 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!tabs.ContainsKey(tabName))
             {
                 var tab = new Tab {Header = tabName, ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_")};
-                //tab.Height = new Unit("100%");
                 Tabstrip.Controls.Add(tab);
                 Tabstrip.Width = new Unit("100%");
-                //Tabstrip.Height = new Unit("100%");
-                var panel = new GridPanel {Width = new Unit("100%"), CssClass = "ValuePanel"};
-                tab.Controls.Add(panel);
-                tabs.Add(tabName, panel);
-                return panel;
+                var border = new Border();
+                tab.Controls.Add(border);
+                tabs.Add(tabName, border);
+                return border;
             }
             return tabs[tabName];
         }
