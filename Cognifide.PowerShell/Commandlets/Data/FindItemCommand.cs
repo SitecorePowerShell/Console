@@ -72,7 +72,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     foreach (var filter in Criteria)
                     {
                         var criteria = filter;
-                        var comparer = criteria.CaseSensitive
+                        var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
                             ? StringComparison.Ordinal
                             : StringComparison.OrdinalIgnoreCase;
                         switch (criteria.Filter)
@@ -97,7 +97,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                             criteria.Value));
                                     return;
                                 }
-                                query = query = criteria.Invert
+                                query = criteria.Invert
                                     ? query.Where(i => !i["_path"].Contains(ancestorId))
                                     : query.Where(i => i["_path"].Contains(ancestorId));
                                 break;
@@ -107,7 +107,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                     : query.Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Contains):
-                                if (comparer == StringComparison.OrdinalIgnoreCase)
+                                if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
                                 {
                                     WriteWarning(
                                         "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
@@ -199,7 +199,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public FilterType Filter { get; set; }
         public string Field { get; set; }
         public object Value { get; set; }
-        public bool CaseSensitive { get; set; }
+        public bool? CaseSensitive { get; set; }
         internal string StringValue { get { return Value.ToString(); } }
         public bool Invert { get; set; }
     }
