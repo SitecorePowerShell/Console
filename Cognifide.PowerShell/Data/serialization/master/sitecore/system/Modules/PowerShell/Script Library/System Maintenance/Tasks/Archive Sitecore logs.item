@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1484
+content-length: 1541
 
 <#
     .SYNOPSIS
@@ -37,14 +37,14 @@ $logDirectory = "$SitecoreLogFolder\"
 
 # The filter includes log files older than 14 days based on LastWriteTime.
 $filter = {
-    $dtme = [datetime]::Today.AddDays(-2)
+    $dtme = [datetime]::Today.AddDays(-14)
     $_.LastWriteTime -lt $dtme
 }
 
-# Get all the log files that match the filter criteria. After zipping up remove the log files.
-$logs = Get-ChildItem -Path $logDirectory | Where-Object -Filter $filter
+# Get all the log files that match the filter criteria, archive them, then cleanup.
+$logs = Get-ChildItem -Path $logDirectory -Recurse | Where-Object -Filter $filter
 if($logs) {
-    $logs | Compress-Archive -Name $archiveName
+    $logs | Compress-Archive -DestinationPath (Join-Path -Path $archiveDirectory -ChildPath $archiveName)
     $logs | Remove-Item
 }
 
@@ -69,7 +69,7 @@ Applications/32x32/folder_into.png
 ----version----
 language: en
 version: 1
-revision: c7eb6ff5-b6bd-4424-add3-15d32c1914e5
+revision: ba6c313d-cae1-4313-bb3a-f34af59e0ec9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -84,14 +84,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c7eb6ff5-b6bd-4424-add3-15d32c1914e5
+ba6c313d-cae1-4313-bb3a-f34af59e0ec9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150203T022008:635585268083521819
+20150719T193916:635729315564559311Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
