@@ -22,41 +22,26 @@
                   x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Gallery.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
-        <Stylesheet>
-          .path { color:gray;}
-          .name { float: left; padding: 5px 0;}
-          .location { clear: both; }
-          .scClickFont,  .scClick_Hover{ width: 40px; clear: both;}
-          .versionNum, .versionNumSelected { padding: 4px 0; width: 30px; float: left; }
-          .scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
-          .selected.scMenuPanelItem { background: #D0EBF6 }
-          .scInitialHeight { height: initial; width: 100%; }
-        </Stylesheet>
-
       <div class="scStretch">
         <div class="scGalleryContent13">
-          <GalleryMenu ID="Options" Class="scStretch">
-            <MenuPanel Height="100%">
-              <Tabstrip ID="Tabs">
-                <Tab ID="SearchTab" Header="Recent">
-                  <Edit ID="SearchPhrase" Width="100%" GridPanel.Width="100%" autocomplete="off" placeholder="Script name to search for - prefix with e.g. 'master:' to narrow to specific database"/>
-		          <GalleryMenu ID="SearchResults" Class="scStretch scInitialHeight">
-                    <MenuPanel Height="100%">
-                      <Scrollbox ID="Scripts" Class="scScrollbox scInitialHeight">
-                      </Scrollbox>
-                    </MenuPanel>
-                  </GalleryMenu>
-                </Tab>
+          <Tabstrip ID="Tabs" GridPanel.Style="height:initial">
+            <Tab ID="SearchTab" Header="Recent">
+              <Edit ID="SearchPhrase" autocomplete="off" placeholder="Script name to search for - prefix with e.g. 'master:' to narrow to specific database"/>
+	          <GalleryMenu ID="SearchResults" Class="scGalleryMenu scStretch scInitialHeight">
+                <MenuPanel Height="100%">
+                  <Scrollbox ID="Scripts" Class="scScrollbox scInitialHeight">
+                  </Scrollbox>
+                </MenuPanel>
+              </GalleryMenu>
+            </Tab>
 
-                <Tab ID="ContentTab" Header="Content Tree">
-                  <DataContext ID="ContentDataContext" />
-                  <Combobox ID="Databases" Change="ChangeDatabase" />
-                  <TreeviewEx ID="ContentTreeview" Style="width: 0px" DataContext="ContentDataContext"
-                              Click="ContentTreeview_Click" />
-                </Tab>
-              </Tabstrip>
-            </MenuPanel>
-          </GalleryMenu>
+            <Tab ID="ContentTab" Header="Content Tree">
+              <DataContext ID="ContentDataContext" />
+              <Combobox ID="Databases" Change="ChangeDatabase" />
+              <TreeviewEx ID="ContentTreeview" Style="width: 0px" DataContext="ContentDataContext"
+                          Click="ContentTreeview_Click" />
+            </Tab>
+          </Tabstrip>
         </div>
         <div class="scGalleryBottom13">
           <GalleryMenuLine />

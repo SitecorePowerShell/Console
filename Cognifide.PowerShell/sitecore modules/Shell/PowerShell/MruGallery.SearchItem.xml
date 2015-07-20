@@ -5,14 +5,10 @@
         <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top" Gridpanel.Width="64px">
           <Literal Text="$ScriptIcon"/>
         </Border>
-        <Border NoWrap="true">
-          <Border Padding="0px 0px 0px 8px">
-            <p class="name">
-              <Literal Text="$Name"/> <span class="path"> - [<span class="path"><Literal Text="$Database"/>:/</span><Literal Text="$Location"/>]</span>
-            </p>
-            <p class="location">
-            </p>
-          </Border>
+        <Border Padding="0px 0px 0px 8px" Style="display: inline-block">
+          <div class="name">
+            <Literal Text="$Name"/> <span class="path"> - [<span class="path"><Literal Text="$Database"/>:/</span><Literal Text="$Location"/>]</span>
+          </div>
         </Border>
     </Border>
   </MruGallery.SearchItem>

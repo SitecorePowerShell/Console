@@ -1,1 +1,9 @@
-
+.path { color:gray;}
+.name { float: left; padding: 5px 0;}
+.location { clear: both; }
+.scClickFont, .scClickFont_Hover,  .scClick_Hover{ clear: both; display: inline-block;}
+.versionNum, .versionNumSelected { padding: 4px 0; width: 30px; float: left; }
+.scMenuPanelItem, .scMenuPanelItemSelected { border: 0px;}
+.scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
+.selected.scMenuPanelItem { background: #D0EBF6 }
+.scInitialHeight { height: initial; width: 100%; }

@@ -1,75 +1,94 @@
-        #Databases{
-        position: relative;
-        left: 4px;
-        top: 4px;
-        right: 4px;
-        width: 97%;
-        margin-bottom: 7px;
-        }
+#SearchPhrase, #Databases{
+  position: relative;
+  left: 4px;
+  top: 4px;
+  right: 4px;
+  width: 97%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
 
-        /* Sitecore 7.0 */
+  /* Sitecore 7.0 */
 
-        .scScrollbox {
-        background: white;
-        height: 100%;
-        overflow: auto;
-        border-top: solid 1px #B4B4B4;
-        border-left: solid 1px #B4B4B4;
-        border-bottom: solid 1px white;
-        border-right: solid 1px white;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        }
+.scScrollbox {
+  background: white;
+  height: 100%;
+  overflow: auto;
+  border:none;
+/*  border-top: solid 1px #B4B4B4;
+  border-left: solid 1px #B4B4B4;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white; */
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
-        .ff .scScrollbox {
-        min-height: 50px !important;
-        }
-        .scScrollboxStretchAbsolute {
-        background: white;
-        overflow: auto;
-        border-top: solid 1px #B4B4B4;
-        border-left: solid 1px #B4B4B4;
-        border-bottom: solid 1px white;
-        border-right: solid 1px white;
+.ff .scScrollbox {
+  min-height: 50px !important;
+  border:none;
+}
 
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 4px;
-        }
+.scScrollboxStretchAbsolute {
+  background: white;
+  overflow: auto;
+  border-top: solid 1px #B4B4B4;
+  border-left: solid 1px #B4B4B4;
+  border-bottom: solid 1px white;
+  border-right: solid 1px white;
 
-        .scStretchAbsolute {
-        position: absolute !important;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        }
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 4px;
+}
 
-        .scStretch {
-        width: 100%;
-        height: 100%;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        position: relative;
-        }
-        .scTabs {
-        border-bottom: 0px;
-        }
-        .scGalleryContent13 {
-        position: absolute;
-        top: 0;
-        bottom: 13px;
-        right: 0;
-        left: 0;
-        overflow: auto;
-        }
-        .scGalleryBottom13 {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 13px;
-        }
+.scStretchAbsolute {
+  position: absolute !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.scStretch {
+  width: 100%;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.scTabs {
+  border-bottom: 0px;
+}
+
+.scGalleryContent13 {
+  position: absolute;
+  top: 0;
+  bottom: 13px;
+  right: 0;
+  left: 0;
+  overflow: auto;
+}
+
+.scGalleryBottom13 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 13px;
+}
+
+#Tabs { height: 95%; border: none; padding:4px;}
+.scTabs { border: none; }
+.path { color:gray;}
+.name { float: left; padding: 5px 0;}
+.location { clear: both; }
+.scClickFont, .scClickFont_Hover,  .scClick_Hover{ clear: both; display: inline-block;}
+.versionNum, .versionNumSelected { padding: 4px 0; width: 30px; float: left; }
+.scMenuPanelItem, .scMenuPanelItemSelected { border-top: 1px solid white; border-bottom: 1px solid white;}
+.scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
+.selected.scMenuPanelItem { background: #D0EBF6 }
+.scInitialHeight { height: initial; width: 100%; }

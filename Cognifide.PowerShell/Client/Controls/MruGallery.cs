@@ -242,6 +242,10 @@ namespace Cognifide.PowerShell.Client.Controls
 
         private void RenderRecent(Item scriptItem)
         {
+            if (scriptItem == null)
+            {
+                return;
+            }
             var control = ControlFactory.GetControl("MruGallery.SearchItem") as XmlControl;
             Assert.IsNotNull(control, typeof (XmlControl), "Xml Control \"{0}\" not found",
                 "MruGallery.SearchItem");
