@@ -13,9 +13,10 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 51
+content-length: 404
 
-Find-Item @actionData | Update-ListView -Property *
+Find-Item @actionData | Update-ListView -Property Name, Language, Version, Url, Path,  
+        @{Label="Fields"; Expression={ "<a href='#' style='color:#f00' onclick=`"javascript:return scForm.postEvent(this,event,'listview:action(scriptDb=master,scriptID={EE75FFCF-7B3A-46CD-86AB-6536AD8675AA},index=$index,id=$([System.Web.HttpUtility]::UrlEncode($_.Fields["_uniqueid"])))')`">Show Full Info</a>" } }
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -26,7 +27,7 @@ Office/32x32/nav_refresh.png
 ----version----
 language: en
 version: 1
-revision: bdb0099d-edb9-4120-8183-32801af72189
+revision: ca2fe8a9-88c8-423f-8af9-3a6796aa0b03
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +42,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-bdb0099d-edb9-4120-8183-32801af72189
+ca2fe8a9-88c8-423f-8af9-3a6796aa0b03
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150627T230952:635710433926578556
+20150718T171042:635728362425806007
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
