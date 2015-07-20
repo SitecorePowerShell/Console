@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8478
+content-length: 8507
 
 <#
     .SYNOPSIS
@@ -46,17 +46,17 @@ content-length: 8478
         
     .EXAMPLE
         The following compresses the specified images.
-        PS C:\> Compress-Archive -LiteralPath C:\image.png,C:\image2.png –CompressionLevel Optimal -DestinationPath C:\images.zip
+        PS C:\> Compress-Archive -LiteralPath "C:\image.png","C:\image2.png" –CompressionLevel Optimal -DestinationPath "C:\images.zip"
 
     .EXAMPLE
         The following compresses an entire directory maintaining the folder structure.
         
-        PS C:\> Compress-Archive -Path C:\Images –CompressionLevel Fastest -DestinationPath C:\temp\bunchofimages
+        PS C:\> Compress-Archive -Path "C:\Images" –CompressionLevel Fastest -DestinationPath "C:\temp\bunchofimages"
 
     .EXAMPLE
         The following adds files to the compressed archive as a flat structure. The default name is archive.zip.
         
-        PS C:\> Get-ChildItem -Path C:\Images | Compress-Archive
+        PS C:\> Get-ChildItem -Path "C:\Images" | Compress-Archive
     
     .INPUT
         You can pipe a string that contains a path to one or more files.
@@ -64,7 +64,7 @@ content-length: 8478
         - System.String
         
     .OUTPUT
-        The output type is the type of the bojects that the command emits.
+        The output type is the type of the objects that the command emits.
         
         - System.IO.FileInfo
         
@@ -81,10 +81,12 @@ function Compress-Archive {
     [CmdletBinding(DefaultParameterSetName="Path")]
     param(
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ParameterSetName="Path")]
+        [ValidateNotNullOrEmpty()]
         [string[]]$Path,
         
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$false, ValueFromPipelineByPropertyName=$true, ParameterSetName="File")]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$false, ValueFromPipelineByPropertyName=$true, ParameterSetName="LiteralPath")]
         [Alias("PSPath")]
+        [ValidateNotNullOrEmpty()]
         [string[]]$LiteralPath,
 
         [Parameter(Mandatory=$false, Position=1)]
@@ -129,7 +131,7 @@ function Compress-Archive {
         }
         
         Write-Verbose "Opening the archive at the path $($zipPath) with mode $($mode)."
-        $zipFile = [System.IO.Compression.ZipFile]::Open($zipPath, $mode)
+        $zipArchive = [System.IO.Compression.ZipFile]::Open($zipPath, $mode)
         
         function Add-FileEntry {
             [CmdletBinding()]
@@ -152,24 +154,22 @@ function Compress-Archive {
             
             $directory = New-Object System.IO.DirectoryInfo $Path
             Write-Verbose "Adding the directory $($directory.FullName) to the archive."
-            $zipFile.CreateEntry($directory.Name + '\') | Out-Null
+            $zipArchive.CreateEntry($directory.Name + '\') | Out-Null
             $items = Get-ChildItem -Path $directory -Recurse
             $dir = [Uri]($directory.Parent.FullName + '\')
             foreach($item in $items) {
                 $subdir = [Uri]($item.FullName + (@{$true="\";$false=""}[$item.PSIsContainer]))
-                Write-Host $dir.MakeRelativeUri($subdir)
                 $p = [Uri]::UnescapeDataString($dir.MakeRelativeUri($subdir).ToString().Replace('/',[System.IO.Path]::DirectorySeparatorChar).TrimStart("..\"))
-                Write-Host $P
                 if($item.PSIsContainer) {
-                    $zipFile.CreateEntry($p) | Out-Null
+                    $zipArchive.CreateEntry($p) | Out-Null
                 } else {
-                    if($Update -and $zipFile.GetEntry($p)) {
+                    if($Update -and $zipArchive.GetEntry($p)) {
                         Write-Verbose "Skipping the file $($item.FullName) because it already exists."
                         continue
                     }
                     
                     Write-Verbose "Adding the file $($item.FullName) to the archive."
-                    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipFile, $item.FullName, $p, $CompressionLevel) | Out-Null
+                    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipArchive, $item.FullName, $p, $CompressionLevel) | Out-Null
                 }
             }    
         }
@@ -179,16 +179,16 @@ function Compress-Archive {
         if($LiteralPath) {
             foreach($literal in $LiteralPath) {
                 if(Test-Path -Path $literal -PathType Leaf) {
-                    Add-FileEntry -Path $literal -Archive $zipFile
+                    Add-FileEntry -Path $literal -Archive $zipArchive
                 }
             }
         } elseif($Path) {
             foreach($p in $Path) {
                 if(Test-Path -Path $p) {
                     if(Test-Path -Path $p -PathType Leaf) {
-                        Add-FileEntry -Path $p -Archive $zipFile
+                        Add-FileEntry -Path $p -Archive $zipArchive
                     } else {
-                        Add-DirectoryEntry -Path $p -Archive $zipFile
+                        Add-DirectoryEntry -Path $p -Archive $zipArchive
                     }
                 }
             }
@@ -197,7 +197,7 @@ function Compress-Archive {
     
     end {
         Write-Verbose "Completed adding entries to the archive."
-        $zipFile.Dispose()
+        $zipArchive.Dispose()
         
         New-Object System.IO.FileInfo $zipPath
     }
@@ -205,7 +205,7 @@ function Compress-Archive {
 ----version----
 language: en
 version: 1
-revision: ab8b60f7-20ac-4796-b52b-d07065abc63d
+revision: f990165f-4e4b-4aee-93d2-75d03522df67
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -220,14 +220,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ab8b60f7-20ac-4796-b52b-d07065abc63d
+f990165f-4e4b-4aee-93d2-75d03522df67
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150719T193813:635729314933729210
+20150719T221710:635729410304888187
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
