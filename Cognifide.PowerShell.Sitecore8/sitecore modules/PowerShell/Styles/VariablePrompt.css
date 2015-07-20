@@ -92,12 +92,8 @@
     padding: 24px 0 16px 0;
 }
 
-/*
-.scTabPage {
-    padding: 8px;
-    width: 100%;
-}
-*/
+
+.scTabPage { padding-right: 5px; }
 
 .scContentControl.treePicker td { padding: 2px 0 2px 6px; }
 
@@ -174,14 +170,14 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .variableWrapperFixedHeight .scContentControlChecklist { height : 100% }
 .variableWrapperFixedHeight .scRadioGroup { height : 100% }
 .variableWrapperFixedHeight textArea { height : 100% }
-.variableWrapper { float: left; width: 100% }
+.variableWrapper { float: left; width: 100%; box-sizing: border-box; padding-right: 10px;}
 .rules-edit-button { float: right; margin-left: 8px !important; }
 .varRule { display: flex; border: solid 0 ButtonShadow; border: solid 1px #DDD; padding: 4px 4px 10px 0px; margin-right: 8px; }
 .scRule { display: none; }
 .scContentControlMultilistBox { padding-bottom: 0; border: 1px solid #e3e3e3;}
 .scContentControlMultilistHelp { border: 1px solid #e3e3e3;}
 .scContentControlMultilistContainer { padding: 0 5px; }
-.grid-1 { width: 8.33333333%; }
+.grid-1 { width: 8.33333333%;   padding-right: 10px; }
 .grid-2 { width: 16.66666667%; }
 .grid-3 { width: 25%; }
 .grid-4 { width: 33.33333333%; }

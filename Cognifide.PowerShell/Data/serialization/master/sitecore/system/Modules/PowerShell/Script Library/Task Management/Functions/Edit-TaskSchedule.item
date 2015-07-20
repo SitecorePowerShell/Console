@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4232
+content-length: 4810
 
 function Parse-TaskSchedule{
         [CmdletBinding()]
@@ -112,14 +112,28 @@ function Edit-TaskSchedule{
     $to =  Parse-TaskSchedule $Item "to"
     $weekdays =  Parse-TaskSchedule $Item "weekdays"
     $interval = Parse-TaskSchedule $Item "interval"
+    $tsInterval = [timespan]$interval
+    $intDays = $tsInterval.Days
+    $intHours = $tsInterval.Hours
+    $intMinutes = $tsInterval.Minutes
+    $intSeconds = $tsInterval.Seconds
+    $intMilis = $tsInterval.Milliseconds
 
     $result = Read-Variable -Parameters `
-        @{ Name = "from"; Title="Starts running at"; Editor="date time"; Tip="Select the date the task should start to be launched for the first time."}, 
-        @{ Name = "to"; Title="Stops running at"; Editor="date time"; Tip="Select the date the task should end being run."}, 
+        @{ Name = "from"; Title="Starts running at"; Editor="date time"; Tip="Date the task should start for the first time."; Columns=6}, 
+        @{ Name = "to"; Title="Stops running at"; Editor="date time"; Tip="Date the task should end being run."; Columns=6}, 
         @{ Name = "weekdays"; Title="Days to run"; Options=$weekDayOptions; Editor="checklist"; Tip="Select the days of the week the task should run."},
-        @{ Name = "interval"; Title="Interval <span style='font-family: courier new,monospace;'>(Days.Hours:Minutes:Seconds.Miliseconds)</span>"; Tip="Specify how often the task should be launched"} `
+        @{ Name = "intervalInfo"; Title="Interval"; Tip="Specify how often the task should be launched"; editor="info"},
+        @{ Name = "intDays"; Title="Days"; Columns=2},
+        @{ Name = "intHours"; Title="Hours"; Columns=2},
+        @{ Name = "intMinutes"; Title="Minutes"; Columns=2},
+        @{ Name = "intSeconds"; Title="Seconds"; Columns=2},
+        @{ Name = "intMilis"; Title="Milliseconds"; Columns=2} `
         -Description "Specify schedule for task '$($Item.DisplayName)'. You can edit the date/time task becomes active and when it should stop running, what days it will run on and how often." `
-        -Title "Schedule for task: $($Item.DisplayName)" -Width 500 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints 
+        -Title "Schedule for task: $($Item.DisplayName)" -Width 600 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints 
+
+    $tsInterval = [timespan]"$($intDays).$($intHours):$($intMinutes):$($intSeconds).$($intMilis)"
+    $interval = $tsInterval.ToString();
 
     if($result -eq "ok")
     {
@@ -129,7 +143,7 @@ function Edit-TaskSchedule{
 ----version----
 language: en
 version: 1
-revision: 7d053f24-f2fd-4b3f-b4cc-8f64f87fbe56
+revision: 61a77ba4-0b25-4993-9df0-8d549cb9597f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -144,14 +158,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7d053f24-f2fd-4b3f-b4cc-8f64f87fbe56
+61a77ba4-0b25-4993-9df0-8d549cb9597f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150614T194356:635699078367458163
+20150720T103319:635729851993945312
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

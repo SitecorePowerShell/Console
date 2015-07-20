@@ -95,7 +95,7 @@ body.ie { overflow: hidden; }
 }
 
 .scTabPage {
-    padding: 12px;
+    padding: 12px 2px 12px 12px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -289,7 +289,7 @@ fieldset label { font: 8pt tahoma; }
 fieldset { padding: 6px 8px 8px 10px; height: 100%; box-sizing: content-box !important; overflow: hide; }
 
 table.scContentControl.treePicker > :first-child > :first-child { height: 20px; }
-
+.variableWrapper { box-sizing: border-box; padding-right: 10px; }
 .variableWrapperFixedHeight .scRadioGroup { height : 100% }
 .variableWrapperFixedHeight .treePicker { height : 100% }
 .variableWrapperFixedHeight .scContentControlChecklist { height : 100% !important }
