@@ -1,0 +1,126 @@
+----item----
+version: 1
+id: {FF02236B-9284-4C65-8A6D-A8371FE0AF3F}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Functions/Expand-Archive
+parent: {E22D066A-04D0-4799-9DAD-EDD9EB07C2B2}
+name: Expand-Archive
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2561
+
+<#
+    .SYNOPSIS
+        Extracts the compressed file to to the specified directory.
+
+    .PARAMETER Path
+        Specifies the path to the archive file.
+        
+    .PARAMETER LiteralPath
+        Specifies the path to an archive file.
+
+    .PARAMETER DestinationPath
+        The directory to extract the compressed file contents.
+
+    .EXAMPLE
+        The following extacts the contents to the specified directory.
+        
+        PS C:\> Expand-Archive -Path "C:\temp\bunchofimages.zip" -DestinationPath "C:\temp"
+    
+    .INPUT
+        You can pipe a string that contains a path to an existing archive file.
+        
+        - System.String
+        
+    .OUTPUT
+
+        - System.IO.FileInfo or System.IO.DirectoryInfo
+        
+    .NOTES
+        Michael West
+    
+    .LINK
+        https://technet.microsoft.com/en-us/library/dn841359.aspx
+#>
+function Expand-Archive {
+   [CmdletBinding()]
+   param(
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, ParameterSetName="Path")]
+        [ValidateNotNullOrEmpty()]
+        [string]$Path,
+
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipelineByPropertyName=$true, ParameterSetName="LiteralPath")]
+        [Alias("PSPath")]
+        [ValidateNotNullOrEmpty()]
+        [string]$LiteralPath,
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$DestinationPath="."
+   )
+   
+   begin {
+        Add-Type -AssemblyName System.IO.Compression
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        
+        if(!(Test-Path -Path $DestinationPath)) {
+            New-Item -Path $DestinationPath -ItemType directory | Out-Null
+        }
+        
+        $directory = New-Object System.IO.DirectoryInfo $DestinationPath
+   }
+
+    process {
+        if($LiteralPath) {
+            Write-Verbose "Preparing to extract $($LiteralPath)"
+            if(Test-Path -Path $LiteralPath -PathType Leaf) {
+                Write-Verbose "Extracting the archive to the path $($DestinationPath)."
+                [System.IO.Compression.ZipFile]::ExtractToDirectory($LiteralPath, $DestinationPath)
+            }
+        } elseif($Path) {
+            Write-Verbose "Preparing to extract $($Path)"
+            if(Test-Path -Path $Path -PathType Leaf) {
+                Write-Verbose "Extracting the archive to the path $($DestinationPath)."
+                [System.IO.Compression.ZipFile]::ExtractToDirectory($Path, $DestinationPath)
+            }
+        }
+    }
+}
+----version----
+language: en
+version: 1
+revision: 49194fd2-7d8f-4573-8eb4-e8533873c439
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20150719T201654
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+49194fd2-7d8f-4573-8eb4-e8533873c439
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 34
+
+20150720T021541:635729553411450927
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
