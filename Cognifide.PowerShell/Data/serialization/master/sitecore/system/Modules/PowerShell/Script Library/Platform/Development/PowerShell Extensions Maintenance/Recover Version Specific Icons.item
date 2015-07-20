@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5408
+content-length: 5916
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -36,6 +36,8 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Office/32x32/floppy_disks.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Office/32x32/arrow_mix.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Office/32x32/window_gear.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Office/32x32/media_step_forward.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'Office/32x32/selection_recycle.png'
 }
 
 $icons7 = @{
@@ -59,6 +61,8 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Applications/32x32/disk_blue_add.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Applications/32x32/gears.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Software/32x32/debug.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'People/32x32/cpu_edit.png'
 }
 
 
@@ -82,7 +86,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: 061c9fe2-5360-4a62-aa66-14a5a302367a
+revision: 3025646a-730a-48e7-8371-61a10dc7e791
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -97,14 +101,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-061c9fe2-5360-4a62-aa66-14a5a302367a
+3025646a-730a-48e7-8371-61a10dc7e791
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150615T205405:635699984456589375
+20150720T150452:635730014921132812
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
