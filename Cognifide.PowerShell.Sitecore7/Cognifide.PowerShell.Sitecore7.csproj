@@ -87,6 +87,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Cognifide.PowerShell\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>  	
     <Compile Include="Client\Applications\FieldEditor.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />
