@@ -1,16 +1,15 @@
 <#
     .SYNOPSIS
-        Remove-Role.
+        Removes a Sitecore role.
 
     .DESCRIPTION
-        Remove-Role.
-
+        The Remove-Role command removes a Sitecore role.
 
     .PARAMETER Identity
-        User name including domain. If no domain is specified - 'sitecore' will be used as the default value
+        Role name including domain. If no domain is specified - 'sitecore' will be used as the default value
 
     .PARAMETER Instance
-        TODO: Provide description for this parameter
+        Role instance like that returned by the Get-Role command.
 
     .PARAMETER WhatIf
         Shows what would happen if the cmdlet runs. The cmdlet is not run.
@@ -19,10 +18,10 @@
         Prompts you for confirmation before running the cmdlet.    
     
     .INPUTS
-        Sitecore.Data.Items.Item
+        Sitecore.Security.Accounts.Role
     
     .OUTPUTS
-        
+        None
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
@@ -31,5 +30,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> Remove-Role -Path master:\content\home
+        PS master:\> Remove-Role -Identity Michael
 #>

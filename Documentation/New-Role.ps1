@@ -1,19 +1,18 @@
 <#
     .SYNOPSIS
-        New-Role.
+        Creates a new Sitecore role.
 
     .DESCRIPTION
-        New-Role.
-
+        The New-Role command creates a new Sitecore role.
 
     .PARAMETER Identity
-        User name including domain. If no domain is specified - 'sitecore' will be used as the default value
+        Role name including domain. If no domain is specified - 'sitecore' will be used as the default value
 
     .PARAMETER PassThru
         Passes the processed object back into the pipeline.    
     
     .INPUTS
-        Sitecore.Data.Items.Item
+        System.String
     
     .OUTPUTS
         Sitecore.Security.Accounts.Role
@@ -25,5 +24,5 @@
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
-        PS master:\> New-Role -Path master:\content\home
+        PS master:\> New-Role -Identity Michael
 #>
