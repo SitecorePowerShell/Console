@@ -5,6 +5,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
+using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -126,6 +127,19 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                     ? query.Where(i => !i[criteria.Field].Equals(criteria.StringValue, comparer))
                                     : query.Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
                                 break;
+                            case (FilterType.Fuzzy):
+                                query = criteria.Invert
+                                    ? query.Where(i => !i[criteria.Field].Like(criteria.StringValue))
+                                    : query.Where(i => i[criteria.Field].Like(criteria.StringValue));
+                                break;
+                            case (FilterType.InclusiveRange):
+                                var pair = criteria.Value as object[];
+                                var left = (pair[0] is DateTime) ? ((DateTime)pair[0]).ToString("yyyyMMdd") : pair[0].ToString();
+                                var right = (pair[1] is DateTime) ? ((DateTime)pair[1]).ToString("yyyyMMdd") : pair[1].ToString();
+                                query = criteria.Invert
+                                    ? query.Where(i => !i[criteria.Field].Between(left, right, Inclusion.Both))
+                                    : query.Where(i => i[criteria.Field].Between(left, right, Inclusion.Both));
+                                break;
                         }
                     }
 
@@ -191,7 +205,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
         StartsWith,
         Contains,
         EndsWith,
-        DescendantOf
+        DescendantOf,
+        Fuzzy,
+        InclusiveRange
     }
 
     public class SearchCriteria
