@@ -73,20 +73,22 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     foreach (var filter in Criteria)
                     {
                         var criteria = filter;
+                        if(criteria.Value == null) continue;
+
                         var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
                             ? StringComparison.Ordinal
                             : StringComparison.OrdinalIgnoreCase;
                         switch (criteria.Filter)
                         {
                             case (FilterType.DescendantOf):
-                                string ancestorId = string.Empty;
+                                var ancestorId = string.Empty;
                                 if (criteria.Value is Item)
                                 {
-                                    ancestorId = (criteria.Value as Item).ID.ToShortID().ToString();
+                                    ancestorId = ((Item) criteria.Value).ID.ToShortID().ToString();
                                 }
-                                if (criteria.Value is ID)
+                                if (ID.IsID(criteria.Value.ToString()))
                                 {
-                                    ancestorId = (criteria.Value as ID).ToShortID().ToString();
+                                    ancestorId = ((ID) criteria.Value).ToShortID().ToString();
                                 }
                                 if (string.IsNullOrEmpty(ancestorId))
                                 {
@@ -133,12 +135,17 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                     : query.Where(i => i[criteria.Field].Like(criteria.StringValue));
                                 break;
                             case (FilterType.InclusiveRange):
-                                var pair = criteria.Value as object[];
+                            case (FilterType.ExclusiveRange):
+                                if (!(criteria.Value is string[])) break;
+
+                                var inclusion = (criteria.Filter == FilterType.InclusiveRange) ? Inclusion.Both : Inclusion.None;
+
+                                var pair = (object[])criteria.Value;
                                 var left = (pair[0] is DateTime) ? ((DateTime)pair[0]).ToString("yyyyMMdd") : pair[0].ToString();
                                 var right = (pair[1] is DateTime) ? ((DateTime)pair[1]).ToString("yyyyMMdd") : pair[1].ToString();
                                 query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].Between(left, right, Inclusion.Both))
-                                    : query.Where(i => i[criteria.Field].Between(left, right, Inclusion.Both));
+                                    ? query.Where(i => !i[criteria.Field].Between(left, right, inclusion))
+                                    : query.Where(i => i[criteria.Field].Between(left, right, inclusion));
                                 break;
                         }
                     }
@@ -207,7 +214,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
         EndsWith,
         DescendantOf,
         Fuzzy,
-        InclusiveRange
+        InclusiveRange,
+        ExclusiveRange
     }
 
     public class SearchCriteria

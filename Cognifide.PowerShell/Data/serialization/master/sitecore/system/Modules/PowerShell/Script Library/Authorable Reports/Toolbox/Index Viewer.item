@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3401
+content-length: 4600
 
 $indexOptions = @{}
 foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
@@ -54,13 +54,39 @@ foreach($property in $properties) {
 
 $topOptions = [ordered]@{"All"=0;"25"=25;"100"=100;"1000"=100}
 
-$filterOptions = [ordered]@{"DecendentOf"="DecendentOf"; "Equals"="Equals"; "StartsWith"="StartsWith"; "Contains"="Contains"; "EndsWith"="EndsWith"}
+$filterOptions = [ordered]@{
+    "Contains"="Contains"
+    "DecendentOf"="DecendentOf"
+    "EndsWith"="EndsWith"
+    "Equals"="Equals"
+    "ExclusiveRange"="ExclusiveRange"
+    "Fuzzy"="Fuzzy"
+    "InclusiveRange"="InclusiveRange"
+    "StartsWith"="StartsWith"
+}
+
+$versionOptions = [ordered]@{
+    "All"=""
+    "Latest"="1"
+}
+
+$languageOptions = [ordered]@{
+    "All"=""
+}
+$languages = [Sitecore.Context]::Database.GetLanguages() | Sort-Object -Property Title
+foreach($language in $languages) {
+    $languageOptions[$language.Title] = $language.Name
+}
+
 $props.Parameters = @(
     @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."},
     @{Name="topCount"; Value="25"; Title="Choose how much to return"; Options=$topOptions; Tooltip="Only the top results will be returned.";},
-    @{Name="searchField"; Value="_language"; Title="Search Field"; Options=$propertyOptions; Tooltip=""; Columns="3"},
-    @{Name="searchOperator"; Value="Equals"; Title="Search Filter"; Options=$filterOptions; Tooltip=""; Columns="3"},
-    @{Name="searchText"; Value=""; Title="Search Value"; Tooltip=""; Columns="6"}
+    @{Name="searchField"; Value="_content"; Title="Search Field"; Options=$propertyOptions; Tooltip=""; Columns="3"},
+    @{Name="searchOperator"; Value="Fuzzy"; Title="Search Filter"; Options=$filterOptions; Tooltip=""; Columns="3"},
+    @{Name="searchText"; Value=""; Title="Search Value"; Tooltip=""; Columns="6"},
+    @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip=""; Columns="3"},
+    @{Name="searchLanguage"; Value="Language"; Title="Language"; Options=$languageOptions; Tooltip=""; Columns="3"}
+    @{Name="searchBaseTemplate"; Value=""; Title="Base Template"; Tooltip=""; Columns="6"}
 )
 $result = Read-Variable @props
 
@@ -70,18 +96,41 @@ if($result -eq "cancel"){
 
 $data = @{
     Index = $index
+    Criteria = @(@{
+        Filter = "DescendantOf"
+        Value = $root
+    })
 }
 
 if($searchText) {
-    $data.Criteria = @{
+    $data.Criteria += @{
         Field = $searchField
         Filter = $searchOperator
         Value = $searchText
     }
-} else {
-    $data.Criteria = @{
-        Filter = "DescendantOf"
-        Value = $root
+}
+
+if($searchVersion) {
+    $data.Criteria += @{
+        Field = "_latestversion"
+        Filter = "Equals"
+        Value = $searchVersion
+    }
+}
+
+if($searchLanguage) {
+    $data.Criteria += @{
+        Field = "_language"
+        Filter = "Equals"
+        Value = $searchLanguage
+    }
+}
+
+if($searchBaseTemplate) {
+    $data.Criteria += @{
+        Field = "_basetemplates"
+        Filter = "Contains"
+        Value = $searchBaseTemplate
     }
 }
 
@@ -110,7 +159,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: aebb6ef3-dfa2-40d6-a781-c785fa327315
+revision: 3bbe4b85-f622-4cd9-bf0c-af2023278d13
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -125,14 +174,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-aebb6ef3-dfa2-40d6-a781-c785fa327315
+3bbe4b85-f622-4cd9-bf0c-af2023278d13
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150719T151845:635729159252575810
+20150722T025845:635731307257104631
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
