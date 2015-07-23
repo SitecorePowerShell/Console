@@ -501,6 +501,18 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
 
                 edit = new Combobox();
+                var placeholder = variable["Placeholder"];
+                if (placeholder is string)
+                {
+                    var option = new ListItem
+                    {
+                        Header = placeholder.ToString(),
+                        Value = "",
+                        Selected = true
+                    };
+                    edit.Controls.Add(option);
+                }
+
                 foreach (var option in options.Keys)
                 {
                     var optionName = option.ToString();
@@ -516,6 +528,11 @@ namespace Cognifide.PowerShell.Client.Applications
             else
             {
                 edit = new Edit();
+                var placeholder = variable["Placeholder"];
+                if (placeholder is string)
+                {
+                    ((Edit) edit).Placeholder = placeholder.ToString();
+                }
             }
             if (!string.IsNullOrEmpty((string) variable["Tooltip"]))
             {
