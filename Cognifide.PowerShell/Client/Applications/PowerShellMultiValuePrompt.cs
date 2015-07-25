@@ -473,7 +473,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         }
                         else if (value is IEnumerable)
                         {
-                            values = ((value as IEnumerable).Cast<object>().Select(s => s.ToString())).ToArray();
+                            values = ((value as IEnumerable).Cast<object>().Select(s => s == null ? "" : s.ToString())).ToArray();
                         }
                         else
                         {
@@ -578,7 +578,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     foreach (WebControl tab in  control.Controls)
                         if (tab is Tab)
                             foreach (WebControl panel in tab.Controls)
-                                if (panel is GridPanel)
+                                if (panel is Border)
                                     foreach (Sitecore.Web.UI.HtmlControls.Control editor in panel.Controls)
                                     {
                                         GetEditorValue(editor, results);
