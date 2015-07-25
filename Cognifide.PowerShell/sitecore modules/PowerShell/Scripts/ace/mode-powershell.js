@@ -53,6 +53,8 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                 "Get-WmiObject|Remove-WmiObject|Connect-WSMan|Disconnect-WSMan|Test-WSMan|Invoke-WSManAction|" +
                 "Disable-WSManCredSSP|Enable-WSManCredSSP|Get-WSManCredSSP|New-WSManInstance|Get-WSManInstance|Set-WSManInstance|" +
                 "Remove-WSManInstance|Set-WSManQuickConfig|New-WSManSessionOption" +
+                // Other Useful elements
+                "|CmdletBinding"+
                 // Sitecore PowerShell built in functions
                 "|Add-ItemAcl|Add-ItemLanguage|Add-Rendering|Add-RoleMember|Clear-ItemAcl|Close-Window|ConvertFrom-CliXml|" +
                 "ConvertFrom-ItemClone|ConvertTo-CliXml|Disable-User|Enable-User|Expand-Token|Export-Item|Export-Package|" +
@@ -69,6 +71,7 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                 "Set-ItemAcl|Set-Layout|Set-Rendering|Set-User|Set-UserPassword|Show-Alert|Show-Application|Show-Confirm|" +
                 "Show-FieldEditor|Show-Input|Show-ListView|Show-ModalDialog|Show-Result|Show-YesNoCancel|Start-TaskSchedule|" +
                 "Test-ItemAcl|Test-Rule|Unlock-Item|Unlock-User|Unprotect-Item|Update-ListView|Write-Log"
+
         );
 
         var keywordMapper = this.createKeywordMapper({
