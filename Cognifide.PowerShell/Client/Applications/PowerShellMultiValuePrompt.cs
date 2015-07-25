@@ -388,7 +388,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     picker.Style.Add("float", "left");
                     picker.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                     picker.Class += " scContentControl textEdit clr" + value.GetType().Name;
-                    picker.Value = value.ToString();
+                    picker.Value = (value is IEnumerable<object>) ? String.Join("|", ((IEnumerable<object>)value).Select(x => x.ToString()).ToArray()) : value.ToString();
                     picker.ExcludeRoles = !showRoles;
                     picker.ExcludeUsers = !showUsers;
                     picker.DomainName = variable["Domain"] as string ?? variable["DomainName"] as string;

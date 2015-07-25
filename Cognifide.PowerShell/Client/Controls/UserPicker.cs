@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Sitecore.Security;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -96,12 +97,11 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else
             {
-                if (args.Result != null)
-                {
-                    Value = args.Result;
-                    Sitecore.Context.ClientPage.ClientResponse.Refresh(Parent);
-                    Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();");
-                }
+                if (args.Result == null) return;
+
+                Value = (args.HasResult) ? args.Result : String.Empty;
+                Sitecore.Context.ClientPage.ClientResponse.Refresh(Parent);
+                Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();");
             }
         }
     }
