@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6161
+content-length: 6300
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -47,9 +47,10 @@ else{
 }
 
 $result = Read-Variable -Parameters `
+    @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple" },
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
     @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false}, 
     @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
     @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
     @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
@@ -118,7 +119,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: e41f2108-289a-4f50-b31e-19d7d4c9bfda
+revision: e1a14feb-34d0-46d4-a988-2df311cf9212
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -133,14 +134,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e41f2108-289a-4f50-b31e-19d7d4c9bfda
+e1a14feb-34d0-46d4-a988-2df311cf9212
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150719T163132:635729202924131966
+20150725T210943:635734553839783614
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
