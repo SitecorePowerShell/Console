@@ -129,7 +129,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteWarningLine(string message)
         {
-            var splitter = new BufferSplitterCollection(OutputLineType.Warning, message, RawUI.BufferSize.Width,
+            var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + message, RawUI.BufferSize.Width,
                 ConsoleColor.Yellow, ConsoleColor.Black, true);
             Output.AddRange(splitter);
         }
