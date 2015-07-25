@@ -26,13 +26,11 @@ namespace Cognifide.PowerShell.Core.Host
 
             switch (_powerShellVersionMajor)
             {
+                case (1):
                 case (2):
                     return FindMatches2(session, command, aceResponse);
-                case (3):
-                case (4):
-                    return FindMatches3(session, command, aceResponse);
                 default:
-                    return new string[0];
+                    return FindMatches3(session, command, aceResponse);
             }
         }
 
