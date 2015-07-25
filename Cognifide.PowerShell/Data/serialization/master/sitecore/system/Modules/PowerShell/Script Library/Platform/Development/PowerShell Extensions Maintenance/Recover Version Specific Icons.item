@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5916
+content-length: 8604
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -37,7 +37,16 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Office/32x32/arrow_mix.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Office/32x32/window_gear.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Office/32x32/media_step_forward.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'Office/32x32/selection_recycle.png'
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'Office/32x32/selection_recycle.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Office/32x32/nav_right.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Office/32x32/rebuild_index.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Office/32x32/nav_refresh.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Index Viewer' = 'Office/32x32/index2.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up database tables' = 'office/32x32/data.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Office/32x32/data.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'office/32x32/data.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Office/32x32/rebuild_all_indexes.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild search indexes' = 'office/32x32/data.png';
 }
 
 $icons7 = @{
@@ -62,7 +71,16 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Applications/32x32/gears.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Software/32x32/debug.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'People/32x32/cpu_edit.png'
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'People/32x32/cpu_edit.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Control/16x16/treeview.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Applications/32x32/exchange.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Applications/32x32/refresh.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Index Viewer' = 'Business/32x32/data_find.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up database tables' = 'Business/32x32/data_replace.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Business/32x32/data_ok.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'Business/32x32/data_refresh.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Database/32x32/db_sql_execute_h.png';
+'master:/sitecore/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild search indexes' = 'Applications/32x32/find.png';
 }
 
 
@@ -86,7 +104,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: 3025646a-730a-48e7-8371-61a10dc7e791
+revision: 079355c7-4576-4f19-818e-5ebab50dea24
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -101,14 +119,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3025646a-730a-48e7-8371-61a10dc7e791
+079355c7-4576-4f19-818e-5ebab50dea24
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150720T150452:635730014921132812
+20150725T220741:635734588613211560
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
