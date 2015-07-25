@@ -235,3 +235,4 @@ Cognifide.PowerShell/obj/
 Cognifide.PowerShell.Sitecore7/obj/
 Cognifide.PowerShell.Sitecore8/obj/
 Data/serialization/
+.vs/config/applicationhost.config
