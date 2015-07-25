@@ -540,16 +540,17 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                edit = new Edit();
+                edit = new EditExtended();
                 var placeholder = variable["Placeholder"];
                 if (placeholder is string)
                 {
-                    ((Edit) edit).Attributes["placeholder"] = placeholder.ToString();
+                    ((EditExtended) edit).PlaceholderText = placeholder.ToString();
                 }
             }
-            if (!string.IsNullOrEmpty((string) variable["Tooltip"]))
+            var tip = (variable["Tooltip"] as string);
+            if (!String.IsNullOrEmpty(tip))
             {
-                edit.ToolTip = (string) variable["Tooltip"];
+                edit.ToolTip = tip.RemoveHtmlTags();
             }
             edit.Style.Add("float", "left");
             edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");

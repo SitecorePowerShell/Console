@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
@@ -45,6 +46,11 @@ namespace Cognifide.PowerShell.Core.Extensions
             }
 
             return rawString.Split(delimiter).ToList().Last();
+        }
+
+        public static string RemoveHtmlTags(this string value)
+        {
+            return !String.IsNullOrEmpty(value) ? Regex.Replace(value, "<.*?>", String.Empty) : value;
         }
     }
 }
