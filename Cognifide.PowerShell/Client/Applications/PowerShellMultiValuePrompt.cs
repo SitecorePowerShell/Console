@@ -23,7 +23,6 @@ using Sitecore.Shell.Applications.Rules;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
-using Sitecore.Web.UI.WebControls;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
 using Control = System.Web.UI.Control;
@@ -61,7 +60,7 @@ namespace Cognifide.PowerShell.Client.Applications
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
             var variables = (object[]) HttpContext.Current.Cache[sid];
-            HttpContext.Current.Cache.Remove(sid);
+            //TODO: HttpContext.Current.Cache.Remove(sid);
 
             var title = WebUtil.GetQueryString("te");
             ShowHints = WebUtil.GetQueryString("sh") == "1";
@@ -576,16 +575,41 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void OKClick()
         {
-            var variables = GetVariableValues();
             var sid = WebUtil.GetQueryString("sid");
-            HttpContext.Current.Cache[sid] = variables;
+            var variables = (object[])HttpContext.Current.Cache[sid];
+
+            var scriptVariables = GetVariableValues();
+
+            foreach (Hashtable variable in variables)
+            {
+                var mandatory = variable["Mandatory"];
+                if (!(mandatory is bool) || !(bool) mandatory) continue;
+
+                var name = variable["Name"] as string;
+                if (String.IsNullOrEmpty(name)) continue;
+
+                var title = variable["Title"] as string;
+                if (String.IsNullOrEmpty(name)) title = name;
+
+                foreach (var scriptVariable in scriptVariables)
+                {
+                    var value = scriptVariable[name] as string;
+                    if (!String.IsNullOrEmpty(value)) continue;
+
+                    SheerResponse.Alert(String.Format("{0} is mandatory.", title));
+                    return;
+                }
+            }
+
+            HttpContext.Current.Cache.Remove(sid);
+            HttpContext.Current.Cache[sid] = scriptVariables;
             SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
         }
 
-        private object[] GetVariableValues()
+        private Hashtable[] GetVariableValues()
         {
-            var results = new List<object>();
+            var results = new List<Hashtable>();
             foreach (Sitecore.Web.UI.HtmlControls.Control control in ValuePanel.Controls)
             {
                 if (control is Tabstrip)
@@ -602,7 +626,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return results.ToArray();
         }
 
-        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control parent, ICollection<object> results)
+        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control parent, ICollection<Hashtable> results)
         {
             var controlId = parent.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
@@ -619,7 +643,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
         }
 
-        private object GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
+        private Hashtable GetVariableValue(Sitecore.Web.UI.HtmlControls.Control control)
         {
             var controlId = control.ID;
             var parts = controlId.Split('_');
