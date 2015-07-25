@@ -312,3 +312,4 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .grid-10 { width: 83.33333333%; }
 .grid-11 { width: 91.66666667%; }
 .grid-12 { width: 100%; }
+.clearfix { clear:both; }

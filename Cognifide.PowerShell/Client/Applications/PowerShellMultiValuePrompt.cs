@@ -103,14 +103,23 @@ namespace Cognifide.PowerShell.Client.Applications
                 var hint = (variable["Tip"] as string) ??
                            (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
                 var columns =  12;
-                if (variable["Columns"] != null && int.TryParse((variable["Columns"].ToString()), out columns))
+                bool clearfix = false;
+                if (variable["Columns"] != null)
                 {
-                    if (columns > 12 && columns < 0)
+                    var strColumns = variable["Columns"].ToString().Split(' ');
+                    foreach (var columnValue in strColumns)
                     {
-                        columns = 12;
+                        if (int.TryParse(columnValue, out columns))
+                        {
+                            if (columns > 12 && columns < 0)
+                            {
+                                columns = 12;
+                            }
+                        }
+                        break;
                     }
+                    clearfix = strColumns.Contains("first", StringComparer.OrdinalIgnoreCase);
                 }
-
                 var container = GetContainer(tabs, tabName);
                 var input = GetVariableEditor(variable);
 
@@ -142,6 +151,10 @@ namespace Cognifide.PowerShell.Client.Applications
                     variableBorder.Class = "variableWrapper";
                 }
                 variableBorder.Class += " grid-" + columns;
+                if (clearfix)
+                {
+                    variableBorder.Class += " clearfix";
+                }
                 container.Controls.Add(variableBorder);
             }
 
