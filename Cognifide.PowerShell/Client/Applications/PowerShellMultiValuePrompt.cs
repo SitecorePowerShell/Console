@@ -531,7 +531,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var placeholder = variable["Placeholder"];
                 if (placeholder is string)
                 {
-                    ((Edit) edit).Placeholder = placeholder.ToString();
+                    ((Edit) edit).Attributes["placeholder"] = placeholder.ToString();
                 }
             }
             if (!string.IsNullOrEmpty((string) variable["Tooltip"]))
