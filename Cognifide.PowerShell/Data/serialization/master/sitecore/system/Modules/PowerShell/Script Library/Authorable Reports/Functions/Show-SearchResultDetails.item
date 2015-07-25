@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1252
+content-length: 1264
 
 function Show-SearchResultDetails { 
     [CmdletBinding()]
@@ -28,13 +28,13 @@ function Show-SearchResultDetails {
         }
 }
 
-if($id -eq $null)
+if($itemId -eq $null)
 {
-    $id = (gi master:\content).Uri
+    $itemId = (gi master:\content).Uri
     $index = "sitecore_master_index" 
 }
 
-$item = Show-SearchResultDetails  $index $id
+$item = Show-SearchResultDetails  $index $itemId
 
 $info = "" <#+ 
     "<b>Name: </b> $($item.Name)<br/>" + 
@@ -64,7 +64,7 @@ $result = Read-Variable @props
 ----version----
 language: en
 version: 1
-revision: 63f3357b-be4c-4354-a64f-5241cda8d473
+revision: 52b3ab5e-af57-4aab-8a20-e7a1928e5fed
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -79,14 +79,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-63f3357b-be4c-4354-a64f-5241cda8d473
+52b3ab5e-af57-4aab-8a20-e7a1928e5fed
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150717T123457:635727332978575546
+20150725T095514
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
