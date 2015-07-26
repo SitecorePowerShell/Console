@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5113
+content-length: 4535
 
 Import-Function Render-ReportField
 Close-Window
@@ -86,8 +86,7 @@ $props.Parameters = @(
     @{Name="searchOperator"; Value="Fuzzy"; Title="Search Filter"; Options=$filterOptions; Tooltip="Choose a comparison method."; Columns="3"},
     @{Name="searchText"; Value=""; Title="Search Value"; Tooltip="Enter the text to search."; Columns="6"; Placeholder="Sample Item"},
     @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3 first"; Placeholder="All"},
-    @{Name="searchLanguage"; Value="Language"; Title="Language"; Options=$languageOptions; Tooltip="Choose enabled languages."; Columns="3"; Placeholder="All"},
-    @{Name="searchBaseTemplate"; Value=""; Title="Base Template"; Tooltip="Index the _basetemplates field as shown here on <a href='https://github.com/SitecorePowerShell/Console/issues/424' target='_blank'>Github</a>."; Placeholder='{7B76036F5E-CBCE-46D1-AF0A-4143F9B557AA}'; Columns="6"}
+    @{Name="searchLanguage"; Value="Language"; Title="Language"; Options=$languageOptions; Tooltip="Choose enabled languages."; Columns="3"; Placeholder="All"}
 )
 $props.Width = 750
 $props.Height = 350
@@ -129,14 +128,6 @@ if($searchLanguage) {
     }
 }
 
-if($searchBaseTemplate -and [Sitecore.Data.ID]::IsID($searchBaseTemplate)) {
-    $data.Criteria += @{
-        Field = "_basetemplates"
-        Filter = "Contains"
-        Value = ([Sitecore.Data.ID]::Parse($searchBaseTemplate).ToShortID().ToString().ToLowerInvariant())
-    }
-}
-
 $details = @"
 Documents: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::GetIndexNumberOfDocuments($data.Index)),
 Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($data.Index)),
@@ -163,7 +154,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: 3ddbd0fa-668b-4ab7-a10e-62215c64cd61
+revision: 4ab035a3-bae8-482b-8b8d-95f2ac03ef2c
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -178,14 +169,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3ddbd0fa-668b-4ab7-a10e-62215c64cd61
+4ab035a3-bae8-482b-8b8d-95f2ac03ef2c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 34
 
-20150725T185553
+20150726T214432:635735438720355424
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
