@@ -297,8 +297,6 @@ namespace Cognifide.PowerShell.Client.Applications
                         Database = dbName,
                         ItemID = "{11111111-1111-1111-1111-111111111111}",
                         Source = variable["Source"] as string ?? "/sitecore",
-                        //cannot use this property because it's not supported on Sitecore 7.0
-                        //re-enable when we drop support for Sitecore 7
                     };
                     multiList.SetLanguage(Sitecore.Context.Language.Name);
 
