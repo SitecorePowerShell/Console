@@ -92,3 +92,4 @@
 .scMenuPanelItem, .scMenuPanelItem_Hover, .scMenuPanelItemSelected { padding: 4px 5px; }
 .selected.scMenuPanelItem { background: #D0EBF6 }
 .scInitialHeight { height: initial; width: 100%; }
+.noScript { text-align: center; }

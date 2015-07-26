@@ -22,6 +22,7 @@ using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.XmlControls;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
+using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 
 namespace Cognifide.PowerShell.Client.Controls
 {
@@ -162,8 +163,6 @@ namespace Cognifide.PowerShell.Client.Controls
             var recentHeader = new MenuHeader();
             SearchResults.Controls.AddAt(0, recentHeader);
             Scripts.Controls.Clear();
-            Scripts.Class = Scripts.Class + " scDontStretch";
-            SearchResults.Class = Scripts.Class + " scDontStretch";
             if (string.IsNullOrEmpty(phrase))
             {
                 recentHeader.Header = "Most Recently opened scripts:";
@@ -197,29 +196,36 @@ namespace Cognifide.PowerShell.Client.Controls
             {
                 recentHeader.Header = "Scripts matching: '" + phrase + "' in all databases";
                 var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
-                SearchDatabase(masterIndex, phrase);
+                var scriptsFound = SearchDatabase(masterIndex, phrase);
                 foreach (var index in ContentSearchManager.Indexes)
                 {
                     if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) &&
                         index.Name.StartsWith("sitecore_") &&
                         index.Name.EndsWith("_index"))
                     {
-                        SearchDatabase(index.Name, phrase);
+                        scriptsFound |= SearchDatabase(index.Name, phrase);
                     }
                 }
+                if (!scriptsFound)
+                {
+                    Context.ClientPage.AddControl(Scripts,
+                        new Literal {Text = "<div class='noScript'><br/><br/>No scripts found... Do you need to re-index your databases?</div>" });
+                    Scripts.CssStyle = "text-align: center;";
+                }
             }
-            HtmlTextWriter writer = new HtmlTextWriter(new StringWriter());
+            var writer = new HtmlTextWriter(new StringWriter());
             SearchResults.RenderControl(writer);
             SheerResponse.SetOuterHtml(SearchResults.ID, writer.InnerWriter.ToString());
         }
 
-        private void SearchDatabase(string indexName, string phrase)
+        private bool SearchDatabase(string indexName, string phrase)
         {
             using (
                 var context =
                     ContentSearchManager.GetIndex(indexName)
                         .CreateSearchContext())
             {
+                var scriptsFound = false;
                 // get all items in medialibrary
                 var rootID = ApplicationSettings.ScriptLibraryRoot().ID.ToShortID().ToString();
                 var query =
@@ -234,9 +240,11 @@ namespace Cognifide.PowerShell.Client.Controls
                 }
                 foreach (var result in query)
                 {
+                    scriptsFound = true;
                     var scriptItem = result.GetItem();
                     RenderRecent(scriptItem);
                 }
+                return scriptsFound;
             }
         }
 

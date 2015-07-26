@@ -27,9 +27,9 @@
           <Tabstrip ID="Tabs" GridPanel.Style="height:initial">
             <Tab ID="SearchTab" Header="Recent">
               <Edit ID="SearchPhrase" autocomplete="off" placeholder="Script name to search for - prefix with e.g. 'master:' to narrow to specific database"/>
-	          <GalleryMenu ID="SearchResults" Class="scGalleryMenu scStretch scInitialHeight">
+	          <GalleryMenu ID="SearchResults" Class="scGalleryMenu scStretch scInitialHeight scDontStretch">
                 <MenuPanel Height="100%">
-                  <Scrollbox ID="Scripts" Class="scScrollbox scInitialHeight">
+                  <Scrollbox ID="Scripts" Class="scScrollbox scInitialHeight scDontStretch">
                   </Scrollbox>
                 </MenuPanel>
               </GalleryMenu>
