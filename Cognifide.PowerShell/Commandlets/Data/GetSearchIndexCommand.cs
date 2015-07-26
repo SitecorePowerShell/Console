@@ -1,44 +1,25 @@
-﻿using System;
-using System.Management.Automation;
-using Sitecore.Configuration;
-using Sitecore.Search;
+﻿using System.Management.Automation;
+using Sitecore.ContentSearch;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsCommon.Get, "SearchIndex")]
-    [OutputType(typeof (Index))]
+    [Cmdlet(VerbsCommon.Get, "SearchIndex", DefaultParameterSetName = "Name")]
+    [OutputType(typeof (ISearchIndex))]
     public class GetSearchIndexCommand : BaseCommand
     {
-        private static SearchConfiguration configuration;
-
         [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
-        [Parameter(Position = 1)]
+        [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
         public string Name { get; set; }
-
-        private static SearchConfiguration SearchConfig
-        {
-            get
-            {
-                return configuration ??
-                       (configuration = Factory.CreateObject("search/configuration", true) as SearchConfiguration);
-            }
-        }
 
         protected override void ProcessRecord()
         {
-            if (String.IsNullOrEmpty(Name))
+            if (Name != null)
             {
-                foreach (var index in SearchConfig.Indexes.Keys)
-                {
-                    WriteObject(SearchManager.GetIndex(index), true);
-                }
+                WildcardWrite(Name, ContentSearchManager.Indexes, index => index.Name);
             }
             else
             {
-                foreach (var index in WildcardFilter(Name, SearchConfig.Indexes.Keys, name => name))
-                {
-                    WriteObject(SearchManager.GetIndex(index), true);
-                }
+                WriteObject(ContentSearchManager.Indexes, true);
             }
         }
     }

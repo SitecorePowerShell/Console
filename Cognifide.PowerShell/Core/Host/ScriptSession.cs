@@ -43,7 +43,8 @@ namespace Cognifide.PowerShell.Core.Host
             {"Invoke-Workflow", "Execute-Workflow"},
             {"Install-Package", "Import-Package"},
             {"Initialize-Item", "Wrap-Item"},
-            {"Send-File", "Download-File"}
+            {"Send-File", "Download-File"},
+            {"Initialize-SearchIndex", "Rebuild-SearchIndex"}
         };
 
         private bool disposed;

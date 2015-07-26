@@ -648,5 +648,54 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    <View>
+      <Name>Sitecore.ContentSearch.LuceneProvider.LuceneIndex</Name>
+      <ViewSelectedBy>
+        <TypeName>Sitecore.ContentSearch.LuceneProvider.LuceneIndex</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Width>32</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IndexingState</Label>
+            <Width>7</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsSharded</Label>
+            <Width>7</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Language</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Version</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>DatabaseName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>ItemId</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>TemplateName</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
   </ViewDefinitions>
 </Configuration>
