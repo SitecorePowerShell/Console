@@ -13,6 +13,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -49,6 +50,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Tabstrip Tabstrip;
         protected Scrollbox ValuePanel;
 
+        public static string MandatoryVariables
+        {
+            get { return StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"]); }
+            set { Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"] = value; }
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -60,7 +67,7 @@ namespace Cognifide.PowerShell.Client.Applications
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
             var variables = (object[]) HttpContext.Current.Cache[sid];
-            //TODO: HttpContext.Current.Cache.Remove(sid);
+            HttpContext.Current.Cache.Remove(sid);
 
             var title = WebUtil.GetQueryString("te");
             ShowHints = WebUtil.GetQueryString("sh") == "1";
@@ -87,6 +94,16 @@ namespace Cognifide.PowerShell.Client.Applications
                 CancelButton.Header = cancelText;
             }
 
+            //MandatoryVariables =
+            var mandatoryVariables =
+                variables.Cast<Hashtable>()
+                    .Where(p => p["Mandatory"] is bool && (bool) p["Mandatory"])
+                    .Select(v => v["Name"]).ToList();
+            if (mandatoryVariables.Any())
+            {
+                MandatoryVariables = (string) mandatoryVariables.Aggregate((accumulated, next) =>
+                    next + "," + accumulated);
+            }
             AddControls(variables);
         }
 
@@ -273,15 +290,18 @@ namespace Cognifide.PowerShell.Client.Applications
                 var dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
                 if (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    var multiList = new MultilistEx
+                    var multiList = new MultilistExtended
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Value = strValue,
                         Database = dbName,
                         ItemID = "{11111111-1111-1111-1111-111111111111}",
                         Source = variable["Source"] as string ?? "/sitecore",
-                        ItemLanguage = Sitecore.Context.Language.Name
+                        //cannot use this property because it's not supported on Sitecore 7.0
+                        //re-enable when we drop support for Sitecore 7
                     };
+                    multiList.SetLanguage(Sitecore.Context.Language.Name);
+
                     multiList.Class += "  treePicker";
                     return multiList;
                 }
@@ -576,31 +596,40 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void OKClick()
         {
             var sid = WebUtil.GetQueryString("sid");
-            var variables = (object[])HttpContext.Current.Cache[sid];
+            var mandatoryVariables = MandatoryVariables.Split(',').ToList();
 
             var scriptVariables = GetVariableValues();
+            var violatingVariables = new List<string>();
 
-            foreach (Hashtable variable in variables)
+            foreach (Hashtable variable in scriptVariables)
             {
-                var mandatory = variable["Mandatory"];
-                if (!(mandatory is bool) || !(bool) mandatory) continue;
-
                 var name = variable["Name"] as string;
                 if (String.IsNullOrEmpty(name)) continue;
+
+                bool mandatory = mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
+                if (!mandatory) continue;
 
                 var title = variable["Title"] as string;
                 if (String.IsNullOrEmpty(name)) title = name;
 
-                foreach (var scriptVariable in scriptVariables)
-                {
-                    var value = scriptVariable[name] as string;
-                    if (!String.IsNullOrEmpty(value)) continue;
-
-                    SheerResponse.Alert(String.Format("{0} is mandatory.", title));
-                    return;
-                }
+                var value = variable["Value"] as string;
+                if (!String.IsNullOrEmpty(value)) continue;
+                violatingVariables.Add(title ?? name);
             }
 
+            if (violatingVariables.Count() == 1)
+            {
+                SheerResponse.Alert(String.Format("\"{0}\" is mandatory.", violatingVariables[0]));
+                return;
+            }
+            if (violatingVariables.Count() > 1)
+            {
+                SheerResponse.Alert(String.Format("{0} are mandatory.",
+                    violatingVariables.Select(p => "\""+p+"\"").Aggregate((accumulated, next) =>
+                        accumulated + ", " + next)));
+                return;
+            }
+            
             HttpContext.Current.Cache.Remove(sid);
             HttpContext.Current.Cache[sid] = scriptVariables;
             SheerResponse.SetDialogValue(sid);
