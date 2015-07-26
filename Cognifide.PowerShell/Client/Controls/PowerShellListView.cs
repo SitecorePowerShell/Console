@@ -192,15 +192,6 @@ namespace Cognifide.PowerShell.Client.Controls
                         case ("True"):
                             val = "<div class='checked'></div>";
                             break;
-                        default:
-                            if (Regex.IsMatch(val, @"^\d+\.?\d*%$", RegexOptions.None))
-                            {
-                                val =
-                                    string.Format(
-                                        "<div class='progressBar'><div class='progressFill' style='width:{0}'><div class='progressFillText'>{0}</div></div>{0}</div>",
-                                        val);
-                            }
-                            break;
                     }
                     lvi.ColumnValues.Add(column, val);
                 }

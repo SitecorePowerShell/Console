@@ -23,6 +23,11 @@
     width: 100%;
 }
 
+.progressBar {
+    position: relative;
+    top: -11px;
+}
+
 .progressFill {
     background: #012456;
     color: #fff;
@@ -34,8 +39,25 @@
     width: 51%;
 }
 
-.progressFillText { }
+.progressFillText {
+    border: 1px solid #012456;
+}
 
+.progressBackFill {
+    background: none;
+    color: #012456;
+    left: 0;
+    overflow: hidden;
+    padding: 4px 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    border: 1px solid #789abc;
+}
+
+.progressFillText, .progressText {
+  text-align: center;
+}
 .scListControl > tbody > tr > td:nth-child(1) { width: 8px; }
 
 .emptyResultsPanel {

@@ -13,8 +13,9 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5609
+content-length: 4801
 
+Import-Function Render-ReportField
 # Set defaults
 
 $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
@@ -110,28 +111,8 @@ if($result -eq "cancel"){
 $properties = @();
 $fields = $stdFields + $fields;
 
-function RenderField($item, $fieldName){
-
-    if($rawValues){
-        return [System.Web.HttpUtility]::HtmlEncode($item.$fieldName);
-    }
-    $field = $item.Fields[$fieldName];
-    if($field -eq $null){
-        return $item.$fieldName;
-    }
-    $typedField = [Sitecore.Data.Fields.FieldTypeManager]::GetField($field);
-    if ($typedField -is [Sitecore.Data.Fields.ImageField]){
-        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field, "mh=64&mw=64");
-    } elseif ($typedField -is [Sitecore.Data.Fields.MultilistField]){
-        return $typedField.GetItems().DisplayName -join ", ";
-    } elseif ([Cognifide.PowerShell.Core.Extensions.FieldExtensions]::ShouldRender($field)) {
-        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field);
-    }
-    return $item.$fieldName;
-}
-
 foreach($field in $fields){
-    $scr = [scriptblock]::Create('RenderField $_ "' + $field + '"')
+    $scr = [scriptblock]::Create('Render-SitecoreField $_ "' + $field + '"')
     $properties += @{Label=$titles[$field]; Expression=$scr}
 }
 
@@ -156,7 +137,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 9b101499-eb50-4a82-b2cf-846e1bbb31d7
+revision: 1d58777f-a316-4854-bddf-f178bcf13b21
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +152,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9b101499-eb50-4a82-b2cf-846e1bbb31d7
+1d58777f-a316-4854-bddf-f178bcf13b21
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150629T113956:635711747966711918
+20150725T101243
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
