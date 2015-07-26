@@ -166,6 +166,7 @@
     <Compile Include="Client\Controls\ContextGallery.cs" />
     <Compile Include="Client\Controls\IseContextPanel.cs" />
     <Compile Include="Client\Controls\ListViewComparer.cs" />
+    <Compile Include="Client\Controls\MultilistExtended.cs" />
     <Compile Include="Client\Controls\PowerShellListView.cs" />
     <Compile Include="Client\Controls\PSCheckList.cs" />
     <Compile Include="Client\Controls\RibbonActionScriptsPanel.cs" />
