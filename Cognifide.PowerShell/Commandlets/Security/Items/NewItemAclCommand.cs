@@ -7,7 +7,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
     [Cmdlet(VerbsCommon.New, "ItemAcl")]
     [OutputType(typeof (AccessRule))]
-    public class NewItemAclCommand : BaseCommand, IDynamicParameters
+    public class NewItemAclCommand : BaseCommand
     {
         [Alias("User")]
         [Parameter(Mandatory = true, Position = 0)]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 
@@ -8,8 +9,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof(ISearchIndex))]
     public class ResumeSearchIndexCommand : BaseCommand
     {
-        [ValidatePattern("[\\*\\?\\[\\]\\-0-9a-zA-Z_]+")]
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
+        private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
+
+        [ValidateSet("*")]
+        [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
         public string Name { get; set; }
 
         protected override void ProcessRecord()
@@ -18,6 +21,20 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
             WriteVerbose(String.Format("Resuming index {0}.", Name));
             ContentSearchManager.GetIndex(Name).ResumeIndexing();
+        }
+
+        public override object GetDynamicParameters()
+        {
+            if (!_reentrancyLock.WaitOne(0))
+            {
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("Name", indexes);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
     }
 }

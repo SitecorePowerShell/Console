@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
     [Cmdlet(VerbsCommon.Add, "ItemAcl", SupportsShouldProcess = true)]
     [OutputType(typeof (Item))]
-    public class AddItemAclCommand : BaseItemAclCommand, IDynamicParameters
+    public class AddItemAclCommand : BaseItemAclCommand
     {
         public override string Filter { get; set; }
 

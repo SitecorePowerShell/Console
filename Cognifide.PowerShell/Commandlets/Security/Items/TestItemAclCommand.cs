@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 {
     [Cmdlet(VerbsDiagnostic.Test, "ItemAcl")]
     [OutputType(typeof(bool))]
-    public class TestItemAclCommand : BaseItemAclCommand, IDynamicParameters
+    public class TestItemAclCommand : BaseItemAclCommand
     {
 
         public override string Filter { get; set; }

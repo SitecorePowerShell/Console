@@ -11,7 +11,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsDiagnostic.Test, "Rule")]
     [OutputType(typeof (bool))]
-    public class TestRuleCommand : BaseCommand, IDynamicParameters
+    public class TestRuleCommand : BaseCommand
     {
         private readonly string[] databases = Factory.GetDatabaseNames(); 
         private RuleList<RuleContext> rules;
@@ -22,15 +22,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public PSObject InputObject  { get; set; }
 
-
-        public TestRuleCommand()
-        {
-            AddDynamicParameter<string>("RuleDatabase", new ParameterAttribute
-            {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = false
-            }, new ValidateSetAttribute(databases));
-        }
+        [ValidateSet("*")]
+        [Parameter]
+        public string RuleDatabase { get; set; }
 
         protected override void BeginProcessing()
         {
@@ -58,6 +52,20 @@ namespace Cognifide.PowerShell.Commandlets.Data
             };
 
             WriteObject(!rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext)));
+        }
+
+        public override object GetDynamicParameters()
+        {
+            if (!_reentrancyLock.WaitOne(0))
+            {
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("RuleDatabase", databases);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
     }
 }

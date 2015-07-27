@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
 {
     [Cmdlet(VerbsData.Import, "Function", SupportsShouldProcess = true)]
     [OutputType(typeof (object))]
-    public class ImportFunctionCommand : BaseShellCommand, IDynamicParameters
+    public class ImportFunctionCommand : BaseShellCommand
     {
         private static string[] functions;
         private static string[] libraries;

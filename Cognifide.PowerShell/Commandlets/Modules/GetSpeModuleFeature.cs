@@ -8,24 +8,18 @@ namespace Cognifide.PowerShell.Commandlets.Modules
 {
     [Cmdlet(VerbsCommon.Get, "SpeModuleFeatureRoot")]
     [OutputType(typeof (Item), ParameterSetName = new[] {"By Feature Name", "Module from Pipeline"})]
-    public class GetSpeModuleFeatureRoot : BaseCommand, IDynamicParameters
+    public class GetSpeModuleFeatureRoot : BaseCommand
     {
-        public GetSpeModuleFeatureRoot()
-        {
-            AddDynamicParameter<string>("Feature", new ParameterAttribute
-            {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = true,
-                Position = 0
-            }, new ValidateSetAttribute(IntegrationPoints.Libraries.Keys.ToArray()));
-        }
-
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Module from Pipeline")]
         public Module Module { get; set; }
 
         [Parameter]
         public SwitchParameter ReturnPath { get; set; }
+
+        [ValidateSet("*")]
+        [Parameter(Mandatory = true, Position = 0)]
+        public string Feature { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -57,6 +51,20 @@ namespace Cognifide.PowerShell.Commandlets.Modules
                     }
                 }
             }
+        }
+
+        public override object GetDynamicParameters()
+        {
+            if (!_reentrancyLock.WaitOne(0))
+            {
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("Feature", IntegrationPoints.Libraries.Keys.ToArray());
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
     }
 }

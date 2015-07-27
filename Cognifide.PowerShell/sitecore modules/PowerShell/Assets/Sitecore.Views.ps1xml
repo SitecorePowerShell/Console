@@ -662,12 +662,12 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>IndexingState</Label>
-            <Width>7</Width>
+            <Width>15</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>IsSharded</Label>
-            <Width>7</Width>
+            <Width>10</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
         </TableHeaders>
@@ -678,19 +678,10 @@
                 <PropertyName>Name</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>Language</PropertyName>
+                <PropertyName>IndexingState</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>Version</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>DatabaseName</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>ItemId</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>TemplateName</PropertyName>
+                <PropertyName>IsSharded</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
