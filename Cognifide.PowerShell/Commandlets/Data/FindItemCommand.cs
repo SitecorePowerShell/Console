@@ -15,19 +15,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Find, "Item")]
     [OutputType(typeof(Item))]
-    public class FindItemCommand : BaseCommand, IDynamicParameters
+    public class FindItemCommand : BaseCommand
     {
         private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
-        public FindItemCommand()
-        {
-            AddDynamicParameter<string>("Index", new ParameterAttribute
-            {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = true,
-                Position = 0
-            }, new ValidateSetAttribute(indexes));
-        }
+        [ValidateSet("*")]
+        [Parameter(Mandatory = true, Position = 0)]
+        public string Index { get; set; }
 
         [Parameter]
         public SearchCriteria[] Criteria { get; set; }
@@ -202,6 +196,20 @@ namespace Cognifide.PowerShell.Commandlets.Data
             skipBeforeEnd = 0;
             // Concat not support by Sitecore.
             return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
+        }
+
+        public override object GetDynamicParameters()
+        {
+            if (!_reentrancyLock.WaitOne(0))
+            {
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("Index", indexes);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
     }
 
