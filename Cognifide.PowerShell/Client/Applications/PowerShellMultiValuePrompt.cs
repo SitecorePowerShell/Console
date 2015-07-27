@@ -464,7 +464,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         var radioList = new Groupbox
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                            Header = (string) variable["Title"],
+                            // Header = (string) variable["Title"],
                             Class = "scRadioGroup"
                         };
 

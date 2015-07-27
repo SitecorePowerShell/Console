@@ -105,6 +105,7 @@ body.ie { overflow: hidden; }
 .scContentControl.treePicker {
     height: 220px;
     padding: 4px 2px 4px 8px;
+    margin-top: 26px;
 }
 
 .psVarPromptHeaderIcon { margin: 6px 16px 4px 0px !important; }
@@ -163,6 +164,9 @@ body.ie { overflow: hidden; }
 
 .scDatePickerComboBox, .scTimePickerComboBox, .scCombobox.treePicker, .scRadioGroup { border: ButtonShadow solid 1px; }
 
+.scCombobox.treePicker {
+    margin-bottom: 8px;
+}
 fieldset label { font: 8pt tahoma; }
 
 fieldset { padding: 6px 8px 8px 10px; }
@@ -286,12 +290,13 @@ form > div.scFlexColumnContainer.scStretch {
 
 fieldset label { font: 8pt tahoma; }
 
-fieldset { padding: 6px 8px 8px 10px; height: 100%; box-sizing: content-box !important; overflow: hide; }
+fieldset { padding: 6px 8px 8px 10px; box-sizing: content-box !important; }
 
 table.scContentControl.treePicker > :first-child > :first-child { height: 20px; }
 .variableWrapper { box-sizing: border-box; padding-right: 10px; }
 .variableWrapperFixedHeight .scRadioGroup { height : 100% }
-.variableWrapperFixedHeight .treePicker { height : 100% }
+.variableWrapperFixedHeight .treePicker { height: 100%; padding-bottom: 26px;border: 0; }
+.scContentControlMultilistBox { height:100% }
 .variableWrapperFixedHeight .scContentControlChecklist { height : 100% !important }
 .variableWrapperFixedHeight .scContentControlChecklist > div { height : 100% !important }
 .variableWrapperFixedHeight .scRadioGroup { height : 100% }

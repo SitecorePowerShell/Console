@@ -161,7 +161,7 @@
 
 fieldset label { font: 8pt tahoma; }
 
-fieldset { padding: 6px 8px 8px 10px; }
+fieldset { padding: 6px 8px 8px 10px; margin-top: 0;}
 
 table.scContentControl.treePicker > :first-child > :first-child { height: 20px; }
 
@@ -176,7 +176,7 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .scRule { display: none; }
 .scContentControlMultilistBox { padding-bottom: 0; border: 1px solid #e3e3e3;}
 .scContentControlMultilistHelp { border: 1px solid #e3e3e3;}
-.scContentControlMultilistContainer { padding: 0 5px; }
+.scContentControlMultilistContainer { padding: 0 5px 20px 0; }
 .grid-1 { width: 8.33333333%;   padding-right: 10px; }
 .grid-2 { width: 16.66666667%; }
 .grid-3 { width: 25%; }
