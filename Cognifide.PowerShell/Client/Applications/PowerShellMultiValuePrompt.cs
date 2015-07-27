@@ -602,28 +602,57 @@ namespace Cognifide.PowerShell.Client.Applications
             foreach (Hashtable variable in scriptVariables)
             {
                 var name = variable["Name"] as string;
-                if (String.IsNullOrEmpty(name)) continue;
+                if (string.IsNullOrEmpty(name)) continue;
 
                 bool mandatory = mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
                 if (!mandatory) continue;
+                var title = (variable["Title"] as string)??name;
+                var value = variable["Value"];
+                var valueType = value == null ? "null" : value.GetType().Name;
 
-                var title = variable["Title"] as string;
-                if (String.IsNullOrEmpty(name)) title = name;
-
-                var value = variable["Value"] as string;
-                if (!String.IsNullOrEmpty(value)) continue;
-                violatingVariables.Add(title ?? name);
+                switch (valueType)
+                {
+                    case ("String"):
+                        if (!string.IsNullOrEmpty(value as string)) continue;
+                        break;
+                    case ("String[]"):
+                        if ((value as String[]).Length > 0) continue;
+                        break;
+                    case ("DateTime"):
+                        if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue) continue;
+                        break;
+                    case ("null"):
+                        break;
+                    case ("List`1"):
+                        if (value is List<Item>)
+                        {
+                            var itemList = value as List<Item>;
+                            var itemFound = false;
+                            foreach (var item in itemList)
+                            {
+                                if (item != null)
+                                {
+                                    itemFound = true;
+                                }
+                            }
+                            if (itemFound) continue;
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+                violatingVariables.Add(title);
             }
 
             if (violatingVariables.Count() == 1)
             {
-                SheerResponse.Alert(String.Format("\"{0}\" is mandatory.", violatingVariables[0]));
+                SheerResponse.Alert(string.Format("\"{0}\" is mandatory.", violatingVariables[0]));
                 return;
             }
             if (violatingVariables.Count() > 1)
             {
-                SheerResponse.Alert(String.Format("{0} are mandatory.",
-                    violatingVariables.Select(p => "\""+p+"\"").Aggregate((accumulated, next) =>
+                SheerResponse.Alert(string.Format("{0} are mandatory.",
+                    violatingVariables.Select(name => "\"" + name + "\"").Aggregate((accumulated, next) =>
                         accumulated + ", " + next)));
                 return;
             }
@@ -686,9 +715,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (control is TreePicker)
                 {
-                    var contextID = (control as TreePicker).DataContext;
+                    var picker = (control as TreePicker);
+                    var contextID = picker.DataContext;
                     var context = (DataContext) DataContextPanel.FindControl(contextID);
-                    result.Add("Value", context.CurrentItem);
+                    result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
                 }
                 else if (control is Border && ((Border) control).Class == "checkBoxWrapper")
                 {
