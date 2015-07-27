@@ -21,16 +21,18 @@ namespace Cognifide.PowerShell.Core.Host
 
         public string ToHtmlUpdate()
         {
+            List<OutputLine> lines;
             lock (this)
             {
-                var output = new StringBuilder(10240);
-                foreach (var outputLine in this.Skip(updatePointer))
-                {
-                    updatePointer++;
-                    outputLine.GetHtmlLine(output);
-                }
-                return output.ToString();
+                lines = this.Skip(updatePointer).ToList();
+                updatePointer += lines.Count();
             }
+            var output = new StringBuilder(10240);
+            foreach (var outputLine in lines)
+            {
+                outputLine.GetHtmlLine(output);
+            }
+            return output.ToString();
         }
 
         public override string ToString()

@@ -573,12 +573,17 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 var result = session.Output.ToHtmlUpdate();
-                if (!string.IsNullOrEmpty(result))
-                {
-                    result = HttpUtility.HtmlEncode(result.Replace("\r\n", "<br/>")).Replace("\\","&#92;");
-                    SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
-                    ScriptResult.Visible = true;
-                }
+                PrintSessionUpdate(result);
+            }
+        }
+
+        private void PrintSessionUpdate(string result)
+        {
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = HttpUtility.HtmlEncode(result.Replace("\r\n", "<br/>")).Replace("\\", "&#92;");
+                SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
+                ScriptResult.Visible = true;
             }
         }
 
@@ -598,6 +603,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (Context.Job != null)
                 {
                     JobContext.PostMessage("ise:updateresults");
+                    JobContext.Job.Status.Result = scriptSession.Output.ToHtmlUpdate();
                     scriptSession.Output.Clear();
                     JobContext.Flush();
                 }
@@ -648,6 +654,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 Monitor.SessionID = string.Empty;
                 result = job.Status.Result as string;
             }
+            PrintSessionUpdate(result);
             Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
