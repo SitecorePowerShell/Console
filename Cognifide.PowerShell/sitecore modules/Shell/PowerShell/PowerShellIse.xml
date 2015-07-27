@@ -72,6 +72,7 @@
                 </Border>
                 <Border ID="ScriptResult">
                   <Border ID="ResultsClose">x</Border>
+                  <pre ID="ScriptResultCode"></pre>
                 </Border>
               </Border>
             </GridPanel>

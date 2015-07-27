@@ -362,3 +362,11 @@ a.ps-link {
 .iseRibbonContextPanel .scRibbonToolbarSmallButtons.scRibbonContextLabels { padding-right: 0; }
 
 .iseRibbonContextPanel.disabled { color: #d6d6d6 }
+
+#PleaseWait {
+    position: fixed;
+    bottom: 28px;
+    right: 19px;
+    text-align: right;
+    float: right;
+}

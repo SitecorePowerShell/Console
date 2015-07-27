@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cognifide.PowerShell.Core.Host
 {
     public class OutputBuffer : List<OutputLine>
     {
+        private int updatePointer = 0;
         public bool HasErrors { get; set; }
 
         public string ToHtml()
@@ -15,6 +17,20 @@ namespace Cognifide.PowerShell.Core.Host
                 outputLine.GetHtmlLine(output);
             }
             return output.ToString();
+        }
+
+        public string ToHtmlUpdate()
+        {
+            lock (this)
+            {
+                var output = new StringBuilder(10240);
+                foreach (var outputLine in this.Skip(updatePointer))
+                {
+                    updatePointer++;
+                    outputLine.GetHtmlLine(output);
+                }
+                return output.ToString();
+            }
         }
 
         public override string ToString()
@@ -35,6 +51,20 @@ namespace Cognifide.PowerShell.Core.Host
                 outputLine.GetTerminalLine(output);
             }
             return output.ToString();
+        }
+
+        public new void AddRange(IEnumerable<OutputLine> collection)
+        {
+            lock (this)
+            {
+                base.AddRange(collection);                
+            }
+        }
+
+        public new void Clear()
+        {
+            updatePointer = 0;
+            base.Clear();
         }
     }
 }

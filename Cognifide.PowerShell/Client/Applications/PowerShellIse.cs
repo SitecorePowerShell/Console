@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
@@ -321,8 +322,8 @@ namespace Cognifide.PowerShell.Client.Applications
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
             EnterScriptInfo.Visible = true;
-            ScriptResult.Value = string.Empty;
-            ScriptResult.Visible = false;
+            ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
+            //ScriptResult.Visible = false;
             SheerResponse.Eval("cognifide.powershell.changeWindowTitle('Untitled', true);");
             UpdateRibbon();
         }
@@ -519,8 +520,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 "ScriptResult",
                 string.Format(
                     "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
-                    "<div align='Center' style='padding:32px 0px 32px 0px'>Please wait, {0}</br>" +
-                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working' style='padding:32px 0px 32px 0px'/></div>",
+                    "<div id='PleaseWait'>" +
+                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working' />" +
+                    "<div>Please wait, {0}</div>" +
+                    "</div>" +
+                    "<pre ID='ScriptResultCode'></pre>",
                     ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
@@ -561,6 +565,19 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.Eval("cognifide.powershell.updateEditor();");
         }
 
+        [HandleMessage("pstaskmonitor:check", true)]
+        protected void PrintOutput(ClientPipelineArgs args)
+        {
+            var job = JobManager.GetJob(Monitor.JobHandle);
+            if (job != null)
+            {
+                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
+                var result = session.Output.ToHtmlUpdate().Replace("\r\n", "<br/>");
+                SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
+                ScriptResult.Visible = true;
+            }
+        }
+
         protected void ExecuteInternal(params object[] parameters)
         {
             var scriptSession = parameters[0] as ScriptSession;
@@ -576,7 +593,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptSession.ExecuteScriptPart(script);
                 if (Context.Job != null)
                 {
-                    Context.Job.Status.Result = string.Format("<pre>{0}</pre>", scriptSession.Output.ToHtml());
+                    Context.Job.Status.Result = string.Format("<pre ID='ScriptResultCode'>{0}</pre>", scriptSession.Output.ToHtml());
                     JobContext.PostMessage("ise:updateresults");
                     scriptSession.Output.Clear();
                     JobContext.Flush();
@@ -642,7 +659,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var showProgress =
                 !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
-            ScriptResult.Visible = !showProgress;
+            //ScriptResult.Visible = !showProgress;
             ProgressOverlay.Visible = showProgress;
             var sb = new StringBuilder();
             if (showProgress)
@@ -738,8 +755,6 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
             ribbon.CommandContext.Parameters.Add("scriptDB", ScriptItemDb);
             ribbon.CommandContext.Parameters.Add("scriptItem", ScriptItemId);
-
-
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
         }
 

@@ -212,7 +212,10 @@ extend(cognifide, "powershell");
             setting = parseInt(setting) || 12;
             codeeditor.setOption("fontSize", setting);
         };
-
+        cognifide.powershell.appendOutput = function(outputToAppend) {
+            $("#ScriptResultCode").append(outputToAppend);
+            $('#ScriptResult').scrollTop($('#ScriptResult')[0].scrollHeight);
+        }
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
