@@ -212,8 +212,9 @@ extend(cognifide, "powershell");
             setting = parseInt(setting) || 12;
             codeeditor.setOption("fontSize", setting);
         };
-        cognifide.powershell.appendOutput = function(outputToAppend) {
-            $("#ScriptResultCode").append(outputToAppend);
+        cognifide.powershell.appendOutput = function (outputToAppend) {
+            var decoded = $('<div/>').html(outputToAppend).text();
+            $("#ScriptResultCode").append(decoded);
             $('#ScriptResult').scrollTop($('#ScriptResult')[0].scrollHeight);
         }
         cognifide.powershell.changeFontFamily = function(setting) {

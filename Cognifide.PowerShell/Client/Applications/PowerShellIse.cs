@@ -572,9 +572,13 @@ namespace Cognifide.PowerShell.Client.Applications
             if (job != null)
             {
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                var result = session.Output.ToHtmlUpdate().Replace("\r\n", "<br/>");
-                SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
-                ScriptResult.Visible = true;
+                var result = session.Output.ToHtmlUpdate();
+                if (!string.IsNullOrEmpty(result))
+                {
+                    result = HttpUtility.HtmlEncode(result.Replace("\r\n", "<br/>")).Replace("\\","&#92;");
+                    SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
+                    ScriptResult.Visible = true;
+                }
             }
         }
 
@@ -593,7 +597,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptSession.ExecuteScriptPart(script);
                 if (Context.Job != null)
                 {
-                    Context.Job.Status.Result = string.Format("<pre ID='ScriptResultCode'>{0}</pre>", scriptSession.Output.ToHtml());
                     JobContext.PostMessage("ise:updateresults");
                     scriptSession.Output.Clear();
                     JobContext.Flush();
@@ -645,9 +648,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 Monitor.SessionID = string.Empty;
                 result = job.Status.Result as string;
             }
-            Context.ClientPage.ClientResponse.SetInnerHtml("ScriptResult",
-                "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
-                (result ?? "No results to display."));
+            Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
 
