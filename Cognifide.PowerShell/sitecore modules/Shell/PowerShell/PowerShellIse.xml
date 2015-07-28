@@ -63,7 +63,7 @@
                   <Literal Text="Enter a script in the Script field and Execute." />
                 </Border>
                 <Border Id="ProgressOverlay" Visible="false">
-                  <Border class="ui-state-highlight ui-corner-all">
+                  <Border>
                     <p>
                       <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top"
                                GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px" />
