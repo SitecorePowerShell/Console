@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.ContentSearch;
@@ -8,14 +7,8 @@ using Sitecore.ContentSearch.Maintenance;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsData.Initialize, "SearchIndex", DefaultParameterSetName = "Name")]
-    public class InitializeSearchIndexCommand : BaseCommand
+    public class InitializeSearchIndexCommand : BaseIndexCommand
     {
-        private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
-
-        [ValidateSet("*")]
-        [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
-        public string Name { get; set; }
-
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Instance")]
         public ISearchIndex Index { get; set; }
 
@@ -69,20 +62,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
             {
                 WriteObject(job);
             }
-        }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("Name", indexes);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
         }
     }
 }

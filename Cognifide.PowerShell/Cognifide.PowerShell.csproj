@@ -175,6 +175,7 @@
     <Compile Include="Client\Controls\SpeJobMonitor.cs" />
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
+    <Compile Include="Commandlets\BaseIndexCommand.cs" />
     <Compile Include="Commandlets\Data\InitializeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\ResumeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\StopSearchIndexCommand.cs" />
