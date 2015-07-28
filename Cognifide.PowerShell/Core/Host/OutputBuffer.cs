@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
+using Cognifide.PowerShell.Core.Settings;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -19,7 +21,7 @@ namespace Cognifide.PowerShell.Core.Host
             return output.ToString();
         }
 
-        public string ToHtmlUpdate()
+        public string GetHtmlUpdate()
         {
             List<OutputLine> lines;
             lock (this)
@@ -34,6 +36,46 @@ namespace Cognifide.PowerShell.Core.Host
             }
             return output.ToString();
         }
+
+        public bool GetConsoleUpdate(StringBuilder output, int maxBufferSize)
+        {
+            if (updatePointer >= Count)
+            {
+                return false;
+            }
+            var buffer = WebServiceSettings.SerializationSizeBuffer;
+            var temp = new StringBuilder();
+
+            List<OutputLine> lines;
+            lock (this)
+            {
+                lines = this.Skip(updatePointer).ToList();
+            }
+
+            var unterminatedLines = 1;
+            foreach (var outputLine in lines)
+            {
+                outputLine.GetLine(temp, OutputLine.FormatResponseJsterm);
+                if ((output.Length + temp.Length + buffer) > maxBufferSize)
+                {
+                    break;
+                }
+                // only full lines can be sent to terminal;
+                if (outputLine.Terminated)
+                {
+                    updatePointer += unterminatedLines;
+                    output.Append(temp);
+                    temp.Clear();
+                    unterminatedLines = 1;
+                }
+                else
+                {
+                    unterminatedLines++;
+                }
+            }
+            return true;
+        }
+
 
         public override string ToString()
         {

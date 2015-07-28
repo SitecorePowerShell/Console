@@ -184,8 +184,9 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return string.Empty;
             }
-            var serializer = new JavaScriptSerializer();
 
+            HttpContext.Current.Response.ContentType = "application/json";
+            var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             var result = new Result();
             var scriptJob = JobManager.GetJob(GetJobId(guid, handle));
@@ -200,11 +201,6 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             result.handle = handle;
-            if (!scriptJob.IsDone)
-            {
-                result.status = StatusWorking;
-                return serializer.Serialize(result);
-            }
             if (scriptJob.Status.Failed)
             {
                 result.status = StatusError;
@@ -217,36 +213,21 @@ namespace Cognifide.PowerShell.Console.Services
                 session.Output.Clear();
                 return serializer.Serialize(result);
             }
-            result.status = StatusComplete;
-            var lines = 0;
-            var buffer = WebServiceSettings.SerializationSizeBuffer;
-            var partial = false;
-            var temp = new StringBuilder();
+
+            var complete = scriptJob.IsDone;
+
+
             var output = new StringBuilder();
-            foreach (var outputLine in session.Output)
-            {
-                outputLine.GetLine(temp, stringFormat);
-                if ((output.Length + temp.Length + buffer) > 131072)
-                {
-                    session.Output.RemoveRange(0, lines);
-                    partial = true;
-                    break;
-                }
-                lines++;
-                output.Append(temp);
-                temp.Remove(0, temp.Length);
-            }
+            var partial = session.Output.GetConsoleUpdate(output, 131072);
             result.result = output.ToString().TrimEnd('\r', '\n');
             result.prompt = string.Format("PS {0}>", session.CurrentLocation);
-            if (partial)
-            {
-                result.status = StatusPartial;
-            }
-            else
+
+            result.status = complete ? (partial ? StatusPartial : StatusComplete) : StatusWorking;
+
+            if (partial && complete)
             {
                 session.Output.Clear();
             }
-            HttpContext.Current.Response.ContentType = "application/json";
             var serializedResult = serializer.Serialize(result);
             return serializedResult;
         }

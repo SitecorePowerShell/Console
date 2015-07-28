@@ -132,6 +132,8 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             Progress.Text = sb.ToString();
+
+            SheerResponse.Eval(@"$ise(function() { cognifide.powershell.resetAttempts(); });");
         }
     }
 }

@@ -21,20 +21,24 @@ extend(cognifide, "powershell");
 (function($, window, cognifide, undefined) {
     var defaults = {
         initialPoll: 100,
-        maxPoll: 5000,
+        maxPoll: 2500,
         keepAliveInterval: 60000, // 60 * 1000 - every minute
         keepAliveCheck: 2000, // 2 * 1000 - every 2 seconds
         monitorActive: true
     };
 
     var settings = defaults;
-    cognifide.powershell.setOptions = function(options) {
+    var tabCompletions = null;
+    var lastUpdate = 0;
+    var attempts = 0;
+
+    cognifide.powershell.setOptions = function (options) {
         $.extend(settings, options);
     };
 
-
-    var tabCompletions = null;
-    var lastUpdate = 0;
+    cognifide.powershell.resetAttempts = function () {
+        attempts = 0;
+    };
 
     var checkInterval = setInterval(function() {
         if (new Date().getTime() - lastUpdate > settings.keepAliveInterval) {
@@ -99,7 +103,6 @@ extend(cognifide, "powershell");
                 var data = JSON.parse(json.d);
                 if (data["status"] == "working") {
                     var handle = data["handle"];
-                    var attempts = 0;
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
                     if (settings.monitorActive) {
@@ -112,10 +115,17 @@ extend(cognifide, "powershell");
                                     function(pollJson) {
                                         var jsonData = JSON.parse(pollJson.d);
                                         var finished = false;
-                                        if (jsonData["status"] == "working") {
+                                        if (jsonData["status"] === "working") {
+                                            displayResult(term, jsonData);
+                                            var textResult = jsonData["result"];
+                                            // value returned stop throttling
+                                            if (textResult || textResult.length > 0) {
+                                                attempts = 0;
+                                            }
                                             if (attempts >= 0) {
+                                                // no value returned start throttling
                                                 attempts++;
-                                                var newWait = Math.pow(initialWait, 1 + (attempts / 50));
+                                                var newWait = Math.pow(initialWait, 1 + (attempts / 10));
                                                 if (newWait > maxWait) {
                                                     newWait = maxWait;
                                                     attempts = -1; //stop incrementing
@@ -124,7 +134,7 @@ extend(cognifide, "powershell");
                                             } else {
                                                 poll(maxWait);
                                             }
-                                        } else if (jsonData["status"] == "partial") {
+                                        } else if (jsonData["status"] === "partial") {
                                             displayResult(term, jsonData);
                                             poll(initialWait);
                                         } else {
@@ -154,7 +164,7 @@ extend(cognifide, "powershell");
     }
 
     function displayResult(term, data) {
-        if (data["status"] != "partial") {
+        if (data["status"] != "partial" && data["status"] != "working") {
             term.resume();
             $("#working").hide();
             term.set_prompt(data["prompt"]);

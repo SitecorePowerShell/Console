@@ -22,7 +22,7 @@ namespace Cognifide.PowerShell.Core.Settings
             InitialPollMillis =
                 Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
             MaxmimumPollMillis =
-                Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 5000);
+                Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 2500);
             var settingStr =
                 Sitecore.Configuration.Settings.GetSetting("Cognifide.PowerShell.SerializationSizeBuffer", "5KB");
             var sizeLong = StringUtil.ParseSizeString(settingStr);

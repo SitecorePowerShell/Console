@@ -251,18 +251,6 @@ a.ps-link {
 
 .ui-state-highlight { background: white; }
 
-#ProgressOverlay {
-    color: black;
-    background: white;
-    padding: 8px 20px;
-    padding-left: 30px;
-    padding-right: 30px;
-    z-index: 1000;
-    font-family: sans-serif;
-    font-weight: normal;
-    opacity: .9;
-}
-
 .progressActivity { font-weight: bold; }
 
 #ProgressOverlay #progressbar {

@@ -572,7 +572,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (job != null)
             {
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                var result = session.Output.ToHtmlUpdate();
+                var result = session.Output.GetHtmlUpdate();
                 PrintSessionUpdate(result);
             }
         }
@@ -603,7 +603,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (Context.Job != null)
                 {
                     JobContext.PostMessage("ise:updateresults");
-                    JobContext.Job.Status.Result = scriptSession.Output.ToHtmlUpdate();
+                    JobContext.Job.Status.Result = scriptSession.Output.GetHtmlUpdate();
                     scriptSession.Output.Clear();
                     JobContext.Flush();
                 }

@@ -253,5 +253,5 @@ html {
     opacity: .9;
 }
 
-#Progress p { margin: 0; }
+#Progress p { margin: 0 2px; }
 #Progress h2 { margin: 0; font-size: 1.5em;}
