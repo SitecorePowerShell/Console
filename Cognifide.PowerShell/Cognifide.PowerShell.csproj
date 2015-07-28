@@ -176,10 +176,10 @@
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
     <Compile Include="Commandlets\BaseIndexCommand.cs" />
-    <Compile Include="Commandlets\Data\InitializeSearchIndexCommand.cs" />
-    <Compile Include="Commandlets\Data\ResumeSearchIndexCommand.cs" />
-    <Compile Include="Commandlets\Data\StopSearchIndexCommand.cs" />
-    <Compile Include="Commandlets\Data\SuspendSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\InitializeSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\ResumeSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\StopSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\Packages\NewSecuritySourceCommand.cs" />
@@ -200,7 +200,7 @@
     <Compile Include="Commandlets\Data\ExpandTokensCommand.cs" />
     <Compile Include="Commandlets\Data\GetArchiveCommand.cs" />
     <Compile Include="Commandlets\Data\GetDatabaseCommand.cs" />
-    <Compile Include="Commandlets\Data\GetSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\GetSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemByUriCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemCloneCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemFieldCommand.cs" />
@@ -211,7 +211,7 @@
     <Compile Include="Commandlets\Data\PublishItemCommand.cs" />
     <Compile Include="Commandlets\Data\RemoveItemLanguageCommand.cs" />
     <Compile Include="Commandlets\Data\InitializeItemCommand.cs" />
-    <Compile Include="Commandlets\Data\FindItemCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\FindItemCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseFormCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseListViewCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseShellCommand.cs" />

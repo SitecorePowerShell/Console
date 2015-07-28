@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Sitecore.ContentSearch;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsCommon.Get, "SearchIndex", DefaultParameterSetName = "Name")]
     [OutputType(typeof (ISearchIndex))]

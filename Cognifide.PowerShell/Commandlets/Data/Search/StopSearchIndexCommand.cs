@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using Sitecore.ContentSearch;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsLifecycle.Stop, "SearchIndex", DefaultParameterSetName = "Name")]
     [OutputType(typeof(ISearchIndex))]

@@ -11,7 +11,7 @@ using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsCommon.Find, "Item")]
     [OutputType(typeof(Item))]

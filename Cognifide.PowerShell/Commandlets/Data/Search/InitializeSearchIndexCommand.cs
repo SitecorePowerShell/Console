@@ -4,7 +4,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsData.Initialize, "SearchIndex", DefaultParameterSetName = "Name")]
     public class InitializeSearchIndexCommand : BaseIndexCommand
