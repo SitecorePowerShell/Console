@@ -37,9 +37,14 @@ namespace Cognifide.PowerShell.Core.Host
             return output.ToString();
         }
 
+        public bool HasUpdates()
+        {
+            return updatePointer < Count;
+        }
+
         public bool GetConsoleUpdate(StringBuilder output, int maxBufferSize)
         {
-            if (updatePointer >= Count)
+            if (!HasUpdates())
             {
                 return false;
             }

@@ -101,7 +101,7 @@ extend(cognifide, "powershell");
         getPowerShellResponse({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
             function(json) {
                 var data = JSON.parse(json.d);
-                if (data["status"] == "working") {
+                if (data["status"] === "working") {
                     var handle = data["handle"];
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
