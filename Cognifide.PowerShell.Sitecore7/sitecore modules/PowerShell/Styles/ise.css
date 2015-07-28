@@ -251,37 +251,37 @@ a.ps-link {
 
 .ui-state-highlight { background: white; }
 
-#ProgressOverlay {
-    font-weight: normal;
+.progressActivity { font-weight: bold; }
+
+#ProgressOverlay #progressbar {
+    margin-top: 8px;
+    width: 100%
+}
+
+#OperationProgress {
     margin: auto;
     margin-top: 30px;
     padding-left: 40px;
     padding-right: 30px;
-    width: 50%;
+    width: 90%;
 }
-
-#Progress h2 {
-    font-size: 1.3em;
-    padding: 5px;
-}
-
-#Progress p { padding: 4px; }
 
 #progressbar {
-    background-color: #012456;
-    border-radius: 13px; /* (height of inner div) / 2 + padding */
-    margin: 30px auto;
-    padding: 3px 5px 3px 3px;
-    width: 300px;
+    background-color: #f7f7f7;
+    border: #e3e3e3 1px solid;
+    margin-top: 4px;
 }
 
 #progressbar div {
-    background: white;
-    border: 1px solid white /*{borderColorHighlight}*/;
-    border-radius: 10px;
+    background: #5E5E5E;
+    border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
     height: 20px;
 }
 
+#progressbar {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
 .ui-menu-item { font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace; }
 
 .ui-autocomplete {
@@ -369,3 +369,11 @@ a.ps-link {
 }
 
 .scRibbonNavigatorButtonsGroupHeader { display: none; }
+
+#PleaseWait {
+    position: fixed;
+    bottom: 52px;
+    right: 38px;
+    text-align: right;
+    float: right;
+}

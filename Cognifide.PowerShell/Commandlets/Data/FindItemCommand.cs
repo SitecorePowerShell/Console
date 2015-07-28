@@ -22,7 +22,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [ValidateSet("*")]
         [Parameter(Mandatory = true, Position = 0)]
         public string Index { get; set; }
-
+        
         [Parameter]
         public SearchCriteria[] Criteria { get; set; }
 

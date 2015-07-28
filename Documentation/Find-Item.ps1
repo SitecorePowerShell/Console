@@ -5,6 +5,11 @@
     .DESCRIPTION
         The Find-Item command searches for items using the Sitecore Content Search API.
 
+    .PARAMETER Index
+        Name of the Index that will be used for the search:
+
+        Find-Item -Index sitecore_master_index -First 10
+
     .PARAMETER Criteria
         simple search criteria in the following example form:
         

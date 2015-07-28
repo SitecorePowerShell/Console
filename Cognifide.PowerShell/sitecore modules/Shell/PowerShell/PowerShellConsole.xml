@@ -26,7 +26,7 @@
       <Literal ID="Options" />
       <a href="#" class="tip_no_hints">No hints found</a>
       <Border Id="ProgressOverlay" Visible="false">
-        <Border class="ui-state-highlight ui-corner-all">
+        <Border>
           <p>
             <Literal Text="Progress" ID="Progress" GridPanel.NoWrap="true" GridPanel.VAlign="top"
                      GridPanel.Align="left" GridPanel.Style="padding:0px 4px 4px 4px" />

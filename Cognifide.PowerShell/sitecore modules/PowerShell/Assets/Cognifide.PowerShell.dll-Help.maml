@@ -8245,6 +8245,10 @@ System.String
           <maml:name>ReturnPath</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
+        <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
+          <maml:name>Feature</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -8273,6 +8277,38 @@ If not provided the feature root will be returned for all modules.
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
           <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
+        <maml:name>Feature</maml:name>
+        <maml:description>
+          <maml:para>Feature for which the root library should be provided. 
+If root item does not exist and -ReturnPath parameter is not specified - nothing will be returned, 
+If -ReturnPath parameter is provided the path in which the feature root should be located will be returned
+
+Valid features:
+- contentEditorContextMenu 
+- contentEditorGutters
+- contentEditorRibbon
+- controlPanel
+- functions
+- listViewExport
+- listViewRibbon
+- pipelineLoggedIn
+- pipelineLoggingIn
+- pipelineLogout
+- toolbox
+- startMenuReports
+- eventHandlers
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -11630,7 +11666,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:name>New-Role</command:name>
       <gl:group>Role</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Creates a new Sitecore role.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -11640,7 +11678,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <dev:version>3.2.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The New-Role command creates a new Sitecore role.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -11660,7 +11700,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="true" globbing="false" pipelineInput="true (ByPropertyName)" position="1" variableLength="false">
         <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Role name including domain. If no domain is specified - 'sitecore' will be used as the default value
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">AccountIdentity</command:parameterValue>
         <dev:type>
@@ -11674,7 +11716,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>PassThru</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Passes the processed object back into the pipeline.    
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -11686,24 +11730,71 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.String
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>Sitecore.Security.Accounts.Role
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; New-Role -Identity Michael
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Remove-Role</command:name>
       <gl:group>Role</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Removes a Sitecore role.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -11713,7 +11804,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <dev:version>3.2.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Remove-Role command removes a Sitecore role.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -11736,7 +11829,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
         <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Role name including domain. If no domain is specified - 'sitecore' will be used as the default value
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">AccountIdentity</command:parameterValue>
         <dev:type>
@@ -11750,7 +11845,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
         <maml:name>Instance</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Role instance like that returned by the Get-Role command.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Role</command:parameterValue>
         <dev:type>
@@ -11762,24 +11859,71 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.Security.Accounts.Role
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Remove-Role -Identity Michael
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Test-Account</command:name>
       <gl:group>Account</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Determines if the Sitecore role or user account exists.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -11789,7 +11933,10 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <dev:version>3.2.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Test-Account command determines if a Sitecore role or user account exists.
+
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -11809,7 +11956,9 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
         <maml:name>Identity</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Role or User name including domain. If no domain is specified - 'sitecore' will be used as the default value
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">AccountIdentity</command:parameterValue>
         <dev:type>
@@ -11823,7 +11972,13 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>AccountType</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Specifies which account to check existence.
+
+- All
+- Role
+- User
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -11835,17 +11990,64 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.String
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>True or False
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE------------------</maml:title>
+        <dev:code>PS master:\&gt; Test-Account -Identity Michael
+
+True
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -20969,6 +21171,291 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
+      <command:name>Initialize-SearchIndex</command:name>
+      <gl:group>SearchIndex</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Initialize</command:verb>
+      <command:noun>SearchIndex</command:noun>
+      <dev:version>3.2.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Name" position="1">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IncludeRemoteIndex</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndex</maml:name>
+        <command:parameter required="true" parameterSetName="Instance" position="1">
+          <maml:name>Index</maml:name>
+          <command:parameterValue required="true">ISearchIndex</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>IncludeRemoteIndex</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+        <maml:name>Index</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">ISearchIndex</command:parameterValue>
+        <dev:type>
+          <maml:name>ISearchIndex</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>IncludeRemoteIndex</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>AsJob</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
+      <command:name>Resume-SearchIndex</command:name>
+      <gl:group>SearchIndex</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Resume</command:verb>
+      <command:noun>SearchIndex</command:noun>
+      <dev:version>3.2.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Resume-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Name" position="1">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
+      <command:name>Stop-SearchIndex</command:name>
+      <gl:group>SearchIndex</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Stop</command:verb>
+      <command:noun>SearchIndex</command:noun>
+      <dev:version>3.2.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Stop-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Name" position="1">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
+      <command:name>Suspend-SearchIndex</command:name>
+      <gl:group>SearchIndex</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Suspend</command:verb>
+      <command:noun>SearchIndex</command:noun>
+      <dev:version>3.2.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Suspend-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Name" position="1">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
       <command:name>Test-Rule</command:name>
       <gl:group>Rule</gl:group>
       <maml:description>
@@ -21000,6 +21487,10 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
           <maml:name>InputObject</maml:name>
           <command:parameterValue required="true">PSObject</command:parameterValue>
         </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>RuleDatabase</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
@@ -21029,6 +21520,22 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
         <command:parameterValue required="false" variableLength="false">PSObject</command:parameterValue>
         <dev:type>
           <maml:name>PSObject</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>RuleDatabase</maml:name>
+        <maml:description>
+          <maml:para>Database in which the rules are located.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -22179,10 +22686,10 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
-      <command:name>Get-Index</command:name>
-      <gl:group>Index</gl:group>
+      <command:name>Get-SearchIndex</command:name>
+      <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para>Returns Sitecore database indices.
+        <maml:para>Returns sitecore Search indices.
 
 </maml:para>
       </maml:description>
@@ -22190,49 +22697,29 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Get</command:verb>
-      <command:noun>Index</command:noun>
+      <command:noun>SearchIndex</command:noun>
       <dev:version>3.2.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para>Returns Sitecore indices in context of a particular database.
+      <maml:para>Returns sitecore Search indices.
 
 </maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Get-Index</maml:name>
-        <command:parameter required="false" parameterSetName="From Database and Name" position="2">
-          <maml:name>Database</maml:name>
-          <command:parameterValue required="true">Database</command:parameterValue>
-        </command:parameter>
-        <command:parameter required="false" parameterSetName="From Database and Name" position="1">
+        <maml:name>Get-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Name" position="1">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="2" variableLength="false">
-        <maml:name>Database</maml:name>
-        <maml:description>
-          <maml:para>Database for which the indices should be retrieved.
-
-</maml:para>
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">Database</command:parameterValue>
-        <dev:type>
-          <maml:name>Database</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para>Name of the index to retrieve.
+          <maml:para>Name of the index to return.
 
 </maml:para>
         </maml:description>
@@ -22249,9 +22736,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>Sitecore.Data.Database
-
-</maml:name>
+          <maml:name />
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -22265,7 +22750,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>Sitecore.Data.Indexing.Index
+          <maml:name>Sitecore.Search.Index
 
 </maml:name>
           <maml:uri />
@@ -22290,7 +22775,13 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
     <command:examples>
       <command:example>
         <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt; Get-Index -Database "master"
+        <dev:code>PS master:\&gt;Get-SearchIndex | ft -auto
+ 
+Name   Analyzer                                      Directory
+----   --------                                      ---------
+system Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\__system lockFactory=Sitecore.Search.SitecoreLockFactory
+WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\WeBlog lockFactory=Sitecore.Search.SitecoreLockFactory
+
 
 </dev:code>
         <dev:remarks />
@@ -23782,116 +24273,6 @@ then format it to only show the template name, path and Key</dev:remarks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
-      <command:name>Get-SearchIndex</command:name>
-      <gl:group>SearchIndex</gl:group>
-      <maml:description>
-        <maml:para>Returns sitecore Search indices.
-
-</maml:para>
-      </maml:description>
-      <maml:copyright>
-        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
-      </maml:copyright>
-      <command:verb>Get</command:verb>
-      <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
-    </command:details>
-    <maml:description>
-      <maml:para>Returns sitecore Search indices.
-
-</maml:para>
-      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-        <maml:name>Get-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="2">
-          <maml:name>Name</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="2" variableLength="false">
-        <maml:name>Name</maml:name>
-        <maml:description>
-          <maml:para>Name of the index to return.
-
-</maml:para>
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-    </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name />
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>Sitecore.Search.Index
-
-</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
-    <command:terminatingErrors />
-    <command:nonTerminatingErrors />
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para>Help Author: Adam Najmanowicz, Michael West
-
-</maml:para>
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt;Get-SearchIndex | ft -auto
- 
-Name   Analyzer                                      Directory
-----   --------                                      ---------
-system Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\__system lockFactory=Sitecore.Search.SitecoreLockFactory
-WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\WeBlog lockFactory=Sitecore.Search.SitecoreLockFactory
-
-
-</dev:code>
-        <dev:remarks />
-      </command:example>
-    </command:examples>
-    <maml:relatedLinks>
-      <maml:navigationLink>
-        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
-        <maml:uri />
-      </maml:navigationLink>
-    </maml:relatedLinks>
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
-    <command:details>
       <command:name>New-ItemClone</command:name>
       <gl:group>ItemClone</gl:group>
       <maml:description>
@@ -24921,6 +25302,10 @@ $item.Title = "New Title"
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Find-Item</maml:name>
+        <command:parameter required="true" parameterSetName="__AllParameterSets" position="1">
+          <maml:name>Index</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Criteria</maml:name>
           <command:parameterValue required="true">SearchCriteria[]</command:parameterValue>
@@ -24952,6 +25337,24 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="1" variableLength="false">
+        <maml:name>Index</maml:name>
+        <maml:description>
+          <maml:para>Name of the Index that will be used for the search:
+
+Find-Item -Index sitecore_master_index -First 10
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
         <maml:name>Criteria</maml:name>
         <maml:description>
