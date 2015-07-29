@@ -19,10 +19,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
                 domain = StringUtil.GetPrefix(name, '\\');
                 account = StringUtil.GetPostfix(name, '\\');
             }
-            
-            if (!Regex.IsMatch(account, "^\\w[\\w\\s]*$", RegexOptions.Compiled))
+
+            if (!Regex.IsMatch(account, @"^\w[\w\s.\\_-]*$", RegexOptions.Compiled))
             {
-                throw new ArgumentException("The name \"{0}\" contains illegal characters.\n\nThe name can only contain the following characters: A-Z, a-z, 0-9 and space.", name);
+                throw new ArgumentException(String.Format("The name '{0}' contains illegal characters.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, and spaces.", account), account);
             }
 
             Domain = domain;
