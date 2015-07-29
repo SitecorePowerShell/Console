@@ -22645,9 +22645,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <command:name>Get-ItemByUri</command:name>
       <gl:group>ItemByUri</gl:group>
       <maml:description>
-        <maml:para>This command has been obsoleted - use "Get-Item -Uri" instead.
-
-</maml:para>
+        <maml:para />
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -22657,10 +22655,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       <dev:version>3.2.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para>This command has been obsoleted - use "Get-Item -Uri" instead.
-
-
-</maml:para>
+      <maml:para />
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -22688,60 +22683,17 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name />
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>Sitecore.Data.Items.Item
-
-</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para>Help Author: Adam Najmanowicz, Michael West
-
-</maml:para>
+        <maml:para />
       </maml:alert>
     </maml:alertSet>
-    <command:examples>
-      <command:example>
-        <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt; Get-Item -Path master: -Uri "sitecore://master/{658017A8-F2D9-45C2-B89E-1B55A9FCFEE2}?lang=en&amp;ver=1"
-
-</dev:code>
-        <dev:remarks />
-      </command:example>
-    </command:examples>
-    <maml:relatedLinks>
-      <maml:navigationLink>
-        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
-        <maml:uri />
-      </maml:navigationLink>
-    </maml:relatedLinks>
+    <command:examples />
+    <maml:relatedLinks />
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
@@ -25174,7 +25126,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Index</maml:name>
         <maml:description>
           <maml:para />
@@ -25216,7 +25168,7 @@ $item.Title = "New Title"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para />
@@ -25271,7 +25223,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para />
@@ -25326,7 +25278,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para />
@@ -25381,7 +25333,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para />
@@ -25440,7 +25392,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>Name of the index to return.
