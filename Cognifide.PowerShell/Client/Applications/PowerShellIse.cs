@@ -453,7 +453,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         result += scriptSession.Output.ToHtml();
                     }
                     result += string.Format("<pre style='background:red;'>{0}</pre>",
-                        scriptSession.GetExceptionString(exc));
+                        scriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
                     Context.ClientPage.ClientResponse.SetInnerHtml("Result", result);
                 }
                 if (settings.SaveLastScript)
@@ -618,7 +618,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         result += scriptSession.Output.ToHtml();
                     }
                     result += string.Format("<pre style='background:red;'>{0}</pre>",
-                        scriptSession.GetExceptionString(exc));
+                        scriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
 
                     Context.Job.Status.Result = result;
                     JobContext.PostMessage("ise:updateresults");

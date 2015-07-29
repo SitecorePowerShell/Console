@@ -23,16 +23,27 @@ namespace Cognifide.PowerShell.Core.Host
 {
     public class ScriptSession : IDisposable
     {
+        public enum ExceptionStringFormat
+        {
+            Default,
+            Html,
+            Console
+        }
+
         private const string HtmlExceptionFormatString =
             "<div class='white-space:normal; width:70%;'>{1}</div>{0}<strong>Of type</strong>: {3}{0}<strong>Stack trace</strong>:{0}{2}{0}";
 
         private const string HtmlInnerExceptionPrefix = "{0}<strong>Inner Exception:</strong>{1}";
-        private const string LineEndformat = "\n";
+        private const string HtmlLineEndFormat = "<br/>";
 
         private const string ConsoleExceptionFormatString =
             "[[;#f00;#000]Exception: {0}]\r\n" + "[[;#f00;#000]Type: {1}]\r\n" + "[[;#f00;#000]Stack trace:\r\n{2}]";
 
-        private const string ConsoleInnerExceptionPrefix = "\r\n[[b;#fff;#F00]Inner ] {0}";
+        private const string ConsoleInnerExceptionPrefix = "{0}[[b;#fff;#F00]Inner ] {1}";
+        private const string ConsoleLineEndFormat = "\r\n";
+
+        private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";
+        private const string ExceptionLineEndFormat = "\r\n";
 
         public static Dictionary<string, string> RenamedCommandlets = new Dictionary<string, string>
         {
@@ -227,7 +238,7 @@ namespace Cognifide.PowerShell.Core.Host
                 runspace.SessionStateProxy.SetVariable("ScriptSession", this);
                 if (PsVersion == null)
                 {
-                    PsVersion = (Version) ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
+                    PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
 
                 var sb = new StringBuilder(2048);
@@ -334,7 +345,7 @@ namespace Cognifide.PowerShell.Core.Host
 
             if (execResults != null && execResults.Any())
             {
-                foreach (var record in execResults.Select(p=> p.BaseObject).OfType<ErrorRecord>().Select(result => result))
+                foreach (var record in execResults.Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
                 {
                     Log.Error(record + record.InvocationInfo.PositionMessage, this);
                 }
@@ -350,34 +361,32 @@ namespace Cognifide.PowerShell.Core.Host
         {
         }
 
-        public string GetExceptionString(Exception exc)
+        public string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)
         {
-            var exception = String.Empty;
-            exception += String.Format(
-                HtmlExceptionFormatString,
-                LineEndformat,
-                exc.Message,
-                exc.StackTrace.Replace("\n", LineEndformat),
-                exc.GetType());
-            if (exc.InnerException != null)
+            var stacktrace = ex.StackTrace;
+            var exceptionPrefix = String.Empty;
+            var exceptionFormat = ExceptionFormatString;
+            var lineEndFormat = ExceptionLineEndFormat;
+            switch (format)
             {
-                exception += String.Format(HtmlInnerExceptionPrefix, LineEndformat,
-                    GetExceptionString(exc.InnerException));
+                case ExceptionStringFormat.Html:
+                    lineEndFormat = HtmlLineEndFormat;
+                    stacktrace = stacktrace.Replace("\n", lineEndFormat);
+                    exceptionPrefix = HtmlInnerExceptionPrefix;
+                    exceptionFormat = HtmlExceptionFormatString;
+                    break;
+                case ExceptionStringFormat.Console:
+                    lineEndFormat = ConsoleLineEndFormat;
+                    stacktrace = stacktrace.Replace("[", "%((%").Replace("]", "%))%");
+                    exceptionPrefix = ConsoleInnerExceptionPrefix;
+                    exceptionFormat = ConsoleExceptionFormatString;
+                    break;
             }
-            return exception;
-        }
-
-        public string GetExceptionConsoleString(Exception exc)
-        {
             var exception = String.Empty;
-            exception += String.Format(
-                ConsoleExceptionFormatString,
-                exc.Message,
-                exc.GetType(),
-                exc.StackTrace.Replace("[", "%((%").Replace("]", "%))%"));
-            if (exc.InnerException != null)
+            exception += String.Format(exceptionFormat, lineEndFormat, ex.Message, stacktrace, ex.GetType());
+            if (ex.InnerException != null)
             {
-                exception += String.Format(ConsoleInnerExceptionPrefix, GetExceptionConsoleString(exc.InnerException));
+                exception += String.Format(exceptionPrefix, lineEndFormat, GetExceptionString(ex.InnerException));
             }
             return exception;
         }

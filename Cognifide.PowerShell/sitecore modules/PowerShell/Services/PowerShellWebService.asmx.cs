@@ -124,7 +124,7 @@ namespace Cognifide.PowerShell.Console.Services
                             result = output +
                                      "\r\n[[;#f00;#000]Ooops, something went wrong... Do you need assistance?]\r\n" +
                                      "[[;#f00;#000]Send an email with the stack trace to adam@najmanowicz.com or contact me on Twitter @AdamNaj]\r\n\r\n" +
-                                     session.GetExceptionConsoleString(ex) + "\r\n",
+                                     session.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n",
                             prompt = string.Format("PS {0}>", session.CurrentLocation)
                         });
             }
@@ -167,6 +167,7 @@ namespace Cognifide.PowerShell.Console.Services
                     job.Status.Messages.Add("Ooops, something went wrong... Do you need assistance?");
                     job.Status.Messages.Add(
                         "Send an email with the stack trace to adam@najmanowicz.com or contact me on Twitter @AdamNaj");
+                    job.Status.Messages.Add(session.GetExceptionString(ex));
                     job.Status.LogException(ex);
                 }
                 else
