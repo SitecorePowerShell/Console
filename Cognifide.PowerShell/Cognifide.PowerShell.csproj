@@ -201,7 +201,6 @@
     <Compile Include="Commandlets\Data\GetArchiveCommand.cs" />
     <Compile Include="Commandlets\Data\GetDatabaseCommand.cs" />
     <Compile Include="Commandlets\Data\Search\GetSearchIndexCommand.cs" />
-    <Compile Include="Commandlets\Data\GetItemByUriCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemCloneCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemFieldCommand.cs" />
     <Compile Include="Commandlets\Data\GetItemReferenceCommand.cs" />
