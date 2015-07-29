@@ -581,7 +581,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (!string.IsNullOrEmpty(result))
             {
-                result = HttpUtility.HtmlEncode(result.Replace("\r\n", "<br/>")).Replace("\\", "&#92;");
+                result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
                 SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
                 ScriptResult.Visible = true;
             }
