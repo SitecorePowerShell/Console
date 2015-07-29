@@ -23,32 +23,28 @@ namespace Cognifide.PowerShell.Commandlets.Modules
 
         protected override void ProcessRecord()
         {
-            string feature;
-            var featureDefined = TryGetParameter("Feature", out feature);
-            if (Module != null)
+            if (!string.IsNullOrEmpty(Feature))
             {
-                if (ReturnPath)
-                {
-                    WriteObject(Module.GetProviderFeaturePath(feature));
-                }
-                else
-                {
-                    WriteItem(Module.GetFeatureRoot(feature));
-                }
-                return;
-            }
-            if (featureDefined)
-            {
-                if (!String.IsNullOrEmpty(feature))
+                if (Module != null)
                 {
                     if (ReturnPath)
                     {
-                        ModuleManager.Modules.ForEach(m => WriteObject(m.GetProviderFeaturePath(feature)));
+                        WriteObject(Module.GetProviderFeaturePath(Feature));
                     }
                     else
                     {
-                        ModuleManager.GetFeatureRoots(feature).ForEach(WriteItem);
+                        WriteItem(Module.GetFeatureRoot(Feature));
                     }
+                    return;
+                }
+
+                if (ReturnPath)
+                {
+                    ModuleManager.Modules.ForEach(m => WriteObject(m.GetProviderFeaturePath(Feature)));
+                }
+                else
+                {
+                    ModuleManager.GetFeatureRoots(Feature).ForEach(WriteItem);
                 }
             }
         }

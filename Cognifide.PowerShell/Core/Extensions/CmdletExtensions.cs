@@ -100,17 +100,10 @@ namespace Cognifide.PowerShell.Core.Extensions
             return account;
         }
 
-        public static bool TryGetAccessRight(this BaseCommand command, out AccessRight accessRight, bool mustDefine)
+        
+        public static bool TryParseAccessRight(this BaseCommand command, string accessRightName, out AccessRight accessRight)
         {
-            string accessRightName;
             accessRight = null;
-
-            if (!command.TryGetParameter("AccessRight", out accessRightName) && mustDefine)
-            {
-                command.WriteError(new ErrorRecord(new InvalidValueException("AccessRight is not defined"),
-                    "sitecore_no_access_right_defined", ErrorCategory.InvalidArgument, null));
-                return false;
-            }
 
             try
             {

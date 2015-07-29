@@ -31,6 +31,12 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
+        [Parameter(ParameterSetName = "Account ID, Item from Path", Mandatory = true)]
+        [Parameter(ParameterSetName = "Account ID, Item from ID", Mandatory = true)]
+        [Parameter(ParameterSetName = "Account ID, Item from Pipeline", Mandatory = true)]
+        [ValidateSet("*")]
+        public string AccessRight { get; set; }
+
         protected override void ProcessItem(Item item)
         {
             var accessRules = item.Security.GetAccessRules();
@@ -39,7 +45,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
             {
                 AccessRight accessRight;
 
-                if (!this.TryGetAccessRight(out accessRight, true)) return;
+                if (!this.TryParseAccessRight(AccessRight, out accessRight)) return;
 
                 Account account = this.GetAccountFromIdentity(Identity);
 
@@ -69,21 +75,19 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
             }
         }
 
-        public AddItemAclCommand()
+        public override object GetDynamicParameters()
         {
-            AddDynamicParameter<string>("AccessRight", new ParameterAttribute
+            if (!_reentrancyLock.WaitOne(0))
             {
-                ParameterSetName = "Account ID, Item from Path",
-                Mandatory = true
-            }, new ParameterAttribute
-            {
-                ParameterSetName = "Account ID, Item from ID",
-                Mandatory = true
-            }, new ParameterAttribute
-            {
-                ParameterSetName = "Account ID, Item from Pipeline",
-                Mandatory = true
-            }, new ValidateSetAttribute(WellKnownRights));
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("AccessRight", WellKnownRights);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
+
     }
 }

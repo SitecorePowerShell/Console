@@ -34,10 +34,11 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
         public override string Id { get; set; }
 
+        [ValidateSet("*")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by instance, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
-        public override Database Database { get; set; }
+        public override string Database { get; set; }
 
         [Parameter(ParameterSetName = "Rendering by filter, Item from Pipeline")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from Path")]

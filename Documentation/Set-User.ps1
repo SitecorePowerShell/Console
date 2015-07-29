@@ -31,6 +31,9 @@
     .PARAMETER CustomProperties
         Specifies a hashtable of custom properties to assign to the Sitecore user profile.
     
+    .PARAMETER Portrait
+        Specifies the Sitecore user portrait image.
+
     .INPUTS
         System.String
         Represents the identity of a user.

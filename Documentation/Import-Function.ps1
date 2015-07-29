@@ -10,7 +10,10 @@
 
     .PARAMETER Library
         Name of the library withing the "Functions" library. Provide this name to disambiguate a script from other scripts of the same name that might exist in multiple sub-librarties of the Functions library.
-    
+
+    .PARAMETER Module
+        Name of the module "Functions" are going to be taken from. Provide this name to disambiguate a script from other scripts of the same name that might exist in multiple Modules.
+        
     .INPUTS
         Sitecore.Data.Items.Item
     

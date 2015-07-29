@@ -24,11 +24,12 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter(ParameterSetName = "Module from ID", Mandatory = true)]
         public override string Id { get; set; }
 
+        [ValidateSet("*")]
         [Parameter(ParameterSetName = "Module from ID", ValueFromPipeline = true, Mandatory = true)]
         [Parameter(ParameterSetName = "Module from Database", ValueFromPipeline = true, Mandatory = true,
             ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = "Module from Name", ValueFromPipeline = true)]
-        public override Database Database { get; set; }
+        public override string Database { get; set; }
 
         [Parameter(ParameterSetName = "Module from Name", Mandatory = true)]
         public string Name { get; set; }
@@ -45,7 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
 
             if (databaseDefined)
             {
-                modules = WildcardFilter(Database.Name, modules, m => m.Database);
+                modules = WildcardFilter(Database, modules, m => m.Database);
             }
 
             if (nameDefined)

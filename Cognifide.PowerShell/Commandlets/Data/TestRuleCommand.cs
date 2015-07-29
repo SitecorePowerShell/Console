@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (bool))]
     public class TestRuleCommand : BaseCommand
     {
-        private readonly string[] databases = Factory.GetDatabaseNames(); 
+        private static readonly string[] databases = Factory.GetDatabaseNames(); 
         private RuleList<RuleContext> rules;
 
         [Parameter]
@@ -30,8 +30,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             Item currentItem = InputObject.BaseObject() as Item;
 
-            string ruleDatabaseName;
-            if (!TryGetParameter("RuleDatabase", out ruleDatabaseName))
+            string ruleDatabaseName = RuleDatabase;
+            if (!string.IsNullOrEmpty(ruleDatabaseName))
             {
                 ruleDatabaseName = currentItem != null
                     ? currentItem.Database.Name

@@ -34,9 +34,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter(ParameterSetName = "Item from ID, return ItemLink", Mandatory = true)]
         public override string Id { get; set; }
 
+        [ValidateSet("*")]
         [Parameter(ParameterSetName = "Item from ID, return Item")]
         [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
-        public override Database Database { get; set; }
+        public override string Database { get; set; }
 
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path, return Item")]

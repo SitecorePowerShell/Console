@@ -28,6 +28,10 @@
         - toolbox
         - startMenuReports
 	- eventHandlers
+	- webAPI
+        - pageEditorNotification
+        - isePlugin
+
     .INPUTS
         Sitecore.Data.Items.Item
     

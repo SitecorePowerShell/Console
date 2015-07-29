@@ -27,24 +27,36 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account ID, Item from ID", Mandatory = true)]
         public override string Id { get; set; }
 
+        [ValidateSet("*")]
         [Parameter(ParameterSetName = "Account ID, Item from ID")]
-        public override Database Database { get; set; }
+        public override string Database { get; set; }
+
+        [Parameter(ParameterSetName = "Account ID, Item from Path", Mandatory = true)]
+        [Parameter(ParameterSetName = "Account ID, Item from ID", Mandatory = true)]
+        [Parameter(ParameterSetName = "Account ID, Item from Pipeline", Mandatory = true)]
+        [ValidateSet("*")]
+        public string AccessRight { get; set; }
 
         protected override void ProcessItem(Item item)
         {
             AccessRight accessRight;
-            WriteObject(this.TryGetAccessRight(out accessRight, true) &&
+            WriteObject(this.TryParseAccessRight(AccessRight, out accessRight) &&
                         AuthorizationManager.IsAllowed(item, accessRight, Identity));
         }
 
-        public TestItemAclCommand()
+        public override object GetDynamicParameters()
         {
-            AddDynamicParameter<string>("AccessRight", new ParameterAttribute
+            if (!_reentrancyLock.WaitOne(0))
             {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = true,
-                Position = 1
-            }, new ValidateSetAttribute(WellKnownRights));            
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("AccessRight", WellKnownRights);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
+
     }
 }

@@ -56,9 +56,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Named Section", Mandatory = true)]
         public override string Id { get; set; }
 
+        [ValidateSet("*")]
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
-        public override Database Database { get; set; }
+        public override string Database { get; set; }
 
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]

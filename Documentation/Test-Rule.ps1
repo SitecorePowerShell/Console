@@ -5,6 +5,9 @@
     .DESCRIPTION
         Tests item or a stream of items against a sitecore serialized rules engine rule set.
 
+    .PARAMETER RuleDatabase 
+        Name of the database from which rules are pulled.
+
     .PARAMETER Rule
         Serialized sitecore rules engine rule. Such rules can be read from rule fields or created by user with the Read-Variable cmdlet.
 

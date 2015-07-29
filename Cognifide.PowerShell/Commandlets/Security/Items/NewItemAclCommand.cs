@@ -14,6 +14,10 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [ValidateNotNullOrEmpty]
         public virtual AccountIdentity Identity { get; set; }
 
+        [Parameter(Mandatory = true, Position = 1)]
+        [ValidateSet("*")]
+        public string AccessRight { get; set; }
+
         [Parameter(Mandatory = true, Position = 2)]
         public virtual PropagationType PropagationType { get; set; }
 
@@ -24,7 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         {
             AccessRight accessRight; 
             
-            if (!this.TryGetAccessRight(out accessRight, true)) return;
+            if (!this.TryParseAccessRight(AccessRight, out accessRight)) return;
 
             Account account = this.GetAccountFromIdentity(Identity);
 
@@ -32,14 +36,19 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
             WriteObject(accessRule);
         }
 
-        public NewItemAclCommand()
+        public override object GetDynamicParameters()
         {
-            AddDynamicParameter<string>("AccessRight", new ParameterAttribute
+            if (!_reentrancyLock.WaitOne(0))
             {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = true,
-                Position = 1
-            }, new ValidateSetAttribute(BaseItemAclCommand.WellKnownRights));            
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("AccessRight", BaseItemAclCommand.WellKnownRights);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
+
     }
 }

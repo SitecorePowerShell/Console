@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [OutputType(typeof(Item))]
     public class FindItemCommand : BaseCommand
     {
-        private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
+        private static readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
         [ValidateSet("*")]
         [Parameter(Mandatory = true, Position = 0)]
@@ -46,11 +46,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
         protected override void EndProcessing()
         {
-            string index;
-            if (!TryGetParameter("Index", out index))
-            {
-                index = "sitecore_master_index";
-            }
+            string index = string.IsNullOrEmpty(Index) ? "sitecore_master_index" : Index;
+
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
                 // get all items in medialibrary

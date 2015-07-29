@@ -21,14 +21,27 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         [Parameter]
         public bool IsAdministrator { get; set; }
 
+        [Parameter]
+        [ValidateSet("*")]
+        public string Portrait { get; set; }
+
         public SetUserCommand()
         {
             Enabled = true;
 
-            AddDynamicParameter<string>("Portrait", new ParameterAttribute
+        }
+        public override object GetDynamicParameters()
+        {
+            if (!_reentrancyLock.WaitOne(0))
             {
-                ParameterSetName = ParameterAttribute.AllParameterSets
-            }, new ValidateSetAttribute(portraits));
+                _reentrancyLock.Set();
+
+                SetValidationSetValues("Portrait", portraits);
+
+                _reentrancyLock.Reset();
+            }
+
+            return base.GetDynamicParameters();
         }
 
         static SetUserCommand()
@@ -100,13 +113,9 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 profile.Comment = Comment;
             }
 
-            string portrait;
-            if (TryGetParameter("Portrait", out portrait))
+            if (!String.IsNullOrEmpty(Portrait))
             {
-                if (!String.IsNullOrEmpty(portrait))
-                {
-                    profile.Portrait = portrait;
-                }
+                profile.Portrait = Portrait;
             }
 
             if (User.Current.IsAdministrator && IsParameterSpecified("IsAdministrator"))

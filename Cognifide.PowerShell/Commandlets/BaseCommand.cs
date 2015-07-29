@@ -186,10 +186,11 @@ namespace Cognifide.PowerShell.Commandlets
         }
 
         protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language,
-            Database database)
+            string databaseName)
         {
             if (item == null)
             {
+                Database database = Factory.GetDatabase(databaseName);
                 if (!String.IsNullOrEmpty(id))
                 {
                     var currentDb = database ?? CurrentDatabase;
@@ -238,79 +239,6 @@ namespace Cognifide.PowerShell.Commandlets
                 var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
                 WriteObject(psobj);
             }
-        }
-
-        protected void AddDynamicParameter<T>(string name, params Attribute[] attributes)
-        {
-            // create a parameter of type T.  
-            var parameter = new RuntimeDefinedParameter
-            {
-                Name = name,
-                ParameterType = typeof (T)
-            };
-
-            if (attributes != null)
-            {
-                foreach (var attribute in attributes)
-                {
-                    parameter.Attributes.Add(attribute);
-                }
-            }
-
-            parameters.Add(name, parameter);
-        }
-
-        protected bool TryGetSwitchParameter(string name, out bool isPresent)
-        {
-            bool value;
-            return TryGetSwitchParameter(name, out isPresent, out value);
-        }
-
-        protected bool TryGetSwitchParameter(string name, out bool isPresent, out bool value)
-        {
-            RuntimeDefinedParameter parameter;
-
-            if (TryGetDynamicParameter(name, out parameter))
-            {
-                isPresent = parameter.IsSet;
-                value = parameter.IsSet && (SwitchParameter) parameter.Value;
-                return true;
-            }
-
-            isPresent = false;
-            value = false;
-            return false;
-        }
-
-        // get a parameter of type T.  
-        public bool TryGetParameter<T>(string name, out T value)
-        {
-            RuntimeDefinedParameter parameter;
-
-            if (TryGetDynamicParameter(name, out parameter))
-            {
-                value = (T) parameter.Value;
-                return true;
-            }
-
-            value = default(T);
-
-            return false;
-        }
-
-        // try to get a dynamically added parameter  
-        internal bool TryGetDynamicParameter(string name, out RuntimeDefinedParameter value)
-        {
-            if (parameters.ContainsKey(name))
-            {
-                value = parameters[name];
-                return true;
-            }
-
-            // need to set this before leaving the method  
-            value = null;
-
-            return false;
         }
 
         public virtual object GetDynamicParameters()

@@ -28,15 +28,5 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
                 WriteObject(accessRights, true);
             }
         }
-
-        public GetItemAclCommand()
-        {
-            AddDynamicParameter<string>("AccessRight", new ParameterAttribute
-            {
-                ParameterSetName = ParameterAttribute.AllParameterSets,
-                Mandatory = false,
-                Position = 0
-            }, new ValidateSetAttribute(WellKnownRights));            
-        }
     }
 }
