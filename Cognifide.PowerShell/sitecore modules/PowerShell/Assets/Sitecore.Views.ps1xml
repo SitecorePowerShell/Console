@@ -666,6 +666,11 @@
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>IsRebuilding</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>IsSharded</Label>
             <Width>10</Width>
             <Alignment>left</Alignment>
@@ -679,6 +684,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>IndexingState</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>IsRebuilding</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>IsSharded</PropertyName>

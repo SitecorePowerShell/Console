@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [Cmdlet(VerbsData.Initialize, "SearchIndex", DefaultParameterSetName = "Name")]
     public class InitializeSearchIndexCommand : BaseIndexCommand
     {
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Instance")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Instance")]
         public ISearchIndex Index { get; set; }
 
         [Parameter]

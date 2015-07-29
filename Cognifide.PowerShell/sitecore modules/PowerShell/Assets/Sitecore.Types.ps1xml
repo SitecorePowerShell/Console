@@ -107,6 +107,12 @@
   <Type>
     <Name>Sitecore.ContentSearch.LuceneProvider.LuceneIndex</Name>
     <Members>
+      <ScriptProperty>
+        <Name>IsRebuilding</Name>
+        <GetScriptBlock>
+          [Sitecore.ContentSearch.Maintenance.IndexCustodian]::IsRebuilding($this)
+        </GetScriptBlock>
+      </ScriptProperty>
       <MemberSet>
         <Name>PsStandardMembers</Name>
         <Members>
@@ -115,18 +121,7 @@
             <ReferencedProperties>
               <Name>Name</Name>
               <Name>IndexingState</Name>
-              <Name>IsSharded</Name>
-            </ReferencedProperties>
-          </PropertySet>
-          <NoteProperty>
-            <Name>DefaultDisplayProperty</Name>
-            <Value>Name</Value>
-          </NoteProperty>
-          <PropertySet>
-            <Name>DefaultKeyPropertySet</Name>
-            <ReferencedProperties>
-              <Name>Name</Name>
-              <Name>IndexingState</Name>
+              <Name>IsRebuilding</Name>
               <Name>IsSharded</Name>
             </ReferencedProperties>
           </PropertySet>

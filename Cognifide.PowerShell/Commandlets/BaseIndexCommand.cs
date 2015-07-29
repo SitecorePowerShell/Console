@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets
         private readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
         [ValidateSet("*")]
-        [Parameter(ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
+        [Parameter(ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
         public string Name { get; set; }
 
         public override object GetDynamicParameters()
