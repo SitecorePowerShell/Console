@@ -25,11 +25,11 @@ namespace Cognifide.PowerShell.Commandlets.Session
         [ValidateSet("*")]
         public string Name { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         [ValidateSet("*")]
         public string Library { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         [ValidateSet("*")]
         public string Module { get; set; }
 
