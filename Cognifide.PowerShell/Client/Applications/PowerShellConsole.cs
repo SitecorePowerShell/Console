@@ -77,11 +77,15 @@ namespace Cognifide.PowerShell.Client.Applications
             var job =
                 JobManager.GetJob(PowerShellWebService.GetJobId(message.Arguments["guid"], message.Arguments["handle"]));
 
-            IMessage iMessage;
-            while (job.MessageQueue.GetMessage(out iMessage))
+            if (job != null)
             {
-                iMessage.Execute();
+                IMessage iMessage;
+                while (job.MessageQueue.GetMessage(out iMessage))
+                {
+                    iMessage.Execute();
+                }
             }
+
             if (message.Arguments.AllKeys.Contains("finished") && message.Arguments["finished"] == "true")
             {
                 ProgressOverlay.Visible = false;

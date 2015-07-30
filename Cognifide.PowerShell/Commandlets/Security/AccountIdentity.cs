@@ -22,7 +22,7 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             if (!Regex.IsMatch(account, @"^\w[\w\s.\\_-]*$", RegexOptions.Compiled))
             {
-                throw new ArgumentException(String.Format("The name '{0}' contains illegal characters.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, and spaces.", account), account);
+                throw new ArgumentException(String.Format("The name '{0}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", name), "name");
             }
 
             Domain = domain;
