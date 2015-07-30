@@ -123,7 +123,7 @@ namespace Cognifide.PowerShell.Console.Services
                             status = StatusError,
                             result = output + session.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n" +
                                      "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
-                                     "[[;#f00;#000]Please submit a support ticket here https://github.com/SitecorePowerShell/Console/ with error details, screenshots, and anything else that might help.]\r\n\r\n" +
+                                     "[[;#f00;#000]Please submit a support ticket here https://git.io/spe/ with error details, screenshots, and anything else that might help.]\r\n\r\n" +
                                      "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
                             prompt = string.Format("PS {0}>", session.CurrentLocation)
                         });
@@ -172,7 +172,7 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     job.Status.Messages.Add(exceptionMessage);
                     job.Status.Messages.Add("Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
-                    job.Status.Messages.Add("Please submit a support ticket here https://github.com/SitecorePowerShell/Console/ with error details, screenshots, and anything else that might help.");
+                    job.Status.Messages.Add("Please submit a support ticket here https://git.io/spe/ with error details, screenshots, and anything else that might help.");
                     job.Status.Messages.Add("We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
                 }
                 else
