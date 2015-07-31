@@ -105,7 +105,7 @@ namespace Cognifide.PowerShell.Console.Services
                 var jobOptions = new JobOptions(GetJobId(guid, handle), "PowerShell", "shell", this, "RunJob",
                     new object[] {session, command})
                 {
-                    AfterLife = new TimeSpan(0, 10, 0),
+                    AfterLife = new TimeSpan(0, 0, 20),
                     ContextUser = Sitecore.Context.User,
                     EnableSecurity = true,
                     ClientLanguage = Sitecore.Context.ContentLanguage
@@ -123,7 +123,7 @@ namespace Cognifide.PowerShell.Console.Services
                             status = StatusError,
                             result = output + session.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n" +
                                      "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
-                                     "[[;#f00;#000]Please submit a support ticket here https://git.io/spe/ with error details, screenshots, and anything else that might help.]\r\n\r\n" +
+                                     "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
                                      "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
                             prompt = string.Format("PS {0}>", session.CurrentLocation)
                         });
@@ -172,7 +172,7 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     job.Status.Messages.Add(exceptionMessage);
                     job.Status.Messages.Add("Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
-                    job.Status.Messages.Add("Please submit a support ticket here https://git.io/spe/ with error details, screenshots, and anything else that might help.");
+                    job.Status.Messages.Add("Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.Status.Messages.Add("We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
                 }
                 else
@@ -200,14 +200,21 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 result.status = StatusError;
                 result.result =
-                    "Can't find your command result. This might mean that your session has timed out or your script caused the application to restart.";
+                    "Can't find your command result. This might mean that your job has timed out or your script caused the application to restart.";
                 result.prompt = string.Format("PS {0}>", session.CurrentLocation);
-                session.Output.Clear();
-                return serializer.Serialize(result);
+
+                if (!session.Output.HasUpdates())
+                {
+                    session.Output.Clear();
+                    return serializer.Serialize(result);
+                }
+            }
+            else
+            {
+                result.handle = handle;
             }
 
-            result.handle = handle;
-            if (scriptJob.Status.Failed)
+            if ( scriptJob != null && scriptJob.Status.Failed)
             {
                 result.status = StatusError;
                 var message =
@@ -220,8 +227,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return serializer.Serialize(result);
             }
 
-            var complete = scriptJob.IsDone;
-
+            var complete = scriptJob == null || scriptJob.IsDone;
 
             var output = new StringBuilder();
             session.Output.GetConsoleUpdate(output, 131072);
