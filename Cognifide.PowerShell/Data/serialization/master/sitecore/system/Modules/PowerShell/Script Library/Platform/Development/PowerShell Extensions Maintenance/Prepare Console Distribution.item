@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8244
+content-length: 9041
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -33,6 +33,8 @@ the following path in your Script Library:
 }
 
 $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+
+# Build Standard Package
 
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
@@ -175,10 +177,17 @@ Export-Package -Project $package -Path "$packageName.xml"
 Export-Package -Project $package -Path "$packageName.zip" -Zip
 Download-File "$SitecorePackageFolder\$packageName.zip"
 
+# Build Minimal Package
+
+Import-Function -Name Compress-Archive
+
+Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath "$($SitecorePackageFolder)\SPE-$($Version) for Sitecore $($SitecoreVersion.Major) - CD.zip" -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled"
+Compress-Archive -Path "$($AppPath)bin" -DestinationPath "$($SitecorePackageFolder)\SPE-$($Version) for Sitecore $($SitecoreVersion.Major) - CD.zip" -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update
+Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath "$($SitecorePackageFolder)\SPE-$($Version) for Sitecore $($SitecoreVersion.Major) - CD.zip" -Include "web.config", "RemoteAutomation.asmx" -Update
 ----version----
 language: en
 version: 1
-revision: 05254647-6225-4f78-b109-7ba24e577716
+revision: c82911ea-8ae3-4f9c-9f94-aea8723ebb6b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -193,14 +202,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-05254647-6225-4f78-b109-7ba24e577716
+c82911ea-8ae3-4f9c-9f94-aea8723ebb6b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150708T154932:635719673720175781
+20150731T221906:635739779469719130Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8507
+content-length: 8693
 
 <#
     .SYNOPSIS
@@ -95,7 +95,10 @@ function Compress-Archive {
         
         [System.IO.Compression.CompressionLevel]$CompressionLevel = [System.IO.Compression.CompressionLevel]::Optimal,
         
-        [switch]$Update
+        [switch]$Update,
+        
+        [ValidateNotNullOrEmpty()]
+        [string[]]$Include = "*"
     )
 
     begin {
@@ -139,8 +142,8 @@ function Compress-Archive {
                 [System.IO.Compression.ZipArchive]$Archive,
                 [string]$Path
             )
-            
-            $file = New-Object System.IO.FileInfo $Path
+            Write-Verbose $Path
+            $file = New-Object System.IO.FileInfo (Resolve-Path -Path $Path).ProviderPath
             Write-Verbose "Adding the file $($file.Name) to the archive."
             [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($Archive, $file.FullName, $File.Name, $CompressionLevel) | Out-Null
         }
@@ -152,10 +155,10 @@ function Compress-Archive {
                 [string]$Path
             )
             
-            $directory = New-Object System.IO.DirectoryInfo $Path
+            $directory = New-Object System.IO.DirectoryInfo (Resolve-Path -Path $Path).ProviderPath
             Write-Verbose "Adding the directory $($directory.FullName) to the archive."
             $zipArchive.CreateEntry($directory.Name + '\') | Out-Null
-            $items = Get-ChildItem -Path $directory -Recurse
+            $items = Get-ChildItem -Path $directory -Recurse -Include $Include
             $dir = [Uri]($directory.Parent.FullName + '\')
             foreach($item in $items) {
                 $subdir = [Uri]($item.FullName + (@{$true="\";$false=""}[$item.PSIsContainer]))
@@ -205,7 +208,7 @@ function Compress-Archive {
 ----version----
 language: en
 version: 1
-revision: f990165f-4e4b-4aee-93d2-75d03522df67
+revision: 857ab097-947d-4842-b489-b846b89b718b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -220,14 +223,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f990165f-4e4b-4aee-93d2-75d03522df67
+857ab097-947d-4842-b489-b846b89b718b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150719T221710:635729410304888187
+20150731T211438:635739740782230533
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
