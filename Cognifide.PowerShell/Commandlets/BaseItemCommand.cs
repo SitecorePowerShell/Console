@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets
 {
     public abstract class BaseItemCommand : BaseLanguageAgnosticItemCommand
     {
+        public static string[] Cultures =
+            CultureInfo.GetCultures(CultureTypes.AllCultures).Where(culture => !string.IsNullOrEmpty(culture.Name)).Select(culture => culture.Name).ToArray();
+
+        [AutocompleteSet("Cultures")]
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path")]
         [Parameter(ParameterSetName = "Item from ID")]

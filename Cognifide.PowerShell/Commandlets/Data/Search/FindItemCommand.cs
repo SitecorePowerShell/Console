@@ -18,7 +18,10 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [OutputType(typeof(Item))]
     public class FindItemCommand : BaseCommand
     {
-        public static readonly string[] Indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
+        public static string[] Indexes
+        {
+            get { return ContentSearchManager.Indexes.Select(i => i.Name).ToArray(); }
+        }
 
         [AutocompleteSet("Indexes")]
         [Parameter(Mandatory = true, Position = 0)]

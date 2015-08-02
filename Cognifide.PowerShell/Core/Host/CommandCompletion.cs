@@ -46,24 +46,45 @@ namespace Cognifide.PowerShell.Core.Host
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
-            var options = new Hashtable(1);
-            var completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
-            options.Add("CustomArgumentCompleters",completers);
+            Hashtable options = null;//session.GetVariable("options") as Hashtable;
+            Hashtable completers = null;
+            if (options == null)
+            {
+                options = new Hashtable(1);
+            }
+
+            if (options.ContainsKey("CustomArgumentCompleters"))
+            {
+                completers = options["CustomArgumentCompleters"] as Hashtable;
+            }
+            if (completers == null)
+            {
+                completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
+                options.Add("CustomArgumentCompleters", completers);
+            }
+
             foreach (var completer in CognifideSitecorePowerShellSnapIn.Completers)
             {
-                completers.Add(completer.Key,
-                    session.GetScriptBlock(
-                        "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
-                        completer.Value));
+                if (!completers.ContainsKey(completer.Key))
+                {
+                    completers.Add(completer.Key,
+                        session.GetScriptBlock(
+                            "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
+                            completer.Value +
+                             " | ForEach-Object { New-Object System.Management.Automation.CompletionResult $_, $_, 'ParameterValue', $_ }"
+                         ));
+                }
             }
             session.SetVariable("options",options);
+
             const string TabExpansionHelper =
-                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
+                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
             session.ExecuteScriptPart(TabExpansionHelper);
 
             var teCmd = new Command("ScPsTabExpansionHelper");
             teCmd.Parameters.Add("inputScript", command);
             teCmd.Parameters.Add("cursorColumn", command.Length);
+            teCmd.Parameters.Add("options", options);
 
             var teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>().ToArray();
             var result = new List<string>();

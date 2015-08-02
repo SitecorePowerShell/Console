@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public abstract class BaseLanguageAgnosticItemCommand : BaseShellCommand
     {
-        private static readonly string[] Databases = Factory.GetDatabaseNames();
+        public static readonly string[] Databases = Factory.GetDatabaseNames();
 
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline", Mandatory = true, Position = 0)]

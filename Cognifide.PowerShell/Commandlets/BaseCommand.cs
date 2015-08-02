@@ -19,15 +19,8 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets
 {
-    public class BaseCommand : PSCmdlet, IDynamicParameters
+    public class BaseCommand : PSCmdlet
     {
-        private readonly RuntimeDefinedParameterDictionary parameters;
-
-        public BaseCommand()
-        {
-            parameters = new RuntimeDefinedParameterDictionary();
-        }
-
         protected bool IsCurrentDriveSitecore
         {
             get
@@ -222,14 +215,15 @@ namespace Cognifide.PowerShell.Commandlets
             }
         }
 
-        public virtual object GetDynamicParameters()
-        {
-            return parameters;
-        }
-
         protected bool IsParameterSpecified(string name)
         {
             return MyInvocation.BoundParameters.ContainsKey(name);
         }
+
+        protected static string WrapNameWithSpacesInQuotes(string name)
+        {
+            return name.Contains(" ") ? "\"" + name + "\"" : name;
+        }
+
     }
 }

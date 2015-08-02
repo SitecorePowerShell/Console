@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
@@ -18,9 +19,10 @@ namespace Cognifide.PowerShell.Commandlets.Session
     [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand
     {
-        private static string[] Functions;
-        private static string[] Libraries;
-        private static string[] Modules;
+        private static string[] functions;
+        private static string[] libraries;
+        private static string[] modules;
+
 
         [Parameter(Mandatory = true, Position = 0)]
         [AutocompleteSet("Functions")]
@@ -34,21 +36,47 @@ namespace Cognifide.PowerShell.Commandlets.Session
         [AutocompleteSet("Modules")]
         public string Module { get; set; }
 
-
-        public override object GetDynamicParameters()
+        public static string[] Functions
         {
-            if (Functions == null)
+            get
             {
-                UpdateCache();
+                if (functions == null)
+                {
+                    UpdateCache();
+                }
+                return functions;
             }
-
-            return base.GetDynamicParameters();
         }
+
+        public static string[] Libraries
+        {
+            get
+            {
+                if (functions == null)
+                {
+                    UpdateCache();
+                }
+                return libraries;
+            }
+        }
+
+        public static string[] Modules
+        {
+            get
+            {
+                if (functions == null)
+                {
+                    UpdateCache();
+                }
+                return modules;
+            }
+        }
+
 
         static ImportFunctionCommand()
         {
             ModuleManager.OnInvalidate += InvalidateCache;
-            Functions = null;
+            functions = null;
         }
 
         // Methods
@@ -126,6 +154,16 @@ namespace Cognifide.PowerShell.Commandlets.Session
             var localFunctions = new List<string>();
             var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.FunctionsFeature);
 
+            modules =
+                (from module in ModuleManager.Modules where module.Enabled select module.Name).ToList()
+                    .ConvertAll(WrapNameWithSpacesInQuotes)
+                    .ToArray();
+
+            libraries = (from root in roots
+                from Item library in root.GetChildren()
+                where library.TemplateName == TemplateNames.ScriptLibraryTemplateName
+                select library.Name).ToList().ConvertAll(WrapNameWithSpacesInQuotes).ToArray();
+
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
@@ -135,26 +173,20 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 try
                 {
                     var results = root.Database.SelectItems(query);
-                    localFunctions.AddRange(results.ToList().ConvertAll(p => p.Name));
+                    localFunctions.AddRange(
+                        results.ToList().ConvertAll(p => WrapNameWithSpacesInQuotes(p.Name)));
                 }
                 catch (Exception ex)
                 {
                     Log.Error("Error while querying for items", ex);
                 }
             }
-            Functions = localFunctions.ToArray();
-
-            Libraries = (from root in roots
-                from Item library in root.GetChildren()
-                where library.TemplateName == TemplateNames.ScriptLibraryTemplateName
-                select library.Name).ToArray();
-
-            Modules = (from module in ModuleManager.Modules where module.Enabled select module.Name).ToArray();
+            functions = localFunctions.ToArray();
         }
 
         public static void InvalidateCache(object sender, EventArgs e)
         {
-            Functions = null;
+            functions = null;
         }
     }
 }
