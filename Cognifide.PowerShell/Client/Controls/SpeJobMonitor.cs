@@ -152,7 +152,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 ContextUser = Sitecore.Context.User,
                 AtomicExecution = false,
                 EnableSecurity = true,
-                ClientLanguage = Sitecore.Context.ContentLanguage
+                ClientLanguage = Sitecore.Context.ContentLanguage,
+                AfterLife = new TimeSpan(0,0,0,10)
             }).Handle;
             ScheduleCallback();
         }
