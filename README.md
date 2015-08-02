@@ -3,26 +3,30 @@ Sitecore PowerShell Extensions
 
 The Sitecore PowerShell Extensions module (SPE) provides a robust environment for automating tasks within Sitecore.
 
-Consider some of the following examples of how SPE can improve your quality of life as a Sitecore developer/administrator:
+Consider some of the following examples to see how SPE can improve your quality of life as a Sitecore developer/administrator:
+
 - Make changes to a large number of pages:
 ```powershell
 Get-ChildItem -Path master:\content\home -Recurse | % { $_.Text += "<p>Updated with SPE</p>"  }
 ```
+
 - Find the oldest page on your site:
 ```powershell
 gci master:\content\home -Recurse | select Name,Id,"__Updated" | sort "__Updated"
 ```
+
 - Remove a file from the Data directory:
 ```powershell
 gci $SitecoreDataFolder\packages -Filter "readme.txt" | ri
 ```
+
 - Rename items in the Media Library:
 ```powershell
 gci "master:\media library\Images" | % { rni $_.ItemPath -NewName ($_.Name + "-old") }
 ```
 
-Note:
-Aliases and positional parameters were used in the above examples
+**Note:** Aliases and positional parameters were used in the above examples. Use *Get-Alias* to see them all.
+
 * gci = Get-ChildItem
 * ri = Remove-Item
 * rni = Rename-Item
@@ -35,15 +39,20 @@ If you have any questions, comments, or suggegstions with the SPE module, please
 
 Enjoy!
 
-[Adam Najmanowicz](http://blog.najmanowicz.com/) - [Cognifide](http://www.cognifide.com/)
+[Adam Najmanowicz](http://blog.najmanowicz.com/) - [Cognifide](http://www.cognifide.com/) -and SPE Senior Developer
 
-[Michael West](http://michaellwest.blogspot.com)
+[Michael West](http://michaellwest.blogspot.com) - SPE Developer
 
-[Mike Reynolds](http://sitecorejunkie.com/)
+[Mike Reynolds](http://sitecorejunkie.com/) - SPE Evangelist
 
-If you simply want to download the module go to the Sitecore Marketplace and download the latest from the
-[Sitecore PowerShell Extensions](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx) page.
+---
 
-[All kind of Resources about Sitecore PowerShell Extensions](http://blog.najmanowicz.com/sitecore-powershell-console/)
+### Resources
 
-[Training Videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b)
+Download the module from the [Sitecore Marketplace](http://marketplace.sitecore.net/en/Modules/Sitecore_PowerShell_console.aspx).
+
+Read the [SPE user guide](http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/).
+
+See a whole [variety of links to SPE material](http://blog.najmanowicz.com/sitecore-powershell-console/).
+
+Watch some quick start [training videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b).
