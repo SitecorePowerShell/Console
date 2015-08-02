@@ -75,7 +75,15 @@
             "So, do you come here often?",
             "Your script is important to us. Please hold.",
             "damn it! I've lost it again. Searching...",
-            "commencing infinite loop (this may take some time)"
+            "commencing infinite loop (this may take some time)",
+            "spinning up the hamster...",
+            "shovelling coal into the server...",
+            "programming the flux capacitor",
+            "loading humorous message...",
+            "yes there really are magic elves with an abacus working frantically in here.",
+            "elf down! We're cloning the elf that was supposed to get you the data.",
+            "rewinding the tape.",
+            "it's 12:38 and I'm trying to concentrate."
         };
     }
 }

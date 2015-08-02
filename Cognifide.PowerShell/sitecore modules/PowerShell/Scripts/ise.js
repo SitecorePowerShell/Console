@@ -43,7 +43,7 @@ extend(cognifide, "powershell");
             "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
-            "You can find more documentation in the Sitecore PowerShell Extensions <a href='https://www.gitbook.com/book/michaellwest/sitecore-powershell-extensions/details' target='_blank'>book</a>."
+            "You can find more documentation in the Sitecore PowerShell Extensions <a href='http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/' target='_blank'>book</a>."
         ];
 
         window.parent.focus();
