@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 
@@ -24,7 +25,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter(ParameterSetName = "Module from ID", Mandatory = true)]
         public override string Id { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter(ParameterSetName = "Module from ID", ValueFromPipeline = true, Mandatory = true)]
         [Parameter(ParameterSetName = "Module from Database", ValueFromPipeline = true, Mandatory = true,
             ValueFromPipelineByPropertyName = true)]

@@ -1,5 +1,6 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
 
@@ -9,13 +10,15 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
     [OutputType(typeof (AccessRule))]
     public class NewItemAclCommand : BaseCommand
     {
+        public static readonly string[] WellKnownRights = BaseItemAclCommand.WellKnownRights;
+
         [Alias("User")]
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public virtual AccountIdentity Identity { get; set; }
 
         [Parameter(Mandatory = true, Position = 1)]
-        [ValidateSet("*")]
+        [AutocompleteSet("WellKnownRights")]
         public string AccessRight { get; set; }
 
         [Parameter(Mandatory = true, Position = 2)]
@@ -35,20 +38,5 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
             var accessRule = AccessRule.Create(account, accessRight, PropagationType, SecurityPermission);
             WriteObject(accessRule);
         }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("AccessRight", BaseItemAclCommand.WellKnownRights);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
-        }
-
     }
 }

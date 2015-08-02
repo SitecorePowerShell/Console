@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7477
+content-length: 7541
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -25,6 +25,7 @@ function Convert-ToOldDate {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true,Position = 0,ValueFromPipeline = $true)]
+    [ValidateNotNullOrEmpty()]
     [Sitecore.Data.Items.Item]$Item,
     [switch]$Recurse)
 
@@ -79,6 +80,7 @@ function Process-Item {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+    [ValidateNotNullOrEmpty()]
     [Sitecore.Data.Items.Item]$Item,
 
     [Parameter()]
@@ -189,7 +191,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: 381fd180-5b89-47d2-8ce5-59c9662389a0
+revision: eda9cf77-8954-42cb-aba0-2bc0af9d8594
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -204,14 +206,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-381fd180-5b89-47d2-8ce5-59c9662389a0
+eda9cf77-8954-42cb-aba0-2bc0af9d8594
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 34
 
-20150725T132736
+20150802T050550:635740887503343997
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

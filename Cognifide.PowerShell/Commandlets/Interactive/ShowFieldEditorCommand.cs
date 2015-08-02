@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -56,7 +57,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Named Section", Mandatory = true)]
         public override string Id { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
         public override string Database { get; set; }

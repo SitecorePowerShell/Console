@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Modules
@@ -10,6 +11,8 @@ namespace Cognifide.PowerShell.Commandlets.Modules
     [OutputType(typeof (Item), ParameterSetName = new[] {"By Feature Name", "Module from Pipeline"})]
     public class GetSpeModuleFeatureRoot : BaseCommand
     {
+        public static readonly string[] Features = IntegrationPoints.Libraries.Keys.ToArray();
+
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Module from Pipeline")]
         public Module Module { get; set; }
@@ -17,7 +20,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter]
         public SwitchParameter ReturnPath { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Features")]
         [Parameter(Mandatory = true, Position = 0)]
         public string Feature { get; set; }
 
@@ -47,20 +50,6 @@ namespace Cognifide.PowerShell.Commandlets.Modules
                     ModuleManager.GetFeatureRoots(Feature).ForEach(WriteItem);
                 }
             }
-        }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("Feature", IntegrationPoints.Libraries.Keys.ToArray());
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
         }
     }
 }

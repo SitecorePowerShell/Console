@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
@@ -34,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
         public override string Id { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by instance, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]

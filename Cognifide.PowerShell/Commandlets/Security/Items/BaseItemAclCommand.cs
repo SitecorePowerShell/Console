@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using System.Xml;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -45,7 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account Filter, Item from ID", Mandatory = true)]
         public override string Id { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter(ParameterSetName = "Account ID, Item from ID")]
         [Parameter(ParameterSetName = "Account Filter, Item from ID")]
         public override string Database { get; set; }

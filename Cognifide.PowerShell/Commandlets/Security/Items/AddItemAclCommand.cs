@@ -1,6 +1,7 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
@@ -34,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account ID, Item from Path", Mandatory = true)]
         [Parameter(ParameterSetName = "Account ID, Item from ID", Mandatory = true)]
         [Parameter(ParameterSetName = "Account ID, Item from Pipeline", Mandatory = true)]
-        [ValidateSet("*")]
+        [AutocompleteSet("WellKnownRights")]
         public string AccessRight { get; set; }
 
         protected override void ProcessItem(Item item)
@@ -74,20 +75,5 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
                 WriteItem(item);
             }
         }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("AccessRight", WellKnownRights);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
-        }
-
     }
 }

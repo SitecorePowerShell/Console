@@ -4,8 +4,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
-using System.Reflection;
-using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
@@ -13,7 +11,6 @@ using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -24,22 +21,6 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public class BaseCommand : PSCmdlet, IDynamicParameters
     {
-        protected static ManualResetEvent _reentrancyLock = new ManualResetEvent(false);
-
-        private static readonly FieldInfo ValidValues = typeof(ValidateSetAttribute).GetField("validValues",
-            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
-
-        public void SetValidationSetValues(string parameterName, IEnumerable<string> values)
-        {
-            if (!MyInvocation.MyCommand.Parameters.ContainsKey(parameterName)) return;
-
-            var attribute = MyInvocation.MyCommand.Parameters[parameterName].Attributes.FirstOrDefault(each => each is ValidateSetAttribute) as ValidateSetAttribute;
-            if (attribute != null)
-            {
-                ValidValues.SetValue(attribute, values.ToArray());
-            }
-        }
-
         private readonly RuntimeDefinedParameterDictionary parameters;
 
         public BaseCommand()

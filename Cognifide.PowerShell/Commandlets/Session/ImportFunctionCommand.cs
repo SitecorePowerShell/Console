@@ -8,6 +8,7 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
@@ -17,40 +18,28 @@ namespace Cognifide.PowerShell.Commandlets.Session
     [OutputType(typeof (object))]
     public class ImportFunctionCommand : BaseShellCommand
     {
-        private static string[] functions;
-        private static string[] libraries;
-        private static string[] modules;
+        private static string[] Functions;
+        private static string[] Libraries;
+        private static string[] Modules;
 
         [Parameter(Mandatory = true, Position = 0)]
-        [ValidateSet("*")]
+        [AutocompleteSet("Functions")]
         public string Name { get; set; }
 
         [Parameter]
-        [ValidateSet("*")]
+        [AutocompleteSet("Libraries")]
         public string Library { get; set; }
 
         [Parameter]
-        [ValidateSet("*")]
+        [AutocompleteSet("Modules")]
         public string Module { get; set; }
 
 
         public override object GetDynamicParameters()
         {
-            if (functions == null)
+            if (Functions == null)
             {
                 UpdateCache();
-            }
-
-
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("Name", functions);
-                SetValidationSetValues("Library", libraries);
-                SetValidationSetValues("Module", modules);
-
-                _reentrancyLock.Reset();
             }
 
             return base.GetDynamicParameters();
@@ -59,7 +48,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
         static ImportFunctionCommand()
         {
             ModuleManager.OnInvalidate += InvalidateCache;
-            functions = null;
+            Functions = null;
         }
 
         // Methods
@@ -153,19 +142,19 @@ namespace Cognifide.PowerShell.Commandlets.Session
                     Log.Error("Error while querying for items", ex);
                 }
             }
-            functions = localFunctions.ToArray();
+            Functions = localFunctions.ToArray();
 
-            libraries = (from root in roots
+            Libraries = (from root in roots
                 from Item library in root.GetChildren()
                 where library.TemplateName == TemplateNames.ScriptLibraryTemplateName
                 select library.Name).ToArray();
 
-            modules = (from module in ModuleManager.Modules where module.Enabled select module.Name).ToArray();
+            Modules = (from module in ModuleManager.Modules where module.Enabled select module.Name).ToArray();
         }
 
         public static void InvalidateCache(object sender, EventArgs e)
         {
-            functions = null;
+            Functions = null;
         }
     }
 }

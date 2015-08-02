@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -13,7 +14,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (bool))]
     public class TestRuleCommand : BaseCommand
     {
-        private static readonly string[] databases = Factory.GetDatabaseNames(); 
+        private static readonly string[] Databases = Factory.GetDatabaseNames(); 
         private RuleList<RuleContext> rules;
 
         [Parameter]
@@ -22,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public PSObject InputObject  { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter]
         public string RuleDatabase { get; set; }
 
@@ -52,20 +53,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
             };
 
             WriteObject(!rules.Rules.Any() || rules.Rules.Any(rule => rule.Evaluate(ruleContext)));
-        }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("RuleDatabase", databases);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
         }
     }
 }

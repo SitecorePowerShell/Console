@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Resources;
@@ -16,13 +17,13 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
     [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     public class SetUserCommand : BaseCommand
     {
-        private static readonly string[] portraits;
+        private static readonly string[] Portraits;
 
         [Parameter]
         public bool IsAdministrator { get; set; }
 
         [Parameter]
-        [ValidateSet("*")]
+        [AutocompleteSet("Portraits")]
         public string Portrait { get; set; }
 
         public SetUserCommand()
@@ -30,24 +31,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             Enabled = true;
 
         }
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("Portrait", portraits);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
-        }
 
         static SetUserCommand()
         {
             // Extracted example from Sitecore.Shell.Applications.Security.EditUser.EditUserPage.cs in Sitecore.Client.dll
-            portraits = (Factory.GetConfigNodes("portraits/collection")
+            Portraits = (Factory.GetConfigNodes("portraits/collection")
                 .Cast<XmlNode>()
                 .SelectMany(xmlNode => new ListString(xmlNode.InnerText),
                     (xmlNode, src) => ImageBuilder.ResizeImageSrc(src, 16, 16).Trim())).ToArray();

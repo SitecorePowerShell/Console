@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -33,7 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter(ParameterSetName = "Item from ID, return ItemLink", Mandatory = true)]
         public override string Id { get; set; }
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Databases")]
         [Parameter(ParameterSetName = "Item from ID, return Item")]
         [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
         public override string Database { get; set; }
