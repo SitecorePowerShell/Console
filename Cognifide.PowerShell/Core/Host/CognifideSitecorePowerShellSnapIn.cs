@@ -9,7 +9,9 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Xml;
 using Cognifide.PowerShell.Core.Provider;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 using Pipeline = Sitecore.Pipelines.Pipeline;
@@ -20,14 +22,15 @@ namespace Cognifide.PowerShell.Core.Host
     public class CognifideSitecorePowerShellSnapIn : CustomPSSnapIn
     {
         private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
+        private static readonly Dictionary<string, string> completers = new Dictionary<string, string>();
 
         /// <summary>
         ///     Specify the providers that belong to this custom PowerShell snap-in.
         /// </summary>
-        private Collection<ProviderConfigurationEntry> _providers;
+        private Collection<ProviderConfigurationEntry> providers;
 
         private bool initialized;
-
+        
         static CognifideSitecorePowerShellSnapIn()
         {
             var cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
@@ -113,9 +116,9 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     Initialize();
                 }
-                if (_providers == null)
+                if (providers == null)
                 {
-                    _providers = new Collection<ProviderConfigurationEntry>
+                    providers = new Collection<ProviderConfigurationEntry>
                     {
                         new ProviderConfigurationEntry("Sitecore PowerShell Provider",
                             typeof (PsSitecoreItemProvider),
@@ -123,13 +126,18 @@ namespace Cognifide.PowerShell.Core.Host
                     };
                 }
 
-                return _providers;
+                return providers;
             }
         }
 
         public static List<CmdletConfigurationEntry> Commandlets
         {
             get { return commandlets; }
+        }
+
+        public static Dictionary<string, string> Completers
+        {
+            get { return completers; }
         }
 
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
@@ -144,6 +152,16 @@ namespace Cognifide.PowerShell.Core.Host
                     var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
                     Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type,
                         helpPath));
+                    foreach (var property in type.GetProperties())
+                    {
+                        var propAttribute = (AutocompleteSetAttribute)
+                            property.GetCustomAttributes(typeof (AutocompleteSetAttribute), true).FirstOrDefault();
+                        if (propAttribute != null)
+                        {
+                            Completers.Add(attribute.VerbName + "-" + attribute.NounName+":"+property.Name, 
+                                "["+type.FullName+"]::"+propAttribute.Values);
+                        }
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
@@ -17,9 +18,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [OutputType(typeof(Item))]
     public class FindItemCommand : BaseCommand
     {
-        private static readonly string[] indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
+        public static readonly string[] Indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
-        [ValidateSet("*")]
+        [AutocompleteSet("Indexes")]
         [Parameter(Mandatory = true, Position = 0)]
         public string Index { get; set; }
         
@@ -193,20 +194,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             skipBeforeEnd = 0;
             // Concat not support by Sitecore.
             return firstObjects.ToList().Concat(query.Skip(takenAndSkipped + skipBeforeEnd).Take(takeLast)).ToList();
-        }
-
-        public override object GetDynamicParameters()
-        {
-            if (!_reentrancyLock.WaitOne(0))
-            {
-                _reentrancyLock.Set();
-
-                SetValidationSetValues("Index", indexes);
-
-                _reentrancyLock.Reset();
-            }
-
-            return base.GetDynamicParameters();
         }
     }
 

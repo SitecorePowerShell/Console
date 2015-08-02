@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
@@ -45,7 +46,17 @@ namespace Cognifide.PowerShell.Core.Host
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
-
+            var options = new Hashtable(1);
+            var completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
+            options.Add("CustomArgumentCompleters",completers);
+            foreach (var completer in CognifideSitecorePowerShellSnapIn.Completers)
+            {
+                completers.Add(completer.Key,
+                    session.GetScriptBlock(
+                        "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
+                        completer.Value));
+            }
+            session.SetVariable("options",options);
             const string TabExpansionHelper =
                 @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn ){ TabExpansion2 $inputScript $cursorColumn |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
             session.ExecuteScriptPart(TabExpansionHelper);
@@ -71,12 +82,9 @@ namespace Cognifide.PowerShell.Core.Host
             teCmd.Parameters.Add("lastWord", lastToken);
             var teResult = session.ExecuteCommand(teCmd, false, true).Cast<string>();
 
-            //IEnumerable<string> teResult = session.ExecuteScriptPart(string.Format("TabExpansion \"{0}\" \"{1}\"", command, lastToken),false,true).Cast<string>();
             var result = new List<string>();
             WrapResults(truncatedCommand, teResult, result, aceResponse);
 
-            //int prefixFileNameLength = Path.GetFileName(lastToken).Length;
-            //string pathPrefix = lastToken.Substring(lastToken.Length - prefixFileNameLength);
             var splitPathResult =
                 (session.ExecuteScriptPart(string.Format("Split-Path \"{0}*\" -IsAbsolute", lastToken), false, true)
                     .FirstOrDefault());
@@ -87,7 +95,6 @@ namespace Cognifide.PowerShell.Core.Host
                 var commandLine = string.Format("Resolve-Path \"{0}*\"", lastToken);
                 var psResults = session.ExecuteScriptPart(commandLine, false, true);
                 var rpResult = psResults.Cast<PathInfo>().Select(p => p.Path);
-                //result.AddRange(rpResult.Select(l => truncatedCommand + l.Path));
                 WrapResults(truncatedCommand, rpResult, result, aceResponse);
             }
             else
