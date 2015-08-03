@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4797
+content-length: 4793
 
 Import-Function Render-ReportField
 # Set defaults
@@ -99,10 +99,10 @@ foreach($field in $customOptions.Keys){
 }
 
 $result = Read-Variable -Parameters `
-    @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="550px"; Tab="Custom Fields"}, `
-    @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="550px"; Tab="Standard Fields"} `
+    @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
+    @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"} `
     -Description "This dialog shows fields to be displayed in the report." `
-    -Title "Report fields" -Width 600 -Height 600    
+    -Title "Report fields" -Width 600 -Height 740
 
 if($result -eq "cancel"){
     exit;
@@ -137,7 +137,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: d9831ae9-5d9f-42ac-b46a-5e36c1dc4280
+revision: 5cd07ede-dfbf-446c-92b4-2f6aa40da0fc
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -152,14 +152,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d9831ae9-5d9f-42ac-b46a-5e36c1dc4280
+5cd07ede-dfbf-446c-92b4-2f6aa40da0fc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150727T083524
+20150803T115223
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
