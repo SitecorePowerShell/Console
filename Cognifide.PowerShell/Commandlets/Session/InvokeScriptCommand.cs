@@ -23,6 +23,9 @@ namespace Cognifide.PowerShell.Commandlets.Session
         [Alias("FullName", "FileName")]
         public string Path { get; set; }
 
+        [Parameter]
+        public object[] ArgumentList { get; set; }
+
         // Methods
         protected override void ProcessRecord()
         {
@@ -49,7 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;
             
             object sendToPipeline = InvokeCommand.InvokeScript(script, false,
-                PipelineResultTypes.Output | PipelineResultTypes.Error, null);
+                PipelineResultTypes.Output | PipelineResultTypes.Error, null, ArgumentList);
             WriteObject(sendToPipeline);
         }
     }
