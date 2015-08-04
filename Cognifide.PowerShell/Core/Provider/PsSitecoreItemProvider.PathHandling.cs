@@ -20,6 +20,13 @@ namespace Cognifide.PowerShell.Core.Provider
             return currentItem;
         }
 
+        private Item GetItemById(string partialPath,string id)
+        {
+            var databaseName = partialPath.IndexOf(':') < 0 ? PSDriveInfo.Name : partialPath.Substring(0, partialPath.IndexOf(':'));
+            var db = Factory.GetDatabase(databaseName);
+            return db != null ? db.GetItem(Sitecore.Data.ID.Parse(id)) : null;
+        }
+
         protected override bool IsValidPath(string path)
         {
             try

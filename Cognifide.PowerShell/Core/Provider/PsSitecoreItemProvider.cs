@@ -99,12 +99,21 @@ namespace Cognifide.PowerShell.Core.Provider
                 Item item;
                 if (!TryGetDynamicParam(ItemParam, out item))
                 {
+                    string id;
                     path = path.Replace("\\", "/");
                     if (path.Contains("../"))
                     {
                         path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
                     }
-                    item = GetItemForPath(path);
+
+                    if (TryGetDynamicParam(IdParam, out id))
+                    {
+                        item = GetItemById(path, id);
+                    }
+                    else
+                    {
+                        item = GetItemForPath(path);
+                    }
                 }
 
                 if (item == null)
