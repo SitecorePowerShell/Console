@@ -106,14 +106,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
                     }
 
-                    if (TryGetDynamicParam(IdParam, out id))
-                    {
-                        item = GetItemById(path, id);
-                    }
-                    else
-                    {
-                        item = GetItemForPath(path);
-                    }
+                    item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
 
                 if (item == null)
