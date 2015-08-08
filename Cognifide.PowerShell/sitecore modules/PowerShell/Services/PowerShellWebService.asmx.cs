@@ -230,8 +230,7 @@ namespace Cognifide.PowerShell.Console.Services
             var complete = scriptJob == null || scriptJob.IsDone;
 
             var output = new StringBuilder();
-            session.Output.GetConsoleUpdate(output, 131072);
-            var partial = session.Output.HasUpdates();
+            var partial = session.Output.GetConsoleUpdate(output, 131072);
             result.result = output.ToString().TrimEnd('\r', '\n');
             result.prompt = string.Format("PS {0}>", session.CurrentLocation);
 

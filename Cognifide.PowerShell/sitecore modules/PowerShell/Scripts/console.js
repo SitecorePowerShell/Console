@@ -102,6 +102,7 @@ extend(cognifide, "powershell");
             function(json) {
                 var data = JSON.parse(json.d);
                 if (data["status"] === "working") {
+                    displayResult(term, data);
                     var handle = data["handle"];
                     var initialWait = settings.initialPoll;
                     var maxWait = settings.maxPoll;
