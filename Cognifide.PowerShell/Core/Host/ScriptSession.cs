@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -58,12 +59,34 @@ namespace Cognifide.PowerShell.Core.Host
             {"Initialize-SearchIndex", "Rebuild-SearchIndex"}
         };
 
+        public static Dictionary<string, Type> Accelerators = new Dictionary<string, Type>
+        {
+            {"Item", typeof(Sitecore.Data.Items.Item)},
+            {"AccountIdentity", typeof(Cognifide.PowerShell.Commandlets.Security.AccountIdentity)},
+            {"SearchResultItem", typeof(Sitecore.ContentSearch.SearchTypes.SearchResultItem)},
+            {"Database", typeof(Sitecore.Data.Database)},
+            {"Account", typeof(Sitecore.Security.Accounts.Account)},
+            {"User", typeof(Sitecore.Security.Accounts.User)},
+            {"Role", typeof(Sitecore.Security.Accounts.Role)},
+            {"AccessRule", typeof(Sitecore.Security.AccessControl.AccessRule)},
+        };
+
         private bool disposed;
         private bool initialized;
         private Pipeline pipeline;
         private readonly ScriptingHost host;
         private readonly Runspace runspace;
 
+        static ScriptSession()
+        {
+            var typeAccelerators = typeof(PSObject).Assembly.GetType("System.Management.Automation.TypeAccelerators");
+            MethodInfo mi = typeAccelerators.GetMethod("Add", BindingFlags.Public | BindingFlags.Static);
+
+            foreach (var accelerator in Accelerators)
+            {
+                mi.Invoke(null, new object[] { accelerator.Key, accelerator.Value });
+            }
+        }
         internal ScriptSession(string applianceType, bool personalizedSettings)
         {
             // Create and open a PowerShell runspace.  A runspace is a container 
