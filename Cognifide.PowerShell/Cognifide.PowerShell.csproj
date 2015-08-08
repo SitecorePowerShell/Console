@@ -367,6 +367,7 @@
     <Compile Include="Core\Utility\SpeTimer.cs" />
     <Compile Include="Core\Utility\WriteLogCommand.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
+    <Compile Include="Core\Validation\MiscAutocompleteSets.cs" />
     <Compile Include="Core\VersionDecoupling\Interfaces\IDateConverter.cs" />
     <Compile Include="Core\VersionDecoupling\TypeResolver.cs" />
     <Compile Include="Core\VersionDecoupling\VersionResolver.cs" />

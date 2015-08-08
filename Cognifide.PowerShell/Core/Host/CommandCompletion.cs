@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 
 namespace Cognifide.PowerShell.Core.Host
@@ -63,17 +64,13 @@ namespace Cognifide.PowerShell.Core.Host
                 options.Add("CustomArgumentCompleters", completers);
             }
 
+            foreach (var miscCompleter in MiscAutocompleteSets.Completers)
+            {
+                AddCompleter(session, completers, miscCompleter);
+            }
             foreach (var completer in CognifideSitecorePowerShellSnapIn.Completers)
             {
-                if (!completers.ContainsKey(completer.Key))
-                {
-                    completers.Add(completer.Key,
-                        session.GetScriptBlock(
-                            "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
-                            completer.Value +
-                             " | ForEach-Object { New-Object System.Management.Automation.CompletionResult $_, $_, 'ParameterValue', $_ }"
-                         ));
-                }
+                AddCompleter(session, completers, completer);
             }
             session.SetVariable("options",options);
 
@@ -91,6 +88,19 @@ namespace Cognifide.PowerShell.Core.Host
 
             WrapResults3(truncatedCommand, teResult, result, aceResponse);
             return result;
+        }
+
+        private static void AddCompleter(ScriptSession session, Hashtable completers, KeyValuePair<string, string> completer)
+        {
+            if (!completers.ContainsKey(completer.Key))
+            {
+                completers.Add(completer.Key,
+                    session.GetScriptBlock(
+                        "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
+                        completer.Value +
+                        " | ForEach-Object { New-Object System.Management.Automation.CompletionResult $_, $_, 'ParameterValue', $_ }"
+                        ));
+            }
         }
 
         public static IEnumerable<string> FindMatches2(ScriptSession session, string command, bool aceResponse)
