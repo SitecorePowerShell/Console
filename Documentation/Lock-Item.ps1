@@ -15,6 +15,9 @@
             Fully Qualified Name
                 Example: sitecore\adam
 
+    .PARAMETER Force
+        Forces the item to be locked by the specified user even if it's currently locked by another user.
+
     .PARAMETER Id
         Id of the item to be processed.
 

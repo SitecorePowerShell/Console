@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.Core.Extensions
     {
         public static bool Is(this string value, string compare)
         {
-            return String.Compare(value, compare, StringComparison.CurrentCultureIgnoreCase) == 0;
+            return String.Compare(value, compare, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         public static bool IsNot(this string value, string compare)

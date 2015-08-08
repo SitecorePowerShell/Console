@@ -14,7 +14,7 @@
       </maml:copyright>
       <command:verb>Write</command:verb>
       <command:noun>Log</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Write-Log command writes text to the Sitecore event log with the specified logging level.
@@ -162,7 +162,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Workflow</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised.
@@ -424,7 +424,7 @@ This command used to be named Execute-Workflow - a matching alias added for comp
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemWorkflowEvent command returns entries from the history store notifying of workflow state change for the specified item.
@@ -671,7 +671,7 @@ User     : sitecore\admin
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemWorkflowEvent</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new entry in the history store notifying of workflow state change.
@@ -963,7 +963,7 @@ User     : sitecore\admin
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-UpdatePackage command generates a Sitecore update package containing a serialization diff list.
@@ -1184,7 +1184,7 @@ IMPORTANT! This functionality requires changes to web.config file on your siteco
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UpdatePackageDiff</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Performs a diff operation between the Source and taget path akin to Sitecore Courier. The diff is the difference that takes the content of Source folder and transforms it to Target.
@@ -1367,7 +1367,7 @@ Export-UpdatePackage -Path C:\temp\SerializationDiff.update -CommandList $diff -
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>UpdatePackage</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Install-UpdatePackage command installs update packages that are used created by Sitecore CMS updates, TDS, and Courier.
@@ -1541,7 +1541,7 @@ This command used to be named Execute-Script - a matching alias added for compat
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>Script</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a script from Sitecore PowerShell Extensions Script Library.
@@ -1557,12 +1557,20 @@ This command used to be named Execute-Script - a matching alias added for compat
           <maml:name>Item</maml:name>
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>ArgumentList</maml:name>
+          <command:parameterValue required="true">Object[]</command:parameterValue>
+        </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Invoke-Script</maml:name>
         <command:parameter required="true" parameterSetName="Path" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>ArgumentList</maml:name>
+          <command:parameterValue required="true">Object[]</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1597,6 +1605,20 @@ PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with 
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="true">
+        <maml:name>ArgumentList</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="true">Object[]</command:parameterValue>
+        <dev:type>
+          <maml:name>Object[]</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -1679,7 +1701,7 @@ PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with 
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Cache</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Cache command retrieves a Sitecore cache.
@@ -1796,7 +1818,7 @@ master[data]                             True           3427    7420654   209715
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ScriptSession command returns the list of PowerShell Extension Sessions running in background.
@@ -1969,7 +1991,7 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>UserAgent</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Returns current user's browser user agent. Works only if Console is running outside of job. (e.g. in ISE - script needs to be run from the dropdown under the "Execute" button)    
@@ -2050,7 +2072,7 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Function</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Function command imports a function script from the script library's "Functions" folder.
@@ -2065,11 +2087,11 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="__AllParameterSets" position="named">
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Library</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
-        <command:parameter required="true" parameterSetName="__AllParameterSets" position="named">
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>Module</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
@@ -2092,14 +2114,14 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Library</maml:name>
         <maml:description>
           <maml:para>Name of the library withing the "Functions" library. Provide this name to disambiguate a script from other scripts of the same name that might exist in multiple sub-librarties of the Functions library.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2108,14 +2130,14 @@ Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrom
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="true" globbing="false" pipelineInput="false" position="named" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Module</maml:name>
         <maml:description>
           <maml:para>Name of the module "Functions" are going to be taken from. Provide this name to disambiguate a script from other scripts of the same name that might exist in multiple Modules.
 
 </maml:para>
         </maml:description>
-        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
@@ -2201,7 +2223,7 @@ that was imported as a result of the execution of the following line</dev:remark
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ScriptSession</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes a persistent Script Session from memory.
@@ -2350,7 +2372,7 @@ that was imported as a result of the execution of the following line</dev:remark
       </maml:copyright>
       <command:verb>Restart</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Restarts the Sitecore Application pool.    
@@ -2427,7 +2449,7 @@ that was imported as a result of the execution of the following line</dev:remark
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>HostProperty</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets the current host property and perssits them for the future if used with -Persist parameter.
@@ -2598,7 +2620,7 @@ that was imported as a result of the execution of the following line</dev:remark
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Role command imports (deserializes) Sitecore roles from the Sitecore server filesystem.
@@ -2837,7 +2859,7 @@ Sitecore.Security.Accounts.Role
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Role command exports (serializes) Sitecore roles to the filesystem on the server.
@@ -3111,7 +3133,7 @@ Sitecore.Security.Accounts.Role
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-User command imports (deserializes) Sitecore users from the Sitecore server filesystem.
@@ -3348,7 +3370,7 @@ Sitecore.Security.Accounts.User
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-User command serializes a Sitecore user to the filesystem on the server.
@@ -3648,7 +3670,7 @@ Export-User -Filter "sitecore\*"
       </maml:copyright>
       <command:verb>Import</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Import-Item command deserializes the specified items. 
@@ -4024,7 +4046,7 @@ Import-Item -path "c:\project\data\serialization\master\sitecore\content\article
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Preset</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Preset command returns a serialization preset for use with Export-Item.
@@ -4155,7 +4177,7 @@ AssetsOptimiser master   /sitecore/system/Modules/Optimiser
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Item command serializes Sitecore items to the filesystem. The alias for the command is Serialize-Item.
@@ -4494,7 +4516,7 @@ Export-Item -id "{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}"
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-TaskSchedule command returns one or more task schedule items, based on name/database filter, path or simply converting a Sitecore item.
@@ -4715,7 +4737,7 @@ Check DSN Messages               master          True     False        False    
       </maml:copyright>
       <command:verb>Start</command:verb>
       <command:noun>TaskSchedule</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes a task schedule either passed from Get-Schedule, based on Item or Schedule path.
@@ -4932,7 +4954,7 @@ Check Bounced Messages           master          True     False        False    
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertFrom-CliXml command imports a CliXml string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell.
@@ -5068,7 +5090,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       </maml:copyright>
       <command:verb>ConvertTo</command:verb>
       <command:noun>CliXml</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The ConvertTo-CliXml command exports Microsoft .NET Framework objects from PowerShell to a CliXml string.
@@ -5199,7 +5221,7 @@ PS master:\&gt; $myCliXmlItem | ConvertFrom-CliXml
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds a rendering to a chosen device for the presentation of an item.
@@ -5571,7 +5593,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Layout command returns the layout for the specified item.
@@ -5800,7 +5822,7 @@ If Device is specified but no layout is specified the command will return an err
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>LayoutDevice</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-LayoutDevice command returns the layout for the specified device.
@@ -5972,7 +5994,7 @@ If Device is specified but no layout is specified the command will return an err
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters.
@@ -6469,7 +6491,7 @@ If Device is specified but no layout is specified the command will return an err
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new rendering definition that can later be added to an item. Most parameters can later be overriden when calling Add-Rendering.
@@ -6954,7 +6976,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner.
@@ -7466,7 +7488,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Layout</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets item layout for a specific device provided
@@ -7721,7 +7743,7 @@ PS master:\&gt; Add-Rendering -Item $item -PlaceHolder "main" -Rendering $render
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>Rendering</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering.
@@ -8061,7 +8083,7 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModule</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SpeModule command returns the object that describes a Sitecore PowerShell Extensions Module.
@@ -8291,7 +8313,7 @@ System.String
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SpeModuleFeatureRoot</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-SpeModuleFeatureRoot command returns library item or path to the library where scripts for a particular integration point should be located for a specific module.
@@ -8474,7 +8496,7 @@ Get-SpeModuleFeatureRoot -Module $module -Feature listViewExport -ReturnPath
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Session command returns one or more Sitecore user sessions using the specified criteria.
@@ -8643,7 +8665,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Login</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs a user in and performs further script instructions in the context of the user.
@@ -8766,7 +8788,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Logout</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Logs the current user out.
@@ -8844,7 +8866,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Session</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Session command removes user sessions in Sitecore.
@@ -8985,7 +9007,7 @@ Created                LastRequest            SessionID                  UserNam
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Checks if a user can perform an operation on an item.
@@ -9316,7 +9338,7 @@ The item is delivered to the Add-ItemAcl from the pipeline and returned to the p
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets.
@@ -9597,7 +9619,7 @@ Any previuous security information on the item is removed.</dev:remarks>
       </maml:copyright>
       <command:verb>Clear</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes all security information from the item specified.
@@ -9845,7 +9867,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sets new security information on an item. The new rules will overwrite the existing security descriptors on the item.
@@ -10133,7 +10155,7 @@ Any previuous security information on the item is removed.</dev:remarks>
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Adds new access rule to an item allowing for the item to have the access granted or denied for a provided role or user.
@@ -10641,7 +10663,7 @@ The item is delivered to the Add-ItemAcl from the pipeline and returned to the p
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemAcl</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves security access rules from an item.
@@ -10976,7 +10998,7 @@ Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru
       </maml:copyright>
       <command:verb>Lock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Lock-Item command unlocks the item.
@@ -10992,6 +11014,10 @@ Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru
           <command:parameterValue required="true">Item</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Force</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PassThru</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
@@ -11005,6 +11031,10 @@ Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru
         <command:parameter required="true" parameterSetName="Item from Path" position="1">
           <maml:name>Path</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Force</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PassThru</maml:name>
@@ -11026,6 +11056,10 @@ Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Force</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PassThru</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
@@ -11036,6 +11070,22 @@ Add-ItemAcl -Path master:\content\Settings -AccessRules $acl -PassThru
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>Force</maml:name>
+        <maml:description>
+          <maml:para>Forces the item to be locked by the specified user even if it's currently locked by another user.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>PassThru</maml:name>
         <maml:description>
@@ -11231,7 +11281,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>Protect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Protect-Item command protects the item by making it read-only.
@@ -11452,7 +11502,7 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-Item command unlocks the item specified with parameters.
@@ -11672,7 +11722,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>Unprotect</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unprotect-Item command removes protection from the item provided to it.
@@ -11892,7 +11942,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-Role command creates a new Sitecore role.
@@ -12018,7 +12068,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Role command removes a Sitecore role.
@@ -12147,7 +12197,7 @@ Home   False    {en, ja-JP, de-DE, da}   {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} 
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>Account</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Test-Account command determines if a Sitecore role or user account exists.
@@ -12280,7 +12330,7 @@ True
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Add-RoleMember command assigns Sitecore users as members of the specified role.
@@ -12421,7 +12471,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Disable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Disable-User command gets a user and disables the account in Sitecore.
@@ -12570,7 +12620,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Enable</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Enable-User command gets a user and enables the account in Sitecore.
@@ -12719,7 +12769,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Domain command returns all the domains or the specified domain.
@@ -12850,7 +12900,7 @@ default         default\        True                   False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Role</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Role command returns one or more Sitecore roles using the specified criteria.
@@ -13032,7 +13082,7 @@ sitecore\Developer                       sitecore     False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-RoleMember command returns the Sitecore users in the specified role.
@@ -13262,7 +13312,7 @@ Name        : sitecore\Developer
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-User command returns a user or performs a search to retrieve multiple users from Sitecore.
@@ -13513,7 +13563,7 @@ sitecore\michael         sitecore     False           False
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-Domain command creates a domain if it does not exist.
@@ -13649,7 +13699,7 @@ Represents the name of a domain.
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The New-User command creates a new user in Sitecore.
@@ -13925,7 +13975,7 @@ sitecore\michael2        sitecore     False           False
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>Domain</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-Domain command removes the specified domain.
@@ -14053,7 +14103,7 @@ Represents the name of a domain.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>RoleMember</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-RoleMember command gets a role and removes members of the Sitecore role.
@@ -14194,7 +14244,7 @@ Represents the identity of a role.
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Remove-User command removes a user from Sitecore.
@@ -14363,7 +14413,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-User command sets a user profile properties in Sitecore.
@@ -14764,7 +14814,7 @@ PS master:\&gt;$user.Profile.GetCustomProperty("HireDate")
       </maml:copyright>
       <command:verb>Set</command:verb>
       <command:noun>UserPassword</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Set-UserPassword command resets or changes a user password.
@@ -14962,7 +15012,7 @@ Represents the instance of a user.
       </maml:copyright>
       <command:verb>Unlock</command:verb>
       <command:noun>User</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Unlock-User command gets a user and unlocks the account in Sitecore.
@@ -15120,7 +15170,7 @@ One or more user instances.
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>SecuritySource</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new User &amp; Role source that can be added to a Sitecore package.
@@ -15398,7 +15448,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>Export</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Export-Package command creates a Sitecore installation package as either a .zip containing all items and files or .xml with project definition.
@@ -15645,7 +15695,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Package commands loads the package definition (xml) and returns the package project. Package definitions can be created by PowerShell scripts using the Export-Package command (without the -Zip parameter)
@@ -15793,7 +15843,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>Install</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. The alias for the command is Import-Package.
@@ -15975,7 +16025,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitFileSource</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -16182,7 +16232,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ExplicitItemSource</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. This source only includes items explicitly added to it and not their children.
@@ -16443,7 +16493,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>FileSource</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new File source that can be added to a Sitecore package. Folder provided as Root will be added as well as all of its content provided it matches the filters.
@@ -16690,7 +16740,7 @@ saves it in the Sitecore Package folder + gives you an option to download the sa
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemSource</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems.
@@ -16990,7 +17040,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>Package</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new Sitecore install package object that allows for further addition of items and files &amp; further export to file.
@@ -17161,7 +17211,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>Close</command:verb>
       <command:noun>Window</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Ensures the runner proces window is closed after the script finishes execution.    
@@ -17238,7 +17288,7 @@ saves it in the Sitecore Package folder+ gives you an option to download the sav
       </maml:copyright>
       <command:verb>Receive</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executing this command with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
@@ -17672,7 +17722,7 @@ A new versioned media item in Danish language is created and returned. If the me
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>File</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executing this command with file path on the server provides script users with means to download a file to their computer.
@@ -17932,7 +17982,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       </maml:copyright>
       <command:verb>Invoke</command:verb>
       <command:noun>ShellCommand</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu.
@@ -18174,7 +18224,7 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
       </maml:copyright>
       <command:verb>Read</command:verb>
       <command:noun>Variable</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Prompts user to provide values for variables required by the script to perform its operation.
@@ -18525,7 +18575,7 @@ The editors for some other are set by providing the "editor" value
       </maml:copyright>
       <command:verb>Send</command:verb>
       <command:noun>SheerMessage</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Sends a sheer message to the app in which context the script is executing.
@@ -18663,7 +18713,7 @@ The editors for some other are set by providing the "editor" value
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Alert</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Pauses the script and shows an alert specified in the -Title to the user. Once user clicks the OK button - script execution resumes.
@@ -18802,7 +18852,7 @@ The editors for some other are set by providing the "editor" value
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Application</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Executes Sitecore Sheer application, allows for passing additional parameters, launching it on desktop in cooperative or in Modal mode.
@@ -19079,7 +19129,7 @@ Show-Application `
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Confirm</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows a user a confirmation request message box.
@@ -19223,7 +19273,7 @@ yes
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>FieldEditor</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Field editor for a provided item allows for editing all or selected list of fields.
@@ -19788,7 +19838,7 @@ The dialog will preserve the item sections.</dev:remarks>
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Input</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows prompt message box asking user to provide a text string.
@@ -20028,7 +20078,7 @@ PS master:\&gt; Write-Host "The new name you've chosen is '$($newName)'"
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Show-ListView command sends the output from a command to a grid view window where the output is displayed in an interactive table.
@@ -20479,7 +20529,7 @@ like in the case of languages which are aggregarde form the "Languages" property
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>ModalDialog</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the command execution.
@@ -20758,7 +20808,7 @@ like in the case of languages which are aggregarde form the "Languages" property
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>Result</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows a Sheer dialog with text results showing the output of the script or another control selected by the user based on either control name or Url to the control.
@@ -21071,7 +21121,7 @@ Show-Result -Url "/sitecore/shell/Applications/PowerShell/PowerShellIse"
       </maml:copyright>
       <command:verb>Show</command:verb>
       <command:noun>YesNoCancel</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Shows Yes/No/Cancel dialog to the user and returns user choice as a string value.
@@ -21262,7 +21312,7 @@ cancel
       </maml:copyright>
       <command:verb>Update</command:verb>
       <command:noun>ListView</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>This command updates the data displayed by List View that called the script the command is part of.
@@ -21424,7 +21474,7 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
       </maml:copyright>
       <command:verb>Test</command:verb>
       <command:noun>Rule</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Tests item or a stream of items against a sitecore serialized rules engine rule set.
@@ -21599,7 +21649,7 @@ Get-ChildItem $root.ProviderPath | ? { Test-Rule -InputObject $_ -Rule $rule -Ru
       </maml:copyright>
       <command:verb>Add</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a version of the item in a new language based on an existing language version. 
@@ -21975,7 +22025,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>ConvertFrom</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Converts an item from a clone to a fully independent item.
@@ -22155,7 +22205,7 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
       </maml:copyright>
       <command:verb>Expand</command:verb>
       <command:noun>Token</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Expand-Token command expands the tokens in fields for items.
@@ -22367,7 +22417,7 @@ Some example of tokens include:
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Archive</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Archive command returns Sitecore archives in context of the specified database.
@@ -22498,7 +22548,7 @@ recyclebin                                   1950
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>Database</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-Database command retrieves one or more Sitecore Database objects based on name or item passed to it.
@@ -22642,61 +22692,6 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
-      <command:name>Get-ItemByUri</command:name>
-      <gl:group>ItemByUri</gl:group>
-      <maml:description>
-        <maml:para />
-      </maml:description>
-      <maml:copyright>
-        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
-      </maml:copyright>
-      <command:verb>Get</command:verb>
-      <command:noun>ItemByUri</command:noun>
-      <dev:version>3.2.0</dev:version>
-    </command:details>
-    <maml:description>
-      <maml:para />
-      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
-    </maml:description>
-    <command:syntax>
-      <command:syntaxItem>
-        <maml:name>Get-ItemByUri</maml:name>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>ItemUri</maml:name>
-          <command:parameterValue required="true">String</command:parameterValue>
-        </command:parameter>
-      </command:syntaxItem>
-    </command:syntax>
-    <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
-        <maml:name>ItemUri</maml:name>
-        <maml:description>
-          <maml:para />
-        </maml:description>
-        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
-        <dev:type>
-          <maml:name>String</maml:name>
-          <maml:uri />
-          <maml:description>
-            <maml:para />
-          </maml:description>
-        </dev:type>
-      </command:parameter>
-    </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
-    <command:terminatingErrors />
-    <command:nonTerminatingErrors />
-    <maml:alertSet>
-      <maml:alert>
-        <maml:para />
-      </maml:alert>
-    </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
-  </command:command>
-  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
-    <command:details>
       <command:name>Get-ItemClone</command:name>
       <gl:group>ItemClone</gl:group>
       <maml:description>
@@ -22709,7 +22704,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemClone command returns all the clones for the specified item.
@@ -22898,7 +22893,7 @@ master               {en, de-DE, es-ES, pt-BR...}   False      False
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemField</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Retrieves item fields as either names or fields or template fields.
@@ -23267,7 +23262,7 @@ __Preview                           __Preview                          Appearanc
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReference</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemReference command returns all items linked to the specified item. If -ItemLink parameter is used the command will return links rather than items.
@@ -23552,7 +23547,7 @@ TargetPath         : /sitecore/content/Home
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemReferrer</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemReferrer command returns all items referring to the specified item. If -ItemLink parameter is used the command will return links rather than items.
@@ -23839,7 +23834,7 @@ TargetPath         : /sitecore/content/Home
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>ItemTemplate</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Get-ItemTemplate command returns the item template and its base templates.
@@ -24083,7 +24078,7 @@ then format it to only show the template name, path and Key</dev:remarks>
       </maml:copyright>
       <command:verb>New</command:verb>
       <command:noun>ItemClone</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Creates a new item clone based on the item provided.
@@ -24357,7 +24352,7 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
       </maml:copyright>
       <command:verb>Publish</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing.
@@ -24656,7 +24651,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
       </maml:copyright>
       <command:verb>Remove</command:verb>
       <command:noun>ItemLanguage</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>Removes Language version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
@@ -24940,7 +24935,7 @@ If Language parameter is not is not specified but ExcludeLanguage is provided, t
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Initialize-Item command wraps Sitecore item with PowerShell property equivalents of fields for easy assignment of values to fields and automatic saving.
@@ -25080,17 +25075,21 @@ $item.Title = "New Title"
       <command:name>Initialize-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Rebuilds the Sitecore index.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Initialize</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Rebuild-SearchIndex command rebuilds Sitecore index. This command is an alias for Initialize-SearchIndex.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -25129,7 +25128,9 @@ $item.Title = "New Title"
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Index</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The index instance.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">ISearchIndex</command:parameterValue>
         <dev:type>
@@ -25143,7 +25144,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>IncludeRemoteIndex</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The remote indexing should be triggered.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -25157,7 +25160,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>AsJob</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The job created for rebuilding the index should be returned as output.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -25171,7 +25176,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the index to resume.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -25183,34 +25190,110 @@ $item.Title = "New Title"
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>None or Sitecore.Jobs.Job
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following rebuilds the index.
+
+PS master:\&gt; Rebuild-SearchIndex -Name sitecore_master_index
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following rebuilds the index.
+
+PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Rebuild-SearchIndex
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Resume-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Suspend-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Stop-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Resume-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Resumes the suspended (paused) Sitecore index.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Resume</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Resume-SearchIndex command resumes the suspended (paused) Sitecore index.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -25226,7 +25309,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the index to resume.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -25238,34 +25323,110 @@ $item.Title = "New Title"
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.ContentSearch.ISearchIndex or System.String
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following stops the indexing process from running.
+
+PS master:\&gt; Resume-SearchIndex -Name sitecore_master_index
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following stops the indexing process from running.
+
+PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Resume-SearchIndex
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Initialize-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Suspend-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Stop-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Stop-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Stops the Sitecore index.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Stop</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Stop-SearchIndex command stops the Sitecore index.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -25281,7 +25442,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the index to stop.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -25293,34 +25456,110 @@ $item.Title = "New Title"
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.ContentSearch.ISearchIndex or System.String
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following stops the indexing process from running.
+
+PS master:\&gt; Stop-SearchIndex -Name sitecore_master_index
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following stops the indexing process from running.
+
+PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Stop-SearchIndex
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Initialize-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Suspend-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Resume-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Suspend-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Suspends (pauses) the Sitecore index.
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
       </maml:copyright>
       <command:verb>Suspend</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The Suspend-SearchIndex command suspends (pauses) the Sitecore index.
+
+</maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -25336,7 +25575,9 @@ $item.Title = "New Title"
       <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The name of the index to suspend (pause).
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -25348,24 +25589,96 @@ $item.Title = "New Title"
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Sitecore.ContentSearch.ISearchIndex or System.String
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>None
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following suspends (pauses) the indexing process from running.
+
+PS master:\&gt; Suspend-SearchIndex -Name sitecore_master_index
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following suspends (pauses) the indexing process from running.
+
+PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Suspend-SearchIndex
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Initialize-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Stop-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Resume-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Get-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
       <command:name>Get-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
-        <maml:para>Returns sitecore Search indices.
+        <maml:para>Returns the available Sitecore indexes.
 
 </maml:para>
       </maml:description>
@@ -25374,10 +25687,10 @@ $item.Title = "New Title"
       </maml:copyright>
       <command:verb>Get</command:verb>
       <command:noun>SearchIndex</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
-      <maml:para>Returns sitecore Search indices.
+      <maml:para>The Get-SearchIndex command returns the available Sitecore indexes. These are the same as those found in the Control Panel.
 
 </maml:para>
       <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -25412,7 +25725,9 @@ $item.Title = "New Title"
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name />
+          <maml:name>None or System.String
+
+</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -25426,7 +25741,7 @@ $item.Title = "New Title"
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>Sitecore.Search.Index
+          <maml:name>Sitecore.ContentSearch.ISearchIndex
 
 </maml:name>
           <maml:uri />
@@ -25450,20 +25765,61 @@ $item.Title = "New Title"
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>------------------EXAMPLE------------------</maml:title>
-        <dev:code>PS master:\&gt;Get-SearchIndex | ft -auto
- 
-Name   Analyzer                                      Directory
-----   --------                                      ---------
-system Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\__system lockFactory=Sitecore.Search.SitecoreLockFactory
-WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDirectory@C:\Projects\ZenGarden\Data\indexes\WeBlog lockFactory=Sitecore.Search.SitecoreLockFactory
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>The following lists all available indexes.
 
+PS master:\&gt;Get-SearchIndex
+
+Name                             IndexingState   IsRebuilding    IsSharded
+----                             -------------   ------------    ---------
+sitecore_analytics_index         Started         False           False
+sitecore_core_index              Started         False           False
+sitecore_master_index            Started         True            False
+sitecore_web_index               Started         False           False
+sitecore_marketing_asset_inde... Started         False           False
+sitecore_marketing_asset_inde... Started         False           False
+sitecore_testing_index           Started         False           False
+sitecore_suggested_test_index    Started         False           False
+sitecore_fxm_master_index        Started         False           False
+sitecore_fxm_web_index           Started         False           False
+sitecore_list_index              Started         False           False
+social_messages_master           Started         False           False
+social_messages_web              Started         False           False
+
+</dev:code>
+        <dev:remarks />
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>The following lists only the specified index.
+
+PS master:\&gt;Get-SearchIndex -Name sitecore_master_index
+
+Name                             IndexingState   IsRebuilding    IsSharded
+----                             -------------   ------------    ---------
+sitecore_master_index            Started         True            False
 
 </dev:code>
         <dev:remarks />
       </command:example>
     </command:examples>
     <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Initialize-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Stop-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Resume-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Suspend-SearchIndex</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
         <maml:uri />
@@ -25484,7 +25840,7 @@ WeBlog Lucene.Net.Analysis.Standard.StandardAnalyzer Lucene.Net.Store.SimpleFSDi
       </maml:copyright>
       <command:verb>Find</command:verb>
       <command:noun>Item</command:noun>
-      <dev:version>3.2.0</dev:version>
+      <dev:version>3.2.1</dev:version>
     </command:details>
     <maml:description>
       <maml:para>The Find-Item command searches for items using the Sitecore Content Search API.
