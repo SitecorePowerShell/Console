@@ -108,16 +108,16 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 if (string.IsNullOrEmpty(Library))
                 {
                     functionItems.AddRange(root.Database.SelectItems(
-                        string.Format(
-                            "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{1}\"]",
-                            path, Name)));
+                        String.Format(
+                            "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{1}\"]",
+                            path, Name.ToLower())));
                 }
                 else
                 {
                     functionItems.AddRange(root.Database.SelectItems(
-                        string.Format(
-                            "{0}/#{1}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Name=\"{2}\"]",
-                            path, Library, Name)));
+                        String.Format(
+                            "{0}/#{1}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{2}\"]",
+                            path, Library, Name.ToLower())));
                 }
             }
 
@@ -133,7 +133,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (functionItems.Count == 0)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
-                    string.Format(
+                    String.Format(
                         "Function item with name '{0}' could not be found in the specified module or library or it does not exist.",
                         Name)), "sitecore_function_not_found", ErrorCategory.ObjectNotFound, null));
                 return;
