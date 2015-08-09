@@ -29,19 +29,19 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 796
+content-length: 1055
 
-Import-Function "Edit-TaskSchedule"
+Import-Function -Name Edit-TaskSchedule
 
 # Get all the items recursively where the TemplateName equals "Schedule".
-Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } |
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateId -eq [Sitecore.TemplateIDs]::Schedule } |
     Show-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
-        @{Label="Last Run"; Expression={ $_."Last Run" } },
+        @{Label="Last Run"; Expression={ (Format-TaskScheduleDate -Date $_."Last Run" -Text "Never") } },
         @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
-        @{Label="From"; Expression={ Parse-TaskSchedule $_ "from"} },
-        @{Label="To"; Expression={ Parse-TaskSchedule $_ "to"} },
-        @{Label="On Week Days"; Expression={ Parse-TaskSchedule $_ "strWeekdays" } },
-        @{Label="Run Every"; Expression={ Parse-TaskSchedule $_ "interval" } } `
+        @{Label="Start Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "from") -Text "Beginning of Time") } },
+        @{Label="End Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "to") -Text "Forever") } },
+        @{Label="Days of the Week"; Expression={ Format-TaskScheduleDay -Days (Parse-TaskSchedule $_ "strWeekdays") -Text "Everyday" } },
+        @{Label="Frequency"; Expression={ Parse-TaskSchedule $_ "interval" } } `
         -Title "Task Manager"
         
 Close-Window
@@ -55,7 +55,7 @@ People/16x16/stopwatch_run.png
 ----version----
 language: en
 version: 1
-revision: b8cb384e-89d3-453f-b716-6193190d5449
+revision: 8d060c01-d347-4872-9217-53fca8f67c55
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -70,14 +70,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b8cb384e-89d3-453f-b716-6193190d5449
+8d060c01-d347-4872-9217-53fca8f67c55
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141126T025348:635525672287478828
+20150809T064519:635746995195503635
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

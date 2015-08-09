@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4869
+content-length: 5388
 
 function Parse-TaskSchedule{
     [CmdletBinding()]
@@ -141,10 +141,37 @@ function Edit-TaskSchedule{
         $Item.Schedule = Format-TaskSchedule $from $to $weekdays $interval
     }
 }
+
+function Format-TaskScheduleDate {
+    param(
+        [datetime]$Date,
+        [string]$Text
+    )
+    
+    if(($Date -le [datetime]::MinValue -or $Date -ge [datetime]::MaxValue) -and $Text) {
+        $Text
+    } else {
+        $Date
+    }
+}
+
+function Format-TaskScheduleDay {
+    param(
+        [string]$Days,
+        [string]$Text
+    )
+    
+    $everyDay = [enum]::GetNames("dayofweek") -join ", "
+    if($Days -eq $everyDay -and $Text) {
+        $Text
+    } else {
+        $Days
+    }
+}
 ----version----
 language: en
 version: 1
-revision: 424785c3-a25c-4931-a97e-7bd54e44b1fe
+revision: b7c63581-5f54-4635-96c6-266ec11d9f7d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -159,14 +186,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-424785c3-a25c-4931-a97e-7bd54e44b1fe
+b7c63581-5f54-4635-96c6-266ec11d9f7d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150721T010815:635730376956004824
+20150809T064230:635746993501791885
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

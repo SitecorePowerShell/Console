@@ -20,7 +20,7 @@ content-length: 268
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 304
+content-length: 1071
 
 Import-Function -Name "Edit-TaskSchedule"
 
@@ -29,7 +29,15 @@ foreach($schedule in $selectedData)
     Edit-TaskSchedule $schedule
 }
 
-Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateName -eq "Schedule" } | Update-ListView
+Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateId -eq [Sitecore.TemplateIDs]::Schedule } |
+    Update-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
+        @{Label="Last Run"; Expression={ (Format-TaskScheduleDate -Date $_."Last Run" -Text "Never") } },
+        @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
+        @{Label="Start Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "from") -Text "Beginning of Time") } },
+        @{Label="End Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "to") -Text "Forever") } },
+        @{Label="Days of the Week"; Expression={ Format-TaskScheduleDay -Days (Parse-TaskSchedule $_ "strWeekdays") -Text "Everyday" } },
+        @{Label="Frequency"; Expression={ Parse-TaskSchedule $_ "interval" } }
+
 if($scriptsession.Output.HasErrors){
     Show-Result -Text
 }
@@ -43,7 +51,7 @@ People/16x16/clock_run.png
 ----version----
 language: en
 version: 1
-revision: 3993fb39-6f19-4dcf-9a36-f9774ef39aeb
+revision: 48a04f46-5ce1-423f-9832-30776b6f57b7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -58,14 +66,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3993fb39-6f19-4dcf-9a36-f9774ef39aeb
+48a04f46-5ce1-423f-9832-30776b6f57b7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141126T025506:635525673062342109
+20150809T064550:635746995507378349
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
