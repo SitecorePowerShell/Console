@@ -13,100 +13,101 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3333
+content-length: 2610
+
+<#
+    .SYNOPSIS
+        Gets the locked item at the specified location.
+        
+    .PARAMETER Path
+        Specifies a path to search for locked items. The default location is the current directory (.).
+        
+    .PARAMETER LockedBy
+        Specifies the the owner account locked on the item.
+        
+    .PARAMETER Unlock
+        Indicates the locked items should be unlocked.
+        
+    .PARAMETER Recurse
+        Specifies all the child items at the specified path should be included in the search.
+        
+    .EXAMPLE
+        PS master:\> Get-LockedChildItem
+        
+        Returns all locked child items at the current path.
+        
+    .EXAMPLE
+        PS master:\> Get-LockedChildItem -LockedBy 'sitecore\admin'
+        
+        Returns all locked child items at the current path for the specified user.
+        
+    .EXAMPLE
+        PS master:\> Get-LockedChildItem -LockedBy $me -Unlock -Recurse
+        
+        Returns all locked child items at the current path and below for the specified user. The items are also unlocked.
+#>
 
 function Get-LockedChildItem {
-    <#
-        .SYNOPSIS
-            Gets the locked item at the specified location.
-            
-        .PARAMETER Path
-            Specifies a path to search for locked items. The default location is the current directory (.).
-            
-        .PARAMETER LockedBy
-            Specifies the the owner account locked on the item.
-            
-        .PARAMETER Unlock
-            Indicates the locked items should be unlocked.
-            
-        .PARAMETER Recurse
-            Specifies all the child items at the specified path should be included in the search.
-            
-        .EXAMPLE
-            PS master:\> Get-LockedChildItem
-            
-            Returns all locked child items at the current path.
-            
-        .EXAMPLE
-            PS master:\> Get-LockedChildItem -LockedBy 'sitecore\admin'
-            
-            Returns all locked child items at the current path for the specified user.
-            
-        .EXAMPLE
-            PS master:\> Get-LockedChildItem -LockedBy $me -Unlock -Recurse
-            
-            Returns all locked child items at the current path and below for the specified user. The items are also unlocked.
-    #>
-    [CmdletBinding()]
-    param(
-        [ValidateNotNullOrEmpty()]
-        [string]$Path = ".",
-        
-        [string]$LockedBy,
-        
-        [timespan]$IdleTime=[timespan]::Zero,
-        
-        [switch]$Unlock,
-        
-        [switch]$Recurse
-    )
-    
-    filter Locked {
-        
-        $skip = $false
-        
-        if($_.Locking -and $_.Locking.IsLocked()) {
-            $lockField = [Sitecore.Data.Fields.LockField]$_.Fields[[Sitecore.FieldIDs]::Lock]
-            if($lockField) {
-                $owner = $lockField.Owner
-                if($LockedBy) {
-                    if($owner -ne $LockedBy) {
-                        Write-Verbose "Skipping locked item $($_.Paths.Path) with different owner."
-                        $skip = $true
-                    }
-                }
-                
-                if($IdleTime -gt [timespan]::Zero) {
-                    $matched = [Sitecore.Web.Authentication.DomainAccessGuard]::Sessions | Where-Object { $_.UserName -eq $owner }
-                    if($matched -and $matched.LastRequest.Add($IdleTime) -gt [datetime]::Now) {
-                        $user = [Sitecore.Security.Accounts.User]::FromName($owner, $false)
-                        if($user -and $user.IsAdministrator) {
-                            Write-Verbose "Skipping locked item $($_.Paths.Path) owned by administrator."
-                            $skip = $true
-                        }
-                    }
-                } 
-                
-                if(!$skip) {
-                    if($Unlock) {
-                        Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
-                        $_.Editing.BeginEdit() | Out-Null
-                        $_.Locking.Unlock() | Out-Null
-                        $_.Editing.EndEdit() | Out-Null
-                    }
-                
-                    $_
-                }
-            }
-        }
-    }
-    
-    Get-ChildItem -Path $Path -Recurse:$Recurse | Locked -Verbose:$Verbose
-}
+	[CmdletBinding()]
+	param(
+		[ValidateNotNullOrEmpty()]
+		[string]$Path = ".",
+
+		[string]$LockedBy,
+
+		[timespan]$IdleTime = [timespan]::Zero,
+
+		[switch]$Unlock,
+
+		[switch]$Recurse
+	)
+
+	filter Locked {
+
+		$skip = $false
+
+		if ($_.Locking -and $_.Locking.IsLocked()) {
+			$lockField = [Sitecore.Data.Fields.LockField]$_.Fields[[Sitecore.FieldIDs]::Lock]
+			if ($lockField) {
+				$owner = $lockField.Owner
+				if ($LockedBy) {
+					if ($owner -ne $LockedBy) {
+						Write-Verbose "Skipping locked item $($_.Paths.Path) with different owner."
+						$skip = $true
+					}
+				}
+
+				if ($IdleTime -gt [timespan]::Zero) {
+					$matched = [Sitecore.Web.Authentication.DomainAccessGuard]::Sessions | Where-Object { $_.UserName -eq $owner }
+					if ($matched -and $matched.LastRequest.Add($IdleTime) -gt [datetime]::Now) {
+						$user = [Sitecore.Security.Accounts.User]::FromName($owner,$false)
+						if ($user -and $user.IsAdministrator) {
+							Write-Verbose "Skipping locked item $($_.Paths.Path) owned by administrator."
+							$skip = $true
+						}
+					}
+				}
+
+				if (!$skip) {
+					if ($Unlock) {
+						Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
+						$_.Editing.BeginEdit() | Out-Null
+						$_.Locking.Unlock() | Out-Null
+						$_.Editing.EndEdit() | Out-Null
+					}
+
+					$_
+				}
+			}
+		}
+	}
+
+	Get-ChildItem -Path $Path -Recurse:$Recurse | Locked -Verbose:$Verbose
+} 
 ----version----
 language: en
 version: 1
-revision: c591992d-d397-455d-b2a1-db668553d682
+revision: 839066d4-650e-4945-9486-2d9a3f3589c8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -121,14 +122,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c591992d-d397-455d-b2a1-db668553d682
+839066d4-650e-4945-9486-2d9a3f3589c8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150614T194011:635699076112790425
+20150809T155509:635747325092525172
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

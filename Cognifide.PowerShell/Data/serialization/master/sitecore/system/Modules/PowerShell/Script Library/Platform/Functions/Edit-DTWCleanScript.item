@@ -141,7 +141,7 @@ function Initialize-ProcessVariables {
 
     #region Initialize process variables
     # indent text; use two spaces by default, change to `t for tabs
-    [string]$script:IndentText = "  "
+    [string]$script:IndentText = "`t"
 
     # initialize file path information
     # source file to process
@@ -1404,7 +1404,7 @@ Initialize-Module
 ----version----
 language: en
 version: 1
-revision: 2666a766-815e-4330-a770-7782f17916fc
+revision: 23760f8d-0ecd-4289-a0ef-fdaacac47f86
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -1419,14 +1419,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2666a766-815e-4330-a770-7782f17916fc
+23760f8d-0ecd-4289-a0ef-fdaacac47f86
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150626T100759:635709100796382344
+20150809T065520:635747001200513605
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

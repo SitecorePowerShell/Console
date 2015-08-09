@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7541
+content-length: 7312
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -21,104 +21,105 @@ $officeIcons = @{};
 $updateItems = $false;
 $showIcons = $false;
 
-function Convert-ToOldDate {
-  [CmdletBinding()]
-  param(
-    [Parameter(Mandatory = $true,Position = 0,ValueFromPipeline = $true)]
-    [ValidateNotNullOrEmpty()]
-    [Sitecore.Data.Items.Item]$Item,
-    [switch]$Recurse)
+function ConvertTo-LegacyDate {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true,Position = 0,ValueFromPipeline = $true)]
+		[ValidateNotNullOrEmpty()]
+		[item]$Item,
+		[switch]$Recurse
+	)
 
-  process {
-    $needsFixing = $false
+	process {
+		$needsFixing = $false
 
-    #Cleanup languages other than EN
-    #Get-Item $item.Providerpath -Language * | ? { $_.Language.Name -ne "en"  } | ft Providerpath, Language #| % { Remove-ItemLanguage -Path $_.ProviderPath -Language $_.Language.Name } 
-    
-    foreach ($field in $monitoredDateFields) {
-      if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
-      {
-        $needsFixing = $true;
-        break;
-      }
-    }
-    if ($needsFixing) {
-      $item.Editing.BeginEdit();
-      foreach ($field in $monitoredDateFields) {
-        if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
-        {
-          Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
-          $item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
-        }
-      }
-      $item.Editing.EndEdit($false,$false) | Out-Null
-    }
-    if ((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue) {
-      $item.Editing.BeginEdit();
-      $item.Fields["__Final Renderings"].Reset()
-      $item.Editing.EndEdit($false,$false);
-    }
-    if ($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")) {
-      $officeIcons[$item.ProviderPath] = $item.__Icon;
-    }
-    if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")) {
-      $officeIcons[$item.ProviderPath] = $item.Icon;
-    }
+		#Cleanup languages other than EN
+		#Get-Item $item.Providerpath -Language * | ? { $_.Language.Name -ne "en"  } | ft Providerpath, Language #| % { Remove-ItemLanguage -Path $_.ProviderPath -Language $_.Language.Name } 
 
-    if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")) {
-      $officeIcons[$item.ProviderPath] = $item.Icon;
-    }
+		foreach ($field in $monitoredDateFields) {
+			if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+			{
+				$needsFixing = $true;
+				break;
+			}
+		}
+		if ($needsFixing) {
+			$item.Editing.BeginEdit();
+			foreach ($field in $monitoredDateFields) {
+				if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+				{
+					Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
+					$item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
+				}
+			}
+			$item.Editing.EndEdit($false,$false) | Out-Null
+		}
+		if ((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue) {
+			$item.Editing.BeginEdit();
+			$item.Fields["__Final Renderings"].Reset()
+			$item.Editing.EndEdit($false,$false);
+		}
+		if ($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")) {
+			$officeIcons[$item.ProviderPath] = $item.__Icon;
+		}
+		if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")) {
+			$officeIcons[$item.ProviderPath] = $item.Icon;
+		}
 
-    if ($Recurse) {
-      #Write-Host "$($item.ProviderPath), Going deep" -f Cyan
-      Get-ChildItem $item.ProviderPath -Recurse | Convert-ToOldDate -Recurse
-    }
-  }
+		if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")) {
+			$officeIcons[$item.ProviderPath] = $item.Icon;
+		}
+
+		if ($Recurse) {
+			#Write-Host "$($item.ProviderPath), Going deep" -f Cyan
+			Get-ChildItem $item.ProviderPath -Recurse | ConvertTo-LegacyDate -Recurse
+		}
+	}
 }
 
 function Process-Item {
-  [CmdletBinding()]
-  param(
-    [Parameter(Mandatory = $true,ValueFromPipeline = $true)]
-    [ValidateNotNullOrEmpty()]
-    [Sitecore.Data.Items.Item]$Item,
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+		[ValidateNotNullOrEmpty()]
+		[item]$Item,
 
-    [Parameter()]
-    [string]$Activity,
+		[Parameter()]
+		[string]$Activity,
 
-    [Parameter()]
-    [int]$PercentComplete,
+		[Parameter()]
+		[int]$PercentComplete,
 
-    [Parameter()]
-    [switch]$Recurse
-  )
+		[Parameter()]
+		[switch]$Recurse
+	)
 
-  process {
+	process {
 
-    if ($PercentComplete -ne 0) {
+		if ($PercentComplete -ne 0) {
 
-      $TheActivity = @{ $true = 'Deserializing '; $false = 'Serializing ' }[$updateItems] + "$Activity"
-      #Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
-      Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
-    }
-    #Write-Host "$($item.ProviderPath), $Recurse"
-    Convert-ToOldDate -Item $Item -Recurse:$Recurse
+			$TheActivity = @{ $true = 'Deserializing '; $false = 'Serializing ' }[$updateItems] + "$Activity"
+			#Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
+			Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
+		}
+		#Write-Host "$($item.ProviderPath), $Recurse"
+		ConvertTo-LegacyDate -Item $Item -Recurse:$Recurse
 
-    if (-not $dryRun) {
-      if ($updateItems) {
-        Import-Item $Item -Recurse:$Recurse -ForceUpdate
-      } else {
-        Export-Item $Item -Recurse:$Recurse
-      }
-    }
+		if (-not $dryRun) {
+			if ($updateItems) {
+				Import-Item $Item -Recurse:$Recurse -ForceUpdate
+			} else {
+				Export-Item $Item -Recurse:$Recurse
+			}
+		}
 
-  }
+	}
 }
 
 
 if (-not $dryRun -and -not $updateItems) {
-  Write-Progress -Activity "Deleting old serialized item"
-  Get-ChildItem "$SitecoreSerializationFolder" | Remove-Item -Recurse
+	Write-Progress -Activity "Deleting old serialized item"
+	Get-ChildItem "$SitecoreSerializationFolder" | Remove-Item -Recurse
 }
 
 #Item templates
@@ -179,19 +180,19 @@ Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/Cont
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
 if ($showIcons) {
-  if ($officeIcons.Keys.Count -gt 0) {
-    Write-Host "`$icons = @{"
-    foreach ($path in ($officeIcons.Keys | sort)) {
-      Write-Host "'$path' = '$($officeIcons[$path])';"
-    }
-    Write-Host "}"
-  }
+	if ($officeIcons.Keys.Count -gt 0) {
+		Write-Host "`$icons = @{"
+		foreach ($path in ($officeIcons.Keys | sort)) {
+			Write-Host "'$path' = '$($officeIcons[$path])';"
+		}
+		Write-Host "}"
+	}
 }
 
 ----version----
 language: en
 version: 1
-revision: eda9cf77-8954-42cb-aba0-2bc0af9d8594
+revision: 830aba62-fb8c-4009-b0d1-bf664811ac0f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -206,14 +207,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-eda9cf77-8954-42cb-aba0-2bc0af9d8594
+830aba62-fb8c-4009-b0d1-bf664811ac0f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150802T050550:635740887503343997
+20150809T155137:635747322972983651
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
