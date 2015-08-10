@@ -75,7 +75,7 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                     regex: "([\\-])([a-zA-Z]{1,})\\b"
                 }, {
                     token: keywordMapper,
-                    regex: "([a-zA-Z]{3,})([a-zA-Z_$][a-zA-Z0-9_$\\-])*\\b"
+                    regex: "[a-zA-Z_$][a-zA-Z0-9_$\\-]*\\b"
                 }, {
                     token: "keyword.operator",
                     regex: "\\-(?:" + binaryOperatorsRe + ")"
