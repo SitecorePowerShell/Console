@@ -11,73 +11,23 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                 "foreach|return|filter|in|trap|throw|param|begin|process|end"
         );
 
-        var builtinFunctions = (
-            "Get-Alias|Import-Alias|New-Alias|Set-Alias|Get-AuthenticodeSignature|Set-AuthenticodeSignature|" +
-                "Set-Location|Get-ChildItem|Clear-Item|Get-Command|Measure-Command|Trace-Command|" +
-                "Add-Computer|Checkpoint-Computer|Remove-Computer|Restart-Computer|Restore-Computer|Stop-Computer|" +
-                "Reset-ComputerMachinePassword|Test-ComputerSecureChannel|Add-Content|Get-Content|Set-Content|Clear-Content|" +
-                "Get-Command|Invoke-Command|Enable-ComputerRestore|Disable-ComputerRestore|Get-ComputerRestorePoint|Test-Connection|" +
-                "ConvertFrom-CSV|ConvertTo-CSV|ConvertTo-Html|ConvertTo-Xml|ConvertFrom-SecureString|ConvertTo-SecureString|" +
-                "Copy-Item|Export-Counter|Get-Counter|Import-Counter|Get-Credential|Get-Culture|" +
-                "Get-ChildItem|Get-Date|Set-Date|Remove-Item|Compare-Object|Get-Event|" +
-                "Get-WinEvent|New-Event|Remove-Event|Unregister-Event|Wait-Event|Clear-EventLog|" +
-                "Get-Eventlog|Limit-EventLog|New-Eventlog|Remove-EventLog|Show-EventLog|Write-EventLog|" +
-                "Get-EventSubscriber|Register-EngineEvent|Register-ObjectEvent|Register-WmiEvent|Get-ExecutionPolicy|Set-ExecutionPolicy|" +
-                "Export-Alias|Export-Clixml|Export-Console|Export-Csv|ForEach-Object|Format-Custom|" +
-                "Format-List|Format-Table|Format-Wide|Export-FormatData|Get-FormatData|Get-Item|" +
-                "Get-ChildItem|Get-Help|Add-History|Clear-History|Get-History|Invoke-History|" +
-                "Get-Host|Read-Host|Write-Host|Get-HotFix|Import-Clixml|Import-Csv|" +
-                "Invoke-Command|Invoke-Expression|Get-Item|Invoke-Item|New-Item|Remove-Item|" +
-                "Set-Item|Clear-ItemProperty|Copy-ItemProperty|Get-ItemProperty|Move-ItemProperty|New-ItemProperty|" +
-                "Remove-ItemProperty|Rename-ItemProperty|Set-ItemProperty|Get-Job|Receive-Job|Remove-Job|" +
-                "Start-Job|Stop-Job|Wait-Job|Stop-Process|Update-List|Get-Location|" +
-                "Pop-Location|Push-Location|Set-Location|Send-MailMessage|Add-Member|Get-Member|" +
-                "Move-Item|Compare-Object|Group-Object|Measure-Object|New-Object|Select-Object|" +
-                "Sort-Object|Where-Object|Out-Default|Out-File|Out-GridView|Out-Host|" +
-                "Out-Null|Out-Printer|Out-String|Convert-Path|Join-Path|Resolve-Path|" +
-                "Split-Path|Test-Path|Get-Pfxcertificate|Pop-Location|Push-Location|Get-Process|" +
-                "Start-Process|Stop-Process|Wait-Process|Enable-PSBreakpoint|Disable-PSBreakpoint|Get-PSBreakpoint|" +
-                "Set-PSBreakpoint|Remove-PSBreakpoint|Get-PSDrive|New-PSDrive|Remove-PSDrive|Get-PSProvider|" +
-                "Set-PSdebug|Enter-PSSession|Exit-PSSession|Export-PSSession|Get-PSSession|Import-PSSession|" +
-                "New-PSSession|Remove-PSSession|Disable-PSSessionConfiguration|Enable-PSSessionConfiguration|Get-PSSessionConfiguration|Register-PSSessionConfiguration|" +
-                "Set-PSSessionConfiguration|Unregister-PSSessionConfiguration|New-PSSessionOption|Add-PsSnapIn|Get-PsSnapin|Remove-PSSnapin|" +
-                "Get-Random|Read-Host|Remove-Item|Rename-Item|Rename-ItemProperty|Select-Object|" +
-                "Select-XML|Send-MailMessage|Get-Service|New-Service|Restart-Service|Resume-Service|" +
-                "Set-Service|Start-Service|Stop-Service|Suspend-Service|Sort-Object|Start-Sleep|" +
-                "ConvertFrom-StringData|Select-String|Tee-Object|New-Timespan|Trace-Command|Get-Tracesource|" +
-                "Set-Tracesource|Start-Transaction|Complete-Transaction|Get-Transaction|Use-Transaction|Undo-Transaction|" +
-                "Start-Transcript|Stop-Transcript|Add-Type|Update-TypeData|Get-Uiculture|Get-Unique|" +
-                "Update-Formatdata|Update-Typedata|Clear-Variable|Get-Variable|New-Variable|Remove-Variable|" +
-                "Set-Variable|New-WebServiceProxy|Where-Object|Write-Debug|Write-Error|Write-Host|" +
-                "Write-Output|Write-Progress|Write-Verbose|Write-Warning|Set-WmiInstance|Invoke-WmiMethod|" +
-                "Get-WmiObject|Remove-WmiObject|Connect-WSMan|Disconnect-WSMan|Test-WSMan|Invoke-WSManAction|" +
-                "Disable-WSManCredSSP|Enable-WSManCredSSP|Get-WSManCredSSP|New-WSManInstance|Get-WSManInstance|Set-WSManInstance|" +
-                "Remove-WSManInstance|Set-WSManQuickConfig|New-WSManSessionOption" +
-                // Other Useful elements
-                "|CmdletBinding"+
-                // Sitecore PowerShell built in functions
-                "|Add-ItemAcl|Add-ItemLanguage|Add-Rendering|Add-RoleMember|Clear-ItemAcl|Close-Window|ConvertFrom-CliXml|" +
-                "ConvertFrom-ItemClone|ConvertTo-CliXml|Disable-User|Enable-User|Expand-Token|Export-Item|Export-Package|" +
-                "Export-Role|Export-UpdatePackage|Export-User|Find-Item|Get-Archive|Get-Cache|Get-Database|Get-Domain|Get-Index|" +
-                "Get-ItemAcl|Get-ItemByUri|Get-ItemClone|Get-ItemField|Get-ItemReference|Get-ItemReferrer|Get-ItemTemplate|" +
-                "Get-ItemWorkflowEvent|Get-Layout|Get-LayoutDevice|Get-Package|Get-Preset|Get-Rendering|Get-Role|Get-RoleMember|" +
-                "Get-ScriptSession|Get-SearchIndex|Get-Session|Get-SpeModule|Get-SpeModuleFeatureRoot|Get-TaskSchedule|" +
-                "Get-UpdatePackageDiff|Get-User|Get-UserAgent|Import-Function|Import-Item|Import-Role|Import-User|Initialize-Item|" +
-                "Install-Package|Install-UpdatePackage|Invoke-Script|Invoke-ShellCommand|Invoke-Workflow|Lock-Item|Login-User|" +
-                "Logout-User|New-Domain|New-ExplicitFileSource|New-ExplicitItemSource|New-FileSource|New-ItemAcl|New-ItemClone|" +
-                "New-ItemSource|New-ItemWorkflowEvent|New-Package|New-Rendering|New-SecuritySource|New-User|Protect-Item|" +
-                "Publish-Item|Read-Variable|Receive-File|Remove-Domain|Remove-ItemLanguage|Remove-Rendering|Remove-RoleMember|" +
-                "Remove-ScriptSession|Remove-Session|Remove-User|Restart-Application|Send-File|Send-SheerMessage|Set-HostProperty|" +
-                "Set-ItemAcl|Set-Layout|Set-Rendering|Set-User|Set-UserPassword|Show-Alert|Show-Application|Show-Confirm|" +
-                "Show-FieldEditor|Show-Input|Show-ListView|Show-ModalDialog|Show-Result|Show-YesNoCancel|Start-TaskSchedule|" +
-                "Test-ItemAcl|Test-Rule|Unlock-Item|Unlock-User|Unprotect-Item|Update-ListView|Write-Log"
+        var attributes = (
+        	"alias|allowemptycollection|allowemptystring|llownull|cmdletbinding|confirmimpact|" + 
+        	"credentialattribute|outputtype|parameter|psdefaultvalue|" + 
+        	"pstypename|supportsshouldprocess|supportswildcards|validatecount|validatelength|" + 
+        	"validatenotnull|validatenotnullorempty|validatepattern|validaterange|validatescript|validateset"
+        );
 
+        var members = (
+            "helpmessage|helpmessagebasename|helpmessageresourceid|mandatory|parametersetname|defaultparametersetname|" + 
+            "position|typeid|valuefrompipeline|valuefrompipelinebypropertyname|valuefromremainingarguments"
         );
 
         var keywordMapper = this.createKeywordMapper({
-            "support.function": builtinFunctions,
+            "attribute": attributes,
+            "member": members,
             "keyword": keywords
-        }, "identifier");
+        }, "identifier", true);
 
         var binaryOperatorsRe = "eq|ne|ge|gt|lt|le|like|notlike|match|notmatch|replace|contains|notcontains|" +
             "ieq|ine|ige|igt|ile|ilt|ilike|inotlike|imatch|inotmatch|ireplace|icontains|inotcontains|" +
@@ -115,8 +65,17 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                     token: "variable.instance",
                     regex: "[$][a-zA-Z][a-zA-Z0-9_]*\\b"
                 }, {
+                    token: ["keyword.operator", "keyword.type", "keyword.operator"],
+                    regex: "([\\[])([a-zA-Z0-9\\-\\.]*)([\\]])"
+                }, {
+                    token: "support.function",
+                    regex: "[a-zA-Z]{1,}[\\-][a-zA-Z]*\\b"
+                }, {
+                    token: ["support.function", "support.parameter"],
+                    regex: "([\\-])([a-zA-Z]{1,})\\b"
+                }, {
                     token: keywordMapper,
-                    regex: "[a-zA-Z_$][a-zA-Z0-9_$\\-]*\\b"
+                    regex: "([a-zA-Z]{3,})([a-zA-Z_$][a-zA-Z0-9_$\\-])*\\b"
                 }, {
                     token: "keyword.operator",
                     regex: "\\-(?:" + binaryOperatorsRe + ")"
