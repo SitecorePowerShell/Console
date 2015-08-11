@@ -10,6 +10,8 @@ namespace Cognifide.PowerShell.Core.Settings
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
         public const string ServiceClient = "client";
+        public const string ServiceFileDownload = "fileDownload";
+        public const string ServiceMediaDownload = "mediaDownload";
 
         static WebServiceSettings()
         {
@@ -17,6 +19,8 @@ namespace Cognifide.PowerShell.Core.Settings
             ServiceEnabledRestfulv2 = IsServiceEnabled(ServiceRestfulv2, true);
             ServiceEnabledClient = IsServiceEnabled(ServiceClient, true);
             ServiceEnabledRemoting = IsServiceEnabled(ServiceRemoting, false);
+            ServiceEnabledFileDownload = IsServiceEnabled(ServiceFileDownload, true);
+            ServiceEnabledMediaDownload = IsServiceEnabled(ServiceMediaDownload, true);
             CommandWaitMillis =
                 Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
             InitialPollMillis =
@@ -29,6 +33,8 @@ namespace Cognifide.PowerShell.Core.Settings
             SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
         }
 
+        public static bool ServiceEnabledFileDownload { get; private set; }
+        public static bool ServiceEnabledMediaDownload { get; private set; }
         public static bool ServiceEnabledRestfulv1 { get; private set; }
         public static bool ServiceEnabledRestfulv2 { get; private set; }
         public static bool ServiceEnabledRemoting { get; private set; }

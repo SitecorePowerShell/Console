@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Web;
 using System.Web.SessionState;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.IO;
+using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
+using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -38,8 +44,9 @@ namespace Cognifide.PowerShell.Console.Services
                 userName = "sitecore\\" + userName;
             }
             var password = request.Params.Get("password");
-            var scriptParam = request.Params.Get("script");
-            var scriptDbParam = request.Params.Get("scriptDb");
+            var itemParam = request.Params.Get("script");
+            var pathParam = request.Params.Get("path");
+            var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
 
             switch (apiVersion)
@@ -58,21 +65,36 @@ namespace Cognifide.PowerShell.Console.Services
                         return;
                     }
                     break;
+                case "file":
+                    if (!WebServiceSettings.ServiceEnabledFileDownload)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
+                    }
+                    break;
+                case "media":
+                    if (!WebServiceSettings.ServiceEnabledMediaDownload)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
+                    }
+                    break;
                 default:
                     HttpContext.Current.Response.StatusCode = 403;
                     return;
             }
 
-            if(!String.IsNullOrEmpty(userName) && !String.IsNullOrEmpty(password))
+            if(!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
                 AuthenticationManager.Login(userName, password, false);
             }
 
             var authenticated = Context.IsLoggedIn;
             var scriptDb =
-                !authenticated || string.IsNullOrEmpty(scriptDbParam) || scriptDbParam == "current"
+                apiVersion.Is("file") || !authenticated ||
+                string.IsNullOrEmpty(originParam) || originParam == "current"
                     ? Context.Database
-                    : Database.GetDatabase(scriptDbParam);
+                    : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
 
             Item scriptItem;
@@ -80,9 +102,83 @@ namespace Cognifide.PowerShell.Console.Services
             switch (apiVersion)
             {
                 case "1":
-                    scriptItem = scriptDb.GetItem(scriptParam) ??
-                                 scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + scriptParam);
+                    scriptItem = scriptDb.GetItem(itemParam) ??
+                                 scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
+                case "media":
+                    itemParam = itemParam.Trim('/', '\\');
+                    var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ??
+                                    scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+                    Stream mediaStream = mediaItem.GetMediaStream();
+                    string str = mediaItem.Extension;
+                    if (!str.StartsWith(".", StringComparison.InvariantCulture))
+                        str = "." + str;
+                    WriteCacheHeaders(mediaItem.Name + str, mediaStream.Length);
+                    WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
+                    return;
+                case "file":
+                    var file = string.Empty;
+                    switch (originParam)
+                    {
+                        case ("data"):
+                            file = Settings.DataFolder;
+                            break;
+                        case ("logs"):
+                            file = Settings.LogFolder;
+                            break;
+                        case ("media"):
+                            file = Settings.MediaFolder;
+                            break;
+                        case ("package"):
+                            file = Settings.PackagePath;
+                            break;
+                        case ("serialization"):
+                            file = Settings.SerializationFolder;
+                            break;
+                        case ("apptemp"):
+                            file = Settings.TempFolderPath;
+                            break;
+                        case ("debug"):
+                            file = Settings.DebugFolder;
+                            break;
+                        case ("index"):
+                            file = Settings.IndexFolder;
+                            break;
+                        case ("layout"):
+                            file = Settings.LayoutFolder;
+                            break;
+                        case ("app"):
+                            file = HttpRuntime.AppDomainAppPath;
+                            break;
+                        case ("temp"):
+                            file = Environment.GetEnvironmentVariable("temp");
+                            break;
+                        case ("tmp"):
+                            file = Environment.GetEnvironmentVariable("tmp");
+                            break;
+                        default:
+                            file = originParam + ":\\";
+                            break;
+                    }
+
+                    if (file == null)
+                    {
+                        HttpContext.Current.Response.StatusCode = 404;
+                    }
+                    else
+                    {
+                        file = Path.Combine(file, pathParam);
+                        file = FileUtil.MapPath(file);
+                        if (!File.Exists(file))
+                        {
+                            HttpContext.Current.Response.StatusCode = 404;
+                            return;
+                        }
+                        FileInfo fileInfo = new FileInfo(file);
+                        WriteCacheHeaders(Path.GetFileName(file), fileInfo.Length);
+                        HttpContext.Current.Response.TransmitFile(file);
+                    }
+                    return;
                 default:
                     UpdateCache(dbName);
                     if (!apiScripts.ContainsKey(dbName))
@@ -91,12 +187,12 @@ namespace Cognifide.PowerShell.Console.Services
                         return;
                     }
                     var dbScripts = apiScripts[scriptDb.Name];
-                    if (!dbScripts.ContainsKey(scriptParam))
+                    if (!dbScripts.ContainsKey(itemParam))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                         return;
                     }
-                    scriptItem = scriptDb.GetItem(dbScripts[scriptParam].Id);
+                    scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
                     break;
             }
 
@@ -125,8 +221,8 @@ namespace Cognifide.PowerShell.Console.Services
                 foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.QueryString[param];
-                    if (String.IsNullOrEmpty(param)) continue;
-                    if (String.IsNullOrEmpty(paramValue)) continue;
+                    if (string.IsNullOrEmpty(param)) continue;
+                    if (string.IsNullOrEmpty(paramValue)) continue;
 
                     scriptArguments[param] = paramValue;
                 }
@@ -134,8 +230,8 @@ namespace Cognifide.PowerShell.Console.Services
                 foreach (var param in HttpContext.Current.Request.Params.AllKeys)
                 {
                     var paramValue = HttpContext.Current.Request.Params[param];
-                    if (String.IsNullOrEmpty(param)) continue;
-                    if (String.IsNullOrEmpty(paramValue)) continue;
+                    if (string.IsNullOrEmpty(param)) continue;
+                    if (string.IsNullOrEmpty(paramValue)) continue;
 
                     if (session.GetVariable(param) == null)
                     {
@@ -219,6 +315,17 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
+        private void WriteCacheHeaders(string filename, long length)
+        {
+            Assert.ArgumentNotNull((object)filename, "filename");
+            var response = HttpContext.Current.Response;
+            response.ClearHeaders();
+            response.AddHeader("Content-Type", "application/octet-stream");
+            response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            response.AddHeader("Content-Length", length.ToString());
+            response.AddHeader("Content-Transfer-Encoding", "binary");
+            response.CacheControl = "private";
+        }
         public class ApiScript
         {
             public string Path { get; set; }

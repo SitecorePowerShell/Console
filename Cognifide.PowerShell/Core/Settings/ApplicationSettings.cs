@@ -20,6 +20,7 @@ namespace Cognifide.PowerShell.Core.Settings
         public const string IseSettingsItemAllUsers = "All Users";
         public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
+        public const string MediaLibraryPath = "/sitecore/media library/";
         public const string FontNamesPath = "/sitecore/system/Modules/PowerShell/Fonts/";
         private static string rulesDb;
         private static string settingsDb;
