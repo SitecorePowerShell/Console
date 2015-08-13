@@ -15,7 +15,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsCommon.Find, "Item")]
-    [OutputType(typeof(Item))]
+    [OutputType(typeof(SearchResultItem))]
     public class FindItemCommand : BaseCommand
     {
         public static string[] Indexes
