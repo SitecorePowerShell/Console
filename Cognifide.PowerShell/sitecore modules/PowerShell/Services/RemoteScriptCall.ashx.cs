@@ -106,8 +106,13 @@ namespace Cognifide.PowerShell.Console.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    itemParam = itemParam.Trim('/', '\\');
-                    var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ??
+                    if (!authenticated)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
+                    }
+                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\','/');
+                    var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
                                     scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
                     Stream mediaStream = mediaItem.GetMediaStream();
                     string str = mediaItem.Extension;
@@ -117,13 +122,18 @@ namespace Cognifide.PowerShell.Console.Services
                     WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
                     return;
                 case "file":
+                    if (!authenticated)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
+                    }
                     var file = string.Empty;
                     switch (originParam)
                     {
                         case ("data"):
                             file = Settings.DataFolder;
                             break;
-                        case ("logs"):
+                        case ("log"):
                             file = Settings.LogFolder;
                             break;
                         case ("media"):
