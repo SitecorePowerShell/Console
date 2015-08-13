@@ -19,8 +19,8 @@ namespace Cognifide.PowerShell.Core.Settings
             ServiceEnabledRestfulv2 = IsServiceEnabled(ServiceRestfulv2, true);
             ServiceEnabledClient = IsServiceEnabled(ServiceClient, true);
             ServiceEnabledRemoting = IsServiceEnabled(ServiceRemoting, false);
-            ServiceEnabledFileDownload = IsServiceEnabled(ServiceFileDownload, true);
-            ServiceEnabledMediaDownload = IsServiceEnabled(ServiceMediaDownload, true);
+            ServiceEnabledFileDownload = IsServiceEnabled(ServiceFileDownload, false);
+            ServiceEnabledMediaDownload = IsServiceEnabled(ServiceMediaDownload, false);
             CommandWaitMillis =
                 Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
             InitialPollMillis =
