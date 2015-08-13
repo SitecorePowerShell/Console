@@ -66,7 +66,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     linkDb.GetReferences(linkedItem)
-                        .Select(link => link.GetSourceItem())
+                        .Select(link => link.GetTargetItem())
                         .Distinct(ItemEqualityComparer.Instance)
                         .ToList()
                         .ForEach(WriteItem);
