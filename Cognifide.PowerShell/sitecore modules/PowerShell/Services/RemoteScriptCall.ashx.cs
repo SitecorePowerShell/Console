@@ -114,6 +114,11 @@ namespace Cognifide.PowerShell.Console.Services
                     itemParam = itemParam.TrimEnd('/', '\\').Replace('\\','/');
                     var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
                                     scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+                    if(mediaItem == null)
+                    {
+                        HttpContext.Current.Response.StatusCode = 404;
+                        return;
+                    }
                     Stream mediaStream = mediaItem.GetMediaStream();
                     string str = mediaItem.Extension;
                     if (!str.StartsWith(".", StringComparison.InvariantCulture))
