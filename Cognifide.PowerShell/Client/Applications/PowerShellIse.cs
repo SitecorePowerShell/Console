@@ -568,8 +568,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("pstaskmonitor:check", true)]
         protected void PrintOutput(ClientPipelineArgs args)
         {
-            var job = JobManager.GetJob(Monitor.JobHandle);
-            if (job != null)
+            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
             {
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 var result = session.Output.GetHtmlUpdate();
@@ -630,9 +629,9 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
-            var currentSession = ScriptSessionManager.GetSession(Monitor.SessionID);
-            if (currentSession != null)
+            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
             {
+                var currentSession = ScriptSessionManager.GetSession(Monitor.SessionID);
                 currentSession.Abort();
                 if (currentSession.AutoDispose)
                 {
@@ -651,7 +650,6 @@ namespace Cognifide.PowerShell.Client.Applications
             var result = string.Empty;
             if (job != null)
             {
-                Monitor.SessionID = string.Empty;
                 result = job.Status.Result as string;
             }
             PrintSessionUpdate(result);
