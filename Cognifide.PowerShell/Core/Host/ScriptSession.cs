@@ -169,7 +169,14 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     return string.Empty;
                 }
-                return runspace.SessionStateProxy.Path.CurrentLocation.Path;
+                try
+                {
+                    return runspace.SessionStateProxy.Path.CurrentLocation.Path;
+                }
+                catch // above can cause problems that we don't really care about.
+                {
+                    return string.Empty;
+                }
             }
         }
 
