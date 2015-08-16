@@ -150,14 +150,11 @@ namespace Cognifide.PowerShell.Console.Services
                         case ("serialization"):
                             file = Settings.SerializationFolder;
                             break;
-                        case ("apptemp"):
+                        case ("temp"):
                             file = Settings.TempFolderPath;
                             break;
                         case ("debug"):
                             file = Settings.DebugFolder;
-                            break;
-                        case ("index"):
-                            file = Settings.IndexFolder;
                             break;
                         case ("layout"):
                             file = Settings.LayoutFolder;
@@ -165,15 +162,9 @@ namespace Cognifide.PowerShell.Console.Services
                         case ("app"):
                             file = HttpRuntime.AppDomainAppPath;
                             break;
-                        case ("temp"):
-                            file = Environment.GetEnvironmentVariable("temp");
-                            break;
-                        case ("tmp"):
-                            file = Environment.GetEnvironmentVariable("tmp");
-                            break;
                         default:
-                            file = originParam + ":\\";
-                            break;
+                            HttpContext.Current.Response.StatusCode = 403;
+                            return;
                     }
 
                     if (file == null)
