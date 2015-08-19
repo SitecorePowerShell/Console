@@ -49,12 +49,15 @@ namespace Cognifide.PowerShell.Console.Services
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
 
+            const string disabledMessage = "The request could not be completed because the service is disabled.";
+
             switch (apiVersion)
             {
                 case "1":
                     if (!WebServiceSettings.ServiceEnabledRestfulv1)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
                         return;
                     }
                     break;
@@ -62,6 +65,7 @@ namespace Cognifide.PowerShell.Console.Services
                     if (!WebServiceSettings.ServiceEnabledRestfulv2)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
                         return;
                     }
                     break;
@@ -69,6 +73,7 @@ namespace Cognifide.PowerShell.Console.Services
                     if (!WebServiceSettings.ServiceEnabledFileDownload)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
                         return;
                     }
                     break;
@@ -76,11 +81,13 @@ namespace Cognifide.PowerShell.Console.Services
                     if (!WebServiceSettings.ServiceEnabledMediaDownload)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
                         return;
                     }
                     break;
                 default:
                     HttpContext.Current.Response.StatusCode = 403;
+                    HttpContext.Current.Response.StatusDescription = disabledMessage;
                     return;
             }
 
@@ -326,7 +333,7 @@ namespace Cognifide.PowerShell.Console.Services
             Assert.ArgumentNotNull((object)filename, "filename");
             var response = HttpContext.Current.Response;
             response.ClearHeaders();
-            response.AddHeader("Content-Type", "application/octet-stream");
+            response.AddHeader("Content-Type", MimeMapping.GetMimeMapping(filename));
             response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
             response.AddHeader("Content-Length", length.ToString());
             response.AddHeader("Content-Transfer-Encoding", "binary");
