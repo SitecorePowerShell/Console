@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8693
+content-length: 9821
 
 <#
     .SYNOPSIS
@@ -77,6 +77,38 @@ content-length: 8693
     .LINK
         https://technet.microsoft.com/en-us/library/dn841358.aspx
 #>
+function New-EntryFromFile {
+    #($Archive, $file.FullName, $File.Name, $CompressionLevel)
+    [CmdletBinding()]
+    param(
+        [ValidateNotNullOrEmpty()]
+        [System.IO.Compression.ZipArchive]$Archive,
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$FileName,
+        
+        [ValidateNotNullOrEmpty()]
+        [string]$EntryName,
+
+        [System.IO.Compression.CompressionLevel]$CompressionLevel = [System.IO.Compression.CompressionLevel]::Optimal
+    )
+    
+    $sourceStream = [System.IO.File]::Open($FileName, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    $entry = $Archive.CreateEntry($entryName, $CompressionLevel)
+    $dateTime = [System.IO.File]::GetLastWriteTime($FileName)
+    if($dateTime.Year -lt 1980 -or $dateTime.Year -gt 2107) {
+        $dateTime = [datetime]"01/01/1980"
+    }
+    $entry.LastWriteTime = [System.DateTimeOffset]$dateTime
+    
+    $destinationStream = $entry.Open()
+    $sourceStream.CopyTo($destinationStream)
+    $destinationStream.Dispose()
+    $sourceStream.Dispose()
+    
+    $entry
+}
+
 function Compress-Archive {
     [CmdletBinding(DefaultParameterSetName="Path")]
     param(
@@ -145,7 +177,7 @@ function Compress-Archive {
             Write-Verbose $Path
             $file = New-Object System.IO.FileInfo (Resolve-Path -Path $Path).ProviderPath
             Write-Verbose "Adding the file $($file.Name) to the archive."
-            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($Archive, $file.FullName, $File.Name, $CompressionLevel) | Out-Null
+            New-EntryFromFile -Archive $Archive -FileName $file.FullName -EntryName $file.Name -CompressionLevel $CompressionLevel | Out-Null
         }
         
         function Add-DirectoryEntry {
@@ -172,7 +204,7 @@ function Compress-Archive {
                     }
                     
                     Write-Verbose "Adding the file $($item.FullName) to the archive."
-                    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zipArchive, $item.FullName, $p, $CompressionLevel) | Out-Null
+                    New-EntryFromFile -Archive $zipArchive -FileName $item.FullName -EntryName $p -CompressionLevel $CompressionLevel | Out-Null
                 }
             }    
         }
@@ -208,7 +240,7 @@ function Compress-Archive {
 ----version----
 language: en
 version: 1
-revision: 857ab097-947d-4842-b489-b846b89b718b
+revision: 3fb38a9e-a07f-4b9f-9ad0-086ff3a5e44f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -223,14 +255,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-857ab097-947d-4842-b489-b846b89b718b
+3fb38a9e-a07f-4b9f-9ad0-086ff3a5e44f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150731T211438:635739740782230533
+20150820T040427:635756402677598295
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
