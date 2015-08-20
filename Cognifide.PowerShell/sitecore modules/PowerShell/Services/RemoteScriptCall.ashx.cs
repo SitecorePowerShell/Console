@@ -15,7 +15,6 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
-using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
 using Sitecore.Web;
 
@@ -126,11 +125,18 @@ namespace Cognifide.PowerShell.Console.Services
                         HttpContext.Current.Response.StatusCode = 404;
                         return;
                     }
-                    Stream mediaStream = mediaItem.GetMediaStream();
-                    string str = mediaItem.Extension;
+
+                    var mediaStream = mediaItem.GetMediaStream();
+                    if (mediaStream == null)
+                    {
+                        HttpContext.Current.Response.StatusCode = 404;
+                        return;
+                    }
+
+                    var str = mediaItem.Extension;
                     if (!str.StartsWith(".", StringComparison.InvariantCulture))
                         str = "." + str;
-                    WriteCacheHeaders(mediaItem.Name + str, mediaStream.Length);
+                    WriteCacheHeaders(mediaItem.Name + str, mediaItem.Size);
                     WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
                     return;
                 case "file":
@@ -139,7 +145,8 @@ namespace Cognifide.PowerShell.Console.Services
                         HttpContext.Current.Response.StatusCode = 403;
                         return;
                     }
-                    var file = string.Empty;
+
+                    string file;
                     switch (originParam)
                     {
                         case ("data"):
@@ -187,8 +194,9 @@ namespace Cognifide.PowerShell.Console.Services
                             HttpContext.Current.Response.StatusCode = 404;
                             return;
                         }
-                        FileInfo fileInfo = new FileInfo(file);
-                        WriteCacheHeaders(Path.GetFileName(file), fileInfo.Length);
+
+                        var fileInfo = new FileInfo(file);
+                        WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
                         HttpContext.Current.Response.TransmitFile(file);
                     }
                     return;
@@ -328,17 +336,17 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private void WriteCacheHeaders(string filename, long length)
+        private static void WriteCacheHeaders(string filename, long length)
         {
-            Assert.ArgumentNotNull((object)filename, "filename");
+            Assert.ArgumentNotNull(filename, "filename");
             var response = HttpContext.Current.Response;
             response.ClearHeaders();
             response.AddHeader("Content-Type", MimeMapping.GetMimeMapping(filename));
             response.AddHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
             response.AddHeader("Content-Length", length.ToString());
             response.AddHeader("Content-Transfer-Encoding", "binary");
-            response.CacheControl = "private";
         }
+
         public class ApiScript
         {
             public string Path { get; set; }
