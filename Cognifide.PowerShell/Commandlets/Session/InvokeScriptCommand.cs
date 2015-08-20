@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive;
@@ -51,9 +52,13 @@ namespace Cognifide.PowerShell.Commandlets.Session
             }
             if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;
             
-            object sendToPipeline = InvokeCommand.InvokeScript(script, false,
+            var sendToPipeline = InvokeCommand.InvokeScript(script, false,
                 PipelineResultTypes.Output | PipelineResultTypes.Error, null, ArgumentList);
-            WriteObject(sendToPipeline);
+
+            if (sendToPipeline != null && sendToPipeline.Any())
+            {
+                WriteObject(sendToPipeline);
+            }
         }
     }
 }
