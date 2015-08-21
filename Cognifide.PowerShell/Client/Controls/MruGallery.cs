@@ -276,10 +276,9 @@ namespace Cognifide.PowerShell.Client.Controls
                                 ItemFromQueryString.Database.Name == scriptItem.Database.Name;
 
             control["ScriptIcon"] = "<div class=\"versionNum\">" + iconUrl + "</div>";
-            control["Location"] = Translate.Text("{0}",
-                scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length));
-            control["Database"] = Translate.Text("{0}", scriptItem.Database.Name);
-            control["Name"] = Translate.Text("{0}", scriptItem.DisplayName);
+            control["Location"] = scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length);
+            control["Database"] = scriptItem.Database.Name;
+            control["Name"] = scriptItem.DisplayName;
             control["Click"] = string.Format("ExecuteMruItem(\"ise:mruopen(id={0},db={1})\")", scriptItem.ID,
                 scriptItem.Database.Name);
             control["Class"] = currentScript ? "selected" : string.Empty;
