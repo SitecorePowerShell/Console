@@ -16,7 +16,7 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Host
 {
-    public class ScriptingHostUserInterface : PSHostUserInterface
+    public class ScriptingHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         private readonly ScriptingHostRawUserInterface rawUi;
 
@@ -196,6 +196,21 @@ namespace Cognifide.PowerShell.Core.Host
                 return int.Parse(dialogResult.Substring(4));
             }
             return -1;
+        }
+
+        public Collection<int> PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices)
+        {
+            Collection<int> results = new Collection<int>();
+            var choice = -1;
+            do
+            {
+                choice = PromptForChoice(caption, message, choices, defaultChoices.FirstOrDefault());
+                if (choice != -1)
+                {
+                    results.Add(choice);
+                }
+            } while (choice != -1);
+            return results;
         }
     }
 }
