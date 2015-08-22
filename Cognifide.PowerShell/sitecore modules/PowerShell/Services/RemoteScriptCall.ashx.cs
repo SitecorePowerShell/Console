@@ -149,45 +149,57 @@ namespace Cognifide.PowerShell.Console.Services
                     string file;
                     switch (originParam)
                     {
-                        case ("data"):
+                        case "data":
                             file = Settings.DataFolder;
                             break;
-                        case ("log"):
+                        case "log":
                             file = Settings.LogFolder;
                             break;
-                        case ("media"):
+                        case "media":
                             file = Settings.MediaFolder;
                             break;
-                        case ("package"):
+                        case "package":
                             file = Settings.PackagePath;
                             break;
-                        case ("serialization"):
+                        case "serialization":
                             file = Settings.SerializationFolder;
                             break;
-                        case ("temp"):
+                        case "temp":
                             file = Settings.TempFolderPath;
                             break;
-                        case ("debug"):
+                        case "debug":
                             file = Settings.DebugFolder;
                             break;
-                        case ("layout"):
+                        case "layout":
                             file = Settings.LayoutFolder;
                             break;
-                        case ("app"):
+                        case "app":
                             file = HttpRuntime.AppDomainAppPath;
                             break;
                         default:
-                            HttpContext.Current.Response.StatusCode = 403;
-                            return;
+                            if (Path.IsPathRooted(pathParam))
+                            {
+                                file = pathParam;
+                            }
+                            else
+                            {
+                                HttpContext.Current.Response.StatusCode = 403;
+                                return;
+                            }
+                            break;
                     }
 
-                    if (file == null)
+                    if (String.IsNullOrEmpty(file))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                     }
                     else
                     {
-                        file = Path.Combine(file, pathParam);
+                        if (file != pathParam)
+                        {
+                            file = Path.Combine(file, pathParam);
+                        }
+
                         file = FileUtil.MapPath(file);
                         if (!File.Exists(file))
                         {
