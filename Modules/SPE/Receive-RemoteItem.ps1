@@ -97,12 +97,13 @@ function Receive-RemoteItem {
 
     process {
 
-        if(!$RootPath -and ![System.IO.Path]::IsPathRooted($Path)) {
+        $isMediaItem = ![string]::IsNullOrEmpty($Database)
+        
+        if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Path))) {
             Write-Error -Message "RootPath is required when Path is not fully qualified." -ErrorAction Stop
         }
 
         $Path = $Path.TrimEnd('\','/')
-        $isMediaItem = ![string]::IsNullOrEmpty($Database)
 
         if($Session) {
             $Username = $Session.Username
