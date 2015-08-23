@@ -204,63 +204,39 @@ namespace Cognifide.PowerShell.Core.Host
                 if (initialized && !reinitialize) return;
 
                 initialized = true;
-                runspace.SessionStateProxy.SetVariable("AppPath", HttpRuntime.AppDomainAppPath);
-                runspace.SessionStateProxy.SetVariable("AppVPath", HttpRuntime.AppDomainAppVirtualPath);
-                runspace.SessionStateProxy.SetVariable("tempPath", Environment.GetEnvironmentVariable("temp"));
-                runspace.SessionStateProxy.SetVariable("tmpPath", Environment.GetEnvironmentVariable("tmp"));
                 UserName = User.Current.Name;
-                runspace.SessionStateProxy.SetVariable("me", UserName);
-                runspace.SessionStateProxy.SetVariable("HttpContext", HttpContext.Current);
+                var proxy = runspace.SessionStateProxy;
+                proxy.SetVariable("me", UserName);
+                proxy.SetVariable("HttpContext", HttpContext.Current);
                 if (HttpContext.Current != null)
                 {
-                    runspace.SessionStateProxy.SetVariable("request", HttpContext.Current.Request);
-                    runspace.SessionStateProxy.SetVariable("response", HttpContext.Current.Response);
+                    proxy.SetVariable("request", HttpContext.Current.Request);
+                    proxy.SetVariable("response", HttpContext.Current.Response);
                 }
-                runspace.SessionStateProxy.SetVariable("ClientData", Context.ClientData);
-                runspace.SessionStateProxy.SetVariable("SitecoreDataFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.DataFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreDebugFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.DebugFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreIndexFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.IndexFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreLayoutFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.LayoutFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreLogFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.LogFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreMediaFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.MediaFolder));
-                runspace.SessionStateProxy.SetVariable("SitecorePackageFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.PackagePath));
-                runspace.SessionStateProxy.SetVariable("SitecoreSerializationFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.SerializationFolder));
-                runspace.SessionStateProxy.SetVariable("SitecoreTempFolder",
-                    FileUtil.MapPath(Sitecore.Configuration.Settings.TempFolderPath));
-                runspace.SessionStateProxy.SetVariable("SitecoreVersion",
-                    VersionResolver.SitecoreVersionCurrent);
 
+                proxy.SetVariable("ClientData", Context.ClientData);
                 try
                 {
-                    runspace.SessionStateProxy.SetVariable("ClientPage", Context.ClientPage);
+                    proxy.SetVariable("ClientPage", Context.ClientPage);
                 }
                 catch
                 {
                     Log.Warn("Unable to set the ClientPage variable.", this);
                 }
-                runspace.SessionStateProxy.SetVariable("HostSettings", Settings);
-                runspace.SessionStateProxy.SetVariable("ScriptSession", this);
+                proxy.SetVariable("HostSettings", Settings);
+                proxy.SetVariable("ScriptSession", this);
+
                 if (PsVersion == null)
                 {
                     PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
 
-                var sb = new StringBuilder(2048);
-                foreach (var rename in RenamedCommands.Aliases)
+                foreach (var key in PredefinedVariables.Variables.Keys)
                 {
-                    sb.AppendFormat(
-                        "New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n", rename.Key,
-                        rename.Value);
+                    proxy.SetVariable(key, PredefinedVariables.Variables[key]);
                 }
-                ExecuteScriptPart(sb.ToString(), false, true);
+
+                ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
             }
         }
 
@@ -288,7 +264,7 @@ namespace Cognifide.PowerShell.Core.Host
             SetExecutedScript(scriptItem);
             var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                : String.Empty;
+                : string.Empty;
             return ExecuteScriptPart(script, stringOutput, false);
         }
 
@@ -392,7 +368,7 @@ namespace Cognifide.PowerShell.Core.Host
         public string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)
         {
             var stacktrace = ex.StackTrace;
-            var exceptionPrefix = String.Empty;
+            var exceptionPrefix = string.Empty;
             var exceptionFormat = ExceptionFormatString;
             var lineEndFormat = ExceptionLineEndFormat;
             switch (format)
@@ -410,11 +386,11 @@ namespace Cognifide.PowerShell.Core.Host
                     exceptionFormat = ConsoleExceptionFormatString;
                     break;
             }
-            var exception = String.Empty;
-            exception += String.Format(exceptionFormat, lineEndFormat, ex.Message, stacktrace, ex.GetType());
+            var exception = string.Empty;
+            exception += string.Format(exceptionFormat, lineEndFormat, ex.Message, stacktrace, ex.GetType());
             if (ex.InnerException != null)
             {
-                exception += String.Format(exceptionPrefix, lineEndFormat, GetExceptionString(ex.InnerException));
+                exception += string.Format(exceptionPrefix, lineEndFormat, GetExceptionString(ex.InnerException));
             }
             return exception;
         }

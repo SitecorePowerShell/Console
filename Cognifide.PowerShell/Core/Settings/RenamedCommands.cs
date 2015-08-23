@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Cognifide.PowerShell.Core.Settings
 {
@@ -17,6 +18,27 @@ namespace Cognifide.PowerShell.Core.Settings
             {"Initialize-SearchIndex", "Rebuild-SearchIndex"}
         };
 
+        private static string aliasSetupScript;
+
+        public static string AliasSetupScript
+        {
+            get
+            {
+                if (aliasSetupScript == null)
+                {
+                    var sb = new StringBuilder(2048);
+                    foreach (var rename in Aliases)
+                    {
+                        sb.AppendFormat(
+                            "New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n",
+                            rename.Key,
+                            rename.Value);
+                    }
+                    aliasSetupScript = sb.ToString();
+                }
+                return aliasSetupScript;
+            }
+        }
 
     }
 }

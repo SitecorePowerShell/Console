@@ -335,6 +335,7 @@
     <Compile Include="Core\Host\OutputBuffer.cs" />
     <Compile Include="Core\Host\OutputLine.cs" />
     <Compile Include="Core\Host\OutputLineType.cs" />
+    <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />
     <Compile Include="Core\Host\ScriptingHostPrivateData.cs" />
