@@ -46,31 +46,6 @@ namespace Cognifide.PowerShell.Core.Host
         private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";
         private const string ExceptionLineEndFormat = "\r\n";
 
-        public static Dictionary<string, string> RenamedCommandlets = new Dictionary<string, string>
-        {
-            {"Export-Item", "Serialize-Item"},
-            {"Import-Item", "Deserialize-Item"},
-            {"Invoke-Script", "Execute-Script"},
-            {"Invoke-ShellCommand", "Execute-ShellCommand"},
-            {"Invoke-Workflow", "Execute-Workflow"},
-            {"Install-Package", "Import-Package"},
-            {"Initialize-Item", "Wrap-Item"},
-            {"Send-File", "Download-File"},
-            {"Initialize-SearchIndex", "Rebuild-SearchIndex"}
-        };
-
-        public static Dictionary<string, Type> Accelerators = new Dictionary<string, Type>
-        {
-            {"Item", typeof(Sitecore.Data.Items.Item)},
-            {"AccountIdentity", typeof(Cognifide.PowerShell.Commandlets.Security.AccountIdentity)},
-            {"SearchResultItem", typeof(Sitecore.ContentSearch.SearchTypes.SearchResultItem)},
-            {"Database", typeof(Sitecore.Data.Database)},
-            {"Account", typeof(Sitecore.Security.Accounts.Account)},
-            {"User", typeof(Sitecore.Security.Accounts.User)},
-            {"Role", typeof(Sitecore.Security.Accounts.Role)},
-            {"AccessRule", typeof(Sitecore.Security.AccessControl.AccessRule)},
-        };
-
         private bool disposed;
         private bool initialized;
         private Pipeline pipeline;
@@ -82,7 +57,7 @@ namespace Cognifide.PowerShell.Core.Host
             var typeAccelerators = typeof(PSObject).Assembly.GetType("System.Management.Automation.TypeAccelerators");
             MethodInfo mi = typeAccelerators.GetMethod("Add", BindingFlags.Public | BindingFlags.Static);
 
-            foreach (var accelerator in Accelerators)
+            foreach (var accelerator in TypeAccelerators.Accelerators)
             {
                 mi.Invoke(null, new object[] { accelerator.Key, accelerator.Value });
             }
@@ -153,19 +128,26 @@ namespace Cognifide.PowerShell.Core.Host
             internal set { host.User = value; }
         }
 
-        public string Key { get; internal set; }
-        public ApplicationSettings Settings { get; private set; }
-
-        public OutputBuffer Output
+        public string JobName
         {
-            get { return host.Output; }
+            get { return host.JobName; }
+            internal set { host.JobName = value; }
         }
+
+        public List<object> AsyncResultsStore { get; set; }
+
+        public string Key { get; internal set; }
+        public ApplicationSettings Settings { get; }
+
+        public OutputBuffer Output => host.Output;
+
+        public RunspaceAvailability State => runspace.RunspaceAvailability;
 
         public string CurrentLocation
         {
             get
             {
-                if (pipeline.PipelineStateInfo.State == PipelineState.Running)
+                if (runspace.RunspaceAvailability == RunspaceAvailability.Busy)
                 {
                     return string.Empty;
                 }
@@ -272,7 +254,7 @@ namespace Cognifide.PowerShell.Core.Host
                 }
 
                 var sb = new StringBuilder(2048);
-                foreach (var rename in RenamedCommandlets)
+                foreach (var rename in RenamedCommands.Aliases)
                 {
                     sb.AppendFormat(
                         "New-Alias {1} {0} -Description '{1}->{0}'-Scope Global -Option AllScope,Constant\n", rename.Key,
@@ -323,7 +305,7 @@ namespace Cognifide.PowerShell.Core.Host
         internal List<object> ExecuteScriptPart(string script, bool stringOutput, bool internalScript,
             bool marshalResults)
         {
-            if (String.IsNullOrWhiteSpace(script))
+            if (string.IsNullOrWhiteSpace(script) || State == RunspaceAvailability.Busy)
             {
                 return null;
             }
@@ -335,8 +317,16 @@ namespace Cognifide.PowerShell.Core.Host
             // edit box of the form.
             return SpeTimer.Measure("script execution", () =>
             {
-                pipeline = runspace.CreatePipeline(script);
-                return ExecuteCommand(stringOutput, internalScript, pipeline, marshalResults);
+                try
+                {
+                    pipeline = runspace.CreatePipeline(script);
+                    return ExecuteCommand(stringOutput, internalScript, marshalResults);
+                }
+                finally
+                {
+                    pipeline.Dispose();
+                    pipeline = null;
+                }
             });
         }
 
@@ -344,21 +334,27 @@ namespace Cognifide.PowerShell.Core.Host
         {
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            pipeline = runspace.CreatePipeline();
-
-            pipeline.Commands.Add(command);
-
-            return ExecuteCommand(stringOutput, internalScript, pipeline);
+            try
+            {
+                pipeline = runspace.CreatePipeline();
+                pipeline.Commands.Add(command);
+                return ExecuteCommand(stringOutput, internalScript);
+            }
+            finally
+            {
+                pipeline.Dispose();
+                pipeline = null;
+            }
         }
 
         public void Abort()
         {
-            pipeline.Stop();
+            pipeline?.Stop();
         }
 
-        private List<object> ExecuteCommand(bool stringOutput, bool internalScript, Pipeline pipeline,
-            bool marshallResults = true)
+        private List<object> ExecuteCommand(bool stringOutput, bool internalScript, bool marshallResults = true)
         {
+            JobName = Context.Job?.Name;
             if (!internalScript)
             {
                 pipeline.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
@@ -375,13 +371,15 @@ namespace Cognifide.PowerShell.Core.Host
 
             if (execResults != null && execResults.Any())
             {
-                foreach (var record in execResults.Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
+                foreach (
+                    var record in
+                        execResults.Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
                 {
                     Log.Error(record + record.InvocationInfo.PositionMessage, this);
                 }
             }
 
-            //Output = host.Output;
+            JobName = string.Empty;
             return marshallResults
                 ? execResults.Select(p => p.BaseObject).ToList()
                 : execResults.Cast<object>().ToList();

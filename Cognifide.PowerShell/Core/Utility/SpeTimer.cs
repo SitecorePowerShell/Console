@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Microsoft.PowerShell.Commands;
 using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Utility
@@ -16,12 +17,12 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                Log.Debug(String.Format("The {0} completed in {1} ms.", message, stopWatch.ElapsedMilliseconds), action);
+                Log.Debug(String.Format("The {0} completed in {1} ms.", message, stopWatch.ElapsedMilliseconds), typeof(SpeTimer));
                 return result;
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message, action);
+                Log.Error(ex.Message, typeof(SpeTimer));
                 throw;
             }
         }

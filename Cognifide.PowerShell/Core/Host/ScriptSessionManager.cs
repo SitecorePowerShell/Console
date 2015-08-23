@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
 using Cognifide.PowerShell.Core.Settings;
+using Sitecore.ContentSearch.Linq;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -33,7 +35,30 @@ namespace Cognifide.PowerShell.Core.Host
         public static bool SessionExists(string persistentId)
         {
             var sessionKey = GetSessionKey(persistentId);
-            return sessions.Contains(sessionKey) && HttpRuntime.Cache[sessionKey] != null;
+            lock (sessions)
+            {
+                return sessions.Contains(sessionKey) && HttpRuntime.Cache[sessionKey] != null;
+            }
+        }
+
+        public static bool SessionExistsForAnyUserSession(string persistentId)
+        {
+            var wildcard = new WildcardPattern("*|"+persistentId, WildcardOptions.IgnoreCase);
+            lock (sessions)
+            {
+                return sessions.Any(id => wildcard.IsMatch(id) && HttpRuntime.Cache[id] != null);
+            }
+        }
+
+        public static IEnumerable<ScriptSession> GetMatchingSessionsForAnyUserSession(string persistentId)
+        {
+            var wildcard = new WildcardPattern("*|" + persistentId, WildcardOptions.IgnoreCase);
+            lock (sessions)
+            {
+                return
+                    sessions.Where(id => wildcard.IsMatch(id) && HttpRuntime.Cache[id] != null)
+                        .Select(id => HttpRuntime.Cache[id] as ScriptSession);
+            }
         }
 
         public static void RemoveSession(string key)
@@ -137,5 +162,6 @@ namespace Cognifide.PowerShell.Core.Host
             key.Append(persistentId);
             return key.ToString();
         }
+
     }
 }

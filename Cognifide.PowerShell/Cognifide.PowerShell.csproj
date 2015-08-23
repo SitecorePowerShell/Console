@@ -182,6 +182,10 @@
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
+    <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
+    <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />
+    <Compile Include="Commandlets\ScriptSessions\StopScriptSessionCommand.cs" />
+    <Compile Include="Commandlets\ScriptSessions\StartScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Packages\NewSecuritySourceCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\NewRoleCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\RemoveRoleCommand.cs" />
@@ -302,10 +306,10 @@
     <Compile Include="Commandlets\Serialization\ExportItemCommand.cs" />
     <Compile Include="Commandlets\Session\InvokeScriptCommand.cs" />
     <Compile Include="Commandlets\Session\GetCacheCommand.cs" />
-    <Compile Include="Commandlets\Session\GetScriptSession.cs" />
+    <Compile Include="Commandlets\ScriptSessions\GetScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Session\GetUserAgent.cs" />
     <Compile Include="Commandlets\Session\ImportFunctionCommand.cs" />
-    <Compile Include="Commandlets\Session\RemoveScriptSessionCommand.cs" />
+    <Compile Include="Commandlets\ScriptSessions\RemoveScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Session\RestartApplicationCommand.cs" />
     <Compile Include="Commandlets\Session\SetHostPropertyCommand.cs" />
     <Compile Include="Commandlets\UpdatePackages\ExportUpdatePackageCommand.cs" />
@@ -330,6 +334,7 @@
     <Compile Include="Core\Host\OutputBuffer.cs" />
     <Compile Include="Core\Host\OutputLine.cs" />
     <Compile Include="Core\Host\OutputLineType.cs" />
+    <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />
     <Compile Include="Core\Host\ScriptingHostPrivateData.cs" />
     <Compile Include="Core\Host\ScriptingHostRawUserInterface.cs" />
@@ -360,6 +365,7 @@
     <Compile Include="Core\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
+    <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />

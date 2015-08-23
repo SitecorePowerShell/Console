@@ -129,4 +129,25 @@
       </MemberSet>
     </Members>
   </Type> 
+  <Type>
+    <Name>Cognifide.PowerShell.Core.Host.ScriptSession</Name>
+    <Members>
+      <MemberSet>
+        <Name>PsStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>ID</Name>
+              <Name>State</Name>
+              <Name>ApplianceType</Name>
+              <Name>CurrentLocation</Name>             
+              <Name>UserName</Name>
+              <Name>JobName</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+    </Members>
+  </Type> 
 </Types>

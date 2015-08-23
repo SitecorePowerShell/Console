@@ -56,5 +56,10 @@ namespace Cognifide.PowerShell.Commandlets.Security
             }
             return User.Exists(account.Name) ? User.FromName(account.Name,false) : null;
         }
+
+        public static implicit operator User(AccountIdentity account)
+        {
+            return User.Exists(account.Name) ? User.FromName(account.Name, true) : null;
+        }
     }
 }

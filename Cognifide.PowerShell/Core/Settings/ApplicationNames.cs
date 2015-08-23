@@ -8,5 +8,6 @@ namespace Cognifide.PowerShell.Core.Settings
         public const string Default = "Default";
         public const string RemoteAutomation = "RemoteAutomation";
         public const string Velocity = "Velocity";
+        public const string BackgroundJob = "BackgroundJob";
     }
 }
