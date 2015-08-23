@@ -11,8 +11,9 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             if (session.State == RunspaceAvailability.Busy)
             {
-                var error = $"The script session with Id '{session.ID}' cannot be unloaded because it is in the Busy state. Use Stop-ScriptSession or wait for the operation to complete.";
-                WriteError(new ErrorRecord(new CmdletInvocationException(error), error, ErrorCategory.ResourceBusy, session.ID));
+                WriteError(typeof (CmdletInvocationException),
+                    $"The script session with Id '{session.ID}' cannot be unloaded because it is in the Busy state. Use Stop-ScriptSession or wait for the operation to complete.",
+                    ErrorIds.ScriptSessionBusy, ErrorCategory.ResourceBusy, session.ID);
                 return;
             }
 

@@ -45,8 +45,10 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 }
                 else
                 {
-                    var error = $"The script session with with Id '{Id}' cannot be found.";
-                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ResourceBusy, Id));
+                    WriteError(typeof (ObjectNotFoundException),
+                        $"The script session with with Id '{Id}' cannot be found.", ErrorIds.ScriptSessionNotFound,
+                        ErrorCategory.ResourceBusy, Id);
+
                 }
             }
             else if (Type != null && Type.Length > 0)

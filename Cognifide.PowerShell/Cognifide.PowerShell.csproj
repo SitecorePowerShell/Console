@@ -181,6 +181,7 @@
     <Compile Include="Commandlets\Data\Search\StopSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
+    <Compile Include="Commandlets\ErrorIds.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />

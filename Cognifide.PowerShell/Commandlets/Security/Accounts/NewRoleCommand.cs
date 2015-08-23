@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             {
                 if (Role.Exists(name))
                 {
-                    var error = String.Format("Cannot create a duplicate account with identity '{0}'.", name);
+                    var error = $"Cannot create a duplicate account with identity '{name}'.";
                     WriteError(new ErrorRecord(new DuplicateNameException(error), error, ErrorCategory.InvalidArgument,
                         Identity));
                     return;

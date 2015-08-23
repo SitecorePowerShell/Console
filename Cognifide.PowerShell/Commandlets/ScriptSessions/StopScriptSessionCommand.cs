@@ -19,8 +19,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             else
             {
-                var error = $"The current script session with Id '{session.ID}' cannot be stopped.";
-                WriteError(new ErrorRecord(new CmdletInvocationException(error), error, ErrorCategory.ResourceBusy, session.ID ?? String.Empty));
+                WriteError(typeof (CmdletInvocationException), $"The current script session with Id '{session.ID}' cannot be stopped.", 
+                    ErrorIds.ScriptSessionCannotBeStopped, ErrorCategory.ResourceBusy,session.ID ?? string.Empty);
             }
         }
     }

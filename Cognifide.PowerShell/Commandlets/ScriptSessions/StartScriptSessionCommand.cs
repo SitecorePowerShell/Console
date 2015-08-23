@@ -76,8 +76,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
                 if (scriptItem == null)
                 {
-                    var error = $"The script '{Path}' cannot be found.";
-                    WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound, Path));
+                    WriteError(typeof (ItemNotFoundException), $"The script '{Path}' cannot be found.",
+                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, Path);
                     return;
                 }
                 script = scriptItem[ScriptItemFieldNames.Script];

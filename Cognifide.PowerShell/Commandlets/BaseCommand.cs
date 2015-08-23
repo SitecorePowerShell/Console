@@ -225,5 +225,11 @@ namespace Cognifide.PowerShell.Commandlets
             return name.Contains(" ") ? "\"" + name + "\"" : name;
         }
 
+        public virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject)
+        {
+            Exception exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
+            WriteError(new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject));
+        }
+
     }
 }
