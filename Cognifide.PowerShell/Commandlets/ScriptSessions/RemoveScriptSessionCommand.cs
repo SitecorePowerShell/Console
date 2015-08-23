@@ -11,11 +11,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             if (session.State == RunspaceAvailability.Busy)
             {
-                WriteError(
-                    new ErrorRecord(
-                        new CmdletInvocationException(
-                            "The session cannot be unloaded as it is currently Busy. Stop-ScriptSession or wait for the operation to end before attempting to unload it again."),
-                        "sitecore_cannot_remove_script_session", ErrorCategory.ResourceBusy, session.ID));
+                var error = $"The script session with Id '{session.ID}' cannot be unloaded because it is in the Busy state. Use Stop-ScriptSession or wait for the operation to complete.";
+                WriteError(new ErrorRecord(new CmdletInvocationException(error), error, ErrorCategory.ResourceBusy, session.ID));
                 return;
             }
 

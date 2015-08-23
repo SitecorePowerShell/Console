@@ -7,7 +7,6 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
     [Cmdlet(VerbsCommunications.Receive, "ScriptSession", DefaultParameterSetName = "All")]
     public class ReceiveScriptSessionCommand : BaseScriptSessionCommand
     {
-
         [Parameter]
         public virtual SwitchParameter KeepResult { get; set; }
 
@@ -18,11 +17,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             if (session.State == RunspaceAvailability.Busy)
             {
-                WriteError(
-                    new ErrorRecord(
-                        new CmdletInvocationException(
-                            "The session cannot be received from as it is Busy. Stop-ScriptSession or wait for the operation to end before attempting to receive from it again."),
-                        "sitecore_cannot_receive_script_session", ErrorCategory.ResourceBusy, session.ID));
+                var error = $"The script session with Id '{session.ID}' cannot be received because it is in the Busy state. Use Stop-ScriptSession or wait for the operation to complete.";
+                WriteError(new ErrorRecord(new CmdletInvocationException(error), error, ErrorCategory.ResourceBusy, session.ID));
                 return;
             }
 

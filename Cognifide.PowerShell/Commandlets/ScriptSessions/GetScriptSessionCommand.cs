@@ -34,9 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 var currentSessionId = CurrentSessionId;
                 if (!string.IsNullOrEmpty(currentSessionId))
                 {
-                    WriteObject(
-                        ScriptSessionManager.GetAll().Where(s => currentSessionId.Equals(s.ID, StringComparison.OrdinalIgnoreCase)),
-                        true);
+                    WriteObject(ScriptSessionManager.GetAll().Where(s => currentSessionId.Equals(s.ID, StringComparison.OrdinalIgnoreCase)), true);
                 }
             }
             else if (!string.IsNullOrEmpty(Id))
@@ -47,11 +45,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 }
                 else
                 {
-                    WriteError(
-                        new ErrorRecord(
-                            new ObjectNotFoundException($"Session with Id '{Id}' cannot be found."),
-                            "sitecore_script_session_not_found", ErrorCategory.ResourceBusy, Id));
-
+                    var error = $"The script session with with Id '{Id}' cannot be found.";
+                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ResourceBusy, Id));
                 }
             }
             else if (Type != null && Type.Length > 0)

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
@@ -18,9 +16,6 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
     [OutputType(typeof (ScriptSession))]
     public class StartScriptSessionCommand : BaseCommand
     {
-        private const string ParameterSetNameFromItem = "Item, ID";
-        private const string ParameterSetNameFromFullPath = "Path";
-
         [Parameter(ParameterSetName = "SessionID, ScriptItem", Mandatory = true)]
         [Parameter(ParameterSetName = "SessionID, ScriptBlock", Mandatory = true)]
         [Parameter(ParameterSetName = "SessionID, ScriptPath", Mandatory = true)]
@@ -48,7 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter(ParameterSetName = "NewSession, ScriptBlock", Mandatory = true)]
         public ScriptBlock ScriptBlock { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public string JobName { get; set; }
 
         [Parameter]
@@ -63,7 +58,6 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter]
         public SwitchParameter AutoDispose { get; set; }
 
-        // Methods
         protected override void ProcessRecord()
         {
             var script = string.Empty;
@@ -82,15 +76,14 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
                 if (scriptItem == null)
                 {
-                    var error = $"The script '{Path}' is cannot be found.";
-                    WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                        Path));
+                    var error = $"The script '{Path}' cannot be found.";
+                    WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound, Path));
                     return;
                 }
                 script = scriptItem[ScriptItemFieldNames.Script];
             }
             
-            if (!ShouldProcess(scriptItem?.GetProviderPath()??string.Empty, "Invoke script")) return;
+            if (!ShouldProcess(scriptItem?.GetProviderPath() ?? string.Empty, "Invoke script")) return;
 
             var scriptBlock = ScriptBlock ?? InvokeCommand.NewScriptBlock(script);
 

@@ -28,19 +28,15 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     return;
                 }
 
-                WriteError(
-                    new ErrorRecord(
-                        new ObjectNotFoundException($"Session with Id '{Id}' cannot be found."),
-                        "sitecore_script_session_not_found", ErrorCategory.ResourceBusy, Id));
+                var error = $"The script session with Id '{Id}' cannot be found.";
+                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ResourceBusy, Id));
                 return;
             }
 
             if (Session == null)
             {
-                WriteError(
-                    new ErrorRecord(
-                        new ObjectNotFoundException("The session does not exist"),
-                        "sitecore_script_session_not_found", ErrorCategory.ObjectNotFound, Id ?? string.Empty));
+                var error = $"The script session cannot be found.";
+                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, Id ?? string.Empty));
                 return;
             }
             ProcessSession(Session);

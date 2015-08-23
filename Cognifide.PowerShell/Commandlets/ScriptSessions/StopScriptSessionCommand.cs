@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Host;
 
@@ -10,28 +11,17 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
     {
         protected override void ProcessSession(ScriptSession session)
         {
-            if (session.State == RunspaceAvailability.Busy)
+            if (session.State != RunspaceAvailability.Busy) { return; }
+
+            if (session.ID != CurrentSessionId)
             {
-                if (session.ID != CurrentSessionId)
-                {
-                    session.Abort();
-                }
-                else
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            new CmdletInvocationException("Current session cannot be stopped."),
-                            "sitecore_cannot_stop_current_script_session", ErrorCategory.ResourceBusy, session.ID ?? string.Empty));
-                }
+                session.Abort();
             }
             else
             {
-                WriteError(
-                    new ErrorRecord(
-                        new CmdletInvocationException("The session does not exist or it is not busy."),
-                        "sitecore_cannot_stop_script_session", ErrorCategory.ResourceBusy, session.ID??string.Empty));
+                var error = $"The current script session with Id '{session.ID}' cannot be stopped.";
+                WriteError(new ErrorRecord(new CmdletInvocationException(error), error, ErrorCategory.ResourceBusy, session.ID ?? String.Empty));
             }
         }
-
     }
 }
