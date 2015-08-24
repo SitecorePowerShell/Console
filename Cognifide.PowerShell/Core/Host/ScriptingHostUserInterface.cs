@@ -7,6 +7,8 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Configuration;
@@ -40,11 +42,27 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override string ReadLine()
         {
+            if (JobContext.IsJob)
+            {
+                JobContext.MessageQueue.PutMessage(new PromptMessage("String", string.Empty));
+                var alertresult = JobContext.MessageQueue.GetResult() as string;
+                return alertresult;
+            }
             throw new NotImplementedException();
         }
 
         public override SecureString ReadLineAsSecureString()
         {
+            if (JobContext.IsJob)
+            {
+                JobContext.MessageQueue.PutMessage(new PromptMessage("String", string.Empty));
+                var alertresult = JobContext.MessageQueue.GetResult() as string;
+                var secure = new SecureString();
+                foreach (char c in alertresult)
+                {
+                    secure.AppendChar(c);
+                }
+            }
             throw new NotImplementedException();
         }
 
@@ -137,15 +155,24 @@ namespace Cognifide.PowerShell.Core.Host
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
             Collection<FieldDescription> descriptions)
         {
-            if (!Context.IsBackgroundThread)
+            if (JobContext.IsJob)
             {
-/*
-                Sitecore.Context.ClientPage.ClientResponse.Input("Caption"
-                                    , "*"
-                                    , Sitecore.Configuration.Settings.ItemNameValidation
-                                    , "'$Input' is not a valid name.", 255);
-*/
-                //args.WaitForPostBack();
+                object[] options = new object[descriptions.Count];
+                for (var i=0 ; i < descriptions.Count; i++)
+                {
+                    var description = descriptions[i];
+                    options[i] = new Hashtable()
+                    {
+                        ["Title"] = description.Name,
+                        ["Name"] = $"var{i}",
+                        ["Value"] = description.DefaultValue?.ToString()??string.Empty
+                    };
+                    
+                }
+                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "800", caption, message, string.Empty, string.Empty, false));
+                var values = (object[]) JobContext.MessageQueue.GetResult();
+
+                return values?.Cast<Hashtable>().ToDictionary(value => value["Name"].ToString(), value => PSObject.AsPSObject(value["Value"]));
             }
             throw new NotImplementedException();
         }
