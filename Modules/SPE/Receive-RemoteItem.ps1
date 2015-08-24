@@ -1,38 +1,47 @@
 ﻿#Requires -Version 3
 
-function Get-FileExtension {
-    param(
-        [ValidateNotNullOrEmpty()]
-        [byte[]]$InputObject,
-
-        [ValidateNotNullOrEmpty()]
-        [string]$ContentType
-    )
-        
-    $extension = ""
-        
-    Write-Verbose "The destination path is missing a file extension. Attempting to figure that out now."
-
-    switch($ContentType) {
-        "application/json" { $extension = ".json" }
-        "application/pdf" { $extension = ".pdf" }
-        "application/x-javascript" { $extension = ".js" }
-        "application/x-zip-compressed" {  $extension = ".zip" }
-        "image/bmp" { $extension = ".bmp" }
-        "image/gif" { $extension = ".gif" }
-        "image/jpeg" { $extension = ".jpg" }
-        "image/png" {  $extension = ".png" }
-        "image/svg+xml" {  $extension = ".svg" }
-        "text/css" {  $extension = ".css" }
-        "text/html" {  $extension = ".html" }
-        "text/plain" {  $extension = ".txt" }
-        "text/xml" {  $extension = ".xml" }
-    }
-        
-    $extension
-}
-
 function Receive-RemoteItem {
+    <#
+        .SYNOPSIS
+            Downloads a file or media item through a Sitecore PowerShell Extensions web service.
+    
+       .EXAMPLE
+            The following downloads an item from the media library in the master db and overwrite any existing version.
+    
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Receive-RemoteItem -Session $session -Path "/Default Website/cover" -Destination "C:\Images\" -Database master -Force
+    
+       .EXAMPLE
+            The following downloads an item from the media library using the Id in the master db and uses the specified name.
+    
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Receive-RemoteItem -Session $session -Path "{04DAD0FD-DB66-4070-881F-17264CA257E1}" -Destination "C:\Images\cover1.jpg" -Database master -Force
+    
+        .EXAMPLE
+            The following downloads all the items from the media library in the specified path.
+    
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | 
+                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath 
+            } | Receive-RemoteItem -Destination "C:\Images\" -Database master
+
+        .EXAMPLE
+            The following downloads a file from the application root path.
+
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
+              
+        .EXAMPLE
+            The following compresses the log files into an archive and downloads from the absolute path.
+
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Invoke-RemoteScript -Session $session -ScriptBlock {
+                Import-Function -Name Compress-Archive
+                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
+                    Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
+            } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
+    #>
     [CmdletBinding(DefaultParameterSetName='Uri and File')]
     param(
         [Parameter(Mandatory=$true, ParameterSetName='Session and File')]
@@ -57,10 +66,7 @@ function Receive-RemoteItem {
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ParameterSetName='Session and File')]
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ParameterSetName='Session and Database')]
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ParameterSetName='Uri and File')]
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ParameterSetName='Uri and Database')]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$Path,
 
@@ -75,17 +81,11 @@ function Receive-RemoteItem {
         [ValidateNotNullOrEmpty()]
         [string]$Database,
 
-        [Parameter(Mandatory=$true, ParameterSetName='Session and File')]
-        [Parameter(Mandatory=$true, ParameterSetName='Session and Database')]
-        [Parameter(Mandatory=$true, ParameterSetName='Uri and File')]
-        [Parameter(Mandatory=$true, ParameterSetName='Uri and Database')]
+        [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$Destination,
 
-        [Parameter(ParameterSetName='Session and File')]
-        [Parameter(ParameterSetName='Session and Database')]
-        [Parameter(ParameterSetName='Uri and File')]
-        [Parameter(ParameterSetName='Uri and Database')]
+        [Parameter()]
         [switch]$Force,
 
         #[Parameter(ParameterSetName='Session and File')]
