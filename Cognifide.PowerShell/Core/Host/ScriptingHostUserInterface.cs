@@ -44,9 +44,17 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (JobContext.IsJob)
             {
-                JobContext.MessageQueue.PutMessage(new PromptMessage("String", string.Empty));
-                var alertresult = JobContext.MessageQueue.GetResult() as string;
-                return alertresult;
+                object[] options = new object[1];
+                options[0] = new Hashtable()
+                {
+                    ["Title"] = " ",
+                    ["Name"] = "varString",
+                    ["Value"] = string.Empty
+                };
+                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false));
+                var values = (object[])JobContext.MessageQueue.GetResult() ?? new object[] { string.Empty };
+                return ((Hashtable)values[0])["Value"] as string;
             }
             throw new NotImplementedException();
         }
@@ -55,13 +63,19 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (JobContext.IsJob)
             {
-                JobContext.MessageQueue.PutMessage(new PromptMessage("String", string.Empty));
-                var alertresult = JobContext.MessageQueue.GetResult() as string;
-                var secure = new SecureString();
-                foreach (char c in alertresult)
+                object[] options = new object[1];
+                options[0] = new Hashtable()
                 {
-                    secure.AppendChar(c);
-                }
+                    ["Title"] = " ",
+                    ["Name"] = "varSecure",
+                    ["Value"] = string.Empty,
+                    ["Editor"] = "password"
+                };
+                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false));
+                var values = (object[]) JobContext.MessageQueue.GetResult() ?? new object[] {string.Empty};
+
+                return ToSecureString(((Hashtable)values[0])["Value"] as string);
             }
             throw new NotImplementedException();
         }
@@ -161,22 +175,45 @@ namespace Cognifide.PowerShell.Core.Host
                 for (var i=0 ; i < descriptions.Count; i++)
                 {
                     var description = descriptions[i];
+                    string editor = description.ParameterTypeName.Contains("SecureString") ? "password" : "string";
                     options[i] = new Hashtable()
                     {
                         ["Title"] = description.Name,
-                        ["Name"] = $"var{i}",
-                        ["Value"] = description.DefaultValue?.ToString()??string.Empty
+                        ["Name"] = $"var{i}{editor}",
+                        ["Value"] = description.DefaultValue?.ToString()??string.Empty,
+                        ["Editor"] = description.ParameterTypeName.Contains("SecureString") ? "password" : "string"
                     };
                     
                 }
-                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "800", caption, message, string.Empty, string.Empty, false));
+                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200", 
+                    string.IsNullOrEmpty(caption)? "Sitecore PowerShell Extensions" : caption,
+                    string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, false));
                 var values = (object[]) JobContext.MessageQueue.GetResult();
 
-                return values?.Cast<Hashtable>().ToDictionary(value => value["Name"].ToString(), value => PSObject.AsPSObject(value["Value"]));
+                return values?.Cast<Hashtable>()
+                    .ToDictionary(value => value["Name"].ToString(),
+                        value =>
+                            ((string) value["Name"]).Contains("password")
+                                ? PSObject.AsPSObject(ToSecureString((string) value["Value"]))
+                                : PSObject.AsPSObject(value["Value"]));
             }
             throw new NotImplementedException();
         }
 
+
+        private static SecureString ToSecureString(string aString)
+        {
+            SecureString secure = null;
+            if (!string.IsNullOrEmpty(aString))
+            {
+                secure = new SecureString();
+                foreach (var c in aString)
+                {
+                    secure.AppendChar(c);
+                }
+            }
+            return secure;
+        }
         public override PSCredential PromptForCredential(string caption, string message, string userName,
             string targetName)
         {

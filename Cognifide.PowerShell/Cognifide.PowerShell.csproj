@@ -159,6 +159,7 @@
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
+    <Compile Include="Client\Controls\PasswordExtended.cs" />
     <Compile Include="Client\Controls\EditExtended.cs" />
     <Compile Include="Client\Controls\IsePluginPanel.cs" />
     <Compile Include="Client\Controls\IsePluginStrip.cs" />

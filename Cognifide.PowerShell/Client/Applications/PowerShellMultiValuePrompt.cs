@@ -557,11 +557,22 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                edit = new EditExtended();
                 var placeholder = variable["Placeholder"];
-                if (placeholder is string)
+                if (!string.IsNullOrEmpty(editor) && editor.IndexOf("pass", StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    ((EditExtended) edit).PlaceholderText = placeholder.ToString();
+                    edit = new PasswordExtended();
+                    if (placeholder is string)
+                    {
+                        ((PasswordExtended)edit).PlaceholderText = placeholder.ToString();
+                    }
+                }
+                else
+                {
+                    edit = new EditExtended();
+                    if (placeholder is string)
+                    {
+                        ((EditExtended)edit).PlaceholderText = placeholder.ToString();
+                    }
                 }
             }
             var tip = (variable["Tooltip"] as string);
