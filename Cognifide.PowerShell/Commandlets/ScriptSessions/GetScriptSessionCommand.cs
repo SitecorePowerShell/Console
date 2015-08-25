@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
+using Sitecore.ContentSearch.Utilities;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -13,11 +16,38 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter(ParameterSetName = "Current", Mandatory = true)]
         public SwitchParameter Current { get; set; }
 
-        [Parameter(ParameterSetName = "Type", Mandatory = true)]
-        public string[] Type { get; set; }
+        [Parameter]
+        [Alias("Type")]
+        public string[] SessionType { get; set; }
+
+        [Parameter]
+        public RunspaceAvailability State { get; set; }
+
+        private List<WildcardPattern> patterns;
 
         protected override void ProcessSession(ScriptSession session)
         {
+            if (State != RunspaceAvailability.None && State != session.State)
+            {
+                return;
+            }
+
+            if (SessionType != null && SessionType.Length > 0)
+            {
+                if (patterns == null)
+                {
+                    patterns = new List<WildcardPattern>(SessionType.Length);
+                    foreach (var type in SessionType)
+                    {
+                        patterns.Add(GetWildcardPattern(type));
+                    }
+                }
+                if (!patterns.Any(pattern => pattern.IsMatch(session.ApplianceType)))
+                {
+                    return;
+                }
+            }
+
             WriteObject(session);
         }
 
@@ -37,30 +67,25 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     WriteObject(ScriptSessionManager.GetAll().Where(s => currentSessionId.Equals(s.ID, StringComparison.OrdinalIgnoreCase)), true);
                 }
             }
-            else if (!string.IsNullOrEmpty(Id))
+            else if (Id != null && Id.Length > 0)
             {
-                if (ScriptSessionManager.SessionExistsForAnyUserSession(Id))
+                foreach (var id in Id)
                 {
-                    WriteObject(ScriptSessionManager.GetMatchingSessionsForAnyUserSession(Id),true);
-                }
-                else
-                {
-                    WriteError(typeof (ObjectNotFoundException),
-                        $"The script session with with Id '{Id}' cannot be found.", ErrorIds.ScriptSessionNotFound,
-                        ErrorCategory.ResourceBusy, Id);
-
-                }
-            }
-            else if (Type != null && Type.Length > 0)
-            {
-                foreach (var type in Type)
-                {
-                    WildcardWrite(type, ScriptSessionManager.GetAll(), session => session.ApplianceType);
+                    if (ScriptSessionManager.SessionExistsForAnyUserSession(id))
+                    {
+                        ScriptSessionManager.GetMatchingSessionsForAnyUserSession(id).ForEach(ProcessSession);
+                    }
+                    else
+                    {
+                        WriteError(typeof (ObjectNotFoundException),
+                            $"The script session with with Id '{id}' cannot be found.", ErrorIds.ScriptSessionNotFound,
+                            ErrorCategory.ResourceBusy, Id);
+                    }
                 }
             }
             else
             {
-                WriteObject(ScriptSessionManager.GetAll(), true);
+                ScriptSessionManager.GetAll().ForEach(ProcessSession);
             }
         }
     }

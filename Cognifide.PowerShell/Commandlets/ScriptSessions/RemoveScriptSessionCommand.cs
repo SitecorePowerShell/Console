@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 return;
             }
 
-            ScriptSessionManager.RemoveSession(Session);
+            ScriptSessionManager.RemoveSession(session);
         }
     }
 }

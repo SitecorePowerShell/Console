@@ -11,35 +11,54 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
     {
         [Parameter(ParameterSetName = "ID", Mandatory = true, ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
-        public virtual string Id { get; set; }
+        public virtual string[] Id { get; set; }
 
         [Parameter(ParameterSetName = "Session", Mandatory = true, ValueFromPipeline = true)]
-        public virtual ScriptSession Session { get; set; }
+        public virtual ScriptSession[] Session { get; set; }
 
         protected abstract void ProcessSession(ScriptSession session);
 
         protected override void ProcessRecord()
         {
-            if (!string.IsNullOrEmpty(Id))
+            if (Id != null && Id.Length > 0)
             {
-                if (ScriptSessionManager.SessionExistsForAnyUserSession(Id))
+                foreach (var id in Id)
                 {
-                    ScriptSessionManager.GetMatchingSessionsForAnyUserSession(Id).ForEach(ProcessSession);
-                    return;
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        if (ScriptSessionManager.SessionExistsForAnyUserSession(id))
+                        {
+                            ScriptSessionManager.GetMatchingSessionsForAnyUserSession(id).ForEach(ProcessSession);
+                        }
+                        else
+                        {
+                            WriteError(typeof (ObjectNotFoundException),
+                                $"The script session with Id '{Id}' cannot be found.",
+                                ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, Id);
+                        }
+                    }
+                    else
+                    {
+                        WriteError(typeof(ObjectNotFoundException),
+                            "The script session Id cannot be null or empty.",
+                            ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, Id);
+                    }
                 }
 
-                WriteError(typeof (ObjectNotFoundException), $"The script session with Id '{Id}' cannot be found.",
-                    ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, Id);
                 return;
             }
 
-            if (Session == null)
+            if (Session == null || Session.Length == 0)
             {
-                WriteError(typeof (ObjectNotFoundException), "The script session cannot be found.", 
-                    ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, Id ?? string.Empty);
+                WriteError(typeof (ObjectNotFoundException), "Script session cannot be found.", 
+                    ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, string.Empty);
                 return;
             }
-            ProcessSession(Session);
+
+            foreach (var session in Session)
+            {
+                ProcessSession(session);
+            }
         }
 
         protected string CurrentSessionId
