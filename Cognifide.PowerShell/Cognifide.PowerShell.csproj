@@ -186,6 +186,7 @@
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />
+    <Compile Include="Commandlets\ScriptSessions\WaitScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\StopScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\StartScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Packages\NewSecuritySourceCommand.cs" />
