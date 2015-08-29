@@ -23,9 +23,8 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 }
                 else
                 {
-                    var error = String.Format("Cannot find a domain with name '{0}'.", Name);
-                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                        Name));
+                    WriteError(typeof(ObjectNotFoundException), $"Cannot find a domain with name '{Name}'.", 
+                        ErrorIds.DomainNotFound, ErrorCategory.ObjectNotFound, Name);
                 }
             }
             else

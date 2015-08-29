@@ -39,15 +39,14 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             var member = Membership.GetUser(name);
             if (member == null) return;
 
-            if (ShouldProcess(name, "Change User Password"))
-            {
-                if (Reset.IsPresent && User.Current.IsAdministrator)
-                {
-                    oldpassword = member.ResetPassword();
-                }
+            if (!ShouldProcess(name, "Change User Password")) return;
 
-                member.ChangePassword(oldpassword, NewPassword);
+            if (Reset.IsPresent && User.Current.IsAdministrator)
+            {
+                oldpassword = member.ResetPassword();
             }
+
+            member.ChangePassword(oldpassword, NewPassword);
         }
     }
 }

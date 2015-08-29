@@ -58,8 +58,8 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
                     if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
                     {
-                        var error = String.Format("The file '{0}' already exists.", fileName);
-                        WriteError(new ErrorRecord(new IOException(error), error, ErrorCategory.ResourceExists, fileName));
+                        WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
+                            ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);
                     }
 
                     if (ShouldProcess(fileName, "Export package project"))
@@ -81,8 +81,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         if (fileName == null)
                         {
                             //name of the zip file when not defined
-                            fileName = string.Format(
-                                "{0}-PS-{1}.zip", Project.Metadata.PackageName, Project.Metadata.Version);
+                            fileName = $"{Project.Metadata.PackageName}-PS-{Project.Metadata.Version}.zip";
                         }
 
                         if (!System.IO.Path.IsPathRooted(fileName))
@@ -97,8 +96,8 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
                         if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
                         {
-                            var error = String.Format("The file '{0}' already exists.", fileName);
-                            WriteError(new ErrorRecord(new IOException(error), error, ErrorCategory.ResourceExists, fileName));
+                            WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
+                                ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);
                         }
 
                         if (ShouldProcess(fileName, "Export package"))

@@ -27,11 +27,10 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
-            if (ShouldProcess(name, "Remove user"))
-            {
-                var user = User.FromName(name, true);
-                user.Delete();
-            }
+            if (!ShouldProcess(name, "Remove user")) return;
+
+            var user = User.FromName(name, true);
+            user.Delete();
         }
     }
 }

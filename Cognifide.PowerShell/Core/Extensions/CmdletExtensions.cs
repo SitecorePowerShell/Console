@@ -18,18 +18,17 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             if (item.Fields[FieldIDs.ReadOnly] == null)
             {
-                var error = String.Format("Item '{0}' does not have a ReadOnly field.", item.Name);
-                command.WriteError(new ErrorRecord(new PSInvalidOperationException(error), error,
-                    ErrorCategory.InvalidData,
-                    item));
+                var error = $"Item '{item.Name}' does not have a ReadOnly field.";
+                command.WriteError(new ErrorRecord(new PSInvalidOperationException(error), 
+                    ErrorIds.InvalidOperation.ToString(), ErrorCategory.InvalidData, item));
                 return false;
             }
 
             if (!item.Fields[FieldIDs.ReadOnly].CanWrite)
             {
-                var error = String.Format("Cannot modify item '{0}' because the ReadOnly field cannot be written.",
-                    item.Name);
-                command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied,
+                var error = $"Cannot modify item '{item.Name}' because the ReadOnly field cannot be written.";
+                command.WriteError(new ErrorRecord(new SecurityException(error), 
+                    ErrorIds.InsufficientSecurityRights.ToString(), ErrorCategory.PermissionDenied,
                     item));
                 return false;
             }
@@ -41,8 +40,9 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             if (item.Access.CanWrite()) return true;
 
-            var error = String.Format("Cannot modify item '{0}' because the item cannot be written.", item.Name);
-            command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied, item));
+            var error = $"Cannot modify item '{item.Name}' because the item cannot be written.";
+            command.WriteError(new ErrorRecord(new SecurityException(error), 
+                ErrorIds.InsufficientSecurityRights.ToString(), ErrorCategory.PermissionDenied, item));
             return false;
         }
 
@@ -50,8 +50,9 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             if (item.Access.CanAdmin()) return true;
 
-            var error = String.Format("Item '{0}' cannot be managed by the current user.", item.Name);
-            command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied, item));
+            var error = $"Item '{item.Name}' cannot be managed by the current user.";
+            command.WriteError(new ErrorRecord(new SecurityException(error), 
+                ErrorIds.InsufficientSecurityRights.ToString(), ErrorCategory.PermissionDenied, item));
             return false;
         }
 
@@ -60,27 +61,27 @@ namespace Cognifide.PowerShell.Core.Extensions
             if (item.Locking.HasLock() || item.Locking.CanUnlock() ||
                 (!item.Locking.IsLocked() && item.Locking.CanLock())) return true;
 
-            var error = String.Format("Cannot modify item '{0}' because it is locked by '{1}'.", item.Name,
-                item.Locking.GetOwner());
-            command.WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied,
-                item));
+            var error = $"Cannot modify item '{item.Name}' because it is locked by '{item.Locking.GetOwner()}'.";
+            command.WriteError(new ErrorRecord(new SecurityException(error), 
+                ErrorIds.InsufficientSecurityRights.ToString(), ErrorCategory.PermissionDenied, item));
             return false;
         }
 
         public static bool CanFindAccount(this Cmdlet command, AccountIdentity account, AccountType accountType)
         {
             var name = account.Name;
-            var error = String.Format("Cannot find an account with identity '{0}'.", name);
+            var error = $"Cannot find an account with identity '{name}'.";
 
             if (accountType == AccountType.Role && !Role.Exists(name))
             {
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), ErrorIds.AccountNotFound.ToString(),
                     ErrorCategory.ObjectNotFound, account));
                 return false;
             }
+
             if (accountType == AccountType.User && !User.Exists(name))
             {
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), ErrorIds.AccountNotFound.ToString(),
                     ErrorCategory.ObjectNotFound, account));
                 return false;
             }
@@ -93,8 +94,8 @@ namespace Cognifide.PowerShell.Core.Extensions
             Account account = identity;
             if (account == null)
             {
-                var error = String.Format("Cannot find an account with identity '{0}'.", identity.Name);
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
+                var error = $"Cannot find an account with identity '{identity.Name}'.";
+                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), ErrorIds.AccountNotFound.ToString(),
                     ErrorCategory.ObjectNotFound, identity));
             }
             return account;
@@ -123,9 +124,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             if (!supported)
             {
                 command.WriteWarning(
-                    string.Format(
-                        "The parameter {0} is not supported on this version of Sitecore due to platform limitations. This parameter is supported starting from Sitecore Version {1}.{2}",
-                        parameter, thresholdSitecoreVersion.Major, thresholdSitecoreVersion.Minor));
+                    $"The parameter {parameter} is not supported on this version of Sitecore due to platform limitations. This parameter is supported starting from Sitecore Version {thresholdSitecoreVersion.Major}.{thresholdSitecoreVersion.Minor}");
             }
             return supported;
         }

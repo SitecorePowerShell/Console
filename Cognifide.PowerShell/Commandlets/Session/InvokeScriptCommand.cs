@@ -44,12 +44,13 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
                 if (scriptItem == null)
                 {
-                    var error = String.Format("The script '{0}' is cannot be found.", Path);
-                    WriteError(new ErrorRecord(new ItemNotFoundException(error), error, ErrorCategory.ObjectNotFound, Path));
+                    WriteError(typeof(ItemNotFoundException), $"The script '{Path}' is cannot be found.", 
+                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, Path);
                     return;
                 }
                 script = scriptItem[ScriptItemFieldNames.Script];
             }
+
             if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;
             
             var sendToPipeline = InvokeCommand.InvokeScript(script, false,

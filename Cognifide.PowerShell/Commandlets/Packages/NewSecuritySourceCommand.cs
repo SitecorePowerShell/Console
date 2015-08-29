@@ -56,9 +56,8 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     }
                     else
                     {
-                        var error = String.Format("Cannot find any account of type {0} with identity '{1}'.", AccountType, Identity.Name);
-                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
-                            ErrorCategory.ObjectNotFound, Identity));
+                        WriteError(typeof(ObjectNotFoundException), $"Cannot find any account of type {AccountType} with identity '{Identity.Name}'.", 
+                            ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, Identity);
                         
                     }
                     break;

@@ -21,23 +21,21 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
-            if (ShouldProcess(Identity.Domain, "Create Role '" + Identity.Account + "' in the domain"))
+            if (!ShouldProcess(Identity.Domain, "Create Role '" + Identity.Account + "' in the domain")) return;
+
+            if (Role.Exists(name))
             {
-                if (Role.Exists(name))
-                {
-                    var error = $"Cannot create a duplicate account with identity '{name}'.";
-                    WriteError(new ErrorRecord(new DuplicateNameException(error), error, ErrorCategory.InvalidArgument,
-                        Identity));
-                    return;
-                }
+                WriteError(typeof(DuplicateNameException), $"Cannot create a duplicate account with identity '{name}'.", 
+                    ErrorIds.AccountAlreadyExists, ErrorCategory.InvalidArgument, Identity);
+                return;
+            }
 
-                Roles.CreateRole(name);
-                var role = Role.FromName(name);
+            Roles.CreateRole(name);
+            var role = Role.FromName(name);
 
-                if (PassThru)
-                {
-                    WriteObject(role);
-                }
+            if (PassThru)
+            {
+                WriteObject(role);
             }
         }
     }

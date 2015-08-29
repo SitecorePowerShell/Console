@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                     if (!user.IsInRole(targetRole)) continue;
 
                     var profile = UserRoles.FromUser(user);
-                    if (ShouldProcess(targetRole.Name, string.Format("Remove user '{0}' from role", user.Name)))
+                    if (ShouldProcess(targetRole.Name, $"Remove user '{user.Name}' from role"))
                     {
                         profile.Remove(targetRole);
                     }
@@ -47,7 +47,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                     var role = Role.FromName(member.Name);
                     if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
                     {
-                        if (ShouldProcess(targetRole.Name, string.Format("Remove role '{0}' from role", role.Name)))
+                        if (ShouldProcess(targetRole.Name, $"Remove role '{role.Name}' from role"))
                         {
                             RolesInRolesManager.RemoveRoleFromRole(role, targetRole);
                         }
@@ -55,9 +55,8 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 }
                 else
                 {
-                    var error = String.Format("Cannot find an account with identity '{0}'.", member);
-                    WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
-                        ErrorCategory.ObjectNotFound, member));
+                    WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{member}'.",
+                        ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, member);
                 }
             }
         }

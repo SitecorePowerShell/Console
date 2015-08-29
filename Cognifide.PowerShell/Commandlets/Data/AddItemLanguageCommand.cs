@@ -58,34 +58,30 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItem(Item item)
         {
-            if (ShouldProcess(item.GetProviderPath(),
-                string.Format("Add language '{0}' version(s){1}",
-                    TargetLanguage.Aggregate((seed, curr) => seed + ", " + curr), (Recurse ? " recursively" : ""))))
+            if (!ShouldProcess(item.GetProviderPath(),
+                $"Add language '{TargetLanguage.Aggregate((seed, curr) => seed + ", " + curr)}' version(s){(Recurse ? " recursively" : "")}"))
+                return;
+
+            foreach (var targetLanguage in TargetLanguage)
             {
-                foreach (var targetLanguage in TargetLanguage)
+                var lang = LanguageManager.GetLanguage(targetLanguage);
+                if (lang == null)
                 {
-                    var lang = LanguageManager.GetLanguage(targetLanguage);
-                    if (lang == null)
+                    WriteError(typeof(ObjectNotFoundException), $"Cannot find target language '{targetLanguage}' or it is not enabled.", 
+                        ErrorIds.LanguageNotFound, ErrorCategory.ObjectNotFound, item);
+                }
+                else
+                {
+                    var latestVersion = item.Versions.GetLatestVersion(lang);
+                    if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
                     {
-                        var error = String.Format("Cannot find target language '{0}' or it is not enabled.",
-                            targetLanguage);
-                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
-                            ErrorCategory.ObjectNotFound,
-                            item));
+                        CopyFields(item, latestVersion, false);
                     }
-                    else
+                    if (Recurse)
                     {
-                        var latestVersion = item.Versions.GetLatestVersion(lang);
-                        if (IfExist != ActionIfExists.Skip || (latestVersion.Versions.Count == 0))
+                        foreach (Item childItem in item.Children)
                         {
-                            CopyFields(item, latestVersion, false);
-                        }
-                        if (Recurse)
-                        {
-                            foreach (Item childItem in item.Children)
-                            {
-                                ProcessItem(childItem);
-                            }
+                            ProcessItem(childItem);
                         }
                     }
                 }

@@ -21,16 +21,15 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         {
             if (DomainManager.DomainExists(Name))
             {
-                var error = String.Format("Cannot create a duplicate domain with name '{0}'.", Name);
-                WriteError(new ErrorRecord(new DuplicateNameException(error), error, ErrorCategory.InvalidArgument, Name));
+                WriteError(typeof(DuplicateNameException), $"Cannot create a duplicate domain with name '{Name}'.", 
+                    ErrorIds.DomainAlreadyExists, ErrorCategory.InvalidArgument, Name);
                 return;
             }
 
-            if (ShouldProcess(Name, "Create domain"))
-            {
-                DomainManager.AddDomain(Name, LocallyManaged);
-                WriteObject(DomainManager.GetDomain(Name));
-            }
+            if (!ShouldProcess(Name, "Create domain")) return;
+
+            DomainManager.AddDomain(Name, LocallyManaged);
+            WriteObject(DomainManager.GetDomain(Name));
         }
     }
 }

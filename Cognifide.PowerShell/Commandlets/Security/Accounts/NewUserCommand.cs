@@ -40,51 +40,49 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
-            if (ShouldProcess(Identity.Domain, "Create User '" + Identity.Account + "' in the domain"))
+            if (!ShouldProcess(Identity.Domain, "Create User '" + Identity.Account + "' in the domain")) return;
+
+            if (User.Exists(name))
             {
-                if (User.Exists(name))
-                {
-                    var error = String.Format("Cannot create a duplicate account with identity '{0}'.", name);
-                    WriteError(new ErrorRecord(new DuplicateNameException(error), error, ErrorCategory.InvalidArgument,
-                        Identity));
-                    return;
-                }
+                WriteError(typeof(DuplicateNameException), $"Cannot create a duplicate account with identity '{name}'.", 
+                    ErrorIds.AccountAlreadyExists, ErrorCategory.InvalidArgument, Identity);
+                return;
+            }
 
-                var pass = Password;
+            var pass = Password;
 
-                if (!Enabled)
+            if (!Enabled)
+            {
+                if (String.IsNullOrEmpty(Password))
                 {
-                    if (String.IsNullOrEmpty(Password))
-                    {
-                        pass = Membership.GeneratePassword(10, 3);
-                    }
+                    pass = Membership.GeneratePassword(10, 3);
                 }
+            }
 
-                var member = Membership.CreateUser(name, pass, Email);
-                member.IsApproved = Enabled;
-                Membership.UpdateUser(member);
+            var member = Membership.CreateUser(name, pass, Email);
+            member.IsApproved = Enabled;
+            Membership.UpdateUser(member);
 
-                var user = User.FromName(name, true);
+            var user = User.FromName(name, true);
 
-                var profile = user.Profile;
-                if (!String.IsNullOrEmpty(FullName))
-                {
-                    profile.FullName = FullName;
-                }
-                if (!String.IsNullOrEmpty(Comment))
-                {
-                    profile.Comment = Comment;
-                }
-                if (!String.IsNullOrEmpty(Portrait))
-                {
-                    profile.Portrait = Portrait;
-                }
-                profile.Save();
+            var profile = user.Profile;
+            if (!String.IsNullOrEmpty(FullName))
+            {
+                profile.FullName = FullName;
+            }
+            if (!String.IsNullOrEmpty(Comment))
+            {
+                profile.Comment = Comment;
+            }
+            if (!String.IsNullOrEmpty(Portrait))
+            {
+                profile.Portrait = Portrait;
+            }
+            profile.Save();
 
-                if (PassThru)
-                {
-                    WriteObject(user);
-                }
+            if (PassThru)
+            {
+                WriteObject(user);
             }
         }
     }

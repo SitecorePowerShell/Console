@@ -18,32 +18,30 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         {
             if (renderings.Any())
             {
-                if (ShouldProcess(item.GetProviderPath(),
-                    string.Format("Remove rendering(s) '{0}' from device {1}",
-                        renderings.Select(r => r.ItemID.ToString()).Aggregate((seed, curr) => seed + ", " + curr),
-                        Device.Name)))
-                {
-                    foreach (
-                        var instanceRendering in
-                            renderings.Select(rendering => device.Renderings.Cast<RenderingDefinition>()
-                                .FirstOrDefault(r => r.UniqueId == rendering.UniqueId))
-                                .Where(instanceRendering => instanceRendering != null)
-                                .Reverse())
-                    {
-                        device.Renderings.Remove(instanceRendering);
-                    }
+                if (!ShouldProcess(item.GetProviderPath(),
+                    $"Remove rendering(s) '{renderings.Select(r => r.ItemID.ToString()).Aggregate((seed, curr) => seed + ", " + curr)}' from device {Device.Name}"))
+                    return;
 
-                    item.Edit(p =>
-                    {
-                        var outputXml = layout.ToXml();
-                        Item["__Renderings"] = outputXml;
-                    });
+                foreach (
+                    var instanceRendering in
+                        renderings.Select(rendering => device.Renderings.Cast<RenderingDefinition>()
+                            .FirstOrDefault(r => r.UniqueId == rendering.UniqueId))
+                            .Where(instanceRendering => instanceRendering != null)
+                            .Reverse())
+                {
+                    device.Renderings.Remove(instanceRendering);
                 }
+
+                item.Edit(p =>
+                {
+                    var outputXml = layout.ToXml();
+                    Item["__Renderings"] = outputXml;
+                });
             }
             else
             {
-                var error = "Cannot find a rendering to remove";
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound, null));
+                WriteError(typeof(ObjectNotFoundException), "Cannot find a rendering to remove", 
+                    ErrorIds.RenderingNotFound, ErrorCategory.ObjectNotFound, null);
             }
         }
     }

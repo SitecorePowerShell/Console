@@ -31,11 +31,10 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             var member = Membership.GetUser(name);
             if (member == null) return;
 
-            if (ShouldProcess(name, "Unlock User"))
-            {
-                member.UnlockUser();
-                Membership.UpdateUser(member);
-            }
+            if (!ShouldProcess(name, "Unlock User")) return;
+
+            member.UnlockUser();
+            Membership.UpdateUser(member);
         }
     }
 }

@@ -20,30 +20,28 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 
         protected override void EditItem(Item item)
         {
-            if (ShouldProcess(item.GetProviderPath(), "Lock Item"))
+            if (!ShouldProcess(item.GetProviderPath(), "Lock Item")) return;
+
+            var itemLock = item.Locking;
+            if (itemLock.GetOwner().Is(Identity.Name))
             {
-                var itemLock = item.Locking;
-                if (itemLock.GetOwner().Is(Identity.Name))
+                return;
+            }
+            if (itemLock.IsLocked())
+            {
+                if (Force)
                 {
+                    itemLock.Unlock();
+                }
+                else
+                {
+                    WriteError(typeof(SecurityException), $"Cannot modify item '{item.Name}' because it is locked by '{item.Locking.GetOwner()}' - Use the -Force parameter to transfet lock to the new user.", 
+                        ErrorIds.InsufficientSecurityRights, ErrorCategory.InvalidData,item);
                     return;
                 }
-                if (itemLock.IsLocked())
-                {
-                    if (Force)
-                    {
-                        itemLock.Unlock();
-                    }
-                    else
-                    {
-                        var error = String.Format("Cannot modify item '{0}' because it is locked by '{1}' - Use the -Force parameter to transfet lock to the new user.", item.Name,
-                            item.Locking.GetOwner());
-                        WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.InvalidData,item));
-                        return;
-                    }
-                }
-
-                item.Locking.Lock();
             }
+
+            item.Locking.Lock();
         }
     }
 }

@@ -31,33 +31,32 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
             var name = ParameterSetName == "Id" ? Identity.Name : Instance.Name;
 
-            if (ShouldProcess(name, "Remove role"))
+            if (!ShouldProcess(name, "Remove role")) return;
+
+            var role = Role.FromName(name);
+            if (!role.IsEveryone)
             {
-                var role = Role.FromName(name);
-                if (!role.IsEveryone)
+                var usersInRoles = Roles.GetUsersInRole(name);
+                if (usersInRoles != null && usersInRoles.Any())
                 {
-                    var usersInRoles = Roles.GetUsersInRole(name);
-                    if (usersInRoles != null && usersInRoles.Any())
-                    {
-                        Roles.RemoveUsersFromRole(usersInRoles, name);
-                    }
-
-                    if (RolesInRolesManager.RolesInRolesSupported)
-                    {
-                        var rolesInRole = RolesInRolesManager.GetRolesForRole(role, false);
-                        if (rolesInRole.Any())
-                        {
-                            RolesInRolesManager.RemoveRolesFromRole(rolesInRole, role);
-                        }
-                    }
-
-                    Roles.DeleteRole(name, true);
+                    Roles.RemoveUsersFromRole(usersInRoles, name);
                 }
-                else
+
+                if (RolesInRolesManager.RolesInRolesSupported)
                 {
-                    var error = String.Format("Cannot remove role '{0}'.", name);
-                    WriteError(new ErrorRecord(new SecurityException(error), error, ErrorCategory.PermissionDenied, name));
+                    var rolesInRole = RolesInRolesManager.GetRolesForRole(role, false);
+                    if (rolesInRole.Any())
+                    {
+                        RolesInRolesManager.RemoveRolesFromRole(rolesInRole, role);
+                    }
                 }
+
+                Roles.DeleteRole(name, true);
+            }
+            else
+            {
+                WriteError(typeof(SecurityException), $"Cannot remove role '{name}'.", 
+                    ErrorIds.InsufficientSecurityRights, ErrorCategory.PermissionDenied, name);
             }
         }
     }

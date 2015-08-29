@@ -28,12 +28,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             if (item.Database.Name.IsNot("master"))
             {
-                var error =
-                    String.Format(
-                        "Item '{0}' cannot be published. Only items from the 'master' database can be published!",
-                        item.Name);
-                WriteError(new ErrorRecord(new PSInvalidOperationException(error), error, ErrorCategory.InvalidData,
-                    null));
+                WriteError(typeof(PSInvalidOperationException), $"Item '{item.Name}' cannot be published. Only items from the 'master' database can be published!", 
+                    ErrorIds.InvalidOperation, ErrorCategory.InvalidOperation, null);
                 return;
             }
 

@@ -79,7 +79,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         protected override void ProcessRecord()
         {
 
-            User user = Instance;
+            var user = Instance;
             if (ParameterSetName == "Id")
             {
                 user = User.FromName(Identity.Name, true);

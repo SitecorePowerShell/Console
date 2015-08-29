@@ -130,10 +130,8 @@ namespace Cognifide.PowerShell.Commandlets
                 }
                 else
                 {
-                    WriteError(new ErrorRecord(
-                        new ObjectNotFoundException("Cannot find item to perform the operation on."),
-                        "sitecore_item_not_found", ErrorCategory.ObjectNotFound, null
-                        ));
+                    WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
+                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
                 }
             }
             return item;
@@ -177,10 +175,8 @@ namespace Cognifide.PowerShell.Commandlets
                 }
                 else
                 {
-                    WriteError(new ErrorRecord(
-                        new ObjectNotFoundException("Cannot find item to perform the operation on."),
-                        "sitecore_item_not_found", ErrorCategory.ObjectNotFound, null
-                        ));
+                    WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
+                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
                 }
                 if (item != null)
                 {
@@ -227,9 +223,8 @@ namespace Cognifide.PowerShell.Commandlets
 
         public virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject)
         {
-            Exception exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
+            var exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
             WriteError(new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject));
         }
-
     }
 }

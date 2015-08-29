@@ -31,36 +31,32 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                         var user = User.FromName(member.Name, false);
                         if (user.IsInRole(targetRole)) continue;
 
-                        if (ShouldProcess(targetRole.Name, string.Format("Add user '{0}' to role", user.Name)))
-                        {
-                            var profile = UserRoles.FromUser(user);
-                            profile.Add(targetRole);
-                        }
+                        if (!ShouldProcess(targetRole.Name, $"Add user '{user.Name}' to role")) continue;
+
+                        var profile = UserRoles.FromUser(user);
+                        profile.Add(targetRole);
                     }
                     else if (Role.Exists(member.Name))
                     {
                         var role = Role.FromName(member.Name);
-                        if (!RolesInRolesManager.IsRoleInRole(role, targetRole, false))
+                        if (RolesInRolesManager.IsRoleInRole(role, targetRole, false)) continue;
+
+                        if (ShouldProcess(targetRole.Name, $"Add role '{role.Name}' to role"))
                         {
-                            if (ShouldProcess(targetRole.Name, string.Format("Add role '{0}' to role", role.Name)))
-                            {
-                                RolesInRolesManager.AddRoleToRole(role, targetRole);
-                            }
+                            RolesInRolesManager.AddRoleToRole(role, targetRole);
                         }
                     }
                     else
                     {
-                        var error = String.Format("Cannot find an account with identity '{0}'.", member);
-                        WriteError(new ErrorRecord(new ObjectNotFoundException(error), error,
-                            ErrorCategory.ObjectNotFound, member));
+                        WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{member}'.", 
+                            ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, member);
                     }
                 }
             }
             else
             {
-                var error = String.Format("Cannot find an account with identity '{0}'.", name);
-                WriteError(new ErrorRecord(new ObjectNotFoundException(error), error, ErrorCategory.ObjectNotFound,
-                    Identity));
+                WriteError(typeof(ObjectNotFoundException), $"Cannot find an account with identity '{name}'.", 
+                    ErrorIds.AccountNotFound, ErrorCategory.ObjectNotFound, Identity);
             }
         }
     }
