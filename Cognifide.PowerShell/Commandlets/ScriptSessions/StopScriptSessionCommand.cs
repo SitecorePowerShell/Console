@@ -6,7 +6,6 @@ using Cognifide.PowerShell.Core.Host;
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
     [Cmdlet(VerbsLifecycle.Stop, "ScriptSession", SupportsShouldProcess = true)]
-    [OutputType(typeof (object))]
     public class StopScriptSessionCommand : BaseScriptSessionCommand
     {
         protected override void ProcessSession(ScriptSession session)
@@ -24,6 +23,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 WriteError(typeof (CmdletInvocationException), $"The current script session with Id '{session.ID}' cannot be stopped.", 
                     ErrorIds.ScriptSessionCannotBeStopped, ErrorCategory.ResourceBusy,session.ID ?? string.Empty);
             }
+
+            WriteObject(session);
         }
     }
 }

@@ -26,13 +26,25 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Get-ScriptSession
+
+    .LINK
+        Receive-ScriptSession
+
+    .LINK
+        Start-ScriptSession
+
+    .LINK
+        Stop-ScriptSession
+
+    .LINK
+        Wait-ScriptSession
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .LINK
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
-
-    .LINK
-        Get-ScriptSession
 
     .EXAMPLE
         PS master:\> Remove-ScriptSession -Path master:\content\home
