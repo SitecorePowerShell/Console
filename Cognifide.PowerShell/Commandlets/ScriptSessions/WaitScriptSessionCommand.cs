@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter]
         public SwitchParameter Any { get; set; }
 
-        private List<ScriptSession> sessions = new List<ScriptSession>();
+        private readonly List<ScriptSession> sessions = new List<ScriptSession>();
 
         protected override void ProcessSession(ScriptSession session)
         {
@@ -29,6 +29,11 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
         protected override void EndProcessing()
         {
+
+            if (!ShouldProcess(
+                sessions.Select(session => session.ID).Aggregate((seed, cur) => seed + ", " + cur),
+                "Wait for running script session")) return;
+
             DateTime stopDateTime = Timeout > -1 ? DateTime.Now.AddSeconds(Timeout) : DateTime.MaxValue;
             while (DateTime.Now < stopDateTime)
             {

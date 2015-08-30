@@ -4,11 +4,13 @@ using Cognifide.PowerShell.Core.Host;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
-    [Cmdlet(VerbsCommon.Remove, "ScriptSession", DefaultParameterSetName = "All")]
+    [Cmdlet(VerbsCommon.Remove, "ScriptSession", DefaultParameterSetName = "All", SupportsShouldProcess = true)]
     public class RemoveScriptSessionCommand : BaseScriptSessionCommand
     {
         protected override void ProcessSession(ScriptSession session)
         {
+            if (!ShouldProcess(session.ID, "Remove existing script session")) return;
+
             if (session.State == RunspaceAvailability.Busy)
             {
                 WriteError(typeof (CmdletInvocationException),

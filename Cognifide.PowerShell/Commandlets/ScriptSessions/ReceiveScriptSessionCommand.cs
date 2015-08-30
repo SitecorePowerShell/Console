@@ -4,7 +4,7 @@ using Cognifide.PowerShell.Core.Host;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
-    [Cmdlet(VerbsCommunications.Receive, "ScriptSession", DefaultParameterSetName = "All")]
+    [Cmdlet(VerbsCommunications.Receive, "ScriptSession", DefaultParameterSetName = "All", SupportsShouldProcess = true)]
     public class ReceiveScriptSessionCommand : BaseScriptSessionCommand
     {
         [Parameter]
@@ -15,6 +15,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
         protected override void ProcessSession(ScriptSession session)
         {
+            if (!ShouldProcess(session.ID, "Receive results from existing script session")) return;
+
             if (session.State == RunspaceAvailability.Busy)
             {
                 WriteError(typeof (CmdletInvocationException),

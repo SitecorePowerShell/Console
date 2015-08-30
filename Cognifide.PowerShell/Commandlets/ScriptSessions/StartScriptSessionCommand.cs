@@ -166,7 +166,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 script = scriptItem[ScriptItemFieldNames.Script];
             }
             
-            if (!ShouldProcess(scriptItem?.GetProviderPath() ?? string.Empty, "Invoke script")) return;
+            if (!ShouldProcess(scriptItem?.GetProviderPath() ?? string.Empty, "Start new script session")) return;
 
             scriptBlock = ScriptBlock ?? InvokeCommand.NewScriptBlock(script);
 

@@ -13,6 +13,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             if (session.State != RunspaceAvailability.Busy) { return; }
 
+            if (!ShouldProcess(session.ID, "Abort running script session")) return;
+
             if (session.ID != CurrentSessionId)
             {
                 session.Abort();
