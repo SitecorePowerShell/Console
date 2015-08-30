@@ -70,7 +70,7 @@ http://bit.ly/ScPsIss
 Thank you for using Sitecore PowerShell Extensions.
 
 Copyright (c) 2010-2015 Adam Najmanowicz - Cognifide
-Copyright (c) 2014-2015 Michael West
+Copyright (c) 2013-2015 Michael West
 
 http://www.cognifide.com/
 http://blog.najmanowicz.com/
@@ -199,7 +199,7 @@ if(Test-Path -Path $remotingSourcePath) {
 ----version----
 language: en
 version: 1
-revision: 8245bdde-408f-4367-9d2b-ec17bab2312d
+revision: 5cabb93d-a178-405f-ad58-86b4ac78be4e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -214,14 +214,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8245bdde-408f-4367-9d2b-ec17bab2312d
+5cabb93d-a178-405f-ad58-86b4ac78be4e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150830T154258:635765461780427730
+20150830T154848:635765465283054423
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
