@@ -54,6 +54,8 @@
     .LINK
         Set-Layout
 
+    .LINK
+        Reset-Layout
 
     .EXAMPLE
         PS master:\> Get-Layout -Path master:\content\home

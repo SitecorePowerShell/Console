@@ -54,6 +54,9 @@
         Get-ItemTemplate
 
     .LINK
+        Reset-ItemField
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

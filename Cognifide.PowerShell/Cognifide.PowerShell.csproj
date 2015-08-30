@@ -177,6 +177,7 @@
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
     <Compile Include="Commandlets\BaseIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\ResetItemFieldCommand.cs" />
     <Compile Include="Commandlets\Data\Search\InitializeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\ResumeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\StopSearchIndexCommand.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Commandlets\ScriptSessions\StopScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\StartScriptSessionCommand.cs" />
     <Compile Include="Commandlets\Packages\NewSecuritySourceCommand.cs" />
+    <Compile Include="Commandlets\Presentation\ResetLayoutCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\NewRoleCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\RemoveRoleCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\TestAccountCommand.cs" />
