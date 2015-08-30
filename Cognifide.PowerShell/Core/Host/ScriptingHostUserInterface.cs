@@ -30,15 +30,9 @@ namespace Cognifide.PowerShell.Core.Host
         /// <summary>
         ///     A reference to the PSHost implementation.
         /// </summary>
-        public OutputBuffer Output
-        {
-            get { return rawUi.Output; }
-        }
+        public OutputBuffer Output => rawUi.Output;
 
-        public override PSHostRawUserInterface RawUI
-        {
-            get { return rawUi; }
-        }
+        public override PSHostRawUserInterface RawUI => rawUi;
 
         public override string ReadLine()
         {

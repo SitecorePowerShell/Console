@@ -496,6 +496,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptSession.SetItemLocationContext(ContextItem);
             }
 
+            scriptSession.Interactive = true;
+
             JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose);
         }
 

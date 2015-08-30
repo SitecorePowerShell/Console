@@ -9,10 +9,11 @@ window.onfocus = function() {
 };
 
 jQuery(document).ready(function($) {
+    var progressWidth = $("#Progress").width();
     if ($("#progressbar").length > 0) {
         $("#progressbar").empty().VistaProgressBar({
             mode: "indeterminate",
-            width: 355,
+            width: progressWidth,
             highlightspeed: 3000
         });
         $("#progressbar").VistaProgressBar("start");
@@ -40,10 +41,11 @@ jQuery(document).ready(function($) {
 });
 
 function undeterminateProgress(id) {
+    var progressWidth = $("#Progress").width();
     var widget = $ise(id);
     widget.empty().VistaProgressBar({
         mode: "indeterminate",
-        width: 355,
+        width: progressWidth,
         highlightspeed: 3000
     }).VistaProgressBar("start");
 }

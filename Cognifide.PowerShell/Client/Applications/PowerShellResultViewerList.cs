@@ -316,6 +316,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     : string.Empty;
                 SetVariables(session, message);
                 session.SetExecutedScript(scriptItem);
+                session.Interactive = true;
+
                 var result = session.ExecuteScriptPart(script, false).Last().ToString();
                 SheerResponse.Download(result);
             }

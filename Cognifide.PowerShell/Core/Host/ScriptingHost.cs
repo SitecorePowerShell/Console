@@ -97,7 +97,8 @@ namespace Cognifide.PowerShell.Core.Host
 
         public bool CloseRunner { get; internal set; }
         public string User { get; internal set; }
-        public string JobName { get; internal set; }        
+        public string JobName { get; internal set; }
+        public bool Interactive { get; internal set; }
 
         /// <summary>
         ///     This implementation always returns the GUID allocated at

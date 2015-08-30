@@ -24,10 +24,10 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 return;
             }
 
-            WriteObject(session.AsyncResultsStore);
+            WriteObject(session.JobResultsStore);
 
             if (KeepResult) return;
-            session.AsyncResultsStore = null;
+            session.JobResultsStore = null;
 
             if (KeepSession) return;
             ScriptSessionManager.RemoveSession(session);

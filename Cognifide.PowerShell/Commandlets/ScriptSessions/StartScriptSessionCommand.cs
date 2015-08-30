@@ -3,15 +3,19 @@ using System.Collections;
 using System.Data;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
+using Sitecore.Text;
+using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -61,7 +65,14 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter]
         public SwitchParameter AutoDispose { get; set; }
 
+        [Parameter]
+        public SwitchParameter Interactive { get; set; }
+
+        [Parameter]
+        public Item ContextItem { get; set; }
+
         private ScriptBlock scriptBlock;
+        private Item scriptItem;
 
         protected override void ProcessSession(ScriptSession session)
         {
@@ -73,6 +84,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 return;
             }
             session.AutoDispose = AutoDispose;
+            session.SetItemLocationContext(ContextItem);
 
             if (ArgumentList != null)
             {
@@ -87,19 +99,52 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 new object[] { session, scriptBlock.ToString() })
             {
                 AfterLife = new TimeSpan(0, 0, 1),
-                ContextUser = Identity ?? Sitecore.Context.User,
+                ContextUser = Identity ?? Context.User,
                 EnableSecurity = !DisableSecurity,
-                ClientLanguage = Sitecore.Context.ContentLanguage
+                ClientLanguage = Context.ContentLanguage
             };
 
-            JobManager.Start(jobOptions);
+            if (Interactive)
+            {
+                var appParams = new Hashtable();
+                if (scriptItem != null)
+                {
+                    appParams.Add("scriptId", scriptItem.ID.ToString());
+                    appParams.Add("scriptDb", scriptItem.Database.Name);
+                }
+                else
+                {
+                    session.JobScript = scriptBlock.ToString();
+                    session.JobOptions = jobOptions;
+                }
+                appParams.Add("appMode", "1");
+                appParams.Add("sessionKey", session.Key);
+
+                var message = new ShowApplicationMessage("PowerShell/PowerShell Runner", "PowerShell", "", "500", "360",
+                    false, appParams)
+                {Title = " "};
+                PutMessage(message);                
+            }
+            else
+            {
+                JobManager.Start(jobOptions);
+            }
             WriteObject(session);
         }
 
         protected override void ProcessRecord()
         {
+            if (Interactive && !HostData.ScriptingHost.Interactive)
+            {
+                RecoverHttpContext();
+                WriteError(typeof(CmdletInvocationException),
+                    "An interactive script session cannot be started from non interactive script session.",
+                    ErrorIds.OriginatingScriptSessionNotInteractive, ErrorCategory.InvalidOperation, HostData.ScriptingHost.SessionId);
+                return;
+            }
+
             var script = string.Empty;
-            var scriptItem = Item;
+            scriptItem = Item;
 
             if (Item != null)
             {
@@ -189,8 +234,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             try
             {
-                session.AsyncResultsStore = null;
-                session.AsyncResultsStore = session.ExecuteScriptPart(command, false, false, false);
+                session.JobResultsStore = null;
+                session.JobResultsStore = session.ExecuteScriptPart(command, false, false, false);
 
             }
             catch (Exception ex)

@@ -3,7 +3,8 @@ $projectPath = "C:\Projects\sitecorepowershell\Trunk"
 
 # This is where your sitecore sites are
 # The sites need to have the standard \Data \Web folders in them
-$sites = @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
+$sites = @{Path = "C:\inetpub\wwwroot\Sitecore81"; Version="8"},
+         @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore70"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"};
 

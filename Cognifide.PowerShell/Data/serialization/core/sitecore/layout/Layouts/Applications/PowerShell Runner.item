@@ -1,0 +1,79 @@
+----item----
+version: 1
+id: {4681B698-D525-4F7F-B667-ECD2E5411078}
+database: core
+path: /sitecore/layout/Layouts/Applications/PowerShell Runner
+parent: {FA21DB1E-3F70-4201-9245-98A864582651}
+name: PowerShell Runner
+master: {00000000-0000-0000-0000-000000000000}
+template: {1163DA83-B2EF-4381-BF09-B2FF714B1B3F}
+templatekey: Xml layout
+
+----field----
+field: {5851D498-15F9-4B1A-BB02-0B736C13AFE3}
+name: Control
+key: control
+content-length: 16
+
+PowerShellRunner
+----field----
+field: {C155D613-6F1E-42B8-96B1-15CE7C845850}
+name: Path
+key: path
+content-length: 0
+
+
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 1
+
+0
+----version----
+language: en
+version: 1
+revision: c768f2ab-951e-4714-bd44-c75d3ad09978
+
+----field----
+field: {C8F93AFE-BFD4-4E8F-9C61-152559854661}
+name: __Valid from
+key: __valid from
+content-length: 15
+
+20060227T100400
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20060227T100400
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\Admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+c768f2ab-951e-4714-bd44-c75d3ad09978
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20150828T211206
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

@@ -99,6 +99,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             var session = GetScriptSession(guid);
+            session.Interactive = true;
             try
             {
                 var handle = ID.NewID.ToString();

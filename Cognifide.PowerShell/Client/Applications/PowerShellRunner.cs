@@ -28,8 +28,6 @@ namespace Cognifide.PowerShell.Client.Applications
     {
         protected Button AbortButton;
         protected Scrollbox All;
-        //protected Item CurrentItem { get; set; }
-
         protected Literal BackgroundColor;
         protected Button Cancel;
         protected Literal Closed;
@@ -72,6 +70,18 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             get { return StringUtil.GetString(ServerProperties["ItemDb"]); }
             set { ServerProperties["ItemDb"] = value; }
+        }
+
+        public bool AppMode
+        {
+            get { return StringUtil.GetString(ServerProperties["AppMode"]) == "1"; }
+            set { ServerProperties["AppMode"] = value ? "1" : string.Empty; }
+        }
+        
+        public bool HasScript
+        {
+            get { return StringUtil.GetString(ServerProperties["HasScript"]) == "1"; }
+            set { ServerProperties["HasScript"] = value ? "1" : string.Empty; }
         }
 
         public string ScriptId
@@ -128,16 +138,32 @@ namespace Cognifide.PowerShell.Client.Applications
                 ItemLang = WebUtil.GetQueryString("lang");
                 ItemVer = WebUtil.GetQueryString("ver");
 
+                AppMode = WebUtil.GetQueryString("AppMode") == "1";
+                HasScript = WebUtil.GetQueryString("HasScript") == "1";
+
                 ScriptId = WebUtil.GetQueryString("scriptId");
                 ScriptDb = WebUtil.GetQueryString("scriptDb");
 
-                var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
-                scriptItem.Fields.ReadAll();
-                Icon.Src = scriptItem.Appearance.Icon;
+                if (!string.IsNullOrEmpty(ScriptId) && !string.IsNullOrEmpty(ScriptId))
+                {
+                    var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
+                    scriptItem.Fields.ReadAll();
+                    Icon.Src = scriptItem.Appearance.Icon;
 
-                PersistentId = scriptItem[ScriptItemFieldNames.PersistentSessionId];
-                ScriptContent = scriptItem[ScriptItemFieldNames.Script];
-                DialogHeader.Text = scriptItem.DisplayName;
+                    PersistentId = string.IsNullOrEmpty(WebUtil.GetQueryString("sessionKey"))
+                        ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
+                        : WebUtil.GetQueryString("sessionKey");
+
+                    ScriptContent = scriptItem[ScriptItemFieldNames.Script];
+                    DialogHeader.Text = scriptItem.DisplayName;
+                }
+                else
+                {
+                    PersistentId = string.IsNullOrEmpty(WebUtil.GetQueryString("sessionKey"))
+                        ? string.Empty
+                        : WebUtil.GetQueryString("sessionKey");
+                    ScriptContent = ScriptSessionManager.GetSession(PersistentId).JobScript;
+                }
 
                 if (Monitor != null) return;
 
@@ -162,6 +188,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
         }
 
+
         [HandleMessage("psr:execute", true)]
         protected virtual void Execute(ClientPipelineArgs args)
         {
@@ -172,16 +199,17 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
-
             scriptSession.SetExecutedScript(ScriptDb, ScriptId);
+            scriptSession.Interactive = true;
+
             var parameters = new object[]
             {
                 scriptSession,
                 ScriptContent
             };
             var runner = new ScriptRunner(ExecuteInternal, parameters, false);
-            Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run);
-            Monitor.SessionID = scriptSession.ID;
+            Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run, scriptSession.JobOptions);
+            Monitor.SessionID = scriptSession.Key;
         }
 
         protected void ExecuteInternal(params object[] parameters)
@@ -270,8 +298,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            var sessionId = Monitor.SessionID;
-            var scriptSession = ScriptSessionManager.GetSession(sessionId);
+            var scriptSession = ScriptSessionManager.GetSession(PersistentId);
             Monitor.SessionID = string.Empty;
 
             if (scriptSession.CloseRunner)
@@ -283,7 +310,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Closed.Text = "close";
                 }
 
-                Context.ClientPage.ClientResponse.CloseWindow();
+                OkClick();
             }
             if (string.IsNullOrEmpty(PersistentId))
             {
@@ -294,7 +321,24 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("psr:close", true)]
         protected virtual void OkClick()
         {
-            SheerResponse.CloseWindow();
+            var sessionId = PersistentId;
+            if (ScriptSessionManager.SessionExists(sessionId))
+            {
+                var currentSession = ScriptSessionManager.GetSession(sessionId);
+                if (currentSession.AutoDispose)
+                {
+                    currentSession.Dispose();
+                }
+            }
+            if (AppMode)
+            {
+                SheerResponse.Eval("window.parent.scWin.closeWindow()");
+            }
+            else
+            {
+                SheerResponse.CloseWindow();
+            }
+
         }
 
         [HandleMessage("psr:delayedclose", true)]
@@ -306,7 +350,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("psr:dodelayedclose", true)]
         protected virtual void DoDelayedClose(ClientPipelineArgs args)
         {
-            SheerResponse.CloseWindow();
+            OkClick();
         }
 
         protected virtual void AbortClick()

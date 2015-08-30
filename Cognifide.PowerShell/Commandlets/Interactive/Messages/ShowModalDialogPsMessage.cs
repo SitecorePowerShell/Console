@@ -27,14 +27,16 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             HandleParams = handleParams;
+            ReceiveResults = true;
             Url = url;
         }
 
         public string Width { get; private set; }
         public string Height { get; private set; }
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public string Url { get; private set; }
         public Hashtable HandleParams { get; set; }
+        public bool ReceiveResults { get; set; }
 
         /// <summary>
         ///     Starts the pipeline.
@@ -44,10 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Context.ClientPage.Start(this, "Pipeline");
         }
 
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
+        public MessageQueue MessageQueue => messageQueue;
 
         /// <summary>
         ///     Shows a confirmation dialog.
@@ -76,7 +75,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 handle.Add(urlString);
             }
 
-            Context.ClientPage.ClientResponse.ShowModalDialog(urlString.ToString(), Width, Height, string.Empty, true);
+            Context.ClientPage.ClientResponse.ShowModalDialog(urlString.ToString(), Width, Height, string.Empty, ReceiveResults);
 
         }
 

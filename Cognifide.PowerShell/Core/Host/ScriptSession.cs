@@ -4,19 +4,17 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
-using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.IO;
+using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
 using Version = System.Version;
 
@@ -46,11 +44,21 @@ namespace Cognifide.PowerShell.Core.Host
         private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";
         private const string ExceptionLineEndFormat = "\r\n";
 
+        private static readonly FormatConfigurationEntry formats = new FormatConfigurationEntry(HttpRuntime.AppDomainAppPath +
+                                                   @"sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml");
+
+        readonly TypeConfigurationEntry types = new TypeConfigurationEntry(HttpRuntime.AppDomainAppPath +
+                                               @"sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml");
+
         private bool disposed;
         private bool initialized;
         private Pipeline pipeline;
         private readonly ScriptingHost host;
         private readonly Runspace runspace;
+
+        internal string JobScript { get; set; }
+        internal JobOptions JobOptions { get; set; }
+        public List<object> JobResultsStore { get; set; }
 
         static ScriptSession()
         {
@@ -77,13 +85,9 @@ namespace Cognifide.PowerShell.Core.Host
             conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
             if (Settings.UseTypeInfo)
             {
-                conf.Formats.Prepend(
-                    new FormatConfigurationEntry(HttpRuntime.AppDomainAppPath +
-                                                 @"sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml"));
+                conf.Formats.Prepend(formats);
                 conf.Formats.Update();
-                conf.Types.Prepend(
-                    new TypeConfigurationEntry(HttpRuntime.AppDomainAppPath +
-                                               @"sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml"));
+                conf.Types.Prepend(types);
                 conf.Types.Update();
             }
 
@@ -122,6 +126,13 @@ namespace Cognifide.PowerShell.Core.Host
             internal set { host.SessionId = value; }
         }
 
+        public bool Interactive
+        {
+            get { return host.Interactive; }
+            internal set { host.Interactive = value; }
+        }
+
+
         public string UserName
         {
             get { return host.User; }
@@ -134,14 +145,11 @@ namespace Cognifide.PowerShell.Core.Host
             internal set { host.JobName = value; }
         }
 
-        public List<object> AsyncResultsStore { get; set; }
-
         public string Key { get; internal set; }
         public ApplicationSettings Settings { get; }
-
         public OutputBuffer Output => host.Output;
-
         public RunspaceAvailability State => runspace.RunspaceAvailability;
+        public string ApplianceType { get; set; }
 
         public string CurrentLocation
         {
@@ -161,8 +169,6 @@ namespace Cognifide.PowerShell.Core.Host
                 }
             }
         }
-
-        public string ApplianceType { get; set; }
 
         public void SetVariable(string varName, object varValue)
         {
@@ -185,9 +191,8 @@ namespace Cognifide.PowerShell.Core.Host
             get
             {
                 lock (this)
-                {
-                    var list = ExecuteScriptPart("Get-Variable", false, true).Cast<PSVariable>().ToList();
-                    return list;
+                {                    
+                    return ExecuteScriptPart("Get-Variable", false, true).Cast<PSVariable>().ToList();
                 }
             }
         }
@@ -397,9 +402,12 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void SetItemLocationContext(Item item)
         {
-            SetVariable("SitecoreContextItem", item);
-            var contextScript = GetDataContextSwitch(item);
-            ExecuteScriptPart(contextScript);
+            if (item != null)
+            {
+                SetVariable("SitecoreContextItem", item);
+                var contextScript = GetDataContextSwitch(item);
+                ExecuteScriptPart(contextScript);
+            }
         }
 
         public void SetExecutedScript(string database, string path)

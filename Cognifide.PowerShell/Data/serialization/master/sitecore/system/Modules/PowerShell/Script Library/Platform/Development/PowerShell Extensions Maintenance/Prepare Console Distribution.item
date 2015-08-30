@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9392
+content-length: 9120
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -39,7 +39,7 @@ $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
-$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West, Michael Reynolds";
 $package.Metadata.Publisher = "Cognifide Limited";
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = '
@@ -70,11 +70,12 @@ http://bit.ly/ScPsIss
 Thank you for using Sitecore PowerShell Extensions.
 
 Copyright (c) 2010-2015 Adam Najmanowicz - Cognifide
-Copyright (c) 2013-2015 Michael West
+Copyright (c) 2014-2015 Michael West
 
 http://www.cognifide.com/
 http://blog.najmanowicz.com/
-http://michaellwest.blogspot.com/'
+http://michaellwest.blogspot.com/
+http://sitecorejunkie.com/category/powershell/'
 
 # Item templates
 $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Overwrite
@@ -178,28 +179,18 @@ Export-Package -Project $package -Path "$packageName.xml"
 Export-Package -Project $package -Path "$packageName.zip" -Zip
 Download-File "$SitecorePackageFolder\$packageName.zip"
 
-Import-Function -Name Compress-Archive
-
 # Build Minimal Package
 
 $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version) for Sitecore $($SitecoreVersion.Major).zip"
+Import-Function -Name Compress-Archive
 
 Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled"
 Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update
 Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath $minimalPackageName -Include "web.config", "RemoteAutomation.asmx" -Update
-
-# Build Remoting Package
-
-$remotingSourcePath = (Get-Item -Path $AppPath).Parent.FullName
-if(Test-Path -Path $remotingSourcePath) {
-    $remotingPackageName = "$($SitecorePackageFolder)\SPE Remoting-$($Version).zip"
-    
-    Compress-Archive -Path "$($remotingSourcePath)\Modules\SPE\" -DestinationPath $remotingPackageName
-}
 ----version----
 language: en
 version: 1
-revision: 5cabb93d-a178-405f-ad58-86b4ac78be4e
+revision: 84213642-b010-4892-b1e2-a2c1f57490f8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -214,14 +205,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5cabb93d-a178-405f-ad58-86b4ac78be4e
+84213642-b010-4892-b1e2-a2c1f57490f8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150830T154848:635765465283054423
+20150803T122137
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

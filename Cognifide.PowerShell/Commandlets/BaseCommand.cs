@@ -57,20 +57,11 @@ namespace Cognifide.PowerShell.Commandlets
             }
         }
 
-        protected ScriptingHostPrivateData HostData
-        {
-            get { return (Host.PrivateData.BaseObject as ScriptingHostPrivateData); }
-        }
+        protected ScriptingHostPrivateData HostData => (Host.PrivateData.BaseObject as ScriptingHostPrivateData);
 
-        protected string CurrentPath
-        {
-            get { return SessionState.Drive.Current.CurrentLocation; }
-        }
+        protected string CurrentPath => SessionState.Drive.Current.CurrentLocation;
 
-        protected ClientPage ClientPage
-        {
-            get { return (GetVariableValue("ClientPage") as ClientPage); }
-        }
+        protected ClientPage ClientPage => (GetVariableValue("ClientPage") as ClientPage);
 
         protected void RecoverHttpContext()
         {
@@ -81,7 +72,7 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected static WildcardPattern GetWildcardPattern(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 name = "*";
             }

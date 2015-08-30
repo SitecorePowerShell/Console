@@ -132,13 +132,7 @@ namespace Cognifide.PowerShell.Client.Controls
             JobFinished(this, EventArgs.Empty);
         }
 
-        /// <summary>
-        ///     Starts the specified task.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="category">The category.</param>
-        /// <param name="task">The entry.</param>
-        public void Start(string name, string category, ThreadStart task)
+        public void Start(string name, string category, ThreadStart task, JobOptions options = null)
         {
             Assert.ArgumentNotNullOrEmpty(name, "name");
             Assert.ArgumentNotNullOrEmpty(category, "category");
@@ -146,14 +140,14 @@ namespace Cognifide.PowerShell.Client.Controls
             var siteName = string.Empty;
             var site = Sitecore.Context.Site;
             if (site != null)
-                siteName = site.Name;
+                siteName = site.Name;                        
             JobHandle = JobManager.Start(new JobOptions(name, category, siteName, new TaskRunner(task), "Run")
             {
-                ContextUser = Sitecore.Context.User,
+                ContextUser = options?.ContextUser ?? Sitecore.Context.User,
                 AtomicExecution = false,
-                EnableSecurity = true,
+                EnableSecurity = options?.EnableSecurity ?? true,
                 ClientLanguage = Sitecore.Context.ContentLanguage,
-                AfterLife = new TimeSpan(0,0,0,10)
+                AfterLife = new TimeSpan(0,0,0,10),
             }).Handle;
             ScheduleCallback();
         }
