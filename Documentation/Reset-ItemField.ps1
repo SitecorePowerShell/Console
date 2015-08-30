@@ -21,16 +21,16 @@
         Id of the item to be analysed.
 
     .PARAMETER Path
-        Path to the item to be analysed - additionally specify Language parameter to fetch different item language than the current user language.
+        Path to the item to be reset - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Id
-        Id of the the item to be analysed - additionally specify Language parameter to fetch different item language than the current user language.
+        Id of the the item to be reset - additionally specify Language parameter to fetch different item language than the current user language.
 
     .PARAMETER Database
-        Database containing the item to be analysed - can work with Language parameter to narrow the publication scope.
+        Database containing the item to be reset - can work with Language parameter to narrow the publication scope.
 
     .PARAMETER Language
-        Language that will be analysed. If not specified the current user language will be used. Globbing/wildcard supported.
+        Language that will be reset. If not specified the current user language will be used. Globbing/wildcard supported.
 
     .INPUTS
         Sitecore.Data.Items.Item
@@ -60,6 +60,6 @@
 
     .EXAMPLE
         # Reset all item fields with names beginning with "a", excluding standard fields.
-        PS master:\> Get-Item master:\content\home | Reset-ItemField -Name "a*
+        PS master:\> Get-Item master:\content\home | Reset-ItemField -Name "a*"
 
 #>

@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItem(Item item)
         {
-            var matchingFields = GetMatchingFields(item);
+            var matchingFields = GetMatchingFields(item).ToList();
 
             if (matchingFields.Any())
             {
