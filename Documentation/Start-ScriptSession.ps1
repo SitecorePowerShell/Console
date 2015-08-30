@@ -75,14 +75,16 @@
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .EXAMPLE
-        # Start the progress demo script in interactive mode (showing dialogs for each script) in 3 different ways.
-        # In the first case script path is used, second case shows the script item beign retrieved and provided to the cmdlet.
-        # The last case shows the script to be provided as a script block (script content)
-        # Script finishes before the sessions that were launched from it end. 
-        # The sessions will be disposed when user presses the "Close" button in their dialogs as the -AutoDispose parameter was provided.
+        The following starts the progress demo script in interactive mode (showing dialogs for each script) in 3 different ways.
+        
+        In the first case script path is used, second case shows the script item beign retrieved and provided to the cmdlet.
+        The last case shows the script to be provided as a script block (script content)
+        Script finishes before the sessions that were launched from it end. 
+        The sessions will be disposed when user presses the "Close" button in their dialogs as the -AutoDispose parameter was provided.
+        
         $scriptPath = "master:\system\Modules\PowerShell\Script Library\Getting Started\Script Testing\Long Running Script with Progress Demo"
         $scriptItem = Get-Item $scriptPath
         $script = [scriptblock]::Create($scriptItem.Script)
@@ -91,7 +93,8 @@
         Start-ScriptSession -ScriptBlock $script -Interactive -AutoDispose
 
     .EXAMPLE
-        # Starts a script that changes its path to "master:\" and sleeps for 4 seconds. The session will persist in memory as no -AutoDispose parameter has been provided
-	Start-ScriptSession -ScriptBlock { cd master:\; Start-Sleep -Seconds 4 } -Id "Background Task"
+        The following starts a script that changes its path to "master:\" and sleeps for 4 seconds. The session will persist in memory as no -AutoDispose parameter has been provided.
+	    
+        Start-ScriptSession -ScriptBlock { cd master:\; Start-Sleep -Seconds 4 } -Id "Background Task"
 
 #>

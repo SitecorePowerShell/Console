@@ -22,7 +22,8 @@
         The parameter limits script sessions to be returned to only those in a specific state, the values should be "Busy" or "Available".  To find states of currently running script sessions, type "Get-ScriptSession" without parameters.
 
     .INPUTS
-    
+        None
+
     .OUTPUTS
         Cognifide.PowerShell.PowerShellIntegrations.Host.ScriptSession        
 
@@ -45,7 +46,7 @@
         Wait-ScriptSession
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .LINK
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/

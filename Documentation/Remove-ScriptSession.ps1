@@ -41,11 +41,13 @@
         Wait-ScriptSession
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .LINK
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
 
     .EXAMPLE
-        PS master:\> Remove-ScriptSession -Path master:\content\home
+        The following removes the script session using the specified Id.
+
+        PS master:\> Remove-ScriptSession -Id "Long running script"
 #>

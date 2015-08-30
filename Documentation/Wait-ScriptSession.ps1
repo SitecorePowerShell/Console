@@ -8,7 +8,7 @@
         You can use Wait-ScriptSession cmdlet to wait for script sessions, such as those that were started by using the Start-ScriptSession cmdlet.
 
     .PARAMETER Timeout
-        TODO: Provide description for this parameter
+        The maximum time to wait for all the other running script sessions to complete.
 
     .PARAMETER Any
         Returns control to the script or displays the command prompt (and returns the ScriptSession object) when any script session completes. By default, Wait-ScriptSession waits until all of the specified jobs are complete before displaying the prompt.
@@ -20,8 +20,7 @@
         Session(s) to be stopped.
     
     .INPUTS
-        System.String
-        Cognifide.PowerShell.Core.Host.ScriptSession
+        System.String or Cognifide.PowerShell.Core.Host.ScriptSession
     
     .OUTPUTS
         Cognifide.PowerShell.Core.Host.ScriptSession
@@ -48,7 +47,7 @@
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .EXAMPLE
         PS master:\> Wait-ScriptSession -Id "My Background Script Session"

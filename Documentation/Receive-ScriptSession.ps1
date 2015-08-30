@@ -3,8 +3,6 @@
         Gets the results of a script session execution.
 
     .DESCRIPTION
-
-        Receive-ScriptSession.
         The Receive-ScriptSession cmdlet gets the results of Windows PowerShell script sessions, such as those started by using the Start-ScriptSession. 
         You can get the results of all script sessions by their ID or by submitting a script session objects.
         When you start a new script session, the session starts, but the results do not appear immediately. Instead, the command returns an object that represents the script session. The script session object contains useful information about the script session, but it does not contain the results. This method allows you to continue working in the current session while the script session runs. For more information about script sessions in Windows PowerShell, see about_script sessions.
@@ -19,7 +17,7 @@
 
     .PARAMETER Id
         Gets the results of script session with the specified IDs.
-       The ID is a string that uniquely identifies the script session within the server. You can type one or more IDs (separated by commas). To find the ID of a script session, type "Get-ScriptSession" without parameters.
+        The ID is a string that uniquely identifies the script session within the server. You can type one or more IDs (separated by commas). To find the ID of a script session, type "Get-ScriptSession" without parameters.
 
     .PARAMETER Session
         Specifies the script session for which results are being retrieved. Enter a variable that contains the script session or a command that gets the script session. You can also pipe a script session object to Receive-ScriptSession.
@@ -28,14 +26,16 @@
         Sitecore.Data.Items.Item
     
     .OUTPUTS
-        
+        None or System.Object
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .EXAMPLE
-        PS master:\> Receive-ScriptSession -Path master:\content\home
+        The following will return the output from all available script sessions.
+
+        PS master:\> Get-ScriptSession | Receive-ScriptSession
 #>

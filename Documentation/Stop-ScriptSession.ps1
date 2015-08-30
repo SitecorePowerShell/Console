@@ -14,8 +14,7 @@
         Specifies the script session to be stopped. Enter a variable that contains the script session or a command that gets the script session. You can also pipe a script session object to Receive-ScriptSession.
         
     .INPUTS
-        System.String
-        Cognifide.PowerShell.Core.Host.ScriptSession
+        System.String or Cognifide.PowerShell.Core.Host.ScriptSession
     
     .OUTPUTS
         Cognifide.PowerShell.Core.Host.ScriptSession
@@ -42,9 +41,10 @@
         http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/
 
     .LINK
-        https://github.com/SitecorePowerShell/Console/
+        https://git.io/spe
 
     .EXAMPLE
-        PS master:\> Stop-ScriptSession -Id "My Background Script Session"
+        The following stops the script session with the specified Id.
 
+        PS master:\> Stop-ScriptSession -Id "My Background Script Session"
 #>
