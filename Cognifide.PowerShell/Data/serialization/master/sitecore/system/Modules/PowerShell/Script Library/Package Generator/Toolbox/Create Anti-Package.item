@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7650
+content-length: 8316
 
 $response = Show-ModalDialog -HandleParameters @{
     "h"="Create an Anti-Package"; 
@@ -29,7 +29,9 @@ if(!$response -or $response -eq "undetermined") {
     Write-Verbose "Operation cancelled by user."
     return $null
 }
+
 $path = Join-Path -Path $SitecorePackageFolder -ChildPath $response
+Write-Verbose "Selected package at the path $($path) to process."
 
 function Get-PackageProject {
     param (
@@ -186,8 +188,21 @@ foreach($source in $project.Sources) {
         }
     } else {
         if($isItemSource) {
-            $itemRoot = Get-Item -Path "$($source.Database):" -ID $source.Root
-            $items = @($itemRoot) + (Get-ChildItem -Path $itemRoot.PSPath -Recurse)
+            Write-Verbose "Processing item $($source.Root) from the $($source.Database) database."
+            $itemRoot = & { 
+                if([Sitecore.Data.ID]::IsID($source.Root)) { 
+                    Get-Item -Path "$($source.Database):" -ID $source.Root 
+                } else { 
+                    Get-Item -Path "$($source.Database):$($source.Root)"
+                }
+            }
+            
+            if($itemRoot) {
+                Write-Verbose "Processing items at the path $($itemRoot)."
+                $items = @($itemRoot) + (Get-ChildItem -Path $itemRoot.PSPath -Recurse)
+            } else {
+                Write-Verbose "No items found at that path. This is likely because it was removed after installation."
+            }
         } elseif($isFileSource) {
             $fileRoot = Get-Item -Path "$AppPath\$($source.Root)"
             $files = @($fileRoot)
@@ -203,7 +218,7 @@ foreach($source in $project.Sources) {
         "Name" = $source.Name
         "InstallMode" = $installMode
     }
-        
+
     if($isItemSource -and $items) {
         $props["MergeMode"] = $mergeMode
         if($source.SkipVersions) {
@@ -242,7 +257,7 @@ People/32x32/package_delete.png
 ----version----
 language: en
 version: 1
-revision: 6157e32a-edc9-406b-9a99-fc24c0063d1a
+revision: 12aad2a7-ed38-4697-98b2-e0f27306204d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -257,14 +272,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6157e32a-edc9-406b-9a99-fc24c0063d1a
+12aad2a7-ed38-4697-98b2-e0f27306204d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150618T092111:635702160710461250
+20150831T200448:635766482881500294
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
