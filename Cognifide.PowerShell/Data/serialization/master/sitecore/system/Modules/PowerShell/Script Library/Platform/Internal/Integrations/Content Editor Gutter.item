@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2875
+content-length: 2935
 
 $gutterPath = "core:/sitecore/content/Applications/Content Editor/Gutters/"
 $gutterHandlerClass = "Cognifide.PowerShell.Integrations.Gutters.GutterStatusRenderer, Cognifide.PowerShell"
@@ -30,7 +30,7 @@ foreach($root in $roots){
         $script = $_
         Write-Host "Processing Script '$($script.Name)'"
         $gutterEntryPath = "$gutterPath$($script.Name)"
-        $gutterEntry = Get-Item $gutterEntryPath
+        $gutterEntry = Get-Item $gutterEntryPath -ErrorAction SilentlyContinue
         if($gutterEntry -eq $null){
             Write-Host "Adding new script '$($script.Name)' to gutter." -ForegroundColor Green
             $gutterEntry = New-Item $gutterEntryPath -ItemType $gutterTemplate
@@ -61,7 +61,7 @@ Get-Childitem $gutterPath | ForEach-Object {
         if ($scriptDb -eq $null){
             $scriptDb = "master"
         }
-        $script = Get-Item -path "$($scriptDb):/" -ID $scriptId
+        $script = Get-Item -path "$($scriptDb):/" -ID $scriptId -ErrorAction SilentlyContinue
         if($script -eq $null){
             Write-Host "Removing '$($gutterEntry.Name)' from gutter as the script no longer exists or module not active."
             $gutterEntry | remove-item
@@ -86,7 +86,7 @@ Control/32x32/treeview.png
 ----version----
 language: en
 version: 1
-revision: 194910fa-051f-4fb5-b58a-9f366878110f
+revision: 6e750e8c-c9df-4819-afec-2dc7de8deb0e
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -101,14 +101,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-194910fa-051f-4fb5-b58a-9f366878110f
+6e750e8c-c9df-4819-afec-2dc7de8deb0e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150105T110540:635560527406969297
+20150831T231701:635766598217345935
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

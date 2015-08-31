@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6086
+content-length: 6206
 
 $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
@@ -44,7 +44,7 @@ foreach($root in $roots){
     #Adding missing strips
     Get-Childitem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
       $scriptLibrary = $_;
-      $strip = Get-Item "$stripsPath/$($scriptLibrary.Name)"
+      $strip = Get-Item "$stripsPath/$($scriptLibrary.Name)" -ErrorAction SilentlyContinue
       if($strip -eq $null){
         Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
         $strip = New-Item -path "$stripsPath" -Name "$($scriptLibrary.Name)" -ItemType "System/Ribbon/Strip"
@@ -54,7 +54,7 @@ foreach($root in $roots){
         # Adding missing chunks
         Get-Childitem $scriptLibrary.ProviderPath | ForEach-Object {
             $chunkLibrary = $_
-            $chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)"
+            $chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)" -ErrorAction SilentlyContinue
             if($chunk -eq $null){
               Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
             $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
@@ -72,7 +72,7 @@ foreach($root in $roots){
         Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
           $script = $_
           if($script.TemplateName -eq "PowerShell Script"){
-              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)/$($script.Name)"
+              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)/$($script.Name)" -ErrorAction SilentlyContinue
               if($button -eq $null){
                 $panel = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "System/Ribbon/Panel"
                 $panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
@@ -117,7 +117,7 @@ Get-Childitem $stripsPath | ForEach-Object {
                 $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$button.Click)
                 $scriptDb = $message.Arguments["scriptDb"]
                 $scriptId = $message.Arguments["script"];
-                $script = Get-Item "$($scriptDb):/" -Id $scriptId
+                $script = Get-Item "$($scriptDb):/" -Id $scriptId -ErrorAction SilentlyContinue
                 if($button.ID -eq $panel.Id)
                 {
                     $panel | remove-item -Recurse
@@ -160,7 +160,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: 0d70bfd7-be3a-4bdf-b9cc-86884854bfcd
+revision: 64be6aec-c0c8-46b7-9ae2-7f5de25abd8a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -175,14 +175,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0d70bfd7-be3a-4bdf-b9cc-86884854bfcd
+64be6aec-c0c8-46b7-9ae2-7f5de25abd8a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 34
 
-20150820T230141
+20150831T231817:635766598979241887
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
