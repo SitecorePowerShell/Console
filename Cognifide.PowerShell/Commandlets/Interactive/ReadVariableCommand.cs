@@ -31,6 +31,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction())
+                {
+                    WriteObject("cancel");
+                    return;
+                }
+
                 AssertDefaultSize(500, 300);
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
                     OkButtonName, CancelButtonName, ShowHints);

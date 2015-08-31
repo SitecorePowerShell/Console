@@ -21,10 +21,12 @@ namespace Cognifide.PowerShell.Core.Host
     public class ScriptingHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         private readonly ScriptingHostRawUserInterface rawUi;
+        private ScriptingHost host;
 
-        public ScriptingHostUserInterface(ApplicationSettings settings)
+        public ScriptingHostUserInterface(ApplicationSettings settings, ScriptingHost host)
         {
             rawUi = new ScriptingHostRawUserInterface(settings);
+            this.host = host;
         }
 
         /// <summary>
@@ -36,7 +38,8 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override string ReadLine()
         {
-            if (JobContext.IsJob)
+            
+            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(ReadLine)))
             {
                 object[] options = new object[1];
                 options[0] = new Hashtable()
@@ -55,7 +58,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override SecureString ReadLineAsSecureString()
         {
-            if (JobContext.IsJob)
+            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(ReadLineAsSecureString)))
             {
                 object[] options = new object[1];
                 options[0] = new Hashtable()
@@ -125,6 +128,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
+            if (!CheckSessionCanDoInteractiveAction(nameof(WriteProgress))) return;
             var message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
@@ -163,7 +167,7 @@ namespace Cognifide.PowerShell.Core.Host
         public override Dictionary<string, PSObject> Prompt(string caption, string message,
             Collection<FieldDescription> descriptions)
         {
-            if (JobContext.IsJob)
+            if (JobContext.IsJob && CheckSessionCanDoInteractiveAction(nameof(Prompt)))
             {
                 object[] options = new object[descriptions.Count];
                 for (var i=0 ; i < descriptions.Count; i++)
@@ -223,11 +227,9 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices,
             int defaultChoice)
-        {
-            if (Context.Job == null)
-            {
-                throw new NotImplementedException();
-            }
+        {            
+            if (!CheckSessionCanDoInteractiveAction(nameof(PromptForChoice))) return -1;
+
 
             var parameters =
                 new Hashtable(choices.ToDictionary(p => "btn_" + choices.IndexOf(p),
@@ -270,5 +272,19 @@ namespace Cognifide.PowerShell.Core.Host
             } while (choice != -1);
             return results;
         }
+
+        public virtual bool CheckSessionCanDoInteractiveAction(string operation)
+        {
+            if (!host.Interactive)
+            {
+                string message = string.IsNullOrEmpty(operation)
+                    ? "Non interactive session cannot perform an interactive operation."
+                    : $"Non interactive session cannot perform an interactive '{operation}' operation.";
+                
+                throw new InvalidOperationException(message);
+            }
+            return true;
+        }
+
     }
 }

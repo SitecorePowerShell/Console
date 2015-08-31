@@ -12,7 +12,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         protected override void EndProcessing()
         {
-            LogErrors(() => SessionState.PSVariable.Set("allDataInternal", CumulativeData));
+            if (CheckSessionCanDoInteractiveAction())
+            {
+                LogErrors(() => SessionState.PSVariable.Set("allDataInternal", CumulativeData));
+            }
             base.EndProcessing();
         }
     }

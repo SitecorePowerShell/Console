@@ -14,6 +14,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 var response = JobContext.Confirm(Title);
                 WriteObject(response);
             });

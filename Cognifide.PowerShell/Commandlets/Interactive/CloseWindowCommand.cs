@@ -7,7 +7,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     {
         protected override void ProcessRecord()
         {
-            //PutMessage(new CloseWindowMessage());
             HostData.CloseRunner = true;
         }
     }

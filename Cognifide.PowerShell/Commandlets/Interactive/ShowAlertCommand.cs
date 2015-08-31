@@ -11,6 +11,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         protected override void ProcessRecord()
         {
+            if (!CheckSessionCanDoInteractiveAction()) return;
+
             LogErrors(() => PutMessage(new AlertMessage(Title)));
         }
     }

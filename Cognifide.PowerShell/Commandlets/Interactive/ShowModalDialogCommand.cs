@@ -28,6 +28,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction())
+                {
+                    WriteObject("error");
+                    return;
+                }
+
                 string response = null;
                 if (!string.IsNullOrEmpty(Url))
                 {

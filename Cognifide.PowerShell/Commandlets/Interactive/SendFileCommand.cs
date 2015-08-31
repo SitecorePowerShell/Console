@@ -35,6 +35,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 AssertDefaultSize(700, 140);
 
                 string response;

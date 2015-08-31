@@ -27,6 +27,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 if (!string.IsNullOrEmpty(Validation) || MaxLength > 0)
                 {
                     PutMessage(new PromptMessage(Prompt, DefaultValue ?? "",

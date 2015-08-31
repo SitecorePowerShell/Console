@@ -16,6 +16,7 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Web.UI.Sheer;
+using Message = Sitecore.Update.Installer.Messages.Message;
 
 namespace Cognifide.PowerShell.Commandlets
 {
@@ -58,6 +59,7 @@ namespace Cognifide.PowerShell.Commandlets
         }
 
         protected ScriptingHostPrivateData HostData => (Host.PrivateData.BaseObject as ScriptingHostPrivateData);
+        protected bool InteractiveSession => HostData.Interactive;
 
         protected string CurrentPath => SessionState.Drive.Current.CurrentLocation;
 
@@ -216,6 +218,20 @@ namespace Cognifide.PowerShell.Commandlets
         {
             var exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
             WriteError(new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject));
+        }
+
+        public virtual bool CheckSessionCanDoInteractiveAction()
+        {
+            if (!InteractiveSession)
+            {
+                CmdletAttribute attribute = GetType().GetCustomAttributes(typeof (CmdletAttribute), true).FirstOrDefault() as CmdletAttribute;
+                string message = attribute == null
+                    ? "Non interactive session cannot perform an interactive operation."
+                    : $"Non interactive session cannot perform an interactive operation requested by the '{attribute.VerbName}-{attribute.NounName}' command.";
+                WriteError(typeof (InvalidOperationException), message,
+                    ErrorIds.ScriptSessionIsNotInteractive, ErrorCategory.InvalidOperation, this);
+            }
+            return InteractiveSession;
         }
     }
 }

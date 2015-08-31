@@ -20,6 +20,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         protected override void ProcessRecord()
         {
+            if (!CheckSessionCanDoInteractiveAction()) return;
+
             var message = Message.Parse(null, Name);
             message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
             if (Parameters != null)

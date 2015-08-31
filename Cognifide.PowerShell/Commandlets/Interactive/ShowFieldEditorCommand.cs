@@ -88,6 +88,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 if (Context.Job != null)
                 {
                     var fields = "*";

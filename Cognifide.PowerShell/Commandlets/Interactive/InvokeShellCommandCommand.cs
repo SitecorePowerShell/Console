@@ -16,7 +16,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
-                if (Context.Job != null)
+                if (CheckSessionCanDoInteractiveAction())
                 {
                     PutMessage(new ShellCommandInItemContextMessage(item, Name));
                     if (item != null)

@@ -19,6 +19,8 @@
 
         public bool AutoDispose => ScriptingHost.AutoDispose;
 
+        public bool Interactive => ScriptingHost.Interactive;
+
         public bool CloseRunner
         {
             get { return ScriptingHost.CloseRunner; }

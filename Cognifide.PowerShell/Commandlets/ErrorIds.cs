@@ -11,10 +11,11 @@ namespace Cognifide.PowerShell.Commandlets
         InvalidOperation,
         ItemNotFound,
         LanguageNotFound,
+        OriginatingScriptSessionNotInteractive,
         RenderingNotFound,
         ScriptSessionBusy,
         ScriptSessionCannotBeStopped,
-        ScriptSessionNotFound,
-        OriginatingScriptSessionNotInteractive
+        ScriptSessionIsNotInteractive,
+        ScriptSessionNotFound
     }
 }

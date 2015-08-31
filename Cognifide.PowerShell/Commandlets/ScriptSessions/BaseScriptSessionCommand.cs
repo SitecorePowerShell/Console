@@ -65,9 +65,8 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             get
             {
-                var scriptingHostPrivateData = Host.PrivateData.BaseObject() as ScriptingHostPrivateData;
-                if (scriptingHostPrivateData == null) return string.Empty;
-                return scriptingHostPrivateData.SessionId;
+                if (HostData == null) return string.Empty;
+                return HostData.SessionId;
             }
         }
     }

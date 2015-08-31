@@ -13,6 +13,9 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter]
         public virtual SwitchParameter KeepSession { get; set; }
 
+        [Parameter]
+        public virtual SwitchParameter HostOutput { get; set; }
+
         protected override void ProcessSession(ScriptSession session)
         {
             if (!ShouldProcess(session.ID, "Receive results from existing script session")) return;
@@ -26,7 +29,14 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 return;
             }
 
-            WriteObject(session.JobResultsStore);
+            if (HostOutput)
+            {
+                WriteObject(session.Output.ToString());
+            }
+            else
+            {
+                WriteObject(session.JobResultsStore);
+            }
 
             if (KeepResult) return;
             session.JobResultsStore = null;

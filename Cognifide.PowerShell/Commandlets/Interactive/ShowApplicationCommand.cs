@@ -23,6 +23,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 var message =
                     new ShowApplicationMessage(Application, Title, Icon, WidthString, HeightString, Modal.IsPresent,
                         Parameter);

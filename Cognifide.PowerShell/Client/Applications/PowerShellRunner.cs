@@ -46,7 +46,6 @@ namespace Cognifide.PowerShell.Client.Applications
         public SpeJobMonitor Monitor { get; private set; }
         public string Script { get; set; }
         public ApplicationSettings Settings { get; set; }
-        public bool NonInteractive { get; set; }
 
         public string PersistentId
         {

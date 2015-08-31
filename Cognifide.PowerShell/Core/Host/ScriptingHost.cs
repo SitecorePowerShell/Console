@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Core.Host
         public ScriptingHost(ApplicationSettings settings, RunspaceConfiguration runspaceConfiguration)
         {
             this.runspaceConfiguration = runspaceConfiguration;
-            ui = new ScriptingHostUserInterface(settings);
+            ui = new ScriptingHostUserInterface(settings, this);
             pushedRunspaces = new Stack<Runspace>();
             privateData = new ScriptingHostPrivateData(this);
             CloseRunner = false;

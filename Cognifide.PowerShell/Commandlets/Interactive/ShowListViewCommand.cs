@@ -40,6 +40,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             base.EndProcessing();
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 var pageSize = PageSize == 0 ? 25 : PageSize;
                 if (Data == null)
                 {

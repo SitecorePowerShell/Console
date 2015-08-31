@@ -11,6 +11,12 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction())
+                {
+                    WriteObject("error");
+                    return;
+                }
+
                 var yesnoresult = JobContext.ShowModalDialog(Title, "YesNoCancel", WidthString, HeightString);
                 WriteObject(yesnoresult);
             });

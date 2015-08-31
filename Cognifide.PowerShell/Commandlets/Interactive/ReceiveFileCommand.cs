@@ -58,6 +58,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             LogErrors(() =>
             {
+                if (!CheckSessionCanDoInteractiveAction()) return;
+
                 AssertDefaultSize(500, AdvancedDialog ? 650 : 300);
 
                 var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description,
