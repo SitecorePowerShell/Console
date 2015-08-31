@@ -22,6 +22,9 @@
     .PARAMETER Session
         Specifies the script session for which results are being retrieved. Enter a variable that contains the script session or a command that gets the script session. You can also pipe a script session object to Receive-ScriptSession.
 
+    .PARAMETER HostOutput
+        Add this parameter to receive the host output content. The result of the command execution will basically be what the session would print if it was interactive.
+
     .INPUTS
         Sitecore.Data.Items.Item
     
