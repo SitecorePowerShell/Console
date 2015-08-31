@@ -406,7 +406,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 SetVariable("SitecoreContextItem", item);
                 var contextScript = GetDataContextSwitch(item);
-                ExecuteScriptPart(contextScript);
+                ExecuteScriptPart(contextScript, false, true, false);
             }
         }
 
