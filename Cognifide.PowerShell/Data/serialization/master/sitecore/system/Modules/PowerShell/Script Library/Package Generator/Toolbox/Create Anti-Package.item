@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8316
+content-length: 8538
 
 $response = Show-ModalDialog -HandleParameters @{
     "h"="Create an Anti-Package"; 
@@ -157,6 +157,12 @@ foreach($source in $project.Sources) {
     $isFileSource = $sourceTypeName -like "*FileSource"
     $isExplicit = "ExplicitItemSource","ExplicitFileSource" -contains $sourceTypeName
     
+    if([string]::IsNullOrEmpty($source.Name)) {
+        $guid = [guid]::NewGuid().ToString()
+        Write-Verbose "Changing the source name to $($guid) because it's missing."
+        $source.Name = $guid
+    }
+    
     Write-Verbose "Processing $($sourceTypeName) : $($source.Name)"
     if($isExplicit) {
         foreach($entry in $source.Entries) {
@@ -257,7 +263,7 @@ People/32x32/package_delete.png
 ----version----
 language: en
 version: 1
-revision: 12aad2a7-ed38-4697-98b2-e0f27306204d
+revision: e02463d4-a856-433a-8d62-6831e92557dd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -272,14 +278,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-12aad2a7-ed38-4697-98b2-e0f27306204d
+e02463d4-a856-433a-8d62-6831e92557dd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150831T200448:635766482881500294
+20150901T153850:635767187305022386
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
