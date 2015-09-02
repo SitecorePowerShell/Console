@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9392
+content-length: 9492
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -21,6 +21,7 @@ content-length: 9392
 if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion71)){
   $sitecore7Warning = ""
 } else {
+  (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowChrome"    
   $sitecore7Warning = @"
 ******************************************************
 If you are on Sitecore 7.0 or lower - after installing 
@@ -199,7 +200,7 @@ if(Test-Path -Path $remotingSourcePath) {
 ----version----
 language: en
 version: 1
-revision: 5cabb93d-a178-405f-ad58-86b4ac78be4e
+revision: 26e2a942-59aa-47a3-86a3-490ed42ad175
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -214,14 +215,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5cabb93d-a178-405f-ad58-86b4ac78be4e
+26e2a942-59aa-47a3-86a3-490ed42ad175
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150830T154848:635765465283054423
+20150902T142611
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

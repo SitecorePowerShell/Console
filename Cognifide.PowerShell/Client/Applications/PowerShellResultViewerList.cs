@@ -422,7 +422,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 : string.Empty;
             SetVariables(scriptSession, message);
             scriptSession.SetExecutedScript(scriptItem);
-
+            scriptSession.Interactive = true;
             ScriptSessionId = scriptSession.ID;
 
             var parameters = new object[]

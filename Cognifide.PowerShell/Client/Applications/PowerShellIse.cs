@@ -553,6 +553,7 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetVariable("scriptText",Editor.Value);
             scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
             scriptSession.SetVariable("scriptItem", ScriptItem);
+            scriptSession.Interactive = true;
             JobExecuteScript(args, script[ScriptItemFieldNames.Script], scriptSession, true);
         }
 

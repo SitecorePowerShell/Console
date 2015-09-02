@@ -2,7 +2,7 @@
 
 <control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
   <PowerShellRunner>
-    <FormPage>
+    <FormPage Application="PowerShell/PowerShell Runner">
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
@@ -37,7 +37,7 @@
           </Border>
         </Border>
 
-        <Scrollbox Class="scFlexContent">
+        <Scrollbox ID="ValuePanelContainer" Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
 
             <ThemedImage ID="TitleIcon" Src="powershell/32x32/powershell.png" Visible="false" />

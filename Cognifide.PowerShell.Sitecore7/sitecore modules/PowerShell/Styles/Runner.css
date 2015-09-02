@@ -210,3 +210,5 @@ a#ViewErrorsButton {
 #Promo.promoArea { border: 0px; }
 
 .scDialogHeader.psTextResults { display: none; }
+
+#ValuePanelContainer { background-color: white; }

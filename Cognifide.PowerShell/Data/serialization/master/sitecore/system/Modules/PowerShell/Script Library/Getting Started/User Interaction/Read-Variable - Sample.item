@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6300
+content-length: 6430
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -53,6 +53,7 @@ $result = Read-Variable -Parameters `
     @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false}, 
     @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
     @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
+    @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password";}, 
     @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
     @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
     @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio" }, 
@@ -119,7 +120,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: e1a14feb-34d0-46d4-a988-2df311cf9212
+revision: 1ef4a4c8-2c01-4c80-a203-4da842d064af
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -134,14 +135,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e1a14feb-34d0-46d4-a988-2df311cf9212
+1ef4a4c8-2c01-4c80-a203-4da842d064af
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150725T210943:635734553839783614
+20150902T141712
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
