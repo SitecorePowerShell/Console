@@ -582,10 +582,11 @@ IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* 
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore70\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 
 echo "Copy build for Mikey"
-IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
-IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Console\Website\App_Config\Include\*.* /s /e /c /y
-IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Console\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-</PostBuildEvent>
+IF EXIST C:\inetpub\wwwroot\Console (
+    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
+    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Console\Website\App_Config\Include\*.* /s /e /c /y
+    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Console\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

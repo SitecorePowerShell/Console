@@ -128,8 +128,11 @@
     <PostBuildEvent>echo "Copy build for Adam"
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
+
 echo "Copy build for Mikey"
-IF %25USERDOMAIN%25==WINDOWSDEV-PC xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
+IF EXIST C:\inetpub\wwwroot\Console (
+    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
+)
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,14 +1,23 @@
 # This is where your git-hub repository is located
 $projectPath = "C:\Projects\sitecorepowershell\Trunk"
+if(-not (Test-Path -Path $projectPath)) {
+    $projectPath = "C:\inetpub\wwwroot\Console"
+
+    if(-not(Test-Path -Path $projectPath)) {
+        Write-Error "The project path defined does not exist."
+        exit
+    }
+}
 
 # This is where your sitecore sites are
 # The sites need to have the standard \Data \Web folders in them
 $sites = @{Path = "C:\inetpub\wwwroot\Sitecore81"; Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore70"; Version="7"},
-         @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"};
+         @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"},
+         @{Path = "C:\inetpub\wwwroot\Console"; Version="8"};
 
-#Set the below to true to remove jusction points only and not set them back
+#Set the below to true to remove junction points only and not set them back
 $removeOnly = $false
 
 # --------------------------------------------------------------
@@ -74,5 +83,7 @@ function Create-ProjectJunctions{
 }
 
 foreach($sitecoreSite in $sites){
-	Create-ProjectJunctions @sitecoreSite
+    if(Test-Path -Path $sitecoreSite.Path) {
+	    Create-ProjectJunctions @sitecoreSite
+    }
 }
