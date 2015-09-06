@@ -186,6 +186,14 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        {
+            lock (this)
+            {                
+                runspace.Debugger.SetBreakpoints(breakpoints);
+            }
+        }
+
         public List<PSVariable> Variables
         {
             get

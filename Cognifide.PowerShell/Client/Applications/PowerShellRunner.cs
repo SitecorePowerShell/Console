@@ -21,6 +21,7 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Version = Sitecore.Data.Version;
+using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {

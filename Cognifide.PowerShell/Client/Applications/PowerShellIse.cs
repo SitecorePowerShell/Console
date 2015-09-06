@@ -36,6 +36,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal ScriptName;
         protected Border ScriptResult;
         protected Memo SelectionText;
+        protected Memo Breakpoints;
 
         protected bool ScriptRunning
         {
@@ -467,6 +468,12 @@ namespace Cognifide.PowerShell.Client.Applications
 
         [HandleMessage("ise:execute", true)]
         protected virtual void JobExecute(ClientPipelineArgs args)
+        {
+            JobExecuteScript(args, Editor.Value);
+        }
+
+        [HandleMessage("ise:debug", true)]
+        protected virtual void Debug(ClientPipelineArgs args)
         {
             JobExecuteScript(args, Editor.Value);
         }

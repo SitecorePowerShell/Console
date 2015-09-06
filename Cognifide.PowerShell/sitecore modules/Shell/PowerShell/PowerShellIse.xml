@@ -32,6 +32,7 @@
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
       <Memo ID="SelectionText" Style="display:none;"/>
       <Memo ID="SelectionRange" Style="display:none;"/>
+      <Memo ID="Breakpoints" Style="display:none;"/>
 
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
       <GridPanel ID="Wrapper" Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">

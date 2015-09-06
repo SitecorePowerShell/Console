@@ -16,6 +16,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -127,7 +128,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
             else
             {
-                JobManager.Start(jobOptions);
+                Sitecore.Jobs.JobManager.Start(jobOptions);
             }
             WriteObject(session);
         }

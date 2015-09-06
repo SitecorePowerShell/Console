@@ -354,3 +354,17 @@ a.ps-link {
     text-align: right;
     float: right;
 }
+
+
+.breakpoint {
+    position:absolute;
+    background:#AB616B;
+    z-index:20
+  }
+
+.ace_gutter-cell.ace_breakpoint{ 
+    border-radius: 20px 0px 0px 20px; 
+    box-shadow: 0px 0px 1px 1px #AB616B inset; 
+    background: #AB616B;
+    color: white;
+} 

@@ -179,6 +179,26 @@ extend(cognifide, "powershell");
 
         codeeditor.setAutoScrollEditorIntoView(true);
 
+        codeeditor.on("guttermousedown", function(editor) {
+            var target = editor.domEvent.target;
+            if (target.className.indexOf("ace_gutter-cell") == -1)
+                return;
+
+            if (editor.clientX > 25 + target.getBoundingClientRect().left)
+                return;
+
+            var currRow = editor.getDocumentPosition().row;
+            var session = editor.editor.session;
+            if (session.getBreakpoints()[currRow] === "ace_breakpoint") {
+                session.clearBreakpoint(currRow);
+            } else {
+                session.setBreakpoint(currRow);
+            }
+            editor.stop();
+            var sparseKeys = Object.keys(session.getBreakpoints());
+            $("#Breakpoints")[0].value  = sparseKeys.toString();
+        });
+
         var codeeeditorcommands = [
             {
                 name: "help",
@@ -218,6 +238,18 @@ extend(cognifide, "powershell");
                 bindKey: { win: "Ctrl-Alt-Shift--", mac: "Ctrl-Alt-Shift--" },
                 exec: function(editor) {
                     cognifide.powershell.changeFontSize(Math.max(editor.getFontSize() - 1, 8));
+                },
+                readOnly: true
+            }, {
+                name: "setDebugPoint",
+                bindKey: { win: "F8", mac: "F8" },
+                exec: function (editor) {
+                    var currRow = editor.selection.getCursor().row;
+                    if (editor.session.getBreakpoints()[currRow] === "ace_breakpoint") {
+                        editor.session.clearBreakpoint(currRow);
+                    } else {
+                        editor.session.setBreakpoint(currRow);
+                    }
                 },
                 readOnly: true
             }
