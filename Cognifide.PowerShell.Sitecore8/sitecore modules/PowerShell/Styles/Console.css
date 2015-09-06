@@ -34,12 +34,10 @@ html {
     border: none;
     color: #fff;
     font-size: 12px;
-    font-weight: 900;
     margin: 0;
     overflow: auto;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 3px 0 2px 3px;
     white-space: pre-wrap;
     width: 99%;
 }
@@ -57,7 +55,6 @@ html {
 }
 
 #ScriptResult {
-    height: 100%;
     left: 0;
     overflow: auto;
     position: absolute;

@@ -806,7 +806,7 @@ namespace Cognifide.PowerShell.Client.Applications
         }
 
         [HandleMessage("ise:updatesettings", true)]
-        protected virtual void SetFontSize(ClientPipelineArgs args)
+        protected virtual void UpdateSettings(ClientPipelineArgs args)
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
             var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
@@ -816,9 +816,7 @@ namespace Cognifide.PowerShell.Client.Applications
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-            SheerResponse.Eval(
-                String.Format("cognifide.powershell.changeFontSize({0});cognifide.powershell.changeFontFamily('{1}');",
-                    settings.FontSize, font));
+            SheerResponse.Eval($"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
         }
     }
 }

@@ -85,6 +85,18 @@ extend(cognifide, "powershell");
         codeeditor.session.on("change", function() {
             editor.val(codeeditor.session.getValue());
         });
+
+        var typingTimer;
+
+        cognifide.powershell.updateRibbon = function () {
+            window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+        };
+
+        cognifide.powershell.updateRibbonNeeded = function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(cognifide.powershell.updateRibbon, 2000);
+        };
+
         var posx = $("#PosX");
         var posy = $("#PosY");
         $("#CodeEditor").on("keyup mousedown", function() {
@@ -211,6 +223,7 @@ extend(cognifide, "powershell");
         cognifide.powershell.changeFontSize = function(setting) {
             setting = parseInt(setting) || 12;
             codeeditor.setOption("fontSize", setting);
+            $("#ScriptResult").css({ "font-size": setting + "px" });
         };
         cognifide.powershell.appendOutput = function (outputToAppend) {
             var decoded = $('<div/>').html(outputToAppend).text();
@@ -220,6 +233,7 @@ extend(cognifide, "powershell");
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
+            $("#ScriptResult").css({ "font-family": setting });
         };
 
         cognifide.powershell.changeSessionId = function (sessionId) {
@@ -235,17 +249,6 @@ extend(cognifide, "powershell");
         cognifide.powershell.clearEditor = function() {
             codeeditor.getSession().setValue("");
         };
-
-		var typingTimer;
-		
-        cognifide.powershell.updateRibbonNeeded = function() {
-			clearTimeout(typingTimer);
-			typingTimer = setTimeout(cognifide.powershell.updateRibbon, 2000);
-        };
-
-		cognifide.powershell.updateRibbon = function() {
-			window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean()+ ")");
-		};
 
         function escapeRegExp(string) {
             return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");

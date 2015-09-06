@@ -34,6 +34,12 @@ extend(cognifide, "powershell");
 
     cognifide.powershell.setOptions = function (options) {
         $.extend(settings, options);
+
+        var fontSize = parseInt(settings.fontSize);
+        fontSize = Math.max(fontSize, 12);
+        fontSize = Math.min(fontSize, 25);
+        var fontFamily = settings.fontFamily;
+        $("#terminal").css({ "font-size": fontSize + "px", "font-family":  fontFamily });
     };
 
     cognifide.powershell.resetAttempts = function () {

@@ -6,6 +6,7 @@ using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
+using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
@@ -41,15 +42,24 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!Context.ClientPage.IsEvent)
             {
-                Options.Text = @"<script type=""text/JavaScript"" language=""javascript"">" +
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
+                var font = string.IsNullOrEmpty(settings.FontFamily) ? "monospace" : settings.FontFamily;
+                var fontItem = fonts.Children[font];
+                font = fontItem != null
+                    ? fontItem["Phrase"]
+                    : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
+
+                Options.Text = @"<script type='text/javascript'>" +
                                @"$ise(function() { cognifide.powershell.setOptions({ initialPoll: " +
                                WebServiceSettings.InitialPollMillis + @", maxPoll: " +
-                               WebServiceSettings.MaxmimumPollMillis + @" });});</script>" +
+                               WebServiceSettings.MaxmimumPollMillis + @", fontSize: " + 
+                               settings.FontSize + $", fontFamily: '{font}' }});}});</script>" +
                                @"<style>.terminal, .terminal .terminal-output, .terminal .terminal-output div," +
                                @".terminal .terminal-output div div, .cmd, .terminal .cmd span, .terminal .cmd div {" +
-                               @"color: " + OutputLine.ProcessHtmlColor(settings.ForegroundColor) + ";" +
-                               @"background-color: " + OutputLine.ProcessHtmlColor(settings.BackgroundColor) +
-                               ";}</style>";
+                               $"color: {OutputLine.ProcessHtmlColor(settings.ForegroundColor)};" +
+                               $"background-color: {OutputLine.ProcessHtmlColor(settings.BackgroundColor)};" +
+                               $"font-family: inherit;" + "}</style>";
             }
         }
 
