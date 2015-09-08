@@ -19,7 +19,7 @@ Import-Module -Name SPE
 $props = @{
     Username = "admin"
     Password = "b"
-    ConnectionUri = "http://console"
+    ConnectionUri = @("http://console")
 }
 
 $session = New-ScriptSession @props
