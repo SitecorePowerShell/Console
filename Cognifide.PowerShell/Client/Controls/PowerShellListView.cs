@@ -64,10 +64,7 @@ namespace Cognifide.PowerShell.Client.Controls
             set { SetViewStateString("SessionId", value); }
         }
 
-        public ShowListViewMessage Data
-        {
-            get { return (ShowListViewMessage) HttpContext.Current.Cache[ContextId]; }
-        }
+        public ShowListViewMessage Data => (ShowListViewMessage) HttpContext.Current.Cache[ContextId];
 
         public List<BaseListViewCommand.DataObject> FilteredItems
         {

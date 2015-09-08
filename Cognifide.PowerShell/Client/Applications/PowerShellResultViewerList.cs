@@ -159,7 +159,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var sid = WebUtil.GetQueryString("sid");
             ListViewer.ContextId = sid;
             ListViewer.Refresh();
-            ChangePage(ListViewer.CurrentPage);
+            UpdatePage(ListViewer.CurrentPage);
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
             if (ListViewer.Data.Data.Count == 0)
@@ -215,13 +215,13 @@ namespace Cognifide.PowerShell.Client.Applications
         public void Filter()
         {
             ListViewer.Filter = Context.ClientPage.Request.Params["Input_Filter"];
-            ChangePage(1);
+            UpdatePage(1);
         }
 
         public void OnDoubleClick()
         {
             if (ListViewer.GetSelectedItems().Length <= 0) return;
-            var clickedId = Int32.Parse(ListViewer.GetSelectedItems()[0].Value);
+            var clickedId = int.Parse(ListViewer.GetSelectedItems()[0].Value);
             var firstDataItem = ListViewer.Data.Data.FirstOrDefault(p => p.Id == clickedId);
             if (firstDataItem != null)
             {
@@ -261,17 +261,17 @@ namespace Cognifide.PowerShell.Client.Applications
                     message.CancelDispatch = true;
                     return;
                 case ("pslvnav:first"):
-                    ChangePage(0);
+                    UpdatePage(0);
                     return;
                 case ("pslvnav:last"):
-                    ChangePage(Int32.MaxValue);
+                    UpdatePage(int.MaxValue);
                     return;
                 case ("pslvnav:previous"):
-                    ChangePage(ListViewer.CurrentPage - 1);
+                    UpdatePage(ListViewer.CurrentPage - 1);
                     ListViewer.Refresh();
                     return;
                 case ("pslvnav:next"):
-                    ChangePage(ListViewer.CurrentPage + 1);
+                    UpdatePage(ListViewer.CurrentPage + 1);
                     return;
                 case ("export:results"):
                     ExportResults(message);
@@ -302,6 +302,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var session = ScriptSessionManager.GetSession(sessionId);
             var varValue = session.GetVariable("allDataInternal").BaseObject();
             ListViewer.Data.Data = varValue.BaseList<BaseListViewCommand.DataObject>();
+            UpdatePage(1);
             ListViewer.Refresh();
         }
 
@@ -367,14 +368,13 @@ namespace Cognifide.PowerShell.Client.Applications
             }
         }
 
-        private void ChangePage(int newPage)
+        private void UpdatePage(int newPage)
         {
             ListViewer.CurrentPage = newPage;
             ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
             PageCount.Text = (ListViewer.PageCount).ToString(CultureInfo.InvariantCulture);
-            SheerResponse.Eval(string.Format("updateStatusBarCounters({0},{1},{2});", ItemCount.Text, CurrentPage.Text,
-                PageCount.Text));
+            SheerResponse.Eval($"updateStatusBarCounters({ItemCount.Text},{CurrentPage.Text},{PageCount.Text});");
             ListViewer.Refresh();
         }
 
