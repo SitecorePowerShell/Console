@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
@@ -180,7 +182,7 @@ namespace Cognifide.PowerShell.Core.Settings
         private Item GetSettingsDto()
         {
             var db = Factory.GetDatabase(SettingsDb);
-            return db.GetItem(CurrentUserSettingsPath) ?? db.GetItem(AllUsersSettingsPath);
+            return db?.GetItem(CurrentUserSettingsPath) ?? db?.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
@@ -243,47 +245,81 @@ namespace Cognifide.PowerShell.Core.Settings
 
             if (configuration != null)
             {
-                LastScript = HttpUtility.HtmlDecode(configuration["LastScript"]);
-                SaveLastScript = ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked;
-                UseTypeInfo = ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked;
-                int hostWidth;
-                HostWidth = Int32.TryParse(configuration["HostWidth"], out hostWidth) ? hostWidth : 150;
                 try
                 {
-                    ForegroundColor = (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["ForegroundColor"]);
-                }
-                catch (ArgumentException) // disregard parsing error & set default
-                {
-                    ForegroundColor = ConsoleColor.White;
-                }
+                    LastScript = TryGetSettingValue(() => HttpUtility.HtmlDecode(configuration["LastScript"]), "");
+                    SaveLastScript =
+                        TryGetSettingValue(() => ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked, false);
+                    UseTypeInfo = TryGetSettingValue(
+                        () => ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked,
+                        false);
+                    HostWidth =
+                        TryGetSettingValue(
+                            () =>
+                            {
+                                int hostWidth;
+                                return int.TryParse(configuration["HostWidth"], out hostWidth) ? hostWidth : 150;
+                            }, 80);
+                    ForegroundColor =
+                        TryGetSettingValue(
+                            () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["ForegroundColor"]),
+                            ConsoleColor.White);
+                    BackgroundColor =
+                        TryGetSettingValue(
+                            () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["BackgroundColor"]),
+                            ConsoleColor.DarkBlue);
+                    FontSize =
+                        TryGetSettingValue(
+                            () =>
+                            {
+                                int fontSize;
+                                return int.TryParse(configuration["FontSize"], out fontSize)
+                                    ? Math.Max(fontSize, 8)
+                                    : 12;
+                            },
+                            12);
+                    FontFamily = TryGetSettingValue(() => configuration["FontFamily"], "Monaco");
 
-                try
-                {
-                    BackgroundColor = (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["BackgroundColor"]);
+                    Loaded = true;
                 }
-                catch (ArgumentException) // disregard parsing error & set default
+                catch
                 {
-                    BackgroundColor = ConsoleColor.DarkBlue;
+                    SetToDefault();
                 }
-
-                int fontSize;
-                FontSize = Int32.TryParse(configuration["FontSize"], out fontSize) ? Math.Max(fontSize, 8) : 12;
-                FontFamily = configuration["FontFamily"];
-                Loaded = true;
             }
             else
             {
-                LastScript = String.Empty;
-                SaveLastScript = false;
-                UseTypeInfo = false;
-                HostWidth = 80;
-                ForegroundColor = ConsoleColor.White;
-                BackgroundColor = ConsoleColor.DarkBlue;
-                FontSize = 12;
-                FontFamily = "Monaco";
-                Loaded = true;
+                SetToDefault();
             }
         }
+
+        private void SetToDefault()
+        {
+            LastScript = String.Empty;
+            SaveLastScript = false;
+            UseTypeInfo = false;
+            HostWidth = 80;
+            ForegroundColor = ConsoleColor.White;
+            BackgroundColor = ConsoleColor.DarkBlue;
+            FontSize = 12;
+            FontFamily = "Monaco";
+            Loaded = true;
+        }
+
+        public static T TryGetSettingValue<T>(Func<T> action, T defaultValue)
+        {
+            try
+            {
+                var result = action();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message, typeof(ApplicationSettings));
+                return defaultValue;
+            }
+        }
+
 
         public static Item ScriptLibraryRoot()
         {
