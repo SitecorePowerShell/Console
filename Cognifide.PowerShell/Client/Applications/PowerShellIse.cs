@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -11,7 +12,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs;
+using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
@@ -20,6 +21,7 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
+using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -469,22 +471,22 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:execute", true)]
         protected virtual void JobExecute(ClientPipelineArgs args)
         {
-            JobExecuteScript(args, Editor.Value);
+            JobExecuteScript(args, Editor.Value, false);
         }
 
         [HandleMessage("ise:debug", true)]
         protected virtual void Debug(ClientPipelineArgs args)
         {
-            JobExecuteScript(args, Editor.Value);
+            JobExecuteScript(args, Editor.Value, true);
         }
 
         [HandleMessage("ise:executeselection", true)]
         protected virtual void JobExecuteSelection(ClientPipelineArgs args)
         {
-            JobExecuteScript(args, SelectionText.Value);
+            JobExecuteScript(args, SelectionText.Value, false);
         }
 
-        protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute)
+        protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
             var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
@@ -498,6 +500,17 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
 
+            if (debug)
+            {
+                var tmpPS = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +
+                            Path.GetFileNameWithoutExtension(Path.GetTempFileName()) +
+                            ".ps1";
+                File.WriteAllText(tmpPS, scriptToExecute);
+                var strBrPoints = (Breakpoints.Value??string.Empty).Split(',');
+                var bPoints = strBrPoints.Select(int.Parse);
+                scriptSession.SetBreakpoints(tmpPS, bPoints);
+                scriptToExecute = tmpPS;
+            }
             if (UseContext)
             {
                 scriptSession.SetItemLocationContext(ContextItem);

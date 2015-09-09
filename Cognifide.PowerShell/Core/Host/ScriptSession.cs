@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -6,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Web;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
@@ -15,6 +17,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
+using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Version = System.Version;
 
@@ -81,7 +84,8 @@ namespace Cognifide.PowerShell.Core.Host
             var conf = RunspaceConfiguration.Create();
             host = new ScriptingHost(Settings, conf);
             runspace = host.Runspace;
-
+            Runspace.DefaultRunspace = runspace;
+            
             conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
             if (Settings.UseTypeInfo)
             {
@@ -186,12 +190,56 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        public void SetBreakpoints(IEnumerable<Breakpoint> breakpoints)
+        public void SetBreakpoints(string scriptPath, IEnumerable<int> breakpoints)
         {
             lock (this)
-            {                
-                runspace.Debugger.SetBreakpoints(breakpoints);
+            {
+
+                foreach (var breakpoint in breakpoints)
+                {
+                    var bPointScript =
+                        $"Set-PSBreakpoint -Line {breakpoint} -Action {{ [{GetType().FullName}]::BreakpointHit($ScriptSession) }} -Script \"{scriptPath}\"";
+                    ExecuteScriptPart(bPointScript, false, true,false);
+                }
+                
+                runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
+                runspace.Debugger.BreakpointUpdated +=DebuggerOnBreakpointUpdated;
             }
+        }
+
+        private void DebuggerOnBreakpointUpdated(object sender, BreakpointUpdatedEventArgs breakpointUpdatedEventArgs)
+        {
+            int i = 0;
+        }
+
+        private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs debuggerStopEventArgs)
+        {
+            if (JobContext.IsJob &&
+                ((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
+            {
+                object[] options = new object[debuggerStopEventArgs.Breakpoints.Count];
+                for (var i = 0; i < debuggerStopEventArgs.Breakpoints.Count; i++)
+                {
+                    var breakpoint = debuggerStopEventArgs.Breakpoints[i];
+                    string editor = breakpoint.Script;
+                    options[i] = new Hashtable()
+                    {
+                        ["Title"] = breakpoint.GetType().Name,
+                        ["Name"] = $"var{i}string",
+                        ["Value"] = debuggerStopEventArgs.InvocationInfo.Line,
+                        ["Editor"] = "info"
+                    };
+
+                }
+                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
+                    "caption", "Message", string.Empty, string.Empty, false));
+                var values = (object[]) JobContext.MessageQueue.GetResult();
+            }
+        }
+
+        public static void BreakpointHit(ScriptSession session)
+        {
+            var i = 0;
         }
 
         public List<PSVariable> Variables
