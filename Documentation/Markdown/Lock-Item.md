@@ -4,11 +4,11 @@ Locks the Sitecore item by the current or specified user.
  
 ## Syntax 
  
-Lock-Item [-Item] &lt;Item&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Lock-Item [-Item] &lt;Item&gt; [-Force] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
  
-Lock-Item [-Path] &lt;String&gt; [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Lock-Item [-Path] &lt;String&gt; [-Force] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
  
-Lock-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
+Lock-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-Force] [-PassThru] [-Identity &lt;AccountIdentity&gt;] 
  
  
 ## Detailed Description 
@@ -18,6 +18,40 @@ The Lock-Item command unlocks the item.
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+### -Force&nbsp; &lt;SwitchParameter&gt; 
+ 
+Forces the item to be locked by the specified user even if it's currently locked by another user. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -PassThru&nbsp; &lt;SwitchParameter&gt; 
  
@@ -196,7 +230,7 @@ Id of the item to be processed.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be fetched with Id parameter. 
  

@@ -4,7 +4,7 @@ Finds items using the Sitecore Content Search API.
  
 ## Syntax 
  
-Find-Item [-Criteria &lt;SearchCriteria[]&gt;] [-Where &lt;String&gt;] [-WhereValues &lt;Object[]&gt;] [-OrderBy &lt;String&gt;] [-First &lt;Int32&gt;] [-Last &lt;Int32&gt;] [-Skip &lt;Int32&gt;] 
+Find-Item [-Index] &lt;String&gt; [-Criteria &lt;SearchCriteria[]&gt;] [-Where &lt;String&gt;] [-WhereValues &lt;Object[]&gt;] [-OrderBy &lt;String&gt;] [-First &lt;Int32&gt;] [-Last &lt;Int32&gt;] [-Skip &lt;Int32&gt;] 
  
  
 ## Detailed Description 
@@ -15,19 +15,59 @@ The Find-Item command searches for items using the Sitecore Content Search API.
  
 ## Parameters 
  
+### -Index&nbsp; &lt;String&gt; 
+ 
+Name of the Index that will be used for the search:
+
+Find-Item -Index sitecore_master_index -First 10 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
 ### -Criteria&nbsp; &lt;SearchCriteria[]&gt; 
  
 simple search criteria in the following example form:
 
 @{
-    Filter = "Equals"
-    Field = "_templatename"
-    Value = "PowerShell Script"
+    Filter = "Equals";
+    Field = "_templatename";
+    Value = "PowerShell Script";
 }, 
 @{
-    Filter = "StartsWith"
-    Field = "_fullpath"
-    Value = "/sitecore/system/Modules/PowerShell/Script Library/System Maintenance"
+    Filter = "StartsWith";
+    Field = "_fullpath";
+    Value = "/sitecore/system/Modules/PowerShell/Script Library/System Maintenance";
+},
+@{
+    Filter = "DescendantOf";
+    Value = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
 }
 
 Where "Filter" is one of the following values:
@@ -35,6 +75,7 @@ Where "Filter" is one of the following values:
 - StartsWith,
 - Contains,
 - EndsWith
+- DescendantOf
 
 Fields by which you can filter can be discovered using the following script:
 
@@ -312,6 +353,19 @@ Find-Item -Index sitecore_master_index `
  
 ### EXAMPLE 2 
  
+Find all children of a specific item including that item - return Sitecore items 
+ 
+```powershell   
+ 
+$root = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
+Find-Item -Index sitecore_master_index `
+          -Criteria @{Filter = "DescendantOf"; Field = $root } |
+    Initialize-Item 
+ 
+``` 
+ 
+### EXAMPLE 3 
+ 
 Find all Template Fields using Dynamic LINQ syntax 
  
 ```powershell   
@@ -323,7 +377,7 @@ Find-Item `
  
 ``` 
  
-### EXAMPLE 3 
+### EXAMPLE 4 
  
 Find all Template Fields using the -Criteria parameter syntax 
  

@@ -1,23 +1,25 @@
-# Remove-Domain 
+# Remove-Role 
  
-Removes the specified domain. 
+Removes a Sitecore role. 
  
 ## Syntax 
  
-Remove-Domain [-Name] &lt;String&gt; [-Force] 
+Remove-Role [-Identity] &lt;AccountIdentity&gt; 
+ 
+Remove-Role -Instance &lt;Role&gt; 
  
  
 ## Detailed Description 
  
-The Remove-Domain command removes the specified domain. 
+The Remove-Role command removes a Sitecore role. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-The name of the domain. 
+Role name including domain. If no domain is specified - 'sitecore' will be used as the default value 
  
 <table>
     <thead></thead>
@@ -40,7 +42,7 @@ The name of the domain.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -49,9 +51,9 @@ The name of the domain.
     </tbody>
 </table> 
  
-### -Force&nbsp; &lt;SwitchParameter&gt; 
+### -Instance&nbsp; &lt;Role&gt; 
  
-Indicates that the domain should be removed although it contains users in that domain. 
+Role instance like that returned by the Get-Role command. 
  
 <table>
     <thead></thead>
@@ -62,7 +64,7 @@ Indicates that the domain should be removed although it contains users in that d
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -74,7 +76,7 @@ Indicates that the domain should be removed although it contains users in that d
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -87,14 +89,13 @@ Indicates that the domain should be removed although it contains users in that d
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the name of a domain. 
+* Sitecore.Security.Accounts.Role 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* None. 
+* None 
  
 ## Notes 
  
@@ -108,7 +109,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Remove-Domain -Name "domainName" 
+PS master:\> Remove-Role -Identity Michael 
  
 ``` 
  

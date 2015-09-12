@@ -4,15 +4,15 @@ Retrieves security access rules from an item.
  
 ## Syntax 
  
-Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Item &lt;Item&gt; 
- 
-Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] 
- 
 Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Path &lt;String&gt; 
  
-Get-ItemAcl -Filter &lt;String&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Id &lt;String&gt; [-Database &lt;String&gt;] 
+ 
+Get-ItemAcl -Identity &lt;AccountIdentity&gt; -Item &lt;Item&gt; 
  
 Get-ItemAcl -Filter &lt;String&gt; -Path &lt;String&gt; 
+ 
+Get-ItemAcl -Filter &lt;String&gt; -Id &lt;String&gt; [-Database &lt;String&gt;] 
  
 Get-ItemAcl -Filter &lt;String&gt; -Item &lt;Item&gt; 
  
@@ -217,7 +217,7 @@ Id of the item from which the security rules should be taken.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be fetched with Id parameter containing the security rules that should be returned. 
  

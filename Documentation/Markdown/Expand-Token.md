@@ -4,11 +4,11 @@ Expands tokens in fields for items.
  
 ## Syntax 
  
-Expand-Token [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; 
- 
 Expand-Token [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; 
  
-Expand-Token [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+Expand-Token [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] 
+ 
+Expand-Token [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; 
  
  
 ## Detailed Description 
@@ -159,7 +159,7 @@ Id of the the item to be processed - additionally specify Language parameter to 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  

@@ -4,11 +4,11 @@ Returns a RenderingDefinition for an item using the filtering parameters.
  
 ## Syntax 
  
-Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
 Get-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
+Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
 Get-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
@@ -16,11 +16,11 @@ Get-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Devic
  
 Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;Database&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
  
  
 ## Detailed Description 
@@ -133,7 +133,7 @@ Id of the item to be processed - can work with Language parameter to narrow the 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  

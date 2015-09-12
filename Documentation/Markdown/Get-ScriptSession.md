@@ -1,57 +1,24 @@
 # Get-ScriptSession 
  
-Returns the list of PowerShell Extension Sessions running in the background. 
+Returns the list of PowerShell Extensions script sessions running in the system. 
  
 ## Syntax 
  
-Get-ScriptSession -Id &lt;String&gt; 
+Get-ScriptSession -Current [-SessionType &lt;String[]&gt;] [-State &lt;None | Available | AvailableForNestedCommand | Busy | RemoteDebug&gt;] 
  
-Get-ScriptSession -Current 
+Get-ScriptSession -Id &lt;String[]&gt; [-SessionType &lt;String[]&gt;] [-State &lt;None | Available | AvailableForNestedCommand | Busy | RemoteDebug&gt;] 
  
-Get-ScriptSession -Type &lt;String[]&gt; 
+Get-ScriptSession -Session &lt;ScriptSession[]&gt; [-SessionType &lt;String[]&gt;] [-State &lt;None | Available | AvailableForNestedCommand | Busy | RemoteDebug&gt;] 
  
  
 ## Detailed Description 
  
-The Get-ScriptSession command returns the list of PowerShell Extension Sessions running in background. 
+The Get-ScriptSession command returns the list of PowerShell Extensions script sessions running in the system.
+To find all script sessions, running in the system type "Get-ScriptSession" without parameters. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
- 
-### -Id&nbsp; &lt;String&gt; 
- 
-Id of the session. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
  
 ### -Current&nbsp; &lt;SwitchParameter&gt; 
  
@@ -87,7 +54,112 @@ Returns current script session if the session is run in a background job.
     </tbody>
 </table> 
  
-### -Type&nbsp; &lt;String[]&gt; 
+### -SessionType&nbsp; &lt;String[]&gt; 
+ 
+Type of the script session to be retrieved.
+       The SessionType is a string that identifies where the session has been launched. You can type one or more session types (separated by commas) and use wildcards to filter. To find currently running types of a script session, type "Get-ScriptSession" without parameters. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -State&nbsp; &lt;RunspaceAvailability&gt; 
+ 
+Type of the script session to be retrieved.
+       The parameter limits script sessions to be returned to only those in a specific state, the values should be "Busy" or "Available".  To find states of currently running script sessions, type "Get-ScriptSession" without parameters. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String[]&gt; 
+ 
+Gets the script session with the specified IDs.
+The ID is a string that uniquely identifies the script session within the server. You can type one or more IDs (separated by commas). To find the ID of a script session, type "Get-ScriptSession" without parameters. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Session&nbsp; &lt;ScriptSession[]&gt; 
  
  
  
@@ -112,7 +184,7 @@ Returns current script session if the session is run in a background job.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -120,6 +192,12 @@ Returns current script session if the session is run in a background job.
         </tr>
     </tbody>
 </table> 
+ 
+## Inputs 
+ 
+The input type is the type of the objects that you can pipe to the cmdlet. 
+ 
+* None 
  
 ## Outputs 
  
@@ -165,4 +243,4 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* Remove-ScriptSession
+* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>

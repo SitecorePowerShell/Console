@@ -4,7 +4,7 @@ Tests item against a sitecore serialized rules engine rule set.
  
 ## Syntax 
  
-Test-Rule [-Rule &lt;String&gt;] [-InputObject &lt;PSObject&gt;] 
+Test-Rule [-Rule &lt;String&gt;] [-InputObject &lt;PSObject&gt;] [-RuleDatabase &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -52,6 +52,40 @@ Serialized sitecore rules engine rule. Such rules can be read from rule fields o
 ### -InputObject&nbsp; &lt;PSObject&gt; 
  
 Item to be tested 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -RuleDatabase&nbsp; &lt;String&gt; 
+ 
+Name of the database from which rules are pulled. 
  
 <table>
     <thead></thead>

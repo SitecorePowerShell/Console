@@ -4,11 +4,11 @@ Publishes a Sitecore item.
  
 ## Syntax 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
- 
 Publish-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
  
-Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+ 
+Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
  
  
 ## Detailed Description 
@@ -262,7 +262,7 @@ Id of the item that should be published - can work with Language parameter to na
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
  
  

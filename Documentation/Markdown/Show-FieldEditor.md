@@ -4,17 +4,17 @@ Shows Field editor for a provided item.
  
 ## Syntax 
  
-Show-FieldEditor -Item &lt;Item&gt; [-SectionTitle &lt;String&gt;] [-SectionIcon &lt;String&gt;] [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
- 
 Show-FieldEditor -Item &lt;Item&gt; -PreserveSections [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
+ 
+Show-FieldEditor -Item &lt;Item&gt; [-SectionTitle &lt;String&gt;] [-SectionIcon &lt;String&gt;] [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
  
 Show-FieldEditor -Path &lt;String&gt; [-Language &lt;String[]&gt;] -PreserveSections [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
  
 Show-FieldEditor -Path &lt;String&gt; [-Language &lt;String[]&gt;] [-SectionTitle &lt;String&gt;] [-SectionIcon &lt;String&gt;] [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
  
-Show-FieldEditor -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt;String[]&gt;] -PreserveSections [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
+Show-FieldEditor -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] -PreserveSections [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
  
-Show-FieldEditor -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Language &lt;String[]&gt;] [-SectionTitle &lt;String&gt;] [-SectionIcon &lt;String&gt;] [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
+Show-FieldEditor -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] [-SectionTitle &lt;String&gt;] [-SectionIcon &lt;String&gt;] [-Name &lt;String[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] [-IncludeStandardFields] 
  
  
 ## Detailed Description 
@@ -304,7 +304,7 @@ Id of the the item to be edited - additionally specify Language parameter to fet
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be edited - can work with Language parameter to narrow the publication scope. 
  

@@ -1,34 +1,95 @@
-# Get-RoleMember 
+# Wait-ScriptSession 
  
-Returns the Sitecore users in the specified role. 
+Suppresses script execution command prompt until one or all of the script sessions provided are complete. 
  
 ## Syntax 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-Recursive] 
+Wait-ScriptSession -Id &lt;String[]&gt; [-Timeout &lt;Int32&gt;] [-Any] 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-UsersOnly] [-Recursive] 
- 
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive] 
+Wait-ScriptSession -Session &lt;ScriptSession[]&gt; [-Timeout &lt;Int32&gt;] [-Any] 
  
  
 ## Detailed Description 
  
-The Get-RoleMember command returns the Sitecore users in the specified role.
-
-The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
+The Wait-ScriptSession cmdlet waits for script session to complete before it displays the command prompt or allows the script to continue. You can wait until any script session is complete, or until all script sessions are complete, and you can set a maximum wait time for the script session.
+When the commands in the script session are complete, Wait-ScriptSession displays the command prompt and returns a script session object so that you can pipe it to another command.
+You can use Wait-ScriptSession cmdlet to wait for script sessions, such as those that were started by using the Start-ScriptSession cmdlet. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
+### -Timeout&nbsp; &lt;Int32&gt; 
  
-Specifies the Sitecore role by providing one of the following values.
-
-    Local Name
-        Example: developer
-    Fully Qualified Name
-        Example: sitecore\developer 
+The maximum time to wait for all the other running script sessions to complete. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Any&nbsp; &lt;SwitchParameter&gt; 
+ 
+Returns control to the script or displays the command prompt (and returns the ScriptSession object) when any script session completes. By default, Wait-ScriptSession waits until all of the specified jobs are complete before displaying the prompt. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String[]&gt; 
+ 
+Id(s) of the session to be stopped. 
  
 <table>
     <thead></thead>
@@ -43,7 +104,7 @@ Specifies the Sitecore role by providing one of the following values.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -60,9 +121,9 @@ Specifies the Sitecore role by providing one of the following values.
     </tbody>
 </table> 
  
-### -Recursive&nbsp; &lt;SwitchParameter&gt; 
+### -Session&nbsp; &lt;ScriptSession[]&gt; 
  
- 
+Session(s) to be stopped. 
  
 <table>
     <thead></thead>
@@ -73,7 +134,7 @@ Specifies the Sitecore role by providing one of the following values.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -85,75 +146,7 @@ Specifies the Sitecore role by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -UsersOnly&nbsp; &lt;SwitchParameter&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -RolesOnly&nbsp; &lt;SwitchParameter&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -166,18 +159,13 @@ Specifies the Sitecore role by providing one of the following values.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the identity of a role. 
+* System.String or Cognifide.PowerShell.Core.Host.ScriptSessio 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Security.Accounts.User
-Returns one or more users.
-
-Sitecore.Security.Accounts.Role
-Returns one or more roles. 
+* Cognifide.PowerShell.Core.Host.ScriptSessio 
  
 ## Notes 
  
@@ -185,43 +173,16 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
  
  
 ```powershell   
  
-PS master:\> Get-RoleMember -Identity developer
-
-Name                     Domain       IsAdministrator IsAuthenticated
-----                     ------       --------------- ---------------
-sitecore\michael         sitecore     False           False 
- 
-``` 
- 
-### EXAMPLE 2 
- 
- 
- 
-```powershell   
- 
-PS master:\> Get-RoleMember -Identity author
-
-Name                     Domain       IsAdministrator IsAuthenticated
-----                     ------       --------------- ---------------
-sitecore\michael         sitecore     False           False
-
-Domain      : sitecore
-IsEveryone  : False
-IsGlobal    : False
-AccountType : Role
-Description : Role
-DisplayName : sitecore\Developer
-LocalName   : sitecore\Developer
-Name        : sitecore\Developer 
+PS master:\> Wait-ScriptSession -Id "My Background Script Session" 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Role* Remove-RoleMember* Add-RoleMember
+* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Stop-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

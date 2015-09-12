@@ -1,33 +1,27 @@
-# Get-ItemReference 
+# Reset-ItemField 
  
-Returns all the items linked to the specified item.. 
+Resets item fields, specified as either names, fields or template fields. 
  
 ## Syntax 
  
-Get-ItemReference -Item &lt;Item&gt; 
+Reset-ItemField [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
  
-Get-ItemReference -Item &lt;Item&gt; -ItemLink 
+Reset-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
  
-Get-ItemReference -Path &lt;String&gt; [-Language &lt;String[]&gt;] 
- 
-Get-ItemReference -Path &lt;String&gt; [-Language &lt;String[]&gt;] -ItemLink 
- 
-Get-ItemReference -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] 
- 
-Get-ItemReference -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] -ItemLink 
+Reset-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
-The Get-ItemReference command returns all items linked to the specified item. If -ItemLink parameter is used the command will return links rather than items. 
+Resets item fields, specified as either names, fields or template fields. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Item&nbsp; &lt;Item&gt; 
+### -IncludeStandardFields&nbsp; &lt;SwitchParameter&gt; 
  
-The item to be analysed. 
+Includes fields that are defined on "Standard template" 
  
 <table>
     <thead></thead>
@@ -38,41 +32,7 @@ The item to be analysed.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
             <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Path&nbsp; &lt;String&gt; 
- 
-Path to the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -93,43 +53,9 @@ Path to the item to be processed - additionally specify Language parameter to fe
     </tbody>
 </table> 
  
-### -Id&nbsp; &lt;String&gt; 
+### -Name&nbsp; &lt;String[]&gt; 
  
-Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Database&nbsp; &lt;String&gt; 
- 
-Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
+Array of field names to include - supports wildcards. 
  
 <table>
     <thead></thead>
@@ -163,7 +89,7 @@ Database containing the item to be processed - can work with Language parameter 
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-Language that will be used as source language. If not specified the current user language will be used. Globbing/wildcard supported. 
+Language that will be reset. If not specified the current user language will be used. Globbing/wildcard supported. 
  
 <table>
     <thead></thead>
@@ -195,9 +121,77 @@ Language that will be used as source language. If not specified the current user
     </tbody>
 </table> 
  
-### -ItemLink&nbsp; &lt;SwitchParameter&gt; 
+### -Item&nbsp; &lt;Item&gt; 
  
-Return ItemLink that define both source and target of a link rather than items that are being linked to from the specified item. 
+The item to be analysed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue, ByPropertyName)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Path&nbsp; &lt;String&gt; 
+ 
+Path to the item to be analysed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String&gt; 
+ 
+Id of the item to be analysed. 
  
 <table>
     <thead></thead>
@@ -229,6 +223,40 @@ Return ItemLink that define both source and target of a link rather than items t
     </tbody>
 </table> 
  
+### -Database&nbsp; &lt;String&gt; 
+ 
+Database containing the item to be reset - can work with Language parameter to narrow the publication scope. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
 ## Inputs 
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
@@ -239,51 +267,44 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item
-Sitecore.Links.ItemLink 
+* None 
  
 ## Notes 
  
-Help Author: Adam Najmanowicz, Michael West 
+Help Author: Adam Najmanowicz, Michael West, Alex Washtell 
  
 ## Examples 
  
 ### EXAMPLE 1 
  
- 
+Reset all item fields, excluding standard fields. 
  
 ```powershell   
  
-PS master:\>Get-ItemReference -Path master:\content\home
- 
-Name                             Children Languages                Id                                     TemplateName
-----                             -------- ---------                --                                     ------------
-Home                             True     {en, de-DE, es-ES, pt... {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item
-Home                             True     {en, de-DE, es-ES, pt... {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9} Sample Item 
+PS master:\> Reset-ItemField -Path master:\content\home 
  
 ``` 
  
 ### EXAMPLE 2 
  
- 
+Reset all item fields, including standard fields. 
  
 ```powershell   
  
-PS master:\>Get-Item master:\content\home | Get-ItemReference -ItemLink
+PS master:\> Reset-ItemField -Path master:\content\home -IncludeStandardFields 
  
-SourceItemLanguage : en
-SourceItemVersion  : 1
-TargetItemLanguage :
-TargetItemVersion  : 0
-SourceDatabaseName : master
-SourceFieldID      : {F685964D-02E1-4DB6-A0A2-BFA59F5F9806}
-SourceItemID       : {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}
-TargetDatabaseName : master
-TargetItemID       : {110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}
-TargetPath         : /sitecore/content/Home 
+``` 
+ 
+### EXAMPLE 3 
+ 
+Reset all item fields with names beginning with "a", excluding standard fields. 
+ 
+```powershell   
+ 
+PS master:\> Get-Item master:\content\home | Reset-ItemField -Name "a*" 
  
 ``` 
  
 ## Related Topics 
  
-* Get-ItemReferrer* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemTemplate* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

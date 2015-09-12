@@ -10,7 +10,7 @@ Export-Item [-Item] &lt;Item&gt; [-Recurse] [-ItemPathsAbsolute] [-Root &lt;Stri
  
 Export-Item [-Path] &lt;String&gt; [-Recurse] [-ItemPathsAbsolute] [-Root &lt;String&gt;] 
  
-Export-Item -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-ItemPathsAbsolute] [-Root &lt;String&gt;] 
+Export-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-ItemPathsAbsolute] [-Root &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -281,7 +281,7 @@ Export-Item -id "{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}"
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
  
  

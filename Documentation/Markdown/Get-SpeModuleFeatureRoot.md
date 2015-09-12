@@ -4,7 +4,7 @@ Returns the library item or path to the library where scripts for a particular i
  
 ## Syntax 
  
-Get-SpeModuleFeatureRoot [-Module &lt;Module&gt;] [-ReturnPath] 
+Get-SpeModuleFeatureRoot [-Module &lt;Module&gt;] [-ReturnPath] [-Feature] &lt;String&gt; 
  
  
 ## Detailed Description 
@@ -68,6 +68,60 @@ If not provided the feature root will be returned for all modules.
         <tr>
             <td>Position?</td>
             <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Feature&nbsp; &lt;String&gt; 
+ 
+Feature for which the root library should be provided. 
+If root item does not exist and -ReturnPath parameter is not specified - nothing will be returned, 
+If -ReturnPath parameter is provided the path in which the feature root should be located will be returned
+
+Valid features:
+- contentEditorContextMenu 
+- contentEditorGutters
+- contentEditorRibbon
+- controlPanel
+- functions
+- listViewExport
+- listViewRibbon
+- pipelineLoggedIn
+- pipelineLoggingIn
+- pipelineLogout
+- toolbox
+- startMenuReports
+- eventHandlers
+- webAPI
+- pageEditorNotification
+- isePlugi 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>

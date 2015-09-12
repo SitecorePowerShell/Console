@@ -10,7 +10,7 @@ Start-TaskSchedule [-Item] &lt;Item&gt;
  
 Start-TaskSchedule [-Path] &lt;String&gt; 
  
-Start-TaskSchedule -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+Start-TaskSchedule -Id &lt;String&gt; [-Database &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -157,7 +157,7 @@ Path to the schedule item - if item is of wrong template - an appropriate error 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
  
  

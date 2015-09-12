@@ -4,11 +4,11 @@ Creates a version of the item in a new language based on an existing language ve
  
 ## Syntax 
  
-Add-ItemLanguage [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
- 
 Add-ItemLanguage [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
  
-Add-ItemLanguage [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemLanguage [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+ 
+Add-ItemLanguage [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-IfExist &lt;Skip | Append | OverwriteLatest&gt;] -TargetLanguage &lt;String[]&gt; [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -310,7 +310,7 @@ Path to the item to be processed - additionally specify Language parameter to fe
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
+Id of the item to be processed - additionally specify Language parameter to fetch different item language than the current user language. 
  
 <table>
     <thead></thead>
@@ -342,7 +342,7 @@ Id of the the item to be processed - additionally specify Language parameter to 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  

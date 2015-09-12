@@ -1,23 +1,23 @@
-# Remove-Domain 
+# New-Role 
  
-Removes the specified domain. 
+Creates a new Sitecore role. 
  
 ## Syntax 
  
-Remove-Domain [-Name] &lt;String&gt; [-Force] 
+New-Role [-Identity] &lt;AccountIdentity&gt; [-PassThru] 
  
  
 ## Detailed Description 
  
-The Remove-Domain command removes the specified domain. 
+The New-Role command creates a new Sitecore role. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-The name of the domain. 
+Role name including domain. If no domain is specified - 'sitecore' will be used as the default value 
  
 <table>
     <thead></thead>
@@ -40,7 +40,7 @@ The name of the domain.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -49,9 +49,9 @@ The name of the domain.
     </tbody>
 </table> 
  
-### -Force&nbsp; &lt;SwitchParameter&gt; 
+### -PassThru&nbsp; &lt;SwitchParameter&gt; 
  
-Indicates that the domain should be removed although it contains users in that domain. 
+Passes the processed object back into the pipeline. 
  
 <table>
     <thead></thead>
@@ -87,14 +87,13 @@ Indicates that the domain should be removed although it contains users in that d
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the name of a domain. 
+* System.String 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* None. 
+* Sitecore.Security.Accounts.Role 
  
 ## Notes 
  
@@ -108,7 +107,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Remove-Domain -Name "domainName" 
+PS master:\> New-Role -Identity Michael 
  
 ``` 
  

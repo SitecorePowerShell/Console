@@ -1,17 +1,18 @@
-# Remove-ScriptSession 
+# Stop-ScriptSession 
  
-Removes a persistent Script Session from memory. 
+Stops executing script session. 
  
 ## Syntax 
  
-Remove-ScriptSession -Id &lt;String[]&gt; 
+Stop-ScriptSession -Id &lt;String[]&gt; 
  
-Remove-ScriptSession -Session &lt;ScriptSession[]&gt; 
+Stop-ScriptSession -Session &lt;ScriptSession[]&gt; 
  
  
 ## Detailed Description 
  
-Removes a persistent Script Session from memory. 
+Aborts the pipeline of a session that is executing. This will stop the session immediately in its next PowerShell command.
+Caution! If your script is running a long operation in the .net code rather than in PowerShell - the session will abort after the code has finished and the control was returned to the script. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -19,7 +20,8 @@ Removes a persistent Script Session from memory.
  
 ### -Id&nbsp; &lt;String[]&gt; 
  
-Id of the PowerShell session to be removed from memory. 
+Stops the script session with the specified IDs.
+The ID is a string that uniquely identifies the script session within the server. You can type one or more IDs (separated by commas). To find the ID of a script session, type "Get-ScriptSession" without parameters. 
  
 <table>
     <thead></thead>
@@ -53,7 +55,7 @@ Id of the PowerShell session to be removed from memory.
  
 ### -Session&nbsp; &lt;ScriptSession[]&gt; 
  
-Session to be removed. 
+Specifies the script session to be stopped. Enter a variable that contains the script session or a command that gets the script session. You can also pipe a script session object to Receive-ScriptSession. 
  
 <table>
     <thead></thead>
@@ -89,7 +91,13 @@ Session to be removed.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Resident Script Session obtained through Get-ScriptSessio* Id of a resident Script Sessio* Cognifide.PowerShell.Core.Host.ScriptSessio* System.String 
+* System.String or Cognifide.PowerShell.Core.Host.ScriptSessio 
+ 
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* Cognifide.PowerShell.Core.Host.ScriptSessio 
  
 ## Notes 
  
@@ -103,12 +111,12 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-The following removes the script session using the specified Id.
+The following stops the script session with the specified Id.
 
-PS master:\> Remove-ScriptSession -Id "Long running script" 
+PS master:\> Stop-ScriptSession -Id "My Background Script Session" 
  
 ``` 
  
 ## Related Topics 
  
-* Get-ScriptSession* Receive-ScriptSession* Start-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>
+* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Wait-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

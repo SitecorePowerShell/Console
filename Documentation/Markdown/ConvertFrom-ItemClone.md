@@ -8,7 +8,7 @@ ConvertFrom-ItemClone [-Item] &lt;Item&gt;
  
 ConvertFrom-ItemClone [-Path] &lt;String&gt; 
  
-ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -121,7 +121,7 @@ Id of the item to be converted
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be converted 
  

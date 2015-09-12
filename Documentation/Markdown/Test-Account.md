@@ -1,23 +1,23 @@
-# Remove-Domain 
+# Test-Account 
  
-Removes the specified domain. 
+Determines if the Sitecore role or user account exists. 
  
 ## Syntax 
  
-Remove-Domain [-Name] &lt;String&gt; [-Force] 
+Test-Account [-Identity] &lt;AccountIdentity&gt; [-AccountType &lt;String&gt;] 
  
  
 ## Detailed Description 
  
-The Remove-Domain command removes the specified domain. 
+The Test-Account command determines if a Sitecore role or user account exists. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
  
-The name of the domain. 
+Role or User name including domain. If no domain is specified - 'sitecore' will be used as the default value 
  
 <table>
     <thead></thead>
@@ -40,7 +40,7 @@ The name of the domain.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -49,9 +49,13 @@ The name of the domain.
     </tbody>
 </table> 
  
-### -Force&nbsp; &lt;SwitchParameter&gt; 
+### -AccountType&nbsp; &lt;String&gt; 
  
-Indicates that the domain should be removed although it contains users in that domain. 
+Specifies which account to check existence.
+
+- All
+- Role
+- User 
  
 <table>
     <thead></thead>
@@ -87,14 +91,13 @@ Indicates that the domain should be removed although it contains users in that d
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the name of a domain. 
+* System.String 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* None. 
+* True or False 
  
 ## Notes 
  
@@ -108,7 +111,9 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Remove-Domain -Name "domainName" 
+PS master:\> Test-Account -Identity Michael
+
+True 
  
 ``` 
  

@@ -4,11 +4,11 @@ Returns entries from the history store notifying of workflow state change for th
  
 ## Syntax 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] 
- 
 Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Identity &lt;String&gt;] 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Identity &lt;String&gt;] 
+ 
+Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -189,7 +189,7 @@ Id of the the item to have its history items returned - additionally specify Lan
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to have its history items returned - can work with Language parameter to narrow the publication scope. 
  

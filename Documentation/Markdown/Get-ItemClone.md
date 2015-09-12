@@ -8,7 +8,7 @@ Get-ItemClone [-Item] &lt;Item&gt;
  
 Get-ItemClone [-Path] &lt;String&gt; 
  
-Get-ItemClone -Id &lt;String&gt; [-Database &lt;Database&gt;] 
+Get-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -121,7 +121,7 @@ Id of the item to be analysed for clones presence.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be processed - if item is being provided through Id. 
  

@@ -1,15 +1,15 @@
-# Get-Domain 
+# Stop-SearchIndex 
  
-Gets all available domains or the specified domain. 
+Stops the Sitecore index. 
  
 ## Syntax 
  
-Get-Domain [-Name &lt;String&gt;] 
+Stop-SearchIndex [[-Name] &lt;String&gt;] 
  
  
 ## Detailed Description 
  
-The Get-Domain command returns all the domains or the specified domain. 
+The Stop-SearchIndex command stops the Sitecore index. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
@@ -17,7 +17,7 @@ The Get-Domain command returns all the domains or the specified domain.
  
 ### -Name&nbsp; &lt;String&gt; 
  
-The name of the domai 
+The name of the index to stop. 
  
 <table>
     <thead></thead>
@@ -32,7 +32,7 @@ The name of the domai
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -40,7 +40,7 @@ The name of the domai
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -53,14 +53,13 @@ The name of the domai
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the name of a domain. 
+* Sitecore.ContentSearch.ISearchIndex or System.String 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Security.Domains.Domai 
+* None 
  
 ## Notes 
  
@@ -74,10 +73,9 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Get-Domain -Name sitecore
-Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
-----            -------------   -------------------    --------------
-sitecore        sitecore\       False                  False 
+The following stops the indexing process from running.
+
+PS master:\> Stop-SearchIndex -Name sitecore_master_index 
  
 ``` 
  
@@ -87,16 +85,12 @@ sitecore        sitecore\       False                  False
  
 ```powershell   
  
-PS master:\> Get-Domain
+The following stops the indexing process from running.
 
-Name            AccountPrefix   EnsureAnonymousUser    LocallyManaged
-----            -------------   -------------------    --------------
-sitecore        sitecore\       False                  False
-extranet        extranet\       True                   False
-default         default\        True                   False 
+PS master:\> Get-SearchIndex -Name sitecore_master_index | Stop-SearchIndex 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-Domain* New-Domain
+* Initialize-SearchIndex* Suspend-SearchIndex* Resume-SearchIndex* Get-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

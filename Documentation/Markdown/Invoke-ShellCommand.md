@@ -5,11 +5,11 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
  
 ## Syntax 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &lt;String&gt; 
- 
 Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Name] &lt;String&gt; 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Name] &lt;String&gt; 
+Invoke-ShellCommand [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Name] &lt;String&gt; 
+ 
+Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &lt;String&gt; 
  
  
 ## Detailed Description 
@@ -192,7 +192,7 @@ Id of the the item to be sent to the command - additionally specify Language par
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be sent to the command - can work with Language parameter to narrow the publication scope. 
  

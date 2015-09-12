@@ -1,34 +1,27 @@
-# Get-RoleMember 
+# Reset-Layout 
  
-Returns the Sitecore users in the specified role. 
+Resets the layout for the specified item. 
  
 ## Syntax 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-Recursive] 
+Reset-Layout [-Item] &lt;Item&gt; 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-UsersOnly] [-Recursive] 
+Reset-Layout [-Path] &lt;String&gt; 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive] 
+Reset-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] 
  
  
 ## Detailed Description 
  
-The Get-RoleMember command returns the Sitecore users in the specified role.
-
-The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
+The Reset-Layout command resets the layout for the specified item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
+### -Item&nbsp; &lt;Item&gt; 
  
-Specifies the Sitecore role by providing one of the following values.
-
-    Local Name
-        Example: developer
-    Fully Qualified Name
-        Example: sitecore\developer 
+The item to be processed. 
  
 <table>
     <thead></thead>
@@ -51,7 +44,7 @@ Specifies the Sitecore role by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -60,9 +53,9 @@ Specifies the Sitecore role by providing one of the following values.
     </tbody>
 </table> 
  
-### -Recursive&nbsp; &lt;SwitchParameter&gt; 
+### -Path&nbsp; &lt;String&gt; 
  
- 
+Path to the item to be processed. 
  
 <table>
     <thead></thead>
@@ -73,7 +66,41 @@ Specifies the Sitecore role by providing one of the following values.
         </tr>
         <tr>
             <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
             <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String&gt; 
+ 
+Id of the item to be processed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -94,43 +121,9 @@ Specifies the Sitecore role by providing one of the following values.
     </tbody>
 </table> 
  
-### -UsersOnly&nbsp; &lt;SwitchParameter&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -RolesOnly&nbsp; &lt;SwitchParameter&gt; 
- 
- 
+Database containing the item to be processed. 
  
 <table>
     <thead></thead>
@@ -166,62 +159,30 @@ Specifies the Sitecore role by providing one of the following values.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the identity of a role. 
+* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Security.Accounts.User
-Returns one or more users.
-
-Sitecore.Security.Accounts.Role
-Returns one or more roles. 
+* None. 
  
 ## Notes 
  
-Help Author: Adam Najmanowicz, Michael West 
+Help Author: Adam Najmanowicz, Michael West, Alex Washtell 
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
  
  
 ```powershell   
  
-PS master:\> Get-RoleMember -Identity developer
-
-Name                     Domain       IsAdministrator IsAuthenticated
-----                     ------       --------------- ---------------
-sitecore\michael         sitecore     False           False 
- 
-``` 
- 
-### EXAMPLE 2 
- 
- 
- 
-```powershell   
- 
-PS master:\> Get-RoleMember -Identity author
-
-Name                     Domain       IsAdministrator IsAuthenticated
-----                     ------       --------------- ---------------
-sitecore\michael         sitecore     False           False
-
-Domain      : sitecore
-IsEveryone  : False
-IsGlobal    : False
-AccountType : Role
-Description : Role
-DisplayName : sitecore\Developer
-LocalName   : sitecore\Developer
-Name        : sitecore\Developer 
+PS master:\> Reset-Layout -Path master:\content\home 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Role* Remove-RoleMember* Add-RoleMember
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Set-Layout* Get-Layout

@@ -8,11 +8,11 @@ Get-SpeModule -Item &lt;Item&gt;
  
 Get-SpeModule -Path &lt;String&gt; 
  
-Get-SpeModule -Id &lt;String&gt; -Database &lt;Database&gt; 
+Get-SpeModule -Id &lt;String&gt; -Database &lt;String&gt; 
  
-Get-SpeModule [-Database &lt;Database&gt;] -Name &lt;String&gt; 
+Get-SpeModule -Database &lt;String&gt; 
  
-Get-SpeModule -Database &lt;Database&gt; 
+Get-SpeModule [-Database &lt;String&gt;] -Name &lt;String&gt; 
  
  
 ## Detailed Description 
@@ -125,7 +125,7 @@ Id of a script or library item that is defined within the module to be returned.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the module to be returned. 
  
@@ -138,7 +138,7 @@ Database containing the module to be returned.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>

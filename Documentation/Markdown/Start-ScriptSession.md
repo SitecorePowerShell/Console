@@ -1,29 +1,42 @@
-# Receive-File 
+# Start-ScriptSession 
  
-Shows a dialog to users allowing to upload files to either server file system or items in media library. 
+Starts a new Script Session and executes a script provided in it. 
  
 ## Syntax 
  
-Receive-File [-Description &lt;String&gt;] [-ParentItem] &lt;Item&gt; [-Title &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-Versioned] [-Language &lt;String&gt;] [-Overwrite] [-Unpack] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Start-ScriptSession -Id &lt;String[]&gt; -Item &lt;Item&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
  
-Receive-File [-Description &lt;String&gt;] [-Path] &lt;String&gt; [-Title &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-Overwrite] [-Unpack] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Start-ScriptSession -Id &lt;String[]&gt; -ScriptBlock &lt;ScriptBlock&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
  
-Receive-File [-ParentItem] &lt;Item&gt; -AdvancedDialog [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Start-ScriptSession -Id &lt;String[]&gt; -Path &lt;String&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -Session &lt;ScriptSession[]&gt; -Item &lt;Item&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -Session &lt;ScriptSession[]&gt; -ScriptBlock &lt;ScriptBlock&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -Session &lt;ScriptSession[]&gt; -Path &lt;String&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -Item &lt;Item&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -Path &lt;String&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
+ 
+Start-ScriptSession -ScriptBlock &lt;ScriptBlock&gt; [-JobName &lt;String&gt;] [-ArgumentList &lt;Hashtable&gt;] [-Identity &lt;AccountIdentity&gt;] [-DisableSecurity] [-AutoDispose] [-Interactive] [-ContextItem &lt;Item&gt;] 
  
  
 ## Detailed Description 
  
-Executing this command with file path on the server (provided as -Path parameter) provides script users with means to upload a file from their computer.
-Executing it for an Item located in Sitecore Media library (provided as -ParentItem) allows the user to upload the file as a child to that item.
-If the file has been uploaded the dialog returns path to the file (in case of file system storage) or Item that has been created if the file was uplaoded to media library. 
+Starts a new Script Session and executes a script provided in it. 
+The session can be a background session or if the caller session is interactive providint the -Interactive switch can open a Windowd for the new sessio 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Description&nbsp; &lt;String&gt; 
+### -Id&nbsp; &lt;String[]&gt; 
  
-Dialog description displayed below the dialog title. 
+Id of the session to be created or retrieved. If the session with the same ID exists - it will be used, unless it's busy - in which case an error will be raised.
+If a session with the Id provided does not exist - it will be created.
+The Id is a string that uniquely identifies the script session within the server. You can type one or more IDs (separated by commas). To find the ID of a script session, type "Get-ScriptSession" without parameters. 
  
 <table>
     <thead></thead>
@@ -34,7 +47,7 @@ Dialog description displayed below the dialog title.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -55,9 +68,10 @@ Dialog description displayed below the dialog title.
     </tbody>
 </table> 
  
-### -ParentItem&nbsp; &lt;Item&gt; 
+### -Session&nbsp; &lt;ScriptSession[]&gt; 
  
-The item under which the uploaded media items should be stored. 
+Specifies the script session in context of which the script should be executed. Enter a variable that contains the script session or a command that gets the script session. You can also pipe a script session object to Start-ScriptSession.
+If the session is busy at the moment of the call - an error will be raised instead of running the script. 
  
 <table>
     <thead></thead>
@@ -72,7 +86,41 @@ The item under which the uploaded media items should be stored.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Item&nbsp; &lt;Item&gt; 
+ 
+Script item containing the code to be executed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -91,279 +139,7 @@ The item under which the uploaded media items should be stored.
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the folder where uploaded file should be stored. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Title&nbsp; &lt;String&gt; 
- 
-Dialog title - shown at the top of the dialog. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -CancelButtonName&nbsp; &lt;String&gt; 
- 
-Text shown on the cancel button. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -OkButtonName&nbsp; &lt;String&gt; 
- 
-Text shown on the OK button. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Versioned&nbsp; &lt;SwitchParameter&gt; 
- 
-Indicates that the Media item should be created as a Versioned media item. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Language&nbsp; &lt;String&gt; 
- 
-Specifies the language in which the media item should be created. if not specified - context language is selected. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Overwrite&nbsp; &lt;SwitchParameter&gt; 
- 
-indicates that the upload should overwrite a file or a media item if that one exists. Otherwise a file with a non-confilicting name or a sibling media item is created. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Unpack&nbsp; &lt;SwitchParameter&gt; 
- 
-Indicates that the uplaod is expected to be a ZIP file which should be unpacked when it's received. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -AdvancedDialog&nbsp; &lt;SwitchParameter&gt; 
- 
-Shows advanced dialog where user can upload multiple media items and select if the uploaded items are versioned, overwritten and unpacked. 
+Path to the script item containing the code to be executed. 
  
 <table>
     <thead></thead>
@@ -395,9 +171,43 @@ Shows advanced dialog where user can upload multiple media items and select if t
     </tbody>
 </table> 
  
-### -Width&nbsp; &lt;Int32&gt; 
+### -ScriptBlock&nbsp; &lt;ScriptBlock&gt; 
  
-Dialog width. 
+Script to be executed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -JobName&nbsp; &lt;String&gt; 
+ 
+Name of the Sitecore job that will run the script session. This can be used to monitor the session progress. 
  
 <table>
     <thead></thead>
@@ -429,9 +239,181 @@ Dialog width.
     </tbody>
 </table> 
  
-### -Height&nbsp; &lt;Int32&gt; 
+### -ArgumentList&nbsp; &lt;Hashtable&gt; 
  
-Dialog width. 
+Hashtable with the additional parameters required by the invoked script. The parameters will be instantiated in the session as variables. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
+ 
+User name including domain in context of which the script will be executed. If no domain is specified - 'sitecore' will be used as the default value. 
+If user is not specified the current user will be the impersonation context. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -DisableSecurity&nbsp; &lt;SwitchParameter&gt; 
+ 
+Add this parameter to disable security in the Job running the script session. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -AutoDispose&nbsp; &lt;SwitchParameter&gt; 
+ 
+Providing this parameter will cause the session to be automatically destroyed after it has executed. 
+Use this parameter if you're not in need of the results of the script execution. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Interactive&nbsp; &lt;SwitchParameter&gt; 
+ 
+If the new session is run from an interactive session (e.g. from desktop, menu item, console or ISE) using this parameter will cause dialog to be shown to the user to monitor the script progress. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -ContextItem&nbsp; &lt;Item&gt; 
+ 
+Context item for the script session. The script will start in the location of the item. 
  
 <table>
     <thead></thead>
@@ -467,15 +449,13 @@ Dialog width.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item
-System.String 
+* Sitecore.Data.Items.Item 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item
-System.String 
+* Cognifide.PowerShell.Core.Host.ScriptSessio 
  
 ## Notes 
  
@@ -485,56 +465,38 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
-Upload text.txt file to server disk drive.
-A new file is created with a non-conflicting name and the path to it is returned 
+ 
  
 ```powershell   
  
-PS master:\> Receive-File -Folder "C:\temp\upload"
-C:\temp\upload\text_029.txt 
+The following starts the progress demo script in interactive mode (showing dialogs for each script) in 3 different ways.
+
+In the first case script path is used, second case shows the script item beign retrieved and provided to the cmdlet.
+The last case shows the script to be provided as a script block (script content)
+Script finishes before the sessions that were launched from it end. 
+The sessions will be disposed when user presses the "Close" button in their dialogs as the -AutoDispose parameter was provided.
+
+$scriptPath = "master:\system\Modules\PowerShell\Script Library\Getting Started\Script Testing\Long Running Script with Progress Demo"
+$scriptItem = Get-Item $scriptPath
+$script = [scriptblock]::Create($scriptItem.Script)
+Start-ScriptSession -Path $scriptPath -Interactive -AutoDispose
+Start-ScriptSession -Item $scriptItem -Interactive -AutoDispose
+Start-ScriptSession -ScriptBlock $script -Interactive -AutoDispose 
  
 ``` 
  
 ### EXAMPLE 2 
  
-Upload text.txt file to media library under the 'master:\media library\Files' item
-A new media item is created and returned 
+ 
  
 ```powershell   
  
-PS master:\> Receive-File -ParentItem (get-item "master:\media library\Files") 
-Name Children Languages Id                                     TemplateName
----- -------- --------- --                                     ------------
-text False    {en}      {7B11CE12-C0FC-4650-916C-2FC76F3DCAAF} File 
- 
-``` 
- 
-### EXAMPLE 3 
- 
-Upload text.txt file to media library under the 'master:\media library\Files' item using advanced dialog.
-A new media item is created but "undetermined" is returned as the dialog does not return the results. 
- 
-```powershell   
- 
-PS master:\> Receive-File (get-item "master:\media library\Files") -AdvancedDialog
-undetermined 
- 
-``` 
- 
-### EXAMPLE 4 
- 
-Upload text.txt file to media library under the 'master:\media library\Files' item.
-A new versioned media item in Danish language is created and returned. If the media item existed - it will be overwritten. 
- 
-```powershell   
- 
-PS master:\> Receive-File -ParentItem (get-item "master:\media library\Files") -Overwrite -Language "da" -Versioned
-Name Children Languages Id                                     TemplateName
----- -------- --------- --                                     ------------
-text False    {en, da}  {307BCF7D-27FD-46FC-BE83-D9ED640CB09F} File 
+The following starts a script that changes its path to "master:\" and sleeps for 4 seconds. The session will persist in memory as no -AutoDispose parameter has been provided.
+
+Start-ScriptSession -ScriptBlock { cd master:\; Start-Sleep -Seconds 4 } -Id "Background Task" 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

@@ -4,11 +4,11 @@ Sets new security information on an item overwriting the previous settings.
  
 ## Syntax 
  
-Set-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; [-Item] &lt;Item&gt; [-PassThru] 
- 
-Set-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; -Id &lt;String&gt; [-Database &lt;Database&gt;] [-PassThru] 
- 
 Set-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; [-Path] &lt;String&gt; [-PassThru] 
+ 
+Set-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; -Id &lt;String&gt; [-Database &lt;String&gt;] [-PassThru] 
+ 
+Set-ItemAcl -AccessRules &lt;AccessRuleCollection&gt; [-Item] &lt;Item&gt; [-PassThru] 
  
  
 ## Detailed Description 
@@ -190,7 +190,7 @@ Id of the item to be processed. Requires the Database parameter to be specified.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be fetched with Id parameter. 
  

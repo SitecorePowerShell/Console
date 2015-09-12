@@ -6,11 +6,11 @@ Imports (deserializes) the specified path from the filesystem on the server as a
  
 Import-Item [-Database &lt;Database&gt;] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
  
-Import-Item [-Item &lt;Item&gt;] [-Recurse] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
+Import-Item [-Item] &lt;Item&gt; [-Recurse] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
  
-Import-Item [-Preset &lt;IncludeEntry&gt;] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
+Import-Item [-Preset] &lt;IncludeEntry&gt; [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
  
-Import-Item [-Path &lt;String&gt;] [-Recurse] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
+Import-Item [-Path] &lt;String&gt; [-Recurse] [-Root &lt;String&gt;] [-UseNewId] [-DisableEvents] [-ForceUpdate] 
  
  
 ## Detailed Description 
@@ -78,11 +78,11 @@ The item to be serialized.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -112,11 +112,11 @@ Name of the preset to be deserialized.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -146,11 +146,11 @@ Path to the item on the drive but without .item extension. If the item does not 
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>

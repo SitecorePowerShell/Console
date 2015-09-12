@@ -4,9 +4,9 @@ Sets the Sitecore user properties.
  
 ## Syntax 
  
-Set-User [-Identity] &lt;AccountIdentity&gt; [-IsAdministrator &lt;Boolean&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Set-User [-Identity] &lt;AccountIdentity&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
-Set-User -Instance &lt;User&gt; [-IsAdministrator &lt;Boolean&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Set-User -Instance &lt;User&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
  
 ## Detailed Description 
@@ -22,6 +22,40 @@ The Identity parameter specifies the Sitecore user to set. You can specify a use
 ### -IsAdministrator&nbsp; &lt;Boolean&gt; 
  
 Specifies whether the Sitecore user should be classified as an Administrator. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Portrait&nbsp; &lt;String&gt; 
+ 
+Specifies the Sitecore user portrait image. 
  
 <table>
     <thead></thead>

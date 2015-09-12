@@ -4,17 +4,17 @@ Tests a specific access right for a specified user against the provided item
  
 ## Syntax 
  
-Test-ItemAcl -Item &lt;Item&gt; -Identity &lt;AccountIdentity&gt; 
- 
 Test-ItemAcl -Item &lt;Item&gt; 
  
-Test-ItemAcl -Path &lt;String&gt; -Identity &lt;AccountIdentity&gt; 
+Test-ItemAcl -Item &lt;Item&gt; -AccessRight &lt;String&gt; -Identity &lt;AccountIdentity&gt; 
  
 Test-ItemAcl -Path &lt;String&gt; 
  
+Test-ItemAcl -Path &lt;String&gt; -AccessRight &lt;String&gt; -Identity &lt;AccountIdentity&gt; 
+ 
 Test-ItemAcl -Id &lt;String&gt; 
  
-Test-ItemAcl -Id &lt;String&gt; [-Database &lt;Database&gt;] -Identity &lt;AccountIdentity&gt; 
+Test-ItemAcl -Id &lt;String&gt; [-Database &lt;String&gt;] -AccessRight &lt;String&gt; -Identity &lt;AccountIdentity&gt; 
  
  
 ## Detailed Description 
@@ -127,7 +127,7 @@ Id of the item to be tested against. Requires the Database parameter to be speci
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be fetched with Id parameter. 
  
@@ -141,6 +141,64 @@ Database containing the item to be fetched with Id parameter.
         <tr>
             <td>Required?</td>
             <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -AccessRight&nbsp; &lt;String&gt; 
+ 
+The access right to grand or deny.
+Well known rights are:
+- field:read - "Field Read" - controls whether an account can read a specific field on an item..
+- field:write - "Field Write" - controls whether an account can update a specific field on an item.
+
+- item:read - "Read" - controls whether an account can see an item in the content tree and/or on the published Web site, including all of its properties and field values.
+- item:write - "Write" - controls whether an account can update field values. The write access right requires the read access right and field read and field write access rights for individual fields (field read and field write are allowed by default).
+- item:rename - "Rename" - controls whether an account can change the name of an item. The rename access right requires the read access right.
+- item:create - "Create" - controls whether an account can create child items. The create access right requires the read access right.
+- item:delete - "Delete" - Delete right for items. controls whether an account can delete an item. The delete access right requires the read access right
+    Important!
+The Delete command also deletes all child items, even if the account has been denied Delete
+rights for one or more of the subitems. 
+- item:admin - "Administer" - controls whether an account can configure access rights on an item. The administer access right requires the read and write access rights.
+- language:read - "Language Read" - controls whether a user can read a specific language version of items.
+- language:write - "Language Write" - controls whether a user can update a specific language version of items.
+- site:enter - controls whether a user can access a specific site.
+- insert:show - "Show in Insert" - Determines if the user can see the insert option
+- workflowState:delete - "Workflow State Delete" - controls whether a user can delete items which are currently associated with a specific workflow state.
+- workflowState:write - "Workflow State Write" - controls whether a user can update items which are currently associated with a specific workflow state.
+- workflowCommand:execute - "Workflow Command Execute" - — controls whether a user is shown specific workflow commands.
+- profile:customize - "Customize Profile Key Values" - The right to input out of range values of profile keys, that belong to this profile.
+- bucket:makebucket - "Create Bucket" - convert item to bucket.
+- bucket:unmake - "Revert Bucket" - convert item back from bucket.
+- remote:fieldread - "Field Remote Read" - Field Read right for remoted clients. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>

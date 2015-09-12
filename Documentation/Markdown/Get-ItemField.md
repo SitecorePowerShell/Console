@@ -4,11 +4,11 @@ Retrieves item fields as either names or fields or template fields.
  
 ## Syntax 
  
-Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
- 
 Get-ItemField [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
  
-Get-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+ 
+Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -260,7 +260,7 @@ Id of the item to be analysed.
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be analysed - can work with Language parameter to narrow the publication scope. 
  
@@ -403,4 +403,4 @@ __Preview                           __Preview                          Appearanc
  
 ## Related Topics 
  
-* Get-ItemTemplate* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemTemplate* Reset-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -8,7 +8,7 @@ New-Rendering [-Item] &lt;Item&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder 
  
 New-Rendering [-Path] &lt;String&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
  
-New-Rendering -Id &lt;String&gt; [-Database &lt;Database&gt;] [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
+New-Rendering -Id &lt;String&gt; [-Database &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
  
  
 ## Detailed Description 
@@ -461,7 +461,7 @@ Id of the item to be processed - can work with Language parameter to narrow the 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  

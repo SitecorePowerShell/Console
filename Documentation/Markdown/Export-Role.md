@@ -4,9 +4,9 @@ Exports (serializes) Sitecore roles to the filesystem on the server.
  
 ## Syntax 
  
-Export-Role [-Identity] &lt;AccountIdentity&gt; -Path &lt;String&gt; 
- 
 Export-Role [-Identity] &lt;AccountIdentity&gt; [-Root &lt;String&gt;] 
+ 
+Export-Role [-Identity] &lt;AccountIdentity&gt; -Path &lt;String&gt; 
  
 Export-Role -Filter &lt;String&gt; [-Root &lt;String&gt;] 
  

@@ -4,11 +4,11 @@ Creates new entry in the history store notifying of workflow state change.
  
 ## Syntax 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
- 
 New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;Database&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+ 
+New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -257,7 +257,7 @@ Id of the the item to have the history event attached - additionally specify Lan
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;Database&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
 Database containing the item to have the history event attached - can work with Language parameter to narrow the publication scope. 
  
