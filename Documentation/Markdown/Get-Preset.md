@@ -92,4 +92,4 @@ AssetsOptimiser master   /sitecore/system/Modules/Optimiser
  
 ## Related Topics 
  
-* Serialize-Item* Deserialize-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Serialize-Item* Deserialize-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

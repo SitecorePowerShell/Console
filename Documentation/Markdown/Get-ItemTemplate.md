@@ -260,4 +260,4 @@ PS master:\> Get-Item -Path master:/content/Home | Get-ItemTemplate -Recurse | f
  
 ## Related Topics 
  
-* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

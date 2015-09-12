@@ -288,4 +288,4 @@ PS master:\> New-ItemClone -Path master:\content\home -Destination $newTarget -N
  
 ## Related Topics 
  
-* Get-ItemClone* ConvertFrom-ItemClone* New-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
+* Get-ItemClone* ConvertFrom-ItemClone* New-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>

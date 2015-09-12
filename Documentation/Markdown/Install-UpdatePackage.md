@@ -180,4 +180,4 @@ PS master:\> Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.u
  
 ## Related Topics 
  
-* Export-UpdatePackage* Get-UpdatePackageDiff* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Export-UpdatePackage* Get-UpdatePackageDiff* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

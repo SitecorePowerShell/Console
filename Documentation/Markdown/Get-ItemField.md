@@ -403,4 +403,4 @@ __Preview                           __Preview                          Appearanc
  
 ## Related Topics 
  
-* Get-ItemTemplate* Reset-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemTemplate* Reset-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -307,4 +307,4 @@ PS master:\> Get-Item master:\content\home | Reset-ItemField -Name "a*"
  
 ## Related Topics 
  
-* Get-ItemTemplate* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemTemplate* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

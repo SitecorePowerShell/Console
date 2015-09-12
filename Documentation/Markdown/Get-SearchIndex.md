@@ -113,4 +113,4 @@ sitecore_master_index            Started         True            False
  
 ## Related Topics 
  
-* Initialize-SearchIndex* Stop-SearchIndex* Resume-SearchIndex* Suspend-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Initialize-SearchIndex* Stop-SearchIndex* Resume-SearchIndex* Suspend-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -288,4 +288,4 @@ TargetPath         : /sitecore/content/Home
  
 ## Related Topics 
  
-* Get-ItemReference* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Get-ItemReference* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

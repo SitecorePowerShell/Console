@@ -233,4 +233,4 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Unprotect-Item* Get-Item
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Unprotect-Item* Get-Item

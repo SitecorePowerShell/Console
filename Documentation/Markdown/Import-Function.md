@@ -148,4 +148,4 @@ PS master:\> Import-Function -Name Resolve-Error
  
 ## Related Topics 
  
-* Invoke-Script* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Invoke-Script* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

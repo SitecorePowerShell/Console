@@ -199,4 +199,4 @@ PS master:\> Get-SearchIndex -Name sitecore_master_index | Rebuild-SearchIndex
  
 ## Related Topics 
  
-* Resume-SearchIndex* Suspend-SearchIndex* Stop-SearchIndex* Get-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* Resume-SearchIndex* Suspend-SearchIndex* Stop-SearchIndex* Get-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
