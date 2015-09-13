@@ -151,7 +151,11 @@ extend(cognifide, "powershell");
                     var line = codeeditor.session.getTextRange(range);
 
                     if (line) {
-                        _getTabCompletions(line);
+                            
+                        if(!$.tabCompletions || line !== prefix || prefix.indexOf($.lastPrefix)==-1) {
+                            $.lastPrefix = prefix;
+                            _getTabCompletions(line);
+                        }
                     } else {
                         $.tabCompletions = [""];
                     }
