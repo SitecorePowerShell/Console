@@ -27,8 +27,9 @@
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <!--for autocomplete and overlay-->
-      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
       <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
+      <Script runat="server" src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
       <Memo ID="SelectionText" Style="display:none;"/>
       <Memo ID="SelectionRange" Style="display:none;"/>

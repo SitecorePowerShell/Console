@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
@@ -496,7 +498,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             var autoDispose = string.IsNullOrEmpty(sessionName);
-            ScriptSession scriptSession = autoDispose
+            var scriptSession = autoDispose
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
 
@@ -506,10 +508,14 @@ namespace Cognifide.PowerShell.Client.Applications
                             Path.GetFileNameWithoutExtension(Path.GetTempFileName()) +
                             ".ps1";
                 File.WriteAllText(tmpPS, scriptToExecute);
-                var strBrPoints = (Breakpoints.Value??string.Empty).Split(',');
-                var bPoints = strBrPoints.Select(int.Parse);
-                scriptSession.SetBreakpoints(tmpPS, bPoints);
+                if (!string.IsNullOrEmpty(Breakpoints.Value))
+                {
+                    var strBrPoints = (Breakpoints.Value ?? string.Empty).Split(',');
+                    var bPoints = strBrPoints.Select(int.Parse);
+                    scriptSession.SetBreakpoints(tmpPS, bPoints);
+                }
                 scriptToExecute = tmpPS;
+                scriptSession.Debugging = true;
             }
             if (UseContext)
             {
@@ -647,6 +653,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     JobContext.Flush();
                 }
             }
+            scriptSession.Debugging = false;
+            scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
         }
 
         [HandleMessage("ise:abort", true)]
@@ -837,6 +845,27 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
             SheerResponse.Eval($"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
+        }
+
+        [HandleMessage("ise:breakpointhit", true)]
+        protected virtual void BreakpointHit(ClientPipelineArgs args)
+        {
+            var line = args.Parameters["Line"];
+            var hitCount = args.Parameters["HitCount"];
+            var jobId = args.Parameters["JobId"];
+            SheerResponse.Eval($"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
+        }
+
+        [HandleMessage("ise:debugaction", true)]
+        protected virtual void BreakpointAction(ClientPipelineArgs args)
+        {
+            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            {
+                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
+                session.NextDebugResumeAction = args.Parameters["action"];
+                SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
+                
+            }
         }
     }
 }

@@ -143,6 +143,34 @@ namespace Cognifide.PowerShell.Console.Services
             return sessionExists ? "alive" : "session-not-found";
         }
 
+        [WebMethod(EnableSession = true)]
+        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
+        public object GetVariableValue(string guid, string variableName)
+        {
+            var sessionExists = ScriptSessionManager.SessionExists(guid);
+            if (sessionExists)
+            {
+                var session = ScriptSessionManager.GetSession(guid);
+                try
+                {
+                    variableName = variableName.TrimStart('$');
+                    var varValue = session.GetDebugVariable(variableName);
+                    while (varValue == null)
+                    {
+                        Thread.Sleep(100);
+                        varValue = session.GetDebugVariable(variableName);
+                    }
+                    return varValue;
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            return "Session not found";
+        }
+
+
         private static ScriptSession GetScriptSession(string guid)
         {
             return ScriptSessionManager.GetSession(guid, ApplicationNames.AjaxConsole, false);

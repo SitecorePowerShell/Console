@@ -35,20 +35,20 @@ namespace Cognifide.PowerShell.Core.Host
 
         private readonly ScriptingHostPrivateData privateData;
         private readonly Stack<Runspace> pushedRunspaces;
-        private readonly RunspaceConfiguration runspaceConfiguration;
         private readonly ScriptingHostUserInterface ui;
+        private InitialSessionState sessionState;
 
         /// <summary>
         ///     Initializes a new instance of the MyHost class. Keep
         ///     a reference to the host application object so that it
         ///     can be informed of when to exit.
         /// </summary>
-        public ScriptingHost(ApplicationSettings settings, RunspaceConfiguration runspaceConfiguration)
+        public ScriptingHost(ApplicationSettings settings, InitialSessionState initialState)
         {
-            this.runspaceConfiguration = runspaceConfiguration;
             ui = new ScriptingHostUserInterface(settings, this);
             pushedRunspaces = new Stack<Runspace>();
             privateData = new ScriptingHostPrivateData(this);
+            sessionState = initialState;
             CloseRunner = false;
         }
 
@@ -181,7 +181,8 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 if (null == runspace)
                 {
-                    runspace = RunspaceFactory.CreateRunspace(this, runspaceConfiguration);
+                    runspace = RunspaceFactory.CreateRunspace(this, sessionState);
+                    runspace.InitialSessionState.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
                 }
 
                 var stack = pushedRunspaces;

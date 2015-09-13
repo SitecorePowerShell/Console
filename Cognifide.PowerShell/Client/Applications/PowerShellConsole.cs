@@ -149,5 +149,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
             SheerResponse.Eval(@"$ise(function() { cognifide.powershell.resetAttempts(); });");
         }
+
     }
 }

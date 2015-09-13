@@ -64,5 +64,13 @@ namespace Cognifide.PowerShell.Core.Provider
                 typeof (PsSitecoreItemProvider),
                 String.Empty));
         }
+
+        public static void AppendToSessionState(InitialSessionState state)
+        {
+            state.Providers.Add(new SessionStateProviderEntry("CmsItemProvider",
+                typeof(PsSitecoreItemProvider),
+                String.Empty));
+        }
+
     }
 }

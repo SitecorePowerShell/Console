@@ -46,6 +46,8 @@ extend(cognifide, "powershell");
             "You can find more documentation in the Sitecore PowerShell Extensions <a href='http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/' target='_blank'>book</a>."
         ];
 
+        var TokenTooltip = ace.require("tooltip").TokenTooltip;
+
         window.parent.focus();
         window.focus();
 
@@ -72,6 +74,9 @@ extend(cognifide, "powershell");
         setTimeout(setFocusOnConsole, 1000);
 
         var guid = "ISE Editing Session";
+        var debugLine = 0;
+        var debugHitCount = 0;
+        var debugSessionId = "";
 
         var editor = $($("#Editor")[0]);
         editor.hide();
@@ -82,7 +87,8 @@ extend(cognifide, "powershell");
         codeeditor.session.setMode("ace/mode/powershell");
         codeeditor.setShowPrintMargin(false);
         codeeditor.session.setValue(editor.val());
-        codeeditor.session.on("change", function() {
+        codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
+        codeeditor.session.on("change", function () {
             editor.val(codeeditor.session.getValue());
         });
 
@@ -277,6 +283,33 @@ extend(cognifide, "powershell");
             guid = sessionId;
         };
 
+        cognifide.powershell.debugStart = function(sessionId) {
+
+        };
+
+        cognifide.powershell.debugStop = function (sessionId) {
+
+        };
+
+        var marker = {};
+
+        cognifide.powershell.breakpointHit = function (line, hitCount, sessionId) {
+            debugLine = line;
+            debugHitCount = hitCount;
+            debugSessionId = sessionId;
+            var Range = ace.require('ace/range').Range;
+            setTimeout(function () {
+                marker = codeeditor.session.addMarker(new Range(line, 0, line+1, 0), "breakpoint", "line");                
+            }, 100);
+
+        };
+
+        cognifide.powershell.breakpointHandled = function() {
+            if (!$.isEmptyObject(marker)) {
+                codeeditor.session.removeMarker(marker);
+            }
+        }
+
         window.scForm.postRequest("", "", "", "ise:updatesettings");
 
         cognifide.powershell.updateEditor = function() {
@@ -324,6 +357,18 @@ extend(cognifide, "powershell");
             });
         };
 
+        cognifide.powershell.variableValue = function (variableName) {
+            var data;
+            var sessionId = debugSessionId;
+            if (!debugSessionId || 0 === debugSessionId.length) {
+                sessionId = guid;
+            }
+            getPowerShellResponse({ "guid": sessionId, "variableName": variableName }, "GetVariableValue",
+                function (json) {
+                    data = json.d;
+                });
+            return data;
+        };
 
         cognifide.powershell.getAutocompletionPrefix = function(text) {
             var data;

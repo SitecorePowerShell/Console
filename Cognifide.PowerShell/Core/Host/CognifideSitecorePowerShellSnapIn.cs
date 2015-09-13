@@ -21,16 +21,13 @@ namespace Cognifide.PowerShell.Core.Host
     [RunInstaller(true)]
     public class CognifideSitecorePowerShellSnapIn : CustomPSSnapIn
     {
-        private static readonly List<CmdletConfigurationEntry> commandlets = new List<CmdletConfigurationEntry>();
-        private static readonly Dictionary<string, string> completers = new Dictionary<string, string>();
-
         /// <summary>
         ///     Specify the providers that belong to this custom PowerShell snap-in.
         /// </summary>
         private Collection<ProviderConfigurationEntry> providers;
 
         private bool initialized;
-        
+
         static CognifideSitecorePowerShellSnapIn()
         {
             var cmdltsToIncludes = Factory.GetConfigNodes("powershell/commandlets/add");
@@ -61,52 +58,37 @@ namespace Cognifide.PowerShell.Core.Host
         /// <summary>
         ///     Specify the name of the PowerShell snap-in.
         /// </summary>
-        public override string Name
-        {
-            get { return "CognifideSitecorePowerShellSnapIn"; }
-        }
+        public override string Name => "CognifideSitecorePowerShellSnapIn";
 
         /// <summary>
         ///     Specify the vendor for the PowerShell snap-in.
         /// </summary>
-        public override string Vendor
-        {
-            get { return "Cognifide"; }
-        }
+        public override string Vendor => "Cognifide";
 
         /// <summary>
         ///     Specify the localization resource information for the vendor.
         ///     Use the format: resourceBaseName,VendorName.
         /// </summary>
-        public override string VendorResource
-        {
-            get { return "CognifideSitecorePowerShellSnapIn,Cognifide"; }
-        }
+        public override string VendorResource => "CognifideSitecorePowerShellSnapIn,Cognifide";
 
         /// <summary>
         ///     Specify a description of the PowerShell snap-in.
         /// </summary>
-        public override string Description
-        {
-            get { return "This snap-in integrates Sitecore & Powershell."; }
-        }
+        public override string Description => "This snap-in integrates Sitecore & Powershell.";
 
         /// <summary>
         ///     Specify the localization resource information for the description.
         ///     Use the format: resourceBaseName,Description.
         /// </summary>
-        public override string DescriptionResource
-        {
-            get { return "CognifideSitecorePowerShellSnapIn,This snap-in integrates Sitecore & Powershell."; }
-        }
+        public override string DescriptionResource => "CognifideSitecorePowerShellSnapIn,This snap-in integrates Sitecore & Powershell.";
 
         /// <summary>
         ///     Specify the cmdlets that belong to this custom PowerShell snap-in.
         /// </summary>
-        public override Collection<CmdletConfigurationEntry> Cmdlets
-        {
-            get { return new Collection<CmdletConfigurationEntry>(commandlets); }
-        }
+        public override Collection<CmdletConfigurationEntry> Cmdlets => new Collection<CmdletConfigurationEntry>(Commandlets);
+        public static List<CmdletConfigurationEntry> Commandlets { get; } = new List<CmdletConfigurationEntry>();
+        public static List<SessionStateCommandEntry> SessionStateCommandlets { get; } = new List<SessionStateCommandEntry>();
+        public static Dictionary<string, string> Completers { get; } = new Dictionary<string, string>();
 
         public override Collection<ProviderConfigurationEntry> Providers
         {
@@ -116,28 +98,13 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     Initialize();
                 }
-                if (providers == null)
+                return providers ?? (providers = new Collection<ProviderConfigurationEntry>
                 {
-                    providers = new Collection<ProviderConfigurationEntry>
-                    {
-                        new ProviderConfigurationEntry("Sitecore PowerShell Provider",
-                            typeof (PsSitecoreItemProvider),
-                            @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml")
-                    };
-                }
-
-                return providers;
+                    new ProviderConfigurationEntry("Sitecore PowerShell Provider",
+                        typeof (PsSitecoreItemProvider),
+                        @"..\sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml")
+                });
             }
-        }
-
-        public static List<CmdletConfigurationEntry> Commandlets
-        {
-            get { return commandlets; }
-        }
-
-        public static Dictionary<string, string> Completers
-        {
-            get { return completers; }
         }
 
         private static void GetCommandletsFromAssembly(Assembly assembly, WildcardPattern wildcard)
@@ -152,6 +119,7 @@ namespace Cognifide.PowerShell.Core.Host
                     var attribute = (CmdletAttribute) (type.GetCustomAttributes(typeof (CmdletAttribute), true)[0]);
                     Commandlets.Add(new CmdletConfigurationEntry(attribute.VerbName + "-" + attribute.NounName, type,
                         helpPath));
+                    SessionStateCommandlets.Add(new SessionStateCmdletEntry(attribute.VerbName + "-" + attribute.NounName, type, helpPath));
                     foreach (var property in type.GetProperties())
                     {
                         var propAttribute = (AutocompleteSetAttribute)
