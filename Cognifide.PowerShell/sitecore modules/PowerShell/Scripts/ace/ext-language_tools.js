@@ -1917,6 +1917,18 @@ ace.define("ace/ext/language_tools", ["require", "exports", "module", "ace/snipp
                 editor.completer.detach();
         } else if (e.command.name === "insertstring") {
             var prefix = getCompletionPrefix(editor);
+            var triggers = ['\\','-'],
+            length = triggers.length;
+            var triggerFound = false;
+            while(length--) {
+               if (prefix.indexOf(triggers[length]) != -1) {
+                    triggerFound = true;
+                    break;
+               }
+            }
+            if(!triggerFound) {
+                return;
+            }
             if (prefix && !hasCompleter) {
                 if (!editor.completer) {
                     editor.completer = new Autocomplete();

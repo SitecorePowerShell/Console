@@ -125,7 +125,8 @@ extend(cognifide, "powershell");
         ace.config.loadModule("ace/ext/language_tools", function(module) {
             codeeditor.setOptions({
                 enableSnippets: true,
-                enableBasicAutocompletion: true
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true
             });
 
             var keyWordCompleter = {
