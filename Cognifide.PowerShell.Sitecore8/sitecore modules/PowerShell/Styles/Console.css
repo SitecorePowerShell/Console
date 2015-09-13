@@ -60,9 +60,14 @@ html {
     position: absolute;
     top: 0;
     width: 100%;
+    bottom: 0;
 }
 
-#Result pre { margin: 4px 2px !important; }
+#Result pre { 
+    margin: 4px 2px !important; 
+    z-index: 0;
+    position: absolute;
+}
 
 .console a { color: #ffa; }
 

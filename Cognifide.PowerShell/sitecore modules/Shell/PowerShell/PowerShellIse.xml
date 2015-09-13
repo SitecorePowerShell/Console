@@ -72,8 +72,8 @@
                     </p>
                   </Border>
                 </Border>
+                <Border ID="ResultsClose">x</Border>
                 <Border ID="ScriptResult" class="console">
-                  <Border ID="ResultsClose">x</Border>
                   <pre ID="ScriptResultCode"></pre>
                 </Border>
               </Border>

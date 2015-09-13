@@ -547,7 +547,6 @@ namespace Cognifide.PowerShell.Client.Applications
             Context.ClientPage.ClientResponse.SetInnerHtml(
                 "ScriptResult",
                 string.Format(
-                    "<div id='ResultsClose' onclick='javascript:return cognifide.powershell.closeResults();' >x</div>" +
                     "<div id='PleaseWait'>" +
                     "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working' />" +
                     "<div>Please wait, {0}</div>" +

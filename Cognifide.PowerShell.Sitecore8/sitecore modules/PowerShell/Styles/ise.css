@@ -213,6 +213,10 @@ a.ps-link {
     text-indent: 0;
     text-shadow: 1px 1px 0 #ffffff;
     width: 24px;
+    z-index: 10;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 #HelpClose:hover, #ResultsClose:hover {
@@ -222,7 +226,7 @@ a.ps-link {
 }
 
 #ResultsClose:active {
-    position: relative;
+    position: absolute;
     top: 1px;
 }
 
