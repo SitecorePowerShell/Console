@@ -11,6 +11,7 @@ using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Microsoft.PowerShell;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -19,6 +20,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
+using Sitecore.Web.UI.Sheer;
 using Version = System.Version;
 
 namespace Cognifide.PowerShell.Core.Host
@@ -47,17 +49,19 @@ namespace Cognifide.PowerShell.Core.Host
         private const string ExceptionFormatString = "{1}{0}Of type: {3}{0}Stack trace:{0}{2}{0}";
         private const string ExceptionLineEndFormat = "\r\n";
 
-        private static readonly FormatConfigurationEntry formats = new FormatConfigurationEntry(HttpRuntime.AppDomainAppPath +
+        private static readonly SessionStateFormatEntry formats = new SessionStateFormatEntry(HttpRuntime.AppDomainAppPath +
                                                    @"sitecore modules\PowerShell\Assets\Sitecore.Views.ps1xml");
 
-        readonly TypeConfigurationEntry types = new TypeConfigurationEntry(HttpRuntime.AppDomainAppPath +
+        private static readonly SessionStateTypeEntry types = new SessionStateTypeEntry(HttpRuntime.AppDomainAppPath +
                                                @"sitecore modules\PowerShell\Assets\Sitecore.Types.ps1xml");
 
         private bool disposed;
         private bool initialized;
         private Pipeline pipeline;
         private readonly ScriptingHost host;
-        private readonly Runspace runspace;
+        private static InitialSessionState state;
+        private bool abortRequested;
+        private Hashtable debugVariables;
 
         internal string JobScript { get; set; }
         internal JobOptions JobOptions { get; set; }
@@ -81,24 +85,11 @@ namespace Cognifide.PowerShell.Core.Host
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
 
-            var conf = RunspaceConfiguration.Create();
-            host = new ScriptingHost(Settings, conf);
-            runspace = host.Runspace;
-            Runspace.DefaultRunspace = runspace;
-            
-            conf.Cmdlets.Append(CognifideSitecorePowerShellSnapIn.Commandlets);
-            if (Settings.UseTypeInfo)
-            {
-                conf.Formats.Prepend(formats);
-                conf.Formats.Update();
-                conf.Types.Prepend(types);
-                conf.Types.Update();
-            }
+            host = new ScriptingHost(Settings, SpeInitialSessionState);
+                        
+            Runspace.DefaultRunspace = host.Runspace;
 
-            runspace.ThreadOptions = PSThreadOptions.UseCurrentThread;
-            runspace.ApartmentState = ApartmentState.STA;
-            PsSitecoreItemProvider.AppendToRunSpace(runspace.RunspaceConfiguration);
-            runspace.Open();
+            host.Runspace.Open();
             if (!initialized)
             {
                 Initialize();
@@ -107,6 +98,35 @@ namespace Cognifide.PowerShell.Core.Host
             if (Settings.UseTypeInfo)
             {
                 Output.Clear();
+            }
+        }
+
+        public InitialSessionState SpeInitialSessionState
+        {
+            get
+            {
+                if (state == null)
+                {
+                    state = InitialSessionState.CreateDefault();
+                    state.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
+
+                    state.Commands.Add(CognifideSitecorePowerShellSnapIn.SessionStateCommandlets);
+                    if (Settings.UseTypeInfo)
+                    {
+                        state.Types.Add(types);
+                        state.Formats.Add(formats);
+                    }
+                    state.ThreadOptions = PSThreadOptions.UseCurrentThread;
+                    state.ApartmentState = ApartmentState.MTA;
+                    foreach (var key in PredefinedVariables.Variables.Keys)
+                    {
+                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables.Keys, "Sitecore PowerShell Extensions Predefined Variable"));
+                    }
+                    state.ExecutionPolicy = ExecutionPolicy.Bypass;
+                    state.UseFullLanguageModeInDebugger = true;
+                    PsSitecoreItemProvider.AppendToSessionState(state);                    
+                }
+                return state;
             }
         }
 
@@ -152,20 +172,21 @@ namespace Cognifide.PowerShell.Core.Host
         public string Key { get; internal set; }
         public ApplicationSettings Settings { get; }
         public OutputBuffer Output => host.Output;
-        public RunspaceAvailability State => runspace.RunspaceAvailability;
+        public RunspaceAvailability State => host.Runspace.RunspaceAvailability;
         public string ApplianceType { get; set; }
+        public bool Debugging { get; set; }
 
         public string CurrentLocation
         {
             get
             {
-                if (runspace.RunspaceAvailability == RunspaceAvailability.Busy)
+                if (host.Runspace.RunspaceAvailability == RunspaceAvailability.Busy)
                 {
                     return string.Empty;
                 }
                 try
                 {
-                    return runspace.SessionStateProxy.Path.CurrentLocation.Path;
+                    return host.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
                 }
                 catch // above can cause problems that we don't really care about.
                 {
@@ -178,7 +199,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                runspace.SessionStateProxy.SetVariable(varName, varValue);
+                host.Runspace.SessionStateProxy.SetVariable(varName, varValue);
             }
         }
 
@@ -186,7 +207,31 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                return runspace.SessionStateProxy.GetVariable(varName);
+                return host.Runspace.SessionStateProxy.GetVariable(varName);
+            }
+        }
+
+        public object GetDebugVariable(string varName)
+        {
+            lock (this)
+            {
+                if (State == RunspaceAvailability.AvailableForNestedCommand)
+                {
+                    if (debugVariables != null)
+                    {
+                        if (debugVariables.ContainsKey(varName))
+                        {
+                            return debugVariables[varName];
+                        }
+                        return debugVariables[varName] = null;
+                    }
+                    return null;
+                }
+                if (State == RunspaceAvailability.Available)
+                {
+                    return GetVariable(varName);
+                }
+                return "unavailable at the moment";
             }
         }
 
@@ -198,12 +243,9 @@ namespace Cognifide.PowerShell.Core.Host
                 foreach (var breakpoint in breakpoints)
                 {
                     var bPointScript =
-                        $"Set-PSBreakpoint -Line {breakpoint} -Action {{ [{GetType().FullName}]::BreakpointHit($ScriptSession) }} -Script \"{scriptPath}\"";
-                    ExecuteScriptPart(bPointScript, false, true,false);
+                        $"Set-PSBreakpoint -Script {scriptPath} -Line {breakpoint+1}";
+                    ExecuteScriptPart(bPointScript, false, true, false);
                 }
-                
-                runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
-                runspace.Debugger.BreakpointUpdated +=DebuggerOnBreakpointUpdated;
             }
         }
 
@@ -212,35 +254,57 @@ namespace Cognifide.PowerShell.Core.Host
             int i = 0;
         }
 
-        private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs debuggerStopEventArgs)
+        private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs args)
         {
-            if (JobContext.IsJob &&
-                ((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
+            if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
-                object[] options = new object[debuggerStopEventArgs.Breakpoints.Count];
-                for (var i = 0; i < debuggerStopEventArgs.Breakpoints.Count; i++)
+                debugVariables = new Hashtable();
+                foreach (var breakpoint in args.Breakpoints)
                 {
-                    var breakpoint = debuggerStopEventArgs.Breakpoints[i];
-                    string editor = breakpoint.Script;
-                    options[i] = new Hashtable()
+                    var message = Message.Parse(this, "ise:breakpointhit");
+                    message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber-1).ToString());
+                    message.Arguments.Add("HitCount", breakpoint.HitCount.ToString());
+                    var sheerMessage = new SendMessageMessage(message, false);
+                    if (JobContext.IsJob)
                     {
-                        ["Title"] = breakpoint.GetType().Name,
-                        ["Name"] = $"var{i}string",
-                        ["Value"] = debuggerStopEventArgs.InvocationInfo.Line,
-                        ["Editor"] = "info"
-                    };
-
+                        message.Arguments.Add("JobId", Key);
+                        JobContext.MessageQueue.PutMessage(sheerMessage);
+                    }
+                    else
+                    {
+                        sheerMessage.Execute();
+                    }
+                    NextDebugResumeAction = string.Empty;
+                    while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
+                    {
+                        foreach (var key in debugVariables.Keys)
+                        {
+                            if (debugVariables[key] == null)
+                            {
+                                object varValue = null;
+                                try
+                                {
+                                    varValue = host.Runspace.SessionStateProxy.PSVariable.GetValue(key.ToString());                                    
+                                }
+                                catch (Exception ex)
+                                {
+                                    varValue = ex.Message;
+                                }
+                                debugVariables[key] = varValue ?? "unavailable";
+                            }
+                        }
+                        Thread.Sleep(100);
+                    }
+                    DebuggerResumeAction action;
+                    Enum.TryParse(NextDebugResumeAction, true, out action);
+                    args.ResumeAction = action;
                 }
-                JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    "caption", "Message", string.Empty, string.Empty, false));
-                var values = (object[]) JobContext.MessageQueue.GetResult();
+                debugVariables = null;
             }
         }
 
-        public static void BreakpointHit(ScriptSession session)
-        {
-            var i = 0;
-        }
+        public string NextDebugResumeAction { get; set; } = string.Empty;
+
 
         public List<PSVariable> Variables
         {
@@ -266,7 +330,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                 initialized = true;
                 UserName = User.Current.Name;
-                var proxy = runspace.SessionStateProxy;
+                var proxy = host.Runspace.SessionStateProxy;
                 proxy.SetVariable("me", UserName);
                 proxy.SetVariable("HttpContext", HttpContext.Current);
                 if (HttpContext.Current != null)
@@ -292,18 +356,13 @@ namespace Cognifide.PowerShell.Core.Host
                     PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
                 }
 
-                foreach (var key in PredefinedVariables.Variables.Keys)
-                {
-                    proxy.SetVariable(key, PredefinedVariables.Variables[key]);
-                }
-
                 ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
             }
         }
 
         public ScriptBlock GetScriptBlock(string scriptBlock)
         {
-            return runspace.SessionStateProxy.InvokeCommand.NewScriptBlock(scriptBlock);
+            return host.Runspace.SessionStateProxy.InvokeCommand.NewScriptBlock(scriptBlock);
         }
 
         public static string GetDataContextSwitch(Item item)
@@ -356,7 +415,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 try
                 {
-                    pipeline = runspace.CreatePipeline(script);
+                    pipeline = host.Runspace.CreatePipeline(script);
                     return ExecuteCommand(stringOutput, internalScript, marshalResults);
                 }
                 finally
@@ -373,7 +432,7 @@ namespace Cognifide.PowerShell.Core.Host
             // edit box of the form.
             try
             {
-                pipeline = runspace.CreatePipeline();
+                pipeline = host.Runspace.CreatePipeline();
                 pipeline.Commands.Add(command);
                 return ExecuteCommand(stringOutput, internalScript);
             }
@@ -387,6 +446,7 @@ namespace Cognifide.PowerShell.Core.Host
         public void Abort()
         {
             pipeline?.Stop();
+            abortRequested = true;
         }
 
         private List<object> ExecuteCommand(bool stringOutput, bool internalScript, bool marshallResults = true)
@@ -401,8 +461,14 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 pipeline.Commands.Add("out-default");
             }
-            pipeline.StateChanged += PipelineStateChanged;
 
+            if (Debugging)
+            {
+                host.Runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
+                host.Runspace.Debugger.BreakpointUpdated += DebuggerOnBreakpointUpdated;
+            }
+            pipeline.StateChanged += PipelineStateChanged;
+            abortRequested = false;
             // execute the commands in the pipeline now
             var execResults = pipeline.Invoke();
 
@@ -414,6 +480,12 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     Log.Error(record + record.InvocationInfo.PositionMessage, this);
                 }
+            }
+
+            if (Debugging)
+            {
+                host.Runspace.Debugger.DebuggerStop -= DebuggerOnDebuggerStop;
+                host.Runspace.Debugger.BreakpointUpdated -= DebuggerOnBreakpointUpdated;
             }
 
             JobName = string.Empty;
@@ -500,7 +572,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void Close()
         {
-            runspace.Dispose();
+            host.Runspace.Dispose();
             disposed = true;
         }
 
