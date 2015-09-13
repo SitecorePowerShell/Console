@@ -66,7 +66,7 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                     regex: "[$][a-zA-Z][a-zA-Z0-9_]*\\b"
                 }, {
                     token: ["keyword.operator", "keyword.type", "keyword.operator"],
-                    regex: "([\\[])([a-zA-Z0-9\\-\\.]*)([\\]])"
+                    regex: "([\\[])([a-zA-Z0-9\\-\\.\\[\\]]*)([\\]])"
                 }, {
                     token: "support.function",
                     regex: "[a-zA-Z]{1,}[\\-][a-zA-Z]*\\b"
