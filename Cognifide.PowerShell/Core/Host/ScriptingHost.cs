@@ -12,8 +12,6 @@ namespace Cognifide.PowerShell.Core.Host
 {
     public class ScriptingHost : PSHost, IHostSupportsInteractiveSession
     {
-        private Runspace runspace;
-
         /// <summary>
         ///     The identifier of this PSHost implementation.
         /// </summary>
@@ -38,6 +36,8 @@ namespace Cognifide.PowerShell.Core.Host
         private readonly ScriptingHostUserInterface ui;
         private InitialSessionState sessionState;
 
+        public System.Management.Automation.PowerShell PowerShell { get; private set; }
+
         /// <summary>
         ///     Initializes a new instance of the MyHost class. Keep
         ///     a reference to the host application object so that it
@@ -55,39 +55,27 @@ namespace Cognifide.PowerShell.Core.Host
         /// <summary>
         ///     A reference to the PSHost implementation.
         /// </summary>
-        public OutputBuffer Output
-        {
-            get { return ui.Output; }
-        }
+        public OutputBuffer Output => ui.Output;
 
         /// <summary>
         ///     Return the culture information to use. This implementation
         ///     returns a snapshot of the culture information of the thread
         ///     that created this object.
         /// </summary>
-        public override CultureInfo CurrentCulture
-        {
-            get { return originalCultureInfo; }
-        }
+        public override CultureInfo CurrentCulture => originalCultureInfo;
 
         /// <summary>
         ///     Return the UI culture information to use. This implementation
         ///     returns a snapshot of the UI culture information of the thread
         ///     that created this object.
         /// </summary>
-        public override CultureInfo CurrentUICulture
-        {
-            get { return originalUiCultureInfo; }
-        }
+        public override CultureInfo CurrentUICulture => originalUiCultureInfo;
 
         /// <summary>
         ///     This implementation always returns the GUID allocated at
         ///     instantiation time.
         /// </summary>
-        public override Guid InstanceId
-        {
-            get { return myId; }
-        }
+        public override Guid InstanceId => myId;
 
         /// <summary>
         ///     This implementation always returns the GUID allocated at
@@ -143,15 +131,9 @@ namespace Cognifide.PowerShell.Core.Host
         ///     Return the version object for this application. Typically this
         ///     should match the version resource in the application.
         /// </summary>
-        public override Version Version
-        {
-            get { return GetType().Assembly.GetName().Version; }
-        }
+        public override Version Version => GetType().Assembly.GetName().Version;
 
-        public override PSObject PrivateData
-        {
-            get { return new PSObject(privateData); }
-        }
+        public override PSObject PrivateData => new PSObject(privateData);
 
         public void PushRunspace(Runspace runspace)
         {
@@ -179,16 +161,17 @@ namespace Cognifide.PowerShell.Core.Host
         {
             get
             {
-                if (null == runspace)
+                
+                if (null == PowerShell)
                 {
-                    runspace = RunspaceFactory.CreateRunspace(this, sessionState);
-                    runspace.InitialSessionState.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
+                    PowerShell = System.Management.Automation.PowerShell.Create(sessionState);
+                    PowerShell.Runspace = RunspaceFactory.CreateRunspace(this, sessionState);
                 }
 
                 var stack = pushedRunspaces;
                 if (0 == stack.Count)
                 {
-                    return runspace;
+                    return PowerShell.Runspace;
                 }
 
                 return stack.Peek();

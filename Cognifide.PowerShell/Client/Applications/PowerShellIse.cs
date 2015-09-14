@@ -41,6 +41,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border ScriptResult;
         protected Memo SelectionText;
         protected Memo Breakpoints;
+        public bool Debugging { get; set; }
 
         protected bool ScriptRunning
         {
@@ -761,7 +762,8 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters["scriptLength"] = Editor.Value.Length.ToString();
             ribbon.CommandContext.Parameters["selectionLength"] = SelectionText.Value.Trim().Length.ToString();
             ribbon.CommandContext.Parameters["modified"] = ScriptModified.ToString();
-            
+            ribbon.CommandContext.Parameters["debugging"] = Debugging ? "1" : "0";
+
             var sessionName = CurrentSessionId ?? string.Empty;
             var persistentSessionId = sessionName;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
@@ -793,6 +795,7 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters.Add("scriptItem", ScriptItemId);
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
         }
+
 
         [HandleMessage("item:updated", true)]
         protected void FieldEditor(ClientPipelineArgs args)
@@ -853,6 +856,21 @@ namespace Cognifide.PowerShell.Client.Applications
             var hitCount = args.Parameters["HitCount"];
             var jobId = args.Parameters["JobId"];
             SheerResponse.Eval($"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
+            Debugging = true;
+            UpdateRibbon();
+        }
+
+        
+        [HandleMessage("ise:debugstart", true)]
+        protected virtual void DebuggingStart(ClientPipelineArgs args)
+        {
+            SheerResponse.Eval("$ise(function() {{ cognifide.powershell.debugStart(); }});");
+        }
+
+        [HandleMessage("ise:debugend", true)]
+        protected virtual void DebuggingEnd(ClientPipelineArgs args)
+        { 
+            SheerResponse.Eval("$ise(function() {{ cognifide.powershell.debugStop(); }});");
         }
 
         [HandleMessage("ise:debugaction", true)]

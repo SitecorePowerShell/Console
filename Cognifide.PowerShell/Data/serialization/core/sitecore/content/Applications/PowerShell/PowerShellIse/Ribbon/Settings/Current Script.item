@@ -1,54 +1,47 @@
 ----item----
 version: 1
-id: {25C829E2-02B8-4132-8065-4F8606960AB4}
+id: {D38E07A3-C814-43BE-9549-312BC6D560DB}
 database: core
-path: /sitecore/content/Applications/PowerShell/PowerShellIse/Meta/EditConsoleSettings
-parent: {BB48D97A-3B30-4EC2-9F2B-88CE27970983}
-name: EditConsoleSettings
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script
+parent: {40D0A766-25D1-4B84-B20C-8BE9F2E54D53}
+name: Current Script
 master: {00000000-0000-0000-0000-000000000000}
-template: {1AB4F9AD-B004-413C-8924-3E07143A614B}
-templatekey: Field Editor Button
+template: {8F3D8F9B-2D76-4ACE-803F-35415D2B230A}
+templatekey: Chunk
 
 ----field----
-field: {4431914A-C40B-437C-8ADD-D2ED12CC8CC3}
-name: Icon
-key: icon
-content-length: 27
+field: {8BB9A5E3-CAE8-49C6-B830-258A51D970C9}
+name: ID
+key: id
+content-length: 16
 
-people/16x16/cubes_blue.png
-----field----
-field: {CF738220-908D-4C3F-9482-32E625DAF13C}
-name: Fields
-key: fields
-content-length: 53
-
-HostWidth|ForegroundColor|BackgroundColor|UseTypeInfo
+IntegrationChunk
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
 content-length: 3
 
-200
-----version----
-language: en
-version: 1
-revision: b486ed92-7bc3-4e34-8005-2feb389597aa
-
+600
 ----field----
-field: {108D3A63-BAAA-4560-86D8-3A112ED84717}
-name: Header
-key: header
-content-length: 23
-
-Script runtime settings
-----field----
-field: {5F0812AF-D370-4292-AFEE-F26A39B7406D}
-name: Tooltip
-key: tooltip
+field: {A4F985D9-98B3-4B52-AAAF-4344F6E747C6}
+name: __Workflow
+key: __workflow
 content-length: 0
 
 
+----version----
+language: en
+version: 1
+revision: 54180560-5cc2-4ac6-b044-20a95b5049be
+
+----field----
+field: {C95D21BD-66C3-444B-A37F-D346CBAF2B55}
+name: Header
+key: header
+content-length: 11
+
+Integration
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -62,7 +55,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20090528T094300
+20121129T225240
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -76,14 +69,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b486ed92-7bc3-4e34-8005-2feb389597aa
+54180560-5cc2-4ac6-b044-20a95b5049be
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150608T181640:635693842005429688
+20150904T131445
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

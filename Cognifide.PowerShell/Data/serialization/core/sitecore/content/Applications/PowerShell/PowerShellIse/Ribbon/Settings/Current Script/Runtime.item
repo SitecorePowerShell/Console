@@ -2,8 +2,8 @@
 version: 1
 id: {EB294A95-86B6-4664-9175-548446AF746E}
 database: core
-path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Runtime
-parent: {FC5B9682-5BAD-4412-96EA-BB0C9AA457CF}
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Settings/Current Script/Runtime
+parent: {D38E07A3-C814-43BE-9549-312BC6D560DB}
 name: Runtime
 master: {00000000-0000-0000-0000-000000000000}
 template: {1DB34C92-03B0-4475-9A39-DA14E4D9D8FC}
@@ -47,7 +47,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: c65fbb4d-d38f-4cb0-8647-e08e7ab523f3
+revision: 07803beb-50c4-4b93-95ef-8141d661551a
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -90,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-c65fbb4d-d38f-4cb0-8647-e08e7ab523f3
+07803beb-50c4-4b93-95ef-8141d661551a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141223T190336:635549582165729375
+20150904T131522
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

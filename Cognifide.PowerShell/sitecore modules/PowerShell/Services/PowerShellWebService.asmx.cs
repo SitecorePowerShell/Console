@@ -155,11 +155,6 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     variableName = variableName.TrimStart('$');
                     var varValue = session.GetDebugVariable(variableName);
-                    while (varValue == null)
-                    {
-                        Thread.Sleep(100);
-                        varValue = session.GetDebugVariable(variableName);
-                    }
                     return varValue;
                 }
                 catch (Exception ex)

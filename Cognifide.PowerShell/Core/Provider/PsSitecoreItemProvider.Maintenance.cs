@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.Core.Provider
             foreach (var drive in Factory.GetDatabases().Select(database => new PSDriveInfo(database.Name,
                 providerInfo,
                 database.Name + ":", //"\\sitecore\\",
-                String.Format("Sitecore '{0}' database.", database.Name),
+                string.Format("Sitecore '{0}' database.", database.Name),
                 PSCredential.Empty)))
             {
                 result.Add(drive);
@@ -62,14 +62,14 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             runspaceConfiguration.Providers.Append(new ProviderConfigurationEntry("CmsItemProvider",
                 typeof (PsSitecoreItemProvider),
-                String.Empty));
+                string.Empty));
         }
 
         public static void AppendToSessionState(InitialSessionState state)
         {
             state.Providers.Add(new SessionStateProviderEntry("CmsItemProvider",
                 typeof(PsSitecoreItemProvider),
-                String.Empty));
+                string.Empty));
         }
 
     }

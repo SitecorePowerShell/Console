@@ -158,6 +158,7 @@
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellScript.cs" />
     <Compile Include="Client\Commands\MenuItems\NewItem.cs" />
     <Compile Include="Client\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
+    <Compile Include="Client\Commands\DebugQueryState.cs" />
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />

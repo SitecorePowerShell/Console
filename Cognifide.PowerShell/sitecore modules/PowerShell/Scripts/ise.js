@@ -283,21 +283,21 @@ extend(cognifide, "powershell");
             guid = sessionId;
         };
 
-        cognifide.powershell.debugStart = function(sessionId) {
+        var marker = -1;
 
+        cognifide.powershell.debugStart = function(sessionId) {
+            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
         };
 
         cognifide.powershell.debugStop = function (sessionId) {
-
+            cognifide.powershell.breakpointHandled();
         };
-
-        var marker = {};
 
         cognifide.powershell.breakpointHit = function (line, hitCount, sessionId) {
             debugLine = line;
             debugHitCount = hitCount;
             debugSessionId = sessionId;
-            var Range = ace.require('ace/range').Range;
+            var Range = ace.require("ace/range").Range;
             setTimeout(function () {
                 marker = codeeditor.session.addMarker(new Range(line, 0, line+1, 0), "breakpoint", "line");                
             }, 100);
@@ -305,8 +305,9 @@ extend(cognifide, "powershell");
         };
 
         cognifide.powershell.breakpointHandled = function() {
-            if (!$.isEmptyObject(marker)) {
+            if (marker < 0) {
                 codeeditor.session.removeMarker(marker);
+                marker = -1;
             }
         }
 

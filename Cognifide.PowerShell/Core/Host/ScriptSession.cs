@@ -61,7 +61,8 @@ namespace Cognifide.PowerShell.Core.Host
         private readonly ScriptingHost host;
         private static InitialSessionState state;
         private bool abortRequested;
-        private Hashtable debugVariables;
+        private Exception errorFatal;
+        private bool isRunspaceOpenedOrBroken;
 
         internal string JobScript { get; set; }
         internal JobOptions JobOptions { get; set; }
@@ -84,10 +85,8 @@ namespace Cognifide.PowerShell.Core.Host
             // of the Runspace session (aka SessionState.)
             ApplianceType = applianceType;
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
-
             host = new ScriptingHost(Settings, SpeInitialSessionState);
-                        
-            Runspace.DefaultRunspace = host.Runspace;
+            host.Runspace.StateChanged += OnRunspaceStateEvent;
 
             host.Runspace.Open();
             if (!initialized)
@@ -95,10 +94,45 @@ namespace Cognifide.PowerShell.Core.Host
                 Initialize();
             }
 
+            Runspace.DefaultRunspace = host.Runspace;
+
+            // complete opening
+            if (Runspace.DefaultRunspace == null)
+            {
+                //! wait while loading
+                while (!isRunspaceOpenedOrBroken)
+                    Thread.Sleep(100);
+
+                //! set default runspace for handlers
+                //! it has to be done in main thread
+                Runspace.DefaultRunspace = host.Runspace;
+            }
+
             if (Settings.UseTypeInfo)
             {
                 Output.Clear();
             }
+        }
+
+        private void OnRunspaceStateEvent(object sender, RunspaceStateEventArgs e)
+        {
+            //! Carefully process events other than 'Opened'.
+            if (e.RunspaceStateInfo.State != RunspaceState.Opened)
+            {
+                // alive? do nothing, wait for other events
+                if (e.RunspaceStateInfo.State != RunspaceState.Broken)
+                    return;
+
+                // broken; keep an error silently
+                errorFatal = e.RunspaceStateInfo.Reason;
+
+                //! Set the broken flag, waiting threads may continue.
+                //! The last code, Invoking() may be waiting for this.
+                isRunspaceOpenedOrBroken = true;
+                return;
+            }
+            Engine = host.Runspace.SessionStateProxy.PSVariable.GetValue("ExecutionContext") as EngineIntrinsics;
+
         }
 
         public InitialSessionState SpeInitialSessionState
@@ -120,7 +154,7 @@ namespace Cognifide.PowerShell.Core.Host
                     state.ApartmentState = ApartmentState.MTA;
                     foreach (var key in PredefinedVariables.Variables.Keys)
                     {
-                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables.Keys, "Sitecore PowerShell Extensions Predefined Variable"));
+                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key], "Sitecore PowerShell Extensions Predefined Variable"));
                     }
                     state.ExecutionPolicy = ExecutionPolicy.Bypass;
                     state.UseFullLanguageModeInDebugger = true;
@@ -175,18 +209,15 @@ namespace Cognifide.PowerShell.Core.Host
         public RunspaceAvailability State => host.Runspace.RunspaceAvailability;
         public string ApplianceType { get; set; }
         public bool Debugging { get; set; }
+        internal EngineIntrinsics Engine { get; set; }
 
         public string CurrentLocation
         {
             get
             {
-                if (host.Runspace.RunspaceAvailability == RunspaceAvailability.Busy)
-                {
-                    return string.Empty;
-                }
                 try
-                {
-                    return host.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
+                { 
+                    return Engine.SessionState.Path.CurrentLocation.Path;
                 }
                 catch // above can cause problems that we don't really care about.
                 {
@@ -199,7 +230,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                host.Runspace.SessionStateProxy.SetVariable(varName, varValue);
+                Engine.SessionState.PSVariable.Set(varName, varValue);
             }
         }
 
@@ -207,7 +238,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                return host.Runspace.SessionStateProxy.GetVariable(varName);
+                return Engine.SessionState.PSVariable.GetValue(varName);
             }
         }
 
@@ -215,23 +246,15 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                if (State == RunspaceAvailability.AvailableForNestedCommand)
+                try
                 {
-                    if (debugVariables != null)
-                    {
-                        if (debugVariables.ContainsKey(varName))
-                        {
-                            return debugVariables[varName];
-                        }
-                        return debugVariables[varName] = null;
-                    }
-                    return null;
+                    var value = Engine.SessionState.PSVariable.GetValue(varName);
+                    return value ?? "undefined";
                 }
-                if (State == RunspaceAvailability.Available)
+                catch (Exception ex)
                 {
-                    return GetVariable(varName);
+                    return ex.Message;
                 }
-                return "unavailable at the moment";
             }
         }
 
@@ -258,7 +281,6 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
-                debugVariables = new Hashtable();
                 foreach (var breakpoint in args.Breakpoints)
                 {
                     var message = Message.Parse(this, "ise:breakpointhit");
@@ -277,29 +299,12 @@ namespace Cognifide.PowerShell.Core.Host
                     NextDebugResumeAction = string.Empty;
                     while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
                     {
-                        foreach (var key in debugVariables.Keys)
-                        {
-                            if (debugVariables[key] == null)
-                            {
-                                object varValue = null;
-                                try
-                                {
-                                    varValue = host.Runspace.SessionStateProxy.PSVariable.GetValue(key.ToString());                                    
-                                }
-                                catch (Exception ex)
-                                {
-                                    varValue = ex.Message;
-                                }
-                                debugVariables[key] = varValue ?? "unavailable";
-                            }
-                        }
                         Thread.Sleep(100);
                     }
                     DebuggerResumeAction action;
                     Enum.TryParse(NextDebugResumeAction, true, out action);
                     args.ResumeAction = action;
                 }
-                debugVariables = null;
             }
         }
 
@@ -462,10 +467,22 @@ namespace Cognifide.PowerShell.Core.Host
                 pipeline.Commands.Add("out-default");
             }
 
-            if (Debugging)
+            if (Interactive && Debugging)
             {
                 host.Runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated += DebuggerOnBreakpointUpdated;
+
+                var message = Message.Parse(this, "ise:debugstart");
+                var sheerMessage = new SendMessageMessage(message, false);
+                if (JobContext.IsJob)
+                {
+                    message.Arguments.Add("JobId", Key);
+                    JobContext.MessageQueue.PutMessage(sheerMessage);
+                }
+                else
+                {
+                    sheerMessage.Execute();
+                }
             }
             pipeline.StateChanged += PipelineStateChanged;
             abortRequested = false;
@@ -482,10 +499,23 @@ namespace Cognifide.PowerShell.Core.Host
                 }
             }
 
-            if (Debugging)
+            if (Interactive && Debugging)
             {
                 host.Runspace.Debugger.DebuggerStop -= DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated -= DebuggerOnBreakpointUpdated;
+
+                var message = Message.Parse(this, "ise:debugend");
+                var sheerMessage = new SendMessageMessage(message, false);
+                if (JobContext.IsJob)
+                {
+                    message.Arguments.Add("JobId", Key);
+                    JobContext.MessageQueue.PutMessage(sheerMessage);
+                }
+                else
+                {
+                    sheerMessage.Execute();
+                }
+                Debugging = false;
             }
 
             JobName = string.Empty;

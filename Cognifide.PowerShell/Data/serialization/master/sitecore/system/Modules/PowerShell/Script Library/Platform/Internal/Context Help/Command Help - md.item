@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8709
+content-length: 8705
 
 $builder = New-Object System.Text.StringBuilder
 
@@ -233,10 +233,10 @@ if($links) {
             } else {
                 if($relatedLink.linkText -match 'http'){
                  $url = $relatedLink.linkText | select-string -pattern '\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])' | % { $_.Matches } | % { $_.Value } | select -first 1
-                 $builder.Append("`r* <a href='$url' target='_blank'>$($relatedLink.linkText)</a><br/>") | Out-Null
+                 $builder.Append("* <a href='$url' target='_blank'>$($relatedLink.linkText)</a><br/>") | Out-Null
                 } else {
                  $internalCommand = '"'+$relatedLink.linkText +'"'
-                 $builder.Append("`r* $($relatedLink.linkText)") | Out-Null
+                 $builder.Append("* $($relatedLink.linkText)") | Out-Null
                 }
             }
         }
@@ -249,7 +249,7 @@ if($hideOutput -eq $null){
 ----version----
 language: en
 version: 1
-revision: a3d867ed-8c1c-420d-9873-a3cedba0d665
+revision: f594e1c3-98a7-415e-b222-3020661d29aa
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -264,14 +264,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a3d867ed-8c1c-420d-9873-a3cedba0d665
+f594e1c3-98a7-415e-b222-3020661d29aa
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150912T151738:635776678581761787
+20150615T084639:635699547992344922
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
