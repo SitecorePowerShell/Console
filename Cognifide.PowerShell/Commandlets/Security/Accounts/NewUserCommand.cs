@@ -34,9 +34,6 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Enabled { get; set; }
 
-        [Parameter]
-        public SwitchParameter PassThru { get; set; }
-
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
@@ -44,7 +41,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
             if (User.Exists(name))
             {
-                WriteError(typeof(DuplicateNameException), $"Cannot create a duplicate account with identity '{name}'.", 
+                WriteError(typeof (DuplicateNameException), $"Cannot create a duplicate account with identity '{name}'.",
                     ErrorIds.AccountAlreadyExists, ErrorCategory.InvalidArgument, Identity);
                 return;
             }
@@ -53,7 +50,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
             if (!Enabled)
             {
-                if (String.IsNullOrEmpty(Password))
+                if (string.IsNullOrEmpty(Password))
                 {
                     pass = Membership.GeneratePassword(10, 3);
                 }
@@ -66,24 +63,21 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             var user = User.FromName(name, true);
 
             var profile = user.Profile;
-            if (!String.IsNullOrEmpty(FullName))
+            if (!string.IsNullOrEmpty(FullName))
             {
                 profile.FullName = FullName;
             }
-            if (!String.IsNullOrEmpty(Comment))
+            if (!string.IsNullOrEmpty(Comment))
             {
                 profile.Comment = Comment;
             }
-            if (!String.IsNullOrEmpty(Portrait))
+            if (!string.IsNullOrEmpty(Portrait))
             {
                 profile.Portrait = Portrait;
             }
             profile.Save();
 
-            if (PassThru)
-            {
-                WriteObject(user);
-            }
+            WriteObject(user);
         }
     }
 }
