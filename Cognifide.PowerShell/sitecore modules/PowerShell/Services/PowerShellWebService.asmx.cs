@@ -154,7 +154,7 @@ namespace Cognifide.PowerShell.Console.Services
                 try
                 {
                     variableName = variableName.TrimStart('$');
-                    var varValue = session.GetDebugVariable(variableName);
+                    var varValue = session.GetDebugVariable(variableName).ToString();
                     return varValue;
                 }
                 catch (Exception ex)
@@ -180,7 +180,23 @@ namespace Cognifide.PowerShell.Console.Services
             }
             try
             {
-                session.ExecuteScriptPart(command);
+                if (!string.IsNullOrEmpty(command))
+                {
+                    if (session.IsRunning)
+                    {
+                        session.ImmediateCommand = command;
+                        var tries = 20;
+                        while (!string.IsNullOrEmpty(session.ImmediateCommand) && tries > 0)
+                        {
+                            Thread.Sleep(100);
+                            tries--;
+                        }
+                    }
+                    else
+                    {
+                        session.ExecuteScriptPart(command);
+                    }
+                }
             }
             catch (Exception ex)
             {

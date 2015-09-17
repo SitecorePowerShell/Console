@@ -305,7 +305,7 @@ extend(cognifide, "powershell");
         };
 
         cognifide.powershell.breakpointHandled = function() {
-            if (marker < 0) {
+            if (marker > -1) {
                 codeeditor.session.removeMarker(marker);
                 marker = -1;
             }

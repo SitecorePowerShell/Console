@@ -503,6 +503,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
 
+            scriptSession.Debugging = false;
             if (debug)
             {
                 var tmpPS = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +
@@ -516,7 +517,6 @@ namespace Cognifide.PowerShell.Client.Applications
                     scriptSession.SetBreakpoints(tmpPS, bPoints);
                 }
                 scriptToExecute = tmpPS;
-                scriptSession.Debugging = true;
             }
             if (UseContext)
             {
@@ -525,11 +525,11 @@ namespace Cognifide.PowerShell.Client.Applications
 
             scriptSession.Interactive = true;
 
-            JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose);
+            JobExecuteScript(args, scriptToExecute, scriptSession, autoDispose, debug);
         }
 
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute,
-            ScriptSession scriptSession, bool autoDispose)
+            ScriptSession scriptSession, bool autoDispose, bool debug)
         {
             ScriptRunning = true;
             EnterScriptInfo.Visible = false;
@@ -555,6 +555,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     "<pre ID='ScriptResultCode'></pre>",
                     ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
+
+            scriptSession.Debugging = true;
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
             Monitor.SessionID = scriptSession.ID;
@@ -580,7 +582,7 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
             scriptSession.SetVariable("scriptItem", ScriptItem);
             scriptSession.Interactive = true;
-            JobExecuteScript(args, script[ScriptItemFieldNames.Script], scriptSession, true);
+            JobExecuteScript(args, script[ScriptItemFieldNames.Script], scriptSession, true, false);
         }
 
         [HandleMessage("ise:pluginupdate", true)]
@@ -882,6 +884,41 @@ namespace Cognifide.PowerShell.Client.Applications
                 session.NextDebugResumeAction = args.Parameters["action"];
                 SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
                 
+            }
+        }
+
+        [HandleMessage("ise:immediatewindow", true)]
+        protected virtual void ImmediateWindow(ClientPipelineArgs args)
+        {
+            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            {
+                UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
+                url.Parameters["id"] = Monitor.SessionID;
+                var options = new ModalDialogOptions(url.ToString())
+                {
+                    Header = "Immediate Window",
+                    Resizable = true,
+                    MinWidth = "600",
+                    MinHeight = "600"
+                };
+                SheerResponse.ShowModalDialog(options);
+
+/*
+                if (args.IsPostBack)
+                {
+                    if (args.HasResult)
+                    {
+                        string script = args.Result;
+                        var session = ScriptSessionManager.GetSession(Monitor.SessionID);
+                        session.ImmediateCommand = script;
+                    }
+                }
+                else
+                {
+                    SheerResponse.Input("Enter the script to execute.", "", "Immediate window");
+                    args.WaitForPostBack(true);
+                }
+*/
             }
         }
     }

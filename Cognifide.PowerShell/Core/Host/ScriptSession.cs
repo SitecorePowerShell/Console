@@ -57,12 +57,13 @@ namespace Cognifide.PowerShell.Core.Host
 
         private bool disposed;
         private bool initialized;
-        private Pipeline pipeline;
+        //private Pipeline pipeline;
         private readonly ScriptingHost host;
         private static InitialSessionState state;
         private bool abortRequested;
         private Exception errorFatal;
         private bool isRunspaceOpenedOrBroken;
+        private System.Management.Automation.PowerShell powerShell;
 
         internal string JobScript { get; set; }
         internal JobOptions JobOptions { get; set; }
@@ -87,6 +88,7 @@ namespace Cognifide.PowerShell.Core.Host
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
             host = new ScriptingHost(Settings, SpeInitialSessionState);
             host.Runspace.StateChanged += OnRunspaceStateEvent;
+            NewPowerShell();
 
             host.Runspace.Open();
             if (!initialized)
@@ -135,6 +137,21 @@ namespace Cognifide.PowerShell.Core.Host
 
         }
 
+        internal bool IsRunning
+        {
+            get { return powerShell != null && powerShell.InvocationStateInfo.State == PSInvocationState.Running; }
+        }
+
+        internal System.Management.Automation.PowerShell NewPowerShell()
+        {
+            if (IsRunning)
+                return powerShell.CreateNestedPowerShell();
+
+            powerShell = System.Management.Automation.PowerShell.Create();
+            powerShell.Runspace = host.Runspace;
+            return powerShell;
+        }
+
         public InitialSessionState SpeInitialSessionState
         {
             get
@@ -151,13 +168,14 @@ namespace Cognifide.PowerShell.Core.Host
                         state.Formats.Add(formats);
                     }
                     state.ThreadOptions = PSThreadOptions.UseCurrentThread;
-                    state.ApartmentState = ApartmentState.MTA;
+                    state.ApartmentState = Thread.CurrentThread.GetApartmentState();
                     foreach (var key in PredefinedVariables.Variables.Keys)
                     {
                         state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key], "Sitecore PowerShell Extensions Predefined Variable"));
                     }
-                    state.ExecutionPolicy = ExecutionPolicy.Bypass;
-                    state.UseFullLanguageModeInDebugger = true;
+                    // PS 5 only?
+                    //state.ExecutionPolicy = ExecutionPolicy.Bypass;
+                    state.UseFullLanguageModeInDebugger = false;
                     PsSitecoreItemProvider.AppendToSessionState(state);                    
                 }
                 return state;
@@ -281,6 +299,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
+                host.Runspace.Debugger.SetDebuggerStepMode(true);
                 foreach (var breakpoint in args.Breakpoints)
                 {
                     var message = Message.Parse(this, "ise:breakpointhit");
@@ -299,14 +318,39 @@ namespace Cognifide.PowerShell.Core.Host
                     NextDebugResumeAction = string.Empty;
                     while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
                     {
-                        Thread.Sleep(100);
+                        if (!string.IsNullOrEmpty(ImmediateCommand))
+                        {
+                            InvokeImmediateCommand();
+                        }
+                        else
+                        {
+                            Thread.Sleep(100);
+                        }
                     }
                     DebuggerResumeAction action;
                     Enum.TryParse(NextDebugResumeAction, true, out action);
-                    args.ResumeAction = action;
+                    args.ResumeAction = action;                    
                 }
             }
         }
+
+        private void InvokeImmediateCommand()
+        {
+            using (var ps = NewPowerShell())
+            {
+                try
+                {
+                    ps.Commands.AddScript(ImmediateCommand).AddCommand(OutHostCommand);
+                    var results = ps.Invoke();
+                }
+                finally
+                {
+                    ImmediateCommand = string.Empty;
+                }
+            }
+        }
+
+        public string ImmediateCommand { get; set; }
 
         public string NextDebugResumeAction { get; set; } = string.Empty;
 
@@ -411,6 +455,11 @@ namespace Cognifide.PowerShell.Core.Host
                 return null;
             }
 
+            if (Runspace.DefaultRunspace == null)
+            {
+                Runspace.DefaultRunspace = host.Runspace;
+            }
+
             Log.Info("Executing a Sitecore PowerShell Extensions script.", this);
             Log.Debug(script, this);
 
@@ -420,13 +469,15 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 try
                 {
-                    pipeline = host.Runspace.CreatePipeline(script);
-                    return ExecuteCommand(stringOutput, internalScript, marshalResults);
+                    using (powerShell = NewPowerShell())
+                    {
+                        powerShell.Commands.AddScript(script);
+                        return ExecuteCommand(stringOutput, internalScript, marshalResults);
+                    }
                 }
                 finally
                 {
-                    pipeline.Dispose();
-                    pipeline = null;
+                    powerShell = null;
                 }
             });
         }
@@ -437,40 +488,68 @@ namespace Cognifide.PowerShell.Core.Host
             // edit box of the form.
             try
             {
-                pipeline = host.Runspace.CreatePipeline();
-                pipeline.Commands.Add(command);
-                return ExecuteCommand(stringOutput, internalScript);
+                using (powerShell = NewPowerShell())
+                {
+                    powerShell.Commands.AddCommand(command);
+                    return ExecuteCommand(stringOutput, internalScript);
+                }
             }
             finally
             {
-                pipeline.Dispose();
-                pipeline = null;
+                powerShell = null;
             }
         }
 
         public void Abort()
         {
-            pipeline?.Stop();
+            powerShell?.Stop();
             abortRequested = true;
+        }
+
+        public static Command OutDefaultCommand
+        {
+            get
+            {
+                var command = new Command("Out-Default");
+                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
+                return command;
+            }
+        }
+        /// <summary>
+        /// Command for formatted output of everything.
+        /// </summary>
+        /// <remarks>
+        /// "Out-Default" is not suitable for external apps, output goes to console.
+        /// </remarks>
+        public static Command OutHostCommand
+        {
+            get
+            {
+                var command = new Command("Out-Host");
+                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
+                return command;
+            }
         }
 
         private List<object> ExecuteCommand(bool stringOutput, bool internalScript, bool marshallResults = true)
         {
             JobName = Context.Job?.Name;
-            if (!internalScript)
-            {
-                pipeline.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
-            }
 
             if (stringOutput)
             {
-                pipeline.Commands.Add("out-default");
+                powerShell.Commands.AddCommand(OutDefaultCommand);
+            }
+
+            if (Runspace.DefaultRunspace == null)
+            {
+                Runspace.DefaultRunspace = host.Runspace;
             }
 
             if (Interactive && Debugging)
             {
                 host.Runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated += DebuggerOnBreakpointUpdated;
+                host.Runspace.Debugger.SetDebuggerStepMode(true);
 
                 var message = Message.Parse(this, "ise:debugstart");
                 var sheerMessage = new SendMessageMessage(message, false);
@@ -484,10 +563,10 @@ namespace Cognifide.PowerShell.Core.Host
                     sheerMessage.Execute();
                 }
             }
-            pipeline.StateChanged += PipelineStateChanged;
+            powerShell.Runspace.StateChanged += PipelineStateChanged;
             abortRequested = false;
             // execute the commands in the pipeline now
-            var execResults = pipeline.Invoke();
+            var execResults = powerShell.Invoke();
 
             if (execResults != null && execResults.Any())
             {
@@ -503,6 +582,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 host.Runspace.Debugger.DebuggerStop -= DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated -= DebuggerOnBreakpointUpdated;
+                host.Runspace.Debugger.SetDebuggerStepMode(true);
 
                 var message = Message.Parse(this, "ise:debugend");
                 var sheerMessage = new SendMessageMessage(message, false);
@@ -520,11 +600,11 @@ namespace Cognifide.PowerShell.Core.Host
 
             JobName = string.Empty;
             return marshallResults
-                ? execResults.Select(p => p.BaseObject).ToList()
-                : execResults.Cast<object>().ToList();
+                ? execResults?.Select(p => p.BaseObject).ToList()
+                : execResults?.Cast<object>().ToList();
         }
 
-        private void PipelineStateChanged(object sender, PipelineStateEventArgs e)
+        private void PipelineStateChanged(object sender, RunspaceStateEventArgs e)
         {
         }
 
