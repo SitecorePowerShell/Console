@@ -48,6 +48,7 @@ namespace Cognifide.PowerShell.Client.Applications
             get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ScriptRunning"]) == "1"; }
             set { Context.ClientPage.ServerProperties["ScriptRunning"] = value ? "1" : string.Empty; }
         }
+
         public string ParentFrameName
         {
             get { return StringUtil.GetString(ServerProperties["ParentFrameName"]); }
@@ -342,7 +343,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (!args.HasResult)
                     return;
-                
+
                 var path = args.Result.Split(':');
                 var db = Factory.GetDatabase(path[0]);
                 var itemTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script");
@@ -506,17 +507,17 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.Debugging = false;
             if (debug)
             {
-                var tmpPS = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +
-                            Path.GetFileNameWithoutExtension(Path.GetTempFileName()) +
-                            ".ps1";
-                File.WriteAllText(tmpPS, scriptToExecute);
+                scriptSession.DebugFile = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +
+                                          Path.GetFileNameWithoutExtension(Path.GetTempFileName()) +
+                                          ".ps1";
+                File.WriteAllText(scriptSession.DebugFile, scriptToExecute);
                 if (!string.IsNullOrEmpty(Breakpoints.Value))
                 {
                     var strBrPoints = (Breakpoints.Value ?? string.Empty).Split(',');
                     var bPoints = strBrPoints.Select(int.Parse);
-                    scriptSession.SetBreakpoints(tmpPS, bPoints);
+                    scriptSession.SetBreakpoints(scriptSession.DebugFile, bPoints);
                 }
-                scriptToExecute = tmpPS;
+                scriptToExecute = scriptSession.DebugFile;
             }
             if (UseContext)
             {
@@ -578,7 +579,7 @@ namespace Cognifide.PowerShell.Client.Applications
             string scriptDb = args.Parameters["scriptDb"];
             string scriptItem = args.Parameters["scriptId"];
             Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
-            scriptSession.SetVariable("scriptText",Editor.Value);
+            scriptSession.SetVariable("scriptText", Editor.Value);
             scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
             scriptSession.SetVariable("scriptItem", ScriptItem);
             scriptSession.Interactive = true;
@@ -636,6 +637,11 @@ namespace Cognifide.PowerShell.Client.Applications
                     JobContext.Job.Status.Result = scriptSession.Output.GetHtmlUpdate();
                     scriptSession.Output.Clear();
                     JobContext.Flush();
+                    if (!string.IsNullOrEmpty(scriptSession.DebugFile))
+                    {
+                        File.Delete(scriptSession.DebugFile);
+                        scriptSession.DebugFile = string.Empty;
+                    }
                 }
             }
             catch (Exception exc)
@@ -784,7 +790,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? "One-time session"
                 : (sessionName == DefaultSessionName)
                     ? Factory.GetDatabase("core")
-                        .GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
+                        .GetItem(
+                            "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
                         .DisplayName
                     : sessionName;
             var obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
@@ -848,7 +855,8 @@ namespace Cognifide.PowerShell.Client.Applications
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-            SheerResponse.Eval($"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
+            SheerResponse.Eval(
+                $"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
         }
 
         [HandleMessage("ise:breakpointhit", true)]
@@ -857,12 +865,13 @@ namespace Cognifide.PowerShell.Client.Applications
             var line = args.Parameters["Line"];
             var hitCount = args.Parameters["HitCount"];
             var jobId = args.Parameters["JobId"];
-            SheerResponse.Eval($"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
+            SheerResponse.Eval(
+                $"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
             Debugging = true;
             UpdateRibbon();
         }
 
-        
+
         [HandleMessage("ise:debugstart", true)]
         protected virtual void DebuggingStart(ClientPipelineArgs args)
         {
@@ -871,7 +880,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         [HandleMessage("ise:debugend", true)]
         protected virtual void DebuggingEnd(ClientPipelineArgs args)
-        { 
+        {
             SheerResponse.Eval("$ise(function() {{ cognifide.powershell.debugStop(); }});");
         }
 
@@ -883,7 +892,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 session.NextDebugResumeAction = args.Parameters["action"];
                 SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
-                
+
             }
         }
 
@@ -892,34 +901,34 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (ScriptSessionManager.SessionExists(Monitor.SessionID))
             {
+                Context.ClientPage.Start(this, "ImmediateWindowPipeline");
+            }
+        }
+
+        public void ImmediateWindowPipeline(ClientPipelineArgs args)
+        {
+            if (!args.IsPostBack)
+            {
+                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
-                url.Parameters["id"] = Monitor.SessionID;
+                url.Parameters["id"] = session.Key;
                 var options = new ModalDialogOptions(url.ToString())
                 {
                     Header = "Immediate Window",
                     Resizable = true,
-                    MinWidth = "600",
-                    MinHeight = "600"
+                    Width = "800",
+                    Height = "600",
+                    Response = true
                 };
+                Monitor.Active = false;
                 SheerResponse.ShowModalDialog(options);
-
-/*
-                if (args.IsPostBack)
-                {
-                    if (args.HasResult)
-                    {
-                        string script = args.Result;
-                        var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                        session.ImmediateCommand = script;
-                    }
-                }
-                else
-                {
-                    SheerResponse.Input("Enter the script to execute.", "", "Immediate window");
-                    args.WaitForPostBack(true);
-                }
-*/
+                args.WaitForPostBack(true);
             }
+            else
+            {
+                Monitor.Active = true;
+            }
+
         }
     }
 }

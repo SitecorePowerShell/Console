@@ -77,6 +77,8 @@ extend(cognifide, "powershell");
         var debugLine = 0;
         var debugHitCount = 0;
         var debugSessionId = "";
+        var marker = -1;
+
 
         var editor = $($("#Editor")[0]);
         editor.hide();
@@ -95,7 +97,9 @@ extend(cognifide, "powershell");
         var typingTimer;
 
         cognifide.powershell.updateRibbon = function () {
-            window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+            if (marker === -1) {
+                window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+            }
         };
 
         cognifide.powershell.updateRibbonNeeded = function () {
@@ -283,14 +287,14 @@ extend(cognifide, "powershell");
             guid = sessionId;
         };
 
-        var marker = -1;
-
         cognifide.powershell.debugStart = function(sessionId) {
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
+            codeeditor.setReadOnly(true);
         };
 
         cognifide.powershell.debugStop = function (sessionId) {
             cognifide.powershell.breakpointHandled();
+            codeeditor.setReadOnly(false);
         };
 
         cognifide.powershell.breakpointHit = function (line, hitCount, sessionId) {

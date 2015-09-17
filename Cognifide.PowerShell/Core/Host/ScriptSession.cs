@@ -227,6 +227,7 @@ namespace Cognifide.PowerShell.Core.Host
         public RunspaceAvailability State => host.Runspace.RunspaceAvailability;
         public string ApplianceType { get; set; }
         public bool Debugging { get; set; }
+        public string DebugFile { get; set; }
         internal EngineIntrinsics Engine { get; set; }
 
         public string CurrentLocation

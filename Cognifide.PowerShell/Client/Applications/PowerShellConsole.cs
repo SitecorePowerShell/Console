@@ -61,6 +61,7 @@ namespace Cognifide.PowerShell.Client.Applications
                                $"background-color: {OutputLine.ProcessHtmlColor(settings.BackgroundColor)};" +
                                $"font-family: inherit;" + "}</style>";
             }
+            SheerResponse.SetDialogValue("ok");
         }
 
         [HandleMessage("item:load", true)]
