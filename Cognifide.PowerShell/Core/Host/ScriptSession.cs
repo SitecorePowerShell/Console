@@ -291,9 +291,36 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private void DebuggerOnBreakpointUpdated(object sender, BreakpointUpdatedEventArgs breakpointUpdatedEventArgs)
+        private void DebuggerOnBreakpointUpdated(object sender, BreakpointUpdatedEventArgs args)
         {
-            int i = 0;
+            if (Interactive)
+            {
+                if (args.Breakpoint is LineBreakpoint)
+                {
+                    var breakpoint = args.Breakpoint as LineBreakpoint;
+                    if (string.Equals(breakpoint.Script, DebugFile, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var message = Message.Parse(this, "ise:setbreakpoint");
+                        message.Arguments.Add("Line", (breakpoint.Line - 1).ToString());
+                        message.Arguments.Add("Action", args.UpdateType.ToString());
+                        SendUiMessage(message);
+                    }
+                }
+            }
+        }
+
+        private void SendUiMessage(Message message)
+        {
+            var sheerMessage = new SendMessageMessage(message, false);
+            if (JobContext.IsJob)
+            {
+                message.Arguments.Add("JobId", Key);
+                JobContext.MessageQueue.PutMessage(sheerMessage);
+            }
+            else
+            {
+                sheerMessage.Execute();
+            }
         }
 
         private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs args)
@@ -306,16 +333,7 @@ namespace Cognifide.PowerShell.Core.Host
                     var message = Message.Parse(this, "ise:breakpointhit");
                     message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber-1).ToString());
                     message.Arguments.Add("HitCount", breakpoint.HitCount.ToString());
-                    var sheerMessage = new SendMessageMessage(message, false);
-                    if (JobContext.IsJob)
-                    {
-                        message.Arguments.Add("JobId", Key);
-                        JobContext.MessageQueue.PutMessage(sheerMessage);
-                    }
-                    else
-                    {
-                        sheerMessage.Execute();
-                    }
+                    SendUiMessage(message);
                     NextDebugResumeAction = string.Empty;
                     while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
                     {
@@ -553,16 +571,7 @@ namespace Cognifide.PowerShell.Core.Host
                 host.Runspace.Debugger.SetDebuggerStepMode(true);
 
                 var message = Message.Parse(this, "ise:debugstart");
-                var sheerMessage = new SendMessageMessage(message, false);
-                if (JobContext.IsJob)
-                {
-                    message.Arguments.Add("JobId", Key);
-                    JobContext.MessageQueue.PutMessage(sheerMessage);
-                }
-                else
-                {
-                    sheerMessage.Execute();
-                }
+                SendUiMessage(message);
             }
             powerShell.Runspace.StateChanged += PipelineStateChanged;
             abortRequested = false;
@@ -586,16 +595,7 @@ namespace Cognifide.PowerShell.Core.Host
                 host.Runspace.Debugger.SetDebuggerStepMode(true);
 
                 var message = Message.Parse(this, "ise:debugend");
-                var sheerMessage = new SendMessageMessage(message, false);
-                if (JobContext.IsJob)
-                {
-                    message.Arguments.Add("JobId", Key);
-                    JobContext.MessageQueue.PutMessage(sheerMessage);
-                }
-                else
-                {
-                    sheerMessage.Execute();
-                }
+                SendUiMessage(message);
                 Debugging = false;
             }
 

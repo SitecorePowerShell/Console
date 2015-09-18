@@ -198,12 +198,7 @@ extend(cognifide, "powershell");
                 return;
 
             var currRow = editor.getDocumentPosition().row;
-            var session = editor.editor.session;
-            if (session.getBreakpoints()[currRow] === "ace_breakpoint") {
-                session.clearBreakpoint(currRow);
-            } else {
-                session.setBreakpoint(currRow);
-            }
+            cognifide.powershell.breakpointSet(currRow, "toggle");
             editor.stop();
             var sparseKeys = Object.keys(session.getBreakpoints());
             $("#Breakpoints")[0].value  = sparseKeys.toString();
@@ -255,11 +250,7 @@ extend(cognifide, "powershell");
                 bindKey: { win: "F8", mac: "F8" },
                 exec: function (editor) {
                     var currRow = editor.selection.getCursor().row;
-                    if (editor.session.getBreakpoints()[currRow] === "ace_breakpoint") {
-                        editor.session.clearBreakpoint(currRow);
-                    } else {
-                        editor.session.setBreakpoint(currRow);
-                    }
+                    cognifide.powershell.breakpointSet(currRow, "toggle");
                 },
                 readOnly: true
             }
@@ -295,6 +286,24 @@ extend(cognifide, "powershell");
         cognifide.powershell.debugStop = function (sessionId) {
             cognifide.powershell.breakpointHandled();
             codeeditor.setReadOnly(false);
+        };
+
+        cognifide.powershell.breakpointSet = function(row, action) {
+            if (action === "toggle") {
+                if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
+                    codeeditor.session.clearBreakpoint(row);
+                } else {
+                    codeeditor.session.setBreakpoint(row);
+                }
+            } else if (action === "Set" || action === "Enabled") {
+                if (codeeditor.session.getBreakpoints()[row] !== "ace_breakpoint") {
+                    codeeditor.session.setBreakpoint(row);
+                }
+            } else if (action === "Removed" || action === "Disabled") {
+                if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
+                    codeeditor.session.clearBreakpoint(row);
+                }
+            }
         };
 
         cognifide.powershell.breakpointHit = function (line, hitCount, sessionId) {

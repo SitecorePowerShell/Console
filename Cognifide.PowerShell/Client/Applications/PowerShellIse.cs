@@ -859,6 +859,15 @@ namespace Cognifide.PowerShell.Client.Applications
                 $"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
         }
 
+        [HandleMessage("ise:setbreakpoint", true)]
+        protected virtual void SetBreakpoint(ClientPipelineArgs args)
+        {
+            var line = args.Parameters["Line"];
+            var action = args.Parameters["Action"];
+            SheerResponse.Eval($"$ise(function() {{{{ cognifide.powershell.breakpointSet({line}, '{action}'); }}}});");
+        }
+
+
         [HandleMessage("ise:breakpointhit", true)]
         protected virtual void BreakpointHit(ClientPipelineArgs args)
         {
