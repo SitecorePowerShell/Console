@@ -557,7 +557,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
 
-            scriptSession.Debugging = true;
+            scriptSession.Debugging = debug;
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
             Monitor.SessionID = scriptSession.ID;

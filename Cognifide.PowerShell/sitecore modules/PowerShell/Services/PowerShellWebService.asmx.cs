@@ -154,7 +154,8 @@ namespace Cognifide.PowerShell.Console.Services
                 try
                 {
                     variableName = variableName.TrimStart('$');
-                    var varValue = session.GetDebugVariable(variableName).ToString();
+                    var variable = session.GetDebugVariable(variableName);
+                    var varValue = variable + " - "+ variable.GetType();
                     return varValue;
                 }
                 catch (Exception ex)

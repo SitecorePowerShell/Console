@@ -200,7 +200,7 @@ extend(cognifide, "powershell");
             var currRow = editor.getDocumentPosition().row;
             cognifide.powershell.breakpointSet(currRow, "toggle");
             editor.stop();
-            var sparseKeys = Object.keys(session.getBreakpoints());
+            var sparseKeys = Object.keys(editor.editor.session.getBreakpoints());
             $("#Breakpoints")[0].value  = sparseKeys.toString();
         });
 
