@@ -155,9 +155,9 @@ namespace Cognifide.PowerShell.Commandlets
         {
             if (item == null)
             {
-                Database database = Factory.GetDatabase(databaseName);
                 if (!String.IsNullOrEmpty(id))
                 {
+                    var database = Factory.GetDatabase(databaseName);
                     var currentDb = database ?? CurrentDatabase;
                     item = currentDb.GetItem(new ID(id));
                 }
