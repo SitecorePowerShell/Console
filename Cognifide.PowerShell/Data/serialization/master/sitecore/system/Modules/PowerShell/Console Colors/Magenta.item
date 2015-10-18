@@ -10,6 +10,13 @@ template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
 templatekey: Standard template
 
 ----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 33
+
+imaging/32x32/paint_brush_big.png
+----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
@@ -26,7 +33,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: aaadba68-2f0c-4772-b375-cc2448fc8474
+revision: 270c2bc1-ecc6-4683-9ba0-4e4662f3b099
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-aaadba68-2f0c-4772-b375-cc2448fc8474
+270c2bc1-ecc6-4683-9ba0-4e4662f3b099
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 35
 
-20151016T021109:635805582690316164Z
+20151018T224149:635808049094508195Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
