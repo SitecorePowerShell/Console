@@ -41,44 +41,46 @@ content-length: 2
 field: {D0620274-D94D-4B13-BD66-CE3104DAEE0D}
 name: LastScript
 key: lastscript
-content-length: 2465
+content-length: 1777
 
-###################################################################################################
-#                                                                                                 #
-#     Go ahead!    Execute this script!                                                           #
-#                                                                                                 #
-# See what it prints out and analyze the code to get some basic idea on the PowerShell scripting  #
-# capabilities of the console and how to format your screen output nicely.                        #
-#                                                                                                 #
-#                        We hope you enjoy using the console as much as we enjoyed writing it!    #
-#                                                                                                 #
-###################################################################################################
+function RunQuery {
+    param(
+        [scriptblock]$ScriptBlock
+    )
+    Write-Host "$($ScriptBlock.ToString())" -ForegroundColor "Green"
+    
+    & $ScriptBlock
+    
+    Write-Host ""
+    
+}
 
-Write-Host -Foreground Red &quot;Start work in the context of &#39;master&#39; database&quot;
-cd master:\content
+Write-Host "The following examples are just enough for you to see what the Windows PowerShell syntax looks like." -BackgroundColor Black -ForegroundColor Yellow
+Write-Host ""
 
-Set-HostProperty -ForegroundColor Yellow
+Write-Host "Start work in the context of 'master' database"
+RunQuery { Set-Location -Path master:\content }
 
-write-host  -Foreground Red &quot;Get all children of the root item (&#39;sitecore&#39; is the root of the drive), you can add -recurse parameter to list the whole tree&quot;
-Get-ChildItem | format-table Name, Languages, Children, ID -auto | out-default
+Write-Host "Get all children of the root item ('sitecore' is the root of the drive), you can add -Recurse parameter to list the whole tree"
+RunQuery { Get-ChildItem | Format-Table -Property Name, Languages, Children, ID -AutoSize | Out-Default }
 
-Set-HostProperty -ForegroundColor White
-Write-Host  -Foreground Red &quot;List all sitecore databases&quot;
-Get-Database * | Format-table Name, Languages, ProxiesEnabled, Protected, ReadOnly, SecurityEnabled -auto
+Write-Host "List all sitecore databases"
+RunQuery { Get-Database * | Format-Table -Property Name, Languages, ProxiesEnabled, Protected, ReadOnly, SecurityEnabled -AutoSize }
 
-Write-Host  -Foreground Red &quot;List all sitecore search indexes&quot;
-Get-SearchIndex | ft Name, Directory
+Write-Host "List all sitecore search indexes"
+RunQuery { Get-SearchIndex | Format-Table -Property Name }
 
-Write-Host  -Foreground Red &quot;List all available drives including sitecore databases&quot;
-Get-Psdrive | ft Name, Root, Description, CurrentLocation -auto
+Write-Host "List all available drives including sitecore databases"
+RunQuery { Get-PSDrive | Format-Table -Property Name, Root, Description, CurrentLocation -AutoSize }
 
-Write-Host  -Foreground Red &#39;Uncomment the following line to sets all children of &quot;Content&quot; item to have their &quot;DisplayName&quot; copied, from their &quot;Title&quot; property.&#39;
-Write-Host  -Foreground Red &#39;For each item that does not have a &quot;Title&quot; property an error will be shown&#39;
-#Get-Childitem Content | ForEach-Object {$_.Title = $_.DisplayName } 
+Write-Host "Piping sample - select master database and get its archives"
+RunQuery { Get-Database -Name master | Get-Archive | Format-Table }
 
-Set-HostProperty -ForegroundColor Cyan
-Write-Host  -Foreground Red &quot;Piping sample - select master database and get its archives&quot;
-Get-Database master | Get-Archive
+Write-Host "Thanks for installing the Sitecore PowerShell Extensions module! - Team SPE" -BackgroundColor Black -ForegroundColor Yellow
+Write-Host ""
+Write-Host "Below are some helpful links:" -BackgroundColor Black -ForegroundColor Yellow
+[PSCustomObject]@{"Title"="Github";"Link"="http://git.io/spe"},
+[PSCustomObject]@{"Title"="Gitbook";"Link"="https://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/"}
 ----field----
 field: {6209F0C2-E2B0-4F0C-95E3-037061CB866C}
 name: SaveLastScript
@@ -103,7 +105,7 @@ People/32x32/users1.png
 ----version----
 language: en
 version: 1
-revision: 7367d6fd-d1be-4299-9614-39f17880f85c
+revision: 80763b6c-6a35-468a-852a-54668947847d
 
 ----field----
 field: {86ECC435-0924-4EA0-92D8-CCA12ED7E644}
@@ -139,14 +141,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7367d6fd-d1be-4299-9614-39f17880f85c
+80763b6c-6a35-468a-852a-54668947847d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 35
 
-20150213T032546:635593947463017578
+20151021T025009:635809926097840160Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
