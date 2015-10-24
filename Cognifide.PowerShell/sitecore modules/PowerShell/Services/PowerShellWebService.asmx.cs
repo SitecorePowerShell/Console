@@ -185,13 +185,7 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     if (session.IsRunning)
                     {
-                        session.ImmediateCommand = command;
-                        var tries = 20;
-                        while (!string.IsNullOrEmpty(session.ImmediateCommand) && tries > 0)
-                        {
-                            Thread.Sleep(100);
-                            tries--;
-                        }
+                        session.TryInvokeInRunningSession(command);
                     }
                     else
                     {

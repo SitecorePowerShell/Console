@@ -263,11 +263,13 @@ extend(cognifide, "powershell");
             codeeditor.setOption("fontSize", setting);
             $("#ScriptResult").css({ "font-size": setting + "px" });
         };
-        cognifide.powershell.appendOutput = function (outputToAppend) {
+
+        cognifide.powershell.appendOutput = function(outputToAppend) {
             var decoded = $('<div/>').html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
             $('#ScriptResult').scrollTop($('#ScriptResult')[0].scrollHeight);
-        }
+        };
+
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
@@ -279,29 +281,43 @@ extend(cognifide, "powershell");
         };
 
         cognifide.powershell.debugStart = function(sessionId) {
-            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
+            //scContent.ribbonNavigatorButtonClick(this, event, 'PowerShellRibbon_Strip_DebugStrip');
             codeeditor.setReadOnly(true);
         };
 
+        cognifide.powershell.setDebugStrip = function() {
+            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
+        }
+
         cognifide.powershell.debugStop = function (sessionId) {
             cognifide.powershell.breakpointHandled();
+            setTimeout(cognifide.powershell.setDebugStrip, 1000);
             codeeditor.setReadOnly(false);
         };
+
+        cognifide.powershell.toggleBreakpoint = function(row, set) {
+            if (set) {
+                codeeditor.session.setBreakpoint(row);
+            } else {
+                codeeditor.session.clearBreakpoint(row);                
+            }
+            scForm.postEvent(this, event, "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
+        }
 
         cognifide.powershell.breakpointSet = function(row, action) {
             if (action === "toggle") {
                 if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
-                    codeeditor.session.clearBreakpoint(row);
+                    cognifide.powershell.toggleBreakpoint(row, false);
                 } else {
-                    codeeditor.session.setBreakpoint(row);
+                    cognifide.powershell.toggleBreakpoint(row, true);
                 }
             } else if (action === "Set" || action === "Enabled") {
                 if (codeeditor.session.getBreakpoints()[row] !== "ace_breakpoint") {
-                    codeeditor.session.setBreakpoint(row);
+                    cognifide.powershell.toggleBreakpoint(row, true);
                 }
             } else if (action === "Removed" || action === "Disabled") {
                 if (codeeditor.session.getBreakpoints()[row] === "ace_breakpoint") {
-                    codeeditor.session.clearBreakpoint(row);
+                    cognifide.powershell.toggleBreakpoint(row, false);
                 }
             }
         };
@@ -310,6 +326,7 @@ extend(cognifide, "powershell");
             debugLine = line;
             debugHitCount = hitCount;
             debugSessionId = sessionId;
+            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
                 marker = codeeditor.session.addMarker(new Range(line, 0, line+1, 0), "breakpoint", "line");                

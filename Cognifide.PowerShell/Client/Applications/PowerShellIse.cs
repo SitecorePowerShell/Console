@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
@@ -42,6 +43,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Memo SelectionText;
         protected Memo Breakpoints;
         public bool Debugging { get; set; }
+        public bool InBreakpoint { get; set; }
 
         protected bool ScriptRunning
         {
@@ -771,6 +773,8 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters["selectionLength"] = SelectionText.Value.Trim().Length.ToString();
             ribbon.CommandContext.Parameters["modified"] = ScriptModified.ToString();
             ribbon.CommandContext.Parameters["debugging"] = Debugging ? "1" : "0";
+            ribbon.CommandContext.Parameters["inBreakpoint"] = InBreakpoint ? "1" : "0";
+
 
             var sessionName = CurrentSessionId ?? string.Empty;
             var persistentSessionId = sessionName;
@@ -867,6 +871,22 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.Eval($"$ise(function() {{{{ cognifide.powershell.breakpointSet({line}, '{action}'); }}}});");
         }
 
+        [HandleMessage("ise:togglebreakpoint", true)]
+        protected virtual void ToggleRuntimeBreakpoint(ClientPipelineArgs args)
+        {
+            var line = Int32.Parse(args.Parameters["Line"]) + 1;
+            var state = args.Parameters["State"] == "true";
+            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            {
+                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
+                var bPointScript = state
+                    ? $"Set-PSBreakpoint -Script {session.DebugFile} -Line {line}"
+                    : $"Get-PSBreakpoint -Script {session.DebugFile} | ? {{ $_.Line -eq {line}}} | Remove-PSBreakpoint";
+                bPointScript += " | Out-Null";
+                session.TryInvokeInRunningSession(bPointScript);
+                InBreakpoint = false;
+            }
+        }
 
         [HandleMessage("ise:breakpointhit", true)]
         protected virtual void BreakpointHit(ClientPipelineArgs args)
@@ -874,10 +894,11 @@ namespace Cognifide.PowerShell.Client.Applications
             var line = args.Parameters["Line"];
             var hitCount = args.Parameters["HitCount"];
             var jobId = args.Parameters["JobId"];
+            Debugging = true;
+            InBreakpoint = true;
+            UpdateRibbon();
             SheerResponse.Eval(
                 $"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
-            Debugging = true;
-            UpdateRibbon();
         }
 
 
@@ -901,7 +922,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 session.NextDebugResumeAction = args.Parameters["action"];
                 SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
-
+                InBreakpoint = false;
             }
         }
 

@@ -8,7 +8,11 @@ namespace Cognifide.PowerShell.Client.Commands
     {
         public override CommandState QueryState(CommandContext context)
         {
-            return context.Parameters["Debugging"] == "1" ? CommandState.Enabled : CommandState.Disabled;
+            return context.Parameters["inBreakpoint"] == "1"
+                ? CommandState.Enabled
+                : context.Parameters["debugging"] == "1"
+                    ? CommandState.Disabled
+                    : CommandState.Hidden;
         }
 
         public override void Execute(CommandContext context)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -8,6 +9,7 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
@@ -21,6 +23,7 @@ using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Workflows.Simple;
 using Version = System.Version;
 
 namespace Cognifide.PowerShell.Core.Host
@@ -281,13 +284,14 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-
+                var bPointScript = string.Empty;
                 foreach (var breakpoint in breakpoints)
                 {
-                    var bPointScript =
-                        $"Set-PSBreakpoint -Script {scriptPath} -Line {breakpoint+1}";
-                    ExecuteScriptPart(bPointScript, false, true, false);
+                    bPointScript +=
+                        $"Set-PSBreakpoint -Script {scriptPath} -Line {breakpoint+1}\n";
                 }
+                bPointScript += "Set-PSDebug -Trace 2 -Step";
+                ExecuteScriptPart(bPointScript, false, true, false);
             }
         }
 
@@ -327,7 +331,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
-                host.Runspace.Debugger.SetDebuggerStepMode(true);
+                InvokeInNewPowerShell("Get-PSBreakpoint -Variable SpeDebug | Remove-PSBreakpoint", OutTarget.OutNull);
                 foreach (var breakpoint in args.Breakpoints)
                 {
                     var message = Message.Parse(this, "ise:breakpointhit");
@@ -337,9 +341,9 @@ namespace Cognifide.PowerShell.Core.Host
                     NextDebugResumeAction = string.Empty;
                     while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
                     {
-                        if (!string.IsNullOrEmpty(ImmediateCommand))
+                        if (ImmediateCommand != null)
                         {
-                            InvokeImmediateCommand();
+                            InvokeInRunningSession();
                         }
                         else
                         {
@@ -348,28 +352,128 @@ namespace Cognifide.PowerShell.Core.Host
                     }
                     DebuggerResumeAction action;
                     Enum.TryParse(NextDebugResumeAction, true, out action);
-                    args.ResumeAction = action;                    
+                    args.ResumeAction = action;
+                    if (action != DebuggerResumeAction.Continue)
+                    {
+                        InvokeInNewPowerShell("Set-PSBreakpoint -Variable SpeDebug -Mode Read", OutTarget.OutNull);
+                        SetVariable("SpeDebug", true);
+                        GetVariable("SpeDebug");
+                    }
                 }
             }
         }
 
-        private void InvokeImmediateCommand()
+        private void InvokeInRunningSession()
+        {
+            try
+            {
+                if (ImmediateCommand != null)
+                {
+                    if (ImmediateCommand is Command)
+                    {
+                        InvokeInNewPowerShell(ImmediateCommand as Command, OutTarget.OutDefault);
+                    }
+                    else
+                    {
+                        InvokeInNewPowerShell(ImmediateCommand as string, OutTarget.OutDefault);
+                    }
+                }
+            }
+            finally
+            {
+                ImmediateCommand = null;
+            }
+
+        }
+
+        public bool TryInvokeInRunningSession(string script, bool stringOutput = false)
+        {
+            List<object> results;
+            return TryInvokeInRunningSessionInternal(script, out results, stringOutput);
+        }
+
+        public bool TryInvokeInRunningSession(string script, out List<object> results, bool stringOutput = false)
+        {
+            return TryInvokeInRunningSessionInternal(script, out results, stringOutput);
+        }
+
+        public bool TryInvokeInRunningSession(Command command, bool stringOutput = false)
+        {
+            List<object> results;
+            return TryInvokeInRunningSessionInternal(command, out results, stringOutput);
+        }
+
+        public bool TryInvokeInRunningSession(Command command, out List<object> results, bool stringOutput = false)
+        {
+            return TryInvokeInRunningSessionInternal(command, out results, stringOutput);
+        }
+
+        private bool TryInvokeInRunningSessionInternal(object executable, out List<object> results, bool stringOutput)
+        {
+            if (Debugging)
+            {
+                ImmediateCommand = executable;
+                var tries = 20;
+                while (ImmediateCommand != null && tries > 0)
+                {
+                    Thread.Sleep(100);
+                    tries--;
+                }
+                results = ImmediateResults.BaseList<object>();
+                return tries > 0;
+            }
+            else
+            {
+                var command = executable as Command;
+                results = command != null
+                    ? InvokeInNewPowerShell(command, OutTarget.OutNone).BaseList<object>()
+                    : ExecuteScriptPart(executable as string, stringOutput, true, true);
+                return true;
+            }
+        }
+
+        public enum OutTarget
+        {
+            OutDefault,
+            OutHost,
+            OutNull,
+            OutNone
+        }
+
+        public Collection<PSObject> InvokeInNewPowerShell(Command command, OutTarget target)
+        {
+            return InvokeInNewPowerShell(ps => ps.Commands.AddCommand(command), target);
+        }
+
+        public Collection<PSObject> InvokeInNewPowerShell(string script, OutTarget target)
+        {
+            return InvokeInNewPowerShell(ps => ps.Commands.AddScript(script), target);
+        }
+
+        private Collection<PSObject> InvokeInNewPowerShell(Func<System.Management.Automation.PowerShell, PSCommand> action, OutTarget target)
         {
             using (var ps = NewPowerShell())
             {
-                try
+                var psc = action(ps);
+                switch (target)
                 {
-                    ps.Commands.AddScript(ImmediateCommand).AddCommand(OutHostCommand);
-                    var results = ps.Invoke();
+                    case (OutTarget.OutNull):
+                        psc.AddCommand(OutNullCommand);
+                        break;
+                    case (OutTarget.OutHost):
+                        psc.AddCommand(OutHostCommand);
+                        break;
+                    case (OutTarget.OutDefault):
+                        psc.AddCommand(OutDefaultCommand);
+                        break;
                 }
-                finally
-                {
-                    ImmediateCommand = string.Empty;
-                }
+                var results = ps.Invoke();
+                return results;
             }
         }
 
-        public string ImmediateCommand { get; set; }
+        private object ImmediateCommand { get; set; }
+        private object ImmediateResults { get; set; }
 
         public string NextDebugResumeAction { get; set; } = string.Empty;
 
@@ -491,7 +595,7 @@ namespace Cognifide.PowerShell.Core.Host
                     using (powerShell = NewPowerShell())
                     {
                         powerShell.Commands.AddScript(script);
-                        return ExecuteCommand(stringOutput, internalScript, marshalResults);
+                        return ExecuteCommand(stringOutput, marshalResults);
                     }
                 }
                 finally
@@ -510,7 +614,7 @@ namespace Cognifide.PowerShell.Core.Host
                 using (powerShell = NewPowerShell())
                 {
                     powerShell.Commands.AddCommand(command);
-                    return ExecuteCommand(stringOutput, internalScript);
+                    return ExecuteCommand(stringOutput);
                 }
             }
             finally
@@ -535,7 +639,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
         /// <summary>
-        /// Command for formatted output of everything.
+        /// command for formatted output of everything.
         /// </summary>
         /// <remarks>
         /// "Out-Default" is not suitable for external apps, output goes to console.
@@ -550,7 +654,23 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private List<object> ExecuteCommand(bool stringOutput, bool internalScript, bool marshallResults = true)
+        /// <summary>
+        /// command for formatted output of everything.
+        /// </summary>
+        /// <remarks>
+        /// "Out-Default" is not suitable for external apps, output goes to console.
+        /// </remarks>
+        public static Command OutNullCommand
+        {
+            get
+            {
+                var command = new Command("Out-Null");
+                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
+                return command;
+            }
+        }
+
+        private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
         {
             JobName = Context.Job?.Name;
 
