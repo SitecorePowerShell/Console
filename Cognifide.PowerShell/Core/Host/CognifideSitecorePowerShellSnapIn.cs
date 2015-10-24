@@ -88,7 +88,14 @@ namespace Cognifide.PowerShell.Core.Host
         public override Collection<CmdletConfigurationEntry> Cmdlets => new Collection<CmdletConfigurationEntry>(Commandlets);
         public static List<CmdletConfigurationEntry> Commandlets { get; } = new List<CmdletConfigurationEntry>();
         public static List<SessionStateCommandEntry> SessionStateCommandlets { get; } = new List<SessionStateCommandEntry>();
-        public static Dictionary<string, string> Completers { get; } = new Dictionary<string, string>();
+
+        public static Dictionary<string, string> Completers { get; } = new Dictionary<string, string>
+        {
+            ["Get-Item:Database"] = "[Cognifide.PowerShell.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-ChildItem:Database"] = "[Cognifide.PowerShell.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-Item:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+            ["Get-ChildItem:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+        };
 
         public override Collection<ProviderConfigurationEntry> Providers
         {
