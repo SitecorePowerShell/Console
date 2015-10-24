@@ -19,16 +19,21 @@ namespace Cognifide.PowerShell.Core.Processors
                 Assert.ArgumentNotNull(arguments.Context, "context");
                 var url = arguments.Context.Request.Url;
                 var localPath = url.LocalPath;
+
+                //Compatibility with 2.x services location now removed - uncomment the following to restore
+                // Issue #511
+                /*  
                 if (localPath.StartsWith("/Console/", StringComparison.OrdinalIgnoreCase))
-                {
-                    // this bit is for compatibility of solutions integrating with SPE 2.x services in mind
-                    WebUtil.RewriteUrl(
-                        new UrlString
-                        {
-                            Path = localPath.ToLowerInvariant().Replace("/console/", "/sitecore modules/PowerShell/"),
-                            Query = url.Query
-                        }.ToString());
-                }
+                  {
+                      // this bit is for compatibility of solutions integrating with SPE 2.x services in mind
+                      WebUtil.RewriteUrl(
+                          new UrlString
+                          {
+                              Path = localPath.ToLowerInvariant().Replace("/console/", "/sitecore modules/PowerShell/"),
+                              Query = url.Query
+                          }.ToString());
+                  }
+                */
                 if (localPath.StartsWith("/-/script/v1", StringComparison.OrdinalIgnoreCase))
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split('/');
