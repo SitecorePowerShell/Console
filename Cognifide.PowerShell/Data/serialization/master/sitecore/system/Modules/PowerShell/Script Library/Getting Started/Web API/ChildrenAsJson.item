@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1120
+content-length: 1217
 
 <#
 For the Script API call to work - make sure the module in which the called script is located is enabled!
@@ -35,12 +35,20 @@ cd $item
 if ($HttpContext -ne $null){
     $HttpContext.Response.ContentType = "application/json";
 }
+
+if($depth -eq $null){
+    $depth =2
+}
+cd $item
+
+Set-HostProperty -HostWidth 20000
+
 #return some of the children's properties as JSON
-gci . | select-object @{Label="Path"; Expression={ $_.Paths.Path}}  , Name, DisplayName, TemplateName, Language, Version, Paths | convertto-json -Depth 2
+gci . | select-object @{Label="Path"; Expression={ $_.Paths.Path}}  , Name, DisplayName, TemplateName, Language, Version, Paths | convertto-json -Depth $depth
 ----version----
 language: en
 version: 1
-revision: 7e6b3ca5-ee2d-40bd-8aa8-a87f2b4b212d
+revision: 5f67dde2-b2be-452b-a851-e0531a2546dd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +63,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7e6b3ca5-ee2d-40bd-8aa8-a87f2b4b212d
+5f67dde2-b2be-452b-a851-e0531a2546dd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150811T135220
+20150919T182532
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
