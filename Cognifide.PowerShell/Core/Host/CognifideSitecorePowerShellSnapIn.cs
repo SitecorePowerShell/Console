@@ -95,6 +95,7 @@ namespace Cognifide.PowerShell.Core.Host
             ["Get-ChildItem:Database"] = "[Cognifide.PowerShell.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
             ["Get-Item:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
             ["Get-ChildItem:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+            ["New-Item:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
         };
 
         public override Collection<ProviderConfigurationEntry> Providers

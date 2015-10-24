@@ -10,8 +10,14 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public abstract class BaseItemCommand : BaseLanguageAgnosticItemCommand
     {
-        public static string[] Cultures =
-            CultureInfo.GetCultures(CultureTypes.AllCultures).Where(culture => !string.IsNullOrEmpty(culture.Name)).Select(culture => culture.Name).ToArray();
+        public static string[] Cultures;
+
+        static BaseItemCommand()
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).Where(culture => !string.IsNullOrEmpty(culture.Name)).Select(culture => culture.Name).OrderBy(p => p).ToList();
+            cultures.Insert(0,"*");
+            Cultures = cultures.ToArray();
+        }
 
         [AutocompleteSet("Cultures")]
         [Alias("Languages")]
