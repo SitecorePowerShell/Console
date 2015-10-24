@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         protected override void ProcessRecord()
         {
-            if (Identity != null && !this.CanFindAccount(Identity, AccountType.User))
+            if (!this.CanFindAccount(Identity, AccountType.User))
             {
                 WriteError(typeof (ObjectNotFoundException), $"User '{Identity.Name}' not found.",
                     ErrorIds.AccountNotFound, ErrorCategory.ResourceUnavailable, Identity);

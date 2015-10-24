@@ -15,9 +15,6 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         [ValidateNotNullOrEmpty]
         public AccountIdentity Identity { get; set; }
 
-        [Parameter]
-        public SwitchParameter PassThru { get; set; }
-
         protected override void ProcessRecord()
         {
             var name = Identity.Name;
@@ -33,10 +30,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             Roles.CreateRole(name);
             var role = Role.FromName(name);
 
-            if (PassThru)
-            {
-                WriteObject(role);
-            }
+            WriteObject(role);
         }
     }
 }

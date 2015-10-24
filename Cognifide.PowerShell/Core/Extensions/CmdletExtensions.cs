@@ -69,6 +69,10 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public static bool CanFindAccount(this Cmdlet command, AccountIdentity account, AccountType accountType)
         {
+            if (account == null)
+            {
+                return false;
+            }
             var name = account.Name;
             var error = $"Cannot find an account with identity '{name}'.";
 

@@ -92,16 +92,16 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             }
 
             var profile = user.Profile;
-            if (!String.IsNullOrEmpty(FullName))
+            if (!string.IsNullOrEmpty(FullName))
             {
                 profile.FullName = FullName;
             }
-            if (!String.IsNullOrEmpty(Comment))
+            if (!string.IsNullOrEmpty(Comment))
             {
                 profile.Comment = Comment;
             }
 
-            if (!String.IsNullOrEmpty(Portrait))
+            if (!string.IsNullOrEmpty(Portrait))
             {
                 profile.Portrait = Portrait;
             }
@@ -111,7 +111,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 profile.IsAdministrator = IsAdministrator;
             }
 
-            if (!String.IsNullOrEmpty(StartUrl))
+            if (!string.IsNullOrEmpty(StartUrl))
             {
                 switch (StartUrl)
                 {
@@ -128,7 +128,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                         profile.StartUrl = "/sitecore/shell/default.aspx";
                         break;
                     default:
-                        profile.StartUrl = String.Empty;
+                        profile.StartUrl = string.Empty;
                         break;
                 }
             }
@@ -141,12 +141,12 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                 {
                     var propertyName =
                         propertyNames.FirstOrDefault(p => p.Equals(key.ToString(), StringComparison.OrdinalIgnoreCase));
-                    if (String.IsNullOrEmpty(propertyName))
+                    if (string.IsNullOrEmpty(propertyName))
                     {
                         propertyName = key.ToString();
                     }
 
-                    var property = CustomProperties[key] ?? String.Empty;
+                    var property = CustomProperties[key] ?? string.Empty;
                     profile.SetCustomProperty(propertyName, property.ToString());
                 }
             }
