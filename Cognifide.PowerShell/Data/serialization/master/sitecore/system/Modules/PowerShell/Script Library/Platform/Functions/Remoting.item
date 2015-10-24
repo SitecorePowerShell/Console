@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5242
+content-length: 5263
 
 <# 
   Sitecore PowerShell Remoting.
@@ -22,7 +22,7 @@ content-length: 5242
     Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
     Invoke-SitecoreScript { get-item master:\content\ } @{name = "value"}
 
-  Sample upload local C:\image.png to a Sitecore Server to "/sitecore/ media library/Path/an_image.png" path:
+  Sample upload local C:\image.png to a Sitecore Server to "/sitecore/media library/Path/an_image.png" path:
     Set-SitecoreConfiguration 'http://hostname' 'admin' 'b'
     Get-Item C:\image.png | Upload-SitecoreFile -remotePath "Path\an_image.png"
     
@@ -49,7 +49,7 @@ function Set-SitecoreConfiguration {
         [ValidateNotNullOrEmpty()]
         [string]$Password
     )
-    $URI = $SitecoreHost + "/Console/Services/RemoteAutomation.asmx";
+    $URI = $SitecoreHost + "/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx";
     $GLOBAL:SpeRemoteProxy = New-WebServiceProxy -Uri $URI
     $GLOBAL:SpeRemoteUser = $User;
     $GLOBAL:SpeRemotePassword = $Password;
@@ -155,7 +155,7 @@ function Download-SitecoreFile {
 ----version----
 language: en
 version: 1
-revision: 466009c1-1512-4c07-bca0-ea07442171a8
+revision: b255de1b-eeb4-4efb-b807-55592277b410
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -170,14 +170,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-466009c1-1512-4c07-bca0-ea07442171a8
+b255de1b-eeb4-4efb-b807-55592277b410
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150614T194149:635699077099811798
+20151024T124418
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
