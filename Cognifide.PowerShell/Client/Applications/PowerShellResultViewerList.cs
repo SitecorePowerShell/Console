@@ -100,20 +100,20 @@ namespace Cognifide.PowerShell.Client.Applications
                 sb.AppendFormat("<div class='progressStatus'>");
                 if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
                 {
-                    sb.AppendFormat("{0}, ", args.Parameters["StatusDescription"]);
+                    sb.AppendFormat("{0}", args.Parameters["StatusDescription"]);
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["SecondsRemaining"]))
                 {
                     var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
-                        sb.AppendFormat("<strong class='progressRemaining'>{0:c} </strong> remaining, ",
+                        sb.AppendFormat("<strong class='progressRemaining'>, {0:c} </strong> remaining",
                             new TimeSpan(0, 0, secondsRemaining));
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
                 {
-                    sb.AppendFormat("{0}", args.Parameters["CurrentOperation"]);
+                    sb.AppendFormat(", {0}", args.Parameters["CurrentOperation"]);
                 }
 
                 sb.AppendFormat(".</div>");
