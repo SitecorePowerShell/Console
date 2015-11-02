@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Web.UI;
+using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
+using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
@@ -15,13 +17,26 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
+            var typeName = context.Parameters["type"];
+            var viewName = context.Parameters["viewName"];
+            var ruleContext = new RuleContext
+            {
+                Item = context.CustomData as Item
+            };
+            ruleContext.Parameters["ViewName"] = viewName;
+
+            if (context.Parameters["features"].Contains(HideListViewFeatures.AllExport.ToString()))
+            {
+                return;
+            }
+            bool hideNonSpecific =
+                context.Parameters["features"].Contains(HideListViewFeatures.NonSpecificExport.ToString());
+
             foreach (
                 Item scriptItem in
                     ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature)
-                        .SelectMany(parent => parent.Children,
-                            (parent, scriptItem) => new {parent, scriptItem})
-                        .Where(@t => RulesUtils.EvaluateRules(@t.scriptItem["ShowRule"], context.CustomData as Item))
-                        .Select(@t => @t.scriptItem))
+                        .SelectMany(parent => parent.Children)
+                        .Where(scriptItem => RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
             {
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),

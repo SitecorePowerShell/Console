@@ -8,6 +8,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     [OutputType(typeof (string))]
     public class ShowListViewCommand : BaseListViewCommand
     {
+
         [Parameter]
         public int PageSize { get; set; }
 
@@ -35,6 +36,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public SwitchParameter ActionsInSession { get; set; }
 
+        [Parameter]
+        public HideListViewFeatures Hide { get; set; }
+
         protected override void EndProcessing()
         {
             base.EndProcessing();
@@ -52,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     PutMessage(new ShowListViewMessage(CumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
-                        ActionData, Property, ViewName, MissingDataMessage));
+                        ActionData, Property, ViewName, MissingDataMessage, Hide));
                 }
             });
         }

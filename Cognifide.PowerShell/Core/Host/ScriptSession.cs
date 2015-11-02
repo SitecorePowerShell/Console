@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,12 +7,10 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Web;
-using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
-using Microsoft.PowerShell;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -23,7 +20,6 @@ using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.Sheer;
-using Sitecore.Workflows.Simple;
 using Version = System.Version;
 
 namespace Cognifide.PowerShell.Core.Host

@@ -150,6 +150,8 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Client\Commands\AbortQueryState.cs" />
+    <Compile Include="Client\Commands\ListViewFilterQueryState.cs" />
+    <Compile Include="Client\Commands\ListViewPagingQueryState.cs" />
     <Compile Include="Client\Commands\EditIseSettingsCombo.cs" />
     <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
     <Compile Include="Client\Commands\ItemDefinedQueryState.cs" />
@@ -188,6 +190,7 @@
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\ErrorIds.cs" />
+    <Compile Include="Commandlets\Interactive\HideListViewFeatures.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />
@@ -391,6 +394,7 @@
     <Compile Include="Core\VersionDecoupling\VersionResolver.cs" />
     <Compile Include="Integrations\Gutters\GutterStatusRenderer.cs" />
     <Compile Include="Integrations\Pipelines\ContentEditorWarningScript.cs" />
+    <Compile Include="Integrations\Pipelines\InitializeSPE.cs" />
     <Compile Include="Integrations\Pipelines\LoggedInScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggingInScript.cs" />
     <Compile Include="Integrations\Pipelines\LogoutScript.cs" />

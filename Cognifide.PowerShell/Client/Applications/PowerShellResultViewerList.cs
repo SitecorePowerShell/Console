@@ -162,12 +162,13 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdatePage(ListViewer.CurrentPage);
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
+            StatusBar.Visible = !ListViewer.Data.HiddenFeatures.HasFlag(HideListViewFeatures.StatusBar);
             if (ListViewer.Data.Data.Count == 0)
             {
                 ListViewer.Visible = false;
                 EmptyPanel.Visible = true;
                 EmptyDataMessageText.Visible = true;
-                if (ListViewer.Data != null && ListViewer.Data.MissingDataMessage != null)
+                if (ListViewer.Data?.MissingDataMessage != null)
                 {
                     EmptyDataMessageText.Text = ListViewer.Data.MissingDataMessage;
                 }
@@ -401,6 +402,15 @@ namespace Cognifide.PowerShell.Client.Applications
                 ribbon.CommandContext.Parameters.Add("type", ListViewer.Data.Data[0].Original.GetType().Name);
                 ribbon.CommandContext.Parameters.Add("viewName", ListViewer.Data.ViewName);
                 ribbon.CommandContext.Parameters.Add("ScriptRunning", ScriptRunning ? "1" : "0");
+                ribbon.CommandContext.Parameters.Add("features", ListViewer.Data.HiddenFeatures.ToString());
+                ribbon.CommandContext.Parameters.Add("hidePaging",
+                    (ListViewer.Data.HiddenFeatures.HasFlag(HideListViewFeatures.PagingWhenNotNeeded) &&
+                     ListViewer.Data.Data.Count < ListViewer.Data.PageSize
+                        ? "1"
+                        : "0"));
+                ribbon.CommandContext.Parameters.Add("hideFilter",
+                    ListViewer.Data.HiddenFeatures.HasFlag(HideListViewFeatures.Filter) ? "1" : "0");
+                
                 ribbon.CommandContext.CustomData = ListViewer.Data.Data[0].Original;
             }
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
