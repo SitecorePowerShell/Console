@@ -300,6 +300,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     openedScript["Display name"] = name;
                     openedScript["__Display name"] = name;
                     openedScript[FieldIDs.Sortorder] = "0";
+                    openedScript.Publishing.NeverPublish = true;
                 });
 
                 var sortOrder = 1;
@@ -316,6 +317,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         item.Edit(args =>
                         {
                             item[FieldIDs.Sortorder] = sortOrder.ToString("G");
+                            item.Publishing.NeverPublish = true;
                             sortOrder++;
                         });
                     }

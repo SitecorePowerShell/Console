@@ -212,8 +212,13 @@ namespace Cognifide.PowerShell.Core.Settings
         public static Item GetIseMruContainerItem()
         {
             var currentUserItem = GetInstance(ApplicationNames.IseConsole).GetSettingsDtoForSave();
-            return currentUserItem.Children["MRU"] ??
+            var mruItem = currentUserItem.Children["MRU"] ??
                           currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
+            if (!mruItem.Publishing.NeverPublish)
+            {
+                mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
+            }
+            return mruItem;
         }
 
         public void Save()
