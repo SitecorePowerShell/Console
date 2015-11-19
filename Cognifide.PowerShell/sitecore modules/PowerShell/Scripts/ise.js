@@ -281,17 +281,11 @@ extend(cognifide, "powershell");
         };
 
         cognifide.powershell.debugStart = function(sessionId) {
-            //scContent.ribbonNavigatorButtonClick(this, event, 'PowerShellRibbon_Strip_DebugStrip');
             codeeditor.setReadOnly(true);
         };
 
-        cognifide.powershell.setDebugStrip = function() {
-            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
-        }
-
         cognifide.powershell.debugStop = function (sessionId) {
-            cognifide.powershell.breakpointHandled();
-            setTimeout(cognifide.powershell.setDebugStrip, 1000);
+            setTimeout(cognifide.powershell.breakpointHandled, 100);
             codeeditor.setReadOnly(false);
         };
 
@@ -339,6 +333,7 @@ extend(cognifide, "powershell");
                 codeeditor.session.removeMarker(marker);
                 marker = -1;
             }
+            scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
         }
 
         window.scForm.postRequest("", "", "", "ise:updatesettings");

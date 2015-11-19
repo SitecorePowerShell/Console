@@ -328,6 +328,7 @@ namespace Cognifide.PowerShell.Core.Host
             if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
                 InvokeInNewPowerShell("Get-PSBreakpoint -Variable SpeDebug | Remove-PSBreakpoint", OutTarget.OutNull);
+                host.Runspace.Debugger.SetDebuggerStepMode(true);
                 foreach (var breakpoint in args.Breakpoints)
                 {
                     var message = Message.Parse(this, "ise:breakpointhit");
@@ -689,7 +690,6 @@ namespace Cognifide.PowerShell.Core.Host
                 var message = Message.Parse(this, "ise:debugstart");
                 SendUiMessage(message);
             }
-            powerShell.Runspace.StateChanged += PipelineStateChanged;
             abortRequested = false;
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
@@ -719,10 +719,6 @@ namespace Cognifide.PowerShell.Core.Host
             return marshallResults
                 ? execResults?.Select(p => p.BaseObject).ToList()
                 : execResults?.Cast<object>().ToList();
-        }
-
-        private void PipelineStateChanged(object sender, RunspaceStateEventArgs e)
-        {
         }
 
         public string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)
@@ -790,11 +786,6 @@ namespace Cognifide.PowerShell.Core.Host
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        ~ScriptSession()
-        {
-            Dispose(false);
         }
 
         public void Close()
