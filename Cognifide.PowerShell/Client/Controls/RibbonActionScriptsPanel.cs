@@ -26,12 +26,12 @@ namespace Cognifide.PowerShell.Client.Controls
             };
             ruleContext.Parameters["ViewName"] = viewName;
 
-            if (context.Parameters["features"].Contains(HideListViewFeatures.AllActions.ToString()))
+            if ((context.Parameters["features"] ?? "").Contains(HideListViewFeatures.AllActions.ToString()))
             {
                 return;
             }
             bool hideNonSpecific =
-                context.Parameters["features"].Contains(HideListViewFeatures.NonSpecificActions.ToString());
+                (context.Parameters["features"] ?? "").Contains(HideListViewFeatures.NonSpecificActions.ToString());
             if (!string.IsNullOrEmpty(typeName))
             {
                 foreach (
@@ -40,7 +40,9 @@ namespace Cognifide.PowerShell.Client.Controls
                             .Select(parent => parent.Paths.GetSubItem(typeName))
                             .Where(scriptLibrary => scriptLibrary != null)
                             .SelectMany(scriptLibrary => scriptLibrary.Children)
-                            .Where(scriptItem => RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
+                            .Where(
+                                scriptItem =>
+                                    RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
                 {
                     RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                         Translate.Text(scriptItem.DisplayName),

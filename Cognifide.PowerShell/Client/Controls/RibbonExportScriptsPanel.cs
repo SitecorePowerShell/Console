@@ -25,12 +25,12 @@ namespace Cognifide.PowerShell.Client.Controls
             };
             ruleContext.Parameters["ViewName"] = viewName;
 
-            if (context.Parameters["features"].Contains(HideListViewFeatures.AllExport.ToString()))
+            if ((context.Parameters["features"] ?? "").Contains(HideListViewFeatures.AllExport.ToString()))
             {
                 return;
             }
             bool hideNonSpecific =
-                context.Parameters["features"].Contains(HideListViewFeatures.NonSpecificExport.ToString());
+                (context.Parameters["features"] ?? "").Contains(HideListViewFeatures.NonSpecificExport.ToString());
 
             foreach (
                 Item scriptItem in
