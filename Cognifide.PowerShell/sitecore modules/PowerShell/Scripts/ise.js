@@ -316,14 +316,14 @@ extend(cognifide, "powershell");
             }
         };
 
-        cognifide.powershell.breakpointHit = function (line, hitCount, sessionId) {
+        cognifide.powershell.breakpointHit = function (line, column, endLine, endColumn, sessionId) {
             debugLine = line;
-            debugHitCount = hitCount;
+            //debugHitCount = hitCount;
             debugSessionId = sessionId;
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
-                marker = codeeditor.session.addMarker(new Range(line, 0, line+1, 0), "breakpoint", "line");                
+                marker = codeeditor.session.addMarker(new Range(line, column, endLine, endColumn+1), "breakpoint", "text");
             }, 100);
 
         };

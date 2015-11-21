@@ -519,7 +519,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     var strBrPoints = (Breakpoints.Value ?? string.Empty).Split(',');
                     var bPoints = strBrPoints.Select(int.Parse);
-                    scriptSession.SetBreakpoints(scriptSession.DebugFile, bPoints);
+                    scriptSession.SetBreakpoints(bPoints);
                 }
                 scriptToExecute = scriptSession.DebugFile;
             }
@@ -894,13 +894,15 @@ namespace Cognifide.PowerShell.Client.Applications
         protected virtual void BreakpointHit(ClientPipelineArgs args)
         {
             var line = args.Parameters["Line"];
-            var hitCount = args.Parameters["HitCount"];
+            var column = args.Parameters["Column"];
+            var endLine = args.Parameters["EndLine"];
+            var endColumn = args.Parameters["EndColumn"];
             var jobId = args.Parameters["JobId"];
             Debugging = true;
             InBreakpoint = true;
             UpdateRibbon();
             SheerResponse.Eval(
-                $"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {hitCount}, '{jobId}'); }});");
+                $"$ise(function() {{ cognifide.powershell.breakpointHit({line}, {column}, {endLine}, {endColumn}, '{jobId}'); }});");
         }
 
 
@@ -922,7 +924,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (ScriptSessionManager.SessionExists(Monitor.SessionID))
             {
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                session.NextDebugResumeAction = args.Parameters["action"];
+                session.TryInvokeInRunningSession(args.Parameters["action"]);
                 SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
                 InBreakpoint = false;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
@@ -174,7 +175,7 @@ namespace Cognifide.PowerShell.Core.Host
                     }
                     // PS 5 only?
                     //state.ExecutionPolicy = ExecutionPolicy.Bypass;
-                    state.UseFullLanguageModeInDebugger = false;
+                    state.UseFullLanguageModeInDebugger = true;
                     PsSitecoreItemProvider.AppendToSessionState(state);                    
                 }
                 return state;
@@ -276,7 +277,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        public void SetBreakpoints(string scriptPath, IEnumerable<int> breakpoints)
+        public void SetBreakpoints(IEnumerable<int> breakpoints)
         {
             lock (this)
             {
@@ -284,9 +285,8 @@ namespace Cognifide.PowerShell.Core.Host
                 foreach (var breakpoint in breakpoints)
                 {
                     bPointScript +=
-                        $"Set-PSBreakpoint -Script {scriptPath} -Line {breakpoint+1}\n";
+                        $"Set-PSBreakpoint -Script {DebugFile} -Line {breakpoint+1}\n";
                 }
-                bPointScript += "Set-PSDebug -Trace 2 -Step";
                 ExecuteScriptPart(bPointScript, false, true, false);
             }
         }
@@ -325,38 +325,66 @@ namespace Cognifide.PowerShell.Core.Host
 
         private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs args)
         {
+            Debugger debugger = sender as Debugger;
+            DebuggerResumeAction? resumeAction = null;
+
             if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
             {
-                InvokeInNewPowerShell("Get-PSBreakpoint -Variable SpeDebug | Remove-PSBreakpoint", OutTarget.OutNull);
-                host.Runspace.Debugger.SetDebuggerStepMode(true);
-                foreach (var breakpoint in args.Breakpoints)
+
+                var output = new PSDataCollection<PSObject>();
+                output.DataAdded += (dSender, dArgs) =>
                 {
-                    var message = Message.Parse(this, "ise:breakpointhit");
-                    message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber-1).ToString());
-                    message.Arguments.Add("HitCount", breakpoint.HitCount.ToString());
-                    SendUiMessage(message);
-                    NextDebugResumeAction = string.Empty;
-                    while (string.IsNullOrEmpty(NextDebugResumeAction) && !abortRequested)
+                    foreach (var item in output.ReadAll())
                     {
-                        if (ImmediateCommand != null)
+                        //Console.WriteLine(item);
+                    }
+                };
+
+                var message = Message.Parse(this, "ise:breakpointhit");
+                //var position = args.InvocationInfo.DisplayScriptPosition;
+                IScriptExtent position = args.InvocationInfo.GetType().GetProperty("ScriptPosition", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty).GetValue(args.InvocationInfo) as IScriptExtent;
+                if (position != null)
+                {
+                    message.Arguments.Add("Line", (position.StartLineNumber - 1).ToString());
+                    message.Arguments.Add("Column", (position.StartColumnNumber - 1).ToString());
+                    message.Arguments.Add("EndLine", (position.EndLineNumber - 1).ToString());
+                    message.Arguments.Add("EndColumn", (position.EndColumnNumber - 1).ToString());
+                }
+                else
+                {
+                    message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber - 1).ToString());
+                    message.Arguments.Add("Column", (args.InvocationInfo.OffsetInLine - 1).ToString());
+                    message.Arguments.Add("EndLine", (args.InvocationInfo.ScriptLineNumber).ToString());
+                    message.Arguments.Add("EndColumn", (0).ToString());
+
+                }
+                message.Arguments.Add("HitCount",
+                    args.Breakpoints.Count > 0 ? args.Breakpoints[0].HitCount.ToString() : "1");
+                SendUiMessage(message);
+
+                while (resumeAction == null && !abortRequested)
+                {
+                    if (ImmediateCommand != null)
+                    {
+                        PSCommand psCommand = new PSCommand();
+                        psCommand.AddScript(ImmediateCommand as string)
+                            .AddCommand("Out-String")
+                            .AddParameter("Stream", true);
+                        ImmediateCommand = null;
+                        DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
+                        if (results.ResumeAction != null)
                         {
-                            InvokeInRunningSession();
-                        }
-                        else
-                        {
-                            Thread.Sleep(100);
+                            resumeAction = results.ResumeAction;
                         }
                     }
-                    DebuggerResumeAction action;
-                    Enum.TryParse(NextDebugResumeAction, true, out action);
-                    args.ResumeAction = action;
-                    if (action != DebuggerResumeAction.Continue)
+                    else
                     {
-                        InvokeInNewPowerShell("Set-PSBreakpoint -Variable SpeDebug -Mode Read", OutTarget.OutNull);
-                        SetVariable("SpeDebug", true);
-                        GetVariable("SpeDebug");
+                        Thread.Sleep(100);
                     }
                 }
+
+
+                args.ResumeAction = resumeAction.Value;
             }
         }
 
@@ -471,9 +499,6 @@ namespace Cognifide.PowerShell.Core.Host
 
         private object ImmediateCommand { get; set; }
         private object ImmediateResults { get; set; }
-
-        public string NextDebugResumeAction { get; set; } = string.Empty;
-
 
         public List<PSVariable> Variables
         {
@@ -681,14 +706,20 @@ namespace Cognifide.PowerShell.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            if (Interactive && Debugging)
+            if (Debugging)
             {
                 host.Runspace.Debugger.DebuggerStop += DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated += DebuggerOnBreakpointUpdated;
-                host.Runspace.Debugger.SetDebuggerStepMode(true);
-
-                var message = Message.Parse(this, "ise:debugstart");
-                SendUiMessage(message);
+                SetVariable("SpeDebug", true);
+                if (Interactive)
+                {
+                    var message = Message.Parse(this, "ise:debugstart");
+                    SendUiMessage(message);
+                }
+            }
+            else
+            {
+                Engine.SessionState.PSVariable.Remove("SpeDebug");
             }
             abortRequested = false;
             // execute the commands in the pipeline now
@@ -708,7 +739,6 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 host.Runspace.Debugger.DebuggerStop -= DebuggerOnDebuggerStop;
                 host.Runspace.Debugger.BreakpointUpdated -= DebuggerOnBreakpointUpdated;
-                host.Runspace.Debugger.SetDebuggerStepMode(true);
 
                 var message = Message.Parse(this, "ise:debugend");
                 SendUiMessage(message);
