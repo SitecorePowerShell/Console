@@ -13,16 +13,16 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1942
+content-length: 1956
 
 <#
-For the Script API call to work - make sure the module in which the called script is located is enabled!
-
-Provides an HTML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
-http://hostname/-/script/v2/master/ChildrenAsHtml?user=admin&password=b&item=content
-
-If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
-http://hostname/-/script/v2/master/ChildrenAsHtml?item=content
+    For the Script API call to work - make sure the module in which the called script is located is enabled!
+    
+    Provides an HTML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
+    http://hostname/-/script/v2/master/ChildrenAsHtml?user=admin&password=b&item=content
+    
+    If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
+    http://hostname/-/script/v2/master/ChildrenAsHtml?item=content
 #>
 
 #if the location is not Sitecore tree, switch to root of Master Database
@@ -41,18 +41,19 @@ if((Get-Location).Provider.Name -ne "CmsItemProvider"){
     Set-Location master:\
 }
 
-cd $item
+Set-Location $item
 
-if ($HttpContext -ne $null){
+if ($HttpContext){
     $HttpContext.Response.ContentType = "text/html";
 }
-#return some of the children's properties as JSON
-gci . | select-object Name, DisplayName, TemplateName, Language, Version, ProviderPath | ConvertTo-Html -head $head -body $body |  % { [System.Web.HttpUtility]::HtmlDecode($_) }
+
+Get-ChildItem -Path . | Select-Object Name, DisplayName, TemplateName, Language, Version, ProviderPath | 
+    ConvertTo-Html -Head $head -Body $body |  ForEach-Object { [System.Web.HttpUtility]::HtmlDecode($_) }
 
 ----version----
 language: en
 version: 1
-revision: 1516119d-4a83-463c-9567-12ad13c3af2e
+revision: a8b95bc3-6e92-44e6-bd55-c7082dcbba0b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -67,14 +68,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1516119d-4a83-463c-9567-12ad13c3af2e
+a8b95bc3-6e92-44e6-bd55-c7082dcbba0b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 34
 
-20150811T135231
+20151025T152129:635813832891981744
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
