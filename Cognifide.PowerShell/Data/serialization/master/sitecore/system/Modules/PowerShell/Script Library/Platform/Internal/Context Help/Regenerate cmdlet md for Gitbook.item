@@ -13,24 +13,55 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 531
+content-length: 1672
+
+$path = "C:\Projects\sitecorepowershell\Trunk\Documentation\Markdown\"
+if(-not(Test-Path -Path $path)) {
+    $path = "C:\inetpub\wwwroot\Console\Documentation\Markdown\"
+    
+    if(-not(Test-Path -Path $path)) {
+        Write-Host "The markdown path does not exist on this machine."
+        return
+    }
+}
+
+$book = "C:\inetpub\wwwroot\spebook\"
+$bookcommandlist = "$($book)appendix\commands-list.md"
+$buildBookFiles = $false
+if(Test-Path -Path $book) {
+    $buildBookFiles = $true
+    Clear-Content -Path $bookcommandlist
+}
 
 $names = Get-Command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"} | % {$_.Name}
 $hideOutput = $true
 $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
+
 foreach($name in $names)
 {
     $helpFor = "$name"
-    $path = "C:\Projects\sitecorepowershell\Trunk\Documentation\Markdown/$name.md"
+    $filename = "$($name).md"
+    $output = "$($path)$($filename)"
     Invoke-Script "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Context Help\Command Help - md"
-    [System.IO.File]::WriteAllLines($path, $builder.ToString(), $Utf8NoBomEncoding)
-    $path
+    [System.IO.File]::WriteAllLines($output, $builder.ToString(), $Utf8NoBomEncoding)
+
+    # Output the md files for the gitbook that will pull the md from github. Crazy.
+    if($buildBookFiles) {
+        # Print out list for the gitbook commands-list.md
+        [System.IO.File]::AppendAllText($bookcommandlist, "* [$name](appendix/commands/$filename)`r", $Utf8NoBomEncoding)
+        
+        $bookreference = "$($book)appendix\commands\$($filename)"
+        $booklink = "{% include 'git+https://github.com/SitecorePowerShell/Console.git/Documentation/Markdown/$($filename)' %}"
+        [System.IO.File]::WriteAllLines($bookreference, $booklink, $Utf8NoBomEncoding)
+    }
 }
+
+Write-Host "Done."
 
 ----version----
 language: en
 version: 1
-revision: 4409c5fb-8ad5-417c-9ecd-cf6e8034601c
+revision: 15b07347-7f07-4195-8dc3-eaacb40213f4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -45,14 +76,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4409c5fb-8ad5-417c-9ecd-cf6e8034601c
+15b07347-7f07-4195-8dc3-eaacb40213f4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150616T154950:635700665906688984
+20150912T153611:635776689716451530
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
