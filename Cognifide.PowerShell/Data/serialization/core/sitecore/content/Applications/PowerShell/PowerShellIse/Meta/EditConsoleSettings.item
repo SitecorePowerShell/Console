@@ -20,9 +20,9 @@ people/16x16/cubes_blue.png
 field: {CF738220-908D-4C3F-9482-32E625DAF13C}
 name: Fields
 key: fields
-content-length: 53
+content-length: 73
 
-HostWidth|ForegroundColor|BackgroundColor|UseTypeInfo
+FontSize|FontFamily|HostWidth|ForegroundColor|BackgroundColor|UseTypeInfo
 ----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
@@ -33,7 +33,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: b486ed92-7bc3-4e34-8005-2feb389597aa
+revision: 60169d7f-98c4-483c-b67f-e98c91afeaff
 
 ----field----
 field: {108D3A63-BAAA-4560-86D8-3A112ED84717}
@@ -76,14 +76,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b486ed92-7bc3-4e34-8005-2feb389597aa
+60169d7f-98c4-483c-b67f-e98c91afeaff
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150608T181640:635693842005429688
+20150904T040139:635769360997713279
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
