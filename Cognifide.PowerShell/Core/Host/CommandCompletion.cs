@@ -17,6 +17,9 @@ namespace Cognifide.PowerShell.Core.Host
             Factory.GetDatabaseNames().ToList().ConvertAll(db => db.ToLower()).ToArray();
 
         public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
+        const string TabExpansionHelper = @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn , $options){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
+
+        private static Hashtable options;
 
         public static IEnumerable<string> FindMatches(ScriptSession session, string command, bool aceResponse)
         {
@@ -41,30 +44,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             string lastToken;
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
-            Hashtable completers = null;
-            var options = new Hashtable(1);
-
-            if (options.ContainsKey("CustomArgumentCompleters"))
-            {
-                completers = options["CustomArgumentCompleters"] as Hashtable;
-            }
-            if (completers == null)
-            {
-                completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
-                options.Add("CustomArgumentCompleters", completers);
-            }
-
-            foreach (var miscCompleter in MiscAutocompleteSets.Completers)
-            {
-                AddCompleter(session, completers, miscCompleter);
-            }
-            foreach (var completer in CognifideSitecorePowerShellSnapIn.Completers)
-            {
-                AddCompleter(session, completers, completer);
-            }
-
-            const string TabExpansionHelper =
-                @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn , $options){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
+            var options = Completers;
 
             session.TryInvokeInRunningSession(TabExpansionHelper);
 
@@ -86,12 +66,44 @@ namespace Cognifide.PowerShell.Core.Host
             return result;
         }
 
-        private static void AddCompleter(ScriptSession session, Hashtable completers, KeyValuePair<string, string> completer)
+        private static Hashtable Completers
+        {
+            get
+            {
+                if (options == null)
+                {
+                    options = new Hashtable(1);
+                    Hashtable completers = null;
+
+                    if (options.ContainsKey("CustomArgumentCompleters"))
+                    {
+                        completers = options["CustomArgumentCompleters"] as Hashtable;
+                    }
+                    if (completers == null)
+                    {
+                        completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
+                        options.Add("CustomArgumentCompleters", completers);
+                    }
+
+                    foreach (var miscCompleter in MiscAutocompleteSets.Completers)
+                    {
+                        AddCompleter(completers, miscCompleter);
+                    }
+                    foreach (var completer in CognifideSitecorePowerShellSnapIn.Completers)
+                    {
+                        AddCompleter(completers, completer);
+                    }
+                }
+                return options;
+            }
+        }
+
+        private static void AddCompleter(Hashtable completers, KeyValuePair<string, string> completer)
         {
             if (!completers.ContainsKey(completer.Key))
             {
                 completers.Add(completer.Key,
-                    session.GetScriptBlock(
+                    ScriptBlock.Create(
                         "param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter) \r\n " +
                         completer.Value +
                         " | ForEach-Object { New-Object System.Management.Automation.CompletionResult $_, $_, 'ParameterValue', $_ }"
@@ -155,10 +167,7 @@ namespace Cognifide.PowerShell.Core.Host
                     return "Server-side|" + l;
                 }
                 return l.IndexOfAny(wrapChars) > -1
-                    ? string.Format("{0}{1}'{2}'",
-                        truncatedCommand,
-                        string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ",
-                        l.Trim('\''))
+                    ? $"{truncatedCommand}{(string.IsNullOrEmpty(truncatedCommand) ? string.Empty : " ")}'{l.Trim('\'')}'"
                     : truncatedCommand + l;
             }
                 ));
@@ -184,10 +193,10 @@ namespace Cognifide.PowerShell.Core.Host
                         case ("ProviderContainer"):
                             content = content.Trim('\'', ' ', '&', '"');
                             return IsSitecoreItem(content)
-                                ? string.Format("Item|{0}|{1}", content.Split('\\').Last(), content)
-                                : string.Format("{0}|{1}|{2}", type, content.Split('\\').Last(), content);
+                                ? $"Item|{content.Split('\\').Last()}|{content}"
+                                : $"{type}|{content.Split('\\').Last()}|{content}";
                         case ("ParameterName"):
-                            return string.Format("Parameter|{0}", content);
+                            return $"Parameter|{content}";
                         default:
                             return l;
                     }
@@ -197,15 +206,13 @@ namespace Cognifide.PowerShell.Core.Host
                     case ("Variable"):
                     case ("ParameterName"):
                     case ("Command"):
-                        return string.Format("{0}{1}{2}",
-                            truncatedCommand, truncatedCommandTail, content);
+                        return $"{truncatedCommand}{truncatedCommandTail}{content}";
                     case ("Property"):
                     case ("Method"):
-                        return string.Format("{0}{1}", truncatedCommand, content);
+                        return $"{truncatedCommand}{content}";
                     default:
-                        return string.Format("{0}{1}{2}",
-                            truncatedCommand, truncatedCommandTail,
-                            content.StartsWith("& '") ? content.Substring(2) : content);
+                        return
+                            $"{truncatedCommand}{truncatedCommandTail}{(content.StartsWith("& '") ? content.Substring(2) : content)}";
                 }
             }));
         }
@@ -214,8 +221,12 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (!string.IsNullOrEmpty(path) && path.IndexOf(':') > 0)
             {
-                var db = path.Split(':')[0].ToLower();
-                return dbNames.Contains(db);
+                var colonIndex = path.IndexOf(':');
+                if (colonIndex > 0)
+                {
+                    var db = path.Substring(0,colonIndex).ToLower();
+                    return dbNames.Contains(db);
+                }
             }
             return false;
         }
