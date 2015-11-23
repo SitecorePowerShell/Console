@@ -16,6 +16,12 @@ namespace Cognifide.PowerShell.Core.Extensions
             return !Is(value, compare);
         }
 
+        public static bool IsSubstringOf(this string subString, string value)
+        {
+            return value.IndexOf(subString, StringComparison.OrdinalIgnoreCase) != -1;
+        }
+
+
         public static string EllipsisString(this string rawString, int maxLength = 30, char delimiter = '\\')
         {
             maxLength -= 3; //account for delimiter spacing

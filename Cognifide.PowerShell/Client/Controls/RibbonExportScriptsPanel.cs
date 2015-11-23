@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 Item scriptItem in
                     ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature)
                         .SelectMany(parent => parent.Children)
-                        .Where(scriptItem => RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
+                        .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
             {
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),

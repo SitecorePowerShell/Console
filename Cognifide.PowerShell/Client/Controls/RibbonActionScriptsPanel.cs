@@ -42,7 +42,7 @@ namespace Cognifide.PowerShell.Client.Controls
                             .SelectMany(scriptLibrary => scriptLibrary.Children)
                             .Where(
                                 scriptItem =>
-                                    RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
+                                    RulesUtils.EvaluateRulesForView(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
                 {
                     RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                         Translate.Text(scriptItem.DisplayName),
