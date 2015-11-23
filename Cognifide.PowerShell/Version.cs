@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("3.3.0.*")]
-[assembly: AssemblyFileVersion("3.3.0.0")]
-[assembly: AssemblyInformationalVersion("3.3.0.0")]
+[assembly: AssemblyVersion("4.0.0.*")]
+[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyInformationalVersion("4.0.0.0")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cognifide Limited")]
