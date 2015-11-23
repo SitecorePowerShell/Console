@@ -334,7 +334,6 @@ namespace Cognifide.PowerShell.Client.Applications
             Editor.Value = string.Empty;
             EnterScriptInfo.Visible = true;
             ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
-            //ScriptResult.Visible = false;
             SheerResponse.Eval("cognifide.powershell.changeWindowTitle('Untitled', true);");
             UpdateRibbon();
         }
@@ -403,6 +402,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     return;
                 scriptItem.Edit(
                     editArgs => { scriptItem.Fields[ScriptItemFieldNames.Script].Value = Editor.Value; });
+                SheerResponse.Eval("cognifide.powershell.updateModificationFlag(true);");
             }
         }
 

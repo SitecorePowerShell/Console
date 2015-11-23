@@ -204,6 +204,10 @@ extend(cognifide, "powershell");
             $("#Breakpoints")[0].value  = sparseKeys.toString();
         });
 
+        codeeditor.on("input", function () {
+            cognifide.powershell.updateModificationFlag(false);
+        });
+
         var codeeeditorcommands = [
             {
                 name: "help",
@@ -289,6 +293,17 @@ extend(cognifide, "powershell");
             codeeditor.setReadOnly(false);
         };
 
+        cognifide.powershell.updateModificationFlag = function (clear) {
+            if (clear) {
+                codeeditor.getSession().getUndoManager().markClean();
+            }
+            var scriptModified = $ise("#scriptModified", window.parent.document);
+            if (codeeditor.getSession().getUndoManager().isClean())
+                scriptModified.hide();
+            else
+                scriptModified.show();
+        };
+
         cognifide.powershell.toggleBreakpoint = function(row, set) {
             if (set) {
                 codeeditor.session.setBreakpoint(row);
@@ -359,11 +374,11 @@ extend(cognifide, "powershell");
                 codeeditor.getSession().setValue("");
             }
             newTitle = replaceAll(newTitle, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            //.replace('/','</i>/<i style="font-style: italic; color: #bbb;">');
             var windowCaption = $ise("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
-                windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> - ";
+                windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> <span id=\"scriptModified\" style=\"display:none;color:#fc2929;\">(*)</span> - ";
             }
+            codeeditor.getSession().getUndoManager().markClean();
         };
 
         cognifide.powershell.resizeEditor = function() {
@@ -464,6 +479,7 @@ extend(cognifide, "powershell");
                 }).animate({ backgroundColor: "#fff" });
 
         });
+
         $("#ResultsClose").click(function() {
             $("#ResultsSplitter").hide();
             $("#ResultsRow").hide("slow", function() {
