@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         {
             if (Name != null)
             {
-                WriteVerbose(String.Format("Getting index with name {0}.", Name));
+                WriteVerbose($"Getting index with name {Name}.");
                 WildcardWrite(Name, ContentSearchManager.Indexes, index => index.Name);
             }
             else

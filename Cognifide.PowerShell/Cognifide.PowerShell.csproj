@@ -185,6 +185,8 @@
     <Compile Include="Commandlets\Data\NewUsingBlockCommand.cs" />
     <Compile Include="Commandlets\Data\ResetItemFieldCommand.cs" />
     <Compile Include="Commandlets\Data\Search\InitializeSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\InitializeSearchIndexItemCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\RemoveSearchIndexItemCommand.cs" />
     <Compile Include="Commandlets\Data\Search\ResumeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\StopSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />

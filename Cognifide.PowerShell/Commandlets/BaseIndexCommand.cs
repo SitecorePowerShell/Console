@@ -10,7 +10,8 @@ namespace Cognifide.PowerShell.Commandlets
         public static readonly string[] Indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
         [AutocompleteSet("Indexes")]
-        [Parameter(ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "Item")]
         public string Name { get; set; }
     }
 }

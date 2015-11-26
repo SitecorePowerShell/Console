@@ -1,5 +1,4 @@
-﻿using System;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
@@ -9,10 +8,11 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [Cmdlet(VerbsData.Initialize, "SearchIndex", DefaultParameterSetName = "Name")]
     public class InitializeSearchIndexCommand : BaseIndexCommand
     {
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, Position = 0, ParameterSetName = "Instance")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true, ParameterSetName = "Instance")]
         public ISearchIndex Index { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Name")]
+        [Parameter(ParameterSetName = "Instance")]
         public SwitchParameter IncludeRemoteIndex { get; set; }
 
         [Parameter]
@@ -47,19 +47,16 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         {
             if (IndexCustodian.IsRebuilding(index))
             {
-                WriteVerbose(String.Format("Skipping full index rebuild for {0} because it's already running.", index.Name));
+                WriteVerbose($"Skipping full index rebuild for {index.Name} because it's already running.");
                 return;
             }
 
-            const string message = "Starting full index rebuild for {0}.";
-            WriteVerbose(String.Format(message, index.Name));
+            WriteVerbose($"Starting full index rebuild for {index.Name}.");
             var job = (isRemoteIndex) ? IndexCustodian.FullRebuildRemote(index) : IndexCustodian.FullRebuild(index);
-            if (job == null) return;
 
-            WriteVerbose(String.Format("Background job created: {0}", job.Name));
-
-            if (AsJob)
+            if (job != null && AsJob)
             {
+                WriteVerbose($"Background job created: {job.Name}");
                 WriteObject(job);
             }
         }

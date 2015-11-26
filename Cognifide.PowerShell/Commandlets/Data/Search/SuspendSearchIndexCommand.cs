@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         {
             if (Name == null) return;
 
-            WriteVerbose(String.Format("Pausing index {0}.", Name));
+            WriteVerbose($"Pausing index {Name}.");
             ContentSearchManager.GetIndex(Name).PauseIndexing();
         }
     }
