@@ -18,15 +18,17 @@ namespace Cognifide.PowerShell.Core.Validation
             "HardLink"
         };
 
-        private static readonly Dictionary<string, string> completers = new Dictionary<string, string>()
+        public static Dictionary<string, string> completers { get; } = new Dictionary<string, string>
         {
-            {"New-Item:ItemType", "[Cognifide.PowerShell.Core.Validation.MiscAutocompleteSets]::Templates"}
+            ["Get-Item:Database"] = "[Cognifide.PowerShell.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-ChildItem:Database"] = "[Cognifide.PowerShell.Commandlets.BaseLanguageAgnosticItemCommand]::Databases",
+            ["Get-Item:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+            ["Get-ChildItem:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+            ["New-Item:Language"] = "[Cognifide.PowerShell.Commandlets.BaseItemCommand]::Cultures",
+            ["New-Item:ItemType"] = "[Cognifide.PowerShell.Core.Validation.MiscAutocompleteSets]::Templates",
         };
 
-        public static Dictionary<string, string> Completers
-        {
-            get { return completers; }
-        }
+        public static Dictionary<string, string> Completers => completers;
 
         public static string[] Templates
         {

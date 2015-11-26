@@ -79,9 +79,12 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         completers = options["CustomArgumentCompleters"] as Hashtable;
                     }
+
                     if (completers == null)
                     {
-                        completers = new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count);
+                        completers =
+                            new Hashtable(CognifideSitecorePowerShellSnapIn.Completers.Count +
+                                          MiscAutocompleteSets.Completers.Count);
                         options.Add("CustomArgumentCompleters", completers);
                     }
 
