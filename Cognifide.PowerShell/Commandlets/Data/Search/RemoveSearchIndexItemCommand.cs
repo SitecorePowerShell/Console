@@ -9,7 +9,7 @@ using Sitecore.Data.Items;
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
     [Cmdlet(VerbsCommon.Remove, "SearchIndexItem", DefaultParameterSetName = "Name")]
-    public class RemoveSearchIndexItem : BaseCommand
+    public class RemoveSearchIndexItem : BaseIndexCommand
     {
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Item")]
@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         protected override void ProcessRecord()
         {
             var itemDatabase = Item.Database.Name;
-            foreach (var index in ContentSearchManager.Indexes)
+            foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
             {
                 if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
 
