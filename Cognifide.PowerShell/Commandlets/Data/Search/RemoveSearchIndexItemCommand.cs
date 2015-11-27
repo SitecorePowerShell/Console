@@ -4,6 +4,7 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
+using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
@@ -15,23 +16,50 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Item")]
         public Item Item { get; set; }
 
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "SearchResultItem")]
+        public SearchResultItem SearchResultItem { get; set; }
+
         [Parameter]
         public SwitchParameter AsJob { get; set; }
 
         protected override void ProcessRecord()
         {
-            var itemDatabase = Item.Database.Name;
-            foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
+            if (Item != null)
             {
-                if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
+                var itemDatabase = Item.Database.Name;
+                var itemPath = Item.Paths.Path;
+                var indexableId = new SitecoreIndexableItem(Item).Id;
 
-                WriteVerbose($"Removing item {Item.Paths.Path} from index {index.Name}.");
-                var job = IndexCustodian.DeleteItem(index, new SitecoreIndexableItem(Item).Id);
-
-                if (job != null && AsJob)
+                foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
                 {
-                    WriteVerbose($"Background job created: {job.Name}");
-                    WriteObject(job);
+                    if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler) c).Database.Is(itemDatabase))) continue;
+
+                    WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
+                    var job = IndexCustodian.DeleteItem(index, indexableId);
+
+                    if (job != null && AsJob)
+                    {
+                        WriteVerbose($"Background job created: {job.Name}");
+                        WriteObject(job);
+                    }
+                }
+            }
+            else if(SearchResultItem != null)
+            {
+                var itemPath = SearchResultItem.Path;
+                var indexableId = (SitecoreItemId)SearchResultItem.ItemId;
+                var indexname = SearchResultItem.Fields["_indexname"].ToString();
+
+                foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
+                {
+                    WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
+                    var job = IndexCustodian.DeleteItem(index, indexableId);
+
+                    if (job != null && AsJob)
+                    {
+                        WriteVerbose($"Background job created: {job.Name}");
+                        WriteObject(job);
+                    }
                 }
             }
         }
