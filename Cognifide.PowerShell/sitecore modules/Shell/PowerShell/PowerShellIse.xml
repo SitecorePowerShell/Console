@@ -41,16 +41,9 @@
         <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%">
           <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
             <GridPanel Columns="1" Height="100%" GridPanel.Height="200px" Width="100%" GridPanel.ID="ScriptPane">
-              <!--GridPanel Width="100%" Columns="2" GridPanel.Width="100%" >
-                <Literal Text="Context Item" />
-                <Literal Text="Database" />
-                <TreePicker ID="DataSource" DataContext="DataContext" SelectOnly="true" GridPanel.Width="100%"
-                            Padding="1" />
-                <Combobox ID="Databases" Change="ChangeDatabase" GridPanel.Style="padding:0px 0px 0px 4px" />
-              </GridPanel-->
               <GridPanel Width="100%" Columns="1" GridPanel.Width="100%" Height="100%" GridPanel.Height="100%">
                 <Memo ID="Editor" Width="100%" Height="100%" Wrap="off" Value="Get-ChildItem *" GridPanel.Height="1px"
-                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" />
+                      GridPanel.Width="100%" class="console pre" GridPanel.Style="padding:0px" spellcheck="false" Visible="false" />
                 <Border ID="CodeEditor" Width="100%" Height="100%" Wrap="off" GridPanel.Height="100%"
                         GridPanel.Width="100%" />
               </GridPanel>

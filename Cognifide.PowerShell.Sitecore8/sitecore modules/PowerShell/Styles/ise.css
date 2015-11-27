@@ -5,6 +5,10 @@
     vertical-align: top;
 }
 
+#ScriptPane{
+    background-color: white;
+}
+
 #ResultsSplitter + tr > td { height: 100%; }
 
 #Databases {
