@@ -258,7 +258,10 @@ extend(cognifide, "powershell");
 
         if (!isBlank(getUrlParameter("item") && getUrlParameter("item") != "null")) {
             callPowerShellHost(terminal, guid, "cd \"" + getUrlParameter("db") + ":\\" + myUnescape(getUrlParameter("item")) + "\"");
-        } else {
+        } else if (!isBlank(getUrlParameter("debug") && getUrlParameter("debug") === "true")) {
+            callPowerShellHost(terminal, guid, "Get-PSCallStack");
+        } else
+        {
             callPowerShellHost(terminal, guid, "cd master:\\");
         }
 

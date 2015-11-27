@@ -229,6 +229,7 @@ namespace Cognifide.PowerShell.Core.Host
         public bool Debugging { get; set; }
         public string DebugFile { get; set; }
         internal EngineIntrinsics Engine { get; set; }
+        public bool DebuggingInBreakpoint { get; private set; }
 
         public string CurrentLocation
         {
@@ -327,88 +328,78 @@ namespace Cognifide.PowerShell.Core.Host
         {
             Debugger debugger = sender as Debugger;
             DebuggerResumeAction? resumeAction = null;
-
-            if (((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(nameof(DebuggerOnDebuggerStop)))
-            {
-
-                var output = new PSDataCollection<PSObject>();
-                output.DataAdded += (dSender, dArgs) =>
-                {
-                    foreach (var item in output.ReadAll())
-                    {
-                        //Console.WriteLine(item);
-                    }
-                };
-
-                var message = Message.Parse(this, "ise:breakpointhit");
-                //var position = args.InvocationInfo.DisplayScriptPosition;
-                IScriptExtent position = args.InvocationInfo.GetType().GetProperty("ScriptPosition", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty).GetValue(args.InvocationInfo) as IScriptExtent;
-                if (position != null)
-                {
-                    message.Arguments.Add("Line", (position.StartLineNumber - 1).ToString());
-                    message.Arguments.Add("Column", (position.StartColumnNumber - 1).ToString());
-                    message.Arguments.Add("EndLine", (position.EndLineNumber - 1).ToString());
-                    message.Arguments.Add("EndColumn", (position.EndColumnNumber - 1).ToString());
-                }
-                else
-                {
-                    message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber - 1).ToString());
-                    message.Arguments.Add("Column", (args.InvocationInfo.OffsetInLine - 1).ToString());
-                    message.Arguments.Add("EndLine", (args.InvocationInfo.ScriptLineNumber).ToString());
-                    message.Arguments.Add("EndColumn", (0).ToString());
-
-                }
-                message.Arguments.Add("HitCount",
-                    args.Breakpoints.Count > 0 ? args.Breakpoints[0].HitCount.ToString() : "1");
-                SendUiMessage(message);
-
-                while (resumeAction == null && !abortRequested)
-                {
-                    if (ImmediateCommand != null)
-                    {
-                        PSCommand psCommand = new PSCommand();
-                        psCommand.AddScript(ImmediateCommand as string)
-                            .AddCommand("Out-String")
-                            .AddParameter("Stream", true);
-                        ImmediateCommand = null;
-                        DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
-                        if (results.ResumeAction != null)
-                        {
-                            resumeAction = results.ResumeAction;
-                        }
-                    }
-                    else
-                    {
-                        Thread.Sleep(100);
-                    }
-                }
-
-
-                args.ResumeAction = resumeAction.Value;
-            }
-        }
-
-        private void InvokeInRunningSession()
-        {
+            DebuggingInBreakpoint = true;
             try
             {
-                if (ImmediateCommand != null)
+                if (
+                    ((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(
+                        nameof(DebuggerOnDebuggerStop)))
                 {
-                    if (ImmediateCommand is Command)
+
+                    var output = new PSDataCollection<PSObject>();
+                    output.DataAdded += (dSender, dArgs) =>
                     {
-                        InvokeInNewPowerShell(ImmediateCommand as Command, OutTarget.OutDefault);
+                        foreach (var item in output.ReadAll())
+                        {
+                            host.UI.WriteLine(item.ToString());
+                        }
+                    };
+
+                    var message = Message.Parse(this, "ise:breakpointhit");
+                    //var position = args.InvocationInfo.DisplayScriptPosition;
+                    IScriptExtent position =
+                        args.InvocationInfo.GetType()
+                            .GetProperty("ScriptPosition",
+                                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty)
+                            .GetValue(args.InvocationInfo) as IScriptExtent;
+                    if (position != null)
+                    {
+                        message.Arguments.Add("Line", (position.StartLineNumber - 1).ToString());
+                        message.Arguments.Add("Column", (position.StartColumnNumber - 1).ToString());
+                        message.Arguments.Add("EndLine", (position.EndLineNumber - 1).ToString());
+                        message.Arguments.Add("EndColumn", (position.EndColumnNumber - 1).ToString());
                     }
                     else
                     {
-                        InvokeInNewPowerShell(ImmediateCommand as string, OutTarget.OutDefault);
+                        message.Arguments.Add("Line", (args.InvocationInfo.ScriptLineNumber - 1).ToString());
+                        message.Arguments.Add("Column", (args.InvocationInfo.OffsetInLine - 1).ToString());
+                        message.Arguments.Add("EndLine", (args.InvocationInfo.ScriptLineNumber).ToString());
+                        message.Arguments.Add("EndColumn", (0).ToString());
+
                     }
+                    message.Arguments.Add("HitCount",
+                        args.Breakpoints.Count > 0 ? args.Breakpoints[0].HitCount.ToString() : "1");
+                    SendUiMessage(message);
+
+                    while (resumeAction == null && !abortRequested)
+                    {
+                        if (ImmediateCommand != null)
+                        {
+                            PSCommand psCommand = new PSCommand();
+                            psCommand.AddScript(ImmediateCommand as string)
+                                .AddCommand("Out-Default");
+                                //.AddParameter("Stream", true);
+                            ImmediateCommand = null;
+                            DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
+                            if (results.ResumeAction != null)
+                            {
+                                resumeAction = results.ResumeAction;
+                            }
+                        }
+                        else
+                        {
+                            Thread.Sleep(20);
+                        }
+                    }
+
+
+                    args.ResumeAction = resumeAction ?? DebuggerResumeAction.Continue;
                 }
             }
             finally
             {
-                ImmediateCommand = null;
+                DebuggingInBreakpoint = false;
             }
-
         }
 
         public bool TryInvokeInRunningSession(string script, bool stringOutput = false)
@@ -439,6 +430,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 ImmediateCommand = executable;
                 var tries = 20;
+                Thread.Sleep(40);
                 while (ImmediateCommand != null && tries > 0)
                 {
                     Thread.Sleep(100);
@@ -447,14 +439,12 @@ namespace Cognifide.PowerShell.Core.Host
                 results = ImmediateResults.BaseList<object>();
                 return tries > 0;
             }
-            else
-            {
-                var command = executable as Command;
-                results = command != null
-                    ? InvokeInNewPowerShell(command, OutTarget.OutNone).BaseList<object>()
-                    : ExecuteScriptPart(executable as string, stringOutput, true, true);
-                return true;
-            }
+
+            var command = executable as Command;
+            results = command != null
+                ? InvokeInNewPowerShell(command, OutTarget.OutNone).BaseList<object>()
+                : ExecuteScriptPart(executable as string, stringOutput, true, true);
+            return true;
         }
 
         public enum OutTarget
@@ -647,6 +637,10 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void Abort()
         {
+            if (DebuggingInBreakpoint)
+            {
+                TryInvokeInRunningSession("quit");
+            }
             powerShell?.Stop();
             abortRequested = true;
         }

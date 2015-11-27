@@ -675,7 +675,9 @@ namespace Cognifide.PowerShell.Client.Applications
             if (ScriptSessionManager.SessionExists(Monitor.SessionID))
             {
                 var currentSession = ScriptSessionManager.GetSession(Monitor.SessionID);
+
                 currentSession.Abort();
+
                 if (currentSession.AutoDispose)
                 {
                     currentSession.Dispose();
@@ -946,6 +948,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
                 url.Parameters["id"] = session.Key;
+                url.Parameters["debug"] = "true";
                 var options = new ModalDialogOptions(url.ToString())
                 {
                     Header = "Immediate Window",
