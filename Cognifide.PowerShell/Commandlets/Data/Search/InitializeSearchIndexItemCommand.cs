@@ -34,14 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 {
                     if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
 
-                    WriteVerbose($"Starting index rebuild for item {itemPath} in {index.Name}.");
-                    var job = IndexCustodian.Refresh(index, indexable);
-
-                    if (job != null && AsJob)
-                    {
-                        WriteVerbose($"Background job created: {job.Name}");
-                        WriteObject(job);
-                    }
+                    RefreshItem(index, indexable, itemPath);
                 }
             }
             else if (SearchResultItem != null)
@@ -52,15 +45,20 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
                 {
-                    WriteVerbose($"Starting index rebuild for item {itemPath} in {index.Name}.");
-                    var job = IndexCustodian.Refresh(index, indexable);
-
-                    if (job != null && AsJob)
-                    {
-                        WriteVerbose($"Background job created: {job.Name}");
-                        WriteObject(job);
-                    }
+                    RefreshItem(index, indexable, itemPath);
                 }
+            }
+        }
+
+        private void RefreshItem(ISearchIndex index, IIndexable indexable, string itemPath)
+        {
+            WriteVerbose($"Starting index rebuild for item {itemPath} in {index.Name}.");
+            var job = IndexCustodian.Refresh(index, indexable);
+
+            if (job != null && AsJob)
+            {
+                WriteVerbose($"Background job created: {job.Name}");
+                WriteObject(job);
             }
         }
     }

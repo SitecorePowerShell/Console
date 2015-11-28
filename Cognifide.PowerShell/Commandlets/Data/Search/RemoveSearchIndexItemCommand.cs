@@ -34,14 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 {
                     if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler) c).Database.Is(itemDatabase))) continue;
 
-                    WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
-                    var job = IndexCustodian.DeleteItem(index, indexableId);
-
-                    if (job != null && AsJob)
-                    {
-                        WriteVerbose($"Background job created: {job.Name}");
-                        WriteObject(job);
-                    }
+                    DeleteItem(index, indexableId, itemPath);
                 }
             }
             else if(SearchResultItem != null)
@@ -52,15 +45,20 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
                 {
-                    WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
-                    var job = IndexCustodian.DeleteItem(index, indexableId);
-
-                    if (job != null && AsJob)
-                    {
-                        WriteVerbose($"Background job created: {job.Name}");
-                        WriteObject(job);
-                    }
+                    DeleteItem(index, indexableId, itemPath);
                 }
+            }
+        }
+
+        private void DeleteItem(ISearchIndex index, IIndexableId indexableId, string itemPath)
+        {
+            WriteVerbose($"Removing item {itemPath} from index {index.Name}.");
+            var job = IndexCustodian.DeleteItem(index, indexableId);
+
+            if (job != null && AsJob)
+            {
+                WriteVerbose($"Background job created: {job.Name}");
+                WriteObject(job);
             }
         }
     }
