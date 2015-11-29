@@ -93,10 +93,17 @@ key: __renderings
 content-length: 145
 
 <r xmlns:xsd="http://www.w3.org/2001/XMLSchema" ><d id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}" l="{DE28D8F7-D47B-4A97-98FC-B5F4F2FBBBB4}" /></r>
+----field----
+field: {DEC8D2D5-E3CF-48B6-A653-8E69E2716641}
+name: __Security
+key: __security
+content-length: 62
+
+ar|sitecore\Sitecore Client Users|pe|+item:read|pd|+item:read|
 ----version----
 language: en
 version: 1
-revision: 511beb76-aa4d-4479-940b-5a27a2b9d9cd
+revision: a61eb19d-8391-41da-93e6-2d49cb564ca3
 
 ----field----
 field: {67B6378B-C9F1-47C7-9CAC-BFA79B0727D9}
@@ -139,14 +146,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-511beb76-aa4d-4479-940b-5a27a2b9d9cd
+a61eb19d-8391-41da-93e6-2d49cb564ca3
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20131120T180440:635205674801093047
+20151129T142109
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

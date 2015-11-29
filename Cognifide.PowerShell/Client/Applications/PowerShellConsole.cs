@@ -35,6 +35,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected override void OnLoad(EventArgs e)
         {
+            Assert.CanRunApplication("PowerShell/PowerShell Console");
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");

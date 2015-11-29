@@ -142,6 +142,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected override void OnLoad(EventArgs e)
         {
+            Assert.CanRunApplication("PowerShell/PowerShellIse");
             base.OnLoad(e);
 
             if (Monitor == null)
