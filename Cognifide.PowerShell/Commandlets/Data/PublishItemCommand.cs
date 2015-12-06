@@ -45,7 +45,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
             }
             else
             {
-                PublishToTarget(item, source, Factory.GetDatabase("web"));
+                foreach (var publishingTarget in PublishManager.GetPublishingTargets(source))
+                {
+                    var destination = Factory.GetDatabase(publishingTarget[Core.Data.FieldIDs.TargetDatabase]);
+                    PublishToTarget(item, source, destination);
+                }
             }
         }
 
@@ -62,10 +66,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 string.Format("{3}ublishing language '{0}', version '{1}' to target '{2}'.", language, item.Version,
                     target.Name, Recurse.IsPresent ? "Recursively p" : "P")))
             {
-                WriteVerbose(
-                    String.Format(
-                        "Publishing item '{0}' in language '{1}', version '{2}' to target '{3}'.  (Recurse={4}).",
-                        item.Name, language, item.Version, target.Name, Recurse.IsPresent));
+                WriteVerbose($"Publishing item '{item.Name}' in language '{language}', version '{item.Version}' to target '{target.Name}'.  (Recurse={Recurse.IsPresent}).");
 
                 var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
                 {
@@ -78,13 +79,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 var handle = PublishManager.Publish(optionsArgs);
 
-                if (handle != null)
-                {
-                    var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+                if (handle == null) return;
 
-                    WriteVerbose(String.Format("Publish Job submitted, current state={0}.",
-                        publishStatus.State));
-                }
+                var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+
+                WriteVerbose($"Publish Job submitted, current state={publishStatus.State}.");
             }
         }
     }
