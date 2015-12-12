@@ -67,9 +67,10 @@
         '.\ConvertTo-CliXml.ps1',
         '.\Invoke-RemoteScript.ps1',
         '.\New-ScriptSession.ps1',
-	'.\Receive-RemoteItem.ps1',
+	    '.\Receive-RemoteItem.ps1',
         '.\Receive-MediaItem.ps1',
-        '.\Send-MediaItem.ps1'
+        '.\Send-MediaItem.ps1',
+        '.\Send-RemoteItem.ps1'
     )
     
     # Functions to export from this module
@@ -78,9 +79,10 @@
         'ConvertTo-CliXml',
         'Invoke-RemoteScript',
         'New-ScriptSession',
-	'Receive-RemoteItem',
+	    'Receive-RemoteItem',
         'Receive-MediaItem',
-        'Send-MediaItem'
+        'Send-MediaItem',
+        'Send-RemoteItem'
     )
 
     # Cmdlets to export from this module

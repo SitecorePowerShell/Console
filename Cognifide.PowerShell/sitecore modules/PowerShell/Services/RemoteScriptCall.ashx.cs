@@ -14,8 +14,11 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.IO;
+using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
+using Sitecore.SecurityModel;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
@@ -90,7 +93,7 @@ namespace Cognifide.PowerShell.Console.Services
                     return;
             }
 
-            if(!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
                 AuthenticationManager.Login(userName, password, false);
             }
@@ -102,6 +105,67 @@ namespace Cognifide.PowerShell.Console.Services
                     ? Context.Database
                     : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
+
+            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
+            if (isUpload)
+            {
+                if (!authenticated)
+                {
+                    HttpContext.Current.Response.StatusCode = 403;
+                    return;
+                }
+
+                switch (apiVersion)
+                {
+                    case "media":
+                        itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+                        var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
+                                        scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+                        if (mediaItem == null)
+                        {
+                            var dirName = (Path.GetDirectoryName(itemParam) ?? string.Empty).Replace('\\', '/');
+                            if (!dirName.StartsWith(Constants.MediaLibraryPath))
+                            {
+                                dirName = Constants.MediaLibraryPath +
+                                          (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                            }
+
+                            var mco = new MediaCreatorOptions
+                            {
+                                Database = Factory.GetDatabase(dbName),
+                                Versioned = Settings.Media.UploadAsVersionableByDefault,
+                                Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(itemParam)}"
+                            };
+
+                            var mc = new MediaCreator();
+                            using (var ms = new MemoryStream())
+                            {
+                                request.InputStream.CopyTo(ms);
+                                mc.CreateFromStream(ms, Path.GetFileName(itemParam), mco);
+                            }
+                        }
+                        else
+                        {
+                            var mediaUri = MediaUri.Parse(mediaItem);
+                            var media = MediaManager.GetMedia(mediaUri);
+
+                            using (var ms = new MemoryStream())
+                            {
+                                request.InputStream.CopyTo(ms);
+                                using (new EditContext(mediaItem, SecurityCheck.Disable))
+                                {
+                                    using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
+                                    {
+                                        media.SetStream(mediaStream);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                return;
+            }
 
             Item scriptItem;
 
@@ -117,10 +181,10 @@ namespace Cognifide.PowerShell.Console.Services
                         HttpContext.Current.Response.StatusCode = 403;
                         return;
                     }
-                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\','/');
-                    var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
+                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+                    var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
                                     scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-                    if(mediaItem == null)
+                    if (mediaItem == null)
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                         return;
