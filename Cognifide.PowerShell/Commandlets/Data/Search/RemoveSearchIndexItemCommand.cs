@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 using Sitecore.ContentSearch.SearchTypes;
@@ -23,6 +24,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         public SwitchParameter AsJob { get; set; }
 
         protected override void ProcessRecord()
+        {
+            if (this.VersionSupportThreshold("Remove-SearchIndexItem", VersionResolver.SitecoreVersion72, false))
+            {
+                ProcessRecord72();
+            }
+        }
+
+        protected void ProcessRecord72()
         {
             if (Item != null)
             {

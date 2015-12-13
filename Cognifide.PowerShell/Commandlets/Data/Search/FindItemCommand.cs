@@ -57,9 +57,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 // get all items in medialibrary
                 var query = context.GetQueryable<SearchResultItem>();
 
-                if (!String.IsNullOrEmpty(Where))
+                if (!string.IsNullOrEmpty(Where))
                 {
-                    if (this.ParameterVersionSupportThreshold("Where", VersionResolver.SitecoreVersion75))
+                    if (this.VersionSupportThreshold("Where", VersionResolver.SitecoreVersion75, true))
                     {
                         query = FilterIfSupported(query);
                     }
@@ -145,9 +145,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         }
                     }
 
-                if (!String.IsNullOrEmpty(OrderBy))
+                if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    if (this.ParameterVersionSupportThreshold("OrderBy", VersionResolver.SitecoreVersion75))
+                    if (this.VersionSupportThreshold("OrderBy", VersionResolver.SitecoreVersion75, true))
                     {
                         query = OrderIfSupported(query);
                     }
