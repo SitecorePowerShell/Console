@@ -3,44 +3,31 @@
 function Send-RemoteItem {
     <#
         .SYNOPSIS
-            Downloads a file or media item through a Sitecore PowerShell Extensions web service.
+            Uploads a file to the filesystem on the server or media library through a Sitecore PowerShell Extensions web service.
     
        .EXAMPLE
-            The following downloads an item from the media library in the master db and overwrite any existing version.
+            The following uploads a file to the root application path.
     
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Receive-RemoteItem -Session $session -Path "/Default Website/cover" -Destination "C:\Images\" -Database master -Force
+            Get-Item -Path C:\temp\data.xml | Send-RemoteItem @props -RootPath App
     
        .EXAMPLE
-            The following downloads an item from the media library using the Id in the master db and uses the specified name.
+            The following uploads the image to the media library with the specified name.
     
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Receive-RemoteItem -Session $session -Path "{04DAD0FD-DB66-4070-881F-17264CA257E1}" -Destination "C:\Images\cover1.jpg" -Database master -Force
+            Get-Item -Path C:\image.png | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/image2.png"
     
         .EXAMPLE
-            The following downloads all the items from the media library in the specified path.
+            The following uploads the image to the media library updating the item with the specified Id..
     
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Invoke-RemoteScript -Session $session -ScriptBlock { 
-                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | 
-                    Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath 
-            } | Receive-RemoteItem -Destination "C:\Images\" -Database master
+            Get-Item -Path C:\temp\cover.jpg | Send-RemoteItem -Session $session -Destination "{04DAD0FD-DB66-4070-881F-17264CA257E1}"
 
         .EXAMPLE
-            The following downloads a file from the application root path.
+            The following uploads a file to the specified absolute path.
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
-              
-        .EXAMPLE
-            The following compresses the log files into an archive and downloads from the absolute path.
-
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Invoke-RemoteScript -Session $session -ScriptBlock {
-                Import-Function -Name Compress-Archive
-                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
-                    Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
-            } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
+            Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
     #>
     [CmdletBinding(DefaultParameterSetName='Uri')]
     param(
