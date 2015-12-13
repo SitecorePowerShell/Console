@@ -7,9 +7,9 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
 {
     public class TypeResolver
     {
-        public static T Resolve<T>(string typeName, object[] parameters = null)
+        public static T Resolve<T>(object[] parameters = null)
         {
-            var xpath = "typeMappings/mapping[@name='" + typeName + "']";
+            var xpath = "typeMappings/mapping[@name='" + typeof (T).Name + "']";
             return (T)(parameters == null ?
               Sitecore.Reflection.ReflectionUtil.CreateObjectFromConfig(xpath) :
               Sitecore.Reflection.ReflectionUtil.CreateObjectFromConfig(xpath, parameters));

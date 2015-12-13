@@ -5,7 +5,6 @@ using Sitecore.CodeDom.Scripts;
 using Sitecore.Diagnostics;
 using Sitecore.Rules;
 using Sitecore.Rules.Conditions;
-using Sitecore.Rules.Conditions.DateTimeConditions;
 
 namespace Cognifide.PowerShell.Core.Rules
 {

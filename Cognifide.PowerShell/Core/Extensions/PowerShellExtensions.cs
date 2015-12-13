@@ -15,12 +15,12 @@ namespace Cognifide.PowerShell.Core.Extensions
             return obj;
         }
 
-        public static List<T> BaseList<T>(this object enumarable) where T : class
+        public static List<T> BaseList<T>(this object enumerable) where T : class
         {
             var newList = new List<T>();
-            if (enumarable is IEnumerable)
+            if (enumerable is IEnumerable)
             {
-                foreach (var val in enumarable as IEnumerable)
+                foreach (var val in enumerable as IEnumerable)
                 {
                     var newVal = val.BaseObject();
                     if (newVal is T)
@@ -32,10 +32,10 @@ namespace Cognifide.PowerShell.Core.Extensions
             return newList;
         }
 
-        public static object[] BaseArray(this object[] array)
+        public static IList BaseArray(this IList array)
         {
-            var newArray = new object[array.Length];
-            for (var i = 0; i < array.Length; i++)
+            var newArray = new object[array.Count];
+            for (var i = 0; i < array.Count; i++)
             {
                 newArray[i] = array[i].BaseObject();
             }

@@ -347,11 +347,19 @@ namespace Cognifide.PowerShell.Core.Host
 
                     var message = Message.Parse(this, "ise:breakpointhit");
                     //var position = args.InvocationInfo.DisplayScriptPosition;
-                    IScriptExtent position =
-                        args.InvocationInfo.GetType()
+                    IScriptExtent position = null;
+                    try
+                    {
+                        position = args.InvocationInfo.GetType()
                             .GetProperty("ScriptPosition",
                                 BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty)
                             .GetValue(args.InvocationInfo) as IScriptExtent;
+                    }
+                    catch (Exception)
+                    {
+                        position = args.InvocationInfo.DisplayScriptPosition;
+                    }
+
                     if (position != null)
                     {
                         message.Arguments.Add("Line", (position.StartLineNumber - 1).ToString());
@@ -367,6 +375,7 @@ namespace Cognifide.PowerShell.Core.Host
                         message.Arguments.Add("EndColumn", (0).ToString());
 
                     }
+
                     message.Arguments.Add("HitCount",
                         args.Breakpoints.Count > 0 ? args.Breakpoints[0].HitCount.ToString() : "1");
                     SendUiMessage(message);

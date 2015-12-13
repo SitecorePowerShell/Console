@@ -35,6 +35,12 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string ParentParam = "Parent";
         private const string AmbiguousPathsParam = "AmbiguousPaths";
         private const string TransferOptionsParam = "TransferOptions";
+        private const string RawParam = "Raw";
+        private const string EncodingParam = "Encoding";
+        private const string DelimiterParam = "Delimiter";
+        private const string ExtensionParam = "Extension";
+        private const string FileBasedParam = "FileBased";
+        private const string VersionedParam = "Versioned";        
 
         public object GetDynamicParameters()
         {
@@ -178,6 +184,15 @@ namespace Cognifide.PowerShell.Core.Provider
             result = defined ? (T)dic[paramName].Value : default(T);
             return defined;
         }
+
+        private T GetDynamicParamValue<T>(string paramName, T defaultValue)
+        {
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            bool defined = (dic != null && dic[paramName].IsSet);
+            T result = defined ? (T)dic[paramName].Value : defaultValue;
+            return result;
+        }
+
 
         private void GetVersionAndLanguageParams(out int version, out string language)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
@@ -138,7 +140,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 var child = childItem;
                 if (wildcard.IsMatch(child.Name))
                 {
-                    WriteMatchingItem(language, version, child);
+                    GetMatchingItem(language, version, child).ForEach(WriteItem);
                 }
 
                 if (recurse)
@@ -219,70 +221,69 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetItem(string path)
         {
-            try
+            GetItemInternal(path).ForEach(WriteItem);
+        }
+
+        internal IEnumerable<Item> GetItemInternal(string path)
+        {
+            LogInfo("Executing GetItem(string path='{0}')", path);
+
+            string language;
+            int version;
+
+            GetVersionAndLanguageParams(out version, out language);
+
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            if (dic != null && dic.ContainsKey(UriParam) && dic[UriParam].IsSet)
             {
-                LogInfo("Executing GetItem(string path='{0}')", path);
-
-                string language;
-                int version;
-
-                GetVersionAndLanguageParams(out version, out language);
-
-                var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                if (dic != null && dic.ContainsKey(UriParam) && dic[UriParam].IsSet)
+                var uri = dic[UriParam].Value.ToString();
+                var itemUri = ItemUri.Parse(uri);
+                var uriItem = Factory.GetDatabase(itemUri.DatabaseName)
+                    .GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
+                yield return uriItem;
+                yield break;
+            }
+            if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
+            {
+                var query = dic[QueryParam].Value.ToString();
+                var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
+                foreach (var resultItem in items.SelectMany(currentItem => GetMatchingItem(language, version, currentItem)))
                 {
-                    var uri = dic[UriParam].Value.ToString();
-                    var itemUri = ItemUri.Parse(uri);
-                    var uriItem = Factory.GetDatabase(itemUri.DatabaseName)
-                        .GetItem(itemUri.ItemID, itemUri.Language, itemUri.Version);
-                    WriteItem(uriItem);
-                    return;
+                    yield return resultItem;
                 }
-                if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
+                yield break;
+            }
+            if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
+            {
+                var id = dic[IdParam].Value.ToString();
+                Database database;
+                if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
                 {
-                    var query = dic[QueryParam].Value.ToString();
-                    var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(query);
-                    foreach (var currentItem in items)
-                    {
-                        WriteMatchingItem(language, version, currentItem);
-                    }
-                    return;
-                }
-                if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
-                {
-                    var id = dic[IdParam].Value.ToString();
-                    Database database;
-                    if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
-                    {
-                        database = (Database) dic[DatabaseParam].Value;
-                    }
-                    else
-                    {
-                        database = Factory.GetDatabase(PSDriveInfo.Name);
-                    }
-                    var itemById = database.GetItem(new ID(id));
-                    if (itemById != null)
-                    {
-                        WriteMatchingItem(language, version, itemById);
-                    }
-                    return;
-                }
-
-
-                var item = GetItemForPath(path);
-                if (item != null)
-                {
-                    WriteMatchingItem(language, version, item);
+                    database = (Database) dic[DatabaseParam].Value;
                 }
                 else
                 {
-                    WriteInvalidPathError(path);
+                    database = Factory.GetDatabase(PSDriveInfo.Name);
+                }
+                var itemById = database.GetItem(new ID(id));
+                foreach (var resultItem in GetMatchingItem(language, version, itemById))
+                {
+                    yield return resultItem;
+                }
+                yield break;
+            }
+
+            var item = GetItemForPath(path);
+            if (item != null)
+            {
+                foreach (var resultItem in GetMatchingItem(language, version, item))
+                {
+                    yield return resultItem;
                 }
             }
-            catch (Exception ex)
+            else
             {
-                LogError(ex, "Error while executing GetItem(string path='{0}')", path);
-                throw;
+                WriteInvalidPathError(path);
             }
         }
 
@@ -298,7 +299,7 @@ namespace Cognifide.PowerShell.Core.Provider
             WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
         }
 
-        private void WriteMatchingItem(string language, int version, Item item)
+        private IEnumerable<Item> GetMatchingItem(string language, int version, Item item)
         {
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             if (dic != null && dic.ContainsKey(AmbiguousPathsParam) && dic[AmbiguousPathsParam].IsSet)
@@ -306,18 +307,21 @@ namespace Cognifide.PowerShell.Core.Provider
                 var ambiguousItems =
                     item.Parent.GetChildren()
                         .Where(child => string.Equals(child.Name, item.Name, StringComparison.CurrentCultureIgnoreCase));
-                foreach (var ambiguousItem in ambiguousItems)
+                foreach (var resultItem in ambiguousItems.SelectMany(ambiguousItem => GetMatchingItemEx(language, version, ambiguousItem)))
                 {
-                    WriteMatchingItemEx(language, version, ambiguousItem);
+                    yield return resultItem;
                 }
             }
             else
             {
-                WriteMatchingItemEx(language, version, item);
+                foreach (var resultItem in GetMatchingItemEx(language, version, item))
+                {
+                    yield return resultItem;
+                }
             }
         }
 
-        private void WriteMatchingItemEx(string language, int version, Item item)
+        private IEnumerable<Item> GetMatchingItemEx(string language, int version, Item item)
         {
             // if language is forced get the item in proper language
             if (language != null || version != Version.Latest.Number)
@@ -334,12 +338,12 @@ namespace Cognifide.PowerShell.Core.Provider
                                     )
                         )))
                 {
-                    WriteItem(matchingItem);
+                    yield return matchingItem;
                 }
             }
             else
             {
-                WriteItem(item);
+                yield return item;
             }
         }
 

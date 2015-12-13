@@ -10,6 +10,8 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -946,20 +948,12 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (!args.IsPostBack)
             {
+                Monitor.Active = false;
                 var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
                 url.Parameters["id"] = session.Key;
                 url.Parameters["debug"] = "true";
-                var options = new ModalDialogOptions(url.ToString())
-                {
-                    Header = "Immediate Window",
-                    Resizable = true,
-                    Width = "800",
-                    Height = "600",
-                    Response = true
-                };
-                Monitor.Active = false;
-                SheerResponse.ShowModalDialog(options);
+                TypeResolver.Resolve<IImmediateDebugWindowLauncher>().ShowImmediateWindow(url);
                 args.WaitForPostBack(true);
             }
             else
@@ -968,5 +962,6 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
         }
+
     }
 }

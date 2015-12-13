@@ -227,7 +227,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     if (date != DateTime.MinValue && date != DateTime.MaxValue)
                     {
                         dateTimePicker.Value = (date.Kind != DateTimeKind.Utc)
-                            ? DateUtil.ToIsoDate(TypeResolver.Resolve<IDateConverter>("IDateConverter").ToServerTime(date))
+                            ? DateUtil.ToIsoDate(TypeResolver.Resolve<IDateConverter>().ToServerTime(date))
                             : DateUtil.ToIsoDate(date);
                     }
                 }

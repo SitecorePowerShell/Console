@@ -20,6 +20,14 @@ namespace Cognifide.PowerShell.Core.Provider
             return currentItem;
         }
 
+        private Item GetSitecorePath(string path)
+        {
+            var relativePath = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
+            var databaseName = path.IndexOf(':') < 0 ? PSDriveInfo.Name : path.Substring(0, path.IndexOf(':'));
+            var currentItem = PathUtilities.GetItem(databaseName, relativePath);
+            return currentItem;
+        }
+
         private Item GetItemById(string partialPath,string id)
         {
             var databaseName = partialPath.IndexOf(':') < 0 ? PSDriveInfo.Name : partialPath.Substring(0, partialPath.IndexOf(':'));
