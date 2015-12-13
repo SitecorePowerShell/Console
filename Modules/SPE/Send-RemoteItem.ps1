@@ -42,27 +42,22 @@ function Send-RemoteItem {
                     Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
             } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
     #>
-    [CmdletBinding(DefaultParameterSetName='Uri and File')]
+    [CmdletBinding(DefaultParameterSetName='Uri')]
     param(
-        [Parameter(Mandatory=$true, ParameterSetName='Session and File')]
-        [Parameter(Mandatory=$true, ParameterSetName='Session and Database')]
+        [Parameter(Mandatory=$true, ParameterSetName='Session')]
         [ValidateNotNull()]
         [pscustomobject]$Session,
         
-        [Parameter(Mandatory=$true, ParameterSetName='Uri and File')]
-        [Parameter(Mandatory=$true, ParameterSetName='Uri and Database')]
+        [Parameter(ParameterSetName='Uri')]
         [Uri[]]$ConnectionUri,
 
-        [Parameter(ParameterSetName='Uri and File')]
-        [Parameter(ParameterSetName='Uri and Database')]
+        [Parameter(ParameterSetName='Uri')]
         [string]$Username,
 
-        [Parameter(ParameterSetName='Uri and File')]
-        [Parameter(ParameterSetName='Uri and Database')]
+        [Parameter(ParameterSetName='Uri')]
         [string]$Password,
 
-        [Parameter(ParameterSetName='Uri and File')]
-        [Parameter(ParameterSetName='Uri and Database')]
+        [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
         $Credential,
 
@@ -70,33 +65,19 @@ function Send-RemoteItem {
         [ValidateNotNullOrEmpty()]
         [string]$Path,
 
-        [Parameter(ParameterSetName='Session and File')]
-        [Parameter(ParameterSetName='Uri and File')]
+        [Parameter(ParameterSetName='Session')]
+        [Parameter(ParameterSetName='Uri')]
         [ValidateSet("App", "Data", "Debug", "Index", "Layout", "Log", "Media", "Package", "Serialization", "Temp")]
         [ValidateNotNullOrEmpty()]
         [string]$RootPath,
 
-        [Parameter(Mandatory=$true, ParameterSetName='Session and Database')]
-        [Parameter(Mandatory=$true, ParameterSetName='Uri and Database')]
-        [ValidateNotNullOrEmpty()]
-        [string]$Database = "master",
-
-        [Parameter()]
-        [string]$Destination,
-
-        [Parameter()]
-        [switch]$Force,
-
-        #[Parameter(ParameterSetName='Session and File')]
-        [Parameter(ParameterSetName='Session and Database')]
-        #[Parameter(ParameterSetName='Uri and File')]
-        [Parameter(ParameterSetName='Uri and Database')]
-        [switch]$Container
+        [string]$Destination
     )
 
     process {
-
-        $isMediaItem = $RootPath -eq "Media"        
+        
+        $mediaId = [guid]::Empty
+        $isMediaItem = $RootPath -eq "Media" -or [guid]::TryParse($Destination, [ref]$mediaId)
         
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Destination))) {
             Write-Error -Message "RootPath is required when Destination is not fully qualified." -ErrorAction Stop
@@ -105,13 +86,16 @@ function Send-RemoteItem {
         $Destination = $Destination.TrimEnd('\','/')
 
         $output = $Destination
-        $extension = [System.IO.Path]::GetExtension($Path)
-        if(!$output.EndsWith($extension)) {
-            if(!$output.EndsWith("/") -and !$output.EndsWith("\")) {
-                $output += "/"
-            }
 
-            $output += [System.IO.Path]::GetFileName($Path)
+        if($mediaId -eq [guid]::Empty) {
+            $extension = [System.IO.Path]::GetExtension($Path)
+            if(!$output.EndsWith($extension)) {
+                if(!$output.EndsWith("/") -and !$output.EndsWith("\")) {
+                    $output += "/"
+                }
+
+                $output += [System.IO.Path]::GetFileName($Path)
+            }
         }
 
         if($Session) {
@@ -124,7 +108,7 @@ function Send-RemoteItem {
         $serviceUrl = "/-/script"
 
         if($isMediaItem) {
-            $serviceUrl += "/media/" + $Database + "/" + $output + "/?"
+            $serviceUrl += "/media/master/" + $output + "/?"
         } else {
             $serviceUrl += "/file/" + $RootPath + "/?path=" + $output + "&"
         }
