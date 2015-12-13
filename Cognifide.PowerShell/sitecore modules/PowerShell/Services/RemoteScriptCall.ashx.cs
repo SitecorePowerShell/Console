@@ -14,8 +14,11 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.IO;
+using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
+using Sitecore.SecurityModel;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
@@ -48,60 +51,99 @@ namespace Cognifide.PowerShell.Console.Services
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
 
-            const string disabledMessage = "The request could not be completed because the service is disabled.";
-
-            switch (apiVersion)
+            if (!CheckServiceEnabled(apiVersion))
             {
-                case "1":
-                    if (!WebServiceSettings.ServiceEnabledRestfulv1)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        return;
-                    }
-                    break;
-                case "2":
-                    if (!WebServiceSettings.ServiceEnabledRestfulv2)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        return;
-                    }
-                    break;
-                case "file":
-                    if (!WebServiceSettings.ServiceEnabledFileDownload)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        return;
-                    }
-                    break;
-                case "media":
-                    if (!WebServiceSettings.ServiceEnabledMediaDownload)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        return;
-                    }
-                    break;
-                default:
-                    HttpContext.Current.Response.StatusCode = 403;
-                    HttpContext.Current.Response.StatusDescription = disabledMessage;
-                    return;
+                return;
             }
 
-            if(!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
                 AuthenticationManager.Login(userName, password, false);
             }
 
-            var authenticated = Context.IsLoggedIn;
-            var scriptDb =
-                apiVersion.Is("file") || !authenticated ||
-                string.IsNullOrEmpty(originParam) || originParam == "current"
-                    ? Context.Database
-                    : Database.GetDatabase(originParam);
+            var isAuthenticated = Context.IsLoggedIn;
+            var useContextDatabase = apiVersion.Is("file") || !isAuthenticated || String.IsNullOrEmpty(originParam) || originParam.Is("current");
+            var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
+
+            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
+            if (isUpload)
+            {
+                if (!isAuthenticated)
+                {
+                    HttpContext.Current.Response.StatusCode = 403;
+                    return;
+                }
+
+                switch (apiVersion)
+                {
+                    case "media":
+                        itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+                        var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
+                                        scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+                        if (mediaItem == null)
+                        {
+                            var dirName = (Path.GetDirectoryName(itemParam) ?? string.Empty).Replace('\\', '/');
+                            if (!dirName.StartsWith(Constants.MediaLibraryPath))
+                            {
+                                dirName = Constants.MediaLibraryPath +
+                                          (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                            }
+
+                            var mco = new MediaCreatorOptions
+                            {
+                                Database = Factory.GetDatabase(dbName),
+                                Versioned = Settings.Media.UploadAsVersionableByDefault,
+                                Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(itemParam)}"
+                            };
+
+                            var mc = new MediaCreator();
+                            using (var ms = new MemoryStream())
+                            {
+                                request.InputStream.CopyTo(ms);
+                                mc.CreateFromStream(ms, Path.GetFileName(itemParam), mco);
+                            }
+                        }
+                        else
+                        {
+                            var mediaUri = MediaUri.Parse(mediaItem);
+                            var media = MediaManager.GetMedia(mediaUri);
+
+                            using (var ms = new MemoryStream())
+                            {
+                                request.InputStream.CopyTo(ms);
+                                using (new EditContext(mediaItem, SecurityCheck.Disable))
+                                {
+                                    using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
+                                    {
+                                        media.SetStream(mediaStream);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "file":
+                        pathParam = pathParam.Replace('/', '\\');
+                        var file = GetPathFromParameters(originParam, pathParam);
+                        file = FileUtil.MapPath(file);
+                        var fileInfo = new FileInfo(file);
+                        if (!fileInfo.Exists)
+                        {
+                            fileInfo.Directory?.Create();
+                        }
+                        using (var output = fileInfo.OpenWrite())
+                        {
+                            using (var input = request.InputStream)
+                            {
+                                input.CopyTo(output);
+                            }
+                        }
+                        break;
+                }
+
+                return;
+            }
 
             Item scriptItem;
 
@@ -112,15 +154,15 @@ namespace Cognifide.PowerShell.Console.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    if (!authenticated)
+                    if (!isAuthenticated)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         return;
                     }
-                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\','/');
-                    var mediaItem = (MediaItem) scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
+                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+                    var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
                                     scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-                    if(mediaItem == null)
+                    if (mediaItem == null)
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                         return;
@@ -140,53 +182,18 @@ namespace Cognifide.PowerShell.Console.Services
                     WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
                     return;
                 case "file":
-                    if (!authenticated)
+                    if (!isAuthenticated)
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         return;
                     }
 
-                    string file;
-                    switch (originParam)
+                    var file = GetPathFromParameters(originParam, pathParam);
+
+                    if (String.IsNullOrEmpty(file))
                     {
-                        case "data":
-                            file = Settings.DataFolder;
-                            break;
-                        case "log":
-                            file = Settings.LogFolder;
-                            break;
-                        case "media":
-                            file = Settings.MediaFolder;
-                            break;
-                        case "package":
-                            file = Settings.PackagePath;
-                            break;
-                        case "serialization":
-                            file = Settings.SerializationFolder;
-                            break;
-                        case "temp":
-                            file = Settings.TempFolderPath;
-                            break;
-                        case "debug":
-                            file = Settings.DebugFolder;
-                            break;
-                        case "layout":
-                            file = Settings.LayoutFolder;
-                            break;
-                        case "app":
-                            file = HttpRuntime.AppDomainAppPath;
-                            break;
-                        default:
-                            if (Path.IsPathRooted(pathParam))
-                            {
-                                file = pathParam;
-                            }
-                            else
-                            {
-                                HttpContext.Current.Response.StatusCode = 403;
-                                return;
-                            }
-                            break;
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
                     }
 
                     if (String.IsNullOrEmpty(file))
@@ -195,11 +202,6 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     else
                     {
-                        if (file != pathParam)
-                        {
-                            file = Path.Combine(file, pathParam);
-                        }
-
                         file = FileUtil.MapPath(file);
                         if (!File.Exists(file))
                         {
@@ -229,7 +231,7 @@ namespace Cognifide.PowerShell.Console.Services
                     break;
             }
 
-            if (scriptItem == null || scriptItem.Fields[ScriptItemFieldNames.Script] == null)
+            if (scriptItem?.Fields[ScriptItemFieldNames.Script] == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
                 return;
@@ -296,6 +298,104 @@ namespace Cognifide.PowerShell.Console.Services
             apiScripts = null;
         }
 
+        private bool CheckServiceEnabled(string apiVersion)
+        {
+            var isEnabled = true;
+            const string disabledMessage = "The request could not be completed because the service is disabled.";
+
+            switch (apiVersion)
+            {
+                case "1":
+                    if (!WebServiceSettings.ServiceEnabledRestfulv1)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
+                case "2":
+                    if (!WebServiceSettings.ServiceEnabledRestfulv2)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
+                case "file":
+                    if (!WebServiceSettings.ServiceEnabledFileDownload)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
+                case "media":
+                    if (!WebServiceSettings.ServiceEnabledMediaDownload)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
+                default:
+                    HttpContext.Current.Response.StatusCode = 403;
+                    HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    isEnabled = false;
+                    break;
+            }
+
+            return isEnabled;
+        }
+
+        private string GetPathFromParameters(string originParam, string pathParam)
+        {
+            var folder = String.Empty;
+
+            switch (originParam)
+            {
+                case "data":
+                    folder = Settings.DataFolder;
+                    break;
+                case "log":
+                    folder = Settings.LogFolder;
+                    break;
+                case "media":
+                    folder = Settings.MediaFolder;
+                    break;
+                case "package":
+                    folder = Settings.PackagePath;
+                    break;
+                case "serialization":
+                    folder = Settings.SerializationFolder;
+                    break;
+                case "temp":
+                    folder = Settings.TempFolderPath;
+                    break;
+                case "debug":
+                    folder = Settings.DebugFolder;
+                    break;
+                case "layout":
+                    folder = Settings.LayoutFolder;
+                    break;
+                case "app":
+                    folder = HttpRuntime.AppDomainAppPath;
+                    break;
+                default:
+                    if (Path.IsPathRooted(pathParam))
+                    {
+                        folder = pathParam;
+                    }
+                    break;
+            }
+
+            if (folder != pathParam && !String.IsNullOrEmpty(pathParam))
+            {
+                folder = Path.GetFullPath(folder + pathParam);
+            }
+
+            return folder;
+        }
+
         private void UpdateCache(string dbName)
         {
             if (apiScripts == null)
@@ -313,15 +413,13 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private void BuildCache(List<Item> roots)
+        private void BuildCache(IEnumerable<Item> roots)
         {
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
                 var rootPath = root.Paths.Path;
-                var query = string.Format(
-                    "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\"]",
-                    path);
+                var query = $"{path}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\"]";
                 try
                 {
                     var results = root.Database.SelectItems(query);
