@@ -101,13 +101,13 @@ function Send-RemoteItem {
         }
 
         $serviceUrl += "user=" + $Username + "&password=" + $Password
-
+        <#
         $data = [System.IO.File]::ReadAllBytes($Path)
 
         if(!$data -or $data.Length -le 0) {
             Write-Verbose -Message "Upload failed. No content to send to the web service."
             return
-        }
+        }#>
 
         foreach($uri in $ConnectionUri) {
             
@@ -124,11 +124,33 @@ function Send-RemoteItem {
             [byte[]]$response = & {
                 try {
                     Write-Verbose -Message "Uploading $($Path)"
-                    $webclient.UploadData($url, $data)
+                    $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
+                    $bytes = New-Object byte[] 1024
+                    $totalBytesToRead = $fileStream.Length
+                    $bytesRead = 0
+                    $bytesToRead = $bytes.Length
+                    if($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
+                        $bytesToRead = $totalBytesToRead - $bytesRead
+                    }
+                    $bytes = New-Object byte[] $bytesToRead
+
+                    $webStream = $webclient.OpenWrite($url)
+                    while(($bytesToRead = $fileStream.Read($bytes, 0, $bytes.Length)) -gt 0) {
+                        $webStream.Write($bytes, 0, $bytes.Length)
+                        $bytesRead += $bytes.Length
+                        if($totalBytesToRead - $bytesRead -lt $bytes.Length) {
+                            $bytesToRead = $totalBytesToRead - $bytesRead
+                        }
+                        $bytes = New-Object byte[] $bytesToRead
+                    }                   
+                    $webStream.Close()
+                    $fileStream.Close()
+                    #$webclient.UploadData($url, $data)
                     Write-Verbose -Message "Upload complete."
                 } catch [System.Net.WebException] {
                     [System.Net.WebException]$ex = $_.Exception
                     [System.Net.HttpWebResponse]$errorResponse = $ex.Response
+                    Write-Verbose -Message "Response exception message: $($ex.Message)"
                     Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
                 }
             }

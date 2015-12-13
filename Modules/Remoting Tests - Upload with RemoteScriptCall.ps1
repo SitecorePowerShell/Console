@@ -16,4 +16,6 @@ Get-Item -Path C:\temp\cover.jpg | Send-RemoteItem @props -Destination "{04DAD0F
 # Upload single file using full qualified path
 Send-RemoteItem @props -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
 
+Get-Item -Path C:\temp\data.zip | Send-RemoteItem @props -RootPath App -Destination "\upload"
+
 # Upload multiple files while maintaining directory structure
