@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Modules;
+using Sitecore;
 using Sitecore.Data;
+using Sitecore.Data.Events;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
+using Sitecore.Events;
 using Sitecore.Resources.Media;
+using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
-    public static class ItemShellExtensions
+    public class ItemShellExtensions
     {
         private static readonly Dictionary<ID, List<string>> allPropertySets = new Dictionary<ID, List<string>>();
 
@@ -48,29 +54,29 @@ namespace Cognifide.PowerShell.Core.Extensions
 
             foreach (var field in propertySet)
             {
-                if (!String.IsNullOrEmpty(field))
+                if (!string.IsNullOrEmpty(field))
                 {
                     var duplicate = psobj.Properties[field] == null;
 
-                    var getter = String.Format("$this[\"{0}\"]", field);
+                    var getter = string.Format("$this[\"{0}\"]", field);
                     if (item.Fields[field] != null)
                     {
                         switch (item.Fields[field].TypeKey)
                         {
                             case ("datetime"):
-                                getter = String.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
+                                getter = string.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
                                 break;
                             default:
-                                getter = String.Format("$this[\"{0}\"]", field);
+                                getter = string.Format("$this[\"{0}\"]", field);
                                 break;
                         }
                     }
                     var setter =
-                        String.Format("[{0}]::Modify($this, \"{1}\", $Args );",
+                        string.Format("[{0}]::Modify($this, \"{1}\", $Args );",
                             typeof (ItemShellExtensions).FullName, field);
 
                     psobj.Properties.Add(new PSScriptProperty(
-                        duplicate ? field : String.Format("_{0}", field),
+                        duplicate ? field : string.Format("_{0}", field),
                         provider.InvokeCommand.NewScriptBlock(getter),
                         provider.InvokeCommand.NewScriptBlock(setter)));
                 }
@@ -128,7 +134,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                                 {
                                     imageField.Clear();
                                     imageField.MediaID = media.ID;
-                                    imageField.Alt = !String.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
+                                    imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
                                 }
                             }
                             else if (field is LinkField)
@@ -197,13 +203,35 @@ namespace Cognifide.PowerShell.Core.Extensions
             if (item != null && provider != null && o != null)
             {
                 psobj.Properties.Add(new PSScriptProperty(
-                    "OwnerItemId", provider.InvokeCommand.NewScriptBlock(string.Format("'{{{0}}}'", item.ID))));
+                    "OwnerItemId", provider.InvokeCommand.NewScriptBlock($"'{{{item.ID}}}'")));
                 psobj.Properties.Add(new PSScriptProperty(
                     "OwnerItemPath",
-                    provider.InvokeCommand.NewScriptBlock(string.Format("\"{0}:{1}\"", item.Database.Name,
-                        item.Paths.Path.Substring(9).Replace('/', '\\')))));
+                    provider.InvokeCommand.NewScriptBlock(
+                        $"\"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}\"")));
             }
             return psobj;
         }
+
+        internal void TemplateFieldsInvalidateCheck(object sender, EventArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var item = Event.ExtractParameter(args, 0) as Item;
+            if (item != null && item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
+            {
+                allPropertySets.Clear();
+            }
+        }
+
+        internal void TemplateFieldsInvalidateCheckRemote(object sender, EventArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var isreErgs = args as ItemSavedRemoteEventArgs;
+            if (isreErgs?.Item != null && isreErgs.Item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
+            {
+                allPropertySets.Clear();
+            }
+        }
+
+
     }
 }
