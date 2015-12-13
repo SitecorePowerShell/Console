@@ -81,8 +81,7 @@ function Send-RemoteItem {
         [ValidateNotNullOrEmpty()]
         [string]$Database = "master",
 
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
+        [Parameter()]
         [string]$Destination,
 
         [Parameter()]
