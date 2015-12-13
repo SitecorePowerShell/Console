@@ -18,6 +18,11 @@
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>Language</Label>
+            <Width>8</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>Languages</Label>
             <Width>24</Width>
             <Alignment>left</Alignment>
@@ -41,6 +46,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>HasChildren</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Language</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Languages</PropertyName>
