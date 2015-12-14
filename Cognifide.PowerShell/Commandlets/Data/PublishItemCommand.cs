@@ -3,10 +3,12 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Publishing;
+using Sitecore.Publishing.Pipelines.Publish;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
@@ -23,6 +25,21 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         [Parameter]
         public PublishMode PublishMode { get; set; }
+        
+        [Parameter]
+        public SwitchParameter PublishRelatedItems { get; set; }
+
+        [Parameter]
+        public SwitchParameter RepublishAll { get; set; }
+
+        [Parameter]
+        public SwitchParameter CompareRevisions { get; set; }
+
+        [Parameter]
+        public DateTime FromDate { get; set; }
+
+        [Parameter]
+        public SwitchParameter Synchronous { get; set; }
 
         protected override void ProcessItem(Item item)
         {
@@ -77,14 +94,38 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 var optionsArgs = new PublishOptions[1];
                 optionsArgs[0] = options;
 
-                var handle = PublishManager.Publish(optionsArgs);
+                // new
+                options.RepublishAll = RepublishAll;
+                options.CompareRevisions = CompareRevisions;
+                options.FromDate = FromDate;
+                if (this.VersionSupportThreshold("PublishRelatedItems", VersionResolver.SitecoreVersion72, true))
+                {
+                    PublishRelatedItems72(options);
+                }
 
-                if (handle == null) return;
-
-                var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
-
-                WriteVerbose($"Publish Job submitted, current state={publishStatus.State}.");
+                if (!Synchronous)
+                {
+                    var handle = PublishManager.Publish(optionsArgs);
+                    if (handle == null) return;
+                    var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
+                    WriteVerbose($"Publish Job submitted, current state={publishStatus.State}.");
+                }
+                else
+                {
+                    var publishContext = PublishManager.CreatePublishContext(options);
+                    var stats = PublishPipeline.Run(publishContext)?.Statistics;
+                    WriteVerbose("Publish Finished.");
+                    if (stats != null)
+                    {
+                        WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+                    }
+                }
             }
+        }
+
+        private void PublishRelatedItems72(PublishOptions options)
+        {
+            options.PublishRelatedItems = PublishRelatedItems;
         }
     }
 }

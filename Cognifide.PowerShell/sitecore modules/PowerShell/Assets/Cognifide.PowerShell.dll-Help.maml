@@ -26270,6 +26270,26 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
           <maml:name>PublishMode</maml:name>
           <command:parameterValue required="true">Unknown | Full | Incremental | SingleItem | Smart</command:parameterValue>
         </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PublishRelatedItems</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>RepublishAll</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>CompareRevisions</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>FromDate</maml:name>
+          <command:parameterValue required="true">DateTime</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Synchronous</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
@@ -26297,6 +26317,26 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
           <maml:name>PublishMode</maml:name>
           <command:parameterValue required="true">Unknown | Full | Incremental | SingleItem | Smart</command:parameterValue>
         </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PublishRelatedItems</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>RepublishAll</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>CompareRevisions</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>FromDate</maml:name>
+          <command:parameterValue required="true">DateTime</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Synchronous</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Publish-Item</maml:name>
@@ -26319,6 +26359,26 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>PublishMode</maml:name>
           <command:parameterValue required="true">Unknown | Full | Incremental | SingleItem | Smart</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>PublishRelatedItems</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>RepublishAll</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>CompareRevisions</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>FromDate</maml:name>
+          <command:parameterValue required="true">DateTime</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>Synchronous</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -26369,6 +26429,86 @@ PS master:\&gt; New-ItemClone -Path master:\content\home -Destination $newTarget
         <command:parameterValue required="false" variableLength="false">PublishMode</command:parameterValue>
         <dev:type>
           <maml:name>PublishMode</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>PublishRelatedItems</maml:name>
+        <maml:description>
+          <maml:para>Turns publishing of related items on. Works only on Sitecore 7.2 or newer
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>RepublishAll</maml:name>
+        <maml:description>
+          <maml:para>Republishes all items provided to the publishing job.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>CompareRevisions</maml:name>
+        <maml:description>
+          <maml:para>Turns revision comparison on.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>FromDate</maml:name>
+        <maml:description>
+          <maml:para>Publishes items newer than the date provided only.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">DateTime</command:parameterValue>
+        <dev:type>
+          <maml:name>DateTime</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>Synchronous</maml:name>
+        <maml:description>
+          <maml:para>Performs the publishing action synchronously making the script wait for the publishing opration to end.
+
+</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
           <maml:uri />
           <maml:description>
             <maml:para />
@@ -26982,11 +27122,11 @@ $item.Title = "New Title"
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Initialize-SearchIndex</maml:name>
-        <command:parameter required="true" parameterSetName="Instance" position="1">
+        <command:parameter required="true" parameterSetName="Instance" position="named">
           <maml:name>Index</maml:name>
           <command:parameterValue required="true">ISearchIndex</command:parameterValue>
         </command:parameter>
-        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+        <command:parameter required="false" parameterSetName="Instance" position="named">
           <maml:name>IncludeRemoteIndex</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
         </command:parameter>
@@ -26997,13 +27137,24 @@ $item.Title = "New Title"
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Initialize-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="Name" position="1">
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>IncludeRemoteIndex</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Name" position="named">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
-          <maml:name>IncludeRemoteIndex</maml:name>
+          <maml:name>AsJob</maml:name>
           <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Item" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
         <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
           <maml:name>AsJob</maml:name>
@@ -27012,7 +27163,7 @@ $item.Title = "New Title"
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="named" variableLength="false">
         <maml:name>Index</maml:name>
         <maml:description>
           <maml:para>The index instance.
@@ -27060,7 +27211,7 @@ $item.Title = "New Title"
           </maml:description>
         </dev:type>
       </command:parameter>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>The name of the index to resume.
@@ -27163,6 +27314,268 @@ PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Rebuild-SearchInde
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
+      <command:name>Initialize-SearchIndexItem</command:name>
+      <gl:group>SearchIndexItem</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Initialize</command:verb>
+      <command:noun>SearchIndexItem</command:noun>
+      <dev:version>4.0.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="Name" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Initialize-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="SearchResultItem" position="named">
+          <maml:name>SearchResultItem</maml:name>
+          <command:parameterValue required="true">SearchResultItem</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
+        <maml:name>Item</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
+        <dev:type>
+          <maml:name>Item</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
+        <maml:name>SearchResultItem</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">SearchResultItem</command:parameterValue>
+        <dev:type>
+          <maml:name>SearchResultItem</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>AsJob</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
+      <command:name>Remove-SearchIndexItem</command:name>
+      <gl:group>SearchIndexItem</gl:group>
+      <maml:description>
+        <maml:para />
+      </maml:description>
+      <maml:copyright>
+        <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+      </maml:copyright>
+      <command:verb>Remove</command:verb>
+      <command:noun>SearchIndexItem</command:noun>
+      <dev:version>4.0.0</dev:version>
+    </command:details>
+    <maml:description>
+      <maml:para />
+      <maml:para>© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
+    </maml:description>
+    <command:syntax>
+      <command:syntaxItem>
+        <maml:name>Remove-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="Name" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="Item" position="named">
+          <maml:name>Item</maml:name>
+          <command:parameterValue required="true">Item</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="Item" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Remove-SearchIndexItem</maml:name>
+        <command:parameter required="true" parameterSetName="SearchResultItem" position="named">
+          <maml:name>SearchResultItem</maml:name>
+          <command:parameterValue required="true">SearchResultItem</command:parameterValue>
+        </command:parameter>
+        <command:parameter required="false" parameterSetName="__AllParameterSets" position="named">
+          <maml:name>AsJob</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
+        <maml:name>Item</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Item</command:parameterValue>
+        <dev:type>
+          <maml:name>Item</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
+        <maml:name>SearchResultItem</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">SearchResultItem</command:parameterValue>
+        <dev:type>
+          <maml:name>SearchResultItem</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>AsJob</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command xmlns="inputTypes" />
+    <command xmlns="returnValues" />
+    <command:terminatingErrors />
+    <command:nonTerminatingErrors />
+    <maml:alertSet>
+      <maml:alert>
+        <maml:para />
+      </maml:alert>
+    </maml:alertSet>
+    <command:examples />
+    <maml:relatedLinks />
+  </command:command>
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
+    <command:details>
       <command:name>Resume-SearchIndex</command:name>
       <gl:group>SearchIndex</gl:group>
       <maml:description>
@@ -27186,14 +27599,21 @@ PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Rebuild-SearchInde
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Resume-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="Name" position="1">
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Resume-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Item" position="named">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>The name of the index to resume.
@@ -27319,14 +27739,21 @@ PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Resume-SearchIndex
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Stop-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="Name" position="1">
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Stop-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Item" position="named">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>The name of the index to stop.
@@ -27452,14 +27879,21 @@ PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Stop-SearchIndex
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Suspend-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="Name" position="1">
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Suspend-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Item" position="named">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>The name of the index to suspend (pause).
@@ -27585,14 +28019,21 @@ PS master:\&gt; Get-SearchIndex -Name sitecore_master_index | Suspend-SearchInde
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-SearchIndex</maml:name>
-        <command:parameter required="false" parameterSetName="Name" position="1">
+        <command:parameter required="false" parameterSetName="Name" position="named">
+          <maml:name>Name</maml:name>
+          <command:parameterValue required="true">String</command:parameterValue>
+        </command:parameter>
+      </command:syntaxItem>
+      <command:syntaxItem>
+        <maml:name>Get-SearchIndex</maml:name>
+        <command:parameter required="false" parameterSetName="Item" position="named">
           <maml:name>Name</maml:name>
           <command:parameterValue required="true">String</command:parameterValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" globbing="false" pipelineInput="true (ByValue, ByPropertyName)" position="1" variableLength="false">
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
           <maml:para>Name of the index to return.
