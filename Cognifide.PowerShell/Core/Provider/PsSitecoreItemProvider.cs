@@ -259,7 +259,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 Database database;
                 if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
                 {
-                    database = (Database) dic[DatabaseParam].Value;
+                    database = Factory.GetDatabase((string) dic[DatabaseParam].Value);
                 }
                 else
                 {

@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof(Database), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), RawParam, ref dic);
@@ -76,7 +76,7 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
-            paramAdded |= AddDynamicParameter(typeof(Database), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), RawParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(FileSystemCmdletProviderEncoding), EncodingParam, ref dic);
