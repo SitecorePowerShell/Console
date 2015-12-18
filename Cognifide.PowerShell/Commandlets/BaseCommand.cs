@@ -72,7 +72,7 @@ namespace Cognifide.PowerShell.Commandlets
             Context.Job = job;
         }
 
-        protected static WildcardPattern GetWildcardPattern(string name)
+        public static WildcardPattern GetWildcardPattern(string name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -88,14 +88,14 @@ namespace Cognifide.PowerShell.Commandlets
             WriteObject(WildcardFilter(filter, items, propertyName), true);
         }
 
-        protected static IEnumerable<T> WildcardFilter<T>(string filter, IEnumerable<T> items,
+        public static IEnumerable<T> WildcardFilter<T>(string filter, IEnumerable<T> items,
             Func<T, string> propertyName)
         {
             var wildcardPattern = GetWildcardPattern(filter);
             return items.Where(item => wildcardPattern.IsMatch(propertyName(item)));
         }
 
-        protected static IEnumerable<T> WildcardFilterMany<T>(string[] filters, IEnumerable<T> items,
+        public static IEnumerable<T> WildcardFilterMany<T>(string[] filters, IEnumerable<T> items,
             Func<T, string> propertyName)
         {
             var matchingItems = new Dictionary<string, T>();
