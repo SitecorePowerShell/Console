@@ -377,3 +377,37 @@ a.ps-link {
     text-align: right;
     float: right;
 }
+
+.ace_editor.ace_autocomplete {
+    width: auto !important;
+    right: 100px !important;
+}
+
+.error_widget {
+    font-size: smaller;
+    margin: 5px !important;
+    padding: 6px 50px;
+}
+
+.error_widget.ace_error {
+    background-color: #FFEFEF;
+    font-size: smaller;
+    border: #FFEFEF 1px solid;
+    color: #ff5a5a;
+}
+
+.error_widget_arrow.ace_error {
+    color: #FFEFEF;
+}
+
+.error_widget.undefined {
+    background-color: #FFFBE6;
+    font-size: smaller;
+    border: #F4BC01 1px solid;
+    color: #5C3B00;
+}
+
+.error_widget_arrow.undefined {
+    color: #F4BC01;
+}
+

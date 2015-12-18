@@ -75,7 +75,6 @@ extend(cognifide, "powershell");
 
         var guid = "ISE Editing Session";
         var debugLine = 0;
-        var debugHitCount = 0;
         var debugSessionId = "";
         var marker = -1;
 
@@ -117,8 +116,8 @@ extend(cognifide, "powershell");
         });
 
         $("#CodeEditor").on("keyup mouseup", function() {
-            $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
             var range = codeeditor.getSelectionRange();
+            $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
 		});
 
         ace.config.loadModule("ace/ext/emmet", function() {
@@ -146,11 +145,40 @@ extend(cognifide, "powershell");
 
                     var ranges = editor.selection.getAllRanges();
                     for (var i = 0, range; range = ranges[i]; i++) {
-                        range.start.column -= editor.completer.completions.filterText.length;
+                        if (data.meta === "Signature") {
+                            data.value = data.fullValue;
+                        } else if (data.meta === "Type") {
+                            while (range.start.column > 0 && codeeditor.session.getTextRange(range).lastIndexOf("[") !== 0) {
+                                range.start.column--;
+                            }
+                            range.start.column++;
+                            data.value = data.fullValue;
+                        } else if (data.meta === "Item" || data.meta === "ProviderItem" || data.meta === "ProviderContainer") {
+                            range.start.column = data.position;
+                            data.value = data.fullValue;
+
+                            //try trim prefix quotes
+                            range.start.column--;
+                            range.end.column++;
+                            var replacedText = codeeditor.session.getTextRange(range);
+                            var charStart = replacedText.charAt(0);
+                            var charEnd = replacedText.charAt(replacedText.length-1);
+                            if (charStart !== '"' && charStart !== "'") {
+                                range.start.column++;
+                            }
+
+                            //try trim trailing quotes
+                            if (charEnd !== '"' && charEnd !== "'") {
+                                range.end.column--;
+                            }
+                        } else {
+                            range.start.column -= editor.completer.completions.filterText.length;
+                        }
                         editor.session.remove(range);
                     }
 
                     editor.execCommand("insertstring", data.value || data);
+                    $.lastPrefix = "";
 
                 },
                 getCompletions: function(editor, session, pos, prefix, callback) {
@@ -162,7 +190,7 @@ extend(cognifide, "powershell");
 
                     if (line) {
                             
-                        if(!$.tabCompletions || line !== prefix || prefix.indexOf($.lastPrefix)==-1) {
+                        if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) === -1) {
                             $.lastPrefix = prefix;
                             _getTabCompletions(line);
                         }
@@ -170,6 +198,32 @@ extend(cognifide, "powershell");
                         $.tabCompletions = [""];
                     }
                     var keywords = $.tabCompletions;
+
+                    if (keywords && keywords.length > 0 && keywords[0].indexOf("Signature", 0) === 0) {
+
+                        callback(null, []);
+                        $.tabCompletions = null;
+
+                        var msgType = "information";
+                        if (keywords.length === 1 && keywords[0].indexOf("not found in session", 0) > 0) {
+                            msgType = "error";
+                        }
+
+                        session.setAnnotations(keywords.map(function (word) {
+                            var hint = word.split("|");
+                            return {
+                                row: pos.row,
+                                column: pos.column,
+                                text: hint[3],
+                                type: msgType // error, warning or information
+                            };
+                        }));
+                        ace.config.loadModule("ace/ext/error_marker", function (module) {
+                            module.showErrorMarker(codeeditor, -1);
+                        });
+                        return;
+                    }
+
                     var psCompleter = this;
                     callback(null, keywords.map(function(word) {
                         var hint = word.split("|");
@@ -178,6 +232,8 @@ extend(cognifide, "powershell");
                             value: hint[1],
                             score: 1000,
                             meta: hint[0],
+                            position: hint[2],
+                            fullValue: hint[3],
                             completer: psCompleter
                         };
                     }));
@@ -187,11 +243,12 @@ extend(cognifide, "powershell");
             module.addCompleter(keyWordCompleter);
         });
 
+
         codeeditor.setAutoScrollEditorIntoView(true);
 
         codeeditor.on("guttermousedown", function(editor) {
             var target = editor.domEvent.target;
-            if (target.className.indexOf("ace_gutter-cell") == -1)
+            if (target.className.indexOf("ace_gutter-cell") === -1)
                 return;
 
             if (editor.clientX > 25 + target.getBoundingClientRect().left)
@@ -269,9 +326,9 @@ extend(cognifide, "powershell");
         };
 
         cognifide.powershell.appendOutput = function(outputToAppend) {
-            var decoded = $('<div/>').html(outputToAppend).text();
+            var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
-            $('#ScriptResult').scrollTop($('#ScriptResult')[0].scrollHeight);
+            $("#ScriptResult").scrollTop($("#ScriptResult")[0].scrollHeight);
         };
 
         cognifide.powershell.changeFontFamily = function(setting) {
@@ -297,7 +354,7 @@ extend(cognifide, "powershell");
             if (clear) {
                 codeeditor.getSession().getUndoManager().markClean();
             }
-            var scriptModified = $ise("#scriptModified", window.parent.document);
+            var scriptModified = $("#scriptModified", window.parent.document);
             if (codeeditor.getSession().getUndoManager().isClean())
                 scriptModified.hide();
             else
@@ -333,7 +390,6 @@ extend(cognifide, "powershell");
 
         cognifide.powershell.breakpointHit = function (line, column, endLine, endColumn, sessionId) {
             debugLine = line;
-            //debugHitCount = hitCount;
             debugSessionId = sessionId;
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
             var Range = ace.require("ace/range").Range;
@@ -374,7 +430,7 @@ extend(cognifide, "powershell");
                 codeeditor.getSession().setValue("");
             }
             newTitle = replaceAll(newTitle, "/", "</i> / <i style=\"font-style: italic; color: #bbb;\">");
-            var windowCaption = $ise("#WindowCaption", window.parent.document);
+            var windowCaption = $("#WindowCaption", window.parent.document);
             if (windowCaption.length > 0) {
                 windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> <span id=\"scriptModified\" style=\"display:none;color:#fc2929;\">(*)</span> - ";
             }
@@ -394,7 +450,7 @@ extend(cognifide, "powershell");
         cognifide.powershell.closeResults = function() {
             $("#ResultsSplitter").hide();
             $("#ResultsRow").hide("slow", function() {
-                codeeditor.resize(); /* do something cool here? */
+                codeeditor.resize();
             });
         };
 
@@ -505,18 +561,17 @@ extend(cognifide, "powershell");
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
             var datastring = JSON.stringify(callData);
-            var ajax =
-                $.ajax({
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
-                        data: datastring,
-                        processData: false,
-                        cache: false,
-                        async: false
-                    }).done(doneFunction)
-                    .fail(errorFunction);
+            $.ajax({
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    url: "/sitecore modules/PowerShell/Services/PowerShellWebService.asmx/" + remotefunction,
+                    data: datastring,
+                    processData: false,
+                    cache: false,
+                    async: false
+                }).done(doneFunction)
+                .fail(errorFunction);
         }
     });
 }(jQuery, window, window.cognifide = window.cognifide || {}, window.ace = window.ace || {}));

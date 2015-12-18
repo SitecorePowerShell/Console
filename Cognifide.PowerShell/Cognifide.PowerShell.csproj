@@ -460,6 +460,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\coglogo.png" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\error.png" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_middle.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_right.gif" />
@@ -471,6 +472,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
     <Content Include="sitecore modules\PowerShell\Assets\stewie.png" />
     <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
+    <Content Include="sitecore modules\PowerShell\Assets\warning.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />

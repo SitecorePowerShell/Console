@@ -4,9 +4,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Core.Validation;
+using Lucene.Net.Highlight;
 using Sitecore.Configuration;
+using Sitecore.ContentSearch.Utilities;
+using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -15,7 +23,10 @@ namespace Cognifide.PowerShell.Core.Host
 
         private static readonly string[] dbNames =
             Factory.GetDatabaseNames().ToList().ConvertAll(db => db.ToLower()).ToArray();
-
+        private static Regex staticFuncRegex = new Regex(@"^\[(?<class>[\w\.]*)\]::(?<method>\w*)\(");
+        private static Regex variableFuncRegex = new Regex(@"^(?<expression>\$[\w\.]*)\.(?<method>\w*)\(");
+        private static Regex variableRegex = new Regex(@"^(?<variable>\$[\w]*)");
+        private static Regex staticExpressionRegex = new Regex(@"^(?<expression>[\[\w\.\:\]]*)\.(?<method>\w*)\(");
         public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
         const string TabExpansionHelper = @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn , $options){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
 
@@ -43,8 +54,91 @@ namespace Cognifide.PowerShell.Core.Host
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            var truncatedCommand = TruncatedCommand3(session, command, out lastToken);
+            var truncatedCommand = TruncatedCommand3(session, command, out lastToken) ?? string.Empty;
+            var truncatedLength = truncatedCommand.Length;
             var options = Completers;
+
+            if (!string.IsNullOrEmpty(lastToken) && lastToken.StartsWith("["))
+            {
+                if (lastToken.IndexOf("]", StringComparison.Ordinal) < 0)
+                {
+                    return CompleteTypes(lastToken, truncatedLength);
+                }
+                if (staticFuncRegex.IsMatch(lastToken))
+                {
+                    var matches = staticFuncRegex.Matches(lastToken);
+                    var className = matches[0].Groups["class"].Value;
+                    var methodName = matches[0].Groups["method"].Value;
+                    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+                    foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        try
+                        {
+                            var type = assembly
+                                .GetExportedTypes()
+                                .FirstOrDefault(
+                                    aType => aType.FullName.Equals(className, StringComparison.OrdinalIgnoreCase));
+                            if (type != null)
+                            {
+                                return GetMethodSignatures(type, methodName, bindingFlags, truncatedLength);
+                            }
+                        }
+                        catch
+                        {
+                            // ignore on purpose
+                        }
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(lastToken) && (lastToken.StartsWith("$") || lastToken.StartsWith("[")))
+            {
+                MatchCollection matches = null;
+                var matched = false;
+                if (variableFuncRegex.IsMatch(lastToken))
+                {
+                    matches = variableFuncRegex.Matches(lastToken);
+                    matched = true;
+                }
+                else if (staticExpressionRegex.IsMatch(lastToken))
+                {
+                    matches = staticExpressionRegex.Matches(lastToken);
+                    matched = true;
+                }
+
+                if (matched)
+                {
+                    //var matches = variableFuncRegex.Matches(lastToken);
+                    var expression = matches[0].Groups["expression"].Value;
+                    var methodName = matches[0].Groups["method"].Value;
+                    Type objectType = null;
+                    List<object> objectValue;
+                    try
+                    {
+                        if (session.TryInvokeInRunningSession(expression, out objectValue, false))
+                        {
+                            if (objectValue != null && objectValue.Count > 0)
+                            {
+                                objectType = objectValue[0].GetType();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var varName = variableRegex.Matches(lastToken)[0].Value;
+                        var message = $"Variable {varName} not found in session. Execute script first.";
+                        return new List<string> {$"Signature|{message}|{truncatedLength}|{message}" };
+                    }
+                    if (objectType != null)
+                    {
+                        const BindingFlags bindingFlags =
+                            BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+                            BindingFlags.FlattenHierarchy;
+                        return GetMethodSignatures(objectType, methodName, bindingFlags, truncatedLength);
+                    }
+                }
+            }
+
 
             session.TryInvokeInRunningSession(TabExpansionHelper);
 
@@ -53,7 +147,7 @@ namespace Cognifide.PowerShell.Core.Host
             teCmd.Parameters.Add("cursorColumn", command.Length);
             teCmd.Parameters.Add("options", options);
 
-            string[] teResult = new string[0];
+            var teResult = new string[0];
 
             List<object> results;
             if (session.TryInvokeInRunningSession(teCmd, out results, true))
@@ -64,6 +158,114 @@ namespace Cognifide.PowerShell.Core.Host
 
             WrapResults3(truncatedCommand, teResult, result, aceResponse);
             return result;
+        }
+
+        private static IEnumerable<string> GetMethodSignatures(Type type, string methodName,
+            BindingFlags bindingFlags,
+            int truncatedLength)
+        {
+
+            if (type != null)
+            {
+                var methods = type.GetMethods(bindingFlags);
+                var filtered =
+                    methods.Where(
+                        method => methodName.Equals(method.Name, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                var signatures =
+                    filtered.Select(mi => GetSignature(mi, truncatedLength))
+                        .Select(sig => $"Signature|{sig}|{truncatedLength}")
+                        .ToList();
+
+                if (signatures.Count == 0)
+                {
+                    var message = $"<method not found on class [{type.FullName}]>";
+                    signatures.Add($"Signature|{message}|{truncatedLength}|{message}");
+                }
+
+                return signatures.ToArray();
+            }
+            return new List<string> {$"Signature|<no parameters>|{truncatedLength}|<no parameters>" };
+        }
+
+        private static string GetSignature(MethodInfo mi, int position)
+        {
+            var param1 = mi.GetParameters()
+                          .Select(p => $"[{p.ParameterType.FullName}] ${p.Name}")
+                          .ToArray();
+            var param2 = mi.GetParameters()
+                          .Select(p => $"[{p.ParameterType.Name}] ${p.Name}")
+                          .ToArray();
+            if (param1.Length == 0)
+            {
+                return $"<no parameters>|{position}|<no parameters>";
+            }
+            //var signature = $"[{mi.ReturnType.Name}] {mi.Name}({string.Join(",", param)})";
+            var signature = string.Join(", ", param2) + $"|{position}|"+ string.Join(", ", param1);
+
+            return signature;
+        }    
+
+        private static IEnumerable<string> CompleteTypes(string completeToken, int position)
+        {
+            var results = new List<string>();
+            completeToken = completeToken.Trim('[', ']');
+            var lastDotPosition = completeToken.LastIndexOf('.');
+            var hasdot = lastDotPosition > -1;
+            var endsWithDot = completeToken.Length == lastDotPosition-1;
+            WildcardPattern nameWildcard;
+            WildcardPattern fullWildcard;
+            if (hasdot)
+            {
+                var namespaceToken = completeToken.Substring(0, lastDotPosition);
+                var nameToken = completeToken.Substring(lastDotPosition+1);
+                if (endsWithDot)
+                {
+                    nameWildcard = BaseCommand.GetWildcardPattern("*");
+                }
+                else
+                {
+                    nameWildcard = BaseCommand.GetWildcardPattern($"{nameToken}*");
+                }
+                fullWildcard = BaseCommand.GetWildcardPattern($"{namespaceToken}*");
+            }
+            else
+            {
+                nameWildcard = BaseCommand.GetWildcardPattern($"{completeToken}*");
+                fullWildcard = BaseCommand.GetWildcardPattern($"{completeToken}.*");
+            }
+            foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
+            {
+                try
+                {
+                    if (hasdot)
+                    {
+                        results.AddRange(
+                            assembly.GetExportedTypes()
+                                .Where(type => nameWildcard.IsMatch(type.Name) &&
+                                               fullWildcard.IsMatch(type.Namespace) &&
+                                               !type.Name.Contains('`'))
+                                .Select(type => $"Type|{type.Name} ({type.Namespace})|{position}|{type.FullName}"));
+                    }
+                    else
+                    {
+                        results.AddRange(
+                            assembly.GetExportedTypes()
+                                .Where(type => (nameWildcard.IsMatch(type.Name) ||
+                                               fullWildcard.IsMatch(type.Namespace)) &&
+                                               !type.Name.Contains('`'))
+                                .Select(type => $"Type|{type.Name} ({type.Namespace})|{position}|{type.FullName}"));
+                    }
+                }
+                catch (Exception e)
+                {
+                    // Log.Error("Error enumerating types", e);
+                    // Ignoring intentionally... 
+                    // This just happens for some assembiles with no consequences to user experience
+                }
+            }
+            results.Sort(StringComparer.OrdinalIgnoreCase);
+            return results.ToArray();
         }
 
         private static Hashtable Completers
@@ -179,6 +381,11 @@ namespace Cognifide.PowerShell.Core.Host
         public static void WrapResults3(string truncatedCommand, IEnumerable<string> tabExpandedResults,
             List<string> results, bool aceResponse)
         {
+            if (truncatedCommand == null)
+            {
+                truncatedCommand = string.Empty;
+            }
+            var truncPosition = truncatedCommand.Length.ToString();
             var truncatedCommandTail = (!string.IsNullOrEmpty(truncatedCommand) && !truncatedCommand.EndsWith(" "))
                 ? " "
                 : string.Empty;
@@ -194,10 +401,12 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         case ("ProviderItem"):
                         case ("ProviderContainer"):
-                            content = content.Trim('\'', ' ', '&', '"');
+                            //content = content.Trim('\'', ' ', '&', '"');
+                            content = content.Trim(' ', '&');
+                            var leaf = content.Split('\\').Last().Trim('\'', '"');
                             return IsSitecoreItem(content)
-                                ? $"Item|{content.Split('\\').Last()}|{content}"
-                                : $"{type}|{content.Split('\\').Last()}|{content}";
+                                ? $"Item|{leaf}|{truncPosition}|{content}"
+                                : $"{type}|{leaf}|{truncPosition}|{content}";
                         case ("ParameterName"):
                             return $"Parameter|{content}";
                         default:
@@ -217,7 +426,7 @@ namespace Cognifide.PowerShell.Core.Host
                         return
                             $"{truncatedCommand}{truncatedCommandTail}{(content.StartsWith("& '") ? content.Substring(2) : content)}";
                 }
-            }));
+            }).Select(p => $"{p}|{truncPosition}"));
         }
 
         private static bool IsSitecoreItem(string path)
@@ -264,7 +473,7 @@ namespace Cognifide.PowerShell.Core.Host
                 List<object> psResult;
                 if (session.TryInvokeInRunningSession(teCmd, out psResult))
                 {
-                    var teResult = psResult.Cast<int>().First();
+                    var teResult = psResult.Cast<int>().FirstOrDefault();
                     lastToken = command.Substring(teResult);
                     return command.Substring(0, teResult);
                 }
