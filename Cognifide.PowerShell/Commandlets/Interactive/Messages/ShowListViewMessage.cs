@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     {
         public ShowListViewMessage(List<BaseListViewCommand.DataObject> data, int pageSize, string title, string icon,
             string width, string height, bool modal, string infoTitle, string infoDescription, string sessionId,
-            object actionData, object[] property, string viewName, string missingDataMessage,
+            object actionData, Hashtable[] property, string viewName, string missingDataMessage,
             HideListViewFeatures hiddenFeatures)
         {
             Data = data;
@@ -34,36 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             ViewName = viewName;
             MissingDataMessage = missingDataMessage;
             HiddenFeatures = hiddenFeatures;
-            Property = property
-                .Select(p =>
-                {
-                    string label;
-                    string expression;
-                    if (p is Hashtable)
-                    {
-                        var h = p as Hashtable;
-                        if (h.ContainsKey("Name"))
-                        {
-                            if (!h.ContainsKey("Label"))
-                            {
-                                h.Add("Label", h["Name"]);
-                            }
-                        }
-                        label = h["Label"].ToString();
-                        expression = h["Expression"].ToString();
-                    }
-                    else
-                    {
-                        label = p.ToString();
-                        expression = "$_." + p.ToString();
-                    }
-                    var result = new Hashtable(2)
-                    {
-                        {"Label", label},
-                        {"Expression", expression}
-                    };
-                    return result;
-                }).ToArray();
+            Property = property;
         }
 
 
@@ -86,7 +57,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             get
             {
                 return Property
-                    .Select(p => "@{Label=\"" + p["Label"] + "\";Expression={" + p["Expression"] + "}},")
+                    .Select(p => $"@{{Label=\"{p["Label"]}\";Expression={{{p["Expression"]}}}}},")
                     .Aggregate((a, b) => a + b)
                     .TrimEnd(',');
             }

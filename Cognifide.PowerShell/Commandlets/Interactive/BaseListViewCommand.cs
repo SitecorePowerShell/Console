@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -16,6 +17,48 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public object[] Property { get; set; }
 
+        private Hashtable[] processedProperty;
+
+        protected Hashtable[] ProcessedProperty
+        {
+            get
+            {
+                if (processedProperty == null)
+                {
+                    processedProperty = Property.Select(p =>
+                    {
+                        string label;
+                        string expression;
+                        if (p is Hashtable)
+                        {
+                            var h = p as Hashtable;
+                            if (h.ContainsKey("Name"))
+                            {
+                                if (!h.ContainsKey("Label"))
+                                {
+                                    h.Add("Label", h["Name"]);
+                                }
+                            }
+                            label = h["Label"].ToString();
+                            expression = h["Expression"].ToString();
+                        }
+                        else
+                        {
+                            label = p.ToString();                            
+                            expression = $"$ofs=', ';\"$($_.'{label}')\"";
+                        }
+                        var result = new Hashtable(2)
+                        {
+                            {"Label", label},
+                            {"Expression", ScriptBlock.Create(expression)}
+                        };
+                        return result;
+                    }).ToArray();
+                }
+                return processedProperty;
+            }
+        }
+
         protected override void BeginProcessing()
         {
             if (Property == null && SessionState.PSVariable.Get("formatProperty") != null)
@@ -24,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             }
             else if (Property != null)
             {
-                SessionState.PSVariable.Set("ScPsSlvProperties", Property);
+                SessionState.PSVariable.Set("ScPsSlvProperties", ProcessedProperty);
             }
             base.BeginProcessing();
         }
