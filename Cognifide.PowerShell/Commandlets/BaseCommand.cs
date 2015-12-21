@@ -16,30 +16,17 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Web.UI.Sheer;
-using Message = Sitecore.Update.Installer.Messages.Message;
 
 namespace Cognifide.PowerShell.Commandlets
 {
     public class BaseCommand : PSCmdlet
     {
-        protected bool IsCurrentDriveSitecore
-        {
-            get
-            {
-                return SessionState.Drive.Current.Provider.ImplementingType == typeof (PsSitecoreItemProvider) ||
-                       SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof (PsSitecoreItemProvider));
-            }
-        }
+        protected bool IsCurrentDriveSitecore => SessionState.Drive.Current.Provider.ImplementingType == typeof (PsSitecoreItemProvider) ||
+                                                 SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof (PsSitecoreItemProvider));
 
-        protected ProviderInfo Provider
-        {
-            get { return SessionState.Drive.Current.Provider; }
-        }
+        protected ProviderInfo Provider => SessionState.Drive.Current.Provider;
 
-        protected string CurrentDrive
-        {
-            get { return SessionState.Drive.Current.Name; }
-        }
+        protected string CurrentDrive => SessionState.Drive.Current.Name;
 
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         protected Database CurrentDatabase
@@ -50,10 +37,7 @@ namespace Cognifide.PowerShell.Commandlets
                 {
                     return Factory.GetDatabase(CurrentDrive);
                 }
-                WriteError(new ErrorRecord(
-                    new InvalidPowerShellStateException(
-                        "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.")
-                    , "location_not_in_sitecore_database", ErrorCategory.DeviceError, null));
+                WriteError(typeof(InvalidPowerShellStateException), "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.", ErrorIds.DatabaseNotFound, ErrorCategory.DeviceError, null, true);
                 return null;
             }
         }
@@ -109,23 +93,22 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected virtual Item FindItemFromParameters(Item item, string path, string id)
         {
-            if (item == null)
+            if (item != null) return item;
+
+            if (!String.IsNullOrEmpty(id))
             {
-                if (!String.IsNullOrEmpty(id))
-                {
-                    var currentDb = Factory.GetDatabase(CurrentDrive);
-                    item = currentDb.GetItem(new ID(id));
-                }
-                else if (!String.IsNullOrEmpty(path))
-                {
-                    path = path.Replace('\\', '/');
-                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
-                }
-                else
-                {
-                    WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
-                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
-                }
+                var currentDb = Factory.GetDatabase(CurrentDrive);
+                item = currentDb.GetItem(new ID(id));
+            }
+            else if (!String.IsNullOrEmpty(path))
+            {
+                path = path.Replace('\\', '/');
+                item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
+            }
+            else
+            {
+                WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
+                    ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
             }
             return item;
         }
@@ -140,12 +123,10 @@ namespace Cognifide.PowerShell.Commandlets
                 }
 
                 var driveSeparator = path.IndexOf(':');
-                if (driveSeparator > 0)
-                {
-                    var driveName = path.Substring(0, driveSeparator);
-                    return Factory.GetDatabase(driveName);
-                }
-                return CurrentDatabase;
+                if (driveSeparator <= 0) return CurrentDatabase;
+
+                var driveName = path.Substring(0, driveSeparator);
+                return Factory.GetDatabase(driveName);
             }
             return item.Database;
         }
@@ -153,30 +134,31 @@ namespace Cognifide.PowerShell.Commandlets
         protected virtual Item FindItemFromParameters(Item item, string path, string id, Language language,
             string databaseName)
         {
-            if (item == null)
+            if (item != null) return item;
+
+            if (!String.IsNullOrEmpty(id))
             {
-                if (!String.IsNullOrEmpty(id))
+                var currentDb = String.IsNullOrEmpty(databaseName) ? CurrentDatabase : Factory.GetDatabase(databaseName);
+                if (currentDb != null)
                 {
-                    var database = Factory.GetDatabase(databaseName);
-                    var currentDb = database ?? CurrentDatabase;
                     item = currentDb.GetItem(new ID(id));
                 }
-                else if (!String.IsNullOrEmpty(path))
-                {
-                    path = path.Replace('\\', '/');
-                    item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
-                }
-                else
-                {
-                    WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
-                        ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
-                }
-                if (item != null)
-                {
-                    item = language != null
-                        ? item.Versions.GetLatestVersion(language)
-                        : item.Versions.GetLatestVersion();
-                }
+            }
+            else if (!String.IsNullOrEmpty(path))
+            {
+                path = path.Replace('\\', '/');
+                item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
+            }
+            else
+            {
+                WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.",
+                    ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, null);
+            }
+            if (item != null)
+            {
+                item = language != null
+                    ? item.Versions.GetLatestVersion(language)
+                    : item.Versions.GetLatestVersion();
             }
             return item;
         }
@@ -196,12 +178,11 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected void WriteItem(Item item)
         {
-            if (item != null)
-            {
-                // add the properties defined by the page type
-                var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-                WriteObject(psobj);
-            }
+            if (item == null) return;
+
+            // add the properties defined by the page type
+            var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
+            WriteObject(psobj);
         }
 
         protected bool IsParameterSpecified(string name)
@@ -214,23 +195,25 @@ namespace Cognifide.PowerShell.Commandlets
             return name.Contains(" ") ? "\"" + name + "\"" : name;
         }
 
-        public virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject)
+        public virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject, bool throwTerminatingError = false)
         {
             var exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
-            WriteError(new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject));
+            var record = new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject);
+            if(throwTerminatingError) ThrowTerminatingError(record);
+
+            WriteError(record);
         }
 
         public virtual bool CheckSessionCanDoInteractiveAction()
         {
-            if (!InteractiveSession)
-            {
-                CmdletAttribute attribute = GetType().GetCustomAttributes(typeof (CmdletAttribute), true).FirstOrDefault() as CmdletAttribute;
-                string message = attribute == null
-                    ? "Non interactive session cannot perform an interactive operation."
-                    : $"Non interactive session cannot perform an interactive operation requested by the '{attribute.VerbName}-{attribute.NounName}' command.";
-                WriteError(typeof (InvalidOperationException), message,
-                    ErrorIds.ScriptSessionIsNotInteractive, ErrorCategory.InvalidOperation, this);
-            }
+            if (InteractiveSession) return InteractiveSession;
+
+            CmdletAttribute attribute = GetType().GetCustomAttributes(typeof (CmdletAttribute), true).FirstOrDefault() as CmdletAttribute;
+            var message = attribute == null
+                ? "Non interactive session cannot perform an interactive operation."
+                : $"Non interactive session cannot perform an interactive operation requested by the '{attribute.VerbName}-{attribute.NounName}' command.";
+            WriteError(typeof (InvalidOperationException), message,
+                ErrorIds.ScriptSessionIsNotInteractive, ErrorCategory.InvalidOperation, this);
             return InteractiveSession;
         }
     }

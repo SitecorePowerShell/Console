@@ -16,6 +16,7 @@ namespace Cognifide.PowerShell.Commandlets
         ScriptSessionBusy,
         ScriptSessionCannotBeStopped,
         ScriptSessionIsNotInteractive,
-        ScriptSessionNotFound
+        ScriptSessionNotFound,
+        DatabaseNotFound
     }
 }
