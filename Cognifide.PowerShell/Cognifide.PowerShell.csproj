@@ -399,6 +399,7 @@
     <Compile Include="Core\VersionDecoupling\VersionResolver.cs" />
     <Compile Include="Core\Data\FieldIDs.cs" />
     <Compile Include="Integrations\Gutters\GutterStatusRenderer.cs" />
+    <Compile Include="Integrations\Pipelines\ChromeDataScript.cs" />
     <Compile Include="Integrations\Pipelines\ContentEditorWarningScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggedInScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggingInScript.cs" />

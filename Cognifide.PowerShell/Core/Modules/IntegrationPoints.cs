@@ -26,6 +26,7 @@ namespace Cognifide.PowerShell.Core.Modules
         public const string WebApi = "webAPI";
         public const string PageEditorNotificationFeature = "pageEditorNotification";
         public const string IsePluginFeature = "isePlugin";
+        public const string PageEditorChromeDataFeature = "pageEditorChromeData";
 
         private static SortedList<string, IntegrationPoint> libraries;
 
@@ -48,8 +49,8 @@ namespace Cognifide.PowerShell.Core.Modules
                     {
                         libraries.Add(integrationPoint.Name, new IntegrationPoint
                         {
-                            CreationScript = integrationPoint.Attributes["creationScript"].InnerText,
-                            Name = integrationPoint.Attributes["name"].InnerText,
+                            CreationScript = integrationPoint.Attributes?["creationScript"].InnerText,
+                            Name = integrationPoint.Attributes?["name"].InnerText,
                             Id = integrationPoint.Name,
                             Path = integrationPoint.InnerText.Trim()
                         });
