@@ -32,11 +32,7 @@ namespace Cognifide.PowerShell.Commandlets
 
             if (sourceItem == null)
             {
-                WriteError(
-                    new ErrorRecord(
-                        new ObjectNotFoundException(
-                            "Item not found."),
-                        "sitecore_item_not_found", ErrorCategory.InvalidData, null));
+                WriteError(typeof(ObjectNotFoundException), "Cannot find item to perform the operation on.", ErrorIds.ItemNotFound, ErrorCategory.InvalidData, null);
                 return;
             }
 

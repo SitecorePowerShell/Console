@@ -172,7 +172,7 @@ namespace Cognifide.PowerShell.Commandlets
             catch (Exception ex)
             {
                 Log.Error("Error while executing '{0}' command", ex, this);
-                WriteError(new ErrorRecord(ex, "loggable_error", ErrorCategory.NotSpecified, null));
+                WriteError(ex.GetType(), $"An error was encountered while executing the command '{this}'", ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
             }
         }
 

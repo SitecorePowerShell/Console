@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Management.Automation.Runspaces;
 using System.Web;
 using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Core.Extensions;
@@ -194,9 +193,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    Exception exception =
-                        new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
-                    WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+                    var exception = new IOException($"Cannot find path '{path}' because it does not exist.");
+                    WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
                 }
             }
             catch (Exception ex)
@@ -294,9 +292,8 @@ namespace Cognifide.PowerShell.Core.Provider
         /// <param name="path">path which is invalid</param>
         private void WriteInvalidPathError(string path)
         {
-            Exception exception =
-                new IOException(string.Format("Cannot find path '{0}' because it does not exist.", path));
-            WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+            var exception = new IOException($"Cannot find path '{path}' because it does not exist.");
+            WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
         }
 
         private IEnumerable<Item> GetMatchingItem(string language, int version, Item item)
@@ -419,9 +416,8 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
                 {
-                    WriteError(new ErrorRecord(new TemplateNotFoundException(string.Format(
-                        "The data contains a reference to a template \"{0}\" that does not exist in the destination database.\nYou must transfer the template first.",
-                        sourceItem.Template.FullName)), "sitecore_tranfer_error", ErrorCategory.InvalidData, sourceItem));
+                    WriteError(new ErrorRecord(new TemplateNotFoundException(
+                        $"The data contains a reference to a template \"{sourceItem.Template.FullName}\" that does not exist in the destination database.\nYou must transfer the template first."), ErrorIds.TemplateNotFound.ToString(), ErrorCategory.InvalidData, sourceItem));
                     return null;
                 }
 

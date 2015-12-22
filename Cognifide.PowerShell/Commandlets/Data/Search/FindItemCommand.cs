@@ -87,12 +87,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 }
                                 if (string.IsNullOrEmpty(ancestorId))
                                 {
-                                    WriteError(
-                                        new ErrorRecord(
-                                            new Exception(
-                                                "The root for DescendantOf criteria has to be an Item or an ID"),
-                                            "sitecore_find_item_invalid_parameter", ErrorCategory.InvalidArgument,
-                                            criteria.Value));
+                                    WriteError(typeof(ArgumentException), "The root for DescendantOf criteria has to be an Item or an ID.", ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
                                     return;
                                 }
                                 query = criteria.Invert

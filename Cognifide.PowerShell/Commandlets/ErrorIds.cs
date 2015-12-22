@@ -17,6 +17,8 @@ namespace Cognifide.PowerShell.Commandlets
         ScriptSessionCannotBeStopped,
         ScriptSessionIsNotInteractive,
         ScriptSessionNotFound,
-        DatabaseNotFound
+        DatabaseNotFound,
+        TemplateNotFound,
+        InvalidItemType
     }
 }

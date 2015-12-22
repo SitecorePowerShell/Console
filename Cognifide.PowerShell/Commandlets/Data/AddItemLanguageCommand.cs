@@ -119,8 +119,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
             catch (Exception exception)
             {
                 targetItem.Editing.CancelEdit();
-                WriteError(new ErrorRecord(exception, "sitecore_item_translation_field_copy_error",
-                    ErrorCategory.NotSpecified, null));
+                WriteError(exception.GetType(), "Cannot complete operation.", ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
@@ -12,16 +13,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             if (!item.IsItemClone)
             {
-                WriteError
-                    (
-                        new ErrorRecord
-                            (
-                            new PSArgumentException("The supplied Item is not a clone!"),
-                            "supplied_item_is_not_a_clone",
-                            ErrorCategory.InvalidArgument,
-                            null
-                            )
-                    );
+                WriteError(typeof(ArgumentException), "The specified item is not a clone.", ErrorIds.InvalidItemType, ErrorCategory.InvalidArgument, null);
                 return;
             }
             if (ShouldProcess(item.GetProviderPath(), "Convert item clone to full item"))
