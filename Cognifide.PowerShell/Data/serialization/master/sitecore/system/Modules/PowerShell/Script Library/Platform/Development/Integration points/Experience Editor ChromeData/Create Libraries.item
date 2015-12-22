@@ -2,7 +2,7 @@
 version: 1
 id: {2C8F2F97-48A5-4D61-9ACE-02F514418860}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Page Editor ChromeData/Create Libraries
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Experience Editor ChromeData/Create Libraries
 parent: {78624BAA-51D5-42B8-BE8D-1CB54FE6182E}
 name: Create Libraries
 master: {00000000-0000-0000-0000-000000000000}
@@ -13,15 +13,15 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 192
+content-length: 198
 
-$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::PageEditorChromeDataFeature
+$integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::ExperienceEditorChromeDataFeature
 Import-Function -Name Create-IntegrationPoint
 CreateIntegrationPoint($integrationPoint)
 ----version----
 language: en
 version: 1
-revision: 2dca1ba9-16f4-4e25-a741-3ab8f5cf984c
+revision: 44ba2ae5-11de-4cb6-910d-72cde60dba28
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -36,14 +36,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2dca1ba9-16f4-4e25-a741-3ab8f5cf984c
+44ba2ae5-11de-4cb6-910d-72cde60dba28
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20151221T012113:635862576736061352
+20151222T221158:635864191187548053
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

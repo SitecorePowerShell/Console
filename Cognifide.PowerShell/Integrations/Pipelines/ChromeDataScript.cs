@@ -10,7 +10,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 {
     public class ChromeDataScript
     {
-        public string IntegrationPoint => IntegrationPoints.PageEditorChromeDataFeature;
+        public string IntegrationPoint => IntegrationPoints.ExperienceEditorChromeDataFeature;
 
         public void Process(GetChromeDataArgs args)
         {
