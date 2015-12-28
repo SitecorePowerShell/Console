@@ -231,7 +231,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     Errors = string.Empty,
                     Output = scriptSession.Output.ToHtml(),
-                    HasErrors = scriptSession.Output.HasErrors
+                    HasErrors = scriptSession.Output.HasErrors,
+                    CloseRunner = scriptSession.CloseRunner
                 };
                 JobContext.PostMessage("psr:updateresults");
                 JobContext.Flush();
@@ -253,7 +254,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     {
                         Errors = scriptSession.GetExceptionString(exc),
                         Output = output.ToString(),
-                        HasErrors = true
+                        HasErrors = true,
+                        CloseRunner = scriptSession.CloseRunner
                     };
                     JobContext.PostMessage("psr:updateresults");
                     JobContext.Flush();
@@ -261,12 +263,13 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             finally
             {
-                if (scriptSession.CloseRunner && scriptSession.AutoDispose)
+                if (scriptSession.AutoDispose)
                 {
                     scriptSession.Dispose();
                 }
             }
         }
+
 
         [HandleMessage("psr:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
@@ -274,9 +277,9 @@ namespace Cognifide.PowerShell.Client.Applications
             var job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
             var printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
-            if (result != null && !string.IsNullOrEmpty(result.Errors))
+            if (!string.IsNullOrEmpty(result?.Errors))
             {
-                printResults += string.Format("<pre style='background:red;'>{0}</pre>", result.Errors);
+                printResults += $"<pre style='background:red;'>{result.Errors}</pre>";
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
@@ -298,23 +301,20 @@ namespace Cognifide.PowerShell.Client.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            var scriptSession = ScriptSessionManager.GetSession(PersistentId);
-            Monitor.SessionID = string.Empty;
-
-            if (scriptSession.CloseRunner)
+            if (ScriptSessionManager.SessionExists(PersistentId))
             {
+                var scriptSession = ScriptSessionManager.GetSession(PersistentId);
                 scriptSession.CloseRunner = false;
-
+                Monitor.SessionID = string.Empty;
+            }
+            if (result != null && result.CloseRunner)
+            {
                 if (Closed != null)
                 {
                     Closed.Text = "close";
                 }
 
                 OkClick();
-            }
-            if (string.IsNullOrEmpty(PersistentId))
-            {
-                scriptSession.Dispose();
             }
         }
 
@@ -455,6 +455,7 @@ namespace Cognifide.PowerShell.Client.Applications
             public string Output { get; set; }
             public string Errors { get; set; }
             public bool HasErrors { get; set; }
+            public bool CloseRunner { get; set; }
         }
     }
 }
