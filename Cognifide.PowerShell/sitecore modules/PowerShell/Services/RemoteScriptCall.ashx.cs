@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.SessionState;
@@ -16,9 +17,11 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.IO;
+using Sitecore.layouts.testing;
 using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
 using Sitecore.SecurityModel;
+using Sitecore.Text;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
@@ -62,7 +65,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             var isAuthenticated = Context.IsLoggedIn;
-            var useContextDatabase = apiVersion.Is("file") || !isAuthenticated || String.IsNullOrEmpty(originParam) || originParam.Is("current");
+            var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated || string.IsNullOrEmpty(originParam) || originParam.Is("current");
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
 
@@ -190,13 +193,13 @@ namespace Cognifide.PowerShell.Console.Services
 
                     var file = GetPathFromParameters(originParam, pathParam);
 
-                    if (String.IsNullOrEmpty(file))
+                    if (string.IsNullOrEmpty(file))
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         return;
                     }
 
-                    if (String.IsNullOrEmpty(file))
+                    if (string.IsNullOrEmpty(file))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                     }
@@ -212,6 +215,40 @@ namespace Cognifide.PowerShell.Console.Services
                         var fileInfo = new FileInfo(file);
                         WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
                         HttpContext.Current.Response.TransmitFile(file);
+                    }
+                    return;
+                case "handle":
+                    if (!isAuthenticated)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        return;
+                    }
+
+                    if (string.IsNullOrEmpty(originParam))
+                    {
+                        HttpContext.Current.Response.StatusCode = 404;
+                    }
+                    else
+                    {
+                        // download handle
+                        UrlString values = new UrlString(WebUtil.GetSessionString(originParam));
+                        WebUtil.RemoveSessionValue(originParam);
+                        var content = HttpUtility.UrlDecode(values.Parameters["obj"]) ?? string.Empty;
+                        var contentType = values.Parameters["ct"];
+                        var name = values.Parameters["name"];
+                        if (string.IsNullOrEmpty(name))
+                        {
+                            name = "content.txt";
+                        }
+                        var Response = HttpContext.Current.Response;
+                        Response.Clear();
+                        Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlDecode(name));
+                        Response.AddHeader("Content-Length", content.Length.ToString(CultureInfo.InvariantCulture));
+                        Response.ContentType = HttpUtility.UrlDecode(string.IsNullOrEmpty(contentType)
+                            ? "application/octet-stream"
+                            : contentType);
+                        Response.Output.Write("{0}", HttpUtility.UrlDecode(content));
+                        Response.End();
                     }
                     return;
                 default:
@@ -337,6 +374,14 @@ namespace Cognifide.PowerShell.Console.Services
                         isEnabled = false;
                     }
                     break;
+                case "handle":
+                    if (!WebServiceSettings.ServiceEnabledHandleDownload)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
                 default:
                     HttpContext.Current.Response.StatusCode = 403;
                     HttpContext.Current.Response.StatusDescription = disabledMessage;
@@ -349,7 +394,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private string GetPathFromParameters(string originParam, string pathParam)
         {
-            var folder = String.Empty;
+            var folder = string.Empty;
 
             switch (originParam)
             {
@@ -388,7 +433,7 @@ namespace Cognifide.PowerShell.Console.Services
                     break;
             }
 
-            if (folder != pathParam && !String.IsNullOrEmpty(pathParam))
+            if (folder != pathParam && !string.IsNullOrEmpty(pathParam))
             {
                 folder = Path.GetFullPath(folder + pathParam);
             }

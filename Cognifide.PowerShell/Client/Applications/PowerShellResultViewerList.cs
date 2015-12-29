@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Extensions;
@@ -12,6 +13,7 @@ using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
@@ -19,6 +21,7 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
+using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -150,9 +153,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
 
-            Monitor.JobFinished += MonitorJobFinished;
-            Monitor.JobDisappeared += MonitorJobFinished;
-
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -193,22 +193,19 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
         }
 
-        private void MonitorJobFinished(object sender, EventArgs e)
+        [HandleMessage("psr:updateresults", true)]
+        protected virtual void UpdateResults(ClientPipelineArgs args)
         {
-            var session = ScriptSessionManager.GetSession(ScriptSessionId);
-            if (session.CloseRunner)
+            var job = JobManager.GetJob(Monitor.JobHandle);
+            var result = (RunnerOutput) job.Status.Result;
+
+            if (result.CloseRunner)
             {
-                session.CloseRunner = false;
                 Windows.Close();
             }
             else
             {
-                UpdateList(ScriptSessionId);
                 UpdateRibbon();
-            }
-            if (session.AutoDispose)
-            {
-                ScriptSessionManager.RemoveSession(session);
             }
         }
 
@@ -311,18 +308,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             var scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
-            {
-                var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                    ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                    : string.Empty;
-                SetVariables(session, message);
-                session.SetExecutedScript(scriptItem);
-                session.Interactive = true;
-
-                var result = session.ExecuteScriptPart(script, false).Last().ToString();
-                SheerResponse.Download(result);
-            }
+            var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true);
+            ExecuteScriptJob(scriptItem, session, message, true);
         }
 
         private void SetVariables(ScriptSession session, Message message)
@@ -426,45 +413,29 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
                 : ListViewer.Data.SessionId;
             var scriptSession = ScriptSessionManager.GetSession(sessionId);
+            ExecuteScriptJob(scriptItem, scriptSession, message, string.IsNullOrEmpty(sessionId));
+        }
 
+        private void ExecuteScriptJob(Item scriptItem, ScriptSession scriptSession, Message message, bool autoDispose)
+        {
             var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
                 ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
                 : string.Empty;
             SetVariables(scriptSession, message);
+
             scriptSession.SetExecutedScript(scriptItem);
             scriptSession.Interactive = true;
             ScriptSessionId = scriptSession.ID;
 
-            var parameters = new object[]
-            {
-                scriptSession,
-                script
-            };
-
-            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, false);
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
             LvProgressOverlay.Visible = false;
             Monitor.SessionID = scriptSession.ID;
         }
 
-        protected void ExecuteInternal(params object[] parameters)
+        protected void ExecuteInternal(ScriptSession scriptSession, string script)
         {
-            var scriptSession = parameters[0] as ScriptSession;
-            var script = parameters[1] as string;
-
-            if (scriptSession == null || script == null)
-            {
-                return;
-            }
-
-            try
-            {
-                scriptSession.ExecuteScriptPart(script);
-            }
-            catch (Exception exc)
-            {
-                Log.Error(scriptSession.GetExceptionString(exc), exc);
-            }
+            scriptSession.ExecuteScriptPart(script);
         }
     }
 }

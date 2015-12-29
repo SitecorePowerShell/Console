@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using Cognifide.PowerShell.Core.Host;
+using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Applications.Dialogs.ProgressBoxes;
@@ -9,60 +12,76 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class ScriptRunner
     {
-        private readonly bool autoDispose;
-        private readonly ProgressBoxMethod method;
-        private readonly object[] parameters;
+        public delegate void ScriptRunnerMethod(ScriptSession session, string script);
 
-        public ScriptRunner(ProgressBoxMethod method, object[] parameters, bool autoDispose)
+        private bool AutoDispose { get; set; }
+        public ScriptRunnerMethod Method { get; private set; }
+        public ScriptSession Session { get; private set; }
+        public string Script { get; private set; }
+
+        public ScriptRunner(ScriptRunnerMethod method, ScriptSession session, string script, bool autoDispose)
         {
             Assert.ArgumentNotNull(method, "method");
-            Assert.ArgumentNotNull(parameters, "parameters");
-            this.method = method;
-            this.parameters = parameters;
-            this.autoDispose = autoDispose;
-        }
-
-        public ProgressBoxMethod Method
-        {
-            get { return method; }
-        }
-
-        public object[] Parameters
-        {
-            get { return parameters; }
+            Assert.ArgumentNotNull(session, "session");
+            Assert.ArgumentNotNull(script, "script");
+            Method = method;
+            Session = session;
+            Script = script;
+            AutoDispose = autoDispose;
         }
 
         public void Run()
         {
             try
             {
-                Method(Parameters);
+                Method(Session, Script);
+                if (Context.Job == null) return;
+
+                Context.Job.Status.Result = new RunnerOutput
+                {
+                    Exception = null,
+                    Output = Session.Output.GetHtmlUpdate(),
+                    HasErrors = Session.Output.HasErrors,
+                    CloseRunner = Session.CloseRunner
+                };
+
+                JobContext.PostMessage("psr:updateresults");
+                JobContext.Flush();
+
             }
-            catch (ThreadAbortException e)
+            catch (ThreadAbortException taex)
             {
-                Log.Error("Script was aborted", e, this);
+                Log.Error("Script was aborted", taex, this);
                 if (!Environment.HasShutdownStarted)
                 {
                     Thread.ResetAbort();
                 }
-                JobContext.PostMessage("ise:updateresult");
-                JobContext.Flush();
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                Log.Error("Script failed: " + ex, this);
-                JobContext.Job.Status.Result = ex;
-                JobContext.PostMessage("ise:updateresult");
-                JobContext.Flush();
+                Log.Error(ScriptSession.GetExceptionString(exc), exc);
+
+                if (Context.Job != null)
+                {
+                    Context.Job.Status.Result = new RunnerOutput
+                    {
+                        Exception = exc,
+                        Output = Session.Output.GetHtmlUpdate(),
+                        HasErrors = true,
+                        CloseRunner = Session.CloseRunner
+                    };
+
+                    JobContext.PostMessage("psr:updateresults");
+                    JobContext.Flush();
+                }
             }
             finally
             {
-                if (autoDispose)
+                Session.CloseRunner = false;
+                Session.Output.Clear();
+                if (AutoDispose)
                 {
-                    foreach (var parameter in Parameters.OfType<IDisposable>())
-                    {
-                        parameter.Dispose();
-                    }
+                    Session.Dispose();
                 }
             }
         }

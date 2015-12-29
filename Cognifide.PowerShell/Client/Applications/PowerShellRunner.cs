@@ -202,72 +202,14 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetExecutedScript(ScriptDb, ScriptId);
             scriptSession.Interactive = true;
 
-            var parameters = new object[]
-            {
-                scriptSession,
-                ScriptContent
-            };
-            var runner = new ScriptRunner(ExecuteInternal, parameters, false);
+            var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent, string.IsNullOrEmpty(PersistentId));
             Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run, scriptSession.JobOptions);
             Monitor.SessionID = scriptSession.Key;
         }
 
-        protected void ExecuteInternal(params object[] parameters)
+        protected void ExecuteInternal(ScriptSession scriptSession, string script)
         {
-            var scriptSession = parameters[0] as ScriptSession;
-            var script = parameters[1] as string;
-
-            if (scriptSession == null)
-            {
-                return;
-            }
-
-            try
-            {
-                scriptSession.ExecuteScriptPart(script);
-                if (Context.Job == null) return;
-
-                Context.Job.Status.Result = new RunnerOutput
-                {
-                    Errors = string.Empty,
-                    Output = scriptSession.Output.ToHtml(),
-                    HasErrors = scriptSession.Output.HasErrors,
-                    CloseRunner = scriptSession.CloseRunner
-                };
-                JobContext.PostMessage("psr:updateresults");
-                JobContext.Flush();
-            }
-            catch (Exception exc)
-            {
-                Log.Error("Exception while running script", exc, this);
-                if (Context.Job != null)
-                {
-                    var output = new StringBuilder(10240);
-                    if (scriptSession.Output != null)
-                    {
-                        foreach (var outputLine in scriptSession.Output)
-                        {
-                            outputLine.GetHtmlLine(output);
-                        }
-                    }
-                    Context.Job.Status.Result = new RunnerOutput
-                    {
-                        Errors = scriptSession.GetExceptionString(exc),
-                        Output = output.ToString(),
-                        HasErrors = true,
-                        CloseRunner = scriptSession.CloseRunner
-                    };
-                    JobContext.PostMessage("psr:updateresults");
-                    JobContext.Flush();
-                }
-            }
-            finally
-            {
-                if (scriptSession.AutoDispose)
-                {
-                    scriptSession.Dispose();
-                }
-            }
+            scriptSession.ExecuteScriptPart(script);
         }
 
 
@@ -277,9 +219,10 @@ namespace Cognifide.PowerShell.Client.Applications
             var job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
             var printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
-            if (!string.IsNullOrEmpty(result?.Errors))
+            if (result?.Exception != null)
             {
-                printResults += $"<pre style='background:red;'>{result.Errors}</pre>";
+                var error = ScriptSession.GetExceptionString(result.Exception);
+                printResults += $"<pre style='background:red;'>{error}</pre>";
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
@@ -301,12 +244,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
-            if (ScriptSessionManager.SessionExists(PersistentId))
-            {
-                var scriptSession = ScriptSessionManager.GetSession(PersistentId);
-                scriptSession.CloseRunner = false;
-                Monitor.SessionID = string.Empty;
-            }
+            Monitor.SessionID = string.Empty;
             if (result != null && result.CloseRunner)
             {
                 if (Closed != null)
@@ -448,14 +386,6 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             Dispatcher.Dispatch(message, context);
-        }
-
-        public class RunnerOutput
-        {
-            public string Output { get; set; }
-            public string Errors { get; set; }
-            public bool HasErrors { get; set; }
-            public bool CloseRunner { get; set; }
         }
     }
 }

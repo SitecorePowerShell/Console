@@ -5,6 +5,16 @@
     <FormPage Application="PowerShell/PowerShellListView">
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
 
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
@@ -14,14 +24,6 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Ise.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/ListView.css" runat="server" />
 
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"></Script>
-      <Script>$ise = jQuery.noConflict();</Script>
-      <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
-      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js" runat="server"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/json2.js" runat="server"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
       <div class="scFlexColumnContainer scHeight100">
         <Border ID="RibbonPanel" GridPanel.Width="100%" class="scEditorWarningPanelTable" />

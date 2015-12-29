@@ -4,6 +4,8 @@
          xmlns:x="http://www.sitecore.net/xaml">
   <PowerShellMultiValuePrompt>
     <FormPage>
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
+
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
@@ -13,12 +15,13 @@
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
+
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
-      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellMultiValuePrompt,Cognifide.PowerShell" />
+
       <script>
         function OnTabSelect() {
         if (window.Flexie) Flexie.updateInstance();

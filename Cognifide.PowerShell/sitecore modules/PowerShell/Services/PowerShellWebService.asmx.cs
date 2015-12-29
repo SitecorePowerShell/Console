@@ -122,7 +122,7 @@ namespace Cognifide.PowerShell.Console.Services
                         new Result
                         {
                             status = StatusError,
-                            result = output + session.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n" +
+                            result = output + ScriptSession.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n" +
                                      "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
                                      "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
                                      "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
@@ -200,7 +200,7 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     job.Status.Failed = true;
 
-                    var exceptionMessage = session.GetExceptionString(ex);
+                    var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
                         Log.Error(exceptionMessage, this);

@@ -57,7 +57,8 @@ namespace Cognifide.PowerShell.Core.Processors
                 }
                 if (localPath.StartsWith("/-/script/v2", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/media", StringComparison.OrdinalIgnoreCase) ||
-                    localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase)
+                    localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase) ||
+                    localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase)
                     )
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split('/');
@@ -69,7 +70,7 @@ namespace Cognifide.PowerShell.Core.Processors
                     var length = sourceArray.Length - 4;
                     var destinationArray = new string[length];
                     var origin = sourceArray[3].ToLowerInvariant();
-                    string database = apiVersion.Is("file") ? string.Empty : origin;
+                    string database = apiVersion.Is("file") || apiVersion.Is("handle") ? string.Empty : origin;
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
                     var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
                     var query = url.Query.TrimStart('?');

@@ -754,7 +754,7 @@ namespace Cognifide.PowerShell.Core.Host
                 : execResults?.Cast<object>().ToList();
         }
 
-        public string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)
+        public static string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)
         {
             var stacktrace = ex.StackTrace;
             var exceptionPrefix = string.Empty;

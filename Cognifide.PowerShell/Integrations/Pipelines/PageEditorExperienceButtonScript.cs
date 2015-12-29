@@ -8,9 +8,9 @@ using Sitecore.Pipelines.GetChromeData;
 
 namespace Cognifide.PowerShell.Integrations.Pipelines
 {
-    public class ChromeDataScript
+    public class PageEditorExperienceButtonScript
     {
-        public string IntegrationPoint => IntegrationPoints.ExperienceEditorChromeDataFeature;
+        public string IntegrationPoint => IntegrationPoints.PageEditorExperienceButtonFeature;
 
         public void Process(GetChromeDataArgs args)
         {

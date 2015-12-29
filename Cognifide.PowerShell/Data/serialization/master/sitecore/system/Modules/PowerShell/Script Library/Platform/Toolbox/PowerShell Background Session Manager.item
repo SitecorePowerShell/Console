@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1147
+content-length: 1111
 
 Close-Window
 $sessions = Get-ScriptSession
@@ -33,9 +33,7 @@ function Get-StateField{
       return $state
   }
 }
-
-if ($sessions.Count -gt 1) { 
-    $sessions | ? { $current.ID -ne $_.ID } |
+$sessions | ? { $current.ID -ne $_.ID } |
     Show-ListView -Property `
         @{Label="Icon"; Expression={"powershell/32x32/powershell.png" } }, 
         @{Label="Application"; Expression={$_.ApplianceType} }, 
@@ -45,11 +43,8 @@ if ($sessions.Count -gt 1) {
         @{Label="Job"; Expression={$_.JobName} }, 
         @{Label="PowerShell Session"; Expression={$_.ID} } `
         -Title "PowerShell Background Session Manager" `
-        -Icon "Software/32x32/console.png"
-} else {
-    Show-Alert "There are no PowerShell sessions running in the background."
-}
-
+        -Icon "Software/32x32/console.png" `
+        -MissingDataMessage "There are no PowerShell sessions running in the background." 
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -61,7 +56,7 @@ Software/32x32/console.png
 ----version----
 language: en
 version: 1
-revision: 76e43e3b-2a4d-4140-bf7b-4fc170155a90
+revision: f593f22e-17df-4541-914a-f7bb94edb175
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -76,14 +71,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-76e43e3b-2a4d-4140-bf7b-4fc170155a90
+f593f22e-17df-4541-914a-f7bb94edb175
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150822T065642
+20151228T052755
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

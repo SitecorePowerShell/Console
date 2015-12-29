@@ -246,7 +246,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 {
                     job.Status.Failed = true;
 
-                    var exceptionMessage = session.GetExceptionString(ex);
+                    var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
                         Log.Error(exceptionMessage, this);

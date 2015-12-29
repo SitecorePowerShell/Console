@@ -26,7 +26,7 @@ namespace Cognifide.PowerShell.Core.Modules
         public const string WebApi = "webAPI";
         public const string PageEditorNotificationFeature = "pageEditorNotification";
         public const string IsePluginFeature = "isePlugin";
-        public const string ExperienceEditorChromeDataFeature = "experienceEditorChromeData";
+        public const string PageEditorExperienceButtonFeature = "pageEditorExperienceButton";
 
         private static SortedList<string, IntegrationPoint> libraries;
 

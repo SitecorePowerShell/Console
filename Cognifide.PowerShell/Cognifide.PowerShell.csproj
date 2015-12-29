@@ -141,6 +141,7 @@
     <Compile Include="Client\Applications\PowerShellRunner.cs" />
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
     <Compile Include="Client\Applications\PowerShellVelociyOutput.cs" />
+    <Compile Include="Client\Applications\RunnerOutput.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
     <Compile Include="Client\Applications\UploadFile\PowerShellUploadFileForm.cs" />
     <Compile Include="Client\Applications\UploadFile\PowerShellUploadFilePage2.cs">
@@ -193,7 +194,9 @@
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\ErrorIds.cs" />
     <Compile Include="Commandlets\Interactive\HideListViewFeatures.cs" />
+    <Compile Include="Commandlets\Interactive\Messages\OutDownloadMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
+    <Compile Include="Commandlets\Interactive\OutDownloadCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\WaitScriptSessionCommand.cs" />
@@ -399,7 +402,7 @@
     <Compile Include="Core\VersionDecoupling\VersionResolver.cs" />
     <Compile Include="Core\Data\FieldIDs.cs" />
     <Compile Include="Integrations\Gutters\GutterStatusRenderer.cs" />
-    <Compile Include="Integrations\Pipelines\ChromeDataScript.cs" />
+    <Compile Include="Integrations\Pipelines\PageEditorExperienceButtonScript.cs" />
     <Compile Include="Integrations\Pipelines\ContentEditorWarningScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggedInScript.cs" />
     <Compile Include="Integrations\Pipelines\LoggingInScript.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -160,9 +161,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
 
-            Monitor.JobFinished += MonitorJobFinished;
-            Monitor.JobDisappeared += MonitorJobFinished;
-
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -188,12 +186,6 @@ namespace Cognifide.PowerShell.Client.Applications
 
             CurrentSessionId = DefaultSessionName;
             ParentFrameName = WebUtil.GetQueryString("pfn");
-            UpdateRibbon();
-        }
-
-        private void MonitorJobFinished(object sender, EventArgs e)
-        {
-            ScriptRunning = false;
             UpdateRibbon();
         }
 
@@ -467,7 +459,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         result += scriptSession.Output.ToHtml();
                     }
                     result += string.Format("<pre style='background:red;'>{0}</pre>",
-                        scriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
+                        ScriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
                     Context.ClientPage.ClientResponse.SetInnerHtml("Result", result);
                 }
                 if (settings.SaveLastScript)
@@ -550,7 +542,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptToExecute
             };
 
-            var progressBoxRunner = new ScriptRunner(ExecuteInternal, parameters, autoDispose);
+            var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, scriptToExecute, autoDispose);
 
             var rnd = new Random();
             Context.ClientPage.ClientResponse.SetInnerHtml(
@@ -625,51 +617,22 @@ namespace Cognifide.PowerShell.Client.Applications
             }
         }
 
-        protected void ExecuteInternal(params object[] parameters)
+        protected void ExecuteInternal(ScriptSession scriptSession, string script)
         {
-            var scriptSession = parameters[0] as ScriptSession;
-            string script = parameters[1] as string;
-
-            if (scriptSession == null)
-            {
-                return;
-            }
-
             try
             {
                 scriptSession.ExecuteScriptPart(script);
-                if (Context.Job != null)
-                {
-                    JobContext.PostMessage("ise:updateresults");
-                    JobContext.Job.Status.Result = scriptSession.Output.GetHtmlUpdate();
-                    scriptSession.Output.Clear();
-                    JobContext.Flush();
-                    if (!string.IsNullOrEmpty(scriptSession.DebugFile))
-                    {
-                        File.Delete(scriptSession.DebugFile);
-                        scriptSession.DebugFile = string.Empty;
-                    }
-                }
             }
-            catch (Exception exc)
+            finally
             {
-                if (Context.Job != null)
+                if (!string.IsNullOrEmpty(scriptSession.DebugFile))
                 {
-                    var result = string.Empty;
-                    if (scriptSession.Output != null)
-                    {
-                        result += scriptSession.Output.ToHtml();
-                    }
-                    result += string.Format("<pre style='background:red;'>{0}</pre>",
-                        scriptSession.GetExceptionString(exc, ScriptSession.ExceptionStringFormat.Html));
-
-                    Context.Job.Status.Result = result;
-                    JobContext.PostMessage("ise:updateresults");
-                    JobContext.Flush();
+                    File.Delete(scriptSession.DebugFile);
+                    scriptSession.DebugFile = string.Empty;
                 }
+                scriptSession.Debugging = false;
+                scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
             }
-            scriptSession.Debugging = false;
-            scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
         }
 
         [HandleMessage("ise:abort", true)]
@@ -691,20 +654,25 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateResults(args);
         }
 
-        [HandleMessage("ise:updateresults", true)]
+        [HandleMessage("psr:updateresults", true)]
         protected virtual void UpdateResults(ClientPipelineArgs args)
         {
             var job = JobManager.GetJob(Monitor.JobHandle);
-            var result = string.Empty;
-            if (job != null)
+            var result = job?.Status?.Result as RunnerOutput;
+            if (result != null)
             {
-                result = job.Status.Result as string;
+                PrintSessionUpdate(result.Output);
             }
-            PrintSessionUpdate(result);
+
+            if(result?.Exception !=null)
+            {
+                var error = ScriptSession.GetExceptionString(result.Exception, ScriptSession.ExceptionStringFormat.Html);
+                PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
+            }
             Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
-
+            ScriptRunning = false;
             UpdateRibbon();
         }
 
