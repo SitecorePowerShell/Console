@@ -11,7 +11,9 @@ namespace Cognifide.PowerShell.Core.Settings
         public const string ServiceRemoting = "remoting";
         public const string ServiceClient = "client";
         public const string ServiceFileDownload = "fileDownload";
+        public const string ServiceFileUpload = "fileUpload";
         public const string ServiceMediaDownload = "mediaDownload";
+        public const string ServiceMediaUpload = "mediaUpload";
         public const string ServiceHandleDownload = "handleDownload";
 
         static WebServiceSettings()
@@ -21,22 +23,22 @@ namespace Cognifide.PowerShell.Core.Settings
             ServiceEnabledClient = IsServiceEnabled(ServiceClient, true);
             ServiceEnabledRemoting = IsServiceEnabled(ServiceRemoting, false);
             ServiceEnabledFileDownload = IsServiceEnabled(ServiceFileDownload, false);
+            ServiceEnabledFileUpload = IsServiceEnabled(ServiceFileUpload, false);
             ServiceEnabledMediaDownload = IsServiceEnabled(ServiceMediaDownload, false);
+            ServiceEnabledMediaUpload = IsServiceEnabled(ServiceMediaUpload, false);
             ServiceEnabledHandleDownload = IsServiceEnabled(ServiceHandleDownload, true);
-            CommandWaitMillis =
-                Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
-            InitialPollMillis =
-                Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
-            MaxmimumPollMillis =
-                Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 2500);
-            var settingStr =
-                Sitecore.Configuration.Settings.GetSetting("Cognifide.PowerShell.SerializationSizeBuffer", "5KB");
+            CommandWaitMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
+            InitialPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
+            MaxmimumPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 2500);
+            var settingStr = Sitecore.Configuration.Settings.GetSetting("Cognifide.PowerShell.SerializationSizeBuffer", "5KB");
             var sizeLong = StringUtil.ParseSizeString(settingStr);
             SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
         }
 
         public static bool ServiceEnabledFileDownload { get; private set; }
+        public static bool ServiceEnabledFileUpload { get; private set; }
         public static bool ServiceEnabledMediaDownload { get; private set; }
+        public static bool ServiceEnabledMediaUpload { get; private set; }
         public static bool ServiceEnabledHandleDownload { get; private set; }
         public static bool ServiceEnabledRestfulv1 { get; private set; }
         public static bool ServiceEnabledRestfulv2 { get; private set; }

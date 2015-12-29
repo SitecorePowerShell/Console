@@ -15,9 +15,7 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.IO;
-using Sitecore.layouts.testing;
 using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
 using Sitecore.SecurityModel;
@@ -325,10 +323,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        public bool IsReusable
-        {
-            get { return true; }
-        }
+        public bool IsReusable => true;
 
         public void InvalidateCache(object sender, EventArgs e)
         {
