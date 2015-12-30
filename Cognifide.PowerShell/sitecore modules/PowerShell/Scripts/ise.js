@@ -190,7 +190,7 @@ extend(cognifide, "powershell");
 
                     if (line) {
                             
-                        if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) === -1) {
+                        if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) !== 0) {
                             $.lastPrefix = prefix;
                             _getTabCompletions(line);
                         }
