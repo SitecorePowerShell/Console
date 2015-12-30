@@ -1,29 +1,4 @@
-﻿
-function onExecute() {
-    document.getElementById("Result").innerHTML = "&lt;div align='Center' style='padding:32px 0px 32px 0px'&gt;Please wait... Executing script...&lt;/div&gt;&lt;img src='../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working'/&gt;";
-}
-
-// a convenience function for parsing string namespaces and
-// automatically generating nested namespaces
-function extend(e, t) {
-    var n = t.split("."), r = e, i, s;
-    if (n[0] == "cognifide") {
-        n = n.slice(1);
-    }
-    i = n.length;
-    for (s = 0; s < i; s++) {
-        if (typeof r[n[s]] == "undefined") {
-            r[n[s]] = {};
-        }
-        r = r[n[s]];
-    }
-    return r;
-}
-
-var cognifide = cognifide || {};
-extend(cognifide, "powershell");
-
-(function($, window, cognifide, ace, undefined) {
+﻿(function($, window, cognifide, ace, undefined) {
     $(function() {
         var tips = [
             "You can press <strong>Ctrl+Space</strong> to show the Auto Suggest drop down that will show you all the matching comands/parameters/files depending on your caret position",

@@ -362,7 +362,7 @@ namespace Cognifide.PowerShell.Client.Applications
             ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
             PageCount.Text = (ListViewer.PageCount).ToString(CultureInfo.InvariantCulture);
-            SheerResponse.Eval($"updateStatusBarCounters({ItemCount.Text},{CurrentPage.Text},{PageCount.Text});");
+            SheerResponse.Eval($"cognifide.powershell.updateStatusBarCounters({ItemCount.Text},{CurrentPage.Text},{PageCount.Text});");
             ListViewer.Refresh();
         }
 

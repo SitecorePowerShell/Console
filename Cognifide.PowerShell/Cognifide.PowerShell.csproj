@@ -504,6 +504,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\flexie.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ise.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery-1.10.2.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery-migrate-1.2.1.min.js" />
@@ -517,6 +518,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\token_tooltip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />

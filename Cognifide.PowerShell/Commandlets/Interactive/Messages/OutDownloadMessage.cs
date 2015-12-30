@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
             handle.Add(new UrlString("/-/script/handle/"));
 
-            SheerResponse.Eval($"DownloadReport('{ handle.ToHandleString()}');");
+            SheerResponse.Eval($"cognifide.powershell.DownloadReport('{ handle.ToHandleString()}');");
         }
     }
 }

@@ -11,9 +11,9 @@
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/jquery.VistaProgressBar-0.6.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/Runner.js"></Script>
       <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
 
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />

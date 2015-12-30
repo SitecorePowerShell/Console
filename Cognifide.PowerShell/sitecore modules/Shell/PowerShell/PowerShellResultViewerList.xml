@@ -12,8 +12,8 @@
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
 
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />

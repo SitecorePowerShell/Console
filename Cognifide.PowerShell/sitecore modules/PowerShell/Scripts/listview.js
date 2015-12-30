@@ -1,34 +1,21 @@
-﻿
-jQuery(document).ready(function($) {
-    window.parent.focus();
-    window.focus();
+﻿(function($, window, cognifide, undefined) {
 
-    $("#CodeEditor").on("keyup mousedown", function() {
-        var position = codeeditor.getCursorPosition();
-        posx.text(position.column);
-        posy.text((position.row + 1));
-    });
-
-    $("#Input_Filter").keypress(function(event) {
-        if (event.which === 13) {
-            event.preventDefault();
-            scForm.postRequest("", "", "", "pslv:filter");
-        };
-    });
-
-    function barWidth() {
-        var barWidth = $(".progressBar").width();
-        $(".progressFillText").css("width", barWidth);
+    cognifide.powershell.updateStatusBarCounters = function (itemCount, currentPage, pageCount) {
+        $("#ItemCount").text(itemCount);
+        $("#CurrentPage").text(currentPage);
+        $("#PageCount").text(pageCount);
     }
 
-    barWidth();
-    window.onresize = function() {
-        barWidth();
-    };
-});
+    $(function () {
+        window.parent.focus();
+        window.focus();
 
-function updateStatusBarCounters(itemCount, currentPage, pageCount) {
-    $ise("#ItemCount").text(itemCount);
-    $ise("#CurrentPage").text(currentPage);
-    $ise("#PageCount").text(pageCount);
-}
+        $("#Input_Filter").keypress(function(event) {
+            if (event.which === 13) {
+                event.preventDefault();
+                window.scForm.postRequest("", "", "", "pslv:filter");
+            };
+        });
+    });
+
+}(jQuery, window, window.cognifide = window.cognifide || {}));

@@ -21,10 +21,10 @@
       <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <!--for autocomplete and overlay-->
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
 
       <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="Ribbon.css" DeviceDependant="true" />
