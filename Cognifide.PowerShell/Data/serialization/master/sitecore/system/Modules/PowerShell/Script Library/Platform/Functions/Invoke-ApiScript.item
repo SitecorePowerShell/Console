@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5027
+content-length: 5113
 
 <#
     .SYNOPSIS
@@ -84,6 +84,10 @@ content-length: 5027
         Michael West
 #>
 
+if ($HttpContext){
+    $HttpContext.Response.ContentType = "application/json";
+}
+
 function Invoke-ApiScript {
     param(
         [Parameter(Mandatory=$true, Position=0)]
@@ -137,12 +141,12 @@ function Invoke-ApiScript {
         $items = $items | Select-Object -Property $fields
     }
     
-    if($Offset -gt 0) {
-        $items = $items | Select-Object -Skip $Offset
+    if($offset -gt 0) {
+        $items = $items | Select-Object -Skip $offset
     }
     
-    if($Limit -gt 0) {
-        $items = $items | Select-Object -First $Limit
+    if($limit -gt 0) {
+        $items = $items | Select-Object -First $limit
     }
     
     [ordered]@{
@@ -164,7 +168,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: e3fd73c0-f621-4bac-a653-f37f24aa8643
+revision: 4ff941aa-84bf-4595-b678-9f2ac6abcbdd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -179,14 +183,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e3fd73c0-f621-4bac-a653-f37f24aa8643
+4ff941aa-84bf-4595-b678-9f2ac6abcbdd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20150714T172855:635724917355092779
+20151230T043737:635870470576153203
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
