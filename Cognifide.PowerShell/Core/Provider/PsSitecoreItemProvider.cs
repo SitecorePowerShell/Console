@@ -193,8 +193,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    var exception = new IOException($"Cannot find path '{path}' because it does not exist.");
-                    WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
+                    WriteInvalidPathError(path);
                 }
             }
             catch (Exception ex)
@@ -219,10 +218,10 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetItem(string path)
         {
-            GetItemInternal(path).ForEach(WriteItem);
+            GetItemInternal(path, true).ForEach(WriteItem);
         }
 
-        internal IEnumerable<Item> GetItemInternal(string path)
+        internal IEnumerable<Item> GetItemInternal(string path, bool errorIfNotFound)
         {
             LogInfo("Executing GetItem(string path='{0}')", path);
 
@@ -279,8 +278,8 @@ namespace Cognifide.PowerShell.Core.Provider
                     yield return resultItem;
                 }
             }
-            else
-            {
+            else if(errorIfNotFound)
+            {                
                 WriteInvalidPathError(path);
             }
         }
@@ -384,8 +383,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (destinationItem == null)
                 {
-                    leafName = GetLeafFromPath(destination);
-                    destination = GetParentFromPath(destination);
+                    leafName = PathUtilities.GetLeafFromPath(destination);
+                    destination = PathUtilities.GetParentFromPath(destination);
                     destinationItem = GetItemForPath(destination);
                     if (destinationItem == null)
                     {
@@ -493,8 +492,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (destinationItem == null)
                 {
-                    leafName = GetLeafFromPath(destination);
-                    destination = GetParentFromPath(destination);
+                    leafName = PathUtilities.GetLeafFromPath(destination);
+                    destination = PathUtilities.GetParentFromPath(destination);
                     destinationItem = GetItemForPath(destination);
 
                     if (destinationItem == null)
@@ -584,7 +583,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         string.Format("Template '{0}' does not exist or wrong path provided.",
                             itemTypeName));
                 }
-                var parentItem = GetItemForPath(GetParentFromPath(path));
+                var parentItem = GetItemForPath(PathUtilities.GetParentFromPath(path));
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
                 if (dic != null && dic[ParentParam].IsSet)
@@ -592,16 +591,16 @@ namespace Cognifide.PowerShell.Core.Provider
                     parentItem = dic[ParentParam].Value as Item;
                 }
 
-                if (!ShouldProcess(GetParentFromPath(path), "Create item '" + GetLeafFromPath(path) + "' of type '" + itemTypeName + "'")) return;
+                if (!ShouldProcess(PathUtilities.GetParentFromPath(path), "Create item '" + PathUtilities.GetLeafFromPath(path) + "' of type '" + itemTypeName + "'")) return;
 
                 Item createdItem = null;
                 switch (srcItem.TemplateName)
                 {
                     case "Template":
-                        createdItem = parentItem.Add(GetLeafFromPath(path), (TemplateItem) srcItem);
+                        createdItem = parentItem.Add(PathUtilities.GetLeafFromPath(path), (TemplateItem) srcItem);
                         break;
                     case "Branch":
-                        createdItem = parentItem.Add(GetLeafFromPath(path), (BranchItem) srcItem);
+                        createdItem = parentItem.Add(PathUtilities.GetLeafFromPath(path), (BranchItem) srcItem);
                         break;
                 }
 

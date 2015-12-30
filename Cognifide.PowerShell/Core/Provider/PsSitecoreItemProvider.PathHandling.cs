@@ -20,14 +20,6 @@ namespace Cognifide.PowerShell.Core.Provider
             return currentItem;
         }
 
-        private Item GetSitecorePath(string path)
-        {
-            var relativePath = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            var databaseName = path.IndexOf(':') < 0 ? PSDriveInfo.Name : path.Substring(0, path.IndexOf(':'));
-            var currentItem = PathUtilities.GetItem(databaseName, relativePath);
-            return currentItem;
-        }
-
         private Item GetItemById(string partialPath,string id)
         {
             var databaseName = partialPath.IndexOf(':') < 0 ? PSDriveInfo.Name : partialPath.Substring(0, partialPath.IndexOf(':'));
@@ -97,8 +89,8 @@ namespace Cognifide.PowerShell.Core.Provider
         protected override string[] ExpandPath(string path)
         {
             path = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            var parent = GetParentFromPath(path);
-            var name = GetLeafFromPath(path).Trim('*');
+            var parent = PathUtilities.GetParentFromPath(path);
+            var name = PathUtilities.GetLeafFromPath(path).Trim('*');
             if (parent.Contains("-") || parent.Contains(" "))
             {
                 var segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -118,40 +110,13 @@ namespace Cognifide.PowerShell.Core.Provider
             return results;
         }
 
-        private static string GetParentFromPath(string path)
-        {
-            path = path.Replace('\\', '/').TrimEnd('/');
-            var lastLeafIndex = path.LastIndexOf('/');
-            return path.Substring(0, lastLeafIndex);
-        }
-
-        private static string GetLeafFromPath(string path)
-        {
-            path = path.Replace('\\', '/').TrimEnd('/');
-            var lastLeafIndex = path.LastIndexOf('/');
-            return path.Substring(lastLeafIndex + 1);
-        }
-    
-        private static bool HasRelativePathTokens(string path)
-        {
-            if ((((path.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) != 0) && !path.Contains(@"\.\")) &&
-                 (!path.Contains(@"\..\") && !path.EndsWith(@"\..", StringComparison.OrdinalIgnoreCase))) &&
-                ((!path.EndsWith(@"\.", StringComparison.OrdinalIgnoreCase) &&
-                  !path.StartsWith(@"..\", StringComparison.OrdinalIgnoreCase)) &&
-                 !path.StartsWith(@".\", StringComparison.OrdinalIgnoreCase)))
-            {
-                return path.StartsWith("~", StringComparison.OrdinalIgnoreCase);
-            }
-            return true;
-        }
-
         private string NormalizePath(string path)
         {
             string normalizedPath = path;
             if (!string.IsNullOrEmpty(path))
             {
                 normalizedPath = path.Replace('/', '\\');
-                if (HasRelativePathTokens(path))
+                if (PathUtilities.HasRelativePathTokens(path))
                 {
                     normalizedPath = NormalizeRelativePath(normalizedPath, null);
                 }

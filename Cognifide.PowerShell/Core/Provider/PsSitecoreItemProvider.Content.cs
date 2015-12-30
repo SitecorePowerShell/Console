@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Text;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Configuration;
@@ -20,11 +21,10 @@ namespace Cognifide.PowerShell.Core.Provider
     {
         public IContentReader GetContentReader(string path)
         {
-            var item = GetItemInternal(path).FirstOrDefault();
+            var item = GetItemInternal(path, true).FirstOrDefault();
             if (item== null)
             {
-                Exception exception = new IOException($"Cannot find path '{path}' or item because it does not exist.");
-                WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+                return null;
             }
             FileSystemCmdletProviderEncoding encoding;
             TryGetDynamicParam(EncodingParam, out encoding);
@@ -56,16 +56,31 @@ namespace Cognifide.PowerShell.Core.Provider
 
         public IContentWriter GetContentWriter(string path)
         {
-            var item = GetItemInternal(path).FirstOrDefault();
-            if (item == null && !ItemContentReaderWriterBase.IsMediaPath(path))
+            var item = GetDynamicParamValue(ItemParam, (Item)null);
+            if (item == null)
             {
-                Exception exception = new IOException($"Cannot find path '{path}' or item because it does not exist.");
-                WriteError(new ErrorRecord(exception, "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+                item = GetItemInternal(path, false).FirstOrDefault();
+
+                if (item == null && !ItemContentReaderWriterBase.IsMediaPath(path))
+                {
+                    WriteInvalidPathError(path);
+                    return null;
+                }
             }
+            else
+            {
+                path = item.GetProviderPath();
+            }
+
             var extension = GetDynamicParamValue(ExtensionParam, string.Empty);
             var encoding = GetDynamicParamValue(EncodingParam, FileSystemCmdletProviderEncoding.Unknown);
+
+            string language;
+            int version;
+            GetVersionAndLanguageParams(out version, out language);
+
             return new ItemContentWriter(this, item, path, encoding, extension, IsDynamicParamSet(RawParam),
-                IsDynamicParamSet(FileBasedParam), IsDynamicParamSet(VersionedParam));
+                IsDynamicParamSet(FileBasedParam), IsDynamicParamSet(VersionedParam), language);
         }
 
         public object GetContentWriterDynamicParameters(string path)
@@ -82,6 +97,8 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof(FileSystemCmdletProviderEncoding), EncodingParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(string), ExtensionParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), FileBasedParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), VersionedParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic);
 
             return paramAdded ? dic : null;
         }

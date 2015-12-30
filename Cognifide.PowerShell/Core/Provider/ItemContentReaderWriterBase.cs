@@ -5,6 +5,7 @@ using System.Linq;
 using System.Management.Automation.Provider;
 using System.Text;
 using System.Threading.Tasks;
+using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Data.Items;
 
@@ -49,6 +50,7 @@ namespace Cognifide.PowerShell.Core.Provider
         }
         public static bool IsMediaPath(string path)
         {
+            path = PathUtilities.GetSitecorePath(path);
             return path.StartsWith("/sitecore/media library/", System.StringComparison.OrdinalIgnoreCase);
         }
 

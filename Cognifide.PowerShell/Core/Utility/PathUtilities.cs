@@ -32,6 +32,38 @@ namespace Cognifide.PowerShell.Core.Utility
             return drivepath[0];
         }
 
+        public static string GetSitecorePath(string path)
+        {
+            if (!path.Contains(":"))
+            {
+                return EnsureItemPath(path);
+            }
+
+            //path with drive
+            var drivepath = path.Split(':');
+            return EnsureItemPath(drivepath[1]);
+        }
+
+        private static string EnsureItemPath(string path)
+        {
+            path = path.Replace('\\', '/');
+
+            if (String.IsNullOrEmpty(path) || path == "/")
+            {
+                return "/sitecore";
+            }
+
+            if (!path.StartsWith("/"))
+            {
+                path = "/" + path;
+            }
+            if (!path.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            {
+                path = "/sitecore" + path;
+            }
+            return path;
+        }
+
         public static Item GetItem(string path, string currentDb, string currentPath)
         {
             Item item;
@@ -58,9 +90,9 @@ namespace Cognifide.PowerShell.Core.Utility
         {
             if (item == null)
             {
-                return string.Empty;
+                return String.Empty;
             }
-            var psPath = string.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+            var psPath = String.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
             return psPath;
         }
 
@@ -70,7 +102,7 @@ namespace Cognifide.PowerShell.Core.Utility
             var sb = new StringBuilder(path.Length + 10);
             foreach (var part in parts)
             {
-                if (string.IsNullOrEmpty(part))
+                if (String.IsNullOrEmpty(part))
                 {
                     continue;
                 }
@@ -96,6 +128,33 @@ namespace Cognifide.PowerShell.Core.Utility
             }
 
             return relativePath;
+        }
+
+        public static string GetParentFromPath(string path)
+        {
+            path = path.Replace('\\', '/').TrimEnd('/');
+            var lastLeafIndex = path.LastIndexOf('/');
+            return path.Substring(0, lastLeafIndex);
+        }
+
+        public static string GetLeafFromPath(string path)
+        {
+            path = path.Replace('\\', '/').TrimEnd('/');
+            var lastLeafIndex = path.LastIndexOf('/');
+            return path.Substring(lastLeafIndex + 1);
+        }
+
+        public static bool HasRelativePathTokens(string path)
+        {
+            if ((((path.IndexOf(@"\", StringComparison.OrdinalIgnoreCase) != 0) && !path.Contains(@"\.\")) &&
+                 (!path.Contains(@"\..\") && !path.EndsWith(@"\..", StringComparison.OrdinalIgnoreCase))) &&
+                ((!path.EndsWith(@"\.", StringComparison.OrdinalIgnoreCase) &&
+                  !path.StartsWith(@"..\", StringComparison.OrdinalIgnoreCase)) &&
+                 !path.StartsWith(@".\", StringComparison.OrdinalIgnoreCase)))
+            {
+                return path.StartsWith("~", StringComparison.OrdinalIgnoreCase);
+            }
+            return true;
         }
     }
 }

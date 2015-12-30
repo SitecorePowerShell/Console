@@ -10,8 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
+using Sitecore.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Resources.Media;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -24,14 +27,17 @@ namespace Cognifide.PowerShell.Core.Provider
         private string fieldName = null;
 
         private Encoder encoder;
-        private bool contentCommitted = false;
-        private StreamWriter memWriter = null;
-        private bool mediaBlob = false;
-        private string extension;
-        private bool fileBased = false;
-        private string path;
+        private bool contentCommitted;
+        private StreamWriter memWriter;
+        private bool mediaBlob;
+        private readonly string extension;
+        private readonly bool fileBased;
+        private readonly string path;
+        private bool versioned;
+        private string language;
+        private string database;
 
-        public ItemContentWriter(CmdletProvider provider, Item item, string path,  FileSystemCmdletProviderEncoding encoding, string extension, bool raw, bool fileBased, bool versioned)
+        public ItemContentWriter(CmdletProvider provider, Item item, string path,  FileSystemCmdletProviderEncoding encoding, string extension, bool raw, bool fileBased, bool versioned, string language)
 			: base(provider, item, encoding, raw)
 		{
             if (Encoding != null && !Raw)
@@ -44,6 +50,10 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             this.fileBased = fileBased;
             this.path = path;
+            this.versioned = versioned;
+            this.language = language ?? Item?.Language?.Name;
+            database = Item?.Database?.Name ?? PathUtilities.GetDrive(path, "master");
+
 		}
 
         public IList Write(IList content)
@@ -141,11 +151,15 @@ namespace Cognifide.PowerShell.Core.Provider
                     var mc = new MediaCreator();
                     var mco = new MediaCreatorOptions()
                     {
-                        Database = Item.Database,
-                        Language = Item.Language,
+                        Database = Factory.GetDatabase(database),
                         FileBased = fileBased,
                     };
-                    mc.AttachStreamToMediaItem(Stream, Item.Paths.Path, Item.Name + extension, mco);
+                    if (!string.IsNullOrEmpty(language))
+                    {
+                        mco.Language = LanguageManager.GetLanguage(language);
+                    }
+
+                    mc.AttachStreamToMediaItem(Stream, PathUtilities.GetSitecorePath(path), PathUtilities.GetLeafFromPath(path) + extension, mco);
                 }
             }
         }
