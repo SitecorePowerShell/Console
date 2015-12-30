@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Validation;
@@ -9,7 +10,7 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public abstract class BaseLanguageAgnosticItemCommand : BaseShellCommand
     {
-        public static readonly string[] Databases = Factory.GetDatabaseNames();
+        public static readonly string[] Databases = Factory.GetDatabaseNames().Where(name => name != "filesystem").ToArray();
 
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline", Mandatory = true, Position = 0)]

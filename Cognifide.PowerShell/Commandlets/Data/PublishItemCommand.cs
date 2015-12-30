@@ -3,7 +3,9 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -21,6 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         [Parameter]
         [Alias("Targets")]
+        [AutocompleteSet("Databases")]
         public string[] Target { get; set; }
 
         [Parameter]
