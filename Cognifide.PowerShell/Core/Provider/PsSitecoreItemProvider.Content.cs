@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Text;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
-using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Data.Managers;
-using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
 {

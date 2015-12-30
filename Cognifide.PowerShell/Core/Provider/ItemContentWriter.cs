@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Security.AccessControl;
 using System.Text;
-using System.Threading.Tasks;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
@@ -24,7 +21,6 @@ namespace Cognifide.PowerShell.Core.Provider
         private enum Mode { Write, Append }
 
         private Mode mode = Mode.Write;
-        private string fieldName = null;
 
         private Encoder encoder;
         private bool contentCommitted;
@@ -33,9 +29,9 @@ namespace Cognifide.PowerShell.Core.Provider
         private readonly string extension;
         private readonly bool fileBased;
         private readonly string path;
-        private bool versioned;
-        private string language;
-        private string database;
+        private readonly bool versioned;
+        private readonly string language;
+        private readonly string database;
 
         public ItemContentWriter(CmdletProvider provider, Item item, string path,  FileSystemCmdletProviderEncoding encoding, string extension, bool raw, bool fileBased, bool versioned, string language)
 			: base(provider, item, encoding, raw)
@@ -97,7 +93,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         encoder.Convert(chars, convertedChars, chars.Length - convertedChars, bytes, 0, bytes.Length, false, out charsUsed, out bytesUsed, out completed);
                         convertedChars += charsUsed;
 
-                        Stream.Write(bytes, 0, bytesUsed);
+                        Stream?.Write(bytes, 0, bytesUsed);
                     }
                 }
             }
@@ -109,7 +105,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 while (bytesWritten < bytes.Length)
                 {
                     var written = Math.Min(bytes.Length - bytesWritten, ByteBufferSize);
-                    Stream.Write(bytes, bytesWritten, written);
+                    Stream?.Write(bytes, bytesWritten, written);
                     bytesWritten += written;
                 }
             }
@@ -128,7 +124,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 CreateStreams();
             }
 
-            Stream.SetLength(0);
+            Stream?.SetLength(0);
         }
 
         public override void Seek(long offset, SeekOrigin origin)
@@ -153,6 +149,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     {
                         Database = Factory.GetDatabase(database),
                         FileBased = fileBased,
+                        Versioned = versioned
                     };
                     if (!string.IsNullOrEmpty(language))
                     {
@@ -187,7 +184,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 mediaBlob = true;
                 if (mode == Mode.Append && Item != null)
                 {
-                    MediaItem mediaItem = (MediaItem) Item;
+                    MediaItem mediaItem = Item;
                     Media media = MediaManager.GetMedia(mediaItem);
                     var mediaStream = media.GetStream();
                     Stream.SetLength(mediaStream.Length);
@@ -197,7 +194,6 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             else
             {
-                Stream = new MemoryStream();
                 if (mode == Mode.Append)
                 {
                     if (Item.TemplateName == TemplateNames.ScriptTemplateName)

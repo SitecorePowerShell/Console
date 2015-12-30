@@ -184,7 +184,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             else if (IsMediaPath(Item.Paths.Path))
             {
-                MediaItem media = (MediaItem)Item;
+                MediaItem media = Item;
                 if (media != null)
                 {
                     Stream = media.GetMediaStream();
