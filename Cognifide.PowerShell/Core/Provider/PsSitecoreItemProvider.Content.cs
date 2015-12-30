@@ -105,12 +105,13 @@ namespace Cognifide.PowerShell.Core.Provider
 
         public void ClearContent(string path)
         {
-            //throw new NotImplementedException();
+            // not supported at this moment
         }
 
         public object ClearContentDynamicParameters(string path)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return null;
         }
     }
 }
