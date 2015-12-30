@@ -67,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
             {
                 foreach (var publishingTarget in PublishManager.GetPublishingTargets(source))
                 {
-                    var destination = Factory.GetDatabase(publishingTarget[Core.Data.FieldIDs.TargetDatabase]);
+                    var destination = Factory.GetDatabase(publishingTarget[FieldIDs.PublishingTargetDatabase]);
                     PublishToTarget(item, source, destination);
                 }
             }
