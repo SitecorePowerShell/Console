@@ -525,22 +525,6 @@ namespace Cognifide.PowerShell.Core.Host
                 UserName = User.Current.Name;
                 var proxy = host.Runspace.SessionStateProxy;
                 proxy.SetVariable("me", UserName);
-                proxy.SetVariable("HttpContext", HttpContext.Current);
-                if (HttpContext.Current != null)
-                {
-                    proxy.SetVariable("request", HttpContext.Current.Request);
-                    proxy.SetVariable("response", HttpContext.Current.Response);
-                }
-
-                proxy.SetVariable("ClientData", Context.ClientData);
-                try
-                {
-                    proxy.SetVariable("ClientPage", Context.ClientPage);
-                }
-                catch
-                {
-                    Log.Warn("Unable to set the ClientPage variable.", this);
-                }
                 proxy.SetVariable("HostSettings", Settings);
                 proxy.SetVariable("ScriptSession", this);
 

@@ -4,17 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Core.Validation;
-using Lucene.Net.Highlight;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch.Utilities;
-using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Host
 {
