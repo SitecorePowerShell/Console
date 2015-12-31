@@ -22,32 +22,6 @@
         ];
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;
-
-        window.parent.focus();
-        window.focus();
-
-        function setFocusOnConsole() {
-            $("body").focus();
-            $("#Editor").focus();
-            ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("Editor");
-        }
-
-		function getQueryStringValue(key) {
-			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
-			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
-			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-		}
-
-        $("body").on("click", "#HelpClose", function() {
-            $("#ajax-dialog").dialog("close");
-        });
-
-		if(getQueryStringValue("sc_bw") === "1"){
-			$("#RibbonPanel").css("padding-top","50px");
-			$("#Wrapper").css("padding-top","0px");
-		}
-        setTimeout(setFocusOnConsole, 1000);
-
         var guid = "ISE Editing Session";
         var debugLine = 0;
         var debugSessionId = "";
@@ -66,6 +40,36 @@
         codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
         codeeditor.session.on("change", function () {
             editor.val(codeeditor.session.getValue());
+
+        window.parent.focus();
+        window.focus();
+
+        function setFocusOnConsole() {
+            $("body").focus();
+            $(codeeditor).focus();
+            ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("CodeEditor");
+        }
+
+        window.addEventListener("focus",
+            function(event) {
+                setFocusOnConsole();
+            }, false);
+
+		function getQueryStringValue(key) {
+			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
+			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+		}
+
+        $("body").on("click", "#HelpClose", function() {
+            $("#ajax-dialog").dialog("close");
+        });
+
+		if(getQueryStringValue("sc_bw") === "1"){
+			$("#RibbonPanel").css("padding-top","50px");
+			$("#Wrapper").css("padding-top","0px");
+		}
+        setTimeout(setFocusOnConsole, 1000);
         });
 
         var typingTimer;
