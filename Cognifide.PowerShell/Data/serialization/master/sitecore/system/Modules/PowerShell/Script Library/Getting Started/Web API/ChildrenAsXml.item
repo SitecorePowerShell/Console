@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1030
+content-length: 1235
 
 <#
     Provides an XML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
@@ -24,8 +24,14 @@ content-length: 1030
 #>
 
 #if the location is not Sitecore tree, switch to root of Master Database
+$HttpContext = [System.Web.HttpContext]::Current;
+
 if((Get-Location).Provider.Name -ne "CmsItemProvider"){
     Set-Location master:\
+}
+
+if(!$item){
+    $item = "/"
 }
 
 Set-Location $item
@@ -33,12 +39,19 @@ Set-Location $item
 if ($HttpContext -ne $null){
     $HttpContext.Response.ContentType = "text/xml";
 }
-#return some of the children's properties as JSON
-Get-ChildItem -Path . | Select-Object Name, DiaplayName, TemplateName, Language, Version, Paths | ConvertTo-Xml | Select-Object -ExpandProperty OuterXml
+
+Set-HostProperty -HostWidth ([System.Int32]::MaxValue)
+
+#return some of the children's properties as XML
+Get-ChildItem -Path . | 
+    Select-Object Name, DisplayName, TemplateName, Language, Version, @{Name="Path"; Expression={ $_.Paths.Path}} | 
+    ConvertTo-Xml | 
+    Select-Object -ExpandProperty OuterXml
+
 ----version----
 language: en
 version: 1
-revision: 46cc5e99-cc84-4ff7-86cc-2e02b44d96a0
+revision: 4c25794c-c9da-41ce-b00e-e5f548ba1a64
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -53,14 +66,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-46cc5e99-cc84-4ff7-86cc-2e02b44d96a0
+4c25794c-c9da-41ce-b00e-e5f548ba1a64
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20151025T152938:635813837789198132
+20151231T162412
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

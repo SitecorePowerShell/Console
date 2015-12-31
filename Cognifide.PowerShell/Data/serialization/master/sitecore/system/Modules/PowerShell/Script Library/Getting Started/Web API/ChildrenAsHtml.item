@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1956
+content-length: 2042
 
 <#
     For the Script API call to work - make sure the module in which the called script is located is enabled!
@@ -36,9 +36,14 @@ $head = '<style>'+
     'tbody tr:hover td{color:#339;background:#f0f0ff;}'+
     '</style>'
 $body = "<h1>Children of $($item)</h1>"
+$HttpContext = [System.Web.HttpContext]::Current;
 
 if((Get-Location).Provider.Name -ne "CmsItemProvider"){
     Set-Location master:\
+}
+
+if(!$item){
+    $item = "/"
 }
 
 Set-Location $item
@@ -53,7 +58,7 @@ Get-ChildItem -Path . | Select-Object Name, DisplayName, TemplateName, Language,
 ----version----
 language: en
 version: 1
-revision: a8b95bc3-6e92-44e6-bd55-c7082dcbba0b
+revision: baa35acb-ae6b-4c81-a67a-4796a3166738
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -68,14 +73,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a8b95bc3-6e92-44e6-bd55-c7082dcbba0b
+baa35acb-ae6b-4c81-a67a-4796a3166738
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20151025T152129:635813832891981744
+20151231T161232
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
