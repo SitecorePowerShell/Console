@@ -61,7 +61,6 @@ namespace Cognifide.PowerShell.Core.Host
         private readonly ScriptingHost host;
         private static InitialSessionState state;
         private bool abortRequested;
-        private Exception errorFatal;
         private bool isRunspaceOpenedOrBroken;
         private System.Management.Automation.PowerShell powerShell;
 
@@ -126,7 +125,7 @@ namespace Cognifide.PowerShell.Core.Host
                     return;
 
                 // broken; keep an error silently
-                errorFatal = e.RunspaceStateInfo.Reason;
+                //errorFatal = e.RunspaceStateInfo.Reason;
 
                 //! Set the broken flag, waiting threads may continue.
                 //! The last code, Invoking() may be waiting for this.
@@ -282,12 +281,9 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                var bPointScript = string.Empty;
-                foreach (var breakpoint in breakpoints)
-                {
-                    bPointScript +=
-                        $"Set-PSBreakpoint -Script {DebugFile} -Line {breakpoint+1}\n";
-                }
+                var bPointScript = breakpoints.Aggregate(string.Empty,
+                    (current, breakpoint) =>
+                        current + $"Set-PSBreakpoint -Script {DebugFile} -Line {breakpoint + 1}\n");
                 ExecuteScriptPart(bPointScript, false, true, false);
             }
         }
@@ -296,9 +292,9 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (Interactive)
             {
-                if (args.Breakpoint is LineBreakpoint)
+                var breakpoint = args.Breakpoint as LineBreakpoint;
+                if (breakpoint != null)
                 {
-                    var breakpoint = args.Breakpoint as LineBreakpoint;
                     if (string.Equals(breakpoint.Script, DebugFile, StringComparison.OrdinalIgnoreCase))
                     {
                         var message = Message.Parse(this, "ise:setbreakpoint");
@@ -347,7 +343,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                     var message = Message.Parse(this, "ise:breakpointhit");
                     //var position = args.InvocationInfo.DisplayScriptPosition;
-                    IScriptExtent position = null;
+                    IScriptExtent position;
                     try
                     {
                         position = args.InvocationInfo.GetType()
@@ -384,16 +380,17 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         if (ImmediateCommand != null)
                         {
-                            PSCommand psCommand = new PSCommand();
+                            var psCommand = new PSCommand();
                             psCommand.AddScript(ImmediateCommand as string)
                                 .AddCommand("Out-Default");
                                 //.AddParameter("Stream", true);
-                            ImmediateCommand = null;
-                            DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
-                            if (results.ResumeAction != null)
+                            var results = debugger?.ProcessCommand(psCommand, output);
+                            ImmediateResults = output;
+                            if (results?.ResumeAction != null)
                             {
                                 resumeAction = results.ResumeAction;
                             }
+                            ImmediateCommand = null;
                         }
                         else
                         {
@@ -446,6 +443,7 @@ namespace Cognifide.PowerShell.Core.Host
                     tries--;
                 }
                 results = ImmediateResults.BaseList<object>();
+                ImmediateResults = null;
                 return tries > 0;
             }
 
