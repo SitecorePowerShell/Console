@@ -161,14 +161,30 @@
         $("html").animate({ scrollTop: $(document).height() }, "slow");
     }
 
+    var sigHint = "";
+
     function tabCompletionInit(command) {
         getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
-            function(json) {
+            function (json) {
                 var data = JSON.parse(json.d);
                 if (!!console) {
                     console.log("setting tabCompletions to: " + data.toString());
                 }
-                tabCompletions = data;
+                sigHint = "";
+                tabCompletions = data.filter(function (hint) {
+                    var isSignature = hint.indexOf("Signature|") === 0;
+                    if (isSignature) {
+                        var hintParts = hint.split("|");
+                        sigHint += hintParts[1] + "<br/>";
+                    }
+                    return !isSignature;
+                }).map(function (hint) {
+                    var hintParts = hint.split("|");
+                    if (hintParts[0] === "Type") {
+                        return "[" + hintParts[3];
+                    }
+                    return hintParts[0];
+                });
             });
         if (!!console) {
             console.log("initializing tab completion");
@@ -190,15 +206,24 @@
 
     function tabCompletionNoHints() {
 
-        var tip = $(".tip_no_hints");
-
+        var tips = $(".tip_no_hints");
+        var tip = tips[0];
+        var tipInterval = 1000;
+        if (sigHint === "") {
+            tip.innerHTML = "No hints found";
+            tips.addClass("no_hints").removeClass("signature");
+        } else {
+            tipInterval = 5000;
+            tip.innerHTML = sigHint;
+            tips.addClass("signature").removeClass("no_hints");
+        }
         //Absolute position the tooltip according to mouse position
-        tip.css({ top: 10, left: 10 });
+        tips.css({ top: 10, left: 10 });
 
-        tip.fadeIn(function() {
-            window.setTimeout(function() {
-                tip.fadeOut("slow");
-            }, 1000);
+        tips.fadeIn(function () {
+            window.setTimeout(function () {
+                tips.fadeOut("slow");
+            }, tipInterval);
         });
     }
 

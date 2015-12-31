@@ -11,8 +11,6 @@ form {
 html {
     height: 100%;
     width: 100%;
-    /*    position:relative;
-/*    overflow-y: inherit;*/
 }
 
 /* make sure it is at least as tall as the viewport */
@@ -257,3 +255,15 @@ html {
 
 #Progress p { margin: 0 2px; }
 #Progress h2 { margin: 0; font-size: 1.5em;}
+
+.tip_no_hints.no_hints {
+    background-color: #FFEFEF;
+    border: #FFEFEF 1px solid;
+    color: #ff5a5a;
+}
+
+.tip_no_hints.signature {
+    background-color: #FFFBE6;
+    border: #F4BC01 1px solid;
+    color: #5C3B00;
+}
