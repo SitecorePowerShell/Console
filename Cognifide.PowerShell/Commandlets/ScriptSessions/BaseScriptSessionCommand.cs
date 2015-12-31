@@ -1,7 +1,6 @@
 using System.Data;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Sitecore.ContentSearch.Utilities;
 
@@ -22,19 +21,19 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         {
             if (Id != null && Id.Length > 0)
             {
-                foreach (var id in Id)
+                foreach (var sessionId in Id)
                 {
-                    if (!string.IsNullOrEmpty(id))
+                    if (!string.IsNullOrEmpty(sessionId))
                     {
-                        if (ScriptSessionManager.SessionExistsForAnyUserSession(id))
+                        if (ScriptSessionManager.SessionExistsForAnyUserSession(sessionId))
                         {
-                            ScriptSessionManager.GetMatchingSessionsForAnyUserSession(id).ForEach(ProcessSession);
+                            ScriptSessionManager.GetMatchingSessionsForAnyUserSession(sessionId).ForEach(ProcessSession);
                         }
                         else
                         {
                             WriteError(typeof (ObjectNotFoundException),
-                                $"The script session with Id '{Id}' cannot be found.",
-                                ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, Id);
+                                $"The script session with Id '{sessionId}' cannot be found.",
+                                ErrorIds.ScriptSessionNotFound, ErrorCategory.ResourceUnavailable, sessionId);
                         }
                     }
                     else
@@ -61,13 +60,6 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
         }
 
-        protected string CurrentSessionId
-        {
-            get
-            {
-                if (HostData == null) return string.Empty;
-                return HostData.SessionId;
-            }
-        }
+        protected string CurrentSessionId => HostData == null ? string.Empty : HostData.SessionId;
     }
 }
