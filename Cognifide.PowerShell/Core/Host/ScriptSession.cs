@@ -712,9 +712,7 @@ namespace Cognifide.PowerShell.Core.Host
 
             if (execResults != null && execResults.Any())
             {
-                foreach (
-                    var record in
-                        execResults.Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
+                foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
                 {
                     Log.Error(record + record.InvocationInfo.PositionMessage, this);
                 }

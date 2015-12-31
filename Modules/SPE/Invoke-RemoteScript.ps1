@@ -76,8 +76,16 @@ function Invoke-RemoteScript {
         
         [Parameter()]
         [Alias("ArgumentList")]
-        [hashtable]$Arguments
+        [hashtable]$Arguments,
+
+        [Parameter()]
+        [switch]$AsJob
     )
+
+    if($AsJob.IsPresent) {
+        $nestedScript = $ScriptBlock.ToString()
+        $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) }")
+    }
 
     $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 
         Group-Object -Property SubExpression | 
@@ -90,7 +98,6 @@ function Invoke-RemoteScript {
         $usingVar = $usingVariables | Group-Object -Property SubExpression | ForEach {$_.Group | Select -First 1}  
         Write-Debug "CommandOrigin: $($MyInvocation.CommandOrigin)"      
         $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
-        Write-Verbose ("Found {0} `$Using: variables!" -f $usingVariableValues.count)
         $invokeWithArguments = $true
     }
   

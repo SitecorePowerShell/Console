@@ -70,7 +70,8 @@
 	    '.\Receive-RemoteItem.ps1',
         '.\Receive-MediaItem.ps1',
         '.\Send-MediaItem.ps1',
-        '.\Send-RemoteItem.ps1'
+        '.\Send-RemoteItem.ps1',
+        '.\Wait-RemoteScriptJob.ps1'
     )
     
     # Functions to export from this module
@@ -82,7 +83,8 @@
 	    'Receive-RemoteItem',
         'Receive-MediaItem',
         'Send-MediaItem',
-        'Send-RemoteItem'
+        'Send-RemoteItem',
+        'Wait-RemoteScriptJob'
     )
 
     # Cmdlets to export from this module
