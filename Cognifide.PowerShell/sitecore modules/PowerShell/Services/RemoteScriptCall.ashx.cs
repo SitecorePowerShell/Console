@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.SessionState;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
@@ -229,23 +230,28 @@ namespace Cognifide.PowerShell.Console.Services
                     else
                     {
                         // download handle
-                        UrlString values = new UrlString(WebUtil.GetSessionString(originParam));
+                        var values = WebUtil.GetSessionValue(originParam) as OutDownloadMessage;
                         WebUtil.RemoveSessionValue(originParam);
-                        var content = HttpUtility.UrlDecode(values.Parameters["obj"]) ?? string.Empty;
-                        var contentType = values.Parameters["ct"];
-                        var name = values.Parameters["name"];
-                        if (string.IsNullOrEmpty(name))
-                        {
-                            name = "content.txt";
-                        }
                         var Response = HttpContext.Current.Response;
                         Response.Clear();
-                        Response.AddHeader("Content-Disposition", "attachment; filename=" + HttpUtility.UrlDecode(name));
-                        Response.AddHeader("Content-Length", content.Length.ToString(CultureInfo.InvariantCulture));
-                        Response.ContentType = HttpUtility.UrlDecode(string.IsNullOrEmpty(contentType)
-                            ? "application/octet-stream"
-                            : contentType);
-                        Response.Output.Write("{0}", HttpUtility.UrlDecode(content));
+                        Response.AddHeader("Content-Disposition", "attachment; filename=" + values.Name);
+                        Response.ContentType = values.ContentType;
+                        var strContent = values.Content as string;
+                        if (strContent != null)
+                        {
+                            Response.Output.Write("{0}", strContent);
+                            Response.AddHeader("Content-Length",
+                                strContent.Length.ToString(CultureInfo.InvariantCulture));
+                        }
+
+                        var byteContent = values.Content as byte[];
+                        if (byteContent != null)
+                        {                            
+                            Response.OutputStream.Write(byteContent,0, byteContent.Length);
+                            Response.AddHeader("Content-Length",
+                            byteContent.Length.ToString(CultureInfo.InvariantCulture));
+                        }
+
                         Response.End();
                     }
                     return;
