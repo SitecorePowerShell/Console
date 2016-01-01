@@ -78,7 +78,7 @@ function Invoke-RemoteScript {
         [Alias("ArgumentList")]
         [hashtable]$Arguments,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='Session')]
         [switch]$AsJob
     )
 
