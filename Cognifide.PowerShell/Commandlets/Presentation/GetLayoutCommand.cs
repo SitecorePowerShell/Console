@@ -11,14 +11,14 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Get, "Layout")]
     [OutputType(typeof (Item))]
-    public class GetLayoutCommand : BaseLanguageAgnosticItemCommand
+    public class GetLayoutCommand : BaseLayoutCommand
     {
         [Parameter]
         public DeviceItem Device { get; set; }
 
         protected override void ProcessItem(Item item)
         {
-            LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+            LayoutField layoutField = item.Fields[LayoutFieldId];
             if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
             {
                 return;

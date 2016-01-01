@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    Item["__Renderings"] = outputXml;
+                    Item[LayoutFieldId] = outputXml;
                 });
             }
             else

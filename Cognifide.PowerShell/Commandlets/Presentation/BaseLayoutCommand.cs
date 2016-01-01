@@ -1,47 +1,40 @@
 ﻿using System.Data;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
+using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    public abstract class BaseLayoutCommand : BaseLanguageAgnosticItemCommand
+    public abstract class BaseLayoutCommand : BaseItemCommand
     {
         [Parameter]
-        public virtual DeviceItem Device { get; set; }
+        public SwitchParameter FinalLayout { get; set; }
 
-        protected override void ProcessItem(Item item)
+        protected ID LayoutFieldId { get; set; }
+
+        protected override void BeginProcessing()
         {
-            LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
-            if (layoutField != null && !string.IsNullOrEmpty(layoutField.Value))
+            base.BeginProcessing();
+            if (FinalLayout && this.VersionSupportThreshold(nameof(FinalLayout), VersionResolver.SitecoreVersion80, true))
             {
-                var layout = LayoutDefinition.Parse(layoutField.Value);
-                if (Device == null)
-                {
-                    Device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault);
-                }
-
-                if (Device == null)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            new ObjectNotFoundException(
-                                "Device not provided and no default device in the system is defined."),
-                            "sitecore_device_not_found", ErrorCategory.InvalidData, null));
-                    return;
-                }
-
-                var device = layout.GetDevice(Device.ID.ToString());
-                if (device != null)
-                {
-                    ProcessLayout(item, layout, device);
-                }
+                SetupLayoutFieldForSitecore8();
+            }
+            else
+            {
+                LayoutFieldId = FieldIDs.LayoutField;
             }
         }
 
-        protected abstract void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device);
+        private void SetupLayoutFieldForSitecore8()
+        {
+            LayoutFieldId = FieldIDs.FinalLayoutField;
+        }
+
     }
 }

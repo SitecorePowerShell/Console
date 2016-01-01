@@ -10,7 +10,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Add, "Rendering", SupportsShouldProcess = true)]
-    public class AddRenderingCommand : BaseLayoutCommand
+    public class AddRenderingCommand : BaseLayoutPerDeviceCommand
     {
         private int index = -1;
 
@@ -86,7 +86,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             item.Edit(p =>
             {
                 var outputXml = layout.ToXml();
-                Item["__Renderings"] = outputXml;
+                Item[LayoutFieldId] = outputXml;
             });
         }
     }

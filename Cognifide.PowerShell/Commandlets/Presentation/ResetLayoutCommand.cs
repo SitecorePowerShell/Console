@@ -11,13 +11,13 @@ using Cognifide.PowerShell.Commandlets.Security.Items;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Reset, "Layout", SupportsShouldProcess = true)]
-    public class ResetLayoutCommand : BaseLanguageAgnosticItemCommand
+    public class ResetLayoutCommand : BaseLayoutCommand
     {
         protected override void ProcessItem(Item item)
         {
             if (ShouldProcess(item.GetProviderPath(), "Reset layout"))
             {
-                Field layoutField = item.Fields[FieldIDs.LayoutField];
+                Field layoutField = item.Fields[LayoutFieldId];
 
                 if (layoutField == null)
                 {

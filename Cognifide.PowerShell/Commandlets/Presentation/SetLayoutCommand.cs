@@ -10,7 +10,7 @@ using Sitecore.Layouts;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Set, "Layout", SupportsShouldProcess = true)]
-    public class SetLayoutCommand : BaseLanguageAgnosticItemCommand
+    public class SetLayoutCommand : BaseLayoutCommand
     {
         [Parameter(Mandatory = true)]
         public DeviceItem Device { get; set; }
@@ -22,7 +22,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         {
             if (ShouldProcess(item.GetProviderPath(), string.Format("Set layout '{0}'", Layout.GetProviderPath())))
             {
-                LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+                LayoutField layoutField = item.Fields[LayoutFieldId];
                 if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
                 {
                     return;
@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    Item["__Renderings"] = outputXml;
+                    Item[LayoutFieldId] = outputXml;
                 });
             }
         }

@@ -197,6 +197,7 @@
     <Compile Include="Commandlets\Interactive\Messages\OutDownloadMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\Interactive\OutDownloadCommand.cs" />
+    <Compile Include="Commandlets\Presentation\BaseLayoutCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\BaseScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\ReceiveScriptSessionCommand.cs" />
     <Compile Include="Commandlets\ScriptSessions\WaitScriptSessionCommand.cs" />
@@ -272,8 +273,8 @@
     <Compile Include="Commandlets\Packages\NewFileSourceCommand.cs" />
     <Compile Include="Commandlets\Packages\NewItemSourceCommand.cs" />
     <Compile Include="Commandlets\Packages\NewPackageCommand.cs" />
-    <Compile Include="Commandlets\Presentation\AddRenderingCommand.cs" />
-    <Compile Include="Commandlets\Presentation\BaseLayoutCommand.cs" />
+    <Compile Include="Commandlets\Presentation\AddRenderingPerDeviceCommand.cs" />
+    <Compile Include="Commandlets\Presentation\BaseLayoutPerDeviceCommand.cs" />
     <Compile Include="Commandlets\Presentation\BaseRenderingCommand.cs" />
     <Compile Include="Commandlets\Presentation\GetLayoutCommand.cs" />
     <Compile Include="Commandlets\Presentation\GetLayoutDeviceCommand.cs" />

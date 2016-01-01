@@ -59,7 +59,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 if (!string.IsNullOrEmpty(Where))
                 {
-                    if (this.VersionSupportThreshold("Where", VersionResolver.SitecoreVersion75, true))
+                    if (this.VersionSupportThreshold(nameof(Where), VersionResolver.SitecoreVersion75, true))
                     {
                         query = FilterIfSupported(query);
                     }
@@ -142,7 +142,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
                 if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    if (this.VersionSupportThreshold("OrderBy", VersionResolver.SitecoreVersion75, true))
+                    if (this.VersionSupportThreshold(nameof(OrderBy), VersionResolver.SitecoreVersion75, true))
                     {
                         query = OrderIfSupported(query);
                     }

@@ -11,7 +11,7 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    public abstract class BaseRenderingCommand : BaseLayoutCommand
+    public abstract class BaseRenderingCommand : BaseLayoutPerDeviceCommand
     {
         private int index = -1;
         private Dictionary<string, WildcardPattern> paramPatterns;

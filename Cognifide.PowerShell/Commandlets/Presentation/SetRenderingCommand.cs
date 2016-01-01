@@ -12,7 +12,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
     [Cmdlet(VerbsCommon.Set, "Rendering", SupportsShouldProcess = true)]
-    public class SetRenderingCommand : BaseLanguageAgnosticItemCommand
+    public class SetRenderingCommand : BaseLayoutCommand
     {
         private int index = -1;
 
@@ -39,10 +39,9 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         protected override void ProcessItem(Item item)
         {
             if (ShouldProcess(item.GetProviderPath(),
-                string.Format("Set '{0}' rendering parameters. Rendering is of type: {1}", Instance.UniqueId,
-                    Instance.ItemID)))
+                $"Set '{Instance.UniqueId}' rendering parameters. Rendering is of type: {Instance.ItemID}"))
             {
-                LayoutField layoutField = item.Fields[FieldIDs.LayoutField];
+                LayoutField layoutField = item.Fields[LayoutFieldId];
                 if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
                 {
                     return;
@@ -113,7 +112,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    Item["__Renderings"] = outputXml;
+                    Item[LayoutFieldId] = outputXml;
                 });
             }
         }
