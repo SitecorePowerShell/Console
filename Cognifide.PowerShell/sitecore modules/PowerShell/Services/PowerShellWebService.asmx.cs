@@ -8,7 +8,7 @@ using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Security;
 using System.Web.Services;
-using Cognifide.PowerShell.Core.Debug;
+using Cognifide.PowerShell.Core.Debugging;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
