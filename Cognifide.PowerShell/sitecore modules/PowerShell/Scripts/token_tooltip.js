@@ -93,8 +93,9 @@ oop.inherits(TokenTooltip, Tooltip);
 
         var tokenText = cognifide.powershell.variableValue(token.value);
 
-        if (this.tokenText != tokenText) {
+        if (this.tokenText !== tokenText) {
             this.setText(tokenText);
+            this.$element.innerHTML = tokenText;
             this.width = this.getWidth();
             this.height = this.getHeight();
             this.tokenText = tokenText;

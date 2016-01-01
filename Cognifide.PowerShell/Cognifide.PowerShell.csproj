@@ -336,6 +336,10 @@
     <Compile Include="Commandlets\Workflows\InvokeWorkflowCommand.cs" />
     <Compile Include="Commandlets\Workflows\GetItemWorkflowEventCommand.cs" />
     <Compile Include="Commandlets\Workflows\NewItemWorkflowEventCommand.cs" />
+    <Compile Include="Core\Debug\Utility\Validate.cs" />
+    <Compile Include="Core\Debug\VariableContainerDetails.cs" />
+    <Compile Include="Core\Debug\VariableDetails.cs" />
+    <Compile Include="Core\Debug\VariableDetailsBase.cs" />
     <Compile Include="Core\Extensions\CmdletExtensions.cs" />
     <Compile Include="Core\Extensions\ItemEqualityComparer.cs" />
     <Compile Include="Core\Extensions\ItemExtensions.cs" />

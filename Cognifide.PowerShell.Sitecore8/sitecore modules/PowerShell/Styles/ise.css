@@ -410,3 +410,38 @@ a.ps-link {
     color: #F4BC01;
 }
 
+.varName {
+    color: #FF4500;
+}
+
+.varChild {
+    /* color: #FF4500; */
+    padding-left: 40px;
+    display: block;
+    overflow: hidden;
+}
+
+.varChild2 {
+    /* color: #FF4500; */
+    padding-left: 60px;
+    display: block;
+    overflow: hidden;
+}
+
+.childName {
+    color: blue;
+}
+
+.ace_tooltip {
+    font-size: smaller;
+}
+
+.variableType {
+    border: 1px #BCE3EE solid;
+    background: #DCF1F6;
+    padding: 2px;
+    text-align: center;
+    color: #267F98;
+    margin-bottom: 5px;
+
+}

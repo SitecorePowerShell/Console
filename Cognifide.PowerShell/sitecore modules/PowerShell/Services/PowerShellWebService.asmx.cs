@@ -8,6 +8,8 @@ using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Web.Security;
 using System.Web.Services;
+using Cognifide.PowerShell.Core.Debug;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Data;
@@ -154,8 +156,34 @@ namespace Cognifide.PowerShell.Console.Services
                 try
                 {
                     variableName = variableName.TrimStart('$');
-                    var variable = session.GetDebugVariable(variableName);
-                    var varValue = variable + " - "+ variable.GetType();
+                    var variable = session.GetDebugVariable(variableName).BaseObject();
+                    VariableDetails details = new VariableDetails("$"+ variableName,variable);
+                    var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
+                    varValue += $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
+                    if (details.IsExpandable)
+                    {
+                        foreach (var child in details.GetChildren())
+                        {
+                            if (!child.IsExpandable)
+                            {
+                                varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
+                            }
+                            else
+                            {
+                                varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
+                                foreach (var subChild in child.GetChildren())
+                                {
+                                    if (!subChild.IsExpandable)
+                                    {
+                                        varValue += $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
+                                    }
+                                }
+                                varValue = varValue.TrimEnd(' ', ',');
+                                varValue += "}</span></span>";
+                            }
+                        }
+                    }
+                    //var varValue = variable + " - "+ variable.GetType();
                     return varValue;
                 }
                 catch (Exception ex)

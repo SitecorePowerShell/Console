@@ -506,11 +506,11 @@
             if (tipIndex >= tips.length) {
                 tipIndex = 0;
             }
-            var tip = tips[tipIndex];
+            var nextTip = tips[tipIndex];
             $(".status-bar-text").animate({ backgroundColor: "#012456" },
                 function() {
-                    $("#TipText").html(tip);
-                    $("#StatusTip").html(tip);
+                    $("#TipText").html(nextTip);
+                    $("#StatusTip").html(nextTip);
                 }).animate({ backgroundColor: "#fff" });
 
         });
