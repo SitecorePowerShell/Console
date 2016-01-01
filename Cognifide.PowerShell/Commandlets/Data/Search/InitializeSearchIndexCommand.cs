@@ -48,14 +48,20 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             if (IndexCustodian.IsRebuilding(index))
             {
                 WriteVerbose($"Skipping full index rebuild for {index.Name} because it's already running.");
-                return;
+                var job = Sitecore.Jobs.JobManager.GetJob($"{"Index_Update"}_IndexName={index.Name}");
+
+                if (job == null || !AsJob) return;
+
+                WriteVerbose($"Background job existed: {job.Name}");
+                WriteObject(job);
             }
-
-            WriteVerbose($"Starting full index rebuild for {index.Name}.");
-            var job = (isRemoteIndex) ? IndexCustodian.FullRebuildRemote(index) : IndexCustodian.FullRebuild(index);
-
-            if (job != null && AsJob)
+            else
             {
+                WriteVerbose($"Starting full index rebuild for {index.Name}.");
+                var job = (isRemoteIndex) ? IndexCustodian.FullRebuildRemote(index) : IndexCustodian.FullRebuild(index);
+
+                if (job == null || !AsJob) return;
+
                 WriteVerbose($"Background job created: {job.Name}");
                 WriteObject(job);
             }
