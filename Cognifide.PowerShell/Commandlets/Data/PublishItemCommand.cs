@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public string[] Target { get; set; }
 
         [Parameter]
-        public PublishMode PublishMode { get; set; }
+        public PublishMode PublishMode { get; set; } = PublishMode.Smart;
         
         [Parameter]
         public SwitchParameter PublishRelatedItems { get; set; }
@@ -42,7 +42,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public DateTime FromDate { get; set; }
 
         [Parameter]
-        public SwitchParameter Synchronous { get; set; }
+        public SwitchParameter AsJob { get; set; }
 
         protected override void ProcessItem(Item item)
         {
@@ -106,12 +106,16 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     PublishRelatedItems72(options);
                 }
 
-                if (!Synchronous)
+                if (AsJob)
                 {
                     var handle = PublishManager.Publish(optionsArgs);
                     if (handle == null) return;
                     var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
                     WriteVerbose($"Publish Job submitted, current state={publishStatus.State}.");
+
+                    var job = Sitecore.Jobs.JobManager.GetJob(handle);
+                    if (job == null) return;
+                    WriteObject(job);
                 }
                 else
                 {
