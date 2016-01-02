@@ -71,6 +71,7 @@
         '.\Receive-MediaItem.ps1',
         '.\Send-MediaItem.ps1',
         '.\Send-RemoteItem.ps1',
+        '.\Test-RemoteConnection.ps1',
         '.\Wait-RemoteScriptJob.ps1'
     )
     
@@ -84,6 +85,7 @@
         'Receive-MediaItem',
         'Send-MediaItem',
         'Send-RemoteItem',
+        'Test-RemoteConnection',
         'Wait-RemoteScriptJob'
     )
 
