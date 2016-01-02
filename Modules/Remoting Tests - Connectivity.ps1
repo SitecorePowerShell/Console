@@ -5,30 +5,36 @@ if(!$session) {
 }
 
 Test-RemoteConnection -Session $session -Quiet
-<#
+
 # Rebuild link databases
-$job = Invoke-RemoteScript -Session $session -ScriptBlock {
+$jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
         "master", "web" | Get-Database | 
             ForEach-Object { 
                 [Sitecore.Globals]::LinkDatabase.Rebuild($_)
             }
 } -AsJob
-Wait-RemoteScriptJob -Session $session -Job $job -Delay 5 -Verbose
+Wait-RemoteScriptSession -Session $session -Id $jobId -Delay 5 -Verbose
 
 # Rebuild search indexes
-$job = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Rebuild-SearchIndex -Name sitecore_master_index -AsJob
+$jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
+        Rebuild-SearchIndex -Name sitecore_master_index -AsJob | 
+            ForEach-Object { $_.Handle.ToString() }
 }
-Wait-RemoteScriptJob -Session $session -Job $job -Delay 5 -Verbose
+Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 5 -Verbose
 
-$job = Invoke-RemoteScript -Session $session -ScriptBlock {
-        Publish-Item -Path "master:\content\home" -Recurse -AsJob
+$jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
+        Publish-Item -Path "master:\content\home" -Recurse -AsJob | 
+            ForEach-Object { $_.Handle.ToString() }
 }
-Wait-RemoteScriptJob -Session $session -Job $job -Delay 1 -Verbose
-#>
+Wait-RemoteScriptJob -Session $session -Id $jobId -Delay 1 -Verbose
+
+
 Invoke-RemoteScript -Session $session -ScriptBlock {
-        [int]$a = 1
-        $a -is [Sitecore.Kittens]
+    $a = 1
+    $a
+
+    $a -is [Sitecore.Kittens]
+    $a
 }
 
 <#

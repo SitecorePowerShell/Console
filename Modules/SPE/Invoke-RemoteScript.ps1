@@ -84,7 +84,7 @@ function Invoke-RemoteScript {
 
     if($AsJob.IsPresent) {
         $nestedScript = $ScriptBlock.ToString()
-        $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) }")
+        $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } | Select-Object -ExpandProperty ID")
     }
 
     $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 

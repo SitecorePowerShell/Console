@@ -72,7 +72,8 @@
         '.\Send-MediaItem.ps1',
         '.\Send-RemoteItem.ps1',
         '.\Test-RemoteConnection.ps1',
-        '.\Wait-RemoteScriptJob.ps1'
+        '.\Wait-RemoteScriptSession.ps1',
+        '.\Wait-RemoteSitecoreJob.ps1'
     )
     
     # Functions to export from this module
@@ -86,7 +87,8 @@
         'Send-MediaItem',
         'Send-RemoteItem',
         'Test-RemoteConnection',
-        'Wait-RemoteScriptJob'
+        'Wait-RemoteScriptSession',
+        'Wait-RemoteSitecoreJob'
     )
 
     # Cmdlets to export from this module

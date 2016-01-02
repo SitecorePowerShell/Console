@@ -220,6 +220,8 @@ namespace Cognifide.PowerShell.Core.Host
             internal set { host.JobName = value; }
         }
 
+        public List<ErrorRecord> LastErrors { get; set; }
+
         public string Key { get; internal set; }
         public ApplicationSettings Settings { get; }
         public OutputBuffer Output => host.Output;
@@ -707,17 +709,14 @@ namespace Cognifide.PowerShell.Core.Host
                 Engine.SessionState.PSVariable.Remove("SpeDebug");
             }
             abortRequested = false;
+
+            LastErrors?.Clear();
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
 
             if (powerShell.HadErrors)
             {
-                foreach (var record in powerShell.Streams.Error)
-                {
-                    Log.Error(record + record.InvocationInfo.PositionMessage, this);
-                }
-
-                return powerShell.Streams.Error.Cast<object>().ToList();
+                LastErrors = powerShell.Streams.Error.ToList();
             }
 
             if (execResults != null && execResults.Any())
