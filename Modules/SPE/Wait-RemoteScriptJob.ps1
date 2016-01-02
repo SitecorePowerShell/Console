@@ -1,4 +1,41 @@
 function Wait-RemoteScriptJob {
+        <#
+        .SYNOPSIS
+            Polls for the specified job until it has completed.
+
+        .DESCRIPTON
+            The Wait-RemoteScriptJob command waits for a ScriptSession or Sitecore.Jobs.Job to complete processing.
+    
+        .PARAMETER Job
+            The ScriptSession or Sitecore.Jobs.Job object to poll.
+
+        .PARAMETER Delay
+            The polling interval in seconds.
+        
+        .EXAMPLE
+            The following example remotely rebuilds a search index as a job and waits for it to complete.
+            The Rebuild-SearchIndex command returns a Sitecore.Jobs.Job object.
+    
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            $job = Invoke-RemoteScript -Session $session -ScriptBlock {
+                    Rebuild-SearchIndex -Name sitecore_master_index -AsJob
+            }
+            Wait-RemoteScriptJob -Session $session -Job $job -Delay 5 -Verbose
+    
+        .EXAMPLE
+            The following example remotely rebuilds link databases as a job and waits for it to complete.
+            The Invoke-RemoteScript command returns a ScriptSession object.
+
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            $job = Invoke-RemoteScript -Session $session -ScriptBlock {
+                    "master", "web" | Get-Database | 
+                        ForEach-Object { 
+                            [Sitecore.Globals]::LinkDatabase.Rebuild($_)
+                        }
+            } -AsJob
+            Wait-RemoteScriptJob -Session $session -Job $job -Delay 5 -Verbose
+    #>
+    
     [CmdletBinding()]
     param(
         [Parameter(ParameterSetName='Session')]
