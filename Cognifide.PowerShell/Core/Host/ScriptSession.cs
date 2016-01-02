@@ -710,6 +710,14 @@ namespace Cognifide.PowerShell.Core.Host
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
 
+            if (powerShell.HadErrors)
+            {
+                foreach (var record in powerShell.Streams.Error)
+                {
+                    Log.Error(record + record.InvocationInfo.PositionMessage, this);
+                }
+            }
+
             if (execResults != null && execResults.Any())
             {
                 foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>().Select(result => result))
