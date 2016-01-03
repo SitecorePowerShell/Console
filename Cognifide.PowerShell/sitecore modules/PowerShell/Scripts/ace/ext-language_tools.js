@@ -1748,12 +1748,12 @@ ace.define("ace/autocomplete/text_completer", ["require", "exports", "module", "
         return textBefore.split(splitRegex).length - 1;
     }
 
-    function wordDistance(doc, pos) {
+    function wordDistance(doc, pos, prefix) {
         var prefixPos = getWordIndex(doc, pos);
         var words = doc.getValue().split(splitRegex);
         var wordScores = Object.create(null);
 
-        var currentWord = words[prefixPos];
+        var currentWord = prefix;
         if (currentWord.indexOf("$") === 0) {
 
             words = words.filter(function(value) {
