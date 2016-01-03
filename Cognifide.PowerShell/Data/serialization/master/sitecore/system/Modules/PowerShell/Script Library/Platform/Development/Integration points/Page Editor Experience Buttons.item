@@ -2,9 +2,9 @@
 version: 1
 id: {B10A0006-2BFE-4676-A0B4-DEBCBB9D3523}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Experience Editor ChromeData
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Page Editor Experience Buttons
 parent: {5398F7EA-3ECB-4C84-946E-49C63ECD8DCD}
-name: Experience Editor ChromeData
+name: Page Editor Experience Buttons
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
@@ -12,7 +12,7 @@ templatekey: PowerShell Script Library
 ----version----
 language: en
 version: 1
-revision: a535b298-43ea-436f-b2a1-cd66118b6cd8
+revision: f792744b-3dce-498f-9802-08aaaeeec25d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -27,14 +27,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a535b298-43ea-436f-b2a1-cd66118b6cd8
+f792744b-3dce-498f-9802-08aaaeeec25d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20151223T173538
+20160102T003753
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
