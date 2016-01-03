@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
+using Microsoft.PowerShell.Commands;
 using Sitecore.Analytics.Pipelines.StartTracking;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -22,7 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     {
 
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public object InputObject { get; set; }
+        public byte InputObject { get; set; }
 
         [Parameter]
         public string ContentType { get; set; }
@@ -30,12 +32,21 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public string Name { get; set; }
 
+        private List<byte> outputContent;
+
+        protected override void BeginProcessing()
+        {
+            outputContent = new List<byte>();
+        }
+
         protected override void ProcessRecord()
         {
             LogErrors(() =>
             {
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
+
+                /*
                 object content;
                 InputObject = InputObject.BaseObject();
                 if (InputObject is Stream)
@@ -57,18 +68,27 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     content = (InputObject as string[]).ToList().Aggregate((accumulated, next) =>
                         accumulated + "\n" + next);
                 }
-                else if (InputObject is byte[])
+                else if (InputObject is byte[] || InputObject is byte)
                 {
                     content = InputObject;
                 }
                 else
                 {
-                    WriteError(typeof (FormatException), "InputObject must be of type string, strings[], Stream byte[]",
+                    WriteError(typeof(FormatException), "InputObject must be of type string, strings[], Stream byte[]",
                         ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
                     return;
                 }
+                */
 
-                PutMessage(new OutDownloadMessage(content, Name, ContentType));
+                outputContent.Add(InputObject);
+            });
+        }
+
+        protected override void EndProcessing()
+        {
+            LogErrors(() =>
+            {
+                PutMessage(new OutDownloadMessage(outputContent.ToArray(), Name, ContentType));
             });
         }
     }

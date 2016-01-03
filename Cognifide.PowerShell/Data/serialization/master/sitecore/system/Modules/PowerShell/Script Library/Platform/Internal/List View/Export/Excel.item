@@ -13,16 +13,17 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 345
+content-length: 367
 
-Import-Function -Name Export-Xlsx
+Import-Function -Name ConvertTo-Xlsx
 
 $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
 if(!$title){
     $title = "Undefined"
 }
 
-$format = & ([scriptblock]::Create($exportProperty))
+#$format = & ([scriptblock]::Create($exportProperty))
+$format = "Name"
 [psCustomObject]$exportData | 
     Select-Object -Property $format | 
     ConvertTo-Xlsx | 
@@ -38,7 +39,7 @@ WordProcessing/32x32/imp_exp_excel.png
 ----version----
 language: en
 version: 1
-revision: 90388f41-7311-412c-b805-bf6868eb59bd
+revision: d9bbcf88-b029-4d6c-a46a-a6fbe1666d46
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -53,14 +54,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-90388f41-7311-412c-b805-bf6868eb59bd
+d9bbcf88-b029-4d6c-a46a-a6fbe1666d46
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 35
 
-20160103T012803
+20160103T020613:635873835736878474Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
