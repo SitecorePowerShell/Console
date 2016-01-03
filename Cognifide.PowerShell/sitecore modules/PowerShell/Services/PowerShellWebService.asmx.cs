@@ -170,6 +170,7 @@ namespace Cognifide.PowerShell.Console.Services
                             }
                             else
                             {
+                                continue;
                                 varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
                                 foreach (var subChild in child.GetChildren())
                                 {
