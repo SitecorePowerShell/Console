@@ -57,13 +57,13 @@ ace.define("ace/mode/powershell_highlight_rules", ["require", "exports", "module
                     regex: "[+-]?\\d+(?:(?:\\.\\d*)?(?:[eE][+-]?\\d+)?)?\\b"
                 }, {
                     token: "constant.language.boolean",
-                    regex: "[$](?:[Tt]rue|[Ff]alse)\\b"
+                    regex: "[$](?:[Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])\\b"
                 }, {
                     token: "constant.language",
-                    regex: "[$][Nn]ull\\b"
+                    regex: "[$][Nn][Uu][Ll][Ll]\\b"
                 }, {
                     token: "variable.instance",
-                    regex: "[$][a-zA-Z][a-zA-Z0-9_]*\\b"
+                    regex: "[$][a-zA-Z_][a-zA-Z0-9_]*\\b"
                 }, {
                     token: ["keyword.operator", "keyword.type", "keyword.operator"],
                     regex: "([\\[])([a-zA-Z0-9\\-\\.\\[\\]]*)([\\]])"
