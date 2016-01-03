@@ -26,6 +26,30 @@ function Invoke-RemoteScript {
             6/25/2015 11:09:17 AM
                     
         .EXAMPLE
+            The following example runs a script as a ScriptSession job on the server (using Start-ScriptSession internally).
+            The arguments are passed to the server with the help of the $Using convention.
+            The results are finally returned and the job is removed.
+            
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            $identity = "admin"
+            $date = [datetime]::Now
+            $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
+                [Sitecore.Security.Accounts.User]$user = Get-User -Identity $using:identity
+                $user.Name
+                $using:date
+            } -AsJob
+            Start-Sleep -Seconds 2
+
+            Invoke-RemoteScript -Session $session -ScriptBlock {
+                $ss = Get-ScriptSession -Id $using:JobId
+                $ss | Receive-ScriptSession
+
+                if($ss.LastErrors) {
+                    $ss.LastErrors
+                }
+            }
+        
+        .EXAMPLE
             The following remotely executes a script in Sitecore with arguments.
             
             $script = {
@@ -84,7 +108,7 @@ function Invoke-RemoteScript {
 
     if($AsJob.IsPresent) {
         $nestedScript = $ScriptBlock.ToString()
-        $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } | Select-Object -ExpandProperty ID")
+        $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } -ArgumentList `$params | Select-Object -ExpandProperty ID")
     }
 
     $usingVariables = @(Get-UsingVariables -ScriptBlock $scriptBlock | 

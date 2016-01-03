@@ -125,7 +125,7 @@ namespace Cognifide.PowerShell.Console.Services
                 script = script.TrimEnd(' ', '\t', '\n');
             }
             var outObjects = scriptSession.ExecuteScriptPart(script, false, false, false);
-            if (scriptSession.LastErrors.Any())
+            if (scriptSession.LastErrors != null && scriptSession.LastErrors.Any())
             {
                 outObjects.AddRange(scriptSession.LastErrors);
             }
