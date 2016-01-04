@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9536
+content-length: 10080
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -109,12 +109,20 @@ $package.Sources.Add($source);
 $source = Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell ISE" | New-ItemSource -Name "ISE Plugin Rules - Tag Definition" -InstallMode Overwrite
 $package.Sources.Add($source);
 
+# Rules Engine - Ise Experience Buttons Tag Definition
+$source = Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | New-ItemSource -Name "ISE Experience Buttons Rules - Tag Definition" -InstallMode Overwrite
+$package.Sources.Add($source);
+
 # Rules Engine - Rules
 $source = Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | New-ItemSource -Name "Rules" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Rules Engine - Ise Plugin Rules
 $source = Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | New-ItemSource -Name "Ise Plugin Rules" -InstallMode Overwrite
+$package.Sources.Add($source);
+
+# Rules Engine - Ise Experience Buttons Rules
+$source = Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | New-ItemSource -Name "Ise Experience Buttons Rules" -InstallMode Overwrite
 $package.Sources.Add($source);
 
 # Rules Engine - Source Definition
@@ -200,7 +208,7 @@ if(Test-Path -Path $remotingSourcePath) {
 ----version----
 language: en
 version: 1
-revision: 4dbe55ce-031c-42e1-b96a-d78487c71f46
+revision: c702a99c-f6c6-4067-9e55-15723173b744
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -215,14 +223,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4dbe55ce-031c-42e1-b96a-d78487c71f46
+c702a99c-f6c6-4067-9e55-15723173b744
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150903T002810
+20160104T014317
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
