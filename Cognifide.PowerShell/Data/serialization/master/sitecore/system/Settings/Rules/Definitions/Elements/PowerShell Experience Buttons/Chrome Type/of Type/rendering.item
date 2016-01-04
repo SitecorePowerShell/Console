@@ -1,0 +1,72 @@
+----item----
+version: 1
+id: {041A8A44-DD56-42AB-B4E3-579845669252}
+database: master
+path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/rendering
+parent: {F5D1B95B-30D3-4738-B41E-6884517CB485}
+name: rendering
+master: {00000000-0000-0000-0000-000000000000}
+template: {1930BBEB-7805-471A-A3BE-4858AC7CF696}
+templatekey: Standard template
+
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 1
+
+2
+----version----
+language: en
+version: 1
+revision: 44a306cf-c905-4e2f-89a0-9620b956699e
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 9
+
+rendering
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20121005T114900
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+44a306cf-c905-4e2f-89a0-9620b956699e
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20160104T005920
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

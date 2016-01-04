@@ -60,16 +60,46 @@ namespace Cognifide.PowerShell.Client.Applications
             set { ServerProperties["ScriptContent"] = value; }
         }
 
+        public string ItemDb
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemDb"]); }
+            set { ServerProperties["ItemDb"] = value; }
+        }
+
         public string ItemId
         {
             get { return StringUtil.GetString(ServerProperties["ItemId"]); }
             set { ServerProperties["ItemId"] = value; }
         }
 
-        public string ItemDb
+        public string ItemLang
         {
-            get { return StringUtil.GetString(ServerProperties["ItemDb"]); }
-            set { ServerProperties["ItemDb"] = value; }
+            get { return StringUtil.GetString(ServerProperties["ItemLang"]); }
+            set { ServerProperties["ItemLang"] = value; }
+        }
+
+        public string ItemVer
+        {
+            get { return StringUtil.GetString(ServerProperties["ItemVer"]); }
+            set { ServerProperties["ItemVer"] = value; }
+        }
+
+        public string PageId
+        {
+            get { return StringUtil.GetString(ServerProperties["PageId"]); }
+            set { ServerProperties["PageId"] = value; }
+        }
+
+        public string PageLang
+        {
+            get { return StringUtil.GetString(ServerProperties["PageLang"]); }
+            set { ServerProperties["PageLang"] = value; }
+        }
+
+        public string PageVer
+        {
+            get { return StringUtil.GetString(ServerProperties["PageVer"]); }
+            set { ServerProperties["PageVer"] = value; }
         }
 
         public bool AppMode
@@ -90,22 +120,17 @@ namespace Cognifide.PowerShell.Client.Applications
             set { ServerProperties["ScriptId"] = value; }
         }
 
+        public string RenderingId
+        {
+            get { return StringUtil.GetString(ServerProperties["RenderingId"]); }
+            set { ServerProperties["RenderingId"] = value; }
+        }
+
+
         public string ScriptDb
         {
             get { return StringUtil.GetString(ServerProperties["ScriptDb"]); }
             set { ServerProperties["ScriptDb"] = value; }
-        }
-
-        public string ItemLang
-        {
-            get { return StringUtil.GetString(ServerProperties["ItemLang"]); }
-            set { ServerProperties["ItemLang"] = value; }
-        }
-
-        public string ItemVer
-        {
-            get { return StringUtil.GetString(ServerProperties["ItemVer"]); }
-            set { ServerProperties["ItemVer"] = value; }
         }
 
         protected Item CurrentItem
@@ -117,6 +142,18 @@ namespace Cognifide.PowerShell.Client.Applications
                 return !string.IsNullOrEmpty(ItemLang)
                     ? db.GetItem(new ID(ItemId), Language.Parse(ItemLang), Version.Parse(ItemVer))
                     : db.GetItem(new ID(ItemId));
+            }
+        }
+
+        protected Item PageItem
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(PageId) || string.IsNullOrEmpty(ItemDb)) return null;
+                var db = Factory.GetDatabase(ItemDb);
+                return !string.IsNullOrEmpty(PageLang)
+                    ? db.GetItem(new ID(PageId), Language.Parse(PageLang), Version.Parse(PageVer))
+                    : db.GetItem(new ID(PageId));
             }
         }
 
@@ -138,11 +175,17 @@ namespace Cognifide.PowerShell.Client.Applications
                 ItemLang = WebUtil.GetQueryString("lang");
                 ItemVer = WebUtil.GetQueryString("ver");
 
+                PageId = WebUtil.GetQueryString("pageId");
+                PageLang = WebUtil.GetQueryString("pageLang");
+                PageVer = WebUtil.GetQueryString("pageVer");
+
                 AppMode = WebUtil.GetQueryString("AppMode") == "1";
                 HasScript = WebUtil.GetQueryString("HasScript") == "1";
 
                 ScriptId = WebUtil.GetQueryString("scriptId");
                 ScriptDb = WebUtil.GetQueryString("scriptDb");
+
+                RenderingId = WebUtil.GetQueryString("RenderingId");
 
                 if (!string.IsNullOrEmpty(ScriptId) && !string.IsNullOrEmpty(ScriptId))
                 {
@@ -200,6 +243,8 @@ namespace Cognifide.PowerShell.Client.Applications
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
             scriptSession.SetExecutedScript(ScriptDb, ScriptId);
+            scriptSession.SetVariable("Page", PageItem);
+            scriptSession.SetVariable("RenderingId", RenderingId);
             scriptSession.Interactive = true;
 
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent, string.IsNullOrEmpty(PersistentId));

@@ -163,6 +163,7 @@
     <Compile Include="Client\Commands\MenuItems\ScriptLibraryMenuItem.cs" />
     <Compile Include="Client\Commands\DebugQueryState.cs" />
     <Compile Include="Client\Commands\RuntimeQueryState.cs" />
+    <Compile Include="Client\Commands\WebEditScriptCommand.cs" />
     <Compile Include="Client\Controls\CompleteMessage.cs" />
     <Compile Include="Client\Controls\ContentEditorRibbonPanel.cs" />
     <Compile Include="Client\Controls\PasswordExtended.cs" />
@@ -360,6 +361,8 @@
     <Compile Include="Core\Provider\ItemContentReader.cs" />
     <Compile Include="Core\Provider\ItemContentReaderWriterBase.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Content.cs" />
+    <Compile Include="Core\Rules\PowerShellExperienceButtonChromeName.cs" />
+    <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />

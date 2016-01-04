@@ -18,15 +18,21 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
         public override void Process(GetChromeDataArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
+            var page = Sitecore.Context.Item;
+            var chromeType = args.ChromeType;
+            var chromeName = args.ChromeData.DisplayName;
 
             var ruleContext = new RuleContext
             {
                 Item = args.Item
             };
+
             foreach (var parameter in args.CommandContext.Parameters.AllKeys)
             {
                 ruleContext.Parameters[parameter] = args.CommandContext.Parameters[parameter];
             }
+            ruleContext.Parameters["ChromeType"] = chromeType;
+            ruleContext.Parameters["ChromeName"] = chromeName;
 
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
@@ -38,34 +44,19 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                     {
                         continue;
                     }
-
                     AddButtonsToChromeData(new[]
                     {
                         new WebEditButton
                         {
-                            Click = "webedit:fieldeditor(fields={0}, command={{007A0E9E-59AA-48BB-84F2-6D25A8D2EF80}})",
-                            Icon = scriptItem.Appearance.Icon,
+                            Click = $"webedit:script(scriptId={scriptItem.ID}, scriptdB={scriptItem.Database.Name}, "+
+                                    $"pageId={page.ID}, pageLang={page.Language.Name}, pageVer={page.Version.Number},"+
+                                    $"chromeType={chromeType}, chromeName={chromeName})",
+                            Icon = scriptItem.Appearance.Icon, 
                             Tooltip = scriptItem.Name,
                             Header = scriptItem.Name,
                             Type = "sticky" // sticky keeps it from being hidden in the 'more' dropdown
                         }
                     }, args);
-                    /*
-                                        using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
-                                        {
-                                            session.SetVariable("pipelineArgs", args);
-
-                                            try
-                                            {
-                                                session.SetItemLocationContext(args.Item);
-                                                session.ExecuteScriptPart(scriptItem, false);
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                Log.Error(ex.Message, this);
-                                            }
-                                        }
-                    */
                 }
             }
         }

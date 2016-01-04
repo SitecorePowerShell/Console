@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7312
+content-length: 7622
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -136,18 +136,19 @@ Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Acti
 Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
 
 # Rules Engine Rules
-# Rules Engine Rules
 Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
+Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 46
 Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
 Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
+Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
+Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 50
 Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
 
 # Script Library
-Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 50
+Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 55
 $libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
 $i = 0;
-$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (50 + 30 / $libraries.Count * $i) }
+$libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (55 + 25 / $libraries.Count * $i) }
 
 # Settings
 Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
@@ -192,7 +193,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: 830aba62-fb8c-4009-b0d1-bf664811ac0f
+revision: 4511fc1e-492e-4c36-a42a-1bef81e84f45
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -207,14 +208,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-830aba62-fb8c-4009-b0d1-bf664811ac0f
+4511fc1e-492e-4c36-a42a-1bef81e84f45
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150809T155137:635747322972983651
+20160104T013513
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
