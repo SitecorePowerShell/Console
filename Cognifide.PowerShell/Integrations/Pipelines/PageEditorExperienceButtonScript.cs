@@ -4,7 +4,9 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore.Collections;
 using Sitecore.Data.Fields;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetChromeData;
 using Sitecore.Rules;
@@ -21,7 +23,13 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
             var page = Sitecore.Context.Item;
             var chromeType = args.ChromeType;
             var chromeName = args.ChromeData.DisplayName;
+            var click = "webedit:script(scriptId={0}, scriptdB={1})";
 
+            args.CommandContext.Parameters["pageId"] = page.ID.ToString();
+            args.CommandContext.Parameters["pageLang"] = page.Language.Name;
+            args.CommandContext.Parameters["pageVer"] = page.Version.Number.ToString();
+            args.CommandContext.Parameters["ChromeType"] = chromeType;
+            args.CommandContext.Parameters["ChromeName"] = chromeName;
             var ruleContext = new RuleContext
             {
                 Item = args.Item
@@ -31,30 +39,41 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
             {
                 ruleContext.Parameters[parameter] = args.CommandContext.Parameters[parameter];
             }
-            ruleContext.Parameters["ChromeType"] = chromeType;
-            ruleContext.Parameters["ChromeName"] = chromeName;
 
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
                 if (!libraryItem.HasChildren) return;
 
-                foreach (var scriptItem in libraryItem.Children.ToList())
+                AddButton(args, libraryItem, ruleContext, click);
+            }
+        }
+
+        private void AddButton(GetChromeDataArgs args, Item libraryItem, RuleContext ruleContext, string click)
+        {
+            foreach (var scriptItem in libraryItem.Children.ToList())
+            {
+                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext))
                 {
-                    if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
+
+                if (scriptItem.TemplateName == TemplateNames.ScriptLibraryTemplateName)
+                {
+                    AddButton(args,scriptItem,ruleContext,click);
+                    continue;
+                }
+
+                if (scriptItem.TemplateName == TemplateNames.ScriptTemplateName)
+                {
                     AddButtonsToChromeData(new[]
                     {
                         new WebEditButton
                         {
-                            Click = $"webedit:script(scriptId={scriptItem.ID}, scriptdB={scriptItem.Database.Name}, "+
-                                    $"pageId={page.ID}, pageLang={page.Language.Name}, pageVer={page.Version.Number},"+
-                                    $"chromeType={chromeType}, chromeName={chromeName})",
-                            Icon = scriptItem.Appearance.Icon, 
+                            Click = string.Format(click, scriptItem.ID, scriptItem.Database.Name),
+                            Icon = scriptItem.Appearance.Icon,
                             Tooltip = scriptItem.Name,
                             Header = scriptItem.Name,
-                            Type = "sticky" // sticky keeps it from being hidden in the 'more' dropdown
+                            Type = "sticky", // sticky keeps it from being hidden in the 'more' dropdown
                         }
                     }, args);
                 }
