@@ -73,7 +73,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                         var label = p["Label"].ToString().ToLower();
                         return label != "icon" && label != "__icon";
                     })
-                    .Select(p => p["Label"] + ",")
+                    .Select(p => $"'{p["Label"]}',")
                     .Aggregate((a, b) => a + b)
                     .TrimEnd(',');
             }
