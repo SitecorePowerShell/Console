@@ -24,20 +24,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     {
 
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public byte InputObject { get; set; }
+        public object InputObject { get; set; }
 
         [Parameter]
         public string ContentType { get; set; }
 
-        [Parameter]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Name { get; set; }
-
-        private List<byte> outputContent;
-
-        protected override void BeginProcessing()
-        {
-            outputContent = new List<byte>();
-        }
 
         protected override void ProcessRecord()
         {
@@ -46,9 +39,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
 
-                /*
                 object content;
                 InputObject = InputObject.BaseObject();
+
                 if (InputObject is Stream)
                 {
                     using (var stream = InputObject as Stream)
@@ -68,7 +61,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     content = (InputObject as string[]).ToList().Aggregate((accumulated, next) =>
                         accumulated + "\n" + next);
                 }
-                else if (InputObject is byte[] || InputObject is byte)
+                else if (InputObject is byte[])
                 {
                     content = InputObject;
                 }
@@ -78,18 +71,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
                     return;
                 }
-                */
 
-                outputContent.Add(InputObject);
+                LogErrors(() =>
+                {
+                    PutMessage(new OutDownloadMessage(content, Name, ContentType));
+                });
             });
         }
 
-        protected override void EndProcessing()
-        {
-            LogErrors(() =>
-            {
-                PutMessage(new OutDownloadMessage(outputContent.ToArray(), Name, ContentType));
-            });
-        }
     }
 }
