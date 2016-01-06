@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Management.Automation;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -18,9 +17,9 @@ using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
-using CommandCompletion = Cognifide.PowerShell.Core.Host.CommandCompletion;
-using JobManager = Sitecore.Jobs.JobManager;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
+using PSCustomObject = System.Management.Automation.PSCustomObject;
+using PSObject = System.Management.Automation.PSObject;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -161,9 +160,9 @@ namespace Cognifide.PowerShell.Console.Services
                     variableName = variableName.TrimStart('$');
                     var debugVariable = session.GetDebugVariable(variableName);
                     var variable = debugVariable.BaseObject();
-                    if (debugVariable is PSObject)
+                    if (variable is PSCustomObject)
                     {
-                        variable = (PSObject)debugVariable;
+                        variable = debugVariable;
                     }
                     VariableDetails details = new VariableDetails("$"+ variableName,variable);
                     var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
@@ -178,7 +177,10 @@ namespace Cognifide.PowerShell.Console.Services
                             }
                             else
                             {
-                                //continue;
+                                if (details.ShowDotNetProperties)
+                                {
+                                    continue;
+                                }
                                 varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
                                 foreach (var subChild in child.GetChildren())
                                 {

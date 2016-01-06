@@ -47,6 +47,12 @@ namespace Cognifide.PowerShell.Core.Debugging
         public bool IsExpandable { get; protected set; }
 
         /// <summary>
+        /// Returns true if the variable's value is expandable, meaning
+        /// that it has child properties or its contents can be enumerated.
+        /// </summary>
+        public bool ShowDotNetProperties { get; protected set; }
+
+        /// <summary>
         /// If this variable instance is expandable, this method returns the
         /// details of its children.  Otherwise it returns an empty array.
         /// </summary>

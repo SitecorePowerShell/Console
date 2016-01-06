@@ -91,7 +91,9 @@ namespace Cognifide.PowerShell.Core.Debugging
             {
                 if (cachedChildren == null)
                 {
-                    cachedChildren = GetChildren(valueObject);
+                    bool isEnumerable;
+                    cachedChildren = GetChildren(valueObject, out isEnumerable);
+                    ShowDotNetProperties = !isEnumerable;
                 }
 
                 return cachedChildren;
@@ -223,9 +225,10 @@ namespace Cognifide.PowerShell.Core.Debugging
             return result;
         }
 
-        private static VariableDetails[] GetChildren(object obj)
+        private static VariableDetails[] GetChildren(object obj, out bool isEnumerable)
         {
             List<VariableDetails> childVariables = new List<VariableDetails>();
+            isEnumerable = false;
 
             if (obj == null)
             {
@@ -282,6 +285,7 @@ namespace Cognifide.PowerShell.Core.Debugging
                                     "[" + entry.Key + "]",
                                     entry.Value));
                         }
+                        isEnumerable = true;
                     }
                     else if (enumerable != null && !(obj is string))
                     {
@@ -293,9 +297,13 @@ namespace Cognifide.PowerShell.Core.Debugging
                                     "[" + i++ + "]",
                                     item));
                         }
+                        isEnumerable = true;
                     }
 
-                    //AddDotNetProperties(obj, childVariables);
+                    if (!isEnumerable)
+                    {
+                        AddDotNetProperties(obj, childVariables);
+                    }
                 }
             }
             catch (GetValueInvocationException)
