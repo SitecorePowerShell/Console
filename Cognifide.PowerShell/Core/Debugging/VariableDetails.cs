@@ -130,6 +130,7 @@ namespace Cognifide.PowerShell.Core.Debugging
                 !valueType.IsEnum && // Enums don't have any properties
                 !(valueObject is string) && // Strings get treated as IEnumerables
                 !(valueObject is decimal) &&
+                !(valueObject is DateTime) &&
                 !(valueObject is UnableToRetrievePropertyMessage);
         }
 
@@ -149,12 +150,8 @@ namespace Cognifide.PowerShell.Core.Debugging
                 if (value is DictionaryEntry)
                 {
                     // For DictionaryEntry - display the key/value as the value.
-                    var entry = (DictionaryEntry)value;
-                    valueString =
-                        string.Format(
-                            "[{0}, {1}]",
-                            entry.Key,
-                            GetValueString(entry.Value, GetIsExpandable(entry.Value)));
+                    var entry = (DictionaryEntry) value;
+                    valueString = $"[{entry.Key}, {GetValueString(entry.Value, GetIsExpandable(entry.Value))}]";
                 }
                 else if (value.ToString().Equals(objType.ToString()))
                 {
@@ -173,11 +170,15 @@ namespace Cognifide.PowerShell.Core.Debugging
                     }
                     else if (value is ICollection)
                     {
-                        var collection = (ICollection)value;
+                        var collection = (ICollection) value;
                         shortTypeName = InsertDimensionSize(shortTypeName, collection.Count);
                     }
 
                     valueString = "[" + shortTypeName + "]";
+                }
+                else if (value is PSObject)
+                {
+                    valueString = "[" + typeof(PSCustomObject).Name + "]";
                 }
                 else
                 {
@@ -278,8 +279,8 @@ namespace Cognifide.PowerShell.Core.Debugging
                         {
                             childVariables.Add(
                                 new VariableDetails(
-                                    "[" + i++ + "]",
-                                    entry));
+                                    "[" + entry.Key + "]",
+                                    entry.Value));
                         }
                     }
                     else if (enumerable != null && !(obj is string))
@@ -294,7 +295,7 @@ namespace Cognifide.PowerShell.Core.Debugging
                         }
                     }
 
-                    AddDotNetProperties(obj, childVariables);
+                    //AddDotNetProperties(obj, childVariables);
                 }
             }
             catch (GetValueInvocationException)

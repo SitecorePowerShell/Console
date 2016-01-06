@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Management.Automation;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -17,6 +18,8 @@ using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
+using CommandCompletion = Cognifide.PowerShell.Core.Host.CommandCompletion;
+using JobManager = Sitecore.Jobs.JobManager;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 
 namespace Cognifide.PowerShell.Console.Services
@@ -156,7 +159,12 @@ namespace Cognifide.PowerShell.Console.Services
                 try
                 {
                     variableName = variableName.TrimStart('$');
-                    var variable = session.GetDebugVariable(variableName).BaseObject();
+                    var debugVariable = session.GetDebugVariable(variableName);
+                    var variable = debugVariable.BaseObject();
+                    if (debugVariable is PSObject)
+                    {
+                        variable = (PSObject)debugVariable;
+                    }
                     VariableDetails details = new VariableDetails("$"+ variableName,variable);
                     var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
                     varValue += $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
@@ -170,7 +178,7 @@ namespace Cognifide.PowerShell.Console.Services
                             }
                             else
                             {
-                                continue;
+                                //continue;
                                 varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
                                 foreach (var subChild in child.GetChildren())
                                 {
