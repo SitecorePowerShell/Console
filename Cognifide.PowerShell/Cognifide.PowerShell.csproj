@@ -185,6 +185,7 @@
     <Compile Include="Commandlets\BaseCommand.cs" />
     <Compile Include="Commandlets\BaseIndexCommand.cs" />
     <Compile Include="Commandlets\Data\NewUsingBlockCommand.cs" />
+    <Compile Include="Commandlets\Data\RemoveItemVersionCommand.cs" />
     <Compile Include="Commandlets\Data\ResetItemFieldCommand.cs" />
     <Compile Include="Commandlets\Data\Search\InitializeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\InitializeSearchIndexItemCommand.cs" />
@@ -231,7 +232,6 @@
     <Compile Include="Commandlets\Data\GetItemTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\NewItemCloneCommand.cs" />
     <Compile Include="Commandlets\Data\PublishItemCommand.cs" />
-    <Compile Include="Commandlets\Data\RemoveItemLanguageCommand.cs" />
     <Compile Include="Commandlets\Data\InitializeItemCommand.cs" />
     <Compile Include="Commandlets\Data\Search\FindItemCommand.cs" />
     <Compile Include="Commandlets\Interactive\BaseFormCommand.cs" />
