@@ -16,7 +16,9 @@ namespace Cognifide.PowerShell.Core.Settings
             {"Initialize-Item", "Wrap-Item"},
             {"Send-File", "Download-File"},
             {"Initialize-SearchIndex", "Rebuild-SearchIndex"},
-            {"Initialize-SearchIndexItem", "Rebuild-SearchIndexItem"}
+            {"Initialize-SearchIndexItem", "Rebuild-SearchIndexItem"},
+            {"Add-ItemVersion", "Add-ItemLanguage"},
+            {"Remove-ItemVersion", "Remove-ItemLanguage"}
         };
 
         private static string aliasSetupScript;

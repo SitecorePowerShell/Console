@@ -217,7 +217,7 @@
     <Compile Include="Commandlets\BaseItemCommand.cs" />
     <Compile Include="Commandlets\BaseItemRecursiveCommand.cs" />
     <Compile Include="Commandlets\BaseLanguageAgnosticItemCommand.cs" />
-    <Compile Include="Commandlets\Data\AddItemLanguageCommand.cs" />
+    <Compile Include="Commandlets\Data\AddItemVersionCommand.cs" />
     <Compile Include="Commandlets\Data\ConvertFromItemCloneCommand.cs" />
     <Compile Include="Commandlets\Data\DatabaseContextBaseCommand.cs" />
     <Compile Include="Commandlets\Data\ExpandTokensCommand.cs" />

@@ -6,8 +6,8 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsCommon.Remove, "ItemLanguage", SupportsShouldProcess = true)]
-    public class RemoveItemLanguageCommand : BaseItemCommand
+    [Cmdlet(VerbsCommon.Remove, "ItemVersion", SupportsShouldProcess = true)]
+    public class RemoveItemVersionCommand : BaseItemCommand
     {
         [Parameter]
         public SwitchParameter Recurse { get; set; }

@@ -11,15 +11,15 @@ using Sitecore.Data.Managers;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsCommon.Add, "ItemLanguage", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Add, "ItemVersion", SupportsShouldProcess = true)]
     [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"}
         )]
-    public class AddItemLanguageCommand : BaseItemCommand
+    public class AddItemVersionCommand : BaseItemCommand
     {
         public enum ActionIfExists
         {
-            Skip,
             Append,
+            Skip,
             OverwriteLatest
         }
 
@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public ActionIfExists IfExist { get; set; }
 
-        [Parameter(Mandatory = true)]
+        [Parameter]
         public string[] TargetLanguage { get; set; }
 
         [Parameter]
@@ -58,11 +58,17 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessItem(Item item)
         {
+            var targetLanguages = TargetLanguage;
+            if (targetLanguages == null || targetLanguages.Length == 0)
+            {
+                targetLanguages = new[] { Item.Language.Name };
+            }
+
             if (!ShouldProcess(item.GetProviderPath(),
-                $"Add language '{TargetLanguage.Aggregate((seed, curr) => seed + ", " + curr)}' version(s){(Recurse ? " recursively" : "")}"))
+                $"Add language '{targetLanguages.Aggregate((seed, curr) => seed + ", " + curr)}' version(s){(Recurse ? " recursively" : "")}"))
                 return;
 
-            foreach (var targetLanguage in TargetLanguage)
+            foreach (var targetLanguage in targetLanguages)
             {
                 var lang = LanguageManager.GetLanguage(targetLanguage);
                 if (lang == null)
