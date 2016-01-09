@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             get
             {
-                if (processedProperty == null)
+                if (processedProperty == null && Property != null)
                 {
                     processedProperty = Property.Select(p =>
                     {
@@ -86,17 +86,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayProperty }");
                 var propDefault = InvokeCommand.InvokeScript(SessionState, propScript).First();
-                propScript =
-                    InvokeCommand.NewScriptBlock(
-                        "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
-                var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
-                var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
-                if (propResult.Any())
+                if (propDefault != null)
                 {
-                    properties.AddRange(propResult.Where(p => p != null));
+                    propScript =
+                        InvokeCommand.NewScriptBlock(
+                            "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+                    var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
+                    var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
+                    if (propResult.Any())
+                    {
+                        properties.AddRange(propResult.Where(p => p != null));
+                    }
+                    Property = properties.ToArray();
+                    SessionState.PSVariable.Set("ScPsSlvProperties", Property);
                 }
-                Property = properties.ToArray();
-                SessionState.PSVariable.Set("ScPsSlvProperties", Property);
             }
 
             LogErrors(() =>
