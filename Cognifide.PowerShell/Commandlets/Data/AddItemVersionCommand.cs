@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -35,6 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public ActionIfExists IfExist { get; set; }
 
         [Parameter]
+        [AutocompleteSet("Cultures")]
         public string[] TargetLanguage { get; set; }
 
         [Parameter]
@@ -61,7 +63,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
             var targetLanguages = TargetLanguage;
             if (targetLanguages == null || targetLanguages.Length == 0)
             {
-                targetLanguages = new[] { Item.Language.Name };
+                targetLanguages = new[] { item.Language.Name };
             }
 
             if (!ShouldProcess(item.GetProviderPath(),
@@ -87,6 +89,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     {
                         foreach (Item childItem in item.Children)
                         {
+                            childItem.Versions.GetLatestVersion(item.Language);
                             ProcessItem(childItem);
                         }
                     }
