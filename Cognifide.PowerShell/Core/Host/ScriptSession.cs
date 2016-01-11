@@ -723,7 +723,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>())
                 {
-                    Log.Error(record + record.InvocationInfo.PositionMessage, this);
+                    Log.Debug(record + record.InvocationInfo.PositionMessage, this);
                 }
             }
 
