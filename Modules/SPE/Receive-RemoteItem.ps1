@@ -143,14 +143,21 @@ function Receive-RemoteItem {
                 $webclient.Credentials = $Credential
             }
 
+            [System.Net.HttpWebResponse]$script:errorResponse = $null;
             [byte[]]$response = & {
                 try {
-                    $webclient.DownloadData($url)
+                    $script:errorResponse = $null;
+                    $script:ex = $null
+                    $webclient.DownloadData($url) | Out-Null
                 } catch [System.Net.WebException] {
-                    [System.Net.WebException]$ex = $_.Exception
-                    [System.Net.HttpWebResponse]$errorResponse = $ex.Response
-                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
+                    [System.Net.WebException]$script:ex = $_.Exception
+                    [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response
                 }
+            }
+
+            if($errorResponse){
+                Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
 
             if($response -and $response.Length -gt 0) {

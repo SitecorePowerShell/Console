@@ -124,6 +124,7 @@ function Send-RemoteItem {
             [byte[]]$response = & {
                 try {
                     Write-Verbose -Message "Uploading $($Path)"
+                    [System.Net.HttpWebResponse]$script:errorResponse = $null;
                     $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
                     $bytes = New-Object byte[] 1024
                     $totalBytesToRead = $fileStream.Length
@@ -148,12 +149,18 @@ function Send-RemoteItem {
                     #$webclient.UploadData($url, $data)
                     Write-Verbose -Message "Upload complete."
                 } catch [System.Net.WebException] {
-                    [System.Net.WebException]$ex = $_.Exception
-                    [System.Net.HttpWebResponse]$errorResponse = $ex.Response
+                    [System.Net.WebException]$script:ex = $_.Exception
+                    [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
                     Write-Verbose -Message "Response exception message: $($ex.Message)"
-                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
+                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"                    
                 }
             }
+
+            if($errorResponse){
+                Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+            }
+            
         }
     }
 }
