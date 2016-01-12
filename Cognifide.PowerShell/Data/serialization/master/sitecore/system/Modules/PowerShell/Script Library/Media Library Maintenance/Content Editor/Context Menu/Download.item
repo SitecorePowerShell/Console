@@ -26,7 +26,7 @@ content-length: 276
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1928
+content-length: 1965
 
 function ZipItems( $zipArchive, $sourcedir )
 {
@@ -35,7 +35,7 @@ function ZipItems( $zipArchive, $sourcedir )
       Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
   $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
       [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
-  $items = gci -recurse $sourceDir
+  $items = @(Get-Item $sourceDir) + (Get-ChildItem -recurse $sourceDir)
   [byte[]]$buff = new-object byte[] 40960
   $i = 0;
   ForEach ($item In $items) {
@@ -89,7 +89,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 41359102-97c0-43ea-865a-d929ac166174
+revision: 5ad1f5db-2bd2-4080-ab08-22fe05431c13
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -104,14 +104,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-41359102-97c0-43ea-865a-d929ac166174
+5ad1f5db-2bd2-4080-ab08-22fe05431c13
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150128T044439:635580170798960876
+20160112T020911
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
