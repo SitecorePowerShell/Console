@@ -52,8 +52,9 @@ namespace Cognifide.PowerShell.Console.Services
             var pathParam = request.Params.Get("path");
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
+            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
 
-            if (!CheckServiceEnabled(apiVersion))
+            if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
                 return;
             }
@@ -68,7 +69,6 @@ namespace Cognifide.PowerShell.Console.Services
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
 
-            var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             if (isUpload)
             {
                 if (!isAuthenticated)
@@ -336,7 +336,7 @@ namespace Cognifide.PowerShell.Console.Services
             apiScripts = null;
         }
 
-        private bool CheckServiceEnabled(string apiVersion)
+        private bool CheckServiceEnabled(string apiVersion, string httpMethod)
         {
             var isEnabled = true;
             const string disabledMessage = "The request could not be completed because the service is disabled.";
@@ -360,20 +360,24 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     break;
                 case "file":
-                    if (!WebServiceSettings.ServiceEnabledFileDownload)
+                    if ((WebServiceSettings.ServiceEnabledFileUpload && httpMethod.Is("POST")) ||
+                        (WebServiceSettings.ServiceEnabledFileDownload && httpMethod.Is("GET")))
                     {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
+                        break;
                     }
+                    HttpContext.Current.Response.StatusCode = 403;
+                    HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    isEnabled = false;
                     break;
                 case "media":
-                    if (!WebServiceSettings.ServiceEnabledMediaDownload)
+                    if ((WebServiceSettings.ServiceEnabledMediaUpload && httpMethod.Is("POST")) ||
+                        (WebServiceSettings.ServiceEnabledMediaDownload && httpMethod.Is("GET")))
                     {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
+                        break;
                     }
+                    HttpContext.Current.Response.StatusCode = 403;
+                    HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    isEnabled = false;
                     break;
                 case "handle":
                     if (!WebServiceSettings.ServiceEnabledHandleDownload)
