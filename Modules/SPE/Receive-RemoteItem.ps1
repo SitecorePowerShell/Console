@@ -97,7 +97,11 @@ function Receive-RemoteItem {
 
     process {
 
-        $isMediaItem = ![string]::IsNullOrEmpty($Database)
+        $isMediaItem = ![string]::IsNullOrEmpty($Database) -or $RootPath -ieq "media"
+        
+        if($isMediaItem -and !$Database){
+            $Database = "master"
+        }
         
         if(!$isMediaItem -and (!$RootPath -and ![System.IO.Path]::IsPathRooted($Path))) {
             Write-Error -Message "RootPath is required when Path is not fully qualified." -ErrorAction Stop
