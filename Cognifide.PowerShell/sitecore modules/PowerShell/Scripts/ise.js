@@ -316,6 +316,10 @@
             $("#ScriptResult").css({ "font-family": setting });
         };
 
+        cognifide.powershell.changeBackgroundColor = function (setting) {
+            $("#ScriptResult").css({ "background-color": setting });
+        };
+
         cognifide.powershell.changeSessionId = function (sessionId) {
             guid = sessionId;
         };

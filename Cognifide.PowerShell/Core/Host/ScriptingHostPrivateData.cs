@@ -1,4 +1,6 @@
-﻿namespace Cognifide.PowerShell.Core.Host
+﻿using System;
+
+namespace Cognifide.PowerShell.Core.Host
 {
     /// <summary>
     ///     This is a sample implementation of the PSHost abstract class for
@@ -26,5 +28,16 @@
             get { return ScriptingHost.CloseRunner; }
             internal set { ScriptingHost.CloseRunner = value; }
         }
+
+        public ConsoleColor DebugBackgroundColor { get; set; } = ConsoleColor.DarkBlue;
+        public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor ErrorBackgroundColor { get; set; } = ConsoleColor.Black;
+        public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
+        public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.DarkCyan;
+        public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.White;
+        public ConsoleColor VerboseBackgroundColor { get; set; } = ConsoleColor.Black;
+        public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor WarningBackgroundColor { get; set; } = ConsoleColor.Black;
+        public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
     }
 }

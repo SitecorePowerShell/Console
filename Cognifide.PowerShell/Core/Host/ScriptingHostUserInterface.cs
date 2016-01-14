@@ -21,7 +21,20 @@ namespace Cognifide.PowerShell.Core.Host
     public class ScriptingHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         private readonly ScriptingHostRawUserInterface rawUi;
-        private ScriptingHost host;
+        private readonly ScriptingHost host;
+        private ScriptingHostPrivateData privateData;
+
+        private ScriptingHostPrivateData PrivateData
+        {
+            get
+            {
+                if (privateData == null)
+                {
+                    privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData;
+                }
+                return privateData;
+            }
+        }
 
         public ScriptingHostUserInterface(ApplicationSettings settings, ScriptingHost host)
         {
@@ -111,9 +124,10 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteErrorLine(string value)
         {
+            
             var splitter = new BufferSplitterCollection(OutputLineType.Error, value, RawUI.BufferSize.Width,
-                ConsoleColor.Red,
-                ConsoleColor.Black, true);
+                PrivateData.ErrorForegroundColor,
+                PrivateData.ErrorBackgroundColor, true);
             Output.HasErrors = true;
             Output.AddRange(splitter);
         }
@@ -122,7 +136,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Debug, "DEBUG: " + message,
                 RawUI.WindowSize.Width,
-                ConsoleColor.Cyan, RawUI.BackgroundColor, true);
+                PrivateData.DebugForegroundColor, PrivateData.DebugBackgroundColor, true);
             Output.AddRange(splitter);
         }
 
@@ -153,14 +167,14 @@ namespace Cognifide.PowerShell.Core.Host
         public override void WriteVerboseLine(string message)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Verbose, "VERBOSE: " + message, RawUI.WindowSize.Width,
-                ConsoleColor.Yellow, ConsoleColor.Black, true);
+                PrivateData.VerboseForegroundColor, PrivateData.VerboseBackgroundColor, true);
             Output.AddRange(splitter);
         }
 
         public override void WriteWarningLine(string message)
         {
             var splitter = new BufferSplitterCollection(OutputLineType.Warning, "WARNING: " + message, RawUI.BufferSize.Width,
-                ConsoleColor.Yellow, ConsoleColor.Black, true);
+                PrivateData.WarningForegroundColor, PrivateData.WarningBackgroundColor, true);
             Output.AddRange(splitter);
         }
 
