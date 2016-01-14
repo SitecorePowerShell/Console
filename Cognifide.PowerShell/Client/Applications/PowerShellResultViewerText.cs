@@ -11,6 +11,8 @@ namespace Cognifide.PowerShell.Client.Applications
     public class PowerShellResultViewerText : BaseForm
     {
         protected Literal Result;
+        protected Scrollbox All;
+        protected Scrollbox Promo;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -22,7 +24,12 @@ namespace Cognifide.PowerShell.Client.Applications
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             Result.Style.Add("color", foregroundColor);
             Result.Style.Add("background-color", backgroundColor);
+            Result.Style.Add("font-family", settings.FontFamily);
+            Result.Style.Add("font-size", $"{settings.FontSize}px");
             Result.Text = HttpContext.Current.Session[sid] as string ?? string.Empty;
+            All.Style.Add("color", foregroundColor);
+            All.Style.Add("background-color", backgroundColor);
+            Promo.Style.Add("background-color", backgroundColor);            
             HttpContext.Current.Session.Remove(sid);
         }
     }
