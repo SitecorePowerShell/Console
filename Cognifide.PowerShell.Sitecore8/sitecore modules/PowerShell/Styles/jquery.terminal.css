@@ -25,8 +25,7 @@
 
 .terminal .terminal-output div { display: block; }
 
-.terminal, .terminal .terminal-output, .terminal .terminal-output div,
-.terminal .terminal-output div div, .cmd, .terminal .cmd span, .terminal .cmd div {
+.terminal {
     background-color: #012456;
     color: #fff;
     font-family: monospace;

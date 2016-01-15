@@ -155,6 +155,14 @@
             term.resume();
             $("#working").hide();
             term.set_prompt(data["prompt"]);
+            var background = data["background"];
+            if (background !== undefined && background !== "null") {
+                $("#terminal").css({ "background-color": background });
+            }
+            var color = data["color"];
+            if (color !== undefined && color !== "null") {
+                $("#terminal").css({ "color": color });
+            }
         }
 
         term.echo(data["result"]);

@@ -98,7 +98,8 @@ namespace Cognifide.PowerShell.Console.Services
                     {
                         result =
                             "You need to be authenticated to use the PowerShell console. Please login to Sitecore first.",
-                        prompt = "PS >"
+                        prompt = "PS >",
+                        background = OutputLine.ProcessHtmlColor(ConsoleColor.DarkBlue)
                     });
             }
 
@@ -130,7 +131,9 @@ namespace Cognifide.PowerShell.Console.Services
                                      "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
                                      "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
                                      "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
-                            prompt = string.Format("PS {0}>", session.CurrentLocation)
+                            prompt = $"PS {session.CurrentLocation}>",
+                            background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
+                            color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
                         });
             }
         }
@@ -296,7 +299,7 @@ namespace Cognifide.PowerShell.Console.Services
                         .Replace("[", "&#91;")
                         .Replace("]", "&#93;");
                 result.result = "[[;#f00;#000]" + (message.Length > 0 ? message : "Command failed") + "]";
-                result.prompt = string.Format("PS {0}>", session.CurrentLocation);
+                result.prompt = $"PS {session.CurrentLocation}>";
                 session.Output.Clear();
                 return serializer.Serialize(result);
             }
@@ -307,9 +310,11 @@ namespace Cognifide.PowerShell.Console.Services
             session.Output.GetConsoleUpdate(output, 131072);
             var partial = session.Output.HasUpdates();
             result.result = output.ToString().TrimEnd('\r', '\n');
-            result.prompt = string.Format("PS {0}>", session.CurrentLocation);
+            result.prompt = $"PS {session.CurrentLocation}>";
 
             result.status = complete ? (partial ? StatusPartial : StatusComplete) : StatusWorking;
+            result.background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor);
+            result.color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor);
 
             if (partial && complete)
             {
@@ -444,6 +449,9 @@ namespace Cognifide.PowerShell.Console.Services
             public string prompt;
             public string result;
             public string status;
+            public string background;
+            public string color;
+
         }
     }
 }

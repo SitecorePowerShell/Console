@@ -56,8 +56,7 @@ namespace Cognifide.PowerShell.Client.Applications
                                WebServiceSettings.InitialPollMillis + @", maxPoll: " +
                                WebServiceSettings.MaxmimumPollMillis + @", fontSize: " + 
                                settings.FontSize + $", fontFamily: '{font}' }});}});</script>" +
-                               @"<style>.terminal, .terminal .terminal-output, .terminal .terminal-output div," +
-                               @".terminal .terminal-output div div, .cmd, .terminal .cmd span, .terminal .cmd div {" +
+                               @"<style>#terminal {" +
                                $"color: {OutputLine.ProcessHtmlColor(settings.ForegroundColor)};" +
                                $"background-color: {OutputLine.ProcessHtmlColor(settings.BackgroundColor)};" +
                                $"font-family: inherit;" + "}</style>";
