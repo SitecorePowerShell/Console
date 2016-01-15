@@ -63,10 +63,16 @@ namespace Cognifide.PowerShell.Core.Host
         private bool abortRequested;
         private bool isRunspaceOpenedOrBroken;
         private System.Management.Automation.PowerShell powerShell;
+        private ScriptingHostPrivateData privateData;
 
         internal string JobScript { get; set; }
         internal JobOptions JobOptions { get; set; }
         public List<object> JobResultsStore { get; set; }
+
+        public ScriptingHostPrivateData PrivateData
+        {
+            get { return privateData ?? (privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData); }
+        }
 
         static ScriptSession()
         {

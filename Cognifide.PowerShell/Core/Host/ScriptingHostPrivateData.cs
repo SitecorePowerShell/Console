@@ -29,6 +29,29 @@ namespace Cognifide.PowerShell.Core.Host
             internal set { ScriptingHost.CloseRunner = value; }
         }
 
+        public ConsoleColor BackgroundColor
+        {
+            get
+            {
+                return ScriptingHost.UI.RawUI.BackgroundColor;
+            }
+            set
+            {
+                ScriptingHost.UI.RawUI.BackgroundColor = value;
+            }
+        }
+
+        public ConsoleColor ForegroundColor
+        {
+            get
+            {
+                return ScriptingHost.UI.RawUI.ForegroundColor;
+            }
+            set
+            {
+                ScriptingHost.UI.RawUI.ForegroundColor = value;
+            }
+        }
         public ConsoleColor DebugBackgroundColor { get; set; } = ConsoleColor.DarkBlue;
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
         public ConsoleColor ErrorBackgroundColor { get; set; } = ConsoleColor.Black;

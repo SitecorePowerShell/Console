@@ -41,7 +41,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     var session = SessionState.PSVariable.Get("ScriptSession").Value as ScriptSession;
                     if (session != null)
                     {
-                        var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString);
+                        var ph = Host.PrivateData.BaseObject as ScriptingHostPrivateData;
+                        var message = new ShowResultsMessage(session.Output.ToHtml(), WidthString, HeightString,
+                            ph?.ForegroundColor.ToString() ?? string.Empty,
+                            ph?.BackgroundColor.ToString() ?? string.Empty);
 
                         PutMessage(message);
                     }
