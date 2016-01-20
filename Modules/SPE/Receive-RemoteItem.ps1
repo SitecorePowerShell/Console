@@ -143,12 +143,12 @@ function Receive-RemoteItem {
                 $webclient.Credentials = $Credential
             }
 
-            [System.Net.HttpWebResponse]$script:errorResponse = $null;
+            [System.Net.HttpWebResponse]$script:errorResponse = $null
             [byte[]]$response = & {
                 try {
-                    $script:errorResponse = $null;
+                    $script:errorResponse = $null
                     $script:ex = $null
-                    $webclient.DownloadData($url) | Out-Null
+                    $webclient.DownloadData($url)
                 } catch [System.Net.WebException] {
                     [System.Net.WebException]$script:ex = $_.Exception
                     [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response

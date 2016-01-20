@@ -440,7 +440,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (folder != pathParam && !string.IsNullOrEmpty(pathParam))
             {
-                folder = Path.GetFullPath(folder + pathParam);
+                folder = Path.GetFullPath(StringUtil.EnsurePostfix('\\', folder) + pathParam);
             }
 
             return folder;
