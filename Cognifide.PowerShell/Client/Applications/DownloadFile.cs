@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -33,6 +34,11 @@ namespace Cognifide.PowerShell.Client.Applications
 
             Id = WebUtil.SafeEncode(WebUtil.GetQueryString("id"));
             Db = WebUtil.SafeEncode(WebUtil.GetQueryString("db"));
+            bool showFullPath;
+            if (!bool.TryParse(WebUtil.GetQueryString("fp"), out showFullPath))
+            {
+                showFullPath = false;
+            }
 
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             if (Context.ClientPage.IsEvent)
@@ -44,7 +50,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
                 if (MediaManager.HasMediaContent(item))
                 {
-                    FileNameLabel.Text = item.Name + "." + item["Extension"];
+                    FileNameLabel.Text = (showFullPath ? item.GetProviderPath() : item.Name)
+                                         + "." + item["Extension"];
                     long size;
                     SizeLabel.Text = Int64.TryParse(item["size"], out size) ? ToFileSize(size) : "unknown";
                 }
@@ -55,7 +62,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else if (!string.IsNullOrEmpty(FileName))
             {
-                FileNameLabel.Text = FileName;
+                FileNameLabel.Text = showFullPath ? FileName : Path.GetFileName(FileName);
                 SheerResponse.Download(FileName);
                 Hidden.Value = "downloaded";
                 var file = new FileInfo(FileName);

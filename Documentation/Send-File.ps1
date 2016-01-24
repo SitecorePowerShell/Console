@@ -19,6 +19,9 @@
     .PARAMETER NoDialog
         If this parameter is used the Dialog will not be shown but instead the file download will begin immediately.
 
+    .PARAMETER ShowFullPath
+        If this parameter is used the Dialog will display full path to the file downloaded in the dialog, otherwise only the file name will be shown.
+
     .PARAMETER Title
         Download dialog title.
 

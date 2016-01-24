@@ -19,17 +19,19 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Alias("FullName", "FileName")]
         public virtual string Path { get; set; }
 
-        [Parameter(ParameterSetName = "Download Item")]
-        [Parameter(ParameterSetName = "Download File")]
+        [Parameter]
         public string Message { get; set; }
 
         [Parameter(ValueFromPipeline = true,
             Mandatory = true, Position = 0, ParameterSetName = "Download Item")]
         public Item Item { get; set; }
 
-        [Parameter(ParameterSetName = "Download Item")]
-        [Parameter(ParameterSetName = "Download File")]
+        [Parameter]
         public SwitchParameter NoDialog { get; set; }
+
+        [Parameter]
+        public SwitchParameter ShowFullPath { get; set; }
+
 
         protected override void ProcessRecord()
         {
@@ -39,7 +41,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                 AssertDefaultSize(700, 140);
 
-                string response;
                 var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
                 if (Item != null)
                 {
@@ -81,7 +82,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 hashParams.Add("te", Message ?? string.Empty);
                 hashParams.Add("cp", Title ?? string.Empty);
-                response = JobContext.ShowModalDialog(
+                hashParams.Add("fp", ShowFullPath.IsPresent.ToString());
+                var response = JobContext.ShowModalDialog(
                     hashParams,
                     "DownloadFile",
                     Width == 0 ? "600" : WidthString,
