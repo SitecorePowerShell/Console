@@ -41,6 +41,13 @@ function Receive-RemoteItem {
                 Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
                     Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" -Recurse | Select-Object -Expand FullName
             } | Receive-RemoteItem -Session $session -Destination "C:\Files\"
+    
+        .LINK
+            Send-RemoteItem
+
+        .LINK
+            New-ScriptSession
+
     #>
     [CmdletBinding(DefaultParameterSetName='Uri and File')]
     param(

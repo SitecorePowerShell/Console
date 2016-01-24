@@ -68,6 +68,13 @@ function Invoke-RemoteScript {
             ----                     ------       --------------- ---------------
             sitecore\admin           sitecore     True            False          
             6/25/2015 11:09:17 AM
+    
+    	.LINK
+    		Wait-RemoteScriptSession
+
+    	.LINK
+    		New-ScriptSession
+
     #>
     
     [CmdletBinding(DefaultParameterSetName="InProcess")]

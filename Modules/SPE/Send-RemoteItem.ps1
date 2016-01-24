@@ -28,6 +28,13 @@ function Send-RemoteItem {
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
+    
+        .LINK
+            Receive-RemoteItem
+
+        .LINK
+            New-ScriptSession
+
     #>
     [CmdletBinding(DefaultParameterSetName='Uri')]
     param(
