@@ -562,26 +562,31 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 itemTypeName = itemTypeName.Replace('\\', '/').Trim('/');
-                
 
-                // for when the template name is starting with /sitecore/
-                if (itemTypeName.StartsWith("sitecore/", StringComparison.OrdinalIgnoreCase))
-                {
-                    itemTypeName = itemTypeName.Substring(9);
-                }
-                //for when the /templates at the start was missing
-                if (!itemTypeName.StartsWith("templates/", StringComparison.OrdinalIgnoreCase))
-                {
-                    itemTypeName = "templates/" + itemTypeName;
-                }
 
                 var srcItem = GetItemForPath("/" + itemTypeName);
 
                 if (srcItem == null)
                 {
-                    throw new ObjectNotFoundException(
-                        string.Format("Template '{0}' does not exist or wrong path provided.",
-                            itemTypeName));
+                    // for when the template name is starting with /sitecore/
+                    if (itemTypeName.StartsWith("sitecore/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        itemTypeName = itemTypeName.Substring(9);
+                    }
+                    //for when the /templates at the start was missing
+                    if (!itemTypeName.StartsWith("templates/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        itemTypeName = "templates/" + itemTypeName;
+                    }
+
+                    srcItem = GetItemForPath("/" + itemTypeName);
+
+                    if (srcItem == null)
+                    {
+                        throw new ObjectNotFoundException(
+                            string.Format("Template '{0}' does not exist or wrong path provided.",
+                                itemTypeName));
+                    }
                 }
                 var parentItem = GetItemForPath(PathUtilities.GetParentFromPath(path));
 
