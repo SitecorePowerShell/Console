@@ -1,30 +1,30 @@
 ----item----
 version: 1
-id: {451CC729-6D14-4190-9382-05AF5D503C85}
+id: {1F2EBEF7-4AB7-477A-B2DD-1B6CAE8BDFE0}
 database: core
-path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Debug
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Script/Debug Small
 parent: {FC5B9682-5BAD-4412-96EA-BB0C9AA457CF}
-name: Debug
+name: Debug Small
 master: {00000000-0000-0000-0000-000000000000}
-template: {1DB34C92-03B0-4475-9A39-DA14E4D9D8FC}
-templatekey: Large Button
+template: {9F62EBD5-2280-4A35-BE51-A210D831D687}
+templatekey: Small Button
 
 ----field----
-field: {D47ED548-84D5-4622-9886-5CC164727507}
+field: {8E40AB40-8C83-4FF7-9D33-38ED9458DE1E}
 name: Icon
 key: icon
 content-length: 22
 
 Office/32x32/debug.png
 ----field----
-field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
+field: {4C2DEDB4-40FB-4166-8221-C4DD3E914478}
 name: Click
 key: click
 content-length: 9
 
 ise:debug
 ----field----
-field: {CCD6BDE9-0A7A-4DA3-B0ED-D3C0F65379FE}
+field: {0CEBD9E7-1008-4EFA-B87C-2445364E286B}
 name: KeyCode
 key: keycode
 content-length: 3
@@ -43,7 +43,7 @@ name: __Sortorder
 key: __sortorder
 content-length: 3
 
-175
+400
 ----field----
 field: {A4F985D9-98B3-4B52-AAAF-4344F6E747C6}
 name: __Workflow
@@ -54,17 +54,17 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: bdd8f6a8-7b0b-4338-8a6c-9b64b67f5a63
+revision: b7b2479d-8c00-4303-9e57-7f4b4a3b3e5d
 
 ----field----
-field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
+field: {C184F18B-B452-44D6-8376-FACD6CEF8A42}
 name: Header
 key: header
 content-length: 5
 
 Debug
 ----field----
-field: {A1A31A93-C4A0-4396-B629-67C33001A3CF}
+field: {A47CD065-C361-4332-B22B-7E2148DE06F4}
 name: Tooltip
 key: tooltip
 content-length: 13
@@ -76,14 +76,14 @@ name: __Valid from
 key: __valid from
 content-length: 15
 
-20060320T112016
+20060320T112000
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
 content-length: 15
 
-20060721T115816
+20060721T115400
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -97,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-bdd8f6a8-7b0b-4338-8a6c-9b64b67f5a63
+b7b2479d-8c00-4303-9e57-7f4b4a3b3e5d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20151012T094058
+20160126T151834
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

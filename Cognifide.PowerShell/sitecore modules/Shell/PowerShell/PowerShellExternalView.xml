@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense">
+  <PowerShellExternalView>
+    <FormPage>
+      <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellExternalView,Cognifide.PowerShell" />
+    
+      <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/IFrame.css" DeviceDependant="true" runat="server" />
+
+      <Border class="scFlexColumnContainer scStretch">
+        <Border class="scDialogHeader">
+          <div id="HeaderIconContainer">
+            <ThemedImage ID="Icon" Width="24" Height="24" Src="powershell/24x24/Logo_Square.png" Alt="" runat="server" />
+          </div>
+          <Border>
+            <Border Class="DialogHeader">
+              <Literal Text="Script Execution Result..." ID="DialogHeader" />
+            </Border>
+            <Border Class="DialogHeaderDescription">
+              <Literal ID="PsProgressStatus" Text="&lt;span class='status'&gt;&lt;/span&gt;&lt;br/&gt;" />
+            </Border>
+          </Border>
+        </Border>
+
+        <Scrollbox Class="scFlexContent">
+          <Literal ID="Result" class="scStretchAbsolute scDialogContentContainer resultsArea console pre" />
+        </Scrollbox>
+      </Border>
+    </FormPage>
+  </PowerShellExternalView>
+</control>

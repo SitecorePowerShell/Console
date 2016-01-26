@@ -1,0 +1,69 @@
+﻿body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+form {
+    position: relative;
+    z-index: 0;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+/* make sure it is at least as tall as the viewport */
+
+.middleArea pre, .resultsArea pre { margin: 4px; }
+
+.console {
+    background-color: #012456;
+    border: none;
+    color: #fff;
+    font-size: 12px;
+    margin: 0;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    width: 99%;
+}
+
+#Result {
+    /* padding: 0px !important; */
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    width: 100%;
+}
+
+.consoleWrapper {
+    background-color: #012456;
+    border: none;
+    bottom: 0;
+    height: 100%;
+    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+.noscrolls { overflow: hidden; }
+
+#All { padding: 0 8px 0 8px; }
+
+.externalViewer {
+   width: 100%;
+   height: 100%;
+}
+
+#HeaderIconContainer img {
+    float: left;
+    padding: 2px 16px 0 16px;
+}
+

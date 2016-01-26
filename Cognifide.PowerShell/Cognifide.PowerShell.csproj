@@ -134,6 +134,7 @@
     <Compile Include="Client\Applications\GetStringResponse.cs" />
     <Compile Include="Client\Applications\IPowerShellRunner.cs" />
     <Compile Include="Client\Applications\PowerShellConsole.cs" />
+    <Compile Include="Client\Applications\PowerShellExternalView.cs" />
     <Compile Include="Client\Applications\PowerShellIse.cs" />
     <Compile Include="Client\Applications\PowerShellMultiValuePrompt.cs" />
     <Compile Include="Client\Applications\PowerShellResultViewerList.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Client\Commands\EditIseSettingsCombo.cs" />
     <Compile Include="Client\Commands\GalleryRuntimeQueryState.cs" />
     <Compile Include="Client\Commands\ItemDefinedQueryState.cs" />
+    <Compile Include="Client\Commands\MenuItems\ShowExternalPage.cs" />
     <Compile Include="Client\Commands\MenuItems\EditPowerShellScript.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellConsole.cs" />
     <Compile Include="Client\Commands\MenuItems\ExecutePowerShellScript.cs" />
@@ -552,6 +554,7 @@
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.SearchItem.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellExternalView.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellVelociyOutput.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml">
