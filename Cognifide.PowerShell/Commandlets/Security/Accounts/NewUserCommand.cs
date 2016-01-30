@@ -2,6 +2,7 @@
 using System.Data;
 using System.Management.Automation;
 using System.Web.Security;
+using Sitecore.Data;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
@@ -33,6 +34,9 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Enabled { get; set; }
+
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        public ID ProfileItemId { get; set; }
 
         protected override void ProcessRecord()
         {
@@ -74,6 +78,10 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             if (!string.IsNullOrEmpty(Portrait))
             {
                 profile.Portrait = Portrait;
+            }
+            if (!ID.IsNullOrEmpty(ProfileItemId))
+            {
+                profile.ProfileItemId = ProfileItemId.ToString();
             }
             profile.Save();
 
