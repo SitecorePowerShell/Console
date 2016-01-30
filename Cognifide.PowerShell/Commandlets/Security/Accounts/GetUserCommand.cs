@@ -24,6 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         public SwitchParameter Current { get; set; }
 
         [Parameter(ParameterSetName = "Id")]
+        [Parameter(ParameterSetName = "Filter")]
         public SwitchParameter Authenticated { get; set; }
 
         [Parameter(ParameterSetName = "Filter")]
