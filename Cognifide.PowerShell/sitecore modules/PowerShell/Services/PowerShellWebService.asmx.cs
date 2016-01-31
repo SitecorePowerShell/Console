@@ -162,21 +162,28 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     variableName = variableName.TrimStart('$');
                     var debugVariable = session.GetDebugVariable(variableName);
+                    if (debugVariable == null)
+                    {
+                        return $"<div class='undefinedVariableType'>undefined</div>" +
+                               $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
+                    }
                     var variable = debugVariable.BaseObject();
                     if (variable is PSCustomObject)
                     {
                         variable = debugVariable;
                     }
-                    VariableDetails details = new VariableDetails("$"+ variableName,variable);
+                    VariableDetails details = new VariableDetails("$" + variableName, variable);
                     var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
-                    varValue += $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
+                    varValue +=
+                        $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
                     if (details.IsExpandable)
                     {
                         foreach (var child in details.GetChildren())
                         {
                             if (!child.IsExpandable)
                             {
-                                varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
+                                varValue +=
+                                    $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
                             }
                             else
                             {
@@ -184,12 +191,14 @@ namespace Cognifide.PowerShell.Console.Services
                                 {
                                     continue;
                                 }
-                                varValue += $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
+                                varValue +=
+                                    $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
                                 foreach (var subChild in child.GetChildren())
                                 {
                                     if (!subChild.IsExpandable)
                                     {
-                                        varValue += $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
+                                        varValue +=
+                                            $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
                                     }
                                 }
                                 varValue = varValue.TrimEnd(' ', ',');
@@ -205,7 +214,8 @@ namespace Cognifide.PowerShell.Console.Services
                     return ex.Message;
                 }
             }
-            return "Session not found";
+            return $"<div class='undefinedVariableType'>Session not found</div>" +
+                   $"<div class='variableLine'>A script needs to be executed in the session<br/>before the variable value can be inspected.</div>";
         }
 
 

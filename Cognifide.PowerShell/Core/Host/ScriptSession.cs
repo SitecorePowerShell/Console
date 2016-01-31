@@ -277,7 +277,7 @@ namespace Cognifide.PowerShell.Core.Host
                 try
                 {
                     var value = Engine.SessionState.PSVariable.GetValue(varName);
-                    return value ?? "undefined";
+                    return value;
                 }
                 catch (Exception ex)
                 {
