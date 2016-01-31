@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Sitecore;
 using Sitecore.Shell.Applications.WebEdit.Commands;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
-namespace Cognifide.PowerShell.Client.Commands
+namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
 {
     public class WebEditScriptCommand : WebEditCommand
     {

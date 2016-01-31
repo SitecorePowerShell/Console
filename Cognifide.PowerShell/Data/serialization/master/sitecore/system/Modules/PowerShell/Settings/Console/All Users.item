@@ -17,6 +17,13 @@ content-length: 3
 
 200
 ----field----
+field: {6F442AC9-7001-4124-9BC3-589875876C27}
+name: FontSize
+key: fontsize
+content-length: 2
+
+12
+----field----
 field: {F810EEC7-9A73-43E6-84C1-36E4951D2B3E}
 name: ForegroundColor
 key: foregroundcolor
@@ -47,8 +54,15 @@ People/32x32/users1.png
 ----version----
 language: en
 version: 1
-revision: 25175aa5-e274-4657-a646-3ededec1e9b8
+revision: 974abf54-6e88-4402-9b83-b9e8045e40ab
 
+----field----
+field: {86ECC435-0924-4EA0-92D8-CCA12ED7E644}
+name: FontFamily
+key: fontfamily
+content-length: 11
+
+Courier New
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -76,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-25175aa5-e274-4657-a646-3ededec1e9b8
+974abf54-6e88-4402-9b83-b9e8045e40ab
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20130625T135502:635077653028771172
+20160114T160958
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -17,6 +17,13 @@ content-length: 3
 
 240
 ----field----
+field: {6F442AC9-7001-4124-9BC3-589875876C27}
+name: FontSize
+key: fontsize
+content-length: 2
+
+15
+----field----
 field: {F810EEC7-9A73-43E6-84C1-36E4951D2B3E}
 name: ForegroundColor
 key: foregroundcolor
@@ -30,13 +37,6 @@ key: backgroundcolor
 content-length: 8
 
 DarkBlue
-----field----
-field: {6F442AC9-7001-4124-9BC3-589875876C27}
-name: FontSize
-key: fontsize
-content-length: 2
-
-15
 ----field----
 field: {D0620274-D94D-4B13-BD66-CE3104DAEE0D}
 name: LastScript

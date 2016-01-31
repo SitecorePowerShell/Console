@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7622
+content-length: 7664
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -136,13 +136,13 @@ Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Acti
 Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
 
 # Rules Engine Rules
-Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
+Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
 Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 46
-Get-Item "master:/system/Settings/Rules/Definitions/Tags/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
+Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
+Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
 Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
-Get-Item "master:/system/Settings/Rules/Definitions/Elements/PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 50
-Get-Item "master:/system/Settings/Rules/PowerShell" | Process-Item -Recurse
+Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 50
+Get-Item "master:\system\Settings\Rules\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 51
 
 # Script Library
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 55
@@ -175,7 +175,7 @@ Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Power
 Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
 
 # LaunchPad
-Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE' | Process-Item -Activity "Launchpad Integration" -PercentComplete 95
+Get-Item 'core:\client\Applications\Launchpad\PageSettings\Buttons\ContentEditing\PowerShell ISE' | Process-Item -Activity "Launchpad Integration" -PercentComplete 95
 
 # Tasks integration
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
@@ -193,7 +193,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: 4511fc1e-492e-4c36-a42a-1bef81e84f45
+revision: d61ac374-5727-4ca0-89e2-a5e6bc07d9e7
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -208,14 +208,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4511fc1e-492e-4c36-a42a-1bef81e84f45
+d61ac374-5727-4ca0-89e2-a5e6bc07d9e7
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160104T013513
+20160131T094444
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

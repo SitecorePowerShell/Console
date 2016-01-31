@@ -15,21 +15,21 @@ name: Icon
 key: icon
 content-length: 28
 
-office/32x32/information.png
+Office/32x32/information.png
 ----field----
 field: {DBBF9EE3-C30E-4456-A81F-ED8C2E8DF91B}
 name: Click
 key: click
 content-length: 139
 
-ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=800,spe_h=430,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})
+ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=430,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})
 ----field----
 field: {CCD6BDE9-0A7A-4DA3-B0ED-D3C0F65379FE}
 name: KeyCode
 key: keycode
-content-length: 3
+content-length: 0
 
-c83
+
 ----field----
 field: {1193B1A3-0148-413F-A979-49B39AA4A2AF}
 name: ID
@@ -61,7 +61,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: 3579f61a-f6de-4116-aaa6-67a6fe710d7c
+revision: ef085695-7dc2-4b92-96fc-068bf5eced00
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -104,14 +104,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3579f61a-f6de-4116-aaa6-67a6fe710d7c
+ef085695-7dc2-4b92-96fc-068bf5eced00
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 34
 
-20160126T180840
+20160129T104519:635896611196811957
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

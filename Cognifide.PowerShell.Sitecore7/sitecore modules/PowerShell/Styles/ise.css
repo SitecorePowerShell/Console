@@ -446,3 +446,7 @@ a.ps-link {
     margin-bottom: 5px;
 
 }
+
+#Result {
+    overflow : hidden;
+}
