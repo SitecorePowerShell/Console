@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
     {
         public void ShowImmediateWindow(UrlString url)
         {
-            SheerResponse.ShowModalDialog(url.ToString(), "800", "600", "Immediate Window", true);
+            SheerResponse.ShowModalDialog(url.ToString(), "800", "600", string.Empty, true);
         }
 
     }
