@@ -13,7 +13,8 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9249
+content-length: 10465
+
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -28,7 +29,9 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'Office/32x32/reticle.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Office/32x32/sign_stop.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Office/32x32/media_play.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Office/32x32/control_panel.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection Small' = 'Office/32x32/media_step_forward.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Debug Small' = 'Office/32x32/debug.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Current Script\Runtime' = 'Office/32x32/control_panel.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Office/32x32/insert_option.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Office/32x32/folder_out.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Office/32x32/refresh.png';
@@ -36,8 +39,8 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Office/32x32/floppy_disks.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Office/32x32/arrow_mix.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Office/32x32/window_gear.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Office/32x32/media_step_forward.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'Office/32x32/selection_recycle.png';
+'core:\sitecore\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Info\About' = 'Office/32x32/information.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Office/32x32/nav_right.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Office/32x32/rebuild_index.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Office/32x32/nav_refresh.png';
@@ -64,7 +67,7 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'People/32x32/cpu.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Abort' = 'Software/32x32/console_stop.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute' = 'Software/32x32/console_run.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Runtime' = 'Applications/32x32/gear_run.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Current Script\Runtime' = 'Applications/32x32/gear_run.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\New' = 'Applications/32x32/document_plain_new.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Open' = 'Core3/24x24/open_document.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Reload' = 'Applications/32x32/refresh.png';
@@ -72,8 +75,10 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Write\Save As' = 'Applications/32x32/disk_blue_add.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Integration\Rebuild' = 'Applications/32x32/exchange.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Settings\Preferences\Settings' = 'Applications/32x32/gears.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection' = 'Software/32x32/debug.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Execute Selection Small' = 'Software/32x32/text_code_line.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Script\Debug Small' = 'Software/32x32/debug_run.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'People/32x32/cpu_edit.png';
+'core:\sitecore\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Info\About' = 'Applications/32x32/about.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Control/16x16/treeview.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Applications/32x32/exchange.png';
 'master:/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Applications/32x32/refresh.png';
@@ -97,18 +102,34 @@ foreach($path in ($icons8.Keys |sort)){
 Write-Host "}"
 exit#>
 
-$icons = $icons8
+if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+  $icons = $icons8
+  (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowHeaderlessChrome"
+} else {
+  $icons = $icons7
+  (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowChrome"    
+}
+
 foreach($path in $icons.Keys){
-    $item = $(Get-Item $path)
+    $item = $null
+    $item = $(Get-Item $path -ErrorAction SilentlyContinue)
+    if($item -eq $null){
+        Write-Host "'$path' not found" -fo Red
+        continue
+    }
     $item.Editing.BeginEdit()
     $item.Fields["__Icon"].Value = $icons[$path];
-    $item.Fields["Icon"].Value = $icons[$path];
-    $item.Editing.EndEdit($false, $false)
+    try{
+       $item.Fields["Icon"].Value = $icons[$path];
+    }catch {
+        #Write-Host "'$($item.Paths.path)' - has no 'Icon' property" -fo Cyan
+    }
+    $item.Editing.EndEdit($false, $false) | Out-Null
 }
 ----version----
 language: en
 version: 1
-revision: 82b2b8db-1f7a-4337-bfb6-f92588987f46
+revision: e47bad2f-4ec1-4a34-8bfc-6969540fff55
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -123,14 +144,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-82b2b8db-1f7a-4337-bfb6-f92588987f46
+e47bad2f-4ec1-4a34-8bfc-6969540fff55
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20151025T034449:635813414894437955
+20160131T143029
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

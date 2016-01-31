@@ -5,6 +5,10 @@
     vertical-align: top;
 }
 
+#ScriptPane{
+    background-color: white;
+}
+
 #ResultsSplitter + tr > td { height: 100%; }
 
 #Databases {
@@ -378,6 +382,20 @@ a.ps-link {
     float: right;
 }
 
+
+.breakpoint {
+    position: absolute;
+    background: #FFF181;
+    z-index:20
+  }
+
+.ace_gutter-cell.ace_breakpoint{ 
+    border-radius: 20px 0px 0px 20px; 
+    box-shadow: 0px 0px 1px 1px #AB616B inset; 
+    background: #AB616B;
+    color: white;
+}
+
 .ace_editor.ace_autocomplete {
     width: auto !important;
     right: 100px !important;
@@ -437,14 +455,22 @@ a.ps-link {
     font-size: smaller;
 }
 
+.variableType, .undefinedVariableType {
+    padding: 2px;
+    text-align: center;
+    margin-bottom: 5px;
+
+}
+
 .variableType {
     border: 1px #BCE3EE solid;
     background: #DCF1F6;
-    padding: 2px;
-    text-align: center;
     color: #267F98;
-    margin-bottom: 5px;
-
+}
+.undefinedVariableType {
+    border: 1px #FFD8D8 solid;
+    background: #FFEFEF;
+    color: #FF4646;
 }
 
 #Result {

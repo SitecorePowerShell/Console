@@ -36,7 +36,6 @@ namespace Cognifide.PowerShell.Client.Applications
         public const string DefaultSessionName = "ISE Editing Session";
 
         protected Memo Editor;
-        protected Border EnterScriptInfo;
         protected Literal Progress;
         protected Border ProgressOverlay;
         protected Border Result;
@@ -327,7 +326,6 @@ namespace Cognifide.PowerShell.Client.Applications
             ScriptItemId = string.Empty;
             ScriptItemDb = string.Empty;
             Editor.Value = string.Empty;
-            EnterScriptInfo.Visible = true;
             ScriptResult.Value = "<pre ID='ScriptResultCode'></pre>";
             SheerResponse.Eval("cognifide.powershell.changeWindowTitle('Untitled', true);");
             UpdateRibbon();
@@ -436,7 +434,6 @@ namespace Cognifide.PowerShell.Client.Applications
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true))
             {
                 var settings = scriptSession.Settings;
-                EnterScriptInfo.Visible = false;
                 try
                 {
                     if (UseContext)
@@ -532,7 +529,6 @@ namespace Cognifide.PowerShell.Client.Applications
             ScriptSession scriptSession, bool autoDispose, bool debug)
         {
             ScriptRunning = true;
-            EnterScriptInfo.Visible = false;
             UpdateRibbon();
 
             scriptSession.SetExecutedScript(ScriptItem);
@@ -650,7 +646,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
             ScriptRunning = false;
-            EnterScriptInfo.Visible = false;
             UpdateResults(args);
         }
 
@@ -831,11 +826,12 @@ namespace Cognifide.PowerShell.Client.Applications
             var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
             var font = string.IsNullOrEmpty(settings.FontFamily) ? "monospace" : settings.FontFamily;
             var fontItem = fonts.Children[font];
+            var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
             SheerResponse.Eval(
-                $"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');");
+                $"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');cognifide.powershell.changeBackgroundColor('{backgroundColor}');");
         }
 
         [HandleMessage("ise:setbreakpoint", true)]

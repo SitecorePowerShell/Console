@@ -436,12 +436,20 @@ a.ps-link {
     font-size: smaller;
 }
 
+.variableType, .undefinedVariableType {
+    padding: 2px;
+    text-align: center;
+    margin-bottom: 5px;
+
+}
+
 .variableType {
     border: 1px #BCE3EE solid;
     background: #DCF1F6;
-    padding: 2px;
-    text-align: center;
     color: #267F98;
-    margin-bottom: 5px;
-
+}
+.undefinedVariableType {
+    border: 1px #FFD8D8 solid;
+    background: #FFEFEF;
+    color: #FF4646;
 }

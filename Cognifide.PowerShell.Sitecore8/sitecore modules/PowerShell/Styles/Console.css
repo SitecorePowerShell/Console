@@ -55,7 +55,6 @@ html {
 #ScriptResult {
     left: 0;
     overflow: auto;
-    position: absolute;
     top: 0;
     width: 100%;
     bottom: 0;

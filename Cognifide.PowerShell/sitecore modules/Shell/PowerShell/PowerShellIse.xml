@@ -56,9 +56,6 @@
                        GridPanel.Row.ID="ResultsRow" GridPanel.Style="padding-bottom:2px">
               <Border ID="Result" Height="100%" GridPanel.Height="100%" Width="100%" class="console pre results"
                       GridPanel.Style="padding:0px">
-                <Border ID="EnterScriptInfo" Align="Center" Padding="32px 0px 0px 0px" Foreground="#999999">
-                  <Literal Text="Enter a script in the Script field and Execute." />
-                </Border>
                 <Border Id="ProgressOverlay" Visible="false">
                   <Border>
                     <p>
