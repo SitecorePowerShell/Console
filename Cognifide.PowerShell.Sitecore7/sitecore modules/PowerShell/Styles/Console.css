@@ -60,6 +60,7 @@ html {
     overflow: auto;
     top: 0px;
     width: 100%;
+    font-weight: normal;
 }
 
 #Result pre { margin: 4px 2px !important; }

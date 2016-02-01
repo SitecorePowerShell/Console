@@ -5,6 +5,6 @@
     <Script type="text/JavaScript" language="javascript" src="/sitecore/shell/controls/SitecoreObjects.js" />
     <Script type="text/JavaScript" language="javascript" src="/sitecore modules/PowerShell/Scripts/PsHSplitter.js" />
 
-    <Image def:ID="Image" Src="/sitecore/images/blank.gif" Cursor="move" Width="100%" Height="6" />
+    <Image def:ID="Image" Src="/sitecore/images/blank.gif" Cursor="n-resize" Width="100%" Height="6" />
   </PsHSplitter>
 </control>

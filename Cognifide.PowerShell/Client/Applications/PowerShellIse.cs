@@ -14,6 +14,7 @@ using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
+using Sitecore.Common;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -830,8 +831,9 @@ namespace Cognifide.PowerShell.Client.Applications
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
+            var bottomPadding = VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80) ? 0 : 10;
             SheerResponse.Eval(
-                $"cognifide.powershell.changeFontSize({settings.FontSize});cognifide.powershell.changeFontFamily('{font}');cognifide.powershell.changeBackgroundColor('{backgroundColor}');");
+                $"cognifide.powershell.changeResultsSettings('{font}', {settings.FontSize}, '{backgroundColor}', {bottomPadding});");
         }
 
         [HandleMessage("ise:setbreakpoint", true)]

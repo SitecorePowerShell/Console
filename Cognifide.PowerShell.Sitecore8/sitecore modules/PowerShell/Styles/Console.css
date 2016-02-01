@@ -34,8 +34,6 @@ html {
     font-size: 12px;
     margin: 0;
     overflow: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
     white-space: pre-wrap;
     width: 99%;
 }

@@ -26,6 +26,7 @@
         var debugLine = 0;
         var debugSessionId = "";
         var marker = -1;
+        var resultsBottomOffset = 10;
 
 
         var editor = $($("#Editor")[0]);
@@ -71,7 +72,7 @@
 		}
         setTimeout(setFocusOnConsole, 1000);
         });
-
+	
         var typingTimer;
 
         cognifide.powershell.updateRibbon = function () {
@@ -313,11 +314,19 @@
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
-            $("#ScriptResult").css({ "font-family": setting });
+            $("#ScriptResult pre").css({ "font-family": setting });
         };
 
         cognifide.powershell.changeBackgroundColor = function (setting) {
             $("#ScriptResult").css({ "background-color": setting });
+            $("#Result").css({ "background-color": setting });
+        };
+
+        cognifide.powershell.changeResultsSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset) {            
+            cognifide.powershell.changeBackgroundColor(backgroundColor);
+            cognifide.powershell.changeFontFamily(fontFamily);
+            cognifide.powershell.changeFontSize(fontSize);
+            resultsBottomOffset = bottomOffset;
         };
 
         cognifide.powershell.changeSessionId = function (sessionId) {
@@ -422,6 +431,10 @@
 
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
+            var resultsHeight =$ise(window).height() -$ise("#ResultsSplitter").height() - $ise("#ResultsSplitter").height()-$ise("#StatusBar").height()-$ise("#CodeEditor").height()-$ise("#RibbonPanel").height()-resultsBottomOffset;
+	    $ise("#Result").height(resultsHeight);
+	    $ise("#Result").width($ise(window).width()-$ise("#Result").offset().left*2)
+
         };
 
         cognifide.powershell.restoreResults = function() {
@@ -556,5 +569,10 @@
                 }).done(doneFunction)
                 .fail(errorFunction);
         }
+
+	$(window).on('resize', function(){
+	    cognifide.powershell.resizeEditor();
+        }).trigger('resize'); 
+
     });
 }(jQuery, window, window.cognifide = window.cognifide || {}, window.ace = window.ace || {}));
