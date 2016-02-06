@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Linq;
+using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
@@ -44,32 +45,31 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                     if (filter.Is("*") || filter.Is("%"))
                     {
                         int total;
-                        var users = new PagingIterator<MembershipUser>(pageIndex => Membership.GetAllUsers(pageIndex, ResultPageSize, out total));
-                        foreach (var user in users)
-                        {
-                            WriteObject(User.FromName(user.UserName, Authenticated));
-                        }
+                        var users =
+                            new PagingIterator<MembershipUser>(
+                                pageIndex => Membership.GetAllUsers(pageIndex, ResultPageSize, out total));
+                        WriteUsers(users);
                     }
                     else if (filter.Contains("?") || filter.Contains("*"))
                     {
                         var pattern = filter.Replace("*", "%").Replace("?", "%");
                         int total;
-                        
+
                         if (filter.Contains("@"))
                         {
-                            var users = new PagingIterator<MembershipUser>(pageIndex => Membership.FindUsersByEmail(pattern, pageIndex, ResultPageSize, out total));
-                            foreach (var user in users)
-                            {
-                                WriteObject(User.FromName(user.UserName, Authenticated));
-                            }
+                            var users =
+                                new PagingIterator<MembershipUser>(
+                                    pageIndex =>
+                                        Membership.FindUsersByEmail(pattern, pageIndex, ResultPageSize, out total));
+                            WriteUsers(users);
                         }
                         else
                         {
-                            var users = new PagingIterator<MembershipUser>(pageIndex => Membership.FindUsersByName(pattern, pageIndex, ResultPageSize, out total));
-                            foreach (var user in users)
-                            {
-                                WriteObject(User.FromName(user.UserName, Authenticated));
-                            }
+                            var users =
+                                new PagingIterator<MembershipUser>(
+                                    pageIndex =>
+                                        Membership.FindUsersByName(pattern, pageIndex, ResultPageSize, out total));
+                            WriteUsers(users);
                         }
                     }
                     break;
@@ -79,6 +79,23 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
                         WriteObject(User.FromName(Identity.Name, Authenticated));
                     }
                     break;
+            }
+        }
+
+        private void WriteUsers(PagingIterator<MembershipUser> users)
+        {
+            if (IsParameterSpecified("ResultPageSize"))
+            {
+                foreach (var user in users)
+                {
+                    WriteObject(User.FromName(user.UserName, Authenticated));
+                }
+            }
+            else
+            {
+                var accumulatedUsers = new Enumerable<User>(() => users.ToList(), o => User.FromName(((MembershipUser)o).UserName, Authenticated));
+                WriteObject(accumulatedUsers, true);
+
             }
         }
     }
