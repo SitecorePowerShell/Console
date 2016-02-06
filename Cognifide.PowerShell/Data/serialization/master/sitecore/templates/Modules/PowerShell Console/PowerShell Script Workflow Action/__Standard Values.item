@@ -13,13 +13,13 @@ templatekey: PowerShell Script Workflow Action
 field: {BDC2FCBC-91EE-4135-BB04-196E3AE683E5}
 name: Type
 key: type
-content-length: 86
+content-length: 78
 
-Cognifide.PowerShell.SitecoreIntegrations.Workflows.ScriptAction, Cognifide.PowerShell
+Cognifide.PowerShell.Integrations.Workflows.ScriptAction, Cognifide.PowerShell
 ----version----
 language: en
 version: 1
-revision: 4d6c86ea-dcfb-4b79-834e-e35c8ae57479
+revision: 6c652672-fcb3-4668-8672-15a7079567fc
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -48,14 +48,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4d6c86ea-dcfb-4b79-834e-e35c8ae57479
+6c652672-fcb3-4668-8672-15a7079567fc
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 34
 
-20141108T132654:635510500141458047
+20160206T220811:635903932914958547
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
