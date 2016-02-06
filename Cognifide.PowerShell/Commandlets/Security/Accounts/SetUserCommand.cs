@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
 using Cognifide.PowerShell.Core.Validation;
+using Sitecore.Analytics.Tracking;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Resources;
@@ -104,6 +105,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             if (!string.IsNullOrEmpty(Portrait))
             {
                 profile.Portrait = Portrait;
+            }
+
+            if (!ID.IsNullOrEmpty(ProfileItemId))
+            {
+                profile.ProfileItemId = ProfileItemId.ToString();
             }
 
             if (User.Current.IsAdministrator && IsParameterSpecified("IsAdministrator"))

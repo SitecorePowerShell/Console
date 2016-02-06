@@ -35,6 +35,9 @@
         
             sitecore\admin  
 
+    .PARAMETER ResultPageSize
+        Specifies the number of users to retrieve per request to the user provider. Each page of users is written to the pipeline before the next request is made. Without specifying this parameter all accounts are retrieved before passing down the pipeline. 
+
     .INPUTS
         System.String
         Represents the identity of a user.

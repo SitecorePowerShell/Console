@@ -21,19 +21,29 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         protected override void ProcessRecord()
         {
-            if (!this.CanFindAccount(Identity, AccountType.User))
+            switch (ParameterSetName)
             {
-                WriteError(typeof (ObjectNotFoundException), $"User '{Identity.Name}' not found.",
-                    ErrorIds.AccountNotFound, ErrorCategory.ResourceUnavailable, Identity);
-                return;
+                case "Instance":
+                    WriteVerbose($"Removing user '{Instance.Name}'.");
+                    Instance.Delete();
+                    break;
+                default:
+                    if (!this.CanFindAccount(Identity, AccountType.User))
+                    {
+                        WriteError(typeof(ObjectNotFoundException), $"User '{Identity.Name}' not found.",
+                            ErrorIds.AccountNotFound, ErrorCategory.ResourceUnavailable, Identity);
+                        return;
+                    }
+
+                    var name = Identity?.Name ?? string.Empty;
+
+                    if (!ShouldProcess(name, "Remove user")) return;
+
+                    var user = User.FromName(name, true);
+                    WriteVerbose($"Removing user '{user.Name}'.");
+                    user.Delete();
+                    break;
             }
-
-            var name = Identity?.Name ?? Instance?.Name ?? string.Empty;
-
-            if (!ShouldProcess(name, "Remove user")) return;
-
-            var user = User.FromName(name, true);
-            user.Delete();
         }
     }
 }
