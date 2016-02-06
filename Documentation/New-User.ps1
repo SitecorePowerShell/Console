@@ -18,6 +18,9 @@
     .PARAMETER Enabled
         Specifies that the account should be enabled. When enabled, the Password parameter is required.
 
+    .PARAMETER ProfileItemId
+        Specifies the profile id to use for the user.
+
     .INPUTS
         System.String
         Represents the identity of a role.

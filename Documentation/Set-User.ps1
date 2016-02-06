@@ -25,6 +25,9 @@
     .PARAMETER Enabled
         Specifies whether the Sitecore user should be enabled.
 
+    .PARAMETER ProfileItemId
+        Specifies the profile id to use for the user.
+
     .PARAMETER IsAdministrator
         Specifies whether the Sitecore user should be classified as an Administrator.
 
