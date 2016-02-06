@@ -766,8 +766,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 : (sessionName == DefaultSessionName)
                     ? Factory.GetDatabase("core")
                         .GetItem(
-                            "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")
-                        .DisplayName
+                            "/sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/ISE editing session")?
+                        .DisplayName ?? DefaultSessionName
                     : sessionName;
             var obj2 = Context.Database.GetItem("/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
@@ -793,7 +793,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Assert.ArgumentNotNull(args, "args");
             var sessionId = args.Parameters["id"];
             CurrentSessionId = sessionId;
-            SheerResponse.Eval(string.Format("cognifide.powershell.changeSessionId('{0}');", sessionId));
+            SheerResponse.Eval($"cognifide.powershell.changeSessionId('{sessionId}');");
             UpdateRibbon();
         }
 
