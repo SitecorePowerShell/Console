@@ -19,11 +19,19 @@ namespace Cognifide.PowerShell.Client.Applications
             base.OnLoad(e);
 
             var sid = WebUtil.GetQueryString("sid");
-            var fc = WebUtil.GetQueryString("fc");
-            var bc = WebUtil.GetQueryString("bc");
             var settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
-            var foregroundColor = string.IsNullOrEmpty(fc) ? OutputLine.ProcessHtmlColor(settings.ForegroundColor) : fc;
-            var backgroundColor = string.IsNullOrEmpty(bc) ? OutputLine.ProcessHtmlColor(settings.BackgroundColor) : bc;
+            ConsoleColor fc;
+            ConsoleColor bc;
+            if (!Enum.TryParse(WebUtil.GetQueryString("fc"), true, out fc))
+            {
+                fc = settings.ForegroundColor;
+            }
+            if (!Enum.TryParse(WebUtil.GetQueryString("bc"), true, out bc))
+            {
+                bc = settings.BackgroundColor;
+            }
+            var foregroundColor = OutputLine.ProcessHtmlColor(fc);
+            var backgroundColor = OutputLine.ProcessHtmlColor(bc);
             Result.Style.Add("color", foregroundColor);
             Result.Style.Add("background-color", backgroundColor);
             Result.Style.Add("font-family", settings.FontFamily);
