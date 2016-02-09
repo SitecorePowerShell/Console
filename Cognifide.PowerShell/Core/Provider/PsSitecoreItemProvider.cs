@@ -20,6 +20,7 @@ using Sitecore.Data.Proxies;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Exceptions;
+using Sitecore.Globalization;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -564,9 +565,9 @@ namespace Cognifide.PowerShell.Core.Provider
                 itemTypeName = itemTypeName.Replace('\\', '/').Trim('/');
 
 
-                var srcItem = GetItemForPath("/" + itemTypeName);
+                var templateItem = GetItemForPath("/" + itemTypeName);
 
-                if (srcItem == null)
+                if (templateItem == null)
                 {
                     // for when the template name is starting with /sitecore/
                     if (itemTypeName.StartsWith("sitecore/", StringComparison.OrdinalIgnoreCase))
@@ -579,9 +580,9 @@ namespace Cognifide.PowerShell.Core.Provider
                         itemTypeName = "templates/" + itemTypeName;
                     }
 
-                    srcItem = GetItemForPath("/" + itemTypeName);
+                    templateItem = GetItemForPath("/" + itemTypeName);
 
-                    if (srcItem == null)
+                    if (templateItem == null)
                     {
                         throw new ObjectNotFoundException(
                             string.Format("Template '{0}' does not exist or wrong path provided.",
@@ -598,28 +599,30 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (!ShouldProcess(PathUtilities.GetParentFromPath(path), "Create item '" + PathUtilities.GetLeafFromPath(path) + "' of type '" + itemTypeName + "'")) return;
 
+                var name = PathUtilities.GetLeafFromPath(path);
                 Item createdItem = null;
-                switch (srcItem.TemplateName)
+                switch (templateItem.TemplateName)
                 {
                     case "Template":
-                        createdItem = parentItem.Add(PathUtilities.GetLeafFromPath(path), (TemplateItem) srcItem);
+                        createdItem = parentItem.Add(name, (TemplateItem)templateItem);
                         break;
                     case "Branch":
-                        createdItem = parentItem.Add(PathUtilities.GetLeafFromPath(path), (BranchItem) srcItem);
+                        createdItem = parentItem.Add(name, (BranchItem)templateItem);
                         break;
+                    default:
+                        WriteError(
+                            new ErrorRecord(new InvalidOperationException("Cannot create item as type provided is neither Template nor Branch"),
+                                ErrorIds.InvalidItemType.ToString(), ErrorCategory.InvalidType, path));
+                        return;
                 }
 
                 if (dic != null && dic[LanguageParam].IsSet)
                 {
                     var forcedLanguage = dic[LanguageParam].Value.ToString();
                     var language = LanguageManager.GetLanguage(forcedLanguage);
-                    // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
-                    // switching language with LanguageSwitcher didn't work
-                    // Thanks Kern!
-                    createdItem.Versions.RemoveAll(true);
-                    createdItem = createdItem.Database.GetItem(createdItem.ID, language);
-                    createdItem = createdItem.Versions.AddVersion();
+                    createdItem = ForceItemLanguage(createdItem, language);
                 }
+
                 // start default workflow on the created item if necessary
                 if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
                 {
@@ -640,6 +643,21 @@ namespace Cognifide.PowerShell.Core.Provider
                     path, itemTypeName, newItemValue);
                 throw;
             }
+        }
+
+        private static Item ForceItemLanguage(Item createdItem, Language language)
+        {
+            // Based on: http://sdn.sitecore.net/Forum/ShowPost.aspx?postid=16551
+            // switching language with LanguageSwitcher didn't work
+            // Thanks Kern!
+            createdItem.Versions.RemoveAll(true);
+            createdItem = createdItem.Database.GetItem(createdItem.ID, language);
+            createdItem = createdItem.Versions.AddVersion();
+            foreach (Item child in createdItem.Children)
+            {
+                ForceItemLanguage(child, language);
+            }
+            return createdItem;
         }
 
         protected override PSDriveInfo NewDrive(PSDriveInfo drive)
