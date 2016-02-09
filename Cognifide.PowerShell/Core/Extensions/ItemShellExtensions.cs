@@ -17,7 +17,8 @@ namespace Cognifide.PowerShell.Core.Extensions
 {
     public class ItemShellExtensions
     {
-        private static readonly Dictionary<ID, List<string>> allPropertySets = new Dictionary<ID, List<string>>();
+        private static readonly Dictionary<ID, Dictionary<ID, string>> allPropertySets = new Dictionary<ID, Dictionary<ID, string>>();
+        private static readonly string helperClassName = typeof (ItemShellExtensions).FullName;
 
         private static readonly Dictionary<string, string> customGetters = new Dictionary<string, string>
         {
@@ -33,7 +34,7 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             var psobj = PSObject.AsPSObject(item);
 
-            List<string> propertySet;
+            Dictionary<ID, string> propertySet;
             if (allPropertySets.ContainsKey(item.TemplateID))
             {
                 propertySet = allPropertySets[item.TemplateID];
@@ -41,42 +42,44 @@ namespace Cognifide.PowerShell.Core.Extensions
             else
             {
                 item.Fields.ReadAll();
-                propertySet = new List<string>(item.Fields.Count);
+                propertySet = new Dictionary<ID, string>(item.Fields.Count);
                 foreach (Field field in item.Fields)
                 {
                     if (field.Name != "ID") // don't map - native property
                     {
-                        propertySet.Add(field.Name);
+                        propertySet.Add(field.ID, field.Name);
                     }
                 }
                 allPropertySets.Add(item.TemplateID, propertySet);
             }
 
-            foreach (var field in propertySet)
+            foreach (var fieldKey in propertySet.Keys)
             {
-                if (!string.IsNullOrEmpty(field))
-                {
-                    var duplicate = psobj.Properties[field] == null;
+                string fieldName = propertySet[fieldKey];
+                ID fieldId = fieldKey;
 
-                    var getter = string.Format("$this[\"{0}\"]", field);
-                    if (item.Fields[field] != null)
+                if (!string.IsNullOrEmpty(fieldName))
+                {
+                    while (psobj.Properties[fieldName] != null)
                     {
-                        switch (item.Fields[field].TypeKey)
+                        fieldName = "_" + fieldName;
+                    }
+
+                    var getter = $"$this[\"{fieldId}\"]";
+                    if (item.Fields[fieldId] != null)
+                    {
+                        switch (item.Fields[fieldId].TypeKey)
                         {
                             case ("datetime"):
-                                getter = string.Format("[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{0}\"])", field);
-                                break;
-                            default:
-                                getter = string.Format("$this[\"{0}\"]", field);
+                                getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
                                 break;
                         }
                     }
                     var setter =
-                        string.Format("[{0}]::Modify($this, \"{1}\", $Args );",
-                            typeof (ItemShellExtensions).FullName, field);
+                        $"[{helperClassName}]::Modify($this, \"{fieldId}\", $Args );";
 
                     psobj.Properties.Add(new PSScriptProperty(
-                        duplicate ? field : string.Format("_{0}", field),
+                        fieldName,
                         provider.InvokeCommand.NewScriptBlock(getter),
                         provider.InvokeCommand.NewScriptBlock(setter)));
                 }
