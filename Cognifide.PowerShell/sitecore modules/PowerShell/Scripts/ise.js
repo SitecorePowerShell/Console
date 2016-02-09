@@ -25,7 +25,7 @@
         var guid = "ISE Editing Session";
         var debugLine = 0;
         var debugSessionId = "";
-        var marker = -1;
+        var debugMarkers = [];
         var resultsBottomOffset = 10;
 
 
@@ -76,7 +76,7 @@
         var typingTimer;
 
         cognifide.powershell.updateRibbon = function () {
-            if (marker === -1) {
+            if (!codeeditor.getReadOnly()) {
                 window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
             }
         };
@@ -386,15 +386,14 @@
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_DebugStrip");
             var Range = ace.require("ace/range").Range;
             setTimeout(function () {
-                marker = codeeditor.session.addMarker(new Range(line, column, endLine, endColumn+1), "breakpoint", "text");
+                debugMarkers.push(codeeditor.session.addMarker(new Range(line, column, endLine, endColumn + 1), "breakpoint", "text"));
             }, 100);
 
         };
 
         cognifide.powershell.breakpointHandled = function() {
-            if (marker > -1) {
-                codeeditor.session.removeMarker(marker);
-                marker = -1;
+            while (debugMarkers.length > 0) {
+                codeeditor.session.removeMarker(debugMarkers.shift());
             }
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
         }
