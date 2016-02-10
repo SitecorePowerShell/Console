@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             if (ShouldProcess(item.GetProviderPath(), string.Format("Set layout '{0}'", Layout.GetProviderPath())))
             {
                 LayoutField layoutField = item.Fields[LayoutFieldId];
-                if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+                if (layoutField == null)
                 {
                     return;
                 }
@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    Item[LayoutFieldId] = outputXml;
+                    layoutField.Value = outputXml;
                 });
             }
         }
