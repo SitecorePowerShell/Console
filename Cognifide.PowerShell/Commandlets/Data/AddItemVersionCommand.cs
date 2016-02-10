@@ -85,6 +85,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     {
                         CopyFields(item, latestVersion, false);
                     }
+                    else 
+                    {
+                        WriteItem(latestVersion);
+                    }
                     if (Recurse)
                     {
                         foreach (Item childItem in item.Children)
