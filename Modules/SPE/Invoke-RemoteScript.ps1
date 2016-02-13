@@ -154,7 +154,7 @@ function Invoke-RemoteScript {
 
     if($PSCmdlet.ParameterSetName -eq "InProcess") {
         # TODO: This will likely fail for params.
-        $newScriptBlock.Invoke()
+        [scriptblock]::Create($newScriptBlock).Invoke()
     } else {
         if($PSCmdlet.ParameterSetName -eq "Session") {
             $Username = $Session.Username
