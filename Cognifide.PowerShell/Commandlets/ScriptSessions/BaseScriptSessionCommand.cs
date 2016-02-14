@@ -1,4 +1,5 @@
 using System.Data;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Host;
@@ -27,7 +28,11 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     {
                         if (ScriptSessionManager.SessionExistsForAnyUserSession(sessionId))
                         {
-                            ScriptSessionManager.GetMatchingSessionsForAnyUserSession(sessionId).ForEach(ProcessSession);
+                            var sessions = ScriptSessionManager.GetMatchingSessionsForAnyUserSession(sessionId).ToList();
+                            foreach (var session in sessions)
+                            {
+                                ProcessSession(session);
+                            }
                         }
                         else
                         {
