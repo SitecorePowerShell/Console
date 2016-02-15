@@ -410,11 +410,16 @@
 
         cognifide.powershell.updateEditor = function() {
             codeeditor.getSession().setValue(editor.val());
+            cognifide.powershell.clearBreakpoints();
         };
 
-        cognifide.powershell.clearEditor = function() {
-            codeeditor.getSession().setValue("");
-        };
+        cognifide.powershell.clearBreakpoints = function() {
+            var breakPoints = Object.keys(codeeditor.session.getBreakpoints());
+            var bpCount = breakPoints.length;
+            for (var i = 0; i < bpCount; i++) {
+                codeeditor.session.clearBreakpoint(breakPoints[i]);
+            }
+        }
 
         function escapeRegExp(string) {
             return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -434,6 +439,7 @@
                 windowCaption[0].innerHTML = "<i style=\"font-style: italic; color: #bbb;\">" + newTitle + "</i> <span id=\"scriptModified\" style=\"display:none;color:#fc2929;\">(*)</span> - ";
             }
             codeeditor.getSession().getUndoManager().markClean();
+            cognifide.powershell.clearBreakpoints();
         };
 
         cognifide.powershell.resizeEditor = function() {
