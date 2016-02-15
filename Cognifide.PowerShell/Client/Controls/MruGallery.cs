@@ -276,7 +276,7 @@ namespace Cognifide.PowerShell.Client.Controls
                                 ItemFromQueryString.Database.Name == scriptItem.Database.Name;
 
             control["ScriptIcon"] = "<div class=\"versionNum\">" + iconUrl + "</div>";
-            control["Location"] = scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length);
+            control["Location"] = scriptItem.Paths.ParentPath.Substring(ApplicationSettings.ScriptLibraryPath.Length-1);
             control["Database"] = scriptItem.Database.Name;
             control["Name"] = scriptItem.DisplayName;
             control["Click"] = string.Format("ExecuteMruItem(\"ise:mruopen(id={0},db={1})\")", scriptItem.ID,
