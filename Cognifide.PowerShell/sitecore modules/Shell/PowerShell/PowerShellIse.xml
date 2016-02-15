@@ -24,6 +24,7 @@
       <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/ace/ext-language_tools.js"></Script>      
       <Script src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
 
       <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
