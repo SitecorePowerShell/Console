@@ -833,7 +833,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
             var bottomPadding = VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80) ? 0 : 10;
             SheerResponse.Eval(
-                $"cognifide.powershell.changeResultsSettings('{font}', {settings.FontSize}, '{backgroundColor}', {bottomPadding});");
+                $"cognifide.powershell.changeSettings('{font}', {settings.FontSize}, '{backgroundColor}', {bottomPadding}, {settings.LiveAutocompletion.ToString().ToLower()});");
         }
 
         [HandleMessage("ise:setbreakpoint", true)]

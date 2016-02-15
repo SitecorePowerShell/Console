@@ -114,8 +114,7 @@
         ace.config.loadModule("ace/ext/language_tools", function(module) {
             codeeditor.setOptions({
                 enableSnippets: true,
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true
+                enableBasicAutocompletion: true
             });
 
             var keyWordCompleter = {
@@ -305,6 +304,12 @@
             $("#ScriptResult").css({ "font-size": setting + "px" });
         };
 
+        cognifide.powershell.changeLiveAutocompletion = function(liveAutocompletion) {
+            codeeditor.setOptions({
+                enableLiveAutocompletion: liveAutocompletion
+            });
+        };
+
         cognifide.powershell.appendOutput = function(outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
@@ -322,10 +327,13 @@
             $("#Result").css({ "background-color": setting });
         };
 
-        cognifide.powershell.changeResultsSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset) {            
+        cognifide.powershell.changeSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion) {            
             cognifide.powershell.changeBackgroundColor(backgroundColor);
             cognifide.powershell.changeFontFamily(fontFamily);
             cognifide.powershell.changeFontSize(fontSize);
+            if (liveAutocompletion !== undefined) {
+                cognifide.powershell.changeLiveAutocompletion(liveAutocompletion);
+            }
             resultsBottomOffset = bottomOffset;
         };
 

@@ -75,6 +75,7 @@ namespace Cognifide.PowerShell.Core.Settings
         public string ApplicationName { get; private set; }
         public int FontSize { get; set; }
         public string FontFamily { get; set; }
+        public bool LiveAutocompletion { get; set; }
 
         public string AppSettingsPath
         {
@@ -234,6 +235,7 @@ namespace Cognifide.PowerShell.Core.Settings
                             configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
                             ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
                             ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
+                            ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked = LiveAutocompletion;                            
                             configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
                             configuration["ForegroundColor"] = ForegroundColor.ToString();
                             configuration["BackgroundColor"] = BackgroundColor.ToString();
@@ -255,6 +257,8 @@ namespace Cognifide.PowerShell.Core.Settings
                     LastScript = TryGetSettingValue(() => HttpUtility.HtmlDecode(configuration["LastScript"]), "");
                     SaveLastScript =
                         TryGetSettingValue(() => ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked, false);
+                    LiveAutocompletion =
+                        TryGetSettingValue(() => ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked, false);
                     UseTypeInfo = TryGetSettingValue(
                         () => ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked,
                         false);
@@ -309,6 +313,7 @@ namespace Cognifide.PowerShell.Core.Settings
             FontSize = 12;
             FontFamily = "Monaco";
             Loaded = true;
+            LiveAutocompletion = false;
         }
 
         public static T TryGetSettingValue<T>(Func<T> action, T defaultValue)
