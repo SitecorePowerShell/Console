@@ -113,6 +113,11 @@ namespace Cognifide.PowerShell.Core.Provider
                     item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
 
+                if (IsDynamicParamSet(WithParentParam))
+                {
+                    GetItemInternal(path, true).ForEach(WriteItem);
+                }
+
                 if (item == null)
                 {
                     WriteInvalidPathError(VirtualPathUtility.AppendTrailingSlash(item.GetProviderPath()));

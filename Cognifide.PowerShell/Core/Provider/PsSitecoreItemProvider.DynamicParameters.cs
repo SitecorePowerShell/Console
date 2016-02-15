@@ -40,7 +40,8 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string DelimiterParam = "Delimiter";
         private const string ExtensionParam = "Extension";
         private const string FileBasedParam = "FileBased";
-        private const string VersionedParam = "Versioned";        
+        private const string VersionedParam = "Versioned";
+        private const string WithParentParam = "WithParent";
 
         public object GetDynamicParameters()
         {
@@ -233,6 +234,8 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithParentParam, ref dic, false, false);
+            
 
             return paramAdded ? dic : null;
         }
