@@ -85,6 +85,7 @@ namespace Cognifide.PowerShell.Core.Host
                 mi.Invoke(null, new object[] { accelerator.Key, accelerator.Value });
             }
         }
+
         internal ScriptSession(string applianceType, bool personalizedSettings)
         {
             // Create and open a PowerShell runspace.  A runspace is a container 
@@ -115,11 +116,7 @@ namespace Cognifide.PowerShell.Core.Host
                 //! it has to be done in main thread
                 Runspace.DefaultRunspace = host.Runspace;
             }
-
-            if (Settings.UseTypeInfo)
-            {
-                Output.Clear();
-            }
+            Output.Clear();
         }
 
         private void OnRunspaceStateEvent(object sender, RunspaceStateEventArgs e)
@@ -143,10 +140,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         }
 
-        internal bool IsRunning
-        {
-            get { return powerShell != null && powerShell.InvocationStateInfo.State == PSInvocationState.Running; }
-        }
+        internal bool IsRunning => powerShell != null && powerShell.InvocationStateInfo.State == PSInvocationState.Running;
 
         internal System.Management.Automation.PowerShell NewPowerShell()
         {
@@ -168,11 +162,8 @@ namespace Cognifide.PowerShell.Core.Host
                     state.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
 
                     state.Commands.Add(CognifideSitecorePowerShellSnapIn.SessionStateCommandlets);
-                    if (Settings.UseTypeInfo)
-                    {
-                        state.Types.Add(types);
-                        state.Formats.Add(formats);
-                    }
+                    state.Types.Add(types);
+                    state.Formats.Add(formats);
                     state.ThreadOptions = PSThreadOptions.UseCurrentThread;
                     state.ApartmentState = Thread.CurrentThread.GetApartmentState();
                     foreach (var key in PredefinedVariables.Variables.Keys)
@@ -534,6 +525,11 @@ namespace Cognifide.PowerShell.Core.Host
                 proxy.SetVariable("me", UserName);
                 proxy.SetVariable("HostSettings", Settings);
                 proxy.SetVariable("ScriptSession", this);
+                var serverAuthority = HttpContext.Current?.Request?.Url?.GetLeftPart(UriPartial.Authority);
+                if (!string.IsNullOrEmpty(serverAuthority))
+                {
+                    proxy.SetVariable("SitecoreAuthority", serverAuthority);
+                }
 
                 if (PsVersion == null)
                 {
@@ -803,8 +799,8 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (scriptItem != null)
             {
-                SetVariable("PSScriptRoot", scriptItem.Parent.GetProviderPath());
-                SetVariable("PSCommandPath", scriptItem.GetProviderPath());
+                SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
+                SetVariable("SitecoreCommandPath", scriptItem.GetProviderPath());
                 SetVariable("PSScript", scriptItem);
             }
         }

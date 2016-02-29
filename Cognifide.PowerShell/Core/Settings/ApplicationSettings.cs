@@ -68,7 +68,6 @@ namespace Cognifide.PowerShell.Core.Settings
         protected bool Loaded { get; private set; }
         public string LastScript { get; set; }
         public bool SaveLastScript { get; set; }
-        public bool UseTypeInfo { get; set; }
         public int HostWidth { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
@@ -234,7 +233,6 @@ namespace Cognifide.PowerShell.Core.Settings
                         {
                             configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
                             ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
-                            ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked = UseTypeInfo;
                             ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked = LiveAutocompletion;                            
                             configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
                             configuration["ForegroundColor"] = ForegroundColor.ToString();
@@ -259,9 +257,6 @@ namespace Cognifide.PowerShell.Core.Settings
                         TryGetSettingValue(() => ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked, false);
                     LiveAutocompletion =
                         TryGetSettingValue(() => ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked, false);
-                    UseTypeInfo = TryGetSettingValue(
-                        () => ((CheckboxField) configuration.Fields["UseTypeInfo"]).Checked,
-                        false);
                     HostWidth =
                         TryGetSettingValue(
                             () =>
@@ -306,7 +301,6 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             LastScript = String.Empty;
             SaveLastScript = false;
-            UseTypeInfo = false;
             HostWidth = 80;
             ForegroundColor = ConsoleColor.White;
             BackgroundColor = ConsoleColor.DarkBlue;
