@@ -263,6 +263,7 @@ namespace Cognifide.PowerShell.Console.Services
                         return;
                     }
                     scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
+                    apiScripts = null;
                     break;
             }
 
