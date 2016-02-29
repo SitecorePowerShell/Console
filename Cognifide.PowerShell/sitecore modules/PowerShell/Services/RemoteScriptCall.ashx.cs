@@ -33,12 +33,6 @@ namespace Cognifide.PowerShell.Console.Services
     {
         private SortedDictionary<string, SortedDictionary<string, ApiScript>> apiScripts;
 
-        public RemoteScriptCall()
-        {
-            ModuleManager.OnInvalidate += InvalidateCache;
-            apiScripts = null;
-        }
-
         public void ProcessRequest(HttpContext context)
         {
             var request = HttpContext.Current.Request;
@@ -451,8 +445,13 @@ namespace Cognifide.PowerShell.Console.Services
             if (apiScripts == null)
             {
                 apiScripts = new SortedDictionary<string, SortedDictionary<string, ApiScript>>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            if (ApplicationSettings.ScriptLibraryDb.Equals(dbName, StringComparison.OrdinalIgnoreCase))
+            {
                 var roots = ModuleManager.GetFeatureRoots(IntegrationPoints.WebApi);
                 BuildCache(roots);
+                return;
             }
 
             if (!apiScripts.ContainsKey(dbName))
