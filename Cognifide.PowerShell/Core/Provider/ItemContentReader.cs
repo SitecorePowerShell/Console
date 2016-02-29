@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Management.Automation.Provider;
 using System.Text;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Data.Items;
@@ -174,7 +175,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private void CreateStreams()
         {
-            if (Item.TemplateName == TemplateNames.ScriptTemplateName)
+            if (Item.IsPowerShellScript())
             {
                 Stream = new MemoryStream();
                 StreamWriter memWriter = new StreamWriter(Stream);

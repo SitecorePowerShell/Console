@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Modules
 {
@@ -12,7 +14,7 @@ namespace Cognifide.PowerShell.Core.Modules
         public delegate void InvalidateEventHandler(object sender, EventArgs e);
 
         private static List<Module> modules;
-        private volatile static bool modulesListDirty = true;
+        private static volatile bool modulesListDirty = true;
         private static readonly object modulesLock = new object();
 
         public static List<Module> Modules
@@ -40,18 +42,17 @@ namespace Cognifide.PowerShell.Core.Modules
         public static List<Module> GetDbModules(string database)
         {
             var dbModules = new List<Module>();
-
-            var db = Factory.GetDatabase(database);
-            if (db != null)
+            using (new SecurityDisabler())
             {
-                var library = db.GetItem(ApplicationSettings.ScriptLibraryPath);
+                var db = Factory.GetDatabase(database);
+                var library = db?.GetItem(ApplicationSettings.ScriptLibraryPath);
                 if (library != null)
                 {
                     dbModules.Add(new Module(library, true));
 
                     foreach (Item item in library.GetChildren())
                     {
-                        if (item.TemplateName.Equals("PowerShell Script Module", StringComparison.InvariantCulture))
+                        if (item.IsPowerShellModule())
                         {
                             dbModules.Add(new Module(item, false));
                         }
@@ -63,48 +64,41 @@ namespace Cognifide.PowerShell.Core.Modules
 
         public static List<Item> GetFeatureRoots(string featureName)
         {
-            var list = new List<Item>();
-            foreach (var module in Modules)
-            {
-                var featureRoot = module.GetFeatureRoot(featureName);
-                if (featureRoot != null) list.Add(featureRoot);
-            }
-            return list;
+            return
+                Modules
+                    .Select(module => module.GetFeatureRoot(featureName))
+                    .Where(featureRoot => featureRoot != null)
+                    .ToList();
         }
 
         public static List<Item> GetFeatureRoots(string featureName, string dbName)
         {
-            var list = new List<Item>();
             var modules = GetDbModules(dbName);
-            foreach (var module in modules)
-            {
-                var featureRoot = module.GetFeatureRoot(featureName);
-                if (featureRoot != null) list.Add(featureRoot);
-            }
-            return list;
+            return
+                modules
+                    .Select(module => module.GetFeatureRoot(featureName))
+                    .Where(featureRoot => featureRoot != null)
+                    .ToList();
         }
 
         public static void Invalidate(Item item)
         {
             modulesListDirty = true;
-            if (OnInvalidate != null)
-            {
-                OnInvalidate(null, EventArgs.Empty);
-            }
+            OnInvalidate?.Invoke(null, EventArgs.Empty);
         }
 
         public static Module GetItemModule(Item item)
         {
-            if (item.TemplateName.Equals(TemplateNames.ScriptModuleTemplateName, StringComparison.InvariantCulture))
+            if (item.IsPowerShellModule())
             {
                 return GetModule(item);
             }
 
-            if (item.TemplateName.Equals(TemplateNames.ScriptLibraryTemplateName, StringComparison.InvariantCulture))
+            if (item.IsPowerShellLibrary())
             {
                 return string.Equals(item.Name, "Script Library") ? GetModule(item) : GetItemModule(item.Parent);
             }
-            return item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture)
+            return item.IsPowerShellScript()
                 ? GetItemModule(item.Parent)
                 : null;
         }

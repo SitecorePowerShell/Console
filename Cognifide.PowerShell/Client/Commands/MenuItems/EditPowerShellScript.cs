@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Shell.Framework;
@@ -15,7 +16,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             if (context.Items.Length != 1)
                 return CommandState.Hidden;
 
-            return context.Items[0].Template.Name.Equals("PowerShell Script", StringComparison.OrdinalIgnoreCase)
+            return context.Items[0].IsPowerShellScript()
                 ? CommandState.Enabled
                 : CommandState.Hidden;
         }

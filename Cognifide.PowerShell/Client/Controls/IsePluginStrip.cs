@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 }
 
                 Item parent = root.Parent;
-                while (parent != null && parent.TemplateName != TemplateNames.ScriptModuleTemplateName)
+                while (parent != null && !parent.IsPowerShellModule())
                 {
                     parent = parent.Parent;
                 }

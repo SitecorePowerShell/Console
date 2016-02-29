@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -57,13 +58,13 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                     continue;
                 }
 
-                if (scriptItem.TemplateName == TemplateNames.ScriptLibraryTemplateName)
+                if (scriptItem.IsPowerShellLibrary())
                 {
                     AddButton(args,scriptItem,ruleContext,click);
                     continue;
                 }
 
-                if (scriptItem.TemplateName == TemplateNames.ScriptTemplateName)
+                if (scriptItem.IsPowerShellScript())
                 {
                     AddButtonsToChromeData(new[]
                     {

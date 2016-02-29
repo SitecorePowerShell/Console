@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
@@ -121,7 +122,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem)
                 };
 
-                if (scriptItem.TemplateName == "PowerShell Script")
+                if (scriptItem.IsPowerShellScript())
                 {
                     if (contextItem != null)
                     {

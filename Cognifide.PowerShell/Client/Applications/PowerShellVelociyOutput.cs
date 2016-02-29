@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using NVelocity;
@@ -37,17 +38,22 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
             }
-            if (scriptItem == null && Context.Item.TemplateName == TemplateNames.ScriptTemplateName)
-            {
-                scriptItem = Context.Item;
-            }
+
             if (scriptItem == null)
             {
-                VelocityOutput.Text = "Could not resolve PowerShell script or no script item specified.";
-                return;
+                if (Context.Item.IsPowerShellScript())
+                {
+                    scriptItem = Context.Item;
+                }
+                else
+                {
+                    VelocityOutput.Text = "Could not resolve PowerShell script or no script item specified.";
+                    return;
+                }
             }
-            var script = scriptItem["script"];
 
+            var script = scriptItem["script"];
+            
             var id = WebUtil.SafeEncode(WebUtil.GetQueryString("id"));
             if (!string.IsNullOrEmpty(id))
             {

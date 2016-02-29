@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Configuration;
@@ -52,7 +53,7 @@ namespace Cognifide.PowerShell.Client.Controls
         protected void ContentTreeview_Click()
         {
             var folder = ContentDataContext.GetFolder();
-            if (folder != null && folder.TemplateName == TemplateNames.ScriptTemplateName)
+            if (folder.IsPowerShellScript())
             {
                 Load(folder.Uri.ToString());
             }

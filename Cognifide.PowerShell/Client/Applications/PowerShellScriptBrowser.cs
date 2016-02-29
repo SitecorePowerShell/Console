@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Configuration;
@@ -112,7 +113,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (opening)
             {
-                if (selectedItem == null || selectedItem.TemplateName != "PowerShell Script")
+                if (!selectedItem.IsPowerShellScript())
                 {
                     SheerResponse.Alert(
                         "Select a script you want to open.");
@@ -131,11 +132,11 @@ namespace Cognifide.PowerShell.Client.Applications
                     SheerResponse.Alert(
                         "Select a library where you want your script saved and specify a name for your script.");
                 }
-                else if (selectedItem.TemplateName == "PowerShell Script Library" && scriptName.Length == 0)
+                else if (selectedItem.IsPowerShellLibrary() && scriptName.Length == 0)
                 {
                     SheerResponse.Alert("Specify a name for your script.");
                 }
-                else if (selectedItem.TemplateName == "PowerShell Script") // selected existing script.
+                else if (selectedItem.IsPowerShellScript()) // selected existing script.
                 {
                     var parameters = new NameValueCollection();
                     parameters["fullPath"] = String.Format("{0}:{1}", selectedItem.Database.Name, selectedItem.Paths.Path);

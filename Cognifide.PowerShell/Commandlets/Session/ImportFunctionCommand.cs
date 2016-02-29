@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using Cognifide.PowerShell.Commandlets.Interactive;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
@@ -165,7 +166,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
             libraries = (from root in roots
                 from Item library in root.GetChildren()
-                where library.TemplateName == TemplateNames.ScriptLibraryTemplateName
+                where library.IsPowerShellLibrary()
                 select library.Name).ToList().ConvertAll(WrapNameWithSpacesInQuotes).ToArray();
 
             foreach (var root in roots)

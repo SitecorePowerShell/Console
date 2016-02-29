@@ -196,7 +196,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 if (mode == Mode.Append)
                 {
-                    if (Item.TemplateName == TemplateNames.ScriptTemplateName)
+                    if (Item.IsPowerShellScript())
                     {
                         memWriter = new StreamWriter(Stream);
                         memWriter.Write(Item[ScriptItemFieldNames.Script]);

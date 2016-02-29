@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.ExpandInitialFieldValue;
@@ -10,7 +11,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
         public override void Process(ExpandInitialFieldValueArgs args)
         {
             Assert.ArgumentNotNull((object)args, "args");
-            if (args.TargetItem.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture))
+            if (args.TargetItem.IsPowerShellScript())
             {
                 args.AbortPipeline();
             }

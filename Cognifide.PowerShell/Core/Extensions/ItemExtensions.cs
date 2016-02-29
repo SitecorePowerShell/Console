@@ -1,10 +1,29 @@
 ﻿using System;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
     public static class ItemExtensions
     {
+        public static bool IsPowerShellScript(this Item item)
+        {
+            return item != null &&
+                   item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture);
+        }
+
+        public static bool IsPowerShellModule(this Item item)
+        {
+            return item != null &&
+                   item.TemplateName.Equals(TemplateNames.ScriptModuleTemplateName, StringComparison.InvariantCulture);
+        }
+
+        public static bool IsPowerShellLibrary(this Item item)
+        {
+            return item != null &&
+                   item.TemplateName.Equals(TemplateNames.ScriptLibraryTemplateName, StringComparison.InvariantCulture);
+        }
+
         public static void Edit(this Item item, Action<ItemEditArgs> action)
         {
             var args = new ItemEditArgs();
