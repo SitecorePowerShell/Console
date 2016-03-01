@@ -25,12 +25,14 @@ function Receive-RemoteItem {
                 Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | 
                     Where-Object { $_.Size -gt 0 } | Select-Object -Expand ItemPath 
             } | Receive-RemoteItem -Destination "C:\Images\" -Database master
+            Stop-ScriptSession -Session $session
 
         .EXAMPLE
             The following downloads a file from the application root path.
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Receive-RemoteItem -Session $session -Path "default.js" -RootPath App -Destination "C:\Files\"
+            Stop-ScriptSession -Session $session
               
         .EXAMPLE
             The following compresses the log files into an archive and downloads from the absolute path.
@@ -47,6 +49,10 @@ function Receive-RemoteItem {
 
         .LINK
             New-ScriptSession
+
+        .LINK
+            Stop-ScriptSession
+
 
     #>
     [CmdletBinding(DefaultParameterSetName='Uri and File')]

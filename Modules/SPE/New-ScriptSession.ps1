@@ -21,6 +21,9 @@ function New-ScriptSession {
         .LINK
             Wait-RemoteScriptSession
 
+        .LINK
+            Stop-ScriptSession
+
     #>
     [CmdletBinding(DefaultParameterSetName="All")]
     param(

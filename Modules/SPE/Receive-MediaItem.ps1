@@ -23,6 +23,7 @@
             Invoke-RemoteScript -Session $session -ScriptBlock { 
                 Get-ChildItem -Path "master:/sitecore/media library/Images/Icons/" | Select-Object -Expand ItemPath 
             } | Receive-MediaItem -Session $session -Destination C:\Temp\Images\
+            Stop-ScriptSession -Session $session
     #>
     [CmdletBinding()]
     param(

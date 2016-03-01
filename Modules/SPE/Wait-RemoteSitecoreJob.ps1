@@ -22,6 +22,20 @@
                         ForEach-Object { $_.Handle.ToString() }
             }
             Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 5 -Verbose
+            Stop-ScriptSession -Session $session
+
+    	.LINK
+            New-ScriptSession
+
+        .LINK
+            Invoke-RemoteScript
+
+        .LINK
+            Stop-ScriptSession
+
+        .LINK
+            Wait-RemoteScriptSession
+
     #>
     
     [CmdletBinding()]

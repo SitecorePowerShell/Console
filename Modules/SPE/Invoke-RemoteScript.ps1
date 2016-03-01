@@ -8,6 +8,7 @@ function Invoke-RemoteScript {
     
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
+            Stop-ScriptSession -Session $session
     
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
@@ -22,6 +23,7 @@ function Invoke-RemoteScript {
             }
     
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script
+            Stop-ScriptSession -Session $session
     
             6/25/2015 11:09:17 AM
                     
@@ -48,6 +50,7 @@ function Invoke-RemoteScript {
                     $ss.LastErrors
                 }
             }
+            Stop-ScriptSession -Session $session
         
         .EXAMPLE
             The following remotely executes a script in Sitecore with arguments.
@@ -63,6 +66,7 @@ function Invoke-RemoteScript {
             }
     
             Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
+            Stop-ScriptSession -Session $session
     
             Name                     Domain       IsAdministrator IsAuthenticated
             ----                     ------       --------------- ---------------
@@ -74,6 +78,10 @@ function Invoke-RemoteScript {
 
     	.LINK
     		New-ScriptSession
+
+    	.LINK
+    	        Stop-ScriptSession -Session $session
+
 
     #>
     

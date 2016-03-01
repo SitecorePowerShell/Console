@@ -105,6 +105,26 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
         [WebMethod]
+        public string DisposeScriptSession(string userName, string password, string sessionId)
+        {
+            if (!WebServiceSettings.ServiceEnabledRemoting)
+            {
+                return string.Empty;
+            }
+
+            Login(userName, password);
+
+            if (ScriptSessionManager.SessionExists(sessionId))
+            {
+                var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
+                ScriptSessionManager.RemoveSession(session);
+                return "done";
+            }
+
+            return "session not found";
+        }
+
+        [WebMethod]
         public string ExecuteScriptBlockinSite2(string userName, string password, string script, string cliXmlArgs,
             string siteName, string sessionId)
         {

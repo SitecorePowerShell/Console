@@ -23,6 +23,9 @@
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Test-RemoteConnection -Session $session
+
+    	.LINK
+            New-ScriptSession
     #>    
     
     [CmdletBinding()]
