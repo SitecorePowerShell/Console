@@ -118,10 +118,10 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
                 ScriptSessionManager.RemoveSession(session);
-                return "done";
+                return "removed";
             }
 
-            return "session not found";
+            return "not found";
         }
 
         [WebMethod]
