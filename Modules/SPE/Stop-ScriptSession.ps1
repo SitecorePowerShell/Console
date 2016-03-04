@@ -108,7 +108,7 @@ function Stop-ScriptSession {
 
         $response = $singleConnection.Proxy.DisposeScriptSession($Username, $Password, $SessionId)
         if($response) {
-            $response
+            Write-Verbose "Server returned a response of '$($response)'."
         }
     }
 }
