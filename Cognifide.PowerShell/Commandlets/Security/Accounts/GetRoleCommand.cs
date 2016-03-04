@@ -24,7 +24,6 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             if (ParameterSetName == "Filter")
             {
                 var filter = Filter;
-                if (!filter.Contains('?') && !filter.Contains('*')) return;
 
                 var managedRoles = Context.User.Delegation.GetManagedRoles(true);
                 WildcardWrite(filter, managedRoles, role => role.Name);

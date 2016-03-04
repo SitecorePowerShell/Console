@@ -9,6 +9,9 @@ using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
+using Sitecore.Security.Domains;
+using Sitecore.SecurityModel;
+using Sitecore.Shell.Applications.Security.RoleManager;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
@@ -76,11 +79,15 @@ namespace Cognifide.PowerShell.Core.Extensions
             var name = account.Name;
             var error = $"Cannot find an account with identity '{name}'.";
 
-            if (accountType == AccountType.Role && !Role.Exists(name))
+            if (accountType == AccountType.Role)
             {
-                command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), ErrorIds.AccountNotFound.ToString(),
-                    ErrorCategory.ObjectNotFound, account));
-                return false;
+                if (!Role.Exists(name) && !RolesInRolesManager.IsCreatorOwnerRole(name) && !RolesInRolesManager.IsSystemRole(name))
+                {
+                    command.WriteError(new ErrorRecord(new ObjectNotFoundException(error),
+                        ErrorIds.AccountNotFound.ToString(),
+                        ErrorCategory.ObjectNotFound, account));
+                    return false;
+                }
             }
 
             if (accountType == AccountType.User && !User.Exists(name))
@@ -98,6 +105,10 @@ namespace Cognifide.PowerShell.Core.Extensions
             Account account = identity;
             if (account == null)
             {
+                if (RolesInRolesManager.IsCreatorOwnerRole(identity.Name) || RolesInRolesManager.IsSystemRole(identity.Name))
+                {
+                    return Role.FromName(identity.Name);
+                }
                 var error = $"Cannot find an account with identity '{identity.Name}'.";
                 command.WriteError(new ErrorRecord(new ObjectNotFoundException(error), ErrorIds.AccountNotFound.ToString(),
                     ErrorCategory.ObjectNotFound, identity));

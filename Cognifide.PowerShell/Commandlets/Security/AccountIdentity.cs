@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
+using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {
@@ -22,12 +23,20 @@ namespace Cognifide.PowerShell.Commandlets.Security
 
             if (!Regex.IsMatch(account, @"^\w[\w\s.\\_-]*$", RegexOptions.Compiled))
             {
-                throw new ArgumentException(String.Format("The name '{0}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", name), "name");
+                throw new ArgumentException(
+                    $"The name '{name}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", "name");
             }
 
             Domain = domain;
             Account = account;
-            Name = domain + @"\" + account;
+            if (RolesInRolesManager.IsCreatorOwnerRole(account))
+            {
+                Name = name;
+            }
+            else
+            {
+                Name = string.IsNullOrEmpty(domain) ? account : domain + @"\" + account;
+            }
         }
 
         public AccountIdentity(Account account)
