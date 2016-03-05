@@ -11,6 +11,7 @@ do {
     }
 
     Invoke-RemoteScript -ScriptBlock $script1 -Session $session
+    
     Stop-ScriptSession -Session $session
 
     $count++

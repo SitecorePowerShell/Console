@@ -1,8 +1,6 @@
 ﻿Import-Module -Name SPE -Force
 
-if(!$session) {
-    $session = New-ScriptSession -Username "admin" -Password "b" -ConnectionUri "http://console"
-}
+$session = New-ScriptSession -Username "admin" -Password "b" -ConnectionUri "http://console"
 
 Test-RemoteConnection -Session $session -Quiet
 
@@ -43,3 +41,5 @@ $jobs = Invoke-RemoteScript -Session $session -ScriptBlock {
 }
 $jobs | Where-Object { $_.Category -eq "publish" -or $_.Category -eq "PublishManager" }
 #>
+
+Stop-ScriptSession -Session $session
