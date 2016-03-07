@@ -29,15 +29,22 @@ namespace Cognifide.PowerShell.Core.Extensions
             var args = new ItemEditArgs();
             try
             {
-                item.Editing.BeginEdit();
-                action(args);
-                if (args.Save)
+                bool wasEditing = item.Editing.IsEditing;
+                if (!wasEditing)
                 {
-                    item.Editing.EndEdit(args.UpdateStatistics, args.Silent);
+                    item.Editing.BeginEdit();
                 }
-                else
+                action(args);
+                if (!wasEditing)
                 {
-                    item.Editing.CancelEdit();
+                    if (args.Save)
+                    {
+                        item.Editing.EndEdit(args.UpdateStatistics, args.Silent);
+                    }
+                    else
+                    {
+                        item.Editing.CancelEdit();
+                    }
                 }
             }
             catch
