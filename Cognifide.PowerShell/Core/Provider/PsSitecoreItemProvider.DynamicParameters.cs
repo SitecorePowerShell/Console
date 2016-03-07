@@ -50,17 +50,47 @@ namespace Cognifide.PowerShell.Core.Provider
 
         public object GetPropertyDynamicParameters(string path, Collection<string> providerSpecificPickList)
         {
-            return null;
+            LogInfo("Executing SetPropertyDynamicParameters(string path='{0}')", path);
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            var paramAdded = AddDynamicParameter(typeof(string), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
+            return paramAdded ? dic : null;
         }
 
         public object ClearPropertyDynamicParameters(string path, Collection<string> propertyToClear)
         {
-            return null;
+            LogInfo("Executing SetPropertyDynamicParameters(string path='{0}')", path);
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            var paramAdded = AddDynamicParameter(typeof(string), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
+            return paramAdded ? dic : null;
         }
 
         public object SetPropertyDynamicParameters(string path, PSObject propertyValue)
         {
-            return null;
+            LogInfo("Executing SetPropertyDynamicParameters(string path='{0}')", path);
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            var paramAdded = AddDynamicParameter(typeof(string), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), VersionParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(string), QueryParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), DatabaseParam, ref dic, false, false);
+            paramAdded |= AddDynamicParameter(typeof(string), UriParam, ref dic, false, true);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), AmbiguousPathsParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
+            return paramAdded ? dic : null;
         }
 
         protected static bool AddDynamicParameter(Type type, string name, ref RuntimeDefinedParameterDictionary dic)
@@ -205,7 +235,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 var forcedLanguage = dic[LanguageParam].Value.ToString();
                 language = forcedLanguage.Contains("*")
                     ? forcedLanguage
-                    : LanguageManager.GetLanguage(forcedLanguage).Name;
+                    : LanguageManager.GetLanguage(forcedLanguage)?.Name;
             }
 
             version = Version.Latest.Number;

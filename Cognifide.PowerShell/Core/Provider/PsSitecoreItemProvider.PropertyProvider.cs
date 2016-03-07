@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -15,7 +17,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing GetProperty(string path='{0}', Collection<string> providerSpecificPickList)", path);
 
-                var item = GetItemForPath(path);
+                var item = GetDynamicItem(path);
                 if (item != null)
                 {
                     // create PSObject from the FileSystemInfo instance
@@ -66,34 +68,37 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             try
             {
+                var item = GetDynamicItem(path);
+
                 if (propertyToSet == null)
                 {
                     throw new ArgumentNullException("Property not defined");
                 }
 
                 LogInfo("Executing SetProperty(string path='{0}', PSObject propertyToSet='{1}')", path, propertyToSet);
-                var item = GetItemForPath(path);
                 if (item != null)
                 {
-                    foreach (PSPropertyInfo property in propertyToSet.Properties)
+                    item.Edit(args =>
                     {
-                        if (ShouldProcess(path,
-                            "Setting property '" + property.Name + "' to '" + property.Value + "'"))
+                        item.Fields.ReadAll();
+
+                        var asDict = propertyToSet.BaseObject() as IDictionary;
+                        if (asDict != null)
                         {
-                            item.Fields.ReadAll();
-                            if (item.Fields != null && item.Fields[property.Name] != null)
+                            foreach (var key in asDict.Keys)
                             {
-                                ItemShellExtensions.ModifyProperty(item, property.Name, property.Value);
+                                SetItemPropertyValue(path, item, key.ToString(), asDict[key]);
                             }
-                            else
-                            {
-                                WriteWarning(String.Format("Property name ’{0}’ doesn’t exist for item at path ’{1}’",
-                                    property.Name,
-                                    path));
-                            }
-                            WriteItem(item);
                         }
-                    }
+                        else
+                        {
+                            foreach (PSPropertyInfo property in propertyToSet.Properties)
+                            {
+                                SetItemPropertyValue(path, item, property.Name, property.Value);
+                            }
+                        }
+                        WriteItem(item);
+                    });
                 }
             }
             catch (Exception ex)
@@ -106,6 +111,31 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
+        private Item GetDynamicItem(string path)
+        {
+            Item item;
+            if (!TryGetDynamicParam(ItemParam, out item))
+            {
+                item = GetItemInternal(path, true).FirstOrDefault();
+            }
+            return item;
+        }
+
+        private void SetItemPropertyValue(string path, Item item, string propertyName, object propertyValue)
+        {
+            if (ShouldProcess(path, $"Setting property '{propertyName}' to '{propertyValue}'"))
+            {
+                if (item.Fields?[propertyName] != null)
+                {
+                    ItemShellExtensions.ModifyProperty(item, propertyName, propertyValue);
+                }
+                else
+                {
+                    WriteWarning($"Property name ’{propertyName}’ doesn’t exist for item at path ’{path}’");
+                }
+            }
+        }
+
         public void ClearProperty(string path, Collection<string> propertyToClear)
         {
             try
@@ -113,7 +143,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing ClearProperty(string path='{0}', string propertyToClear='{1}')",
                     path,
                     propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
-                var item = GetItemForPath(path);
+                var item = GetDynamicItem(path);
                 item.Edit(args =>
                 {
                     foreach (var property in propertyToClear)
