@@ -57,15 +57,14 @@
     .PARAMETER Height
         Height of the results window.
 
-    .PARAMETER Hide
-        Hide UI elements from the results dialog
-        -- AllExport - hides all export scripts (left-most ribbon panel)
-        -- NonSpecificExport - hides export filters that are not specific to this very `-ViewName report (left-most ribbon panel)
-        -- Filter - hides filter panel
-        -- PagingWhenNotNeeded - hides paging when list is shorter than the page specified
-        -- AllActions - hides all actions (right-most ribbon panel)
-        -- NonSpecificActions - hides actions that are not specific to this very `-ViewName report (right-most ribbon panel)
-        -- StatusBar - hides status bar.
+    .PARAMETER Show
+        Shows UI elements selectively in the results dialog
+        -- All - shows all UI elements automatically - default value
+        -- SharedExport - shows export filters that are not specific to this very `-ViewName report (left-most ribbon panel)
+        -- Filter - shows filter panel
+        -- PagingAlways - shows paging when list is shorter than the page specified
+        -- SharedActions - shows actions that are not specific to this very `-ViewName report (right-most ribbon panel)
+        -- StatusBar - shows status bar.
         
     .INPUTS
         System.Management.Automation.PSObject
