@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Client.Commands
     {
         public override CommandState QueryState(CommandContext context)
         {
-            return context.Parameters["hideFilter"] != "1"
+            return context.Parameters["showFilter"] == "1"
                 ? CommandState.Enabled
                 : CommandState.Hidden;
         }

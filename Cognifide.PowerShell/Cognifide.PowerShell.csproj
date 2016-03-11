@@ -192,7 +192,7 @@
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\ErrorIds.cs" />
-    <Compile Include="Commandlets\Interactive\HideListViewFeatures.cs" />
+    <Compile Include="Commandlets\Interactive\ShowListViewFeatures.cs" />
     <Compile Include="Commandlets\Interactive\Messages\OutDownloadMessage.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowModalDialogPsMessage.cs" />
     <Compile Include="Commandlets\Interactive\OutDownloadCommand.cs" />

@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         public SwitchParameter ActionsInSession { get; set; }
 
         [Parameter]
-        public HideListViewFeatures Hide { get; set; }
+        public ShowListViewFeatures Show { get; set; } = ShowListViewFeatures.All;
 
         protected override void EndProcessing()
         {
@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     PutMessage(new ShowListViewMessage(CumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
-                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, Hide));
+                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, Show));
                 }
             });
         }

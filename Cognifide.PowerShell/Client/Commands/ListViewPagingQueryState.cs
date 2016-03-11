@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Client.Commands
     {
         public override CommandState QueryState(CommandContext context)
         {
-            return context.Parameters["hidePaging"] != "1"
+            return context.Parameters["showPaging"] == "1"
                 ? CommandState.Enabled
                 : CommandState.Hidden;
         }

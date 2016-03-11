@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.Commandlets.Interactive;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
@@ -25,18 +27,15 @@ namespace Cognifide.PowerShell.Client.Controls
             };
             ruleContext.Parameters["ViewName"] = viewName;
 
-            if ((context.Parameters["features"] ?? "").Contains(HideListViewFeatures.AllExport.ToString()))
-            {
-                return;
-            }
-            bool hideNonSpecific =
-                (context.Parameters["features"] ?? "").Contains(HideListViewFeatures.NonSpecificExport.ToString());
+            ShowListViewFeatures features;
+            var showShared = Enum.TryParse(context.Parameters["features"] ?? "", out features) &&
+                             features.HasFlag(ShowListViewFeatures.SharedExport);
 
             foreach (
                 Item scriptItem in
                     ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature)
                         .SelectMany(parent => parent.Children)
-                        .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem["ShowRule"], ruleContext, hideNonSpecific)))
+                        .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem["ShowRule"], ruleContext, !showShared)))
             {
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),

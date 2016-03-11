@@ -21,6 +21,17 @@ namespace Cognifide.PowerShell.Core.Extensions
             return value.IndexOf(subString, StringComparison.OrdinalIgnoreCase) != -1;
         }
 
+        public static bool HasSubstring(this string value, object subString)
+        {
+            subString = subString ?? string.Empty;
+            return (value ?? string.Empty).IndexOf(subString.ToString(), StringComparison.OrdinalIgnoreCase) != -1;
+        }
+
+        public static bool Contains(this string value, Enum option)
+        {
+            return (value ?? string.Empty).IndexOf(option.ToString(), StringComparison.OrdinalIgnoreCase) != -1;
+        }
+
 
         public static string EllipsisString(this string rawString, int maxLength = 30, char delimiter = '\\')
         {
