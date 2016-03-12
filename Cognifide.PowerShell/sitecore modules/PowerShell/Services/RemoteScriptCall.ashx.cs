@@ -74,49 +74,7 @@ namespace Cognifide.PowerShell.Console.Services
                 switch (apiVersion)
                 {
                     case "media":
-                        itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
-                        var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
-                                        scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-                        if (mediaItem == null)
-                        {
-                            var dirName = (Path.GetDirectoryName(itemParam) ?? string.Empty).Replace('\\', '/');
-                            if (!dirName.StartsWith(Constants.MediaLibraryPath))
-                            {
-                                dirName = Constants.MediaLibraryPath +
-                                          (dirName.StartsWith("/") ? dirName : "/" + dirName);
-                            }
-
-                            var mco = new MediaCreatorOptions
-                            {
-                                Database = Factory.GetDatabase(dbName),
-                                Versioned = Settings.Media.UploadAsVersionableByDefault,
-                                Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(itemParam)}"
-                            };
-
-                            var mc = new MediaCreator();
-                            using (var ms = new MemoryStream())
-                            {
-                                request.InputStream.CopyTo(ms);
-                                mc.CreateFromStream(ms, Path.GetFileName(itemParam), mco);
-                            }
-                        }
-                        else
-                        {
-                            var mediaUri = MediaUri.Parse(mediaItem);
-                            var media = MediaManager.GetMedia(mediaUri);
-
-                            using (var ms = new MemoryStream())
-                            {
-                                request.InputStream.CopyTo(ms);
-                                using (new EditContext(mediaItem, SecurityCheck.Disable))
-                                {
-                                    using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
-                                    {
-                                        media.SetStream(mediaStream);
-                                    }
-                                }
-                            }
-                        }
+                        ProcessMediaUpload(request.InputStream, scriptDb, itemParam);
                         break;
 
                     case "file":
@@ -439,6 +397,54 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             return folder;
+        }
+
+        private static void ProcessMediaUpload(Stream content, Database db, string itemParam)
+        {
+            var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
+                            db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+
+            if (mediaItem == null)
+            {
+                var filename = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+                var dirName = (Path.GetDirectoryName(filename) ?? string.Empty).Replace('\\', '/');
+                if (!dirName.StartsWith(Constants.MediaLibraryPath))
+                {
+                    dirName = Constants.MediaLibraryPath +
+                              (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                }
+
+                var mco = new MediaCreatorOptions
+                {
+                    Database = db,
+                    Versioned = Settings.Media.UploadAsVersionableByDefault,
+                    Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filename)}"
+                };
+
+                var mc = new MediaCreator();
+                using (var ms = new MemoryStream())
+                {
+                    content.CopyTo(ms);
+                    mc.CreateFromStream(ms, Path.GetFileName(filename), mco);
+                }
+            }
+            else
+            {
+                var mediaUri = MediaUri.Parse(mediaItem);
+                var media = MediaManager.GetMedia(mediaUri);
+
+                using (var ms = new MemoryStream())
+                {
+                    content.CopyTo(ms);
+                    using (new EditContext(mediaItem, SecurityCheck.Disable))
+                    {
+                        using (var mediaStream = new MediaStream(ms, media.Extension, mediaItem))
+                        {
+                            media.SetStream(mediaStream);
+                        }
+                    }
+                }
+            }
         }
 
         private void UpdateCache(string dbName)
