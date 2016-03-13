@@ -18,7 +18,8 @@ Send-RemoteItem @props -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot
 
 Get-Item -Path C:\temp\data.zip | Send-RemoteItem @props -RootPath App -Destination "\upload"
 
-# TODO: Upload multiple files while maintaining directory structure
+# Upload multiple files in a compressed zip to maintain directory structure
+Get-Item -Path C:\temp\Kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/"
 
 # Close out the existing session
 Stop-ScriptSession -Session $props.Session

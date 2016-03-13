@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
@@ -74,7 +75,23 @@ namespace Cognifide.PowerShell.Console.Services
                 switch (apiVersion)
                 {
                     case "media":
-                        ProcessMediaUpload(request.InputStream, scriptDb, itemParam);
+                        if (ZipUtils.IsZipContent(request.InputStream))
+                        {
+                            using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
+                            {
+                                foreach (var zipEntry in packageReader.Entries)
+                                {
+                                    if (!zipEntry.IsDirectory)
+                                    {
+                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam);
+                        }
                         break;
 
                     case "file":
@@ -399,19 +416,24 @@ namespace Cognifide.PowerShell.Console.Services
             return folder;
         }
 
-        private static void ProcessMediaUpload(Stream content, Database db, string itemParam)
+        private static void ProcessMediaUpload(Stream content, Database db, string itemParam, string entryName = null)
         {
             var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
                             db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-
+            
             if (mediaItem == null)
             {
                 var filename = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
                 var dirName = (Path.GetDirectoryName(filename) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
                 {
-                    dirName = Constants.MediaLibraryPath +
-                              (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                    dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
+                }
+
+                if (!String.IsNullOrEmpty(entryName))
+                {
+                    dirName += "/" + Path.GetDirectoryName(entryName).Replace('\\','/');
+                    filename = Path.GetFileName(entryName);
                 }
 
                 var mco = new MediaCreatorOptions
