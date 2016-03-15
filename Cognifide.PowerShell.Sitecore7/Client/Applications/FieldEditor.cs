@@ -6,6 +6,7 @@ using System.Management.Automation;
 using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore;
+using Sitecore.Collections;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
@@ -107,7 +108,11 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
                 TemplateManager.GetTemplate(Settings.DefaultBaseTemplate,
                     currentItem.Database);
 
-            foreach (Field field in currentItem.Fields)
+            FieldCollection fields = new FieldCollection(CurrentItem);
+            fields.ReadAll();
+            fields.Sort();
+
+            foreach (Field field in fields)
             {
                 //if not including standard field and it's standard, skip it.
                 if (!IncludeStandardFields && template.ContainsField(field.ID))
