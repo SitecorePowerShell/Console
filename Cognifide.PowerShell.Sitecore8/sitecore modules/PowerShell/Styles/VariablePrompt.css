@@ -103,6 +103,7 @@
     float: left;
 }
 
+.scTreeview { margin: 4px 0 }
 .psVarPromptHeaderIcon { margin: 6px 16px 4px 0 !important; }
 
 /* 6.6 Backwards compatibility - copied from 7.2 styles */
