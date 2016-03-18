@@ -14,6 +14,7 @@ if(-not (Test-Path -Path $projectPath)) {
 $sites = @{Path = "C:\inetpub\wwwroot\Sitecore81"; Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore70"; Version="7"},
+         @{Path = "C:\inetpub\wwwroot\Sitecore71"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore72"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Console"; Version="8"};

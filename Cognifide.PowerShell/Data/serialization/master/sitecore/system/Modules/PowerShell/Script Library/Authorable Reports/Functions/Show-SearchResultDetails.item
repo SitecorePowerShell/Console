@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1264
+content-length: 1526
 
 function Show-SearchResultDetails { 
     [CmdletBinding()]
@@ -44,10 +44,21 @@ $info = "" <#+
     "<b>Template: </b> $($item.TemplateName) - $($item.TemplateId)<br/><br/><br/>"+
     "<h1>Fields:</h1>"#>
     
-foreach($fieldKey in ($item.Fields.Keys | sort)){
-  $info += "<b>$($fieldKey): </b> $($item.Fields[$fieldKey])<br/>"
+$keys = $item.Fields.Keys;
+if($keys -eq $null)
+{
+    $keys = $item | Get-Member -MemberType Property | %{ $_.Name}
+    foreach($fieldKey in ($keys | sort)){
+      $info += "<b>$($fieldKey): </b> $($item.$fieldKey)<br/>"
+    }
 }
-    
+else
+{
+    foreach($fieldKey in ($item.Fields.Keys | sort))
+    {
+        $info += "<b>$($fieldKey): </b> $($item.Fields[$fieldKey])<br/>"
+    }
+}
 
 $props = @{
     Parameters = @(
@@ -64,7 +75,7 @@ $result = Read-Variable @props
 ----version----
 language: en
 version: 1
-revision: 52b3ab5e-af57-4aab-8a20-e7a1928e5fed
+revision: 60391f70-84e3-4f72-9b39-e4d23ce1860b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -79,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-52b3ab5e-af57-4aab-8a20-e7a1928e5fed
+60391f70-84e3-4f72-9b39-e4d23ce1860b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150725T095514
+20160318T093042
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

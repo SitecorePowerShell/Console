@@ -14,10 +14,10 @@
       <Script src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore/shell/controls/TreeviewEx/TreeviewEx.js"></Script>
-      <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/Scriptaculous.js"></Script>
+      <!--Script src="/sitecore/shell/Controls/Lib/Scriptaculous/Scriptaculous.js"></Script>
       <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/Effects.js"></Script>
-      <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/DragDrop.js"></Script>
-      <Script src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script>
+      <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/DragDrop.js"></Script-->
+      <!--Script src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script-->
       <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <!--for autocomplete and overlay-->
