@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                Log.Debug($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.", typeof(SpeTimer));
+                Log.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.", typeof(SpeTimer));
                 return result;
             }
             catch (Exception ex)
