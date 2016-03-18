@@ -7,7 +7,7 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public virtual void SetLanguage(string language)
         {
-            if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion75))
+            if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion71))
             {
                 SetLanguageInternal(language);
             }
