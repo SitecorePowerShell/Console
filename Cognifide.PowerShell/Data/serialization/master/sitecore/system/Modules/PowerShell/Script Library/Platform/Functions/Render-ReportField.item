@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2214
+content-length: 2210
 
 function Render-ScriptInvoker {
     [CmdletBinding()]
@@ -65,18 +65,21 @@ function Render-ItemField{
     return $item.$fieldName;
 }
 
-function Render-PercentValue{
+function Render-PercentValue {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)]
-        [int]$Percent
+        [int]$Percent,
+        [Parameter(Position=1)]
+        [int]$Width = 200
         )
-    return "<div class='progressBar'><div class='progressBackFill' style='width:100%'><div class='progressText'>$Percent%</div></div><div class='progressFill' style='width:$Percent%'><div class='progressFillText'>$Percent%</div></div></div>"
+    return "<div class='progressBar' style='width:$($Width)px'>$Percent%<span style='clip:rect(0 $($Percent*$Width/100)px 20px 0); width:$($Width)px'>$Percent%</span></div>"
 }
+
 ----version----
 language: en
 version: 1
-revision: f9e02fab-cff5-4548-bb75-bbff853f1aab
+revision: 5ffcf499-45a3-438e-82a8-315cf7bad75b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -91,14 +94,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f9e02fab-cff5-4548-bb75-bbff853f1aab
+5ffcf499-45a3-438e-82a8-315cf7bad75b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150727T083454
+20160315T193845
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

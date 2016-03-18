@@ -71,3 +71,21 @@
     border: 1px solid #5E5E5E/*{borderColorHighlight}*/;
     height: 20px;
 }
+
+.progressBar, .progressBar span {
+    position:relative;
+    width:200px;
+    border:1px solid #012456;
+    height:20px;
+    line-height:20px;
+    text-align:center;
+    color:#012456;
+}
+.progressBar span {
+    position:absolute;
+    color:#fff;
+    left:0px;
+    top:0px;
+    border:none;
+    background: #012456;
+}
