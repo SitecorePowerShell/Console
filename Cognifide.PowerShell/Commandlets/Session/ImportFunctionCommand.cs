@@ -102,32 +102,24 @@ namespace Cognifide.PowerShell.Commandlets.Session
                             string.Equals(ModuleManager.GetItemModule(p).Name, Module,
                                 StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
-
+            var name = Name.ToLower();
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                if (string.IsNullOrEmpty(Library))
+                string query = string.IsNullOrEmpty(Library)
+                    ? $"{path}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{name}\"]"
+                    : $"{path}/#{Library}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{name}\"]";
+                Item[] scriptItems = root.Database.SelectItems(query);
+                if (scriptItems?.Length > 0)
                 {
-                    functionItems.AddRange(root.Database.SelectItems(
-                        String.Format(
-                            "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{1}\"]",
-                            path, Name.ToLower())));
-                }
-                else
-                {
-                    functionItems.AddRange(root.Database.SelectItems(
-                        String.Format(
-                            "{0}/#{1}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{2}\"]",
-                            path, Library, Name.ToLower())));
+                    functionItems.AddRange(scriptItems);
                 }
             }
 
             if (functionItems.Count > 1)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
-                    string.Format(
-                        "Ambiguous function name '{0}' detected, please narrow your search by specifying sub-library and/or module name.",
-                        Name)), "sitecore_ambiguous_name", ErrorCategory.InvalidData, null));
+                    $"Ambiguous function name '{Name}' detected, please narrow your search by specifying sub-library and/or module name."), "sitecore_ambiguous_name", ErrorCategory.InvalidData, null));
                 return;
             }
 

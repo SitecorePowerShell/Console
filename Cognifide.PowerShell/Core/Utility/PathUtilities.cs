@@ -102,11 +102,11 @@ namespace Cognifide.PowerShell.Core.Utility
             var sb = new StringBuilder(path.Length + 10);
             foreach (var part in parts)
             {
-                if (String.IsNullOrEmpty(part))
+                if (string.IsNullOrEmpty(part))
                 {
                     continue;
                 }
-                if (part.IndexOf(' ') > -1 && part.IndexOf('#') != 0)
+                if ((part.IndexOf(' ') > -1 || part.IndexOf('-') > -1)  && part.IndexOf('#') != 0)
                 {
                     sb.AppendFormat("/#{0}#", part);
                 }
