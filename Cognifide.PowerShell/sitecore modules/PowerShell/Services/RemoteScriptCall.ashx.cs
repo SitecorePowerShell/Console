@@ -48,6 +48,7 @@ namespace Cognifide.PowerShell.Console.Services
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
+            var unpackZip = request.Params.Get("unpack").IsNot("false");
 
             if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
@@ -75,7 +76,7 @@ namespace Cognifide.PowerShell.Console.Services
                 switch (apiVersion)
                 {
                     case "media":
-                        if (ZipUtils.IsZipContent(request.InputStream))
+                        if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
                         {
                             using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                             {

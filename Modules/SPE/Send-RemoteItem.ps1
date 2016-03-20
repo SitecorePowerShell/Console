@@ -65,7 +65,10 @@ function Send-RemoteItem {
         [ValidateNotNullOrEmpty()]
         [string]$RootPath,
 
-        [string]$Destination
+        [string]$Destination,
+
+        [Parameter()]
+        [hashtable]$Arguments
     )
 
     process {
@@ -108,14 +111,15 @@ function Send-RemoteItem {
         }
 
         $serviceUrl += "user=" + $Username + "&password=" + $Password
-        <#
-        $data = [System.IO.File]::ReadAllBytes($Path)
 
-        if(!$data -or $data.Length -le 0) {
-            Write-Verbose -Message "Upload failed. No content to send to the web service."
-            return
-        }#>
-
+        if($Arguments) {
+            foreach($argument in $Arguments.GetEnumerator()) {
+                if($argument.Name) {
+                    $serviceUrl += "&$($argument.Name)=$($argument.Value)"
+                }
+            }
+        }
+        
         foreach($uri in $ConnectionUri) {
             
             # http://hostname/-/script/type/origin/location
@@ -153,7 +157,6 @@ function Send-RemoteItem {
                     }                   
                     $webStream.Close()
                     $fileStream.Close()
-                    #$webclient.UploadData($url, $data)
                     Write-Verbose -Message "Upload complete."
                 } catch [System.Net.WebException] {
                     [System.Net.WebException]$script:ex = $_.Exception
