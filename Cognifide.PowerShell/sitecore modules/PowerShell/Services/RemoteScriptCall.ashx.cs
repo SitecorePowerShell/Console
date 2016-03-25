@@ -48,7 +48,8 @@ namespace Cognifide.PowerShell.Console.Services
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
-            var unpackZip = request.Params.Get("unpack").IsNot("false");
+            var unpackZip = request.Params.Get("skipunpack").IsNot("true");
+            var skipExisting = request.Params.Get("skipexisting").Is("true");
 
             if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
@@ -84,14 +85,14 @@ namespace Cognifide.PowerShell.Console.Services
                                 {
                                     if (!zipEntry.IsDirectory)
                                     {
-                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name);
+                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam);
+                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
                         }
                         break;
 
@@ -417,7 +418,7 @@ namespace Cognifide.PowerShell.Console.Services
             return folder;
         }
 
-        private static void ProcessMediaUpload(Stream content, Database db, string itemParam, string entryName = null)
+        private static void ProcessMediaUpload(Stream content, Database db, string itemParam, string entryName, bool skipExisting = false)
         {
             var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
                             db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
@@ -441,7 +442,7 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     Database = db,
                     Versioned = Settings.Media.UploadAsVersionableByDefault,
-                    Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filename)}"
+                    Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filename)}",
                 };
 
                 var mc = new MediaCreator();
@@ -453,6 +454,8 @@ namespace Cognifide.PowerShell.Console.Services
             }
             else
             {
+                if (skipExisting) return;
+
                 var mediaUri = MediaUri.Parse(mediaItem);
                 var media = MediaManager.GetMedia(mediaUri);
 

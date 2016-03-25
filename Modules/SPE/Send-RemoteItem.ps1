@@ -28,12 +28,21 @@ function Send-RemoteItem {
 
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
             Send-RemoteItem -Session $session -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
-    
+        
+        .EXAMPLE
+            The following uploads a compressed archive to the the media library and skips unpacking.
+            
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Get-Item -Path C:\temp\Kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
+        
         .LINK
             Receive-RemoteItem
 
         .LINK
             New-ScriptSession
+
+        .LINK
+            Stop-ScriptSession
 
     #>
     [CmdletBinding(DefaultParameterSetName='Uri')]
@@ -65,11 +74,27 @@ function Send-RemoteItem {
         [ValidateNotNullOrEmpty()]
         [string]$RootPath,
 
-        [string]$Destination,
-
-        [Parameter()]
-        [hashtable]$Arguments
+        [string]$Destination
     )
+
+    dynamicparam {
+         if ($RootPath -eq "Media") {
+              $paramDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
+
+              $skipUnpackAttribute = New-Object System.Management.Automation.ParameterAttribute
+              $skipUnpackAttributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+              $skipUnpackAttributeCollection.Add($skipUnpackAttribute)
+              $skipUnpackParam = New-Object System.Management.Automation.RuntimeDefinedParameter('SkipUnpack', [switch], $skipUnpackAttributeCollection)
+              $paramDictionary.Add('SkipUnpack', $skipUnpackParam)
+
+              $skipExistingAttribute = New-Object System.Management.Automation.ParameterAttribute
+              $skipExistingAttributeCollection = New-Object System.Collections.ObjectModel.Collection[System.Attribute]
+              $skipExistingAttributeCollection.Add($skipExistingAttribute)
+              $skipExistingParam = New-Object System.Management.Automation.RuntimeDefinedParameter('SkipExisting', [switch], $skipExistingAttributeCollection)
+              $paramDictionary.Add('SkipExisting', $skipExistingParam)
+              return $paramDictionary
+        }
+    }
 
     process {
         
@@ -112,12 +137,11 @@ function Send-RemoteItem {
 
         $serviceUrl += "user=" + $Username + "&password=" + $Password
 
-        if($Arguments) {
-            foreach($argument in $Arguments.GetEnumerator()) {
-                if($argument.Name) {
-                    $serviceUrl += "&$($argument.Name)=$($argument.Value)"
-                }
-            }
+        if($PSBoundParameters.SkipUnpack.IsPresent) {
+            $serviceUrl += "&skipunpack=true"
+        }
+        if($PSBoundParameters.SkipExisting.IsPresent) {
+            $serviceUrl += "&skipexisting=true"
         }
         
         foreach($uri in $ConnectionUri) {
