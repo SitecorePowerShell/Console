@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -94,6 +97,11 @@ namespace Cognifide.PowerShell.Core.Utility
             }
             var psPath = String.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
             return psPath;
+        }
+
+        public static string GetProviderPaths(this IEnumerable<Item> items)
+        {
+            return items.Select(item => item.GetProviderPath()).Aggregate((seed, curr) => seed + ", " + curr);
         }
 
         public static string PreparePathForQuery(string path)

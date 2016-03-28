@@ -33,6 +33,12 @@
 
     .LINK
         Get-ItemTemplate
+        
+    .LINK
+        Add-BaseTemplate
+        
+    .LINK
+        Remove-BaseTemplate        
 
     .LINK
         https://github.com/SitecorePowerShell/Console/
