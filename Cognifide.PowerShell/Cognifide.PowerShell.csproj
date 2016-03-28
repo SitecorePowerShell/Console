@@ -187,6 +187,9 @@
     <Compile Include="Client\Controls\UserPicker.cs" />
     <Compile Include="Commandlets\BaseCommand.cs" />
     <Compile Include="Commandlets\BaseIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\BaseTemplateItemCommand.cs" />
+    <Compile Include="Commandlets\Data\RemoveBaseTemplateCommand.cs" />
+    <Compile Include="Commandlets\Data\AddBaseTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\NewUsingBlockCommand.cs" />
     <Compile Include="Commandlets\Data\RemoveItemVersionCommand.cs" />
     <Compile Include="Commandlets\Data\ResetItemFieldCommand.cs" />
