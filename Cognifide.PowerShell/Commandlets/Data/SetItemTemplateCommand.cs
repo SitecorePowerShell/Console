@@ -8,7 +8,6 @@ using Sitecore.Exceptions;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsCommon.Set, "ItemTemplate", SupportsShouldProcess = true)]
-    [OutputType(typeof (TemplateItem))]
     public class SetItemTemplateCommand : BaseLanguageAgnosticItemCommand
     {
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Item from Pipeline, set by TemplateItem", Mandatory = true)]
