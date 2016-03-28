@@ -562,38 +562,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
                     path, itemTypeName, newItemValue);
 
-                if(itemTypeName.StartsWith(@".\"))
-                {
-                    itemTypeName = itemTypeName.Substring(2);
-                }
+                var templateItem = TemplateUtils.GetFromPath(itemTypeName, PSDriveInfo.Name);
 
-                itemTypeName = itemTypeName.Replace('\\', '/').Trim('/');
-
-
-                var templateItem = GetItemForPath("/" + itemTypeName);
-
-                if (templateItem == null)
-                {
-                    // for when the template name is starting with /sitecore/
-                    if (itemTypeName.StartsWith("sitecore/", StringComparison.OrdinalIgnoreCase))
-                    {
-                        itemTypeName = itemTypeName.Substring(9);
-                    }
-                    //for when the /templates at the start was missing
-                    if (!itemTypeName.StartsWith("templates/", StringComparison.OrdinalIgnoreCase))
-                    {
-                        itemTypeName = "templates/" + itemTypeName;
-                    }
-
-                    templateItem = GetItemForPath("/" + itemTypeName);
-
-                    if (templateItem == null)
-                    {
-                        throw new ObjectNotFoundException(
-                            string.Format("Template '{0}' does not exist or wrong path provided.",
-                                itemTypeName));
-                    }
-                }
                 var parentItem = GetItemForPath(PathUtilities.GetParentFromPath(path));
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
@@ -606,12 +576,13 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 var name = PathUtilities.GetLeafFromPath(path);
                 Item createdItem = null;
-                switch (templateItem.TemplateName)
+
+                switch (TemplateUtils.GetType(templateItem))
                 {
-                    case "Template":
+                    case TemplateItemType.Template:
                         createdItem = parentItem.Add(name, (TemplateItem)templateItem);
                         break;
-                    case "Branch":
+                    case TemplateItemType.Branch:
                         createdItem = parentItem.Add(name, (BranchItem)templateItem);
                         break;
                     default:

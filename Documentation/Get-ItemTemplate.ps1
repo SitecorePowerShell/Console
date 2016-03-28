@@ -33,6 +33,9 @@
         Get-ItemField
 
     .LINK
+        Set-ItemTemplate
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

@@ -95,7 +95,9 @@
     <Reference Include="Sitecore.Logging">
       <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(LibrariesPath)\Sitecore.NVelocity.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Update">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
@@ -194,6 +196,7 @@
     <Compile Include="Commandlets\Data\Search\ResumeSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\StopSearchIndexCommand.cs" />
     <Compile Include="Commandlets\Data\Search\SuspendSearchIndexCommand.cs" />
+    <Compile Include="Commandlets\Data\SetItemTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\TestRuleCommand.cs" />
     <Compile Include="Commandlets\ErrorIds.cs" />
     <Compile Include="Commandlets\Interactive\ShowListViewFeatures.cs" />
@@ -402,6 +405,7 @@
     <Compile Include="Core\Utility\PathUtilities.cs" />
     <Compile Include="Core\Utility\RulesUtils.cs" />
     <Compile Include="Core\Utility\SpeTimer.cs" />
+    <Compile Include="Core\Utility\TemplateUtils.cs" />
     <Compile Include="Core\Utility\WriteLogCommand.cs" />
     <Compile Include="Core\Utility\ZipUtils.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
