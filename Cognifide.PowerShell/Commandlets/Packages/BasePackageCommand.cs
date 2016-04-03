@@ -13,15 +13,9 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 {
     public class BasePackageCommand : BaseCommand
     {
-        protected static string PackagePath
-        {
-            get { return ApplicationContext.PackagePath; }
-        }
+        protected static string PackagePath => ApplicationContext.PackagePath;
 
-        protected static string PackageProjectPath
-        {
-            get { return ApplicationContext.PackageProjectPath; }
-        }
+        protected static string PackageProjectPath => ApplicationContext.PackageProjectPath;
 
         protected static string FullPackagePath(string packageFileName)
         {
