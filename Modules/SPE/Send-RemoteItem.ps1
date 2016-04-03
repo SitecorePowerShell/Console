@@ -5,6 +5,23 @@ function Send-RemoteItem {
         .SYNOPSIS
             Uploads a file to the filesystem on the server or media library through a Sitecore PowerShell Extensions web service.
     
+       .PARAMETER Path
+            The source path of the item to upload on the client side.
+            
+       .PARAMETER Destination
+            The destination path of the item on the server side.
+            
+       .PARAMETER RootPath
+            The predefined directory in which the item will be uploaded to. This is simply a keyword that maps to a predefined location on the server side. 
+            
+            When using this you can simply provide the file or media item name in the Destination parameter.
+       
+       .PARAMETER SkipUnpack
+            The compressed archive should not be unpacked during the upload process. This is a dynamic parameter that appears when RootPath is 'Media'.
+       
+       .PARAMETER SkipExisting
+            Any existing items should not be overwritten.
+            
        .EXAMPLE
             The following uploads a file to the root application path.
     

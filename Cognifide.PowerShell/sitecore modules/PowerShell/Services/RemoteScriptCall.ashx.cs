@@ -308,7 +308,7 @@ namespace Cognifide.PowerShell.Console.Services
             apiScripts = null;
         }
 
-        private bool CheckServiceEnabled(string apiVersion, string httpMethod)
+        private static bool CheckServiceEnabled(string apiVersion, string httpMethod)
         {
             var isEnabled = true;
             const string disabledMessage = "The request could not be completed because the service is disabled.";
