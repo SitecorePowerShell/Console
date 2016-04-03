@@ -4,7 +4,18 @@ function Receive-RemoteItem {
     <#
         .SYNOPSIS
             Downloads a file or media item through a Sitecore PowerShell Extensions web service.
-    
+
+       .PARAMETER Path
+            The source path of the item to download on the server side.
+            
+       .PARAMETER Destination
+            The destination path of the item on the client side.
+            
+       .PARAMETER RootPath
+            The predefined directory in which the item will be downloaded from. This is simply a keyword that maps to a predefined location on the server side. 
+            
+            When using this you can simply provide the file or media item name in the Path parameter.    
+            
        .EXAMPLE
             The following downloads an item from the media library in the master db and overwrite any existing version.
     
