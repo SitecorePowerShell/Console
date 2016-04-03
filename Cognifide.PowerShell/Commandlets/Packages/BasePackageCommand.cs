@@ -19,12 +19,12 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
         protected static string FullPackagePath(string packageFileName)
         {
-            return Path.Combine(PackagePath, packageFileName);
+            return Path.GetFullPath(Path.Combine(PackagePath, packageFileName));
         }
 
         protected static string FullPackageProjectPath(string packageFileName)
         {
-            return Path.Combine(PackageProjectPath, packageFileName);
+            return Path.GetFullPath(Path.Combine(PackageProjectPath, packageFileName));
         }
 
         protected void PerformInstallAction(Action action)

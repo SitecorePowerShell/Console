@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Install;
 using Sitecore.Install.Files;
 using Sitecore.Install.Framework;
@@ -6,6 +7,7 @@ using Sitecore.Install.Items;
 using Sitecore.Install.Metadata;
 using Sitecore.Install.Utils;
 using Sitecore.Install.Zip;
+using Sitecore.IO;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
@@ -32,7 +34,24 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                 {
                     if (!System.IO.Path.IsPathRooted(fileName))
                     {
-                        fileName = FullPackagePath(fileName);
+                        var packagePath = FullPackagePath(fileName);
+                        WriteVerbose($"Path is not rooted. Updating to {packagePath}.");
+
+                        if (!FileUtil.Exists(packagePath))
+                        {
+                            packagePath =
+                                System.IO.Path.GetFullPath(
+                                    System.IO.Path.Combine(
+                                        CurrentProviderLocation("FileSystem").ProviderPath, fileName));
+                            WriteVerbose($"Path could not be found. Updating to {packagePath}.");
+
+                            if (!FileUtil.Exists(packagePath))
+                            {
+                                WriteVerbose("Path still could not be found. Check that the file actually exists in the Sitecore package directory.");
+                            }
+                        }
+
+                        fileName = packagePath;
                     }
 
                     if (ShouldProcess(fileName, "Install package"))
@@ -46,7 +65,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         try
                         {
                             IProcessingContext context = new SimpleProcessingContext();
-                            IItemInstallerEvents instance1 =new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
+                            IItemInstallerEvents instance1 = new DefaultItemInstallerEvents(new BehaviourOptions(InstallMode, MergeMode));
                             context.AddAspect(instance1);
                             IFileInstallerEvents instance2 = new DefaultFileInstallerEvents(true);
                             context.AddAspect(instance2);
