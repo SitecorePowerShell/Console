@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.CodeDom.Scripts;
 using Sitecore.Diagnostics;
 using Sitecore.Rules;
@@ -55,14 +56,14 @@ namespace Cognifide.PowerShell.Core.Rules
             int length;
             if (!int.TryParse(lengthStr, out length))
             {
-                Log.Error("Invalid script length: " + MeasuredLength, GetType());
+                LogUtils.Error("Invalid script length: " + MeasuredLength, GetType());
                 return false;
             }
 
             int desiredLength;
             if (!int.TryParse(DesiredLength, out desiredLength))
             {
-                Log.Error("Wrong script length definition: " + DesiredLength, GetType());
+                LogUtils.Error("Wrong script length definition: " + DesiredLength, GetType());
                 return false;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.PreprocessRequest;
@@ -86,7 +87,7 @@ namespace Cognifide.PowerShell.Core.Processors
             }
             catch (Exception exception)
             {
-                Log.Error("Error during the SPE API call", exception);
+                LogUtils.Error("Error during the SPE API call", exception);
             }
         }
     }

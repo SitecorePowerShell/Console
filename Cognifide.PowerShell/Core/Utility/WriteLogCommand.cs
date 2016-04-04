@@ -56,30 +56,28 @@ namespace Cognifide.PowerShell.Core.Utility
             }
         }
 
-        private void LogString(string logMessage)
+        private void LogString(string message)
         {
             switch (Log)
             {
                 case LogNotificationLevel.Debug:
-                    Sitecore.Diagnostics.Log.Debug(logMessage, this);
+                    LogUtils.Debug(message, this);
                     break;
                 case LogNotificationLevel.Error:
-                    Sitecore.Diagnostics.Log.Error(logMessage, this);
+                    LogUtils.Error(message, this);
                     break;
                 case LogNotificationLevel.Fatal:
-                    Sitecore.Diagnostics.Log.Fatal(logMessage, this);
+                    LogUtils.Fatal(message, this);
                     break;
                 case LogNotificationLevel.Warning:
-                    Sitecore.Diagnostics.Log.Warn(logMessage, this);
+                    LogUtils.Warn(message, this);
                     break;
-                //case (LogNotificationLevel.Info) :
-                //case LogNotificationLevel.None:
                 default:
-                    Sitecore.Diagnostics.Log.Info(logMessage, this);
+                    LogUtils.Info(message, this);
                     break;
             }
 
-            WriteVerbose(logMessage);
+            WriteVerbose(message);
         }
 
         protected override void ProcessRecord()

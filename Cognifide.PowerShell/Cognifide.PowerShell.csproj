@@ -405,6 +405,7 @@
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
+    <Compile Include="Core\Utility\LogUtils.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />
     <Compile Include="Core\Utility\RulesUtils.cs" />
     <Compile Include="Core\Utility\SpeTimer.cs" />

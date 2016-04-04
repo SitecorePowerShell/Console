@@ -3,6 +3,7 @@ using System.Linq;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetPageEditorNotifications;
 
@@ -36,7 +37,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex.Message, this);
+                            LogUtils.Error(ex.Message, this);
                         }
                     }
                 }

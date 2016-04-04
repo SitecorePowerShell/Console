@@ -319,7 +319,7 @@ namespace Cognifide.PowerShell.Core.Settings
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message, typeof(ApplicationSettings));
+                LogUtils.Error(ex.Message, typeof(ApplicationSettings));
                 return defaultValue;
             }
         }

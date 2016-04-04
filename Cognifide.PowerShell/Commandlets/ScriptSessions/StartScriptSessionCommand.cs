@@ -249,7 +249,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        Log.Error(exceptionMessage, this);
+                        LogUtils.Error(exceptionMessage, this);
                     }
                     job.Status.Messages.Add(exceptionMessage);
                     job.Status.Messages.Add(
@@ -261,7 +261,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 }
                 else
                 {
-                    Log.Error("Script execution failed. Could not find command job.", ex, this);
+                    LogUtils.Error("Script execution failed. Could not find command job.", ex, this);
                 }
             }
             finally

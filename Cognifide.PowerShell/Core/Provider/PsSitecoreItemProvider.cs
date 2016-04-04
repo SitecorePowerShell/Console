@@ -440,7 +440,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     transferOptions.HasFlag(TransferOptions.ChangeID),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
                 Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
-                Log.Audit(this, "Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+                LogUtils.Audit(this, "Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
                     AuditFormatter.FormatItem(destinationItem));
                 if (transferedItem.Name != leafName)
                 {

@@ -5,6 +5,7 @@ using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using NVelocity;
 using NVelocity.App;
 using NVelocity.Exception;
@@ -110,8 +111,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 catch (ParseErrorException ex)
                 {
-                    Log.Error(string.Format("Error parsing template for the {0} item \n {1}",
-                        currentItem.Paths.Path, ex), this);
+                    LogUtils.Error($"Error parsing template for the {currentItem.Paths.Path} item \n {ex}", this);
                 }
                 VelocityOutput.Text = result.GetStringBuilder().ToString();
             }

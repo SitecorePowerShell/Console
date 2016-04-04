@@ -125,7 +125,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    Log.Audit(this, "Download file: {0}", str.ToString());
+                    LogUtils.Audit(this, "Download file: {0}", str.ToString());
                 }
                 else
                 {

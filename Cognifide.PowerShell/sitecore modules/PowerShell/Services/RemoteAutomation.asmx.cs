@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Web.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -194,7 +195,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             catch (Exception ex)
             {
-                Log.Error("Error during uploading file using PowerShell web service", ex);
+                LogUtils.Error("Error during uploading file using PowerShell web service", ex);
                 return false;
             }
             return true;
@@ -229,7 +230,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
             catch (Exception ex)
             {
-                Log.Error("Error during uploading file using PowerShell web service", ex);
+                LogUtils.Error("Error during uploading file using PowerShell web service", ex);
                 return new byte[0];
             }
         }

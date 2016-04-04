@@ -45,7 +45,7 @@ namespace Cognifide.PowerShell.Package.Install
                 }
                 catch (Exception)
                 {
-                    Log.Error(String.Format("The post step encountered a problem deleting the file {0}. Please remove manually.", path), typeof(PackagePostStep));
+                    Log.Error($"The post step encountered a problem deleting the file {path}. Please remove manually.", typeof(PackagePostStep));
                 }
             }
         }

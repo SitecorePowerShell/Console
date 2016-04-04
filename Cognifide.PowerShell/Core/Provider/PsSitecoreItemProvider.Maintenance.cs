@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 
@@ -28,7 +29,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private static void LogError(Exception ex, string format, params object[] args)
         {
-            Log.Error(string.Format(format, args), ex);
+            LogUtils.Error(string.Format(format, args), ex);
         }
 
         private static void LogInfo(string format, params object[] args)

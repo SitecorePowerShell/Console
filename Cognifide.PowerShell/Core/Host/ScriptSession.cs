@@ -591,8 +591,8 @@ namespace Cognifide.PowerShell.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            Log.Info("Executing a Sitecore PowerShell Extensions script.", this);
-            Log.Debug(script, this);
+            LogUtils.Info("Executing a Sitecore PowerShell Extensions script.", this);
+            LogUtils.Debug(script, this);
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
@@ -726,7 +726,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>())
                 {
-                    Log.Debug(record + record.InvocationInfo.PositionMessage, this);
+                    LogUtils.Debug(record + record.InvocationInfo.PositionMessage, this);
                 }
             }
 

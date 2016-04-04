@@ -1,5 +1,6 @@
 using System;
 using System.Web;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -72,7 +73,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                     if (uploadArgs.UploadedItems.Count > 0)
                     {
                         fileName = uploadArgs.UploadedItems[0].ID.ToString();
-                        Log.Audit(this, "Upload: {0}", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
+                        LogUtils.Audit(this, "Upload: {0}", StringUtil.Join(uploadArgs.UploadedItems, ", ", "Name"));
                     }
                     else
                     {

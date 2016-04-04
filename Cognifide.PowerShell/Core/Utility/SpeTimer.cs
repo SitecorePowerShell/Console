@@ -17,12 +17,12 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                Log.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.", typeof(SpeTimer));
+                LogUtils.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.", typeof(SpeTimer));
                 return result;
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message, typeof(SpeTimer));
+                LogUtils.Error(ex.Message, typeof(SpeTimer));
                 throw;
             }
         }

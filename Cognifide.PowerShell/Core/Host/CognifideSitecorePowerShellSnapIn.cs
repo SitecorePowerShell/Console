@@ -9,6 +9,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Xml;
 using Cognifide.PowerShell.Core.Provider;
+using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch.Utilities;
@@ -49,7 +50,7 @@ namespace Cognifide.PowerShell.Core.Host
                         var typeLoadException = ex as ReflectionTypeLoadException;
                         var loaderExceptions = typeLoadException.LoaderExceptions;
                         var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
-                        Log.Error(string.Format("Error while loading commandlets list: {0}",message), ex, typeof (CognifideSitecorePowerShellSnapIn));
+                        LogUtils.Error($"Error while loading commandlets list: {message}", ex, typeof (CognifideSitecorePowerShellSnapIn));
                     }
                 }
             }

@@ -51,6 +51,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
+                LogUtils.Debug($"The specified service {apiVersion} is not enabled.", this);
                 return;
             }
 
@@ -66,37 +67,42 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
             {
+                LogUtils.Debug($"The specified service {apiVersion} requires authentication.", this);
                 return;
             }
 
             if (isUpload)
             {
                 switch (apiVersion)
-            {
-                case "media":
-                    if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
-                    {
-                        using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
+                {
+                    case "media":
+                        if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
                         {
-                            foreach (var zipEntry in packageReader.Entries)
+                            LogUtils.Debug("The uploaded media item will be extracted to the media library.", this);
+                            using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                             {
-                                if (!zipEntry.IsDirectory)
+                                foreach (var zipEntry in packageReader.Entries)
                                 {
-                                    ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
+                                    if (!zipEntry.IsDirectory)
+                                    {
+                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
+                                    }
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
-                    }
-                    break;
+                        else
+                        {
+                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
+                        }
+                        break;
 
-                case "file":
-                    ProcessFileUpload(request.InputStream, originParam, pathParam);
-                    break;
-            }
+                    case "file":
+                        ProcessFileUpload(request.InputStream, originParam, pathParam);
+                        break;
+                    default:
+                        LogUtils.Debug($"The specified apiVersion {apiVersion} is not supported.", this);
+                        break;
+                }
                 return;
             }
 
@@ -540,7 +546,7 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Error while querying for items", ex);
+                    LogUtils.Error("Error while querying for items", ex);
                 }
             }
         }

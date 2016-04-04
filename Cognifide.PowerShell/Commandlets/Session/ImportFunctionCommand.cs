@@ -175,7 +175,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Error while querying for items", ex);
+                    LogUtils.Error("Error while querying for items", ex);
                 }
             }
             functions = localFunctions.ToArray();

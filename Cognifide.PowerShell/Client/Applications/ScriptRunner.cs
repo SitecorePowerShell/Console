@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Cognifide.PowerShell.Core.Host;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
@@ -51,7 +52,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             catch (ThreadAbortException taex)
             {
-                Log.Error("Script was aborted", taex, this);
+                LogUtils.Error("Script was aborted", taex, this);
                 if (!Environment.HasShutdownStarted)
                 {
                     Thread.ResetAbort();
@@ -59,7 +60,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             catch (Exception exc)
             {
-                Log.Error(ScriptSession.GetExceptionString(exc), exc);
+                LogUtils.Error(ScriptSession.GetExceptionString(exc), exc);
 
                 if (Context.Job != null)
                 {

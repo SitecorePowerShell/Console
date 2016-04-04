@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex.Message, this);
+                    LogUtils.Error(ex.Message, this);
                 }
                 return null;
             });
