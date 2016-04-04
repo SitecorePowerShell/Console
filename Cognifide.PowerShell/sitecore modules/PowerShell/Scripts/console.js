@@ -84,6 +84,7 @@
     function callPowerShellHost(term, guid, command) {
         term.pause();
         $("#working").show();
+        cognifide.powershell.preventCloseWhenRunning(true);
         getPowerShellResponse({ "guid": guid, "command": command, "stringFormat": "jsterm" }, "ExecuteCommand",
             function(json) {
                 var data = JSON.parse(json.d);
@@ -133,6 +134,7 @@
                                     function(jqXHR, textStatus, errorThrown) {
                                         term.resume();
                                         $("#working").hide();
+                                        cognifide.powershell.preventCloseWhenRunning(false);
                                         term.echo("Communication error: " + textStatus + "; " + errorThrown);
                                     }
                                 );
@@ -154,6 +156,7 @@
         if (data["status"] != "partial" && data["status"] != "working") {
             term.resume();
             $("#working").hide();
+            cognifide.powershell.preventCloseWhenRunning(false);
             term.set_prompt(data["prompt"]);
             var background = data["background"];
             if (background !== undefined && background !== "null") {
