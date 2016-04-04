@@ -49,8 +49,9 @@ function Send-RemoteItem {
         .EXAMPLE
             The following uploads a compressed archive to the the media library and skips unpacking.
             
+            Compress-Archive -Path C:\temp\kittens -DestinationPath C:\temp\kittens.zip
             $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Get-Item -Path C:\temp\Kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
+            Get-Item -Path C:\temp\kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipUnpack
         
         .LINK
             Receive-RemoteItem

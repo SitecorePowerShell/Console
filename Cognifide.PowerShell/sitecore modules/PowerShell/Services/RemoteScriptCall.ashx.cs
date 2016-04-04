@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
@@ -21,7 +20,6 @@ using Sitecore.IO;
 using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
 using Sitecore.SecurityModel;
-using Sitecore.Text;
 using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Console.Services
@@ -66,55 +64,39 @@ namespace Cognifide.PowerShell.Console.Services
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb.Name;
 
+            if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
+            {
+                return;
+            }
+
             if (isUpload)
             {
-                if (!isAuthenticated)
-                {
-                    HttpContext.Current.Response.StatusCode = 403;
-                    return;
-                }
-
                 switch (apiVersion)
-                {
-                    case "media":
-                        if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
+            {
+                case "media":
+                    if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
+                    {
+                        using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                         {
-                            using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
+                            foreach (var zipEntry in packageReader.Entries)
                             {
-                                foreach (var zipEntry in packageReader.Entries)
+                                if (!zipEntry.IsDirectory)
                                 {
-                                    if (!zipEntry.IsDirectory)
-                                    {
-                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
-                                    }
+                                    ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
                                 }
                             }
                         }
-                        else
-                        {
-                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
-                        }
-                        break;
+                    }
+                    else
+                    {
+                        ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
+                    }
+                    break;
 
-                    case "file":
-                        pathParam = pathParam.Replace('/', '\\');
-                        var file = GetPathFromParameters(originParam, pathParam);
-                        file = FileUtil.MapPath(file);
-                        var fileInfo = new FileInfo(file);
-                        if (!fileInfo.Exists)
-                        {
-                            fileInfo.Directory?.Create();
-                        }
-                        using (var output = fileInfo.OpenWrite())
-                        {
-                            using (var input = request.InputStream)
-                            {
-                                input.CopyTo(output);
-                            }
-                        }
-                        break;
-                }
-
+                case "file":
+                    ProcessFileUpload(request.InputStream, originParam, pathParam);
+                    break;
+            }
                 return;
             }
 
@@ -127,104 +109,13 @@ namespace Cognifide.PowerShell.Console.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    if (!isAuthenticated)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        return;
-                    }
-                    itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
-                    var mediaItem = (MediaItem)scriptDb.GetItem(itemParam) ?? scriptDb.GetItem(itemParam.TrimStart('/', '\\')) ??
-                                    scriptDb.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-                    if (mediaItem == null)
-                    {
-                        HttpContext.Current.Response.StatusCode = 404;
-                        return;
-                    }
-
-                    var mediaStream = mediaItem.GetMediaStream();
-                    if (mediaStream == null)
-                    {
-                        HttpContext.Current.Response.StatusCode = 404;
-                        return;
-                    }
-
-                    var str = mediaItem.Extension;
-                    if (!str.StartsWith(".", StringComparison.InvariantCulture))
-                        str = "." + str;
-                    WriteCacheHeaders(mediaItem.Name + str, mediaItem.Size);
-                    WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
+                    ProcessMediaDownload(scriptDb, itemParam);
                     return;
                 case "file":
-                    if (!isAuthenticated)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        return;
-                    }
-
-                    var file = GetPathFromParameters(originParam, pathParam);
-
-                    if (string.IsNullOrEmpty(file))
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        return;
-                    }
-
-                    if (string.IsNullOrEmpty(file))
-                    {
-                        HttpContext.Current.Response.StatusCode = 404;
-                    }
-                    else
-                    {
-                        file = FileUtil.MapPath(file);
-                        if (!File.Exists(file))
-                        {
-                            HttpContext.Current.Response.StatusCode = 404;
-                            return;
-                        }
-
-                        var fileInfo = new FileInfo(file);
-                        WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
-                        HttpContext.Current.Response.TransmitFile(file);
-                    }
+                    ProcessFileDownload(originParam, pathParam);
                     return;
                 case "handle":
-                    if (!isAuthenticated)
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        return;
-                    }
-
-                    if (string.IsNullOrEmpty(originParam))
-                    {
-                        HttpContext.Current.Response.StatusCode = 404;
-                    }
-                    else
-                    {
-                        // download handle
-                        var values = WebUtil.GetSessionValue(originParam) as OutDownloadMessage;
-                        WebUtil.RemoveSessionValue(originParam);
-                        var Response = HttpContext.Current.Response;
-                        Response.Clear();
-                        Response.AddHeader("Content-Disposition", "attachment; filename=" + values.Name);
-                        Response.ContentType = values.ContentType;
-                        var strContent = values.Content as string;
-                        if (strContent != null)
-                        {
-                            Response.Output.Write("{0}", strContent);
-                            Response.AddHeader("Content-Length",
-                                strContent.Length.ToString(CultureInfo.InvariantCulture));
-                        }
-
-                        var byteContent = values.Content as byte[];
-                        if (byteContent != null)
-                        {                            
-                            Response.OutputStream.Write(byteContent,0, byteContent.Length);
-                            Response.AddHeader("Content-Length",
-                            byteContent.Length.ToString(CultureInfo.InvariantCulture));
-                        }
-
-                        Response.End();
-                    }
+                    ProcessHandle(originParam);
                     return;
                 default:
                     UpdateCache(dbName);
@@ -244,61 +135,7 @@ namespace Cognifide.PowerShell.Console.Services
                     break;
             }
 
-            if (scriptItem?.Fields[ScriptItemFieldNames.Script] == null)
-            {
-                HttpContext.Current.Response.StatusCode = 404;
-                return;
-            }
-
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
-            {
-                var script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
-
-                if (Context.Database != null)
-                {
-                    var item = Context.Database.GetRootItem();
-                    if (item != null)
-                        session.SetItemLocationContext(item);
-                }
-                session.SetExecutedScript(scriptItem);
-
-                context.Response.ContentType = "text/plain";
-
-                var scriptArguments = new Hashtable();
-
-                foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
-                {
-                    var paramValue = HttpContext.Current.Request.QueryString[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
-
-                    scriptArguments[param] = paramValue;
-                }
-
-                foreach (var param in HttpContext.Current.Request.Params.AllKeys)
-                {
-                    var paramValue = HttpContext.Current.Request.Params[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
-
-                    if (session.GetVariable(param) == null)
-                    {
-                        session.SetVariable(param, paramValue);
-                    }
-                }
-
-                session.SetVariable("scriptArguments", scriptArguments);
-
-                session.ExecuteScriptPart(script, true);
-
-                context.Response.Write(session.Output.ToString());
-
-                if (session.Output.HasErrors)
-                {
-                    context.Response.StatusCode = 424;
-                    context.Response.StatusDescription = "Method Failure";
-                }
-            }
+            ProcessScript(context, scriptItem);
         }
 
         public bool IsReusable => true;
@@ -369,7 +206,27 @@ namespace Cognifide.PowerShell.Console.Services
             return isEnabled;
         }
 
-        private string GetPathFromParameters(string originParam, string pathParam)
+        private static bool CheckServiceAuthentication(string apiVersion, bool isAuthenticated)
+        {
+            var skipAuthentication = false;
+            const string disabledMessage = "The request could not be completed because the service requires authentication.";
+
+            switch (apiVersion)
+            {
+                case "1":
+                case "2":
+                    skipAuthentication = true;
+                    break;
+                default:
+                    HttpContext.Current.Response.StatusCode = 403;
+                    HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    break;
+            }
+
+            return skipAuthentication || isAuthenticated;
+        }
+
+        private static string GetPathFromParameters(string originParam, string pathParam)
         {
             var folder = string.Empty;
 
@@ -422,7 +279,7 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
                             db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-            
+
             if (mediaItem == null)
             {
                 var filename = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
@@ -434,7 +291,7 @@ namespace Cognifide.PowerShell.Console.Services
 
                 if (!String.IsNullOrEmpty(entryName))
                 {
-                    dirName += "/" + Path.GetDirectoryName(entryName).Replace('\\','/');
+                    dirName += "/" + Path.GetDirectoryName(entryName).Replace('\\', '/');
                     filename = Path.GetFileName(entryName);
                 }
 
@@ -470,6 +327,166 @@ namespace Cognifide.PowerShell.Console.Services
                         }
                     }
                 }
+            }
+        }
+
+        private static void ProcessFileUpload(Stream content, string originParam, string pathParam)
+        {
+            var file = GetPathFromParameters(originParam, pathParam.Replace('/', '\\'));
+            file = FileUtil.MapPath(file);
+            var fileInfo = new FileInfo(file);
+            if (!fileInfo.Exists)
+            {
+                fileInfo.Directory?.Create();
+            }
+            using (var output = fileInfo.OpenWrite())
+            {
+                using (var input = content)
+                {
+                    input.CopyTo(output);
+                }
+            }
+        }
+
+        private static void ProcessMediaDownload(Database db, string itemParam)
+        {
+            itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
+            var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
+                            db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+            if (mediaItem == null)
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+                return;
+            }
+
+            var mediaStream = mediaItem.GetMediaStream();
+            if (mediaStream == null)
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+                return;
+            }
+
+            var str = mediaItem.Extension;
+            if (!str.StartsWith(".", StringComparison.InvariantCulture))
+                str = "." + str;
+            WriteCacheHeaders(mediaItem.Name + str, mediaItem.Size);
+            WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
+        }
+
+        private static void ProcessFileDownload(string originParam, string pathParam)
+        {
+            var file = GetPathFromParameters(originParam, pathParam);
+
+            if (string.IsNullOrEmpty(file))
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+            }
+            else
+            {
+                file = FileUtil.MapPath(file);
+                if (!File.Exists(file))
+                {
+                    HttpContext.Current.Response.StatusCode = 404;
+                    return;
+                }
+
+                var fileInfo = new FileInfo(file);
+                WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
+                HttpContext.Current.Response.TransmitFile(file);
+            }
+        }
+
+        private static void ProcessScript(HttpContext context, Item scriptItem)
+        {
+            if (scriptItem?.Fields[ScriptItemFieldNames.Script] == null)
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+                return;
+            }
+
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
+            {
+                var script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
+
+                if (Context.Database != null)
+                {
+                    var item = Context.Database.GetRootItem();
+                    if (item != null)
+                        session.SetItemLocationContext(item);
+                }
+                session.SetExecutedScript(scriptItem);
+
+                context.Response.ContentType = "text/plain";
+
+                var scriptArguments = new Hashtable();
+
+                foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
+                {
+                    var paramValue = HttpContext.Current.Request.QueryString[param];
+                    if (string.IsNullOrEmpty(param)) continue;
+                    if (string.IsNullOrEmpty(paramValue)) continue;
+
+                    scriptArguments[param] = paramValue;
+                }
+
+                foreach (var param in HttpContext.Current.Request.Params.AllKeys)
+                {
+                    var paramValue = HttpContext.Current.Request.Params[param];
+                    if (string.IsNullOrEmpty(param)) continue;
+                    if (string.IsNullOrEmpty(paramValue)) continue;
+
+                    if (session.GetVariable(param) == null)
+                    {
+                        session.SetVariable(param, paramValue);
+                    }
+                }
+
+                session.SetVariable("scriptArguments", scriptArguments);
+
+                session.ExecuteScriptPart(script, true);
+
+                context.Response.Write(session.Output.ToString());
+
+                if (session.Output.HasErrors)
+                {
+                    context.Response.StatusCode = 424;
+                    context.Response.StatusDescription = "Method Failure";
+                }
+            }
+        }
+
+        private static void ProcessHandle(string originParam)
+        {
+            if (string.IsNullOrEmpty(originParam))
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+            }
+            else
+            {
+                // download handle
+                var values = WebUtil.GetSessionValue(originParam) as OutDownloadMessage;
+                WebUtil.RemoveSessionValue(originParam);
+                var Response = HttpContext.Current.Response;
+                Response.Clear();
+                Response.AddHeader("Content-Disposition", "attachment; filename=" + values.Name);
+                Response.ContentType = values.ContentType;
+                var strContent = values.Content as string;
+                if (strContent != null)
+                {
+                    Response.Output.Write("{0}", strContent);
+                    Response.AddHeader("Content-Length",
+                        strContent.Length.ToString(CultureInfo.InvariantCulture));
+                }
+
+                var byteContent = values.Content as byte[];
+                if (byteContent != null)
+                {
+                    Response.OutputStream.Write(byteContent, 0, byteContent.Length);
+                    Response.AddHeader("Content-Length",
+                    byteContent.Length.ToString(CultureInfo.InvariantCulture));
+                }
+
+                Response.End();
             }
         }
 
