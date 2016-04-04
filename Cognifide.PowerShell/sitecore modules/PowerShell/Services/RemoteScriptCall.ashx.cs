@@ -6,6 +6,7 @@ using System.IO;
 using System.Web;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
@@ -36,10 +37,6 @@ namespace Cognifide.PowerShell.Console.Services
         {
             var request = HttpContext.Current.Request;
             var userName = request.Params.Get("user");
-            if (!string.IsNullOrEmpty(userName) && !userName.Contains("\\"))
-            {
-                userName = "sitecore\\" + userName;
-            }
             var password = request.Params.Get("password");
             var itemParam = request.Params.Get("script");
             var pathParam = request.Params.Get("path");
@@ -57,7 +54,8 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
-                AuthenticationManager.Login(userName, password, false);
+                var account = new AccountIdentity(userName);
+                AuthenticationManager.Login(account.Name, password, false);
             }
 
             var isAuthenticated = Context.IsLoggedIn;
