@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1663
+content-length: 1751
 
 <#
     .SYNOPSIS
@@ -33,10 +33,13 @@ function HasContentReference {
     $result = $false
     
     foreach($link in $links) {
-        $path = New-Object Sitecore.Data.ItemPath ($link.GetSourceItem())
-        if($path.IsContentItem) {
-            $result = $true
-            break
+        $linkItem = $link.GetSourceItem()
+        if ($linkItem) {
+            $path = New-Object Sitecore.Data.ItemPath ($linkItem)
+            if($path.IsContentItem) {
+                $result = $true
+                break
+            }
         }
     }
     
@@ -84,7 +87,7 @@ Network/16x16/link_delete.png
 ----version----
 language: en
 version: 1
-revision: 642f07cc-f4c3-4deb-a6cb-60529f28f41c
+revision: f999e1a3-664d-436d-8f49-e0e6f8583d70
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -99,14 +102,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-642f07cc-f4c3-4deb-a6cb-60529f28f41c
+f999e1a3-664d-436d-8f49-e0e6f8583d70
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20140408T090837:635325449179434769
+20160405T213830Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
