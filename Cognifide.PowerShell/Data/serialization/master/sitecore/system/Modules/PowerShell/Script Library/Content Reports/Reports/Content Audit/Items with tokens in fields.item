@@ -1,0 +1,104 @@
+----item----
+version: 1
+id: {0C97AC4B-647F-4012-A11D-608A4BC39045}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Items with tokens in fields
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Items with tokens in fields
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1773
+
+<#
+    .SYNOPSIS
+        Lists all content items that contain one of the following tokens in at least one field - $name, $date, $parentname, $time, $now, $id, $parentid
+        
+    .NOTES
+        Alex Washtell
+#>
+filter Where-TokenInFields {
+    param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$item
+    )
+    
+    foreach ($field in $item.Fields)
+    {
+        if ($field.Value -match '\$(name|date|parentname|time|now|id|parentid)')
+        {
+            # Return custom object so we can include both the item and the field in the report
+            @{Item = $item; Field = $field}
+            break
+        }
+    }
+}
+
+$items = Get-ChildItem -Path "master:\sitecore\content" -Recurse | Where-TokenInFields
+
+if($items.Count -eq 0) {
+    Show-Alert "There are no content items that have tokens in fields"
+} else {
+    $props = @{
+        InfoTitle = "Content items with tokens in fields"
+        InfoDescription = 'Lists all content items that contain one of the following tokens in at least one field - $name, $date, $parentname, $time, $now, $id, $parentid.'
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Icon"; Expression={$_.Item.__Icon} },
+            @{Label="Name"; Expression={$_.Item.DisplayName} },
+            @{Label="Field Name"; Expression={$_.Field.Name} },
+            @{Label="Updated"; Expression={$_.Item.__Updated} },
+            @{Label="Updated by"; Expression={$_.Item."__Updated by"} },
+            @{Label="Created"; Expression={$_.Item.__Created} },
+            @{Label="Created by"; Expression={$_.Item."__Created by"} },
+            @{Label="Path"; Expression={$_.Item.ItemPath} }
+}
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 39
+
+Applications/32x32/document_warning.png
+----version----
+language: en
+version: 1
+revision: 6fd9973e-e0cf-4e48-8a94-7edb7f27543d
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160405T225137Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+6fd9973e-e0cf-4e48-8a94-7edb7f27543d
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160405T231412Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
