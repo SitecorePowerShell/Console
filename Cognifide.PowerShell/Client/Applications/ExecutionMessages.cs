@@ -62,6 +62,7 @@
             "working... unlike you!",
             "doing something useful...",
             "oh, yeah, comments! Good idea!",
+            "it's still faster than doing this in Java...",
             "prepare for awesomeness!",
             "it's not you. It's me.",
             "ouch! Careful where you point that thing!",

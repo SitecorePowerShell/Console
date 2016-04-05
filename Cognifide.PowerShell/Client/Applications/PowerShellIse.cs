@@ -553,6 +553,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     ExecutionMessages.PleaseWaitMessages[
                         rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
 
+            Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(true);}");
+
             scriptSession.Debugging = debug;
             Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
 
@@ -666,6 +668,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
             }
             Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWait", "");
+            Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(false);}");
             ProgressOverlay.Visible = false;
             ScriptResult.Visible = true;
             ScriptRunning = false;

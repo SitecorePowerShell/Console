@@ -18,7 +18,23 @@ function extend(e, t) {
 var cognifide = cognifide || {};
 extend(cognifide, "powershell");
 
-(function($, window, cognifide, undefined) {
+(function ($, window, cognifide, undefined) {
+    var messages = {
+        "confirmQuit": "Script is running. Are you sure you want to quit?"
+    };
+
+
+    cognifide.powershell.preventCloseWhenRunning = function (isRunning) {
+        if (isRunning) {
+            if (!window.onbeforeunload) {
+                window.onbeforeunload = function () { return messages["confirmQuit"]; };
+            }
+        }
+        else {
+            window.onbeforeunload = null;
+        }
+    };
+
     cognifide.powershell.DownloadReport = function (handle) {
         var iframe = document.createElement("iframe");
         iframe.src = "/-/script/handle/" + handle;
