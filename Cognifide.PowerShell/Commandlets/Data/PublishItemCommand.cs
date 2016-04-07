@@ -9,6 +9,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.Publish;
 
@@ -120,6 +121,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     var publishContext = PublishManager.CreatePublishContext(options);
+                    publishContext.Languages = new[] {language};
                     var stats = PublishPipeline.Run(publishContext)?.Statistics;
                     WriteVerbose("Publish Finished.");
                     if (stats != null)
