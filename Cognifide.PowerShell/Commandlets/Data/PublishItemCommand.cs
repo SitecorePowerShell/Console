@@ -101,7 +101,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 // new
                 options.RepublishAll = RepublishAll;
                 options.CompareRevisions = CompareRevisions;
-                options.FromDate = FromDate;
+                if (IsParameterSpecified(nameof(FromDate)))
+                {
+                    options.FromDate = FromDate;
+                }
                 if (PublishRelatedItems && this.VersionSupportThreshold(nameof(PublishRelatedItems), VersionResolver.SitecoreVersion72, true))
                 {
                     PublishRelatedItems72(options);
