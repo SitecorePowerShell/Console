@@ -102,7 +102,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 options.RepublishAll = RepublishAll;
                 options.CompareRevisions = CompareRevisions;
                 options.FromDate = FromDate;
-                if (this.VersionSupportThreshold(nameof(PublishRelatedItems), VersionResolver.SitecoreVersion72, true))
+                if (PublishRelatedItems && this.VersionSupportThreshold(nameof(PublishRelatedItems), VersionResolver.SitecoreVersion72, true))
                 {
                     PublishRelatedItems72(options);
                 }
@@ -121,16 +121,36 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     var publishContext = PublishManager.CreatePublishContext(options);
-                    publishContext.Languages = new[] {language};
-                    var stats = PublishPipeline.Run(publishContext)?.Statistics;
-                    WriteVerbose("Publish Finished.");
-                    if (stats != null)
+                    if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion72))
                     {
-                        WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+                        Publish72(publishContext, language);
+                    }
+                    else
+                    {
+                        PublishPre72(publishContext);
                     }
                 }
             }
         }
+
+        private void Publish72(PublishContext publishContext, Language language)
+        {
+            publishContext.Languages = new[] {language};
+            var stats = PublishPipeline.Run(publishContext)?.Statistics;
+            WriteVerbose("Publish Finished.");
+            if (stats != null)
+            {
+                WriteVerbose(
+                    $"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+            }
+        }
+
+        private void PublishPre72(PublishContext publishContext)
+        {
+            PublishPipeline.Run(publishContext);
+            WriteVerbose("Publish Finished.");
+        }
+
 
         private void PublishRelatedItems72(PublishOptions options)
         {
