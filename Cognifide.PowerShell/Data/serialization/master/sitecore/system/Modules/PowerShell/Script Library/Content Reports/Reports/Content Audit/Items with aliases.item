@@ -1,0 +1,127 @@
+----item----
+version: 1
+id: {4ADB96CA-9011-4888-9500-8E9A891CB0B3}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Items with aliases
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Items with aliases
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2161
+
+<#
+    .SYNOPSIS
+        Lists the items with at least one alias
+        
+    .NOTES
+        Alex Washtell
+        Adapted from the Advanced System Reporter module.
+#>
+
+$database = "master"
+$root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+
+$props = @{
+    Parameters = @(
+        @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned."; Columns=9}
+    )
+    Title = "Items With Aliases Report"
+    Description = "Choose the criteria for the report."
+    Width = 550
+    Height = 300
+    ShowHints = $true
+}
+
+$result = Read-Variable @props
+
+if($result -eq "cancel"){
+    exit
+}
+
+$aliasPath = "/sitecore/system/aliases/"
+$allAliases = Get-ChildItem -Path "master:$aliasPath" -Recurse
+
+filter WithAliases {
+    param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$Item
+    )
+    
+    if($Item) {
+        $matchingAliases = $allAliases | ? { $_."Linked item" -match $Item.ID }
+        if ($matchingAliases)
+        {
+            
+            @{ Item = $Item; Aliases = ($matchingAliases | Select -Expand FullPath) -replace $aliasPath,"" -join ", " }
+        }
+    }
+}
+
+$items = Get-ChildItem -Path $root.ProviderPath -Recurse | WithAliases
+
+if($items.Count -eq 0){
+    Show-Alert "There are no items found which have aliases."
+} else {
+    $props = @{
+        InfoTitle = "Items with aliases"
+        InfoDescription = "Lists the items with at least one alias."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Name"; Expression={$_.Item.DisplayName} },
+            @{Label="Aliases"; Expression={$_.Aliases}},
+            @{Label="Path"; Expression={$_.Item.ItemPath} },
+            @{Label="Updated"; Expression={$_.Item.__Updated} },
+            @{Label="Updated by"; Expression={$_.Item."__Updated by"} },
+            @{Label="Created"; Expression={$_.Item.__Created} },
+            @{Label="Created by"; Expression={$_.Item."__Created by"} }
+}
+Close-Window
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 21
+
+Network/32x32/spy.png
+----version----
+language: en
+version: 1
+revision: fff99e14-db7e-42f4-b46f-88882527ae0b
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160410T092452Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+fff99e14-db7e-42f4-b46f-88882527ae0b
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160410T103110Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
