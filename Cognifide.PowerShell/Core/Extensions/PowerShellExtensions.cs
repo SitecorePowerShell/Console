@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             return newList;
         }
 
-        public static IList BaseArray(this IList array)
+        public static object[] BaseArray(this IList array)
         {
             var newArray = new object[array.Count];
             for (var i = 0; i < array.Count; i++)
