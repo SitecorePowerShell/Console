@@ -222,8 +222,11 @@ namespace Cognifide.PowerShell.Console.Services
                     skipAuthentication = true;
                     break;
                 default:
-                    HttpContext.Current.Response.StatusCode = 403;
-                    HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    if (!isAuthenticated)
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                    }
                     break;
             }
 
