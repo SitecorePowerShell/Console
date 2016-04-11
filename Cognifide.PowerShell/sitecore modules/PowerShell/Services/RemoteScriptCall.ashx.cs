@@ -472,6 +472,11 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 // download handle
                 var values = WebUtil.GetSessionValue(originParam) as OutDownloadMessage;
+                if (values == null)
+                {
+                    HttpContext.Current.Response.StatusCode = 404;
+                    return;
+                }
                 WebUtil.RemoveSessionValue(originParam);
                 var Response = HttpContext.Current.Response;
                 Response.Clear();
