@@ -15,7 +15,7 @@ using Sitecore.Publishing.Pipelines.Publish;
 namespace Cognifide.PowerShell.Commandlets.Data
 {
     [Cmdlet(VerbsData.Publish, "Item", SupportsShouldProcess = true)]
-    [OutputType(new Type[] {}, ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
+    [OutputType(new Type[] { }, ParameterSetName = new[] { "Item from Pipeline", "Item from Path", "Item from ID" })]
     public class PublishItemCommand : BaseItemCommand
     {
         [Parameter]
@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         [Parameter]
         public PublishMode PublishMode { get; set; } = PublishMode.Smart;
-        
+
         [Parameter]
         public SwitchParameter PublishRelatedItems { get; set; }
 
@@ -48,7 +48,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         {
             if (item.Database.Name.IsNot("master"))
             {
-                WriteError(typeof(PSInvalidOperationException), $"Item '{item.Name}' cannot be published. Only items from the 'master' database can be published!", 
+                WriteError(typeof(PSInvalidOperationException), $"Item '{item.Name}' cannot be published. Only items from the 'master' database can be published!",
                     ErrorIds.InvalidOperation, ErrorCategory.InvalidOperation, null);
                 return;
             }
@@ -67,8 +67,8 @@ namespace Cognifide.PowerShell.Commandlets.Data
             {
                 foreach (var publishingTarget in PublishManager.GetPublishingTargets(source))
                 {
-                    var destination = Factory.GetDatabase(publishingTarget[FieldIDs.PublishingTargetDatabase]);
-                    PublishToTarget(item, source, destination);
+                    var target = Factory.GetDatabase(publishingTarget[FieldIDs.PublishingTargetDatabase]);
+                    PublishToTarget(item, source, target);
                 }
             }
         }
@@ -90,16 +90,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
                 {
-                    Deep = Recurse.IsPresent,
-                    RootItem = item
+                    Deep = Recurse.IsPresent || PublishMode == PublishMode.Smart || RepublishAll,
+                    RootItem = item,
+                    RepublishAll = RepublishAll,
+                    CompareRevisions = PublishMode == PublishMode.Smart
+
                 };
 
-                var optionsArgs = new PublishOptions[1];
-                optionsArgs[0] = options;
-
-                // new
-                options.RepublishAll = RepublishAll;
-                options.CompareRevisions = CompareRevisions;
                 if (IsParameterSpecified(nameof(FromDate)))
                 {
                     options.FromDate = FromDate;
@@ -107,37 +104,36 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 if (PublishRelatedItems)
                 {
                     SitecoreVersion.V72
-                        .OrNewer(() => options.PublishRelatedItems = PublishRelatedItems)
-                        .ElseWriteWarning(this, nameof(PublishRelatedItems), true);
+                        .OrNewer(() =>
+                        {
+                            options.PublishRelatedItems = PublishRelatedItems;
+                            options.Mode = PublishMode.SingleItem;
+                        }).ElseWriteWarning(this, nameof(PublishRelatedItems), true);
                 }
 
                 if (AsJob)
                 {
-                    var handle = PublishManager.Publish(optionsArgs);
-                    if (handle == null) return;
-                    var publishStatus = PublishManager.GetStatus(handle) ?? new PublishStatus();
-                    WriteVerbose($"Publish Job submitted, current state={publishStatus.State}.");
+                    var publisher = new Publisher(options);
+                    var job = publisher.PublishAsync();
 
-                    var job = Sitecore.Jobs.JobManager.GetJob(handle);
                     if (job == null) return;
                     WriteObject(job);
                 }
                 else
                 {
                     var publishContext = PublishManager.CreatePublishContext(options);
-                    SitecoreVersion.V72.OrNewer(
-                        () =>
+                    SitecoreVersion.V72.OrNewer(() => 
                         {
-                            publishContext.Languages = new[] {language};
+                            publishContext.Languages = new[] { language };
                             var stats = PublishPipeline.Run(publishContext)?.Statistics;
                             if (stats != null)
                             {
-                                WriteVerbose(
-                                    $"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+                                WriteVerbose($"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
                             }
                         }).Else(
-                            () => {
-                                      PublishPipeline.Run(publishContext);
+                            () =>
+                            {
+                                PublishPipeline.Run(publishContext);
                             });
                     WriteVerbose("Publish Finished.");
                 }

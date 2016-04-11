@@ -63,8 +63,10 @@
             $processed = $remoteJob.Status.Processed
             if($remoteJob.Options -and $remoteJob.Options.CustomData -is [Sitecore.Publishing.PublishStatus]) {
                 $publishStatus = $remoteJob.Options.CustomData -as [Sitecore.Publishing.PublishStatus]
-                $state = $publishStatus.State
-                $processed = $publishStatus.Processed
+                if($publishStatus.Processed -gt 0) {
+                    $state = $publishStatus.State
+                    $processed = $publishStatus.Processed
+                }
             }
             $status = "$($state) and processed $($processed)"
         }
