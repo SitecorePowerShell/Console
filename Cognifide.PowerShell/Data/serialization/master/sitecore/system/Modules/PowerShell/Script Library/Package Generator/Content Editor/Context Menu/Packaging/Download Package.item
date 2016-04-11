@@ -35,7 +35,7 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1184
+content-length: 1180
 
 if($Author -eq $null)
 {
@@ -52,8 +52,8 @@ $result = Read-Variable -Parameters `
     @{ Name = "Publisher"; Title="Publisher"}, `
     @{ Name = "Version"; Title="Version"}, `
     @{ Name = "Readme"; Title="ReadMe"} `
-    -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
-    -Title "Security for a user" -Width 600 -Height 400 `
+    -Description "This tool allows you to download the package built in the current session." `
+    -Title "Download package" -Width 600 -Height 400 `
 
 if($result -ne "ok")
 {
@@ -91,7 +91,7 @@ People/16x16/box_next.png
 ----version----
 language: en
 version: 1
-revision: 2036ff09-1d9e-47ee-8369-250b7e2fe512
+revision: d088c590-9f05-49c1-b614-103d0aa321f6
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -106,14 +106,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-2036ff09-1d9e-47ee-8369-250b7e2fe512
+d088c590-9f05-49c1-b614-103d0aa321f6
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20130919T175158:635152099188745704
+20160411T211534Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

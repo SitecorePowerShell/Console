@@ -2,9 +2,9 @@
 version: 1
 id: {E6B36111-8411-414B-A7E9-58E75B365EA7}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging/Add Branch to Package
+path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package
 parent: {C83CC1EE-A860-4E64-9715-E9C3BBB885F0}
-name: Add Branch to Package
+name: Add Tree to Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -59,7 +59,7 @@ Software/16x16/branch_add.png
 ----version----
 language: en
 version: 1
-revision: e0282e51-09c6-4aa9-bf4f-8e258170624b
+revision: 47f8efba-e858-46b7-b923-a11e3f346966
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -74,14 +74,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e0282e51-09c6-4aa9-bf4f-8e258170624b
+47f8efba-e858-46b7-b923-a11e3f346966
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20130919T170438:635152070784790625
+20160410T084001Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
