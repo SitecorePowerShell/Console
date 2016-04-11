@@ -433,9 +433,19 @@ namespace Cognifide.PowerShell.Core.Provider
                     transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
                 }
 
-                var outerXml = VersionResolver.SitecoreVersionCurrent >= VersionResolver.SitecoreVersion72
-                    ? GetSerializedItem72(sourceItem, recurse, transferOptions)
-                    : GetSerializedItemOld(sourceItem, recurse);
+                var outerXml = string.Empty;
+                SitecoreVersion.V72.OrNewer(() =>
+                {
+                    var options = ItemSerializerOptions.GetDefaultOptions();
+                    options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
+                    options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
+                    options.ProcessChildren = recurse;
+                    outerXml = sourceItem.GetOuterXml(options);
+                }).Else(() =>
+                {
+                    outerXml = sourceItem.GetOuterXml(recurse);
+                });
+
                 var transferedItem = destinationItem.PasteItem(outerXml,
                     transferOptions.HasFlag(TransferOptions.ChangeID),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
@@ -449,20 +459,6 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 return transferedItem;
             }
-        }
-
-        private string GetSerializedItem72(Item sourceItem, bool recurse, TransferOptions transferOptions)
-        {
-            var options = ItemSerializerOptions.GetDefaultOptions();
-            options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
-            options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
-            options.ProcessChildren = recurse;
-            return sourceItem.GetOuterXml(options);
-        }
-
-        private string GetSerializedItemOld(Item sourceItem, bool recurse)
-        {
-            return sourceItem.GetOuterXml(recurse);
         }
 
         protected override void MoveItem(string path, string destination)

@@ -21,19 +21,14 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            if (FinalLayout && this.VersionSupportThreshold(nameof(FinalLayout), VersionResolver.SitecoreVersion80, true))
-            {
-                SetupLayoutFieldForSitecore8();
-            }
-            else
-            {
-                LayoutFieldId = FieldIDs.LayoutField;
-            }
-        }
 
-        private void SetupLayoutFieldForSitecore8()
-        {
-            LayoutFieldId = FieldIDs.FinalLayoutField;
+            LayoutFieldId = FieldIDs.LayoutField;
+            if (FinalLayout)
+            {
+                SitecoreVersion.V80.OrNewer(
+                    () => LayoutFieldId = FieldIDs.FinalLayoutField)
+                    .ElseWriteWarning(this, nameof(FinalLayout), true);
+            }
         }
 
     }

@@ -133,17 +133,5 @@ namespace Cognifide.PowerShell.Core.Extensions
             return true;
         }
 
-        public static bool VersionSupportThreshold(this BaseCommand command, string parameter, Version thresholdSitecoreVersion, bool parameterScope)
-        {
-            string unit = parameterScope ? "parameter" : "command";
-            var supported = thresholdSitecoreVersion < VersionResolver.SitecoreVersionCurrent;
-            if (!supported)
-            {
-                command.WriteWarning(
-                    $"The \"{parameter}\" {unit} is not supported on this version of Sitecore due to platform limitations. This parameter is supported starting from Sitecore Version {thresholdSitecoreVersion.Major}.{thresholdSitecoreVersion.Minor}");
-            }
-            return supported;
-        }
-
     }
 }

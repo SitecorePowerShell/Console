@@ -26,39 +26,41 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
         protected override void ProcessRecord()
         {
-            if (this.VersionSupportThreshold("Initialize-SearchIndexItem", VersionResolver.SitecoreVersion72, false))
-            {
-                ProcessRecord72();
-            }
+            SitecoreVersion.V72.OrNewer(
+                () =>
+                {
+                    if (Item != null)
+                    {
+                        var itemDatabase = Item.Database.Name;
+                        var itemPath = Item.Paths.Path;
+                        var indexable = new SitecoreIndexableItem(Item);
+
+                        foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
+                        {
+                            if (
+                                !index.Crawlers.Any(
+                                    c => c is SitecoreItemCrawler && ((SitecoreItemCrawler) c).Database.Is(itemDatabase)))
+                                continue;
+
+                            RefreshItem(index, indexable, itemPath);
+                        }
+                    }
+                    else if (SearchResultItem != null)
+                    {
+                        var itemPath = SearchResultItem.Path;
+                        var indexable = new SitecoreIndexableItem(SearchResultItem.GetItem());
+                        var indexname = SearchResultItem.Fields["_indexname"].ToString();
+
+                        foreach (
+                            var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
+                        {
+                            RefreshItem(index, indexable, itemPath);
+                        }
+                    }
+                })
+                .ElseWriteWarning(this, "Initialize-SearchIndexItem", false);
         }
 
-        protected void ProcessRecord72()
-        {
-            if (Item != null)
-            {
-                var itemDatabase = Item.Database.Name;
-                var itemPath = Item.Paths.Path;
-                var indexable = new SitecoreIndexableItem(Item);
-
-                foreach (var index in WildcardFilter(Name, ContentSearchManager.Indexes, index => index.Name))
-                {
-                    if (!index.Crawlers.Any(c => c is SitecoreItemCrawler && ((SitecoreItemCrawler)c).Database.Is(itemDatabase))) continue;
-
-                    RefreshItem(index, indexable, itemPath);
-                }
-            }
-            else if (SearchResultItem != null)
-            {
-                var itemPath = SearchResultItem.Path;
-                var indexable = new SitecoreIndexableItem(SearchResultItem.GetItem());
-                var indexname = SearchResultItem.Fields["_indexname"].ToString();
-
-                foreach (var index in WildcardFilter(indexname, ContentSearchManager.Indexes, index => index.Name))
-                {
-                    RefreshItem(index, indexable, itemPath);
-                }
-            }
-        }
 
         private void RefreshItem(ISearchIndex index, IIndexable indexable, string itemPath)
         {

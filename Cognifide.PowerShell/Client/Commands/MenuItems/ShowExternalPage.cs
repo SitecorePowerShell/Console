@@ -37,8 +37,8 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                             .Replace("{spe}", GetType().Assembly.GetName().Version.ToString())
                             .Replace("{ps}", ScriptSession.PsVersion.Major + "." + ScriptSession.PsVersion.Minor)
                             .Replace("{sc}",
-                                VersionResolver.SitecoreVersionCurrent.Major + "." +
-                                VersionResolver.SitecoreVersionCurrent.Minor);
+                                SitecoreVersion.Current.Major + "." +
+                                SitecoreVersion.Current.Minor);
                     urlString.Add(key, param);
                 }
 

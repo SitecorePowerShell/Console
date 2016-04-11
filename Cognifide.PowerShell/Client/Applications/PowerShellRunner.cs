@@ -271,14 +271,9 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             Result.Value = printResults;
             PsProgress.Text = string.Empty;
-            if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80))
-            {
-                PsProgressStatus.Text = "<span class='status'> </span><br/>";
-            }
-            else
-            {
-                Subtitle.Text = "<span class='status'> </span><br/>";
-            }
+            SitecoreVersion.V80
+                .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
+                .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
             
             if (result != null)
             {
@@ -364,7 +359,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
 
-            bool isSitecore8 = VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80);
+            bool isSitecore8 = CurrentVersion.IsAtLeast(SitecoreVersion.V80);
             PsProgressStatus.Visible = showStatus && isSitecore8;
             Subtitle.Visible = showStatus && !isSitecore8;
 

@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using Cognifide.PowerShell.Commandlets;
 using Sitecore.Configuration;
 
 namespace Cognifide.PowerShell.Core.VersionDecoupling
 {
-    public class VersionResolver
+    public static class SitecoreVersion
     {
-        public static Version SitecoreVersionCurrent = GetVersionNumber();
-        public static Version SitecoreVersion71 = new Version(7, 1);
-        public static Version SitecoreVersion72 = new Version(7, 2);
-        public static Version SitecoreVersion75 = new Version(7, 5);
-        public static Version SitecoreVersion80 = new Version(8, 0);
+        public static Version Current = GetVersionNumber();
+        public static Version V71 = new Version(7, 1);
+        public static Version V72 = new Version(7, 2);
+        public static Version V75 = new Version(7, 5);
+        public static Version V80 = new Version(8, 0);
+        public static Version V81 = new Version(8, 1);
 
         public static Version GetVersionNumber()
         {
@@ -44,9 +46,6 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
             return version;
         }
 
-        public static bool IsVersionHigherOrEqual(Version version)
-        {
-            return version <= SitecoreVersionCurrent;
-        }
+
     }
 }

@@ -9,7 +9,6 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.Publish;
 
@@ -105,9 +104,11 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 {
                     options.FromDate = FromDate;
                 }
-                if (PublishRelatedItems && this.VersionSupportThreshold(nameof(PublishRelatedItems), VersionResolver.SitecoreVersion72, true))
+                if (PublishRelatedItems)
                 {
-                    PublishRelatedItems72(options);
+                    SitecoreVersion.V72
+                        .OrNewer(() => options.PublishRelatedItems = PublishRelatedItems)
+                        .ElseWriteWarning(this, nameof(PublishRelatedItems), true);
                 }
 
                 if (AsJob)
@@ -124,40 +125,23 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 else
                 {
                     var publishContext = PublishManager.CreatePublishContext(options);
-                    if (VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion72))
-                    {
-                        Publish72(publishContext, language);
-                    }
-                    else
-                    {
-                        PublishPre72(publishContext);
-                    }
+                    SitecoreVersion.V72.OrNewer(
+                        () =>
+                        {
+                            publishContext.Languages = new[] {language};
+                            var stats = PublishPipeline.Run(publishContext)?.Statistics;
+                            if (stats != null)
+                            {
+                                WriteVerbose(
+                                    $"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
+                            }
+                        }).Else(
+                            () => {
+                                      PublishPipeline.Run(publishContext);
+                            });
+                    WriteVerbose("Publish Finished.");
                 }
             }
-        }
-
-        private void Publish72(PublishContext publishContext, Language language)
-        {
-            publishContext.Languages = new[] {language};
-            var stats = PublishPipeline.Run(publishContext)?.Statistics;
-            WriteVerbose("Publish Finished.");
-            if (stats != null)
-            {
-                WriteVerbose(
-                    $"Items Created={stats.Created}, Deleted={stats.Deleted}, Skipped={stats.Skipped}, Updated={stats.Updated}.");
-            }
-        }
-
-        private void PublishPre72(PublishContext publishContext)
-        {
-            PublishPipeline.Run(publishContext);
-            WriteVerbose("Publish Finished.");
-        }
-
-
-        private void PublishRelatedItems72(PublishOptions options)
-        {
-            options.PublishRelatedItems = PublishRelatedItems;
         }
     }
 }

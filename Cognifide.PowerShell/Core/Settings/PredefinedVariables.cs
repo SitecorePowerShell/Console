@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Core.Settings
             ["SitecorePackageFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.PackagePath),
             ["SitecoreSerializationFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.SerializationFolder),
             ["SitecoreTempFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.TempFolderPath),
-            ["SitecoreVersion"] = VersionResolver.SitecoreVersionCurrent
+            ["SitecoreVersion"] = SitecoreVersion.Current
         };
     }
 }

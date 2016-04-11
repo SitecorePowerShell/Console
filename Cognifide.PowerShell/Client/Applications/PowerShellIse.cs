@@ -834,7 +834,7 @@ namespace Cognifide.PowerShell.Client.Applications
             font = fontItem != null
                 ? fontItem["Phrase"]
                 : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
-            var bottomPadding = VersionResolver.IsVersionHigherOrEqual(VersionResolver.SitecoreVersion80) ? 0 : 10;
+            var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
             SheerResponse.Eval(
                 $"cognifide.powershell.changeSettings('{font}', {settings.FontSize}, '{backgroundColor}', {bottomPadding}, {settings.LiveAutocompletion.ToString().ToLower()});");
         }

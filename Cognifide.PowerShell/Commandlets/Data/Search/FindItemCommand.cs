@@ -55,14 +55,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
                 // get all items in medialibrary
-                var query = context.GetQueryable<SearchResultItem>();
+                IQueryable<SearchResultItem>[] query = {context.GetQueryable<SearchResultItem>()};
 
                 if (!string.IsNullOrEmpty(Where))
                 {
-                    if (this.VersionSupportThreshold(nameof(Where), VersionResolver.SitecoreVersion75, true))
+                    SitecoreVersion.V75.OrNewer(() =>
                     {
-                        query = FilterIfSupported(query);
-                    }
+                        query[0] = query[0].Where(Where, WhereValues.BaseArray());
+                    }).ElseWriteWarning(this, nameof(Where), true);
                 }
                 if (Criteria != null)
                     foreach (var filter in Criteria)
@@ -90,14 +90,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     WriteError(typeof(ArgumentException), "The root for DescendantOf criteria has to be an Item or an ID.", ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
                                     return;
                                 }
-                                query = criteria.Invert
-                                    ? query.Where(i => !i["_path"].Contains(ancestorId))
-                                    : query.Where(i => i["_path"].Contains(ancestorId));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i["_path"].Contains(ancestorId))
+                                    : query[0].Where(i => i["_path"].Contains(ancestorId));
                                 break;
                             case (FilterType.StartsWith):
-                                query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].StartsWith(criteria.StringValue, comparer))
-                                    : query.Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i[criteria.Field].StartsWith(criteria.StringValue, comparer))
+                                    : query[0].Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Contains):
                                 if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
@@ -105,24 +105,24 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     WriteWarning(
                                         "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
-                                query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].Contains(criteria.StringValue))
-                                    : query.Where(i => i[criteria.Field].Contains(criteria.StringValue));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i[criteria.Field].Contains(criteria.StringValue))
+                                    : query[0].Where(i => i[criteria.Field].Contains(criteria.StringValue));
                                 break;
                             case (FilterType.EndsWith):
-                                query = criteria.Invert
-                                    ? query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
-                                    : query.Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
+                                    : query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Equals):
-                                query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].Equals(criteria.StringValue, comparer))
-                                    : query.Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i[criteria.Field].Equals(criteria.StringValue, comparer))
+                                    : query[0].Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
                                 break;
                             case (FilterType.Fuzzy):
-                                query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].Like(criteria.StringValue))
-                                    : query.Where(i => i[criteria.Field].Like(criteria.StringValue));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i[criteria.Field].Like(criteria.StringValue))
+                                    : query[0].Where(i => i[criteria.Field].Like(criteria.StringValue));
                                 break;
                             case (FilterType.InclusiveRange):
                             case (FilterType.ExclusiveRange):
@@ -133,29 +133,23 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 var pair = (object[])criteria.Value;
                                 var left = (pair[0] is DateTime) ? ((DateTime)pair[0]).ToString("yyyyMMdd") : pair[0].ToString();
                                 var right = (pair[1] is DateTime) ? ((DateTime)pair[1]).ToString("yyyyMMdd") : pair[1].ToString();
-                                query = criteria.Invert
-                                    ? query.Where(i => !i[criteria.Field].Between(left, right, inclusion))
-                                    : query.Where(i => i[criteria.Field].Between(left, right, inclusion));
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(i => !i[criteria.Field].Between(left, right, inclusion))
+                                    : query[0].Where(i => i[criteria.Field].Between(left, right, inclusion));
                                 break;
                         }
                     }
 
                 if (!string.IsNullOrEmpty(OrderBy))
                 {
-                    if (this.VersionSupportThreshold(nameof(OrderBy), VersionResolver.SitecoreVersion75, true))
+                    SitecoreVersion.V75.OrNewer(() =>
                     {
-                        query = OrderIfSupported(query);
-                    }
+                        query[0] = OrderIfSupported(query[0]);
+                    }).ElseWriteWarning(this, nameof(OrderBy), true);
                 }
 
-                WriteObject(FilterByPosition(query), true);
+                WriteObject(FilterByPosition(query[0]), true);
             }
-        }
-
-        private IQueryable<SearchResultItem> FilterIfSupported(IQueryable<SearchResultItem> query)
-        {
-            query = query.Where(Where, WhereValues.BaseArray());
-            return query;
         }
 
         private IQueryable<SearchResultItem> OrderIfSupported(IQueryable<SearchResultItem> query)

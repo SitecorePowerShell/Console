@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.Core.Host
         /// </summary>
         public override string Name => ScriptSession.PsVersion == null
             ? "Sitecore PowerShell Extensions Host"
-            : $"Sitecore PowerShell Extensions Host {GetType().Assembly.GetName().Version} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {VersionResolver.SitecoreVersionCurrent.Major}.{VersionResolver.SitecoreVersionCurrent.Minor}";
+            : $"Sitecore PowerShell Extensions Host {GetType().Assembly.GetName().Version} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {SitecoreVersion.Current.Major}.{SitecoreVersion.Current.Minor}";
 
         /// <summary>
         ///     This sample does not implement a PSHostUserInterface component so
