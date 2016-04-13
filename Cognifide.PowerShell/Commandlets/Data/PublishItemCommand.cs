@@ -90,7 +90,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
                 {
-                    Deep = Recurse.IsPresent || PublishMode == PublishMode.Smart || RepublishAll,
+                    Deep = Recurse.IsPresent || PublishMode == PublishMode.Smart || PublishMode == PublishMode.Full || RepublishAll,
                     RootItem = item,
                     RepublishAll = RepublishAll,
                     CompareRevisions = PublishMode == PublishMode.Smart
@@ -107,7 +107,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         .OrNewer(() =>
                         {
                             options.PublishRelatedItems = PublishRelatedItems;
-                            options.Mode = PublishMode.SingleItem;
                         }).ElseWriteWarning(this, nameof(PublishRelatedItems), true);
                 }
 
