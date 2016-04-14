@@ -6,8 +6,8 @@ path: /sitecore/system/Modules/PowerShell/Fonts/Courier New
 parent: {4406B665-C086-4D1F-9048-0E62A9863755}
 name: Courier New
 master: {00000000-0000-0000-0000-000000000000}
-template: {6D1CD897-1936-4A3A-A511-289A94C2A7B1}
-templatekey: Dictionary entry
+template: {5BA5DBE4-F85D-4797-9084-ACB31952B3B3}
+templatekey: Font Definition
 
 ----field----
 field: {580C75A8-C01A-4580-83CB-987776CEB3AF}
@@ -26,7 +26,7 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: 7d26f32a-2ab6-4b55-8023-e6108dd04cb5
+revision: a5b1fca6-d367-4d0e-97e5-4ca977fbfcce
 
 ----field----
 field: {2BA3454A-9A9C-4CDF-A9F8-107FD484EB6E}
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7d26f32a-2ab6-4b55-8023-e6108dd04cb5
+a5b1fca6-d367-4d0e-97e5-4ca977fbfcce
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150222T184709:635602276292490234
+20160414T142912
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
