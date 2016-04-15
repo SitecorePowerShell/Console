@@ -90,23 +90,26 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
                 var options = new PublishOptions(source, target, PublishMode, language, DateTime.Now)
                 {
-                    Deep = Recurse.IsPresent || PublishMode == PublishMode.Smart || PublishMode == PublishMode.Full || RepublishAll,
-                    RootItem = item,
+                    Deep = Recurse,
+                    RootItem = (PublishMode == PublishMode.Incremental) ? null : item,
                     RepublishAll = RepublishAll,
-                    CompareRevisions = PublishMode == PublishMode.Smart
-
+                    CompareRevisions = CompareRevisions || PublishMode == PublishMode.Smart
                 };
 
                 if (IsParameterSpecified(nameof(FromDate)))
                 {
                     options.FromDate = FromDate;
                 }
+
                 if (PublishRelatedItems)
                 {
                     SitecoreVersion.V72
                         .OrNewer(() =>
                         {
                             options.PublishRelatedItems = PublishRelatedItems;
+                            // Below blog explains why we're forcing Single Item 
+                            // http://www.sitecore.net/learn/blogs/technical-blogs/reinnovations/posts/2014/03/related-item-publishing.aspx
+                            options.Mode = PublishMode.SingleItem;
                         }).ElseWriteWarning(this, nameof(PublishRelatedItems), true);
                 }
 

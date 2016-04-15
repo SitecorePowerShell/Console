@@ -21,13 +21,13 @@ Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 5 -Verbose
 
 # Republish Site
 $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-        (Publish-Item -Path "master:\" -PublishMode Full -RepublishAll -AsJob).Handle.ToString()
+        (Publish-Item -Path "master:\" -PublishMode Full -Recurse -RepublishAll -AsJob).Handle.ToString()
 }
 Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 2 -Verbose
 
 # Smart Publish Site
 $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-        (Publish-Item -Path "master:\" -PublishMode Smart -AsJob).Handle.ToString()
+        (Publish-Item -Path "master:\" -PublishMode Smart -Recurse -AsJob).Handle.ToString()
 }
 Wait-RemoteSitecoreJob -Session $session -Id $jobId -Delay 2 -Verbose
 
