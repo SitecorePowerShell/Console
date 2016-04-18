@@ -1,0 +1,124 @@
+----item----
+version: 1
+id: {701177E5-09EF-4B40-9E33-C12FA925EA46}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Items with template
+parent: {66D85BC1-4DC1-4172-94C0-FD6CD5D8E47A}
+name: Items with template
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2204
+
+<#
+    .SYNOPSIS
+        Lists all content items that inherit from a given template
+        
+    .NOTES
+        Alex Washtell
+#>
+
+$database = "master"
+$root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+$baseTemplate = Get-Item master:\templates
+
+$props = @{
+    Parameters = @(
+        @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned."; }
+        @{ Name = "baseTemplate"; Title="Start Item"; Tooltip="Select the item to use as a base template for the report"; Root="/sitecore/templates/"}
+    )
+    Title = "Items With Template Report"
+    Description = "Choose the criteria for the report."
+    Width = 550
+    Height = 300
+    ShowHints = $true
+}
+
+$result = Read-Variable @props
+
+if($result -eq "cancel"){
+    exit
+}
+
+filter Where-InheritsTemplate {
+    param(
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [Sitecore.Data.Items.Item]$item
+    )
+    
+    if ($item) {
+        $itemTemplate = [Sitecore.Data.Managers.TemplateManager]::GetTemplate($item)
+
+        if ($itemTemplate.DescendsFromOrEquals($baseTemplate.ID)) {
+            $Item
+        }
+    }
+}
+
+$items = Get-ChildItem -Path $root.ProviderPath -Recurse | Where-InheritsTemplate
+
+if($items.Count -eq 0) {
+    Show-Alert "There are no content items that inherit from this template"
+} else {
+    $props = @{
+        InfoTitle = "Items that inherit from the '$($baseTemplate.Name)' template"
+        InfoDescription = "The following items all inherit from the '$($baseTemplate.FullPath)' template."
+        PageSize = 25
+    }
+    
+    $items |
+        Show-ListView @props -Property @{Label="Icon"; Expression={$_.__Icon} },
+            @{Label="Name"; Expression={$_.DisplayName} },
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} },
+            @{Label="Created"; Expression={$_.__Created} },
+            @{Label="Created by"; Expression={$_."__Created by"} },
+            @{Label="Path"; Expression={$_.ItemPath} }
+}
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 32
+
+Applications/16x16/form_blue.png
+----version----
+language: en
+version: 1
+revision: 6acf0f87-2cc3-43d1-9193-c778c132eb89
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160405T225137Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+6acf0f87-2cc3-43d1-9193-c778c132eb89
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160418T220839Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
