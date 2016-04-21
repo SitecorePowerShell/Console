@@ -52,8 +52,8 @@ namespace Cognifide.PowerShell.Core.Host
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken) ?? string.Empty;
             var truncatedLength = truncatedCommand.Length;
             var options = Completers;
-
-            if (!string.IsNullOrEmpty(lastToken) && lastToken.StartsWith("["))
+            lastToken = lastToken.Trim();
+            if (!string.IsNullOrEmpty(lastToken) && lastToken.Trim().StartsWith("["))
             {
                 if (lastToken.IndexOf("]", StringComparison.Ordinal) < 0)
                 {
@@ -222,6 +222,7 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     nameWildcard = BaseCommand.GetWildcardPattern($"{nameToken}*");
                 }
+                namespaceToken = namespaceToken.Replace(".", "*.");
                 fullWildcard = BaseCommand.GetWildcardPattern($"{namespaceToken}*");
             }
             else
