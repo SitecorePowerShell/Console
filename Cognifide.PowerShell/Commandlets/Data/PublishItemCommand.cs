@@ -96,6 +96,16 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     CompareRevisions = CompareRevisions || PublishMode == PublishMode.Smart
                 };
 
+                if (PublishMode == PublishMode.Incremental)
+                {
+                    WriteVerbose("Incremental publish causes ALL Database Items that are in the publishing queue to be published.");
+                }
+
+                if (!CompareRevisions && IsParameterSpecified(nameof(CompareRevisions)) && (PublishMode == PublishMode.Smart))
+                {
+                    WriteWarning($"The -{nameof(CompareRevisions)} parameter is set to $false but required to be $true when -{nameof(PublishMode)} is set to {PublishMode.Smart}, forcing {CompareRevisions} to $true.");
+                }
+
                 if (IsParameterSpecified(nameof(FromDate)))
                 {
                     options.FromDate = FromDate;
@@ -109,6 +119,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
                             options.PublishRelatedItems = PublishRelatedItems;
                             // Below blog explains why we're forcing Single Item 
                             // http://www.sitecore.net/learn/blogs/technical-blogs/reinnovations/posts/2014/03/related-item-publishing.aspx
+                            if (PublishRelatedItems && IsParameterSpecified(nameof(PublishMode)) && (PublishMode != PublishMode.SingleItem))
+                            {
+                                WriteWarning($"The -{nameof(PublishRelatedItems)} parameter is used which requires -{nameof(PublishMode)} to be set to set to {PublishMode.SingleItem}, forcing {PublishMode.SingleItem} PublishMode.");
+                            }
                             options.Mode = PublishMode.SingleItem;
                         }).ElseWriteWarning(this, nameof(PublishRelatedItems), true);
                 }
