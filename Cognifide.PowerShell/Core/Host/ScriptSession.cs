@@ -742,7 +742,7 @@ namespace Cognifide.PowerShell.Core.Host
 
             JobName = string.Empty;
             return marshallResults
-                ? execResults?.Select(p => p.BaseObject).ToList()
+                ? execResults?.Select(p => p?.BaseObject).ToList()
                 : execResults?.Cast<object>().ToList();
         }
 

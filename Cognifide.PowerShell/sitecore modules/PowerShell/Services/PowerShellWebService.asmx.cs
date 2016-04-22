@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,7 @@ namespace Cognifide.PowerShell.Console.Services
         public const string StatusPartial = "partial";
         public const string StatusWorking = "working";
         public const string StatusError = "error";
+        public static readonly string[] ImportantProperties = { "Name", "Title"};
 
         [WebMethod(EnableSession = true)]
         public void LoginUser(string userName, string password)
@@ -168,6 +170,18 @@ namespace Cognifide.PowerShell.Console.Services
                         return $"<div class='undefinedVariableType'>undefined</div>" +
                                $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
                     }
+
+                    var defaultProps = new List<string>();
+                    if (debugVariable is PSObject)
+                    {
+                        var script =
+                            $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
+                        List<object> results;
+                        if (session.TryInvokeInRunningSession(script, out results) && results != null)
+                        {
+                            defaultProps = results.Cast<string>().ToList();
+                        }
+                    }
                     var variable = debugVariable.BaseObject();
                     if (variable is PSCustomObject)
                     {
@@ -179,9 +193,11 @@ namespace Cognifide.PowerShell.Console.Services
                         $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
                     if (details.IsExpandable)
                     {
-                        foreach (var child in details.GetChildren())
+                        foreach (var child in details.GetChildren().OrderBy(d => d.Name))
                         {
-                            if (!child.IsExpandable)
+                            if (!child.IsExpandable ||
+                                defaultProps.Contains(child.Name, StringComparer.OrdinalIgnoreCase) ||
+                                ImportantProperties.Contains(child.Name, StringComparer.OrdinalIgnoreCase))
                             {
                                 varValue +=
                                     $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
