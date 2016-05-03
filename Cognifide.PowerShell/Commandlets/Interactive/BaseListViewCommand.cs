@@ -28,7 +28,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     processedProperty = Property.Select(p =>
                     {
                         string label;
-                        string expression;
+                        ScriptBlock expression;
+
                         if (p is Hashtable)
                         {
                             var h = p as Hashtable;
@@ -40,17 +41,17 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                                 }
                             }
                             label = h["Label"].ToString();
-                            expression = h["Expression"].ToString();
+                            expression = h["Expression"] as ScriptBlock ?? ScriptBlock.Create(h["Expression"].ToString());
                         }
                         else
                         {
                             label = p.ToString();                            
-                            expression = $"$ofs=', ';\"$($_.'{label}')\"";
+                            expression = ScriptBlock.Create($"$ofs=', ';\"$($_.'{label}')\"");
                         }
                         var result = new Hashtable(2)
                         {
                             {"Label", label},
-                            {"Expression", ScriptBlock.Create(expression)}
+                            {"Expression", expression}
                         };
                         return result;
                     }).ToArray();
