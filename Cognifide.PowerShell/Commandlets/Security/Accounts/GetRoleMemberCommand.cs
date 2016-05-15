@@ -35,13 +35,13 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             switch (ParameterSetName)
             {
                 case "Id":
-                    WriteObject(RolesInRolesManager.GetRoleMembers(role, Recursive));
+                    WriteObject(RolesInRolesManager.GetRoleMembers(role, Recursive), true);
                     break;
                 case "UsersOnly":
-                    WriteObject(RolesInRolesManager.GetUsersInRole(role, Recursive));
+                    WriteObject(RolesInRolesManager.GetUsersInRole(role, Recursive), true);
                     break;
                 case "RolesOnly":
-                    WriteObject(RolesInRolesManager.GetRolesInRole(role, Recursive));
+                    WriteObject(RolesInRolesManager.GetRolesInRole(role, Recursive), true);
                     break;
             }
         }
