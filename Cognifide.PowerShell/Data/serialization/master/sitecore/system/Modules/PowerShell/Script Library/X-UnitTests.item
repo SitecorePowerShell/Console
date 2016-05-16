@@ -17,6 +17,36 @@ content-length: 1
 
 1
 ----field----
+field: {6D22BCCE-2799-4324-B0D9-C44DF5EFFAF3}
+name: Description
+key: description
+content-length: 66
+
+Provides the following unit tests for SPE:
+- Security
+- Sessions
+----field----
+field: {9911A28E-2120-4AB0-9113-5BAE386769C1}
+name: Module Version
+key: module version
+content-length: 3
+
+1.0
+----field----
+field: {53996CFF-BB46-498C-AE54-5D8C6AA7B6A4}
+name: Author
+key: author
+content-length: 8
+
+Team SPE
+----field----
+field: {E1D6475E-58E6-4A11-8BEA-2E58B6F834F6}
+name: Published by
+key: published by
+content-length: 12
+
+Michael West
+----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
 key: __icon
@@ -26,7 +56,7 @@ Software/32x32/jar_bean.png
 ----version----
 language: en
 version: 1
-revision: 31a566ad-6ce8-42c8-9e25-5f971b6492d6
+revision: da6f4e69-4f82-475a-a784-082a96d1cf08
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -41,14 +71,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-31a566ad-6ce8-42c8-9e25-5f971b6492d6
+da6f4e69-4f82-475a-a784-082a96d1cf08
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20160328T011327Z
+20160516T005720Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
