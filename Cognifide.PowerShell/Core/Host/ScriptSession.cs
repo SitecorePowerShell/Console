@@ -77,13 +77,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         static ScriptSession()
         {
-            var typeAccelerators = typeof(PSObject).Assembly.GetType("System.Management.Automation.TypeAccelerators");
-            MethodInfo mi = typeAccelerators.GetMethod("Add", BindingFlags.Public | BindingFlags.Static);
-
-            foreach (var accelerator in TypeAccelerators.Accelerators)
-            {
-                mi.Invoke(null, new object[] { accelerator.Key, accelerator.Value });
-            }
+            TypeAccelerators.AddSitecoreAccelerators();
         }
 
         internal ScriptSession(string applianceType, bool personalizedSettings)

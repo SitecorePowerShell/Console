@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Cognifide.PowerShell.Commandlets;
+using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 
@@ -18,12 +19,15 @@ namespace Cognifide.PowerShell.Core.Host
 
         private static readonly string[] dbNames =
             Factory.GetDatabaseNames().ToList().ConvertAll(db => db.ToLower()).ToArray();
+
         private static Regex staticFuncRegex = new Regex(@"^\[(?<class>[\w\.]*)\]::(?<method>\w*)\(");
         private static Regex variableFuncRegex = new Regex(@"^(?<expression>\$[\w\.]*)\.(?<method>\w*)\(");
         private static Regex variableRegex = new Regex(@"^(?<variable>\$[\w]*)");
         private static Regex staticExpressionRegex = new Regex(@"^(?<expression>[\[\w\.\:\]]*)\.(?<method>\w*)\(");
         public static char[] wrapChars = {' ', '$', '(', ')', '{', '}', '%', '@', '|'};
-        const string TabExpansionHelper = @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn , $options){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
+
+        const string TabExpansionHelper =
+            @"function ScPsTabExpansionHelper( [string] $inputScript, [int]$cursorColumn , $options){ TabExpansion2 $inputScript $cursorColumn -Options $options |% { $_.CompletionMatches } |% { ""$($_.ResultType)|$($_.CompletionText)"" } }";
 
         private static Hashtable options;
 
@@ -65,7 +69,17 @@ namespace Cognifide.PowerShell.Core.Host
                     var matches = staticFuncRegex.Matches(lastToken);
                     var className = matches[0].Groups["class"].Value;
                     var methodName = matches[0].Groups["method"].Value;
-                    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+
+                    const BindingFlags bindingFlags =
+                        BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+
+                    // look in acceelerators first
+                    if (!className.Contains('.') && TypeAccelerators.AllAccelerators.ContainsKey(className))
+                    {
+                        return GetMethodSignatures(TypeAccelerators.AllAccelerators[className], methodName, bindingFlags, truncatedLength);
+                    }
+
+                    // check the loaded assemblies
                     foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
                     {
                         try
@@ -123,7 +137,7 @@ namespace Cognifide.PowerShell.Core.Host
                     {
                         var varName = variableRegex.Matches(lastToken)[0].Value;
                         var message = $"Variable {varName} not found in session. Execute script first.";
-                        return new List<string> {$"Signature|{message}|{truncatedLength}|{message}" };
+                        return new List<string> {$"Signature|{message}|{truncatedLength}|{message}"};
                     }
                     if (objectType != null)
                     {
@@ -181,26 +195,26 @@ namespace Cognifide.PowerShell.Core.Host
 
                 return signatures.ToArray();
             }
-            return new List<string> {$"Signature|<no parameters>|{truncatedLength}|<no parameters>" };
+            return new List<string> {$"Signature|<no parameters>|{truncatedLength}|<no parameters>"};
         }
 
         private static string GetSignature(MethodInfo mi, int position)
         {
             var param1 = mi.GetParameters()
-                          .Select(p => $"[{p.ParameterType.FullName}] ${p.Name}")
-                          .ToArray();
+                .Select(p => $"[{p.ParameterType.FullName}] ${p.Name}")
+                .ToArray();
             var param2 = mi.GetParameters()
-                          .Select(p => $"[{p.ParameterType.Name}] ${p.Name}")
-                          .ToArray();
+                .Select(p => $"[{p.ParameterType.Name}] ${p.Name}")
+                .ToArray();
             if (param1.Length == 0)
             {
                 return $"<no parameters>|{position}|<no parameters>";
             }
             //var signature = $"[{mi.ReturnType.Name}] {mi.Name}({string.Join(",", param)})";
-            var signature = string.Join(", ", param2) + $"|{position}|"+ string.Join(", ", param1);
+            var signature = string.Join(", ", param2) + $"|{position}|" + string.Join(", ", param1);
 
             return signature;
-        }    
+        }
 
         private static IEnumerable<string> CompleteTypes(string completeToken, int position)
         {
@@ -208,13 +222,13 @@ namespace Cognifide.PowerShell.Core.Host
             completeToken = completeToken.Trim('[', ']');
             var lastDotPosition = completeToken.LastIndexOf('.');
             var hasdot = lastDotPosition > -1;
-            var endsWithDot = completeToken.Length == lastDotPosition-1;
+            var endsWithDot = completeToken.Length == lastDotPosition - 1;
             WildcardPattern nameWildcard;
             WildcardPattern fullWildcard;
             if (hasdot)
             {
                 var namespaceToken = completeToken.Substring(0, lastDotPosition);
-                var nameToken = completeToken.Substring(lastDotPosition+1);
+                var nameToken = completeToken.Substring(lastDotPosition + 1);
                 if (endsWithDot)
                 {
                     nameWildcard = BaseCommand.GetWildcardPattern("*");
@@ -230,7 +244,16 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 nameWildcard = BaseCommand.GetWildcardPattern($"{completeToken}*");
                 fullWildcard = BaseCommand.GetWildcardPattern($"{completeToken}.*");
+
+                //autocomplete accelerators
+                var accelerators = TypeAccelerators.AllAccelerators;
+                results.AddRange(
+                    accelerators.Keys
+                        .Where(acc => (nameWildcard.IsMatch(acc)))
+                        .Select(
+                            type => $"Type|{type} (Accelerator -> {accelerators[type].FullName})|{position}|{type}"));
             }
+
             foreach (var assembly in System.AppDomain.CurrentDomain.GetAssemblies())
             {
                 try
@@ -249,7 +272,7 @@ namespace Cognifide.PowerShell.Core.Host
                         results.AddRange(
                             assembly.GetExportedTypes()
                                 .Where(type => (nameWildcard.IsMatch(type.Name) ||
-                                               fullWildcard.IsMatch(type.Namespace)) &&
+                                                fullWildcard.IsMatch(type.Namespace)) &&
                                                !type.Name.Contains('`'))
                                 .Select(type => $"Type|{type.Name} ({type.Namespace})|{position}|{type.FullName}"));
                     }
@@ -433,7 +456,7 @@ namespace Cognifide.PowerShell.Core.Host
                 var colonIndex = path.IndexOf(':');
                 if (colonIndex > 0)
                 {
-                    var db = path.Substring(0,colonIndex).ToLower();
+                    var db = path.Substring(0, colonIndex).ToLower();
                     return dbNames.Contains(db);
                 }
             }
