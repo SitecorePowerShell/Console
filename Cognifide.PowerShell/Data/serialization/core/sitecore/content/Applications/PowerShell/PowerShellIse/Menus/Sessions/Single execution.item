@@ -2,9 +2,9 @@
 version: 1
 id: {BA5B0AF4-AAA1-46D6-9CB6-C53A77F05EAA}
 database: core
-path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/One-time session
+path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Sessions/Single execution
 parent: {92BA4FF7-D42C-462B-9C6A-194FF9DA3DD3}
-name: One-time session
+name: Single execution
 master: {00000000-0000-0000-0000-000000000000}
 template: {998B965E-6AB8-4568-810F-8101D60D0CC3}
 templatekey: Menu item
@@ -33,15 +33,15 @@ Office/32x32/selection_delete.png
 ----version----
 language: en
 version: 1
-revision: 42679124-cd77-4c1d-bc66-85785dae8d0d
+revision: f2a2885b-d56f-46e1-bdb6-206ceaedaea5
 
 ----field----
 field: {9B72A62B-2775-423D-B17A-EC34A9F31AF8}
 name: Display name
 key: display name
-content-length: 16
+content-length: 38
 
-One-time session
+Dispose session after script execution
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-42679124-cd77-4c1d-bc66-85785dae8d0d
+f2a2885b-d56f-46e1-bdb6-206ceaedaea5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150127T234727:635579992479361797
+20160518T161838
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

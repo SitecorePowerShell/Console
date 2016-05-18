@@ -759,13 +759,13 @@ namespace Cognifide.PowerShell.Client.Applications
                     !string.IsNullOrEmpty(item[ScriptItemFieldNames.PersistentSessionId])
                         ? item[ScriptItemFieldNames.PersistentSessionId]
                         : null;
-                sessionName = string.Format("Script defined: {0}", name ?? "One-time session");
+                sessionName = string.Format("Script defined: {0}", name ?? "Single execution");
                 persistentSessionId = name ?? string.Empty;
             }
 
             ribbon.CommandContext.Parameters["persistentSessionId"] = persistentSessionId;
             ribbon.CommandContext.Parameters["currentSessionName"] = string.IsNullOrEmpty(sessionName)
-                ? "One-time session"
+                ? "Single execution"
                 : (sessionName == DefaultSessionName)
                     ? Factory.GetDatabase("core")
                         .GetItem(
