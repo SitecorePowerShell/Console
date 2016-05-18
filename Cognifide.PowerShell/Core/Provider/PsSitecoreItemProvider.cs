@@ -258,7 +258,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
             {
-                var id = dic[IdParam].Value.ToString();
+                var idParam = dic[IdParam].Value.ToString();
                 Database database;
                 if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
                 {
@@ -268,10 +268,14 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     database = Factory.GetDatabase(PSDriveInfo.Name);
                 }
-                var itemById = database.GetItem(new ID(id));
-                foreach (var resultItem in GetMatchingItem(language, version, itemById))
+                foreach (var id in idParam.Split('|'))
                 {
-                    yield return resultItem;
+
+                    var itemById = database.GetItem(new ID(id));
+                    foreach (var resultItem in GetMatchingItem(language, version, itemById))
+                    {
+                        yield return resultItem;
+                    }
                 }
                 yield break;
             }
