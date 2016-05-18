@@ -193,8 +193,8 @@
                     var hintParts = hint.split("|");
                     if (hintParts[0] === "Type") {
                         return "[" + hintParts[3];
-                    }
-                    return hintParts[0];
+                    }                    
+                    return hint;
                 });
             });
         if (!!console) {

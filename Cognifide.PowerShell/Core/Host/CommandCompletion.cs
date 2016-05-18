@@ -423,7 +423,7 @@ namespace Cognifide.PowerShell.Core.Host
                         return
                             $"{truncatedCommand}{truncatedCommandTail}{(content.StartsWith("& '") ? content.Substring(2) : content)}";
                 }
-            }).Select(p => $"{p}|{truncPosition}"));
+            }).Select(p => aceResponse ? $"{p}|{truncPosition}" : p));
         }
 
         private static bool IsSitecoreItem(string path)
