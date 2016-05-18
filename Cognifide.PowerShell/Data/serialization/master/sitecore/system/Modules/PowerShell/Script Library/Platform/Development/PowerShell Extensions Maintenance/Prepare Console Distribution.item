@@ -13,12 +13,12 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 10169
+content-length: 9834
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
 
-if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
   $sitecore7Warning = ""
 } else {
   (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowChrome"    
@@ -85,7 +85,7 @@ $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSour
 $package.Sources.Add($source);
 
 # Rules engine taxonomy templates for Sitecore 7.0 that misses it
-if(-not [Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+if([SitecoreVersion]::Current -lt [SitecoreVersion]::V80){
   $source = Get-Item 'master:\templates\System\Rules\Taxonomy' | New-ItemSource -Name 'Rules Engine Taxonomy' -InstallMode Skip -SkipVersions
   $package.Sources.Add($source);
   Write-Host "Adding rules engine taxonomy templates" -ForegroundColor Green
@@ -163,7 +163,7 @@ $source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Def
 $package.Sources.Add($source);
 
 # LaunchPad
-if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
 $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell ISE' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
 $package.Sources.Add($source);
 }
@@ -210,7 +210,7 @@ if(Test-Path -Path $remotingSourcePath) {
 ----version----
 language: en
 version: 1
-revision: f03bd3ae-fd1b-4ebd-846c-9995f1eff9b5
+revision: 555b65dc-0714-42e4-9039-9c82fa9bad79
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -225,14 +225,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f03bd3ae-fd1b-4ebd-846c-9995f1eff9b5
+555b65dc-0714-42e4-9039-9c82fa9bad79
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160511T035121Z
+20160518T123000
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
