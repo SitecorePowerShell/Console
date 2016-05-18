@@ -366,8 +366,8 @@ namespace Cognifide.PowerShell.Client.Applications
             if (isSitecore8)
             {
                 PsProgressStatus.Text = showStatus
-                ? string.Format("<span class='status'>{0}</span><br/>", status)
-                : "<span class='status'> </span><br/>";
+                ? $"<span class='status'>{status}   </span><br/>"
+                    : "<span class='status'> </span><br/>";
             }
             else
             {

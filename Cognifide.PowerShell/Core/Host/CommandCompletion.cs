@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.Core.Host
         public static IEnumerable<string> FindMatches3(ScriptSession session, string command, bool aceResponse)
         {
             string lastToken;
-            command = command.Trim();
+            //command = command.Trim();
             var truncatedCommand = TruncatedCommand3(session, command, out lastToken) ?? string.Empty;
             var truncatedLength = truncatedCommand.Length;
             var options = Completers;

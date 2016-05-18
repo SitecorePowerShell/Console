@@ -172,7 +172,7 @@ namespace Cognifide.PowerShell.Console.Services
                     }
 
                     var defaultProps = new List<string>();
-                    if (debugVariable is PSObject)
+                    if (debugVariable is PSObject && !session.IsRunning)
                     {
                         var script =
                             $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
