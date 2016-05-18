@@ -21,6 +21,8 @@ namespace Cognifide.PowerShell.Core.Settings
             {"User", typeof(User)},
             {"Role", typeof(Role)},
             {"AccessRule", typeof(AccessRule)},
+            {"SitecoreVersion", typeof(Cognifide.PowerShell.Core.VersionDecoupling.SitecoreVersion)},
+            {"CurrentSitecoreVersion", typeof(Cognifide.PowerShell.Core.VersionDecoupling.CurrentVersion)},
         };
     }
 }

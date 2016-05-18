@@ -13,13 +13,14 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1200
+content-length: 1093
 
 <#
     This script fixes the SPE specific rules for Sitecore 7.0 and earlier.
 #>
 
-if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual( [Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion71)){
+
+if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V71)){
     Show-Alert "This script should never be run on Sitecore 7.1 or later"
     exit;
 }
@@ -44,7 +45,7 @@ Write-Host "If no errors are showing above this line - your rules have now been 
 ----version----
 language: en
 version: 1
-revision: fd745e00-5116-426d-a090-3d7577301032
+revision: b864b62c-1c85-4239-8367-935e48155d72
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -59,14 +60,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fd745e00-5116-426d-a090-3d7577301032
+b864b62c-1c85-4239-8367-935e48155d72
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150609T213954:635694827946025391
+20160518T123305
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

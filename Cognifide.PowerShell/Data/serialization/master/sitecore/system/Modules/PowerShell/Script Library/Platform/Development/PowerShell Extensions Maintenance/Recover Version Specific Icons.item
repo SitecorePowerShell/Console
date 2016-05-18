@@ -13,8 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 11697
-
+content-length: 11587
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -114,7 +113,7 @@ foreach($path in ($icons8.Keys |sort)){
 Write-Host "}"
 exit#>
 
-if([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::IsVersionHigherOrEqual([Cognifide.PowerShell.Core.VersionDecoupling.VersionResolver]::SitecoreVersion80)){
+if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
   $icons = $icons8
   (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowHeaderlessChrome"
 } else {
@@ -141,7 +140,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: f30344cb-d399-498d-80f6-829e9dae9a15
+revision: 4361011b-9cf2-4f30-acaf-f52f8645b326
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -156,14 +155,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f30344cb-d399-498d-80f6-829e9dae9a15
+4361011b-9cf2-4f30-acaf-f52f8645b326
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160131T162206
+20160518T123345
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
