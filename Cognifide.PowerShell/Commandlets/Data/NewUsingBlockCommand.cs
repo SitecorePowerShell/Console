@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     WriteObject(ScriptBlock.Invoke());
                 }
             }
-            catch
+            finally
             {
                 InputObject?.Dispose();
             }
