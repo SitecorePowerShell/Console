@@ -27,8 +27,14 @@ namespace Cognifide.PowerShell.Core.Debugging
         /// </summary>
         public const string DollarPrefix = "$";
 
+        /// <summary>
+        /// Maximum number of results returned in a tooltip
+        /// </summary>
+        public static readonly int MaxArrayParseSize = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.VariableDetails.MaxArrayParseSize", 20);
+
         private object valueObject;
         private VariableDetails[] cachedChildren;
+        public bool MaxArrayParseSizeExceeded { get; private set; }
 
         #endregion
 
@@ -92,7 +98,9 @@ namespace Cognifide.PowerShell.Core.Debugging
                 if (cachedChildren == null)
                 {
                     bool isEnumerable;
-                    cachedChildren = GetChildren(valueObject, out isEnumerable);
+                    bool maxArrayParseSizeExceeded;
+                    cachedChildren = GetChildren(valueObject, out isEnumerable, out maxArrayParseSizeExceeded);
+                    MaxArrayParseSizeExceeded = maxArrayParseSizeExceeded;
                     ShowDotNetProperties = !isEnumerable;
                 }
 
@@ -225,10 +233,11 @@ namespace Cognifide.PowerShell.Core.Debugging
             return result;
         }
 
-        private static VariableDetails[] GetChildren(object obj, out bool isEnumerable)
+        private static VariableDetails[] GetChildren(object obj, out bool isEnumerable, out bool maxArrayParseSizeExceeded)
         {
             List<VariableDetails> childVariables = new List<VariableDetails>();
             isEnumerable = false;
+            maxArrayParseSizeExceeded = false;
 
             if (obj == null)
             {
@@ -280,6 +289,11 @@ namespace Cognifide.PowerShell.Core.Debugging
                         int i = 0;
                         foreach (DictionaryEntry entry in dictionary)
                         {
+                            if (childVariables.Count > MaxArrayParseSize)
+                            {
+                                maxArrayParseSizeExceeded = true;
+                                break;
+                            }
                             childVariables.Add(
                                 new VariableDetails(
                                     "[" + entry.Key + "]",
@@ -292,6 +306,11 @@ namespace Cognifide.PowerShell.Core.Debugging
                         int i = 0;
                         foreach (var item in enumerable)
                         {
+                            if (childVariables.Count > MaxArrayParseSize)
+                            {
+                                maxArrayParseSizeExceeded = true;
+                                break;
+                            }
                             childVariables.Add(
                                 new VariableDetails(
                                     "[" + i++ + "]",

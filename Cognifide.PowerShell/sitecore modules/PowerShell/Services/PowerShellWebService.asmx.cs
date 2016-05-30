@@ -222,6 +222,10 @@ namespace Cognifide.PowerShell.Console.Services
                                 varValue += "}</span></span>";
                             }
                         }
+                        if (details.MaxArrayParseSizeExceeded)
+                        {
+                            varValue += $"<span class='varChild'><span class='varName'>... first {VariableDetails.MaxArrayParseSize} items shown.</span></span>";
+                        }
                     }
                     //var varValue = variable + " - "+ variable.GetType();
                     return varValue;
