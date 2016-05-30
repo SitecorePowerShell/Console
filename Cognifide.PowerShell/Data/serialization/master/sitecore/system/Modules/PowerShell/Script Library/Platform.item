@@ -43,10 +43,17 @@ key: __icon
 content-length: 27
 
 Software/32x32/jar_bean.png
+----field----
+field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
+name: __Sortorder
+key: __sortorder
+content-length: 4
+
+1850
 ----version----
 language: en
 version: 1
-revision: acb0c4f2-0655-4f9d-965b-9677cc251157
+revision: 9c172122-6717-4d92-9f69-b1f288b8063f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -61,14 +68,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-acb0c4f2-0655-4f9d-965b-9677cc251157
+9c172122-6717-4d92-9f69-b1f288b8063f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150613T214726:635698288464194871
+20160530T145519
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
