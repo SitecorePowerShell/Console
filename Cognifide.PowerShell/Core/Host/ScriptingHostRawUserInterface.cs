@@ -30,7 +30,7 @@ namespace Cognifide.PowerShell.Core.Host
         /// <summary>
         ///     A reference to the PSHost implementation.
         /// </summary>
-        public OutputBuffer Output { get; private set; }
+        internal OutputBuffer Output { get; private set; }
 
         public override ConsoleColor ForegroundColor
         {

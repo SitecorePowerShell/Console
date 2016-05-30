@@ -442,9 +442,9 @@ namespace Cognifide.PowerShell.Core.Host
             }
 
             var command = executable as Command;
-            results = command != null
-                ? InvokeInNewPowerShell(command, OutTarget.OutNone).BaseList<object>()
-                : ExecuteScriptPart(executable as string, stringOutput, true, true);
+                results = command != null
+                    ? InvokeInNewPowerShell(command, OutTarget.OutNone).BaseList<object>()
+                    : ExecuteScriptPart(executable as string, stringOutput, true, true);
             return true;
         }
 

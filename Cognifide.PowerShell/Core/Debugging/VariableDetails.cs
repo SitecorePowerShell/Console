@@ -289,7 +289,7 @@ namespace Cognifide.PowerShell.Core.Debugging
                         int i = 0;
                         foreach (DictionaryEntry entry in dictionary)
                         {
-                            if (childVariables.Count > MaxArrayParseSize)
+                            if (childVariables.Count >= MaxArrayParseSize)
                             {
                                 maxArrayParseSizeExceeded = true;
                                 break;
@@ -306,7 +306,7 @@ namespace Cognifide.PowerShell.Core.Debugging
                         int i = 0;
                         foreach (var item in enumerable)
                         {
-                            if (childVariables.Count > MaxArrayParseSize)
+                            if (childVariables.Count >= MaxArrayParseSize)
                             {
                                 maxArrayParseSizeExceeded = true;
                                 break;

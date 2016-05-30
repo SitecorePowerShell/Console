@@ -3,6 +3,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using Cognifide.PowerShell.Core.Settings;
+using Sitecore.ContentSearch.Utilities;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -10,6 +11,8 @@ namespace Cognifide.PowerShell.Core.Host
     {
         private int updatePointer = 0;
         public bool HasErrors { get; set; }
+        public bool SilenceOutput { get; set; }
+        public OutputBuffer SilencedOutput { get; private set; }
 
         public string ToHtml()
         {
@@ -104,9 +107,20 @@ namespace Cognifide.PowerShell.Core.Host
 
         public new void AddRange(IEnumerable<OutputLine> collection)
         {
-            lock (this)
+            if (SilenceOutput)
             {
-                base.AddRange(collection);                
+                if (SilencedOutput == null)
+                {
+                    SilencedOutput = new OutputBuffer();
+                }
+                SilencedOutput.AddRange(collection);
+            }
+            else
+            {
+                lock (this)
+                {
+                    base.AddRange(collection);
+                }
             }
         }
 
@@ -114,6 +128,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             updatePointer = 0;
             base.Clear();
+            SilencedOutput?.Clear();
         }
     }
 }

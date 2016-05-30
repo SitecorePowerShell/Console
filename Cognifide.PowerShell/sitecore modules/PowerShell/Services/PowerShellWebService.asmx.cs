@@ -14,6 +14,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
@@ -171,16 +172,21 @@ namespace Cognifide.PowerShell.Console.Services
                                $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
                     }
 
-                    var defaultProps = new List<string>();
-                    if (debugVariable is PSObject && !session.IsRunning)
+                    var defaultProps = new string[0];
+                    if (debugVariable is PSObject)
                     {
                         var script =
                             $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
                         List<object> results;
+                        session.Output.SilenceOutput = true;
                         if (session.TryInvokeInRunningSession(script, out results) && results != null)
                         {
-                            defaultProps = results.Cast<string>().ToList();
+                            defaultProps = session.IsRunning
+                                ? session.Output.SilencedOutput.ToString().Split('\n').Select(line => line.Trim()).ToArray()
+                                : results.Cast<string>().ToArray();
+                            session.Output.SilencedOutput?.Clear();
                         }
+                        session.Output.SilenceOutput = false;
                     }
                     var variable = debugVariable.BaseObject();
                     if (variable is PSCustomObject)
@@ -193,7 +199,11 @@ namespace Cognifide.PowerShell.Console.Services
                         $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
                     if (details.IsExpandable)
                     {
-                        foreach (var child in details.GetChildren().OrderBy(d => d.Name))
+                        // sort only if the object is not an array otherwise the indexes will get scrambled.
+                        var children = details.ShowDotNetProperties
+                            ? details.GetChildren().OrderBy(d => d.Name).ToArray()
+                            : details.GetChildren();
+                        foreach (var child in children)
                         {
                             if (!child.IsExpandable ||
                                 defaultProps.Contains(child.Name, StringComparer.OrdinalIgnoreCase) ||
