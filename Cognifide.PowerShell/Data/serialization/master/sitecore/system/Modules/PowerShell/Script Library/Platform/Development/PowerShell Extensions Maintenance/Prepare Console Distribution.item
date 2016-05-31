@@ -13,18 +13,20 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 9834
+content-length: 10040
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
 
+Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\Development\PowerShell Extensions Maintenance\Set up Runner Window Chrome"
+Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\Development\PowerShell Extensions Maintenance\Recover Version Specific Icons"
+
 if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
   $sitecore7Warning = ""
 } else {
-  (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowChrome"    
   $sitecore7Warning = @"
 ******************************************************
-If you are on Sitecore 7.0 or lower - after installing 
+If you are on Sitecore 7.0 - after installing 
 the package please run the script located under 
 the following path in your Script Library:
 
@@ -210,7 +212,7 @@ if(Test-Path -Path $remotingSourcePath) {
 ----version----
 language: en
 version: 1
-revision: 555b65dc-0714-42e4-9039-9c82fa9bad79
+revision: f8cabb55-26e5-4ac3-8f0e-2e8966d5c686
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -225,14 +227,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-555b65dc-0714-42e4-9039-9c82fa9bad79
+f8cabb55-26e5-4ac3-8f0e-2e8966d5c686
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160518T123000
+20160531T085051
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

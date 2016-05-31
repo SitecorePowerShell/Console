@@ -77,7 +77,8 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             var options = GetLoadOptions();
             var path = System.IO.Path.Combine(options.Root, database.Name);
-            if (ShouldProcess(path, string.Format("Deserializing database")))
+            options.Database = database;
+            if (ShouldProcess(path, "Deserializing database"))
             {
                 Manager.LoadTree(path, options);
             }
@@ -102,14 +103,14 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (Recurse.IsPresent)
             {
-                if (ShouldProcess(path, string.Format("Deserializing tree")))
+                if (ShouldProcess(path, "Deserializing tree"))
                 {
                     Manager.LoadTree(path, GetLoadOptions());
                 }
             }
             else
             {
-                if (ShouldProcess(path, string.Format("Deserializing item")))
+                if (ShouldProcess(path, "Deserializing item"))
                 {
                     Manager.LoadItem(path, GetLoadOptions());
                 }
@@ -131,10 +132,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                 ForceUpdate = ForceUpdate
             };
 
-            if (Root != null)
-            {
-                options.Root = Root;
-            }
+            options.Root = Root ?? PathUtils.Root;
 
             return options;
         }
