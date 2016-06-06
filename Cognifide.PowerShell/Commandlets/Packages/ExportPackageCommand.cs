@@ -39,11 +39,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     if (fileName == null)
                     {
                         //name of the zip file when not defined                        
-                        fileName = string.Format(
-                            "{0}{1}{2}.xml",
-                            Project.Metadata.PackageName,
-                            string.IsNullOrEmpty(Project.Metadata.Version) ? "" : "-",
-                            Project.Metadata.Version);
+                        fileName = $"{Project.Metadata.PackageName}{(string.IsNullOrEmpty(Project.Metadata.Version) ? "" : "-")}{Project.Metadata.Version}{Constants.SolutionExtension}";
                     }
 
                     if (!System.IO.Path.IsPathRooted(fileName))
@@ -53,7 +49,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
                     if (!System.IO.Path.HasExtension(fileName))
                     {
-                        fileName = fileName + ".xml";
+                        fileName = fileName + Constants.SolutionExtension;
                     }
 
                     if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
@@ -81,7 +77,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         if (fileName == null)
                         {
                             //name of the zip file when not defined
-                            fileName = $"{Project.Metadata.PackageName}-PS-{Project.Metadata.Version}.zip";
+                            fileName = $"{Project.Metadata.PackageName}-PS-{Project.Metadata.Version}{Constants.PackageExtension}";
                         }
 
                         if (!System.IO.Path.IsPathRooted(fileName))
@@ -91,7 +87,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
 
                         if (!System.IO.Path.HasExtension(fileName))
                         {
-                            fileName = fileName + ".zip";
+                            fileName = fileName + Constants.PackageExtension;
                         }
 
                         if (NoClobber.IsPresent && System.IO.File.Exists(fileName))

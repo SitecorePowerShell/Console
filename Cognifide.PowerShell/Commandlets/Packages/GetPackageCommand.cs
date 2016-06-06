@@ -66,7 +66,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                     {
                         foreach (var entry in reader.Entries)
                         {
-                            if (!entry.Name.Is("installer/project")) continue;
+                            if (!entry.Name.Is(Constants.ProjectKey)) continue;
 
                             packageProject = IOUtils.LoadSolution(StreamUtil.LoadString(entry.GetStream()));
                             break;

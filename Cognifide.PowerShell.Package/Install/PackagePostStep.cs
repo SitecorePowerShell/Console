@@ -7,6 +7,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Extensions.XElementExtensions;
 using Sitecore.Install.Framework;
 using Sitecore.IO;
+using Constants = Sitecore.Install.Constants;
 
 namespace Cognifide.PowerShell.Package.Install
 {
@@ -20,13 +21,13 @@ namespace Cognifide.PowerShell.Package.Install
             var xelement = ToXElement(text);
             if (xelement == null) { return; }
 
-            var items = xelement.Element("items");
+            var items = xelement.Element(Constants.ItemsPrefix);
             if (items != null)
             {
                 DeleteItems(items);
             }
 
-            var files = xelement.Element("files");
+            var files = xelement.Element(Constants.FilesPrefix);
             if (files == null) { return; }
 
             DeleteFiles(files);
@@ -55,13 +56,9 @@ namespace Cognifide.PowerShell.Package.Install
             foreach (var element in items.Elements())
             {
                 var database = Factory.GetDatabase(element.GetAttributeValue("database"));
-                if (database == null) { continue; }
 
-                var obj = database.GetItem(element.GetAttributeValue("id"));
-                if (obj != null)
-                {
-                    obj.Delete();
-                }
+                var obj = database?.GetItem(element.GetAttributeValue("id"));
+                obj?.Delete();
             }
         }
 
