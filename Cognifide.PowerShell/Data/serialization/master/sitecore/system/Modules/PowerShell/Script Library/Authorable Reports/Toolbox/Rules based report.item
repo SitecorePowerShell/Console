@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4793
+content-length: 4741
 
 Import-Function Render-ReportField
 # Set defaults
@@ -23,18 +23,19 @@ $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "
     "__Validator Bar Validation Rules", "__Skin", "__Icon", "__Enabled Views", "__Default View", "__Context Menu", "__Revision", "__Quick Actions",
     "__Display Name"
     
+$standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
 
-$standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (gi master:\).Database).GetFields() | % { $_.Name };
-
-$rule = '<ruleset>
+$rule = @"
+<ruleset>
   <rule uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}">
     <conditions>
         <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="ED10990E15EB4E1E8FCFD33F441588A1" />
     </conditions>
   </rule>
-</ruleset>'
+</ruleset>
+"@
 
-$root = Get-Item -Path (@{$true="master:\content\home\"; $false="master:\content\"}[(Test-Path -Path master:\content\home)])
+$root = Get-Item -Path (@{$true="master:\content\home"; $false="master:\content"}[(Test-Path -Path "master:\content\home")])
 $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
 $include = @("Recurse", "Root")
 
@@ -48,36 +49,39 @@ $result = Read-Variable -Parameters `
     -Title "Rules based report" -Width 600 -Height 600 -ShowHints
 
 if($result -eq "cancel"){
-    exit;
+    exit
 }
 
 $rawValues = $include.Contains("Raw")
 
 # Lookup all fields for the content used.
 
-$templateFields = Find-Item -Index sitecore_master_index -Criteria @{Filter = "DescendantOf"; Value = $root} | 
-    Initialize-Item |
-    ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
-    Select -ExpandProperty TemplateId -Unique |  
-    %{ New-Object Sitecore.Data.Items.TemplateItem (Get-Item master:\ -ID "$_") } | %{ $_.Fields } | 
-    ?{ $ignoredFields -notcontains $_.Name } | 
-    select Name, Title, Type -Unique | sort Name
+$templateFields = Find-Item -Criteria @{
+        Filter = "DescendantOf"; Value = $root
+    } -Index sitecore_master_index | Initialize-Item |
+    Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
+    Select-Object -ExpandProperty TemplateId -Unique |  
+    ForEach-Object { New-Object Sitecore.Data.Items.TemplateItem (Get-Item -Path "master:" -ID "$_") } | 
+    ForEach-Object { $_.Fields } | 
+    Where-Object { $ignoredFields -notcontains $_.Name } | 
+    Select-Object Name, Title, Type -Unique | Sort-Object Name
 
 if($templateFields.Count -eq 0){
     Show-Alert "No Items matching your rule!"
-    Exit
+    exit
 } 
 
-$stdOptions = New-Object System.Collections.Specialized.OrderedDictionary
-$stdOptions["Name"] = "Name"
-$stdOptions["Display Name"] = "DisplayName"
-$stdOptions["PowerShell Path"] = "ProviderPath"
-$stdOptions["Template"] = "TemplateName"
+$stdOptions = [ordered]@{
+    "Name" = "Name"
+    "Display Name" = "DisplayName"
+    "PowerShell Path" = "ProviderPath"
+    "Template" = "TemplateName"
+}
 
-$customOptions = New-Object System.Collections.Specialized.OrderedDictionary
+$customOptions = [ordered]@{}
 
-$stdFields = @("DisplayName", "TemplateName");
-$customFields = @();
+$stdFields = @("DisplayName", "TemplateName")
+$customFields = @()
 
 foreach($field in $templateFields){
     $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
@@ -89,7 +93,7 @@ foreach($field in $templateFields){
     }
 }
 
-$titles = New-Object System.Collections.Specialized.OrderedDictionary
+$titles = [ordered]@{}
 
 foreach($field in $stdOptions.Keys){
     $titles[$stdOptions[$field]] = $field
@@ -105,11 +109,11 @@ $result = Read-Variable -Parameters `
     -Title "Report fields" -Width 600 -Height 740
 
 if($result -eq "cancel"){
-    exit;
+    exit
 }
 
-$properties = @();
-$fields = $stdFields + $fields;
+$properties = @()
+$fields = $stdFields + $fields
 
 foreach($field in $fields){
     $scr = [scriptblock]::Create('Render-ItemField $_ "' + $field + '"')
@@ -121,7 +125,7 @@ $items = Get-ChildItem $root.ProviderPath -Recurse:$include.Contains("Recurse")
 if($include.Contains("Root")){
     $items = @($root) + $items
 }
-$items = $items | ? { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+$items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
 
 $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData
 
@@ -137,7 +141,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 5cd07ede-dfbf-446c-92b4-2f6aa40da0fc
+revision: 49561bfd-5aa2-4b70-90df-6c8cafb64c28
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -152,14 +156,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5cd07ede-dfbf-446c-92b4-2f6aa40da0fc
+49561bfd-5aa2-4b70-90df-6c8cafb64c28
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20150803T115223
+20160518T220625Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
