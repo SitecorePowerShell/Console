@@ -12,6 +12,7 @@ namespace Cognifide.PowerShell.Commandlets
         [AutocompleteSet("Indexes")]
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "Item")]
+        [ValidateNotNullOrEmpty]
         public string Name { get; set; }
     }
 }

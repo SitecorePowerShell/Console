@@ -8,12 +8,29 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [OutputType(typeof(ISearchIndex))]
     public class StopSearchIndexCommand : BaseIndexCommand
     {
+        [Parameter(ParameterSetName = "Index", Mandatory = true, ValueFromPipeline = true)]
+        [ValidateNotNull]
+        public ISearchIndex Index { get; set; }
+
         protected override void ProcessRecord()
         {
-            if (Name == null) return;
+            ISearchIndex searchIndex;
 
-            WriteVerbose($"Stopping index {Name}.");
-            ContentSearchManager.GetIndex(Name).StopIndexing();
+            if (Index != null)
+            {
+                searchIndex = Index;
+            }
+            else if (!String.IsNullOrEmpty(Name))
+            {
+                searchIndex = ContentSearchManager.GetIndex(Name);
+            }
+            else
+            {
+                return;
+            }
+
+            WriteVerbose($"Stopping index {searchIndex.Name}.");
+            searchIndex.StopIndexing();
         }
     }
 }
