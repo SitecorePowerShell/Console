@@ -431,7 +431,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                var transferOptions = TransferOptions.ChangeID;
+                var transferOptions = TransferOptions.ChangeId;
                 if (dic != null && dic[TransferOptionsParam].IsSet)
                 {
                     transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
@@ -451,7 +451,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 });
 
                 var transferedItem = destinationItem.PasteItem(outerXml,
-                    transferOptions.HasFlag(TransferOptions.ChangeID),
+                    transferOptions.HasFlag(TransferOptions.ChangeId),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
                 Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
                 LogUtils.Audit(this, "Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),

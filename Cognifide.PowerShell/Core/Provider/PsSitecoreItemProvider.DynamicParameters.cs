@@ -16,7 +16,8 @@ namespace Cognifide.PowerShell.Core.Provider
         [Flags]
         public enum TransferOptions
         {
-            ChangeID = 1,
+            None = 0,
+            ChangeId = 1,
             AllowDefaultValues = 2,
             AllowStandardValues = 4
         }
