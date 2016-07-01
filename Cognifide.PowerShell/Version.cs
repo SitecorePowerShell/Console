@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cognifide Limited")]
 [assembly: AssemblyProduct("Sitecore PowerShell Extensions")]
-[assembly: AssemblyCopyright("© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved.")]
+[assembly: AssemblyCopyright("© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
