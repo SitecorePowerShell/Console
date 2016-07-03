@@ -2,9 +2,9 @@
 version: 1
 id: {96341FC3-DA36-4490-9396-EE338378BFD5}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Rules based report
+path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Rules Based Report
 parent: {B85E2336-26AB-47A7-B2BF-91CDE1A7E3BA}
-name: Rules based report
+name: Rules Based Report
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4741
+content-length: 4736
 
 Import-Function Render-ReportField
 # Set defaults
@@ -45,8 +45,8 @@ $result = Read-Variable -Parameters `
     @{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
     @{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."}, `
     @{Name="include"; title="Additional Options"; editor="checklist"; Options=$includes} `
-    -Description "This dialog shows editor parameters used in determining which items to include in the report." `
-    -Title "Rules based report" -Width 600 -Height 600 -ShowHints
+    -Description "Choose the starting location and filtering criteria for the report." `
+    -Title "Rules Based Report" -Width 600 -Height 600 -ShowHints
 
 if($result -eq "cancel"){
     exit
@@ -105,8 +105,8 @@ foreach($field in $customOptions.Keys){
 $result = Read-Variable -Parameters `
     @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
     @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"} `
-    -Description "This dialog shows fields to be displayed in the report." `
-    -Title "Report fields" -Width 600 -Height 740
+    -Description "Choose the fields to include in the report." `
+    -Title "Rules Based Report" -Width 600 -Height 740
 
 if($result -eq "cancel"){
     exit
@@ -127,7 +127,7 @@ if($include.Contains("Root")){
 }
 $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
 
-$items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData
+$items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title "Rules Based Report"
 
 Close-Window
 
@@ -141,7 +141,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 49561bfd-5aa2-4b70-90df-6c8cafb64c28
+revision: 5bb8d6d2-0f79-4015-a49d-5d3977483617
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -156,14 +156,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-49561bfd-5aa2-4b70-90df-6c8cafb64c28
+5bb8d6d2-0f79-4015-a49d-5d3977483617
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20160518T220625Z
+20160703T224459Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

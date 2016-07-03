@@ -13,10 +13,10 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 362
+content-length: 397
 
 Get-Session |
-    Show-ListView -Property @{Label="User"; Expression={ $_.UserName} },
+    Show-ListView -Title "Logged in Session Manager" -Property @{Label="User"; Expression={ $_.UserName} },
         @{Label="Logged In"; Expression={ $_.Created } },
         @{Label="Last Activity"; Expression={ $_.LastRequest} },
         @{Label="Session ID"; Expression={ $_.SessionID} },
@@ -32,7 +32,7 @@ People/16x16/users_into.png
 ----version----
 language: en
 version: 1
-revision: 4fe6ae4e-5733-4140-8e95-5035cef26387
+revision: d8dcbabc-b482-4696-a185-3b373a8a5dae
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -47,14 +47,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4fe6ae4e-5733-4140-8e95-5035cef26387
+d8dcbabc-b482-4696-a185-3b373a8a5dae
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20141126T030645:635525680053601875
+20160703T225229Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

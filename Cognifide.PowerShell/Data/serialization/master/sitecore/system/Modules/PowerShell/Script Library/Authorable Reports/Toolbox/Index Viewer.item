@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4496
+content-length: 4499
 
 Import-Function Render-ReportField
 Close-Window
@@ -29,8 +29,8 @@ $props = @{
     Parameters = @(
         @{Name="index"; Title="Choose the report index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
     )
-    Title = "Index Viewer Report"
-    Description = "Choose the criteria for the report."
+    Title = "Index Viewer"
+    Description = "Choose the filtering criteria for the report."
     Width = 450
     Height = 300
     ShowHints = $true
@@ -154,7 +154,7 @@ Office/32x32/index2.png
 ----version----
 language: en
 version: 1
-revision: a431d078-be91-460d-83c7-fee80ce73d81
+revision: 62d286b4-5d19-412a-8998-23a7dff2ce23
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -169,14 +169,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a431d078-be91-460d-83c7-fee80ce73d81
+62d286b4-5d19-412a-8998-23a7dff2ce23
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20150730T210803:635738872838115190
+20160703T222603Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
