@@ -1,0 +1,57 @@
+----item----
+version: 1
+id: {4FC0532A-7B62-441D-A863-66F7E6496080}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Functions/Get-ReportRule
+parent: {90B71926-6FC4-41E1-BFDB-828D6F9E243B}
+name: Get-ReportRule
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 169
+
+function Get-ReportRule {
+    param(
+        [Sitecore.Data.ID]$ID
+    )
+    Get-Item -Path "master:" -ID $ID | 
+        Select-Object -ExpandProperty FilterRule
+}
+----version----
+language: en
+version: 1
+revision: d51beb49-0d5e-435a-982d-54e1cc95fc5c
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160704T020734Z
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+d51beb49-0d5e-435a-982d-54e1cc95fc5c
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160704T021150Z
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

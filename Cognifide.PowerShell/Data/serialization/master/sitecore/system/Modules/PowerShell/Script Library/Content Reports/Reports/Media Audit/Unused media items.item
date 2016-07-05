@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1342
+content-length: 1368
 
 <#
     .SYNOPSIS
@@ -47,9 +47,10 @@ if($items.Count -eq 0) {
     Show-Alert "There are no unused media items"
 } else {
     $props = @{
-        InfoTitle = "Unused media items"
+        InfoTitle = $PSScript.Name
         InfoDescription = "Lists all media items that are not linked from other items."
         PageSize = 25
+        Title = $PSScript.Name
     }
     
     $items |
@@ -71,7 +72,7 @@ Network/16x16/link_delete.png
 ----version----
 language: en
 version: 1
-revision: 47aee562-f2ff-4a91-a0c0-d56cbd0e3c95
+revision: 05af3579-a0ab-4e1c-9ee1-9c5499863736
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -86,14 +87,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-47aee562-f2ff-4a91-a0c0-d56cbd0e3c95
+05af3579-a0ab-4e1c-9ee1-9c5499863736
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20140408T090913:635325449535880082
+20160704T003309Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

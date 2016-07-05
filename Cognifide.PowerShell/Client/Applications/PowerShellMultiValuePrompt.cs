@@ -271,7 +271,8 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!string.IsNullOrEmpty(editor) &&
                 (editor.IndexOf("treelist", StringComparison.OrdinalIgnoreCase) > -1 ||
                  (editor.IndexOf("multilist", StringComparison.OrdinalIgnoreCase) > -1) ||
-                 (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)))
+                 (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1) ||
+                 (editor.IndexOf("droptree", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 Item item = null;
                 var strValue = string.Empty;
@@ -295,7 +296,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Value = strValue,
                         Database = dbName,
-                        ItemID = "{11111111-1111-1111-1111-111111111111}",
+                        ItemID = ItemIDs.RootID.ToString(),
                         Source = variable["Source"] as string ?? "/sitecore",
                     };
                     multiList.SetLanguage(Sitecore.Context.Language.Name);
@@ -310,13 +311,28 @@ namespace Cognifide.PowerShell.Client.Applications
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                         Database = dbName,
-                        ItemID = (item != null ? item.ID.ToString() : "{11111111-1111-1111-1111-111111111111}"),
+                        ItemID = item?.ID.ToString() ?? ItemIDs.RootID.ToString(),
                         Source = variable["Source"] as string ?? "/sitecore",
                         ItemLanguage = Sitecore.Context.Language.Name,
-                        Value = (item != null ? item.ID.ToString() : "{11111111-1111-1111-1111-111111111111}")
+                        Value = item?.ID.ToString() ?? ItemIDs.RootID.ToString()
                     };
                     lookup.Class += " textEdit";
                     return lookup;
+                }
+
+                if (editor.IndexOf("droptree", StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    var tree = new Tree
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Database = dbName,
+                        ItemID = item?.ID.ToString() ?? ItemIDs.Null.ToString(),
+                        Source = variable["Source"] as string ?? "",
+                        ItemLanguage = Sitecore.Context.Language.Name,
+                        Value = item?.ID.ToString() ?? ""
+                    };
+                    tree.Class += " textEdit";
+                    return tree;
                 }
                 var treeList = new TreeList
                 {
@@ -493,7 +509,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         {
                             ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                             HeaderStyle = "margin-top:20px; display:inline-block;",
-                            ItemID = "{11111111-1111-1111-1111-111111111111}"
+                            ItemID = ItemIDs.RootID.ToString()
                         };
                         checkList.SetItemLanguage(Sitecore.Context.Language.Name);
                         string[] values;

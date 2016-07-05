@@ -13,9 +13,10 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4736
+content-length: 5159
 
-Import-Function Render-ReportField
+Import-Function -Name Render-ReportField
+Import-Function -Name Get-ReportRule
 # Set defaults
 
 $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
@@ -25,33 +26,36 @@ $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "
     
 $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
 
-$rule = @"
-<ruleset>
-  <rule uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}">
-    <conditions>
-        <condition id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}" uid="ED10990E15EB4E1E8FCFD33F441588A1" />
-    </conditions>
-  </rule>
-</ruleset>
-"@
-
-$root = Get-Item -Path (@{$true="master:\content\home"; $false="master:\content"}[(Test-Path -Path "master:\content\home")])
+$dialogTitle = "Rules Based Report"
+$ruleItems = Get-ChildItem -Path "master:" -ID "{150D9F3E-1782-4439-A0DC-532426428BC5}"
+$ruleOptions = [ordered]@{}
+for($i = 0; $i -lt $ruleItems.Count; $i++) {
+    $ruleItem = $ruleItems[$i]
+    $ruleOptions[$ruleItem.Name] = $i
+}
+$ruleIndex = 0
 $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
 $include = @("Recurse", "Root")
 
-# Setup the report parameters with user
-
+$rootOverride = ""
 $result = Read-Variable -Parameters `
-    @{Name="root"; title="Items under"; Tooltip="Items under the selected item will be considered for evaluation"}, `
-    @{Name="rule"; Editor="rule"; title="Filter rules"; Tooltip="Only items conforming to this rule will be displayed."}, `
-    @{Name="include"; title="Additional Options"; editor="checklist"; Options=$includes} `
+    @{Name="ruleIndex"; Title="Filter rules"; Options=$ruleOptions; Tooltip="Only items conforming to this rule will be returned."}, `
+    @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
+    @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
     -Description "Choose the starting location and filtering criteria for the report." `
-    -Title "Rules Based Report" -Width 600 -Height 600 -ShowHints
+    -Title $dialogTitle -Width 600 -Height 600 -ShowHints
 
 if($result -eq "cancel"){
+    Close-Window
     exit
 }
 
+$rootItemId = @{$true=$ruleItems[$ruleIndex].RootItem; $false="master:\content"}[(Test-Path -Path "master:\$($ruleItems[$ruleIndex].RootItem)")]
+$root = Get-Item -Path "master:" -ID $rootItemId
+if($rootOverride) {
+    $root = $rootOverride
+}
+$rule = Get-ReportRule -ID ($ruleItems[$ruleIndex].ID) 
 $rawValues = $include.Contains("Raw")
 
 # Lookup all fields for the content used.
@@ -68,6 +72,7 @@ $templateFields = Find-Item -Criteria @{
 
 if($templateFields.Count -eq 0){
     Show-Alert "No Items matching your rule!"
+    Close-Window
     exit
 } 
 
@@ -106,9 +111,10 @@ $result = Read-Variable -Parameters `
     @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
     @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"} `
     -Description "Choose the fields to include in the report." `
-    -Title "Rules Based Report" -Width 600 -Height 740
+    -Title $dialogTitle -Width 600 -Height 740
 
 if($result -eq "cancel"){
+    Close-Window
     exit
 }
 
@@ -127,10 +133,9 @@ if($include.Contains("Root")){
 }
 $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
 
-$items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title "Rules Based Report"
+$items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Filter Path: $($root.ProviderPath)"
 
 Close-Window
-
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -141,7 +146,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 5bb8d6d2-0f79-4015-a49d-5d3977483617
+revision: 72d4b296-d5e6-411c-b372-beb2d123f052
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -156,14 +161,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5bb8d6d2-0f79-4015-a49d-5d3977483617
+72d4b296-d5e6-411c-b372-beb2d123f052
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20160703T224459Z
+20160704T182013Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

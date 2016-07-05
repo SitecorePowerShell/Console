@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Utility;
@@ -71,13 +72,12 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             foreach (var item in menuItems)
             {
                 var menuItem = item as MenuItem;
-                if (menuItem != null)
-                {
-                    var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
-                        menuItem.Click,
-                        menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
-                    subItem.Disabled = menuItem.Disabled;
-                }
+                if (menuItem == null) continue;
+
+                var subItem = subMenu.Add(menuItem.ID, menuItem.Header, menuItem.Icon, menuItem.Hotkey,
+                    menuItem.Click,
+                    menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
+                subItem.Disabled = menuItem.Disabled;
             }
             SheerResponse.EnableOutput();
             subMenu.Visible = true;
@@ -107,7 +107,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 return;
             }
-            foreach (Item scriptItem in parent.Children)
+            var scriptTemplateId = new ID("{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}");
+            var scriptLibaryTemplateId = new ID("{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}");
+            foreach (var scriptItem in parent.Children.Where(p => p.TemplateID == scriptTemplateId || p.TemplateID == scriptLibaryTemplateId))
             {
                 if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], contextItem))
                 {
@@ -124,33 +126,12 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
                 if (scriptItem.IsPowerShellScript())
                 {
-                    if (contextItem != null)
-                    {
-                        menuItem.Click = string.Format("item:executescript(id={0},db={1},script={2},scriptDb={3})",
-                            contextItem.ID, contextItem.Database.Name, scriptItem.ID, scriptItem.Database.Name);
-                    }
-                    else
-                    {
-                        menuItem.Click = string.Format("item:executescript(script={0},scriptDb={1})",
-                            scriptItem.ID, scriptItem.Database.Name);
-                    }
+                    menuItem.Click = contextItem != null ? $"item:executescript(id={contextItem.ID},db={contextItem.Database.Name},script={scriptItem.ID},scriptDb={scriptItem.Database.Name})" : $"item:executescript(script={scriptItem.ID},scriptDb={scriptItem.Database.Name})";
                 }
                 else
                 {
                     menuItem.Type = MenuItemType.Submenu;
-                    if (contextItem != null)
-                    {
-                        menuItem.Click = string.Format(
-                            "item:scriptlibrary(id={0},db={1},scriptPath={2},scriptDB={3},menuItemId={4})",
-                            contextItem.ID, contextItem.Database.Name, scriptItem.Paths.Path, scriptItem.Database.Name,
-                            menuItem.ID);
-                    }
-                    else
-                    {
-                        menuItem.Click = string.Format(
-                            "item:scriptlibrary(scriptPath={0},scriptDB={1},menuItemId={2})",
-                            scriptItem.Paths.Path, scriptItem.Database.Name, menuItem.ID);
-                    }
+                    menuItem.Click = contextItem != null ? $"item:scriptlibrary(id={contextItem.ID},db={contextItem.Database.Name},scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})" : $"item:scriptlibrary(scriptPath={scriptItem.Paths.Path},scriptDB={scriptItem.Database.Name},menuItemId={menuItem.ID})";
                 }
                 menuItems.Add(menuItem);
             }

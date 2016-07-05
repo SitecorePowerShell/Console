@@ -1,33 +1,26 @@
 ----item----
 version: 1
-id: {F2E422C9-726E-4A6D-B992-71945BBE2F0A}
+id: {FAC6DF8B-6987-4EA9-BD09-F5E2997B2739}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Media Audit
-parent: {C34E89D5-7F6C-4977-967B-2E5C886C27E0}
-name: Media Audit
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Rule/Conditions
+parent: {BC29CC43-FC82-4A6C-B325-FB261DA5931B}
+name: Conditions
 master: {00000000-0000-0000-0000-000000000000}
-template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
-templatekey: PowerShell Script Library
+template: {E269FBB5-3750-427A-9149-7AA950B49301}
+templatekey: Template section
 
-----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 35
-
-Applications/32x32/folder_movie.png
 ----version----
 language: en
 version: 1
-revision: 19d36dfc-28b9-40aa-a859-161e8d22a346
+revision: 5ec0fd91-2d16-4917-a7cd-895f7111c6e2
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20140405T001154
+20160704T013111Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -41,14 +34,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-19d36dfc-28b9-40aa-a859-161e8d22a346
+5ec0fd91-2d16-4917-a7cd-895f7111c6e2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20160705T003509Z
+20160704T040947Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
