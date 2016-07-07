@@ -10,6 +10,8 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
 {
     public static class CurrentVersion
     {
+        public static Version SpeVersion => typeof(CurrentVersion).Assembly.GetName().Version;
+
         public static bool IsAtLeast(Version version)
         {
             return version <= SitecoreVersion.Current;

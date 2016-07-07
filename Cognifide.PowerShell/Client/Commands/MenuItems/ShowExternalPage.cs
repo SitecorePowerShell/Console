@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     var param =
                         context.Parameters[key]
-                            .Replace("{spe}", GetType().Assembly.GetName().Version.ToString())
+                            .Replace("{spe}", CurrentVersion.SpeVersion.ToString())
                             .Replace("{ps}", ScriptSession.PsVersion.Major + "." + ScriptSession.PsVersion.Minor)
                             .Replace("{sc}",
                                 SitecoreVersion.Current.Major + "." +

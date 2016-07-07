@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,6 +13,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -519,6 +521,8 @@ namespace Cognifide.PowerShell.Core.Host
                 proxy.SetVariable("me", UserName);
                 proxy.SetVariable("HostSettings", Settings);
                 proxy.SetVariable("ScriptSession", this);
+                var psVersionTable = proxy.GetVariable("PSVersionTable") as Hashtable;
+                psVersionTable?.Add("SPEVersion", CurrentVersion.SpeVersion);
                 var serverAuthority = HttpContext.Current?.Request?.Url?.GetLeftPart(UriPartial.Authority);
                 if (!string.IsNullOrEmpty(serverAuthority))
                 {
@@ -527,7 +531,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                 if (PsVersion == null)
                 {
-                    PsVersion = (Version)ExecuteScriptPart("$PSVersionTable.PSVersion", false, true)[0];
+                    PsVersion = (Version)psVersionTable?["PSVersion"];
                 }
 
                 ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);

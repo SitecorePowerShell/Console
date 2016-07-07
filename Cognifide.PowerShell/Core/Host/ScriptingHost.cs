@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.Core.Host
         /// </summary>
         public override string Name => ScriptSession.PsVersion == null
             ? "Sitecore PowerShell Extensions Host"
-            : $"Sitecore PowerShell Extensions Host {GetType().Assembly.GetName().Version} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {SitecoreVersion.Current.Major}.{SitecoreVersion.Current.Minor}";
+            : $"Sitecore PowerShell Extensions Host {CurrentVersion.SpeVersion} on Windows PowerShell {ScriptSession.PsVersion.Major}.{ScriptSession.PsVersion.Minor} & Sitecore {SitecoreVersion.Current.Major}.{SitecoreVersion.Current.Minor}";
 
         /// <summary>
         ///     This sample does not implement a PSHostUserInterface component so
@@ -94,7 +94,7 @@ namespace Cognifide.PowerShell.Core.Host
         ///     Return the version object for this application. Typically this
         ///     should match the version resource in the application.
         /// </summary>
-        public override Version Version => GetType().Assembly.GetName().Version;
+        public override Version Version => CurrentVersion.SpeVersion;
 
         public override PSObject PrivateData => new PSObject(privateData);
 
