@@ -13,7 +13,6 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -36,7 +35,7 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellMultiValuePrompt : DialogPage
     {
-        private static readonly Regex typeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
+        private static readonly Regex TypeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
         protected Button CancelButton;
@@ -119,7 +118,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var hint = (variable["Tip"] as string) ??
                            (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
                 var columns =  12;
-                bool clearfix = false;
+                var clearfix = false;
                 if (variable["Columns"] != null)
                 {
                     var strColumns = variable["Columns"].ToString().Split(' ');
@@ -171,11 +170,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     variableBorder.Class += " clearfix";
                 }
+
                 container.Controls.Add(variableBorder);
             }
 
-            TabOffsetValue.Text = string.Format("<script type='text/javascript'>var tabsOffset={0};</script>",
-                tabs.Count > 0 ? 24 : 0);
+            TabOffsetValue.Text = $"<script type='text/javascript'>var tabsOffset={(tabs.Count > 0 ? 24 : 0)};</script>";
         }
 
         public void tabstrip_OnChange(object sender, EventArgs e)
@@ -189,17 +188,16 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 return ValuePanel;
             }
-            if (!tabs.ContainsKey(tabName))
-            {
-                var tab = new Tab {Header = tabName, ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_")};
-                Tabstrip.Controls.Add(tab);
-                Tabstrip.Width = new Unit("100%");
-                var border = new Border();
-                tab.Controls.Add(border);
-                tabs.Add(tabName, border);
-                return border;
-            }
-            return tabs[tabName];
+
+            if (tabs.ContainsKey(tabName)) return tabs[tabName];
+
+            var tab = new Tab {Header = tabName, ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("tab_")};
+            Tabstrip.Controls.Add(tab);
+            Tabstrip.Width = new Unit("100%");
+            var border = new Border();
+            tab.Controls.Add(border);
+            tabs.Add(tabName, border);
+            return border;
         }
 
         private Control GetVariableEditor(IDictionary variable)
@@ -631,11 +629,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 var name = variable["Name"] as string;
                 if (string.IsNullOrEmpty(name)) continue;
 
-                bool mandatory = mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
+                var mandatory = mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
                 if (!mandatory) continue;
                 var title = (variable["Title"] as string)??name;
                 var value = variable["Value"];
-                var valueType = value == null ? "null" : value.GetType().Name;
+                var valueType = value?.GetType().Name ?? "null";
 
                 switch (valueType)
                 {
@@ -671,16 +669,15 @@ namespace Cognifide.PowerShell.Client.Applications
                 violatingVariables.Add(title);
             }
 
-            if (violatingVariables.Count() == 1)
+            if (violatingVariables.Count == 1)
             {
-                SheerResponse.Alert(string.Format("\"{0}\" is mandatory.", violatingVariables[0]));
+                SheerResponse.Alert($"\"{violatingVariables[0]}\" is mandatory.");
                 return;
             }
-            if (violatingVariables.Count() > 1)
+            if (violatingVariables.Count > 1)
             {
-                SheerResponse.Alert(string.Format("{0} are mandatory.",
-                    violatingVariables.Select(name => "\"" + name + "\"").Aggregate((accumulated, next) =>
-                        accumulated + ", " + next)));
+                SheerResponse.Alert(
+                    $"{violatingVariables.Select(name => "\"" + name + "\"").Aggregate((accumulated, next) => accumulated + ", " + next)} are mandatory.");
                 return;
             }
             
@@ -864,7 +861,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected string GetClrTypeName(string classNames)
         {
-            var typeMatch = typeRegex.Match(classNames);
+            var typeMatch = TypeRegex.Match(classNames);
             return typeMatch.Success ? typeMatch.Groups["type"].Value : string.Empty;
         }
 
@@ -876,8 +873,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void EditConditionClick(string id)
         {
             Assert.ArgumentNotNull(id, "id");
-            NameValueCollection parameters = new NameValueCollection();
-            parameters["id"] = id;
+            var parameters = new NameValueCollection {["id"] = id};
             Sitecore.Context.ClientPage.Start(this, "EditCondition", parameters);
         }
 

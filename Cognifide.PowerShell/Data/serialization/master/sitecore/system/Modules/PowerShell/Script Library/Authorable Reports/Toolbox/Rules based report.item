@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5159
+content-length: 5846
 
 Import-Function -Name Render-ReportField
 Import-Function -Name Get-ReportRule
@@ -27,7 +27,13 @@ $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "
 $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
 
 $dialogTitle = "Rules Based Report"
-$ruleItems = Get-ChildItem -Path "master:" -ID "{150D9F3E-1782-4439-A0DC-532426428BC5}"
+$reportRoots = [Cognifide.PowerShell.Core.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.Core.Modules.IntegrationPoints]::StartMenuReportsFeature)
+$ruleItems = @()
+$powershellRuleLibaryTemplateId = "{BC29CC43-FC82-4A6C-B325-FB261DA5931B}"
+foreach($reportRoot in $reportRoots) {
+    $ruleItems += Get-ChildItem -Path "$($reportRoot.Database):$($reportRoot.Paths.Path)" -Recurse | 
+        Where-Object { $_.TemplateId -eq $powershellRuleLibaryTemplateId }
+}
 $ruleOptions = [ordered]@{}
 for($i = 0; $i -lt $ruleItems.Count; $i++) {
     $ruleItem = $ruleItems[$i]
@@ -85,8 +91,8 @@ $stdOptions = [ordered]@{
 
 $customOptions = [ordered]@{}
 
-$stdFields = @("DisplayName", "TemplateName")
-$customFields = @()
+$stdFields = $ruleItems[$ruleIndex].DefaultFields.Split("|")
+$customFields = $stdFields
 
 foreach($field in $templateFields){
     $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
@@ -107,9 +113,11 @@ foreach($field in $customOptions.Keys){
     $titles[$customOptions[$field]] = $field
 }
 
+$saveSettings = $false
 $result = Read-Variable -Parameters `
-    @{ Name = "fields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
-    @{ Name = "stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"} `
+    @{ Name="customFields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
+    @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
+    @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
     -Description "Choose the fields to include in the report." `
     -Title $dialogTitle -Width 600 -Height 740
 
@@ -119,7 +127,7 @@ if($result -eq "cancel"){
 }
 
 $properties = @()
-$fields = $stdFields + $fields
+$fields = $stdFields + $customFields
 
 foreach($field in $fields){
     $scr = [scriptblock]::Create('Render-ItemField $_ "' + $field + '"')
@@ -135,6 +143,10 @@ $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleData
 
 $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Filter Path: $($root.ProviderPath)"
 
+if($saveSettings) {
+    $ruleItem = Get-Item -Path "master:" -ID ($ruleItems[$ruleIndex].ID)
+    $ruleItem.DefaultFields = $fields -join "|"
+}
 Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -146,7 +158,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 72d4b296-d5e6-411c-b372-beb2d123f052
+revision: 8d03ca29-6da0-4709-a540-e6a92bfd9c73
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -161,14 +173,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-72d4b296-d5e6-411c-b372-beb2d123f052
+8d03ca29-6da0-4709-a540-e6a92bfd9c73
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20160704T182013Z
+20160709T170111Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
