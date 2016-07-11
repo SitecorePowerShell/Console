@@ -521,17 +521,22 @@ namespace Cognifide.PowerShell.Core.Host
                 proxy.SetVariable("me", UserName);
                 proxy.SetVariable("HostSettings", Settings);
                 proxy.SetVariable("ScriptSession", this);
-                var psVersionTable = proxy.GetVariable("PSVersionTable") as Hashtable;
-                psVersionTable?.Add("SPEVersion", CurrentVersion.SpeVersion);
+
                 var serverAuthority = HttpContext.Current?.Request?.Url?.GetLeftPart(UriPartial.Authority);
                 if (!string.IsNullOrEmpty(serverAuthority))
                 {
                     proxy.SetVariable("SitecoreAuthority", serverAuthority);
                 }
 
-                if (PsVersion == null)
+                var psVersionTable = proxy.GetVariable("PSVersionTable") as Hashtable;
+                if (psVersionTable != null)
                 {
-                    PsVersion = (Version)psVersionTable?["PSVersion"];
+                    psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
+
+                    if (PsVersion == null)
+                    {
+                        PsVersion = (Version)psVersionTable["PSVersion"];
+                    }
                 }
 
                 ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
