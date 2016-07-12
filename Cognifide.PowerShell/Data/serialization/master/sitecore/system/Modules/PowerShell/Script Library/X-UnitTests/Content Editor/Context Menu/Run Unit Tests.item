@@ -64,9 +64,9 @@ revision: b55c817a-b0fe-4ef0-960d-4955b63e7e2a
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20160515T231336Z
+20160515T231336
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
@@ -78,9 +78,9 @@ b55c817a-b0fe-4ef0-960d-4955b63e7e2a
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160518T221822Z
+20160518T221822
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
