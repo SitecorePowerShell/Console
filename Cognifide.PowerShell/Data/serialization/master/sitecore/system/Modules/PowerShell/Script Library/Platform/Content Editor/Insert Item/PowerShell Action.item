@@ -26,15 +26,14 @@ content-length: 280
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 480
+content-length: 421
 
 $item = Get-Item -Path .
 if($item -and $item.TemplateID -eq [Sitecore.TemplateIDs]::WorkflowCommand) {
     $name = Show-Input -Prompt "Enter a name for the new workflow action item:"
     if($name) {
         $path = "$($item.ItemPath)/$($name)"
-        $scriptActionTemplateId = "{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}"
-        $template = Get-Item -Path "master:" -ID $scriptActionTemplateId
+        $template = Get-Item -Path "master:" -ID "{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}"
         New-Item -ItemType $template.ItemPath -Path $path
     }
 }
@@ -56,29 +55,29 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 11b39590-c0cc-42bf-af3a-087d20b3b8d5
+revision: f7d77cda-9f4b-4c37-83ed-ef0bd598b579
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20160606T015312Z
+20160606T015312
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-11b39590-c0cc-42bf-af3a-087d20b3b8d5
+f7d77cda-9f4b-4c37-83ed-ef0bd598b579
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160606T231125Z
+20160712T162007
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
