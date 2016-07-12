@@ -18,6 +18,12 @@ namespace Cognifide.PowerShell.Core.Extensions
                    item.TemplateName.Equals(TemplateNames.ScriptModuleTemplateName, StringComparison.InvariantCulture);
         }
 
+        public static bool IsPowerShellModuleFolder(this Item item)
+        {
+            return item != null &&
+                   item.TemplateName.Equals(TemplateNames.ScriptModuleFolderTemplateName, StringComparison.InvariantCulture);
+        }
+
         public static bool IsPowerShellLibrary(this Item item)
         {
             return item != null &&

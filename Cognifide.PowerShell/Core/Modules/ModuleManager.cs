@@ -50,16 +50,25 @@ namespace Cognifide.PowerShell.Core.Modules
                 {
                     dbModules.Add(new Module(library, true));
 
-                    foreach (Item item in library.GetChildren())
-                    {
-                        if (item.IsPowerShellModule())
-                        {
-                            dbModules.Add(new Module(item, false));
-                        }
-                    }
+                    EnumerateLibraries(library, dbModules);
                 }
             }
             return dbModules;
+        }
+
+        private static void EnumerateLibraries(Item library, List<Module> dbModules)
+        {
+            foreach (Item item in library.GetChildren())
+            {
+                if (item.IsPowerShellModule())
+                {
+                    dbModules.Add(new Module(item, false));
+                }
+                if (item.IsPowerShellModuleFolder())
+                {
+                    EnumerateLibraries(item, dbModules);
+                }
+            }
         }
 
         public static List<Item> GetFeatureRoots(string featureName)

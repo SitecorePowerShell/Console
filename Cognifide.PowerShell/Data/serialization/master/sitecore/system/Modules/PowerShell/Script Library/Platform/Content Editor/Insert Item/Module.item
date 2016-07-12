@@ -13,12 +13,15 @@ templatekey: PowerShell Script
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 327
+content-length: 551
 
 <ruleset>
   <rule uid="{22B9C290-7895-41D6-B175-38066F5067FF}">
     <conditions>
-      <condition id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}" uid="80248DCFDFC6401DA4FA21129D7AC4A7" operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}" value="{A3572733-5062-43E9-A447-54698BC1C637}" />
+      <or uid="DC1F7BE30B864847BF5F536DED14ADBD">
+        <condition id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}" uid="80248DCFDFC6401DA4FA21129D7AC4A7" operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}" value="{A3572733-5062-43E9-A447-54698BC1C637}" />
+        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="7E77D7F89E414D5D90A149E52DAD4EC5" templateid="{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" />
+      </or>
     </conditions>
   </rule>
 </ruleset>
@@ -39,7 +42,7 @@ Software/32x32/jar_bean_new.png
 ----version----
 language: en
 version: 1
-revision: fe91e7ea-ccbc-41e8-ac9d-4de00eaf839c
+revision: 732fe00b-ce75-44da-9767-f18b1e2babcd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -54,14 +57,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fe91e7ea-ccbc-41e8-ac9d-4de00eaf839c
+732fe00b-ce75-44da-9767-f18b1e2babcd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150419T210924:635650745642423125
+20160712T145222
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

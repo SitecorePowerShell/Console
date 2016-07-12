@@ -13,11 +13,16 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2326
+content-length: 2540
 
 $integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
 $options = New-Object System.Collections.Specialized.OrderedDictionary
+$moduleRootPath = (Get-Item .).ProviderPath
+
+if(-not $moduleRootPath.StartsWith("master:\system\Modules\PowerShell\Script Library",[System.StringComparison]::OrdinalIgnoreCase)){
+    $moduleRootPath = "master:\system\Modules\PowerShell\Script Library"
+}
 
 $integrationPoints.Values | % { $options.Add($_.Name, $_.Id) }
 
@@ -35,7 +40,7 @@ if($module -eq $null){
         Exit
     }
     
-    $moduleitem = New-Item -Path "master:/sitecore/system/Modules/PowerShell/Script Library/" -ItemType "Modules/PowerShell Console/PowerShell Script Module" -Name "$moduleName"
+    $moduleitem = New-Item -Path $moduleRootPath -ItemType "Modules/PowerShell Console/PowerShell Script Module" -Name "$moduleName"
     if($moduleitem -eq $null){
         Show-Alert "$error"
         Exit
@@ -63,7 +68,7 @@ foreach($pointToCreate in $pointsToCreate){
 ----version----
 language: en
 version: 1
-revision: 32f01af0-e9d0-46c1-82af-8773d443723b
+revision: 806a36ff-6e71-452f-b1ff-23f5f934e7f4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -78,14 +83,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-32f01af0-e9d0-46c1-82af-8773d443723b
+806a36ff-6e71-452f-b1ff-23f5f934e7f4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150618T094616:635702175762043282
+20160712T150725
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

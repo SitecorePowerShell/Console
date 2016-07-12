@@ -13,14 +13,17 @@ templatekey: PowerShell Script
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 504
+content-length: 751
 
 <ruleset>
-  <rule uid="{89814947-19B4-477A-A25C-4CD908C38A4A}">
+  <rule uid="{89814947-19B4-477A-A25C-4CD908C38A4A}" name="Selection">
     <conditions>
-      <or uid="C26805179A4144529254551809C576CF">
-        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="6C8642014A8C446D9988637AA25C5B3F" templateid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" />
-        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="4186021969C641BDBD062AEF7563126D" templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+      <or uid="5DC5F886770B4829AD020E02FC3846D2">
+        <or uid="DF05782C7EFF496F85410B18C58CB51C">
+          <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="6C8642014A8C446D9988637AA25C5B3F" templateid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" />
+          <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="4186021969C641BDBD062AEF7563126D" templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+        </or>
+        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="A2D71C06D3794A05A1E3FC9718A7BBA1" templateid="{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" />
       </or>
     </conditions>
   </rule>
@@ -45,7 +48,7 @@ Software/32x32/jar_out.png
 ----version----
 language: en
 version: 1
-revision: b9455694-f983-4159-bae1-23fa29ecbf87
+revision: b79d6e09-015f-4f60-ab98-7a84460e6cd1
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -67,14 +70,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b9455694-f983-4159-bae1-23fa29ecbf87
+b79d6e09-015f-4f60-ab98-7a84460e6cd1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141203T030339:635531726195363437
+20160712T145139
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

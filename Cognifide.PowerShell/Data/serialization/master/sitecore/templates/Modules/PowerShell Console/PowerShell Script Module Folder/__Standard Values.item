@@ -1,21 +1,14 @@
 ----item----
 version: 1
-id: {A3572733-5062-43E9-A447-54698BC1C637}
+id: {1F80750D-D9A6-469C-823C-52EE341CCBA3}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library
-parent: {DADC7C07-2606-4F1C-98C6-FB8162E55257}
-name: Script Library
+path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Module Folder/__Standard Values
+parent: {B6A55AC6-A602-4C09-AC3A-1D2938621D5B}
+name: __Standard Values
 master: {00000000-0000-0000-0000-000000000000}
-template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
-templatekey: PowerShell Script Library
+template: {B6A55AC6-A602-4C09-AC3A-1D2938621D5B}
+templatekey: PowerShell Script Module Folder
 
-----field----
-field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
-name: __Icon
-key: __icon
-content-length: 39
-
-powershell/32x32/powershell_library.png
 ----field----
 field: {1172F251-DAD4-4EFB-A329-0C63500E4F1E}
 name: __Masters
@@ -26,7 +19,7 @@ content-length: 77
 ----version----
 language: en
 version: 1
-revision: cef5ce67-5c49-4b9b-9f1f-e45462de831a
+revision: 99f3dbe0-7e70-4531-8fd1-9f7049d306d1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -34,7 +27,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20121128T205245
+20160712T110640
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-cef5ce67-5c49-4b9b-9f1f-e45462de831a
+99f3dbe0-7e70-4531-8fd1-9f7049d306d1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160712T144607
+20160712T110717
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
