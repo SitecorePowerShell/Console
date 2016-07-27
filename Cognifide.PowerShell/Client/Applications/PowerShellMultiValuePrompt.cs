@@ -503,9 +503,23 @@ namespace Cognifide.PowerShell.Client.Applications
 
                     if (editor.IndexOf("check", StringComparison.OrdinalIgnoreCase) > -1)
                     {
+                        var checkBorder = new Border
+                        {
+                            Class = "checkListWrapper",
+                            ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_")
+                        };
+                        var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+                        var link =
+                            new Literal(
+                                @"<div class='checkListActions'>"+
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id="+ editorId + @")')"">Select all</a> &nbsp;|&nbsp; " +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">Deselect all</a> &nbsp;|&nbsp;" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" + editorId + @")')"">Invert selection</a>" +
+                                @"</div>");
+                        checkBorder.Controls.Add(link);
                         var checkList = new PSCheckList
                         {
-                            ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                            ID = editorId,
                             HeaderStyle = "margin-top:20px; display:inline-block;",
                             ItemID = ItemIDs.RootID.ToString()
                         };
@@ -540,7 +554,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
                         checkList.TrackModified = false;
                         checkList.Disabled = false;
-                        return checkList;
+                        checkBorder.Controls.Add(checkList);
+                        return checkBorder;
                     }
                 }
 
@@ -786,11 +801,12 @@ namespace Cognifide.PowerShell.Client.Applications
                             ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
                             : null);
                 }
-                else if (control is PSCheckList)
+                else if (control is Border && ((Border)control).Class == "checkListWrapper")
                 {
-                    var checkList = control as PSCheckList;
+                    var checkboxBorder = control as Border;
+                    var checkList = checkboxBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
                     var values =
-                        checkList.Controls.Cast<Control>()
+                        checkList?.Controls.Cast<Control>()
                             .Where(item => (item is ChecklistItem))
                             .Cast<ChecklistItem>()
                             .Where(checkItem => checkItem.Checked)

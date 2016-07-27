@@ -318,3 +318,12 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .grid-11 { width: 91.66666667%; }
 .grid-12 { width: 100%; }
 .clearfix { clear:both; }
+
+.checkListWrapper {
+    clear: both;
+    display: block;
+    float: left;
+    width: 100%;
+}
+.checkListActions { padding: 4px 0 4px 2px}
+.scContentButton { color:#dc291e }
