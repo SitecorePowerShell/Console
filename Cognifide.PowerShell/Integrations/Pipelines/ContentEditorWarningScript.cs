@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -37,7 +38,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            LogUtils.Error(ex.Message, this);
+                            PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' in Content Editor Warning pipeline.", ex);
                         }
                     }
                 }

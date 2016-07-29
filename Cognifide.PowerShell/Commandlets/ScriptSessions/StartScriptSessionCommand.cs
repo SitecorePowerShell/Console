@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
@@ -249,7 +250,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        LogUtils.Error(exceptionMessage, this);
+                        PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
                     }
                     job.Status.Messages.Add(exceptionMessage);
                     job.Status.Messages.Add(
@@ -261,7 +262,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 }
                 else
                 {
-                    LogUtils.Error("Script execution failed. Could not find command job.", ex, this);
+                    PowerShellLog.Error("Script execution failed. Could not find command job.", ex);
                 }
             }
             finally

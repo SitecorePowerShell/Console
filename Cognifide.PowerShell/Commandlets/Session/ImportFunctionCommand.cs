@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using Cognifide.PowerShell.Commandlets.Interactive;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -175,7 +176,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 }
                 catch (Exception ex)
                 {
-                    LogUtils.Error("Error while querying for items", ex);
+                    PowerShellLog.Error("Error while querying for items", ex);
                 }
             }
             functions = localFunctions.ToArray();

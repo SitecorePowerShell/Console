@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Management.Automation;
-using Cognifide.PowerShell.Commandlets;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Sitecore.Diagnostics;
 
-namespace Cognifide.PowerShell.Core.Utility
+namespace Cognifide.PowerShell.Commandlets.Diagnostics
 {
     [Cmdlet(VerbsCommunications.Write, "Log")]
     public class WriteLogCommand : BaseCommand
@@ -61,19 +61,19 @@ namespace Cognifide.PowerShell.Core.Utility
             switch (Log)
             {
                 case LogNotificationLevel.Debug:
-                    LogUtils.Debug(message, this);
+                    PowerShellLog.Debug(message);
                     break;
                 case LogNotificationLevel.Error:
-                    LogUtils.Error(message, this);
+                    PowerShellLog.Error(message);
                     break;
                 case LogNotificationLevel.Fatal:
-                    LogUtils.Fatal(message, this);
+                    PowerShellLog.Fatal(message);
                     break;
                 case LogNotificationLevel.Warning:
-                    LogUtils.Warn(message, this);
+                    PowerShellLog.Warn(message);
                     break;
                 default:
-                    LogUtils.Info(message, this);
+                    PowerShellLog.Info(message);
                     break;
             }
 

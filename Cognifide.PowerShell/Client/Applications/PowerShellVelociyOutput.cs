@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
@@ -111,7 +112,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 catch (ParseErrorException ex)
                 {
-                    LogUtils.Error($"Error parsing template for the {currentItem.Paths.Path} item \n {ex}", this);
+                    PowerShellLog.Error($"Error parsing template for the {currentItem.Paths.Path} item.", ex);
                 }
                 VelocityOutput.Text = result.GetStringBuilder().ToString();
             }

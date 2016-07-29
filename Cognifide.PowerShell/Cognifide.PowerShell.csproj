@@ -405,12 +405,12 @@
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
-    <Compile Include="Core\Utility\LogUtils.cs" />
+    <Compile Include="Core\Diagnostics\PowerShellLog.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />
     <Compile Include="Core\Utility\RulesUtils.cs" />
     <Compile Include="Core\Utility\SpeTimer.cs" />
     <Compile Include="Core\Utility\TemplateUtils.cs" />
-    <Compile Include="Core\Utility\WriteLogCommand.cs" />
+    <Compile Include="Commandlets\Diagnostics\WriteLogCommand.cs" />
     <Compile Include="Core\Utility\ZipUtils.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
     <Compile Include="Core\Validation\MiscAutocompleteSets.cs" />

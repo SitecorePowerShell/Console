@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Web;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
@@ -27,6 +28,14 @@ namespace Cognifide.PowerShell.Core.Settings
         private static string rulesDb;
         private static string settingsDb;
         private static string scriptLibraryDb;
+        private const string LastScriptSettingFieldName = "LastScript";
+        private const string SaveLastScriptSettingFieldName = "SaveLastScript";
+        private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
+        private const string HostWidthSettingFieldName = "HostWidth";
+        private const string ForegroundColorSettingFieldName = "ForegroundColor";
+        private const string BackgroundColorSettingFieldName = "BackgroundColor";
+        private const string FontSizeSettingFieldName = "FontSize";
+        private const string FontFamilySettingFieldName = "FontFamily";
 
         private static readonly Dictionary<string, ApplicationSettings> instances =
             new Dictionary<string, ApplicationSettings>();
@@ -231,14 +240,14 @@ namespace Cognifide.PowerShell.Core.Settings
                     configuration.Edit(
                         p =>
                         {
-                            configuration["LastScript"] = HttpUtility.HtmlEncode(LastScript);
-                            ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked = SaveLastScript;
-                            ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked = LiveAutocompletion;                            
-                            configuration["HostWidth"] = HostWidth.ToString(CultureInfo.InvariantCulture);
-                            configuration["ForegroundColor"] = ForegroundColor.ToString();
-                            configuration["BackgroundColor"] = BackgroundColor.ToString();
-                            configuration["FontSize"] = FontSize.ToString();
-                            configuration["FontFamily"] = FontFamily;
+                            configuration[LastScriptSettingFieldName] = HttpUtility.HtmlEncode(LastScript);
+                            ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked = SaveLastScript;
+                            ((CheckboxField)configuration.Fields[LiveAutocompletionSettingFieldName]).Checked = LiveAutocompletion;                            
+                            configuration[HostWidthSettingFieldName] = HostWidth.ToString(CultureInfo.InvariantCulture);
+                            configuration[ForegroundColorSettingFieldName] = ForegroundColor.ToString();
+                            configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
+                            configuration[FontSizeSettingFieldName] = FontSize.ToString();
+                            configuration[FontFamilySettingFieldName] = FontFamily;
                         });
                 }
             }
@@ -252,37 +261,41 @@ namespace Cognifide.PowerShell.Core.Settings
             {
                 try
                 {
-                    LastScript = TryGetSettingValue(() => HttpUtility.HtmlDecode(configuration["LastScript"]), "");
+                    LastScript = TryGetSettingValue(LastScriptSettingFieldName,string.Empty,() => HttpUtility.HtmlDecode(configuration[LastScriptSettingFieldName]));
                     SaveLastScript =
-                        TryGetSettingValue(() => ((CheckboxField) configuration.Fields["SaveLastScript"]).Checked, false);
+                        TryGetSettingValue(SaveLastScriptSettingFieldName, true, () => ((CheckboxField) configuration.Fields[SaveLastScriptSettingFieldName]).Checked);
                     LiveAutocompletion =
-                        TryGetSettingValue(() => ((CheckboxField)configuration.Fields["LiveAutocompletion"]).Checked, false);
+                        TryGetSettingValue(LiveAutocompletionSettingFieldName, false,
+                            () => ((CheckboxField) configuration.Fields[LiveAutocompletionSettingFieldName]).Checked);
                     HostWidth =
-                        TryGetSettingValue(
+                        TryGetSettingValue(HostWidthSettingFieldName,150,
                             () =>
                             {
                                 int hostWidth;
-                                return int.TryParse(configuration["HostWidth"], out hostWidth) ? hostWidth : 150;
-                            }, 80);
+                                return int.TryParse(configuration[HostWidthSettingFieldName], out hostWidth) ? hostWidth : 150;
+                            });
                     ForegroundColor =
-                        TryGetSettingValue(
-                            () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["ForegroundColor"]),
-                            ConsoleColor.White);
+                        TryGetSettingValue(ForegroundColorSettingFieldName, ConsoleColor.White,
+                            () =>
+                                (ConsoleColor)
+                                    Enum.Parse(typeof(ConsoleColor), configuration[ForegroundColorSettingFieldName]));
                     BackgroundColor =
-                        TryGetSettingValue(
-                            () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration["BackgroundColor"]),
-                            ConsoleColor.DarkBlue);
+                        TryGetSettingValue(BackgroundColorSettingFieldName, ConsoleColor.DarkBlue,
+                            () => (ConsoleColor) Enum.Parse(typeof (ConsoleColor), configuration[BackgroundColorSettingFieldName]));
                     FontSize =
-                        TryGetSettingValue(
+                        TryGetSettingValue(FontSizeSettingFieldName, 12,
                             () =>
                             {
                                 int fontSize;
-                                return int.TryParse(configuration["FontSize"], out fontSize)
+                                return int.TryParse(configuration[FontSizeSettingFieldName], out fontSize)
                                     ? Math.Max(fontSize, 8)
                                     : 12;
-                            },
-                            12);
-                    FontFamily = TryGetSettingValue(() => configuration["FontFamily"], "Monaco");
+                            });
+                    FontFamily = TryGetSettingValue(FontFamilySettingFieldName, "Monaco",
+                        () =>
+                            string.IsNullOrWhiteSpace(configuration[FontFamilySettingFieldName])
+                                ? "Monaco"
+                                : configuration[FontFamilySettingFieldName]);
 
                     Loaded = true;
                 }
@@ -300,17 +313,17 @@ namespace Cognifide.PowerShell.Core.Settings
         private void SetToDefault()
         {
             LastScript = String.Empty;
-            SaveLastScript = false;
-            HostWidth = 80;
+            SaveLastScript = true;
+            LiveAutocompletion = false;
+            HostWidth = 150;
             ForegroundColor = ConsoleColor.White;
             BackgroundColor = ConsoleColor.DarkBlue;
             FontSize = 12;
             FontFamily = "Monaco";
             Loaded = true;
-            LiveAutocompletion = false;
         }
 
-        public static T TryGetSettingValue<T>(Func<T> action, T defaultValue)
+        private static T TryGetSettingValue<T>(string fieldName, T defaultValue, Func<T> action)
         {
             try
             {
@@ -319,7 +332,7 @@ namespace Cognifide.PowerShell.Core.Settings
             }
             catch (Exception ex)
             {
-                LogUtils.Error(ex.Message, typeof(ApplicationSettings));
+                PowerShellLog.Error($"Error while restoring setting {fieldName}", ex);
                 return defaultValue;
             }
         }

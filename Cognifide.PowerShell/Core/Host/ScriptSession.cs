@@ -9,6 +9,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Web;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Settings;
@@ -594,12 +595,12 @@ namespace Cognifide.PowerShell.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            LogUtils.Info("Executing a Sitecore PowerShell Extensions script.", this);
-            LogUtils.Debug(script, this);
+            PowerShellLog.Info($"Executing a script in ScriptSession '{Key}'.");
+            PowerShellLog.Debug(script);
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            return SpeTimer.Measure("script execution", () =>
+            return SpeTimer.Measure($"script execution in ScriptSession '{Key}'", () =>
             {
                 try
                 {
@@ -640,6 +641,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 TryInvokeInRunningSession("quit");
             }
+            PowerShellLog.Info($"Aborting script execution in ScriptSession '{Key}'.");
             powerShell?.Stop();
             abortRequested = true;
         }
@@ -729,7 +731,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>())
                 {
-                    LogUtils.Debug(record + record.InvocationInfo.PositionMessage, this);
+                    PowerShellLog.Debug(record + record.InvocationInfo.PositionMessage);
                 }
             }
 
@@ -802,8 +804,10 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (scriptItem != null)
             {
+                var scriptPath = scriptItem.GetProviderPath();
+                PowerShellLog.Info($"Script item set to {scriptPath} in ScriptSession {Key}.");
                 SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
-                SetVariable("SitecoreCommandPath", scriptItem.GetProviderPath());
+                SetVariable("SitecoreCommandPath", scriptPath);
                 SetVariable("PSScript", scriptItem);
             }
         }

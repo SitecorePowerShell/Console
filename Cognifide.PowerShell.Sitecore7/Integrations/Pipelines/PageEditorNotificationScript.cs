@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -11,10 +12,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Integrations.Pipelines
 {
     public class PageEditorNotificationScript
     {
-        public string IntegrationPoint
-        {
-            get { return IntegrationPoints.PageEditorNotificationFeature; }
-        }
+        private string IntegrationPoint => IntegrationPoints.PageEditorNotificationFeature;
 
         public void Process(GetPageEditorNotificationsArgs args)
         {
@@ -37,7 +35,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            LogUtils.Error(ex.Message, this);
+                            PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' in Page Editor Notification pipeline.", ex);
                         }
                     }
                 }

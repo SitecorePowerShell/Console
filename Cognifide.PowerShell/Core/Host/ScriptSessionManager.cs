@@ -5,6 +5,7 @@ using System.Management.Automation;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.ContentSearch.Linq;
 
@@ -76,6 +77,7 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     session.Dispose();
                 }
+                PowerShellLog.Debug($"Script Session '{key}' disposed.");
             }
         }
 
@@ -105,6 +107,8 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     ID = persistentId,
                 };
+
+                PowerShellLog.Debug($"New Script Session with key '{sessionKey}' created.");
 
                 if (autoDispose)
                 {

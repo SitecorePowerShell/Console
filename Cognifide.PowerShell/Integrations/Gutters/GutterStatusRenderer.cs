@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -34,22 +35,22 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                 // If a script is configured but does not exist then return.
                 if (scriptItem == null) return null;
 
-                // Create a new session for running the script.
-                var session = ScriptSessionManager.GetSession(scriptItem[ScriptItemFieldNames.PersistentSessionId],
-                    IntegrationPoints.ContentEditorGuttersFeature);
-
-                var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                    ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                    : String.Empty;
-
-                // We will need the item variable in the script.
-                session.SetItemLocationContext(item);
-
-                //let the session know which script is being executed
-                session.SetExecutedScript(scriptItem);
-
                 try
                 {
+                    // Create a new session for running the script.
+                    var session = ScriptSessionManager.GetSession(scriptItem[ScriptItemFieldNames.PersistentSessionId],
+                        IntegrationPoints.ContentEditorGuttersFeature);
+
+                    var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+                        ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
+                        : string.Empty;
+
+                    // We will need the item variable in the script.
+                    session.SetItemLocationContext(item);
+
+                    //let the session know which script is being executed
+                    session.SetExecutedScript(scriptItem);
+
                     // Any objects written to the pipeline in the script will be returned.
                     var output = session.ExecuteScriptPart(script, false);
                     foreach (var result in output)
@@ -62,7 +63,7 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                 }
                 catch (Exception ex)
                 {
-                    LogUtils.Error(ex.Message, this);
+                    PowerShellLog.Error($"Error while invoking script '{scriptItem?.Paths.Path}' for rendering in Content Editor gutter.", ex);
                 }
                 return null;
             });

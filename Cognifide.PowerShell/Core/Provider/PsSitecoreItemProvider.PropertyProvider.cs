@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
@@ -104,7 +105,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             catch (Exception ex)
             {
-                LogUtils.Error($"Error while executing GetProperty(string path='{path}', PSObject propertyValue)", ex);
+                PowerShellLog.Error($"Error while executing GetProperty(string path='{path}', PSObject propertyValue)", ex);
                 throw;
             }
         }

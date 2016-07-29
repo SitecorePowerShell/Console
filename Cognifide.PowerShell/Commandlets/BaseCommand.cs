@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
 using System.Web;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Provider;
@@ -37,7 +38,9 @@ namespace Cognifide.PowerShell.Commandlets
                 {
                     return Factory.GetDatabase(CurrentDrive);
                 }
-                WriteError(typeof(InvalidPowerShellStateException), "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.", ErrorIds.DatabaseNotFound, ErrorCategory.DeviceError, null, true);
+                WriteError(typeof(InvalidPowerShellStateException),
+                    "Current Sitecore database cannot be established, current location is not within a Sitecore content tree.",
+                    ErrorIds.DatabaseNotFound, ErrorCategory.DeviceError, null, true);
                 return null;
             }
         }
@@ -136,7 +139,7 @@ namespace Cognifide.PowerShell.Commandlets
         {
             if (item != null) return item;
 
-            if (!String.IsNullOrEmpty(id))
+            if (!string.IsNullOrEmpty(id))
             {
                 var currentDb = String.IsNullOrEmpty(databaseName) ? CurrentDatabase : Factory.GetDatabase(databaseName);
                 if (currentDb != null)
@@ -144,7 +147,7 @@ namespace Cognifide.PowerShell.Commandlets
                     item = currentDb.GetItem(new ID(id));
                 }
             }
-            else if (!String.IsNullOrEmpty(path))
+            else if (!string.IsNullOrEmpty(path))
             {
                 path = path.Replace('\\', '/');
                 item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);
@@ -171,7 +174,7 @@ namespace Cognifide.PowerShell.Commandlets
             }
             catch (Exception ex)
             {
-                LogUtils.Error("Error while executing '{0}' command", ex, this);
+                PowerShellLog.Error($"Error while executing '{GetType().FullName}' command", ex);
                 WriteError(ex.GetType(), $"An error was encountered while executing the command '{this}'", ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
             }
         }
@@ -195,16 +198,21 @@ namespace Cognifide.PowerShell.Commandlets
             return name.Contains(" ") ? "\"" + name + "\"" : name;
         }
 
-        public virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject, bool throwTerminatingError = false)
+        protected virtual void WriteError(Type exceptionType, string error, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject, bool throwTerminatingError = false)
         {
             var exceptionInstance = (Exception)Activator.CreateInstance(exceptionType, error);
-            var record = new ErrorRecord(exceptionInstance, errorIds.ToString(), errorCategory, targetObject);
-            if(throwTerminatingError) ThrowTerminatingError(record);
+            WriteError(exceptionInstance, errorIds, errorCategory, targetObject, throwTerminatingError);
+        }
 
+        protected virtual void WriteError(Exception exception, ErrorIds errorIds, ErrorCategory errorCategory, object targetObject, bool throwTerminatingError = false)
+        {
+            var record = new ErrorRecord(exception, errorIds.ToString(), errorCategory, targetObject);
+            PowerShellLog.Error($"'{errorIds}' (Category: {errorCategory}) error encountered on object. ", exception);
+            if (throwTerminatingError) ThrowTerminatingError(record);
             WriteError(record);
         }
 
-        public virtual bool CheckSessionCanDoInteractiveAction()
+        protected virtual bool CheckSessionCanDoInteractiveAction()
         {
             if (InteractiveSession) return InteractiveSession;
 

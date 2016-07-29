@@ -628,9 +628,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     File.Delete(scriptSession.DebugFile);
                     scriptSession.DebugFile = string.Empty;
+                    scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
                 }
                 scriptSession.Debugging = false;
-                scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
             }
         }
 

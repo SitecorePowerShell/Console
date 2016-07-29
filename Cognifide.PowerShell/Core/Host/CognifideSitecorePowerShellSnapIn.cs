@@ -8,6 +8,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Xml;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Provider;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
@@ -45,12 +46,12 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 catch (Exception ex)
                 {
-                    if (ex is ReflectionTypeLoadException)
+                    var typeLoadException = ex as ReflectionTypeLoadException;
+                    if (typeLoadException != null)
                     {
-                        var typeLoadException = ex as ReflectionTypeLoadException;
                         var loaderExceptions = typeLoadException.LoaderExceptions;
                         var message = loaderExceptions.Aggregate(string.Empty, (current, exc) => current + exc.Message);
-                        LogUtils.Error($"Error while loading commandlets list: {message}", ex, typeof (CognifideSitecorePowerShellSnapIn));
+                        PowerShellLog.Error($"Error while loading commandlets list: {message}", typeLoadException);
                     }
                 }
             }

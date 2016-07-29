@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
@@ -48,7 +49,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
-                LogUtils.Debug($"The specified service {apiVersion} is not enabled.", this);
+                PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as it is not enabled.");
                 return;
             }
 
@@ -65,7 +66,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
             {
-                LogUtils.Debug($"The specified service {apiVersion} requires authentication.", this);
+                PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as - user not logged in, authentication failed or no credentials provided.");
                 return;
             }
 
@@ -76,7 +77,7 @@ namespace Cognifide.PowerShell.Console.Services
                     case "media":
                         if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
                         {
-                            LogUtils.Debug("The uploaded media item will be extracted to the media library.", this);
+                            PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
                             using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                             {
                                 foreach (var zipEntry in packageReader.Entries)
@@ -98,7 +99,7 @@ namespace Cognifide.PowerShell.Console.Services
                         ProcessFileUpload(request.InputStream, originParam, pathParam);
                         break;
                     default:
-                        LogUtils.Debug($"The specified apiVersion {apiVersion} is not supported.", this);
+                        PowerShellLog.Error($"Requested API/Version ({apiVersion}) is not supported.");
                         break;
                 }
                 return;
@@ -552,7 +553,7 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 catch (Exception ex)
                 {
-                    LogUtils.Error("Error while querying for items", ex);
+                    PowerShellLog.Error("Error while querying for items", ex);
                 }
             }
         }

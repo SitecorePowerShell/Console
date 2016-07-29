@@ -10,6 +10,7 @@ using System.Web.Script.Services;
 using System.Web.Security;
 using System.Web.Services;
 using Cognifide.PowerShell.Core.Debugging;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
@@ -286,7 +287,7 @@ namespace Cognifide.PowerShell.Console.Services
                     var exceptionMessage = ScriptSession.GetExceptionString(ex);
                     if (job.Options.WriteToLog)
                     {
-                        LogUtils.Error(exceptionMessage, this);
+                        PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
                     }
                     job.Status.Messages.Add(exceptionMessage);
                     job.Status.Messages.Add("Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
@@ -295,7 +296,7 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 else
                 {
-                    LogUtils.Error("Script execution failed. Could not find command job.", ex, this);
+                    PowerShellLog.Error("Script execution failed. Job not found.", ex);
                 }
             }
         }

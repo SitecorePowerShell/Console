@@ -279,7 +279,7 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 catch (Exception e)
                 {
-                    // LogUtils.Error("Error enumerating types", e);
+                    // PowerShellLog.Error("Error enumerating types", e);
                     // Ignoring intentionally... 
                     // This just happens for some assembiles with no consequences to user experience
                 }

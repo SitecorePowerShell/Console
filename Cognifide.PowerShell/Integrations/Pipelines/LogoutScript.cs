@@ -5,9 +5,6 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 {
     public class LogoutScript : PipelineProcessor<LogoutArgs>
     {
-        protected override string IntegrationPoint
-        {
-            get { return IntegrationPoints.PipelineLogoutFeature; }
-        }
+        protected override string IntegrationPoint => IntegrationPoints.PipelineLogoutFeature;
     }
 }

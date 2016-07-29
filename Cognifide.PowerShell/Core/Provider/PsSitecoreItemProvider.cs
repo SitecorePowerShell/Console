@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Web;
 using Cognifide.PowerShell.Commandlets;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
@@ -454,7 +455,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     transferOptions.HasFlag(TransferOptions.ChangeId),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
                 Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
-                LogUtils.Audit(this, "Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+                PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
                     AuditFormatter.FormatItem(destinationItem));
                 if (transferedItem.Name != leafName)
                 {

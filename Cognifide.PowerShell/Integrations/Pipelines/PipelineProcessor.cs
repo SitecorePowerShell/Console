@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -37,7 +38,8 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            LogUtils.Error(ex.Message, this);
+                            PowerShellLog.Error($"Error while executing script in {GetType().FullName} pipeline processor.",ex)
+                            ;
                         }
                     }
                 }

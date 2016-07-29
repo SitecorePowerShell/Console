@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -125,7 +126,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var str = item.Uri.ToUrlString(string.Empty);
                     str.Append("field", "Blob");
                     Files.Download(str.ToString());
-                    LogUtils.Audit(this, "Download file: {0}", str.ToString());
+                    PowerShellLog.Audit("Download file: {0}", str.ToString());
                 }
                 else
                 {

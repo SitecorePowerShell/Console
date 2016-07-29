@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Diagnostics;
 
@@ -9,20 +10,20 @@ namespace Cognifide.PowerShell.Core.Utility
     {
         public static T Measure<T>(string message, Func<T> action) where T : class
         {
+            var stopWatch = new Stopwatch();
             try
             {
-                var stopWatch = new Stopwatch();
                 stopWatch.Start();
 
                 var result = action();
 
                 stopWatch.Stop();
-                LogUtils.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.", typeof(SpeTimer));
+                PowerShellLog.Debug($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LogUtils.Error(ex.Message, typeof(SpeTimer));
+                PowerShellLog.Error($"Error while performing timed '{message}' operation within {stopWatch.ElapsedMilliseconds} ms. Exception logged at operation origin point.");
                 throw;
             }
         }
