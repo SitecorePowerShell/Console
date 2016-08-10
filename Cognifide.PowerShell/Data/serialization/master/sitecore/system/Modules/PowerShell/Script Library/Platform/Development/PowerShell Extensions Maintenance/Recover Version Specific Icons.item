@@ -22,7 +22,7 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Gutter' = 'Apps/32x32/Pencil.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Ribbon' = 'apps/32x32/pencil.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Control Panel' = 'Apps/48x48/Setting.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'Office/32x32/selection_delete.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Single execution' = 'Office/32x32/selection_delete.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'Office/32x32/selection_refresh.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Office/32x32/reticle.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'Office/32x32/reticle.png';
@@ -68,7 +68,7 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Gutter' = 'People/16x16/cubes_blue.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Content Editor Ribbon' = 'People/16x16/cubes_blue.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Integrations\Control Panel' = 'Applications/32x32/preferences.png';
-'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\One-time session' = 'people/32x32/cpu_delete.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Single execution' = 'people/32x32/cpu_delete.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\Script defined' = 'People/32x32/cpu_run.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Context' = 'Core2/32x32/cross.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\Context\ActionsScripts\Session' = 'People/32x32/cpu.png';
@@ -144,7 +144,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: 395e721f-4833-4af3-95b5-7daa9c13b6b2
+revision: fa7a3ce6-54cb-463e-844f-c1dfedec9a84
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -159,14 +159,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-395e721f-4833-4af3-95b5-7daa9c13b6b2
+fa7a3ce6-54cb-463e-844f-c1dfedec9a84
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160703T223835
+20160810T171755
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
