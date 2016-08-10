@@ -11,7 +11,8 @@ if(-not (Test-Path -Path $projectPath)) {
 
 # This is where your sitecore sites are
 # The sites need to have the standard \Data \Web folders in them
-$sites = @{Path = "C:\inetpub\wwwroot\Sitecore81"; Version="8"},
+$sites = @{Path = "C:\inetpub\wwwroot\Sitecore82"; Version="8"},
+         @{Path = "C:\inetpub\wwwroot\Sitecore81"; Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore8";  Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore70"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore71"; Version="7"},

@@ -55,6 +55,8 @@
         });
       </script>
 
+      <Literal ID="CustomStyles" />
+
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />

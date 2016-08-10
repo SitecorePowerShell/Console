@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.Security;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -101,7 +102,9 @@ namespace Cognifide.PowerShell.Client.Controls
 
                 Value = (args.HasResult) ? args.Result : String.Empty;
                 Sitecore.Context.ClientPage.ClientResponse.Refresh(Parent);
-                Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();");
+                SitecoreVersion.V81.OrOlder(() =>
+                    Sitecore.Context.ClientPage.ClientResponse.Eval("ResizeDialogControls();")
+                    );
             }
         }
     }

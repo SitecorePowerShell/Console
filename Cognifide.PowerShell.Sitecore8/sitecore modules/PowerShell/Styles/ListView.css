@@ -89,3 +89,15 @@
     border:none;
     background: #012456;
 }
+
+.scEditorWarning {
+    padding: 5px;
+}
+
+.scEditorWarning td {
+    padding: 7px;
+}
+
+.scEditorWarningHelp {
+    padding-top: 5px;
+}

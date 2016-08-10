@@ -21,7 +21,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cognifide.PowerShell</RootNamespace>
     <AssemblyName>Cognifide.PowerShell</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Nonshipping>true</Nonshipping>
     <FileUpgradeFlags>
@@ -75,10 +75,12 @@
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Analytics">
-      <HintPath>$(SitecorePath)\bin\Sitecore.Analytics.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(LibrariesPath)\bin\Sitecore.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Client">
-      <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(LibrariesPath)\bin\Sitecore.Client.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch">
       <SpecificVersion>False</SpecificVersion>
@@ -90,12 +92,14 @@
     </Reference>
     <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
+      <HintPath>$(LibrariesPath)\bin\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Logging">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.NVelocity">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>$(LibrariesPath)\Sitecore.NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Update">
@@ -612,12 +616,14 @@
     <PostBuildEvent>echo "Copy build for Adam"
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
+IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore81\Website\App_Config\Include\*.* /s /e /c /y
+IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore75\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore72\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore71\Website\App_Config\Include\*.* /s /e /c /y
@@ -625,6 +631,7 @@ IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\w
 
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore8\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore81\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
+IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore75\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore72\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore71\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y

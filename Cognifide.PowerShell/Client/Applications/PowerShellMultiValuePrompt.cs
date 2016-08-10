@@ -42,6 +42,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border DataContextPanel;
         protected Literal DialogDescription;
         protected Literal DialogHeader;
+        protected Literal CustomStyles;
         protected Button OKButton;
         protected Literal Result;
         protected bool ShowHints;
@@ -104,6 +105,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     next + "," + accumulated);
             }
             AddControls(variables);
+            SitecoreVersion.V82.OrNewer(() =>
+                CustomStyles.Text = "<style>.scContentButton { color: rgb(38, 148, 192);}</style>"
+                );
         }
 
         private void AddControls(object[] variables)
@@ -179,7 +183,9 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void tabstrip_OnChange(object sender, EventArgs e)
         {
-            SheerResponse.Eval("ResizeDialogControls();");
+            SitecoreVersion.V81.OrOlder(() =>
+                SheerResponse.Eval("ResizeDialogControls();")
+                );
         }
 
         private WebControl GetContainer(IDictionary<string, Border> tabs, string tabName)

@@ -16,6 +16,7 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
         public static Version V75 = new Version(7, 5);
         public static Version V80 = new Version(8, 0);
         public static Version V81 = new Version(8, 1);
+        public static Version V82 = new Version(8, 2);
 
         public static Version GetVersionNumber()
         {

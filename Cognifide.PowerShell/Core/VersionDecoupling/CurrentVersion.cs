@@ -21,6 +21,11 @@ namespace Cognifide.PowerShell.Core.VersionDecoupling
         {
             return IsAtLeast(requiredVersion, actionIfAtLeast);
         }
+        public static Version OrOlder(this Version requiredVersion, Action actionIfAtLeast)
+        {
+            return IsAtMost(requiredVersion, actionIfAtLeast);
+        }
+
 
         public static Version IsAtLeast(Version requiredVersion, Action actionIfAtLeast)
         {
