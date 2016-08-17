@@ -178,6 +178,10 @@ namespace Cognifide.PowerShell.Client.Controls
                     {
                         RenderRecent(scriptItem);
                     }
+                    else
+                    {
+                        item.Delete();
+                    }
                 }
 
             }
