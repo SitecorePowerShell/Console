@@ -384,8 +384,12 @@ namespace Cognifide.PowerShell.Core.Host
                             try
                             {
                                 var psCommand = new PSCommand();
-                                psCommand.AddScript(commandString)
-                                    .AddCommand(OutHostCommand);
+                                var scriptCommand = new Command(commandString, true)
+                                {
+                                    MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Warning
+                                };
+                                psCommand.AddCommand(scriptCommand)
+                                    .AddCommand(OutDefaultCommand);
 
                                 results = debugger?.ProcessCommand(psCommand, output);
                                 ImmediateResults = output;
@@ -395,6 +399,7 @@ namespace Cognifide.PowerShell.Core.Host
                             {
                                 PowerShellLog.Error("Error while executing Debugging command.", ex);
                                 ImmediateCommand = null;
+                                host.UI.WriteErrorLine(GetExceptionString(ex,ExceptionStringFormat.Default));
                             }
 
                             if (results?.ResumeAction != null)
