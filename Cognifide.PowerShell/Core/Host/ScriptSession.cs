@@ -487,6 +487,7 @@ namespace Cognifide.PowerShell.Core.Host
                         break;
                 }
                 var results = ps.Invoke();
+                LogErrors(powerShell, results);
                 return results;
             }
         }
@@ -721,19 +722,12 @@ namespace Cognifide.PowerShell.Core.Host
             LastErrors?.Clear();
             // execute the commands in the pipeline now
             var execResults = powerShell.Invoke();
-
             if (powerShell.HadErrors)
             {
                 LastErrors = powerShell.Streams.Error.ToList();
             }
 
-            if (execResults != null && execResults.Any())
-            {
-                foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>())
-                {
-                    PowerShellLog.Debug(record + record.InvocationInfo.PositionMessage);
-                }
-            }
+            LogErrors(powerShell, execResults);
 
             if (Interactive && Debugging)
             {
@@ -749,6 +743,26 @@ namespace Cognifide.PowerShell.Core.Host
             return marshallResults
                 ? execResults?.Select(p => p?.BaseObject).ToList()
                 : execResults?.Cast<object>().ToList();
+        }
+
+        private static void LogErrors(System.Management.Automation.PowerShell powerShell, Collection<PSObject> execResults)
+        {
+            if (powerShell.HadErrors)
+            {
+                var errors = powerShell.Streams.Error.ToList();
+                foreach (var record in errors)
+                {
+                    PowerShellLog.Warn(record + record.InvocationInfo.PositionMessage, record.Exception);
+                }
+            }
+
+            if (execResults != null && execResults.Any())
+            {
+                foreach (var record in execResults.Where(r => r != null).Select(p => p.BaseObject).OfType<ErrorRecord>())
+                {
+                    PowerShellLog.Warn(record + record.InvocationInfo.PositionMessage, record.Exception);
+                }
+            }
         }
 
         public static string GetExceptionString(Exception ex, ExceptionStringFormat format = ExceptionStringFormat.Default)

@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                PowerShellLog.Debug($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
+                PowerShellLog.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
                 return result;
             }
             catch (Exception)
