@@ -92,7 +92,7 @@ namespace Cognifide.PowerShell.Core.Host
             Settings = ApplicationSettings.GetInstance(ApplianceType, personalizedSettings);
             host = new ScriptingHost(Settings, SpeInitialSessionState);
             host.Runspace.StateChanged += OnRunspaceStateEvent;
-            NewPowerShell();
+            powerShell = NewPowerShell();
 
             host.Runspace.Open();
             if (!initialized)
@@ -144,9 +144,9 @@ namespace Cognifide.PowerShell.Core.Host
             if (IsRunning)
                 return powerShell.CreateNestedPowerShell();
 
-            powerShell = System.Management.Automation.PowerShell.Create();
-            powerShell.Runspace = host.Runspace;
-            return powerShell;
+            var newPowerShell = System.Management.Automation.PowerShell.Create();
+            newPowerShell.Runspace = host.Runspace;
+            return newPowerShell;
         }
 
         public InitialSessionState SpeInitialSessionState
@@ -375,14 +375,28 @@ namespace Cognifide.PowerShell.Core.Host
 
                     while (resumeAction == null && !abortRequested)
                     {
-                        if (ImmediateCommand != null)
+                        var commandString = ImmediateCommand as string;
+                        if (commandString != null)
                         {
-                            var psCommand = new PSCommand();
-                            psCommand.AddScript(ImmediateCommand as string)
-                                .AddCommand("Out-Default");
-                                //.AddParameter("Stream", true);
-                            var results = debugger?.ProcessCommand(psCommand, output);
-                            ImmediateResults = output;
+                            PowerShellLog.Info($"Executing a debug command in ScriptSession '{Key}'.");
+                            PowerShellLog.Debug(commandString);
+                            DebuggerCommandResults results = null;
+                            try
+                            {
+                                var psCommand = new PSCommand();
+                                psCommand.AddScript(commandString)
+                                    .AddCommand(OutHostCommand);
+
+                                results = debugger?.ProcessCommand(psCommand, output);
+                                ImmediateResults = output;
+                                LogErrors(null, output.ToList());
+                            }
+                            catch (Exception ex)
+                            {
+                                PowerShellLog.Error("Error while executing Debugging command.", ex);
+                                ImmediateCommand = null;
+                            }
+
                             if (results?.ResumeAction != null)
                             {
                                 resumeAction = results.ResumeAction;
@@ -487,7 +501,7 @@ namespace Cognifide.PowerShell.Core.Host
                         break;
                 }
                 var results = ps.Invoke();
-                LogErrors(powerShell, results);
+                LogErrors(ps, results);
                 return results;
             }
         }
@@ -745,9 +759,9 @@ namespace Cognifide.PowerShell.Core.Host
                 : execResults?.Cast<object>().ToList();
         }
 
-        private static void LogErrors(System.Management.Automation.PowerShell powerShell, Collection<PSObject> execResults)
+        private static void LogErrors(System.Management.Automation.PowerShell powerShell, IEnumerable<PSObject> execResults)
         {
-            if (powerShell.HadErrors)
+            if (powerShell?.HadErrors ?? false)
             {
                 var errors = powerShell.Streams.Error.ToList();
                 foreach (var record in errors)
