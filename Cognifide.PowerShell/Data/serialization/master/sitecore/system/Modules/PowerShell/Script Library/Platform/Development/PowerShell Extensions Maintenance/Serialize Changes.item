@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7664
+content-length: 7803
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -125,6 +125,7 @@ if (-not $dryRun -and -not $updateItems) {
 #Item templates
 Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates " -PercentComplete 5
 Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
+Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
 
 # Module Root
 Get-Item 'master:\system\Modules\PowerShell' | Process-Item -Activity "Module Root" -PercentComplete 35
@@ -216,6 +217,46 @@ key: __updated
 content-length: 15
 
 20160131T094444
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
+----version----
+language: ja-JP
+version: 1
+revision: 73705d0e-5f7f-409e-b5d3-78901d7b2ad1
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160824T161306Z
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+73705d0e-5f7f-409e-b5d3-78901d7b2ad1
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160824T161306Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

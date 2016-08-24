@@ -2,8 +2,8 @@
 version: 1
 id: {F140551C-B292-4629-8358-817E394C4382}
 database: master
-path: /sitecore/templates/Modules/PowerShell Console/PowerShell Rule Library
-parent: {5FB5EB9F-41C5-43DD-B9F7-70A482B21093}
+path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule Library
+parent: {87A00499-0FCE-4E00-B63B-5C400F898A93}
 name: PowerShell Rule Library
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB86861A-6030-46C5-B394-E8F99E8B87DB}
@@ -33,7 +33,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 1c65baa7-5626-4713-b500-e86d9552d755
+revision: 06b51b64-f51a-45f2-aab6-a5d60b019021
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1c65baa7-5626-4713-b500-e86d9552d755
+06b51b64-f51a-45f2-aab6-a5d60b019021
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160704T020219
+20160823T093853
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

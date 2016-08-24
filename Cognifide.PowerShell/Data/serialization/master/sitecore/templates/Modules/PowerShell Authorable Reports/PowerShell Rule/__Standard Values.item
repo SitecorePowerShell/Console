@@ -1,25 +1,18 @@
 ----item----
 version: 1
-id: {F8BDF2AD-5B96-4AE4-8DFD-61CFC52443AB}
+id: {24F865B6-130F-4FB2-B6C9-1BE5C4712BF0}
 database: master
-path: /sitecore/templates/Modules/PowerShell Console/PowerShell Rule Library/__Standard Values
-parent: {F140551C-B292-4629-8358-817E394C4382}
+path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/__Standard Values
+parent: {BC29CC43-FC82-4A6C-B325-FB261DA5931B}
 name: __Standard Values
 master: {00000000-0000-0000-0000-000000000000}
-template: {F140551C-B292-4629-8358-817E394C4382}
-templatekey: PowerShell Rule Library
+template: {BC29CC43-FC82-4A6C-B325-FB261DA5931B}
+templatekey: PowerShell Rule
 
-----field----
-field: {1172F251-DAD4-4EFB-A329-0C63500E4F1E}
-name: __Masters
-key: __masters
-content-length: 38
-
-{BC29CC43-FC82-4A6C-B325-FB261DA5931B}
 ----version----
 language: en
 version: 1
-revision: b1e88a43-e901-4c51-893c-95d155730721
+revision: 4bc64a85-546e-453d-9e01-ef8db046e115
 
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
@@ -34,7 +27,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20160704T012944
+20160709T155213
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +41,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b1e88a43-e901-4c51-893c-95d155730721
+4bc64a85-546e-453d-9e01-ef8db046e115
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160704T013003
+20160709T155229
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

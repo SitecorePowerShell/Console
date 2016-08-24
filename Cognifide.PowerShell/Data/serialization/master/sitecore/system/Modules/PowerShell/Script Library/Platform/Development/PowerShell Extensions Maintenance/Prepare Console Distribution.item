@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 10040
+content-length: 11541
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -136,7 +136,10 @@ $package.Sources.Add($source);
 # Script Library
 $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
 $package.Sources.Add($source);
-$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
+$source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | 
+    ? { -not ($_.Name -eq "Authorable Reports") } | # Skip Authorable Reports
+    %{ Get-ChildItem "$($_.ProviderPath)" -WithParent -Recurse} | 
+    New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
 $package.Sources.Add($source);
 
 # Settings
@@ -209,6 +212,44 @@ if(Test-Path -Path $remotingSourcePath) {
     
     Compress-Archive -Path "$($remotingSourcePath)\Modules\SPE\" -DestinationPath $remotingPackageName | Out-Null
 }
+
+$Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+
+# Build Standard Package
+
+$package = new-package "Sitecore PowerShell Extensions - Authorable Reports";
+$package.Sources.Clear();
+
+$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
+$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Version = $Version;
+$package.Metadata.Readme = '
+This module provides 2 reports based on 
+Sitecore PowerShell Extensions module available from the 
+SPE Toolbox in the "Start" menu on Desktop.
+The reports are:
+- Index Viewer
+- Rule Based Report
+
+Thank you for using Sitecore PowerShell Extensions.
+
+Copyright (c) 2010-2015 Adam Najmanowicz - Cognifide
+Copyright (c) 2013-2015 Michael West
+
+http://www.cognifide.com/
+http://blog.najmanowicz.com/
+http://michaellwest.blogspot.com/'
+
+# Item templates
+$source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+$source = Get-Item 'master:\system\Modules\PowerShell\Script Library\Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+$package.Sources.Add($source);
+
+$packageName = "$($package.Name)-$Version";
+Export-Package -Project $package -Path "$packageName.zip" -Zip
+
 ----version----
 language: en
 version: 1
@@ -235,6 +276,46 @@ key: __updated
 content-length: 15
 
 20160531T085051
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
+----version----
+language: ja-JP
+version: 1
+revision: 44dcea04-781f-4110-8b87-ecd523153129
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 16
+
+20160824T164804Z
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+44dcea04-781f-4110-8b87-ecd523153129
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 16
+
+20160824T170007Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
