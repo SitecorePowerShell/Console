@@ -319,7 +319,7 @@
         cognifide.powershell.changeFontFamily = function(setting) {
             setting = setting || "Monaco";
             codeeditor.setOption("fontFamily", setting);
-            $("#ScriptResult pre").css({ "font-family": setting });
+            document.getElementById("ScriptResult").style.fontFamily = setting;
         };
 
         cognifide.powershell.changeBackgroundColor = function (setting) {

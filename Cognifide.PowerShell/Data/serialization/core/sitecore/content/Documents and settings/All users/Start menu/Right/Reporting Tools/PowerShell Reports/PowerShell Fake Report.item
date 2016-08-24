@@ -236,7 +236,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: 9b62ebe1-639d-46ec-b59d-eb9d2168a4fb
+revision: 644dc2e9-7cc5-45b6-9ed7-b71e0bf076b5
 
 ----field----
 field: {326CD362-CB1C-4E81-B5F2-5EFA940351F7}
@@ -252,13 +252,6 @@ key: tool tip
 content-length: 51
 
 Reports written with Sitecore PowerShell Extensions
-----field----
-field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
-name: __Display name
-key: __display name
-content-length: 0
-
-
 ----field----
 field: {577F1689-7DE4-4AD2-A15F-7FDC1759285F}
 name: __Long description
@@ -321,14 +314,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9b62ebe1-639d-46ec-b59d-eb9d2168a4fb
+644dc2e9-7cc5-45b6-9ed7-b71e0bf076b5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141227T172013:635552976132518281
+20160823T192853
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

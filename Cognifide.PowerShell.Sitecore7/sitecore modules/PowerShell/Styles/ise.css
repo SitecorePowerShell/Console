@@ -484,3 +484,11 @@ a.ps-link {
 #ResultsPane {
     padding:0 !important;
 }
+
+#ScriptResult * {
+    font-family: inherit !important;
+}
+
+#CodeEditor * {
+    font-family: inherit !important;
+}

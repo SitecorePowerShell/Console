@@ -19,7 +19,7 @@ Cognifide.PowerShell.Core.Rules.PowerShellIseSelectionLength,Cognifide.PowerShel
 ----version----
 language: en
 version: 1
-revision: a136578f-2dd0-4c3e-8074-911e14f0a502
+revision: 14b4dfa0-93b3-4302-828f-b6ec1cd16bbf
 
 ----field----
 field: {AF321234-4EB9-4EF5-9197-65903351939C}
@@ -28,6 +28,13 @@ key: text
 content-length: 202
 
 when [MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&setRootAsSearchRoot=true,length] script length is [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] characters long
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 16
+
+Selection Length
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -55,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a136578f-2dd0-4c3e-8074-911e14f0a502
+14b4dfa0-93b3-4302-828f-b6ec1cd16bbf
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150629T231832:635712167124335937
+20160824T143750
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

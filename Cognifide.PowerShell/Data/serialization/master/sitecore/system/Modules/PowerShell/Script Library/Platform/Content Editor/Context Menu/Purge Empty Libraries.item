@@ -48,15 +48,8 @@ Software/32x32/jar_out.png
 ----version----
 language: en
 version: 1
-revision: b79d6e09-015f-4f60-ab98-7a84460e6cd1
+revision: 6b90f9de-7f26-47b3-a6ae-4c0c3a0c9a2f
 
-----field----
-field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
-name: __Display name
-key: __display name
-content-length: 21
-
-Purge Empty Libraries
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -70,14 +63,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b79d6e09-015f-4f60-ab98-7a84460e6cd1
+6b90f9de-7f26-47b3-a6ae-4c0c3a0c9a2f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160712T145139
+20160823T133706
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

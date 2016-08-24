@@ -614,6 +614,7 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>echo "Copy build for Adam"
+IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\SXA\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82\Website\bin\*.* /s /e /c /y
@@ -621,6 +622,7 @@ IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\w
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
+IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\SXA\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore81\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82\Website\App_Config\Include\*.* /s /e /c /y
@@ -629,6 +631,7 @@ IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\w
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore71\Website\App_Config\Include\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore70\Website\App_Config\Include\*.* /s /e /c /y
 
+IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\SXA\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore8\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore81\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 IF %25USERDOMAIN%25==DUNE xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y

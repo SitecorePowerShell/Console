@@ -24,6 +24,13 @@ content-length: 41
 
 /sitecore/system/Modules/PowerShell/Fonts
 ----field----
+field: {BE351A73-FCB0-4213-93FA-C302D8AB4F51}
+name: Shared
+key: shared
+content-length: 1
+
+1
+----field----
 field: {BA3F86A2-4A1C-4D78-B63D-91C2779C1B5E}
 name: __Sortorder
 key: __sortorder
@@ -33,7 +40,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 154f660c-bf03-41d3-b069-72ae2b6bcc58
+revision: 10608ee1-c298-49bc-9675-5bbec7724e7f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-154f660c-bf03-41d3-b069-72ae2b6bcc58
+10608ee1-c298-49bc-9675-5bbec7724e7f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160229T114645
+20160823T094538
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

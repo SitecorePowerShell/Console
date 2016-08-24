@@ -13,9 +13,9 @@ templatekey: Template
 field: {12C33F3F-86C5-43A5-AEB4-5598CEC45116}
 name: __Base template
 key: __base template
-content-length: 38
+content-length: 0
 
-{6D1CD897-1936-4A3A-A511-289A94C2A7B1}
+
 ----field----
 field: {F7D48A55-2158-4F02-9356-756654404F73}
 name: __Standard values
@@ -33,7 +33,7 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: 4dff03ef-a310-4af0-9de8-718305f7c2fc
+revision: 2b435d96-51b0-4494-8708-5a18d779a45f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4dff03ef-a310-4af0-9de8-718305f7c2fc
+2b435d96-51b0-4494-8708-5a18d779a45f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160414T143123
+20160823T092157
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

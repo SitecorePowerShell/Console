@@ -9,20 +9,15 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {BC29CC43-FC82-4A6C-B325-FB261DA5931B}
 templatekey: PowerShell Rule
 
-----version----
-language: en
-version: 1
-revision: 8bfe964a-29c2-4f59-8648-5b31751a8c9e
-
 ----field----
-field: {299AF05F-0AB5-4375-A383-18B2F8F5EB6D}
+field: {072645B6-C332-446F-9F2C-255467AF5BC9}
 name: RootItem
 key: rootitem
 content-length: 38
 
 {3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}
 ----field----
-field: {1172EFE7-3568-422F-A103-F2F337C2FA78}
+field: {37D9ED28-C31B-4686-8564-A0F181721640}
 name: FilterRule
 key: filterrule
 content-length: 919
@@ -45,6 +40,18 @@ content-length: 919
     </conditions>
   </rule>
 </ruleset>
+----field----
+field: {52C8F3B7-3110-41D1-ABCA-979ED691135C}
+name: DefaultFields
+key: defaultfields
+content-length: 24
+
+DisplayName|TemplateName
+----version----
+language: en
+version: 1
+revision: 80054028-ee37-441a-8aca-29bd0b2789e2
+
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -72,14 +79,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8bfe964a-29c2-4f59-8648-5b31751a8c9e
+80054028-ee37-441a-8aca-29bd0b2789e2
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160704T180212
+20160823T131819
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

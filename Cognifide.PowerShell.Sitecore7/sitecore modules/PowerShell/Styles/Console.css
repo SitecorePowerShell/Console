@@ -25,6 +25,10 @@ html {
     z-index: -1
 }
 
+#terminal * {
+    font-family: inherit !important;
+}
+
 .middleArea pre, .resultsArea pre { margin: 4px; }
 
 .console {

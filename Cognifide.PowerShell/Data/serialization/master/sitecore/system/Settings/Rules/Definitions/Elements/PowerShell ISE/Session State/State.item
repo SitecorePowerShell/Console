@@ -19,8 +19,15 @@ Applications/32x32/star_blue.png
 ----version----
 language: en
 version: 1
-revision: 22c5caac-5158-4e05-ac9d-db84930b05a3
+revision: 69009c3a-c750-448d-ab0a-630882d6c05e
 
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 5
+
+State
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -34,7 +41,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20121005T114640
+20121005T094640
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-22c5caac-5158-4e05-ac9d-db84930b05a3
+69009c3a-c750-448d-ab0a-630882d6c05e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150629T234854:635712185342255859
+20160824T143522
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -26,7 +26,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 8b9636ee-ecb0-4ce1-b414-d8f71fab7174
+revision: a611fc36-9b10-4e83-85ae-ae1e767f3aa4
 
 ----field----
 field: {AF321234-4EB9-4EF5-9197-65903351939C}
@@ -39,9 +39,9 @@ where [persistentsessionid,,,specific] persistent PowerShell session was already
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
 name: __Display name
 key: __display name
-content-length: 0
+content-length: 35
 
-
+Persistent Session Variable Defined
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -69,14 +69,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8b9636ee-ecb0-4ce1-b414-d8f71fab7174
+a611fc36-9b10-4e83-85ae-ae1e767f3aa4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150204T145234:635586583541334844
+20160824T144320
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

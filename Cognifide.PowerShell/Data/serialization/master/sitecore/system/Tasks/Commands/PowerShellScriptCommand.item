@@ -26,15 +26,8 @@ Update
 ----version----
 language: en
 version: 1
-revision: 3caac2fb-dc03-4687-90e3-8411002c38d2
+revision: 700ef057-8501-4de6-a414-161203e8e785
 
-----field----
-field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
-name: __Display name
-key: __display name
-content-length: 23
-
-PowerShellScriptCommand
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -62,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-3caac2fb-dc03-4687-90e3-8411002c38d2
+700ef057-8501-4de6-a414-161203e8e785
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150210T170042:635591844429414063
+20160824T140621
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

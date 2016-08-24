@@ -453,3 +453,15 @@ a.ps-link {
     background: #FFEFEF;
     color: #FF4646;
 }
+
+#ScriptResult * {
+    font-family: inherit !important;
+}
+
+.ace_layer.ace_text-layer * {
+    font-family: inherit !important;
+}
+
+#CodeEditor * {
+    font-family: inherit !important;
+}

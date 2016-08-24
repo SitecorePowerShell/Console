@@ -19,7 +19,7 @@ Cognifide.PowerShell.Core.Rules.PowerShellExperienceButtonChromeType,Cognifide.P
 ----version----
 language: en
 version: 1
-revision: 53fa914b-af83-48eb-b6e4-327674e452ff
+revision: 047c3e74-57df-4288-b651-9a9460b8c8bb
 
 ----field----
 field: {AF321234-4EB9-4EF5-9197-65903351939C}
@@ -28,6 +28,13 @@ key: text
 content-length: 121
 
 when chrome is of [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&setRootAsSearchRoot=true,unspecified] type
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 11
+
+Chrome Type
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -55,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-53fa914b-af83-48eb-b6e4-327674e452ff
+047c3e74-57df-4288-b651-9a9460b8c8bb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160104T012436
+20160824T144007
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

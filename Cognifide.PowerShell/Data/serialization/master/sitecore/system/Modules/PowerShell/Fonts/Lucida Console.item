@@ -10,12 +10,19 @@ template: {5BA5DBE4-F85D-4797-9084-ACB31952B3B3}
 templatekey: Font Definition
 
 ----field----
-field: {580C75A8-C01A-4580-83CB-987776CEB3AF}
+field: {DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}
 name: Key
 key: key
 content-length: 14
 
 Lucida Console
+----field----
+field: {E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}
+name: Phrase
+key: phrase
+content-length: 84
+
+"Lucida Console", Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -26,15 +33,8 @@ wordprocessing/32x32/style_formatting_b.png
 ----version----
 language: en
 version: 1
-revision: 722f8326-b880-4eba-a268-f7ab016a9144
+revision: c597b2c1-6d3c-4700-be9b-9a0e479e6924
 
-----field----
-field: {2BA3454A-9A9C-4CDF-A9F8-107FD484EB6E}
-name: Phrase
-key: phrase
-content-length: 84
-
-"Lucida Console", Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
@@ -55,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-722f8326-b880-4eba-a268-f7ab016a9144
+c597b2c1-6d3c-4700-be9b-9a0e479e6924
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160414T142912
+20160823T122714
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

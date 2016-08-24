@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2210
+content-length: 2364
 
 function Render-ScriptInvoker {
     [CmdletBinding()]
@@ -44,7 +44,13 @@ function Render-ItemField{
         [Sitecore.Data.Items.Item]$item,
         
         [Parameter(Mandatory=$true, Position=1)]
-        [string]$fieldName
+        [string]$fieldName,
+        
+        [Parameter(Position=2)]
+        [int]$MaxWidth = 64,
+
+        [Parameter(Position=3)]
+        [int]$MaxHeight = 64
         )
 
     if($rawValues){
@@ -56,7 +62,7 @@ function Render-ItemField{
     }
     $typedField = [Sitecore.Data.Fields.FieldTypeManager]::GetField($field);
     if ($typedField -is [Sitecore.Data.Fields.ImageField]){
-        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field, "mh=64&mw=64");
+        return [Cognifide.PowerShell.Core.Extensions.FieldExtensions]::Render($field, "mh=$MaxHeight&mw=$MaxWidth");
     } elseif ($typedField -is [Sitecore.Data.Fields.MultilistField]){
         return $typedField.GetItems().DisplayName -join ", ";
     } elseif ([Cognifide.PowerShell.Core.Extensions.FieldExtensions]::ShouldRender($field)) {
@@ -79,7 +85,7 @@ function Render-PercentValue {
 ----version----
 language: en
 version: 1
-revision: 5ffcf499-45a3-438e-82a8-315cf7bad75b
+revision: cbe0539d-5be5-4dde-b963-c1e6424ab91f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -94,14 +100,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5ffcf499-45a3-438e-82a8-315cf7bad75b
+cbe0539d-5be5-4dde-b963-c1e6424ab91f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160315T193845
+20160819T164013
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
