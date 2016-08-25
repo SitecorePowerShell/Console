@@ -140,3 +140,78 @@ key: __workflow state
 content-length: 0
 
 
+----version----
+language: ja-JP
+version: 1
+revision: 2d93b22d-d971-4db3-b06b-7523c5c26254
+
+----field----
+field: {CF5BB092-1A85-4C78-B486-A79FD6D84771}
+name: Header
+key: header
+content-length: 10
+
+ワンタイムセッション
+----field----
+field: {37103048-B73C-4621-88EB-77912CACA135}
+name: Tooltip
+key: tooltip
+content-length: 22
+
+スクリプト実行中のインメモリセッションの選択
+----field----
+field: {29D3164D-DE97-4ACE-BCB4-83CB6954BEE3}
+name: Gallery
+key: gallery
+content-length: 24
+
+Gallery.SessionIDGallery
+----field----
+field: {212B99DF-C246-46CE-9E51-86DB77E3BC97}
+name: Gallery Height
+key: gallery height
+content-length: 3
+
+400
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20160825T104818
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+2d93b22d-d971-4db3-b06b-7523c5c26254
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20160825T104818
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin

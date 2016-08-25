@@ -94,7 +94,7 @@ sitecore\admin
 ----version----
 language: ja-JP
 version: 1
-revision: 7af707a8-3ac2-4a67-98be-c8c31e004f7a
+revision: 566b6292-1bcc-4877-b36f-db3cee59bd64
 
 ----field----
 field: {108D3A63-BAAA-4560-86D8-3A112ED84717}
@@ -114,9 +114,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20160823T075958Z
+20160823T075958
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -130,14 +130,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-7af707a8-3ac2-4a67-98be-c8c31e004f7a
+566b6292-1bcc-4877-b36f-db3cee59bd64
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160823T075958Z
+20160825T104818
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

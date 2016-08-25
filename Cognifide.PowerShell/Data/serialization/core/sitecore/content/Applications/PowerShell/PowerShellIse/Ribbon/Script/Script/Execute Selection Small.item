@@ -122,7 +122,7 @@ content-length: 0
 ----version----
 language: ja-JP
 version: 1
-revision: 1a1fe55b-c8f8-4ec8-8ae2-60c7828ce950
+revision: 8689d69f-7d0c-4547-a5bd-78c39a6fe851
 
 ----field----
 field: {C184F18B-B452-44D6-8376-FACD6CEF8A42}
@@ -131,6 +131,15 @@ key: header
 content-length: 6
 
 セレクション
+----field----
+field: {A47CD065-C361-4332-B22B-7E2148DE06F4}
+name: Tooltip
+key: tooltip
+content-length: 20
+
+
+      セレクション
+    
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -142,9 +151,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20160823T075959Z
+20160823T075959
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -158,14 +167,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1a1fe55b-c8f8-4ec8-8ae2-60c7828ce950
+8689d69f-7d0c-4547-a5bd-78c39a6fe851
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160823T075959Z
+20160825T104818
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

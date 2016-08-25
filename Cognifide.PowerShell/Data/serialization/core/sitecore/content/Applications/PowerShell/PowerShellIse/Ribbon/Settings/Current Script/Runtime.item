@@ -115,7 +115,7 @@ content-length: 0
 ----version----
 language: ja-JP
 version: 1
-revision: 9c0447d3-acde-4f4b-851b-764d84aa9266
+revision: 23d6efda-7360-4e79-a902-48ab5f22e3f5
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -124,6 +124,14 @@ key: header
 content-length: 5
 
 ランタイム
+----field----
+field: {A1A31A93-C4A0-4396-B629-67C33001A3CF}
+name: Tooltip
+key: tooltip
+content-length: 30
+
+ラインタイムプロパティのスクリプトアイテムの選択
+    
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -135,9 +143,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20160823T075959Z
+20160823T075959
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -151,14 +159,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9c0447d3-acde-4f4b-851b-764d84aa9266
+23d6efda-7360-4e79-a902-48ab5f22e3f5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20160823T075959Z
+20160825T104818
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
