@@ -17,6 +17,7 @@ using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Shell.Applications.Dialogs.RulesEditor;
 using Sitecore.Shell.Applications.Rules;
@@ -518,9 +519,9 @@ namespace Cognifide.PowerShell.Client.Applications
                         var link =
                             new Literal(
                                 @"<div class='checkListActions'>"+
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id="+ editorId + @")')"">Select all</a> &nbsp;|&nbsp; " +
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">Deselect all</a> &nbsp;|&nbsp;" +
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" + editorId + @")')"">Invert selection</a>" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id="+ editorId + @")')"">" + Translate.Text("Select all") + "</a> &nbsp;|&nbsp; " +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">" + Translate.Text("Deselect all") + "</a> &nbsp;|&nbsp;" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" + editorId + @")')"">" + Translate.Text("Invert selection") + "</a>" +
                                 @"</div>");
                         checkBorder.Controls.Add(link);
                         var checkList = new PSCheckList
