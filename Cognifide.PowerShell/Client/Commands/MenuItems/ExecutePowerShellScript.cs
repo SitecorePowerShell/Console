@@ -53,10 +53,13 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             else
             {
                 var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
-                str.Append("id", itemId);
-                str.Append("db", itemDb);
-                str.Append("lang", itemLang);
-                str.Append("ver", itemVer);
+                if (!string.IsNullOrWhiteSpace(itemId))
+                {
+                    str.Append("id", itemId);
+                    str.Append("db", itemDb);
+                    str.Append("lang", itemLang);
+                    str.Append("ver", itemVer);
+                }
                 str.Append("scriptId", scriptId);
                 str.Append("scriptDb", scriptDb);
                 //Context.ClientPage.ClientResponse.Broadcast(
