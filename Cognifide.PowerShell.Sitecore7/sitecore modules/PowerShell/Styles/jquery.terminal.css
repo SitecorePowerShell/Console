@@ -1,6 +1,8 @@
 .terminal .clipboard {
     bottom: 0;
+    /* ReSharper disable once InvalidValue */
     filter: alpha(opacity = 0.01);
+    /* ReSharper disable once InvalidValue */
     filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.01);
     left: 0;
     opacity: 0.01;
