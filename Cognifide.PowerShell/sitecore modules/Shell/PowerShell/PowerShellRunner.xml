@@ -67,11 +67,11 @@
                    Text="Sitecore PowerShell Extensions (c) 2010-2016 &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt; - &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide&lt;/a&gt;, &lt;a href='http://michaellwest.blogspot.com/' target='_blank'&gt;Michael West&lt;/a&gt;." />
           <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
              onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
-            View Script Results
+            <Literal ID="ResultsOK" Text="View Script Results" />
           </a>
           <a href="#" id="ViewErrorsButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
              onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">
-            View Script Results and errors
+            <Literal ID="ResultsError" Text="View Script Results and errors"/>
           </a>
           <div class="footerOkCancel">
             <Button ID="OkButton" Click="OkClick" Class="scButton scButtonPrimary" Visible="false" Header="Close" />

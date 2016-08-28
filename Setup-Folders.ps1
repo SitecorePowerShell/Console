@@ -65,6 +65,7 @@ function Create-ProjectJunctions{
     Write-Host "--------------------------------------------------------------------------------------------"
 
     Create-Junction "$path\Data\serialization" "$projectPath\Cognifide.PowerShell\Data\serialization"
+    Create-Junction "$path\Data\Translations" "$projectPath\Cognifide.PowerShell\Data\Translations"
 
     if(Test-Path "$path\Website\sitecore modules\PowerShell"){
         cmd.exe /c "rmdir `"$path\Website\sitecore modules\PowerShell`" /Q /S" 

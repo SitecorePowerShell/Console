@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7375
+content-length: 7609
 
 $srcLanguage = "en"
 $targetLanguage = "ja-JP"
@@ -167,7 +167,11 @@ Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
 Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
 
 # PowerShell Applications
-Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
+Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 82
+
+# PowerShell Dictionary - translation strings
+Get-Item core:\system\Dictionary\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
+
 
 # PowerShell Application Layouts
 Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse -Activity "PowerShell Application Layouts" -PercentComplete 87
@@ -191,12 +195,12 @@ Get-Item 'core:\client\Applications\Launchpad\PageSettings\Buttons\ContentEditin
 # Tasks integration
 Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 100
 
-$xmlMaster.Save("$SitecoreTempFolder\spe-translation-master.xml")
-$xmlCore.Save("$SitecoreTempFolder\spe-translation-core.xml")
+$xmlMaster.Save("$SitecoreDataFolder\Translations\spe-translation-master-$targetLanguage.xml")
+$xmlCore.Save("$SitecoreDataFolder\Translations\spe-translation-core-$targetLanguage.xml")
 ----version----
 language: en
 version: 1
-revision: 4faf8441-0936-469d-89b9-bcaa6a668f16
+revision: 06b46172-fffe-4870-ae5a-ce3ba6773ae4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -211,14 +215,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4faf8441-0936-469d-89b9-bcaa6a668f16
+06b46172-fffe-4870-ae5a-ce3ba6773ae4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160824T145706
+20160827T233638
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

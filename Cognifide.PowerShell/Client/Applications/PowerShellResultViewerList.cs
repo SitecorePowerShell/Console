@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -110,7 +111,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
-                        sb.AppendFormat("<strong class='progressRemaining'>, {0:c} </strong> remaining",
+                        sb.AppendFormat("<strong class='progressRemaining'>, {0:c} </strong> " +
+                            Texts.PowerShellResultViewerList_UpdateProgress_remaining,
                             new TimeSpan(0, 0, secondsRemaining));
                 }
 

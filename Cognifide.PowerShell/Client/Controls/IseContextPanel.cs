@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch.Utilities;
@@ -45,14 +46,14 @@ namespace Cognifide.PowerShell.Client.Controls
             output.Write("<div class=\"scRibbonToolbarSmallButtons scRibbonContextLabels\" timestamp=\"{0}\">",
                 DateTime.Now.ToString("O"));
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(Translate.Text("Context"));
+            output.Write(Translate.Text(Texts.IseContextPanel_Render_Context));
             output.Write("</div>");
             output.Write("<div class=\"iseRibbonContextPanelLabel\">");
-            output.Write(Translate.Text("Session"));
+            output.Write(Translate.Text(Texts.IseContextPanel_Render_Session));
             output.Write("</div>");
             output.Write("</div>");
             var contextButton = Factory.GetDatabase("core").GetItem("{C733DE04-FFA2-4DCB-8D18-18EB1CB898A3}");
-            var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : "none";
+            var path = contextItem != null ? contextItem.GetProviderPath().EllipsisString(50) : Texts.IseContextPanel_Render_none;
             var icon = contextItem != null ? contextItem.Appearance.Icon : contextButton.Appearance.Icon;
             RenderSmallGalleryButton(output, contextButton, context, ribbon, path, icon, parameters);
             var sessionButton = Factory.GetDatabase("core").GetItem("{0C784F54-2B46-4EE2-B0BA-72384125E123}");

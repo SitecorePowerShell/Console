@@ -458,6 +458,7 @@
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Texts.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>

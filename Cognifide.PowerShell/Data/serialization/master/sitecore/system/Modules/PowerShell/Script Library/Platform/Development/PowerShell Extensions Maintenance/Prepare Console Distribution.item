@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 11541
+content-length: 11738
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -150,6 +150,10 @@ $package.Sources.Add($source);
 $source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
 $package.Sources.Add($source);
 
+# PowerShell Dictionary - translation strings
+$source = Get-Item core:\system\Dictionary\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
+$package.Sources.Add($source);
+
 # Application Layouts
 $source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
 $package.Sources.Add($source);
@@ -253,7 +257,7 @@ Export-Package -Project $package -Path "$packageName.zip" -Zip
 ----version----
 language: en
 version: 1
-revision: f8cabb55-26e5-4ac3-8f0e-2e8966d5c686
+revision: 49d88bc5-6633-4ab6-a52b-c2340843d694
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -268,14 +272,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f8cabb55-26e5-4ac3-8f0e-2e8966d5c686
+49d88bc5-6633-4ab6-a52b-c2340843d694
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160531T085051
+20160826T152336
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

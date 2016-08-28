@@ -6,6 +6,7 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -44,6 +45,10 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal Subtitle;
         protected Literal Result;
         protected Literal Title;
+        protected Literal ResultsError;
+        protected Literal ResultsOK;
+        protected Image Copyright;
+
         public SpeJobMonitor Monitor { get; private set; }
         public string Script { get; set; }
         public ApplicationSettings Settings { get; set; }
@@ -187,6 +192,12 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 RenderingId = WebUtil.GetQueryString("RenderingId");
 
+
+                ResultsError.Text = Texts.PowerShellRunner_OnLoad_View_script_results_and_errors;
+                ResultsOK.Text = Texts.PowerShellRunner_OnLoad_View_script_results;
+                Copyright.Alt = Texts.PowerShellRunner_OnLoad_Show_copyright__;
+                Title.Text = Texts.PowerShellRunner_UpdateProgress_Running_script___;
+
                 if (!string.IsNullOrEmpty(ScriptId) && !string.IsNullOrEmpty(ScriptId))
                 {
                     var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
@@ -263,7 +274,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var job = JobManager.GetJob(Monitor.JobHandle);
             var result = (RunnerOutput) job.Status.Result;
-            var printResults = (result != null ? result.Output : null) ?? "Script finished - no results to display.";
+            var printResults = result?.Output ??
+                               Texts.PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_;
             if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception);
@@ -354,7 +366,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var sb = new StringBuilder();
 
             var activity = args.Parameters["Activity"];
-            Title.Text = string.IsNullOrEmpty(activity) ? "Running script..." : activity;
+            Title.Text = string.IsNullOrEmpty(activity) ? Texts.PowerShellRunner_UpdateProgress_Running_script___ : activity;
 
             var status = args.Parameters["StatusDescription"];
             var showStatus = !string.IsNullOrEmpty(status);
@@ -372,7 +384,9 @@ namespace Cognifide.PowerShell.Client.Applications
             else
             {
                 Subtitle.Text = showStatus
-                ? string.Format("<span class='status'>Status: {0}</span>", status)
+                ? string.Format("<span class='status'>"+
+                Texts.PowerShellRunner_UpdateProgress_Status_+
+                " {0}</span>", status)
                 : "<span class='status'> </span>";
             }
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
@@ -397,13 +411,17 @@ namespace Cognifide.PowerShell.Client.Applications
                     var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
                         sb.AppendFormat(
-                            "<span class='timeRemaining'><span class='label'>Time remaining:</span> {0:c}</span><br/>",
+                            "<span class='timeRemaining'><span class='label'>" +
+                            Texts.PowerShellRunner_UpdateProgress_Time_remaining_ +
+                            "</span> {0:c}</span><br/>",
                             new TimeSpan(0, 0, 0, secondsRemaining));
                 }
 
                 if (!string.IsNullOrEmpty(args.Parameters["CurrentOperation"]))
                 {
-                    sb.AppendFormat("<span class='operation'><span class='label'>Operation:</span> {0}</span>",
+                    sb.AppendFormat("<span class='operation'><span class='label'>" +
+                                    Texts.PowerShellRunner_UpdateProgress_Operation_ + 
+                                    "</span> {0}</span>",
                         args.Parameters["CurrentOperation"]);
                 }
 

@@ -5,6 +5,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch;
@@ -127,6 +128,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 {
                     ContentDataContext.Folder = itemArray[0].ID.ToString();
                 }
+                SearchPhrase.Placeholder =
+                    Translate.Text(Texts.MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
             }
         }
 
@@ -166,7 +169,7 @@ namespace Cognifide.PowerShell.Client.Controls
             Scripts.Controls.Clear();
             if (string.IsNullOrEmpty(phrase))
             {
-                recentHeader.Header = "Most Recently opened scripts:";
+                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_);
                 foreach (Item item in ApplicationSettings.GetIseMruContainerItem().Children)
                 {
                     var messageString = item["Message"];
@@ -187,7 +190,7 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else if (database.Length > 0)
             {
-                recentHeader.Header = "Scripts matching: '" + phrase + "' in '" + database + "*' database";
+                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database, phrase, database);
                 foreach (var index in ContentSearchManager.Indexes)
                 {
                     if (index.Name.StartsWith("sitecore_" + database) &&
@@ -199,7 +202,7 @@ namespace Cognifide.PowerShell.Client.Controls
             }
             else
             {
-                recentHeader.Header = "Scripts matching: '" + phrase + "' in all databases";
+                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases, phrase);
                 var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
                 var scriptsFound = SearchDatabase(masterIndex, phrase);
                 foreach (var index in ContentSearchManager.Indexes)
@@ -214,7 +217,9 @@ namespace Cognifide.PowerShell.Client.Controls
                 if (!scriptsFound)
                 {
                     Context.ClientPage.AddControl(Scripts,
-                        new Literal {Text = "<div class='noScript'><br/><br/>No scripts found... Do you need to re-index your databases?</div>" });
+                        new Literal {Text = "<div class='noScript'><br/><br/>"+
+                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_No_scripts_found____Do_you_need_to_re_index_your_databases_)+
+                        "</div>" });
                     Scripts.CssStyle = "text-align: center;";
                 }
             }
@@ -260,7 +265,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 return;
             }
             var control = ControlFactory.GetControl("MruGallery.SearchItem") as XmlControl;
-            Assert.IsNotNull(control, typeof (XmlControl), "Xml Control \"{0}\" not found",
+            Assert.IsNotNull(control, typeof (XmlControl), Translate.Text(Texts.MruGallery_RenderRecent_Xml_Control___0___not_found),
                 "MruGallery.SearchItem");
 
             Context.ClientPage.AddControl(Scripts, control);

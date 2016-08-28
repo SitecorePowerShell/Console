@@ -12,6 +12,7 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
@@ -141,8 +142,16 @@ namespace Cognifide.PowerShell.Client.Applications
                     clearfix = strColumns.Contains("first", StringComparer.OrdinalIgnoreCase);
                 }
                 var container = GetContainer(tabs, tabName);
-                var input = GetVariableEditor(variable);
+                Control input;
 
+                try
+                {
+                    input = GetVariableEditor(variable);
+                }
+                catch (Exception ex)
+                {
+                    input = new Literal { Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor, Class = "varHint" };
+                }
                 var variableBorder = new Border();
 
                 if (variable["Value"] == null || variable["Value"].GetType() != typeof(bool))
@@ -256,7 +265,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 Button rulesEditButton = new Button
                 {
-                    Header = "Edit rule",
+                    Header = Texts.PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule,
                     Class = "scButton edit-button rules-edit-button",
                     Click = "EditConditionClick(\\\"" + editorId + "\\\")"
                 };
@@ -312,6 +321,20 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 if (editor.IndexOf("droplist", StringComparison.OrdinalIgnoreCase) > -1)
                 {
+                    if (Sitecore.Context.ContentDatabase?.Name != dbName)
+                    {
+                        // this control will crash if if content database is different than the items fed to it.
+                        return new Literal
+                        {
+                            Text = "<span style='color: red'>" +
+                                   Translate.Text(
+                                       Texts
+                                           .PowerShellMultiValuePrompt_GetVariableEditor_DropList_control_cannot_render_items_from_the_database___0___because_it_its_not_the_same_as___1___which_is_the_current_content_database__,
+                                       dbName, Sitecore.Context.ContentDatabase?.Name) + "</span>",
+                            Class = "varHint"
+                        };
+
+                    }
                     var lookup = new LookupEx
                     {
                         ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -520,7 +543,7 @@ namespace Cognifide.PowerShell.Client.Applications
                             new Literal(
                                 @"<div class='checkListActions'>"+
                                 @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id="+ editorId + @")')"">" + Translate.Text("Select all") + "</a> &nbsp;|&nbsp; " +
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">" + Translate.Text("Deselect all") + "</a> &nbsp;|&nbsp;" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">" + Translate.Text("Unselect all") + "</a> &nbsp;|&nbsp;" +
                                 @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" + editorId + @")')"">" + Translate.Text("Invert selection") + "</a>" +
                                 @"</div>");
                         checkBorder.Controls.Add(link);

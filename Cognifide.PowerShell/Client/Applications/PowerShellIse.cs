@@ -13,6 +13,7 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Common;
 using Sitecore.Configuration;
@@ -223,10 +224,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                const string header = "Open Script";
-                const string text = "Select the script item that you want to open.";
                 const string icon = "powershell/48x48/script.png";
-                const string button = "Open";
                 const string root = ApplicationSettings.ScriptLibraryPath;
                 const string selected = ApplicationSettings.ScriptLibraryPath;
 
@@ -241,10 +239,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 urlString.Append("id", selected);
                 urlString.Append("fo", str);
                 urlString.Append("ro", root);
-                urlString.Append("he", header);
-                urlString.Append("txt", text);
+                urlString.Append("he", Texts.PowerShellIse_Open_Open_Script);
+                urlString.Append("txt", Texts.PowerShellIse_Open_Select_the_script_item_that_you_want_to_open_);
                 urlString.Append("ic", icon);
-                urlString.Append("btn", button);
+                urlString.Append("btn", Sitecore.Texts.OPEN);
                 urlString.Append("opn", "1");
                 SheerResponse.ShowModalDialog(urlString.ToString(), true);
                 args.WaitForPostBack();
@@ -354,10 +352,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                const string header = "Select Script Library";
-                const string text = "Select the Library that you want to save your script to.";
                 const string icon = "powershell/48x48/script.png";
-                const string button = "Select";
                 const string root = ApplicationSettings.ScriptLibraryPath;
                 const string selected = ApplicationSettings.ScriptLibraryPath;
 
@@ -372,10 +367,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 urlString.Append("id", selected);
                 urlString.Append("fo", str);
                 urlString.Append("ro", root);
-                urlString.Append("he", header);
-                urlString.Append("txt", text);
+                urlString.Append("he", Texts.PowerShellIse_SaveAs_Select_Script_Library);
+                urlString.Append("txt", Texts.PowerShellIse_SaveAs_Select_the_Library_that_you_want_to_save_your_script_to_);
                 urlString.Append("ic", icon);
-                urlString.Append("btn", button);
+                urlString.Append("btn", Sitecore.Texts.SELECT);
                 SheerResponse.ShowModalDialog(urlString.ToString(), true);
                 args.WaitForPostBack();
             }
@@ -425,7 +420,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
-                SheerResponse.Alert("The item is not a script.", true);
+                SheerResponse.Alert(Texts.PowerShellIse_LoadItem_The_item_is_not_a_script_, true);
             }
         }
 
@@ -546,8 +541,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 "ScriptResult",
                 string.Format(
                     "<div id='PleaseWait'>" +
-                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='Working' />" +
-                    "<div>Please wait, {0}</div>" +
+                    "<img src='../../../../../sitecore modules/PowerShell/Assets/working.gif' alt='"+
+                    Texts.PowerShellIse_JobExecuteScript_Working+
+                    "' />" +
+                    "<div>"+
+                    Texts.PowerShellIse_JobExecuteScript_Please_wait___0_+
+                    "</div>" +
                     "</div>" +
                     "<pre ID='ScriptResultCode'></pre>",
                     ExecutionMessages.PleaseWaitMessages[
@@ -704,7 +703,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     var secondsRemaining = Int32.Parse(args.Parameters["SecondsRemaining"]);
                     if (secondsRemaining > -1)
-                        sb.AppendFormat("<p><strong>{0:c} </strong> remaining.</p>",
+                        sb.AppendFormat("<p><strong>{0:c} </strong> "+
+                            Texts.PowerShellIse_UpdateProgress_remaining+
+                            ".</p>",
                             new TimeSpan(0, 0, secondsRemaining));
                 }
 
@@ -759,13 +760,13 @@ namespace Cognifide.PowerShell.Client.Applications
                     !string.IsNullOrEmpty(item[ScriptItemFieldNames.PersistentSessionId])
                         ? item[ScriptItemFieldNames.PersistentSessionId]
                         : null;
-                sessionName = string.Format("Script defined: {0}", name ?? "Single execution");
+                sessionName = string.Format(Texts.PowerShellIse_UpdateRibbon_Script_defined___0_, name ?? Texts.PowerShellIse_UpdateRibbon_Single_execution);
                 persistentSessionId = name ?? string.Empty;
             }
 
             ribbon.CommandContext.Parameters["persistentSessionId"] = persistentSessionId;
             ribbon.CommandContext.Parameters["currentSessionName"] = string.IsNullOrEmpty(sessionName)
-                ? "Single execution"
+                ? Texts.PowerShellIse_UpdateRibbon_Single_execution
                 : (sessionName == DefaultSessionName)
                     ? Factory.GetDatabase("core")
                         .GetItem(

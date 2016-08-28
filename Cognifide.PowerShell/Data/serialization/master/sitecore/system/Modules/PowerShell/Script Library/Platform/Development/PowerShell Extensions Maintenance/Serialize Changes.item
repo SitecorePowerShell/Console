@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 7803
+content-length: 7977
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -157,7 +157,10 @@ Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
 Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
 
 # PowerShell Applications
-Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
+Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 82
+
+# PowerShell Dictionary - translation strings
+Get-Item core:\system\Dictionary\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
 
 # PowerShell Application Layouts
 Get-Item 'core:\layout\Layouts\Applications\PowerShell*' | Process-Item -Recurse -Activity "PowerShell Application Layouts" -PercentComplete 87
@@ -194,7 +197,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: d61ac374-5727-4ca0-89e2-a5e6bc07d9e7
+revision: eb0857d0-2fa7-4699-a61c-3b5b060b9bb5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -209,14 +212,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d61ac374-5727-4ca0-89e2-a5e6bc07d9e7
+eb0857d0-2fa7-4699-a61c-3b5b060b9bb5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160131T094444
+20160826T151453
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -1,0 +1,242 @@
+<sitecore>
+  <phrase updated="20160823T092339" fieldid="Title" itemid="{DA69B6B3-D7BF-40D0-8609-E9B7B7BE01BA}" key="Key" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Key">
+    <ja-JP>キー</ja-JP>
+  </phrase>
+  <phrase updated="20160823T092339" fieldid="Title" itemid="{E82A50D9-E483-4C2A-BEA1-730DD9AB7DE6}" key="Phrase" path="/sitecore/templates/Modules/PowerShell Console/Font Definition/Data/Phrase">
+    <ja-JP>フレーズ</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094538" fieldid="Title" itemid="{F59378A5-F21D-4E07-B7DE-7986DDA3A510}" key="HostWidth" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/HostWidth">
+    <ja-JP>ホストの横幅（文字数）</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094540" fieldid="Title" itemid="{F810EEC7-9A73-43E6-84C1-36E4951D2B3E}" key="ForegroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/ForegroundColor">
+    <ja-JP>文字の色</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094540" fieldid="Title" itemid="{AEEB1BB0-87B9-4E16-B5DE-D4CC544A992F}" key="BackgroundColor" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Appearance/BackgroundColor">
+    <ja-JP>文字の背景色</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094540" fieldid="Title" itemid="{D0620274-D94D-4B13-BD66-CE3104DAEE0D}" key="LastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LastScript">
+    <ja-JP>最後に実行したスクリプト</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094540" fieldid="Title" itemid="{6209F0C2-E2B0-4F0C-95E3-037061CB866C}" key="SaveLastScript" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/SaveLastScript">
+    <ja-JP>セッション間で編集したスクリプトを保存しますか？</ja-JP>
+  </phrase>
+  <phrase updated="20160823T094540" fieldid="Title" itemid="{E81731F2-D79D-4F63-A36D-29502B0DC406}" key="LiveAutocompletion" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Console Settings/Behaviour/LiveAutocompletion">
+    <ja-JP>ライブオートコンプリート - 次の文字を入力した場合  "\" や "-" オートコンプリートが自動的に起動します (エディタが一時的にフリーズします) </ja-JP>
+  </phrase>
+  <phrase updated="20150501T220658:635661148181875000" fieldid="Title" itemid="{B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Scripting/Script">
+    <ja-JP>スクリプト本文</ja-JP>
+  </phrase>
+  <phrase updated="20150501T220658:635661148182275390" fieldid="Title" itemid="{1C76313E-3C8C-4807-A826-135D10C39299}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/ShowRule">
+    <ja-JP>ルールが満たされているもしくは未設定を表示します</ja-JP>
+  </phrase>
+  <phrase updated="20150501T220658:635661148182470703" fieldid="Title" itemid="{F62C67B4-28B6-4A6F-91CB-DB78CF054F4E}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Interactive/EnableRule">
+    <ja-JP>ルールが満たされているもしくは未設定を表示します</ja-JP>
+  </phrase>
+  <phrase updated="20150501T220658:635661148182929687" fieldid="Title" itemid="{7FA141B7-7473-44A9-9BD9-2739C51FF8DA}" key="PersistentSessionId" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script/Session Persistency/PersistentSessionId">
+    <ja-JP>現在のセッションID - この ID のコンテキストスクリプトは1つのセッションで実行します。実行したあとのセッションは空になり、それ以外は再利用するためにインメモリでストアします。</ja-JP>
+  </phrase>
+  <phrase updated="20141102T235141:635505691010852513" fieldid="Title" itemid="{613D128B-7BF2-40F4-84CB-6717408F9806}" key="ShowRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/ShowRule">
+    <ja-JP>ルールが満たされているもしくは未設定を表示します</ja-JP>
+  </phrase>
+  <phrase updated="20141102T235146:635505691065485305" fieldid="Title" itemid="{05EECF47-0BB9-4B85-B926-0BC6DD987EC8}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/Interactive/EnableRule">
+    <ja-JP>ルールが満たされているもしくは未設定を有効にします</ja-JP>
+  </phrase>
+  <phrase updated="20141125T030217:635524813377391795" fieldid="__Display name" itemid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" key="PowerShell Script Module" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Module">
+    <ja-JP>PowerShell Script モジュール</ja-JP>
+  </phrase>
+  <phrase updated="20110401T093047:634372470479035377" fieldid="Title" itemid="{BDC2FCBC-91EE-4135-BB04-196E3AE683E5}" key="Type" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data/Type">
+    <ja-JP>文字の入力</ja-JP>
+  </phrase>
+  <phrase updated="20141108T132632:635510499926926797" fieldid="__Display name" itemid="{616C618F-8631-4199-8CDE-34FBEB398C6C}" key="Data" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Data">
+    <ja-JP>データ</ja-JP>
+  </phrase>
+  <phrase updated="20141108T132321:635510498011487344" fieldid="Title" itemid="{CD8DA5E2-3B65-4A14-B7A6-9F41181CE172}" key="Script" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/Script">
+    <ja-JP>スクリプト本文</ja-JP>
+  </phrase>
+  <phrase updated="20160606T235415" fieldid="Title" itemid="{D51CFE9B-67D9-40C3-9AA7-31456FB9AEFB}" key="EnableRule" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action/Execution/EnableRule">
+    <ja-JP>ルールが設定もしくは未設定の場合のみ実行</ja-JP>
+  </phrase>
+  <phrase updated="20141227T155747:635552926670008515" fieldid="__Display name" itemid="{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}" key="PowerShell Script Workflow Action" path="/sitecore/templates/Modules/PowerShell Console/PowerShell Script Workflow Action">
+    <ja-JP>PowerShell スクリプトワークフローのアクション</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{81184848-ECF9-4448-8515-DFDBC83AC41B}" key="Black" path="/sitecore/system/Modules/PowerShell/Console Colors/Black">
+    <ja-JP>黒</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{BD085463-EEB5-4BB8-8473-078943D7EFD8}" key="Blue" path="/sitecore/system/Modules/PowerShell/Console Colors/Blue">
+    <ja-JP>青</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{E2E5425E-3524-472F-9F50-1EE7B383F315}" key="Cyan" path="/sitecore/system/Modules/PowerShell/Console Colors/Cyan">
+    <ja-JP>シアン</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{AB222740-C3B4-46CD-AF84-8B3BB4B9BA37}" key="DarkBlue" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkBlue">
+    <ja-JP>濃い青</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{23E6E1F1-66BF-4A4C-A1EB-B61A0EF2F6B4}" key="DarkCyan" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkCyan">
+    <ja-JP>濃いシアン</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{B1893C54-8D20-4A6C-8A37-5B2887CFB6D7}" key="DarkGray" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGray">
+    <ja-JP>濃い緑</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{E517A968-CC59-425B-8BAA-6D26EBC1564D}" key="DarkGreen" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkGreen">
+    <ja-JP>濃い緑</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{1454C6B5-BD50-4745-A569-644F4AD2622D}" key="DarkMagenta" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkMagenta">
+    <ja-JP>濃いマジェンタ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{C9F7DFDB-A714-4B14-9F1C-5C31961D493E}" key="DarkRed" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkRed">
+    <ja-JP>濃い赤</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{10752CF2-8D56-4DC6-9FFC-6F51DB195422}" key="DarkYellow" path="/sitecore/system/Modules/PowerShell/Console Colors/DarkYellow">
+    <ja-JP>濃い黄色*</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{2146E874-FA2E-419F-8E29-29A72E0FCB4A}" key="Gray" path="/sitecore/system/Modules/PowerShell/Console Colors/Gray">
+    <ja-JP>灰色</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{4BDA1126-D3D3-4831-8CA2-A913E01C6208}" key="Green" path="/sitecore/system/Modules/PowerShell/Console Colors/Green">
+    <ja-JP>緑</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{31509572-F2A3-455B-887A-D67EE25151AB}" key="Magenta" path="/sitecore/system/Modules/PowerShell/Console Colors/Magenta">
+    <ja-JP>マジェンタ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{0E7B2B4A-1E41-48D7-8063-FC1C1E00C2E5}" key="Red" path="/sitecore/system/Modules/PowerShell/Console Colors/Red">
+    <ja-JP>赤</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{711AFE32-3147-41F4-81B7-821CFCF45079}" key="White" path="/sitecore/system/Modules/PowerShell/Console Colors/White">
+    <ja-JP>白</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{EAF596B9-BCF7-48AA-939C-A15604D6D98F}" key="Yellow" path="/sitecore/system/Modules/PowerShell/Console Colors/Yellow">
+    <ja-JP>黄色</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150159" fieldid="__Display name" itemid="{42FFA0E6-F121-432A-821D-D40C53560563}" key="Console Colors" path="/sitecore/system/Modules/PowerShell/Console Colors">
+    <ja-JP>カーソルの色</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150243" fieldid="__Display name" itemid="{4406B665-C086-4D1F-9048-0E62A9863755}" key="Fonts" path="/sitecore/system/Modules/PowerShell/Fonts">
+    <ja-JP>フォント</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="Text" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <ja-JP>[persistentsessionid,,,specific] 現在の PowerShell セッションは初期化されました</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}" key="Persistent Session Initiated" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Initiated">
+    <ja-JP>現在のセッションの初期化</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="Text" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <ja-JP>[persistentsessionid,,,specific] 現在の PowerShell セッションは既に初期化され、 [VariableName,,,specific] 変数は定義され、空ではありません</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{6DE31839-7C3D-4260-AA13-EBF30170FE28}" key="Persistent Session Variable Defined" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Persistent Session Variable Defined">
+    <ja-JP>現在のセッションの表示を設定</ja-JP>
+  </phrase>
+  <phrase updated="20150204T145249:635586583694176640" fieldid="Text" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <ja-JP>[ValidViewName,,,specific] を表示</ja-JP>
+  </phrase>
+  <phrase updated="20150204T145249:635586583694176640" fieldid="__Display name" itemid="{1B499603-87C9-4440-969F-D9568CE1E926}" key="ListView name matching" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/ListView name matching">
+    <ja-JP>リストビューで名前を表示</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{E9622DF0-ED90-47A5-97F8-EBE1E4E5B7DE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags/Default">
+    <ja-JP>標準</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{3F56D6C5-24E0-48DD-8A0C-79FE5AC96A45}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Tags">
+    <ja-JP>タグ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{DF828AF3-8F0C-406D-AE87-61B2340A4833}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Visibility">
+    <ja-JP>表示</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{C84F4255-CF8A-455D-9C11-94A774773ABA}" key="PowerShell" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell">
+    <ja-JP>PowerShell</ja-JP>
+  </phrase>
+  <phrase updated="20150629T235030:635712186308339843" fieldid="__Display name" itemid="{C04EB772-961B-425C-8057-04D3D5D76954}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/saved">
+    <ja-JP>保存</ja-JP>
+  </phrase>
+  <phrase updated="20150629T235042:635712186429677734" fieldid="__Display name" itemid="{AFC4CFC7-D9AF-49AC-9F9E-8AB823897CB0}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State/modified">
+    <ja-JP>編集</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143920" fieldid="__Display name" itemid="{4741FCEE-24E1-460B-A126-2736A5F57871}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name/State">
+    <ja-JP>状態</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143859" fieldid="Text" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <ja-JP>クローム属性は [ChromeName,,,specific] という名前です</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143859" fieldid="__Display name" itemid="{4A8EC3F1-90FE-4D9F-823E-7C6DB35F880E}" key="Chrome Name" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Name">
+    <ja-JP>クローム名</ja-JP>
+  </phrase>
+  <phrase updated="20160104T005907" fieldid="__Display name" itemid="{4C6068C8-E969-4DFD-B22C-33E820D20651}" key="placeholder" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/placeholder">
+    <ja-JP>プレースホルダー</ja-JP>
+  </phrase>
+  <phrase updated="20160104T005934" fieldid="__Display name" itemid="{F4E27AEB-AA6C-4B36-B8B5-72648F47BC98}" key="field" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/field">
+    <ja-JP>フィールド</ja-JP>
+  </phrase>
+  <phrase updated="20160104T005920" fieldid="__Display name" itemid="{041A8A44-DD56-42AB-B4E3-579845669252}" key="rendering" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type/rendering">
+    <ja-JP>レンダリング</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144021" fieldid="__Display name" itemid="{F5D1B95B-30D3-4738-B41E-6884517CB485}" key="of Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type/of Type">
+    <ja-JP>タイプ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144007" fieldid="Text" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <ja-JP>クロームは [ChromeType,Tree,root={F5D1B95B-30D3-4738-B41E-6884517CB485}&amp;setRootAsSearchRoot=true,unspecified] タイプ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144007" fieldid="__Display name" itemid="{999CA9BA-63BC-4AB9-9FAB-931FB7DB003C}" key="Chrome Type" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Chrome Type">
+    <ja-JP>クロームタイプ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{F92D8CC3-B46B-475D-BFBA-E8A04BE64A8F}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags/Default">
+    <ja-JP>標準</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{2AECAD56-18F1-43DF-93FF-35D9C5865E7A}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Tags">
+    <ja-JP>タグ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{02F717CF-3EA0-4C60-9D35-5EEF83ED1476}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons/Visibility">
+    <ja-JP>表示</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{077B0435-77D4-46FF-89D0-AA78190DB8BD}" key="PowerShell Experience Buttons" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Experience Buttons">
+    <ja-JP>PowerShell Experience ボタン</ja-JP>
+  </phrase>
+  <phrase updated="20150629T221247:635712127674970703" fieldid="__Display name" itemid="{83DD228B-D7BD-4DE2-B858-DEC59CC06ADF}" key="selected" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/selected">
+    <ja-JP>選択</ja-JP>
+  </phrase>
+  <phrase updated="20150629T221233:635712127533593750" fieldid="__Display name" itemid="{22BE997D-B182-4C9B-888B-FB543D79E7BE}" key="total" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of/total">
+    <ja-JP>合計</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143550" fieldid="__Display name" itemid="{77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}" key="Length of" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length/Length of">
+    <ja-JP>長さ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143750" fieldid="Text" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <ja-JP>[MeasuredLength,Tree,root={77FA49C3-07B0-48FB-93C4-3BC50A93FAF1}&amp;setRootAsSearchRoot=true,length] スクリプトの長さが [operatorid,Operator,,compares to] [DesiredLength,Integer,,number] 文字よりも長い</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143750" fieldid="__Display name" itemid="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}" key="Selection Length" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Selection Length">
+    <ja-JP>長さを選択</ja-JP>
+  </phrase>
+  <phrase updated="20150629T235030:635712186308339843" fieldid="__Display name" itemid="{9B141D4F-BCC7-4579-A108-192B955C3539}" key="saved" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/saved">
+    <ja-JP>保存</ja-JP>
+  </phrase>
+  <phrase updated="20150629T235042:635712186429677734" fieldid="__Display name" itemid="{CA052047-96B6-4802-A58E-AA353757B585}" key="modified" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State/modified">
+    <ja-JP>編集</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143522" fieldid="__Display name" itemid="{0C6821F1-3977-4427-9CAF-F963BB8E172D}" key="State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State/State">
+    <ja-JP>状態</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143825" fieldid="Text" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <ja-JP>編集されたスクリプト [State,Tree,root={0C6821F1-3977-4427-9CAF-F963BB8E172D}&amp;setRootAsSearchRoot=true,in a state]</ja-JP>
+  </phrase>
+  <phrase updated="20160824T143825" fieldid="__Display name" itemid="{CB1D8D92-0889-4D06-8438-E2FD80CAE1C1}" key="Session State" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Session State">
+    <ja-JP>セッション状態</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{CAB0E012-D2DB-42EB-9D8A-3FCF981431AE}" key="Default" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags/Default">
+    <ja-JP>標準</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{4A1A2169-951F-4098-95BA-271506DADF42}" key="Tags" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Tags">
+    <ja-JP>タグ</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{3CCE52E5-0FB0-463E-B751-8A586DA58549}" key="Visibility" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE/Visibility">
+    <ja-JP>表示</ja-JP>
+  </phrase>
+  <phrase updated="20160824T144320" fieldid="__Display name" itemid="{95323F20-ADAA-4354-B8BD-2D6FD847F205}" key="PowerShell ISE" path="/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell ISE">
+    <ja-JP>PowerShell ISE</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150323" fieldid="__Display name" itemid="{83B665CB-DE30-453E-AD18-338C851BBA46}" key="Settings" path="/sitecore/system/Modules/PowerShell/Settings">
+    <ja-JP>設定</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150357" fieldid="__Display name" itemid="{86DBCCD1-CF63-4203-98F8-8A07CFEF65A9}" key="RemoteAutomation" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation">
+    <ja-JP>リモートオートメーション</ja-JP>
+  </phrase>
+  <phrase updated="20160824T150357" fieldid="__Display name" itemid="{C02D13EE-8F7C-426D-8623-EEA082B59A79}" key="All Users" path="/sitecore/system/Modules/PowerShell/Settings/RemoteAutomation/All Users">
+    <ja-JP>すべてのユーザー</ja-JP>
+  </phrase>
+</sitecore>
