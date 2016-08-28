@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4050
+content-length: 4107
 
 $scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
 $controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
@@ -30,8 +30,8 @@ foreach($root in $roots){
         if($section.TemplateName -eq "PowerShell Script Library"){
             Get-Childitem $_.ProviderPath | ForEach-Object {
                 $script = $_
-                $cpSection = Get-Item "$controlPanelPath/$($section.Name)"
-                $cpEntry = Get-Item "$controlPanelPath/$($section.Name)/$($script.Name)"
+                $cpSection = Get-Item "$controlPanelPath/$($section.Name)" -ErrorAction SilentlyContinue
+                $cpEntry = Get-Item "$controlPanelPath/$($section.Name)/$($script.Name)" -ErrorAction SilentlyContinue
                 Write-Host "Processing Section '$($section.Name)'" -ForegroundColor Yellow
                 if($cpSection -eq $null){
                     Write-Host "Creating Section $controlPanelPath" -ForegroundColor Green
@@ -60,7 +60,7 @@ foreach($root in $roots){
 #Remove non existing scripts from Control Panel
 Write-Host "Purging Control Panel entries for non existing scripts and disabled modules" -ForegroundColor Cyan
 Get-Childitem $controlPanelPath | ForEach-Object {
-    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
+    Write-Progress -Activity "Control Panel Sync" -CurrentOperation "Removing entries for deleted scripts"
     $cpSection = $_;
     Get-Childitem $_.ProviderPath | ForEach-Object {
         $cpEntry = $_
@@ -94,7 +94,7 @@ Applications/16x16/preferences.png
 ----version----
 language: en
 version: 1
-revision: fc4d5505-e326-47ca-875f-7b5717de13de
+revision: 6c73765e-6d87-443e-82b2-de02b807f73a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -109,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fc4d5505-e326-47ca-875f-7b5717de13de
+6c73765e-6d87-443e-82b2-de02b807f73a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150206T163129:635588370898408203
+20160828T094434
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
