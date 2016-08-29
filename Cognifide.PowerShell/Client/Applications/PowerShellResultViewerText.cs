@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var backgroundColor = OutputLine.ProcessHtmlColor(bc);
             Result.Style.Add("color", foregroundColor);
             Result.Style.Add("background-color", backgroundColor);
-            Result.Style.Add("font-family", settings.FontFamily);
+            Result.Style.Add("font-family", settings.FontFamilyStyle);
             Result.Style.Add("font-size", $"{settings.FontSize}px");
             Result.Text = HttpContext.Current.Session[sid] as string ?? string.Empty;
             All.Style.Add("color", foregroundColor);

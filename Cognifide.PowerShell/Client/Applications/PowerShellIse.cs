@@ -826,17 +826,10 @@ namespace Cognifide.PowerShell.Client.Applications
         protected virtual void UpdateSettings(ClientPipelineArgs args)
         {
             var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
-            var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-            var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
-            var font = string.IsNullOrEmpty(settings.FontFamily) ? "monospace" : settings.FontFamily;
-            var fontItem = fonts.Children[font];
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
-            font = fontItem != null
-                ? fontItem["Phrase"]
-                : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
             var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
             SheerResponse.Eval(
-                $"cognifide.powershell.changeSettings('{font}', {settings.FontSize}, '{backgroundColor}', {bottomPadding}, {settings.LiveAutocompletion.ToString().ToLower()});");
+                $"cognifide.powershell.changeSettings('{settings.FontFamilyStyle}', {settings.FontSize}, '{backgroundColor}', {bottomPadding}, {settings.LiveAutocompletion.ToString().ToLower()});");
         }
 
         [HandleMessage("ise:setbreakpoint", true)]

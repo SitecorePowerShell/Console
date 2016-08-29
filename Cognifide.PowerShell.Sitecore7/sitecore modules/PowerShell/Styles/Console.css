@@ -59,15 +59,17 @@ html {
 }
 
 #ScriptResult {
-    height: 100%;
-    left: 0px;
+    left: 0;
     overflow: auto;
-    top: 0px;
+    top: 0;
     width: 100%;
+    height: 100%;
     font-weight: normal;
 }
 
-#Result pre { margin: 4px 2px !important; }
+#Result pre { 
+    margin: 4px 2px !important; 
+}
 
 .console a { color: #ffa; }
 
@@ -254,7 +256,6 @@ html {
     font-weight: normal;
     opacity: .9;
 }
-
 
 #Progress p { margin: 0 2px; }
 #Progress h2 { margin: 0; font-size: 1.5em;}

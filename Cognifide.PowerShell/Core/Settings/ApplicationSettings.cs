@@ -83,6 +83,22 @@ namespace Cognifide.PowerShell.Core.Settings
         public string ApplicationName { get; private set; }
         public int FontSize { get; set; }
         public string FontFamily { get; set; }
+
+        public string FontFamilyStyle
+        {
+            get
+            {
+                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
+                var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
+                var font = string.IsNullOrEmpty(FontFamily) ? "Monaco" : FontFamily;
+                var fontItem = fonts.Children[font];
+                return fontItem != null
+                    ? fontItem["Phrase"]
+                    : "Monaco, Menlo, \"Ubuntu Mono\", Consolas, source-code-pro, monospace";
+
+            }
+        }
+
         public bool LiveAutocompletion { get; set; }
 
         public string AppSettingsPath
