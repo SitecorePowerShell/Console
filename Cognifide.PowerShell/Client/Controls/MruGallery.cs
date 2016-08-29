@@ -5,6 +5,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
@@ -128,8 +129,14 @@ namespace Cognifide.PowerShell.Client.Controls
                 {
                     ContentDataContext.Folder = itemArray[0].ID.ToString();
                 }
-                SearchPhrase.Placeholder =
-                    Translate.Text(Texts.MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
+                var placeholderText = Translate.Text(
+                    Texts
+                        .MruGallery_OnLoad_Script_name_to_search_for___prefix_with_e_g___master___to_narrow_to_specific_database);
+                SitecoreVersion.V80.OrNewer(() =>
+                            SearchPhrase.Placeholder = placeholderText
+                ).Else(() =>
+                            SheerResponse.SetAttribute(SearchPhrase.ClientID, "placeholder", placeholderText)
+                );
             }
         }
 

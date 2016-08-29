@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell
             "Select the Library that you want to save your script to.";
 
         public const string PowerShellIse_UpdateProgress_remaining = "remaining";
-        public const string PowerShellIse_UpdateRibbon_Script_defined___0_ = "Script defined: { 0}";
+        public const string PowerShellIse_UpdateRibbon_Script_defined___0_ = "Script defined: {0}";
         public const string PowerShellIse_UpdateRibbon_Single_execution = "Single execution";
         public const string IseContextPanel_Render_Context = "Context";
         public const string IseContextPanel_Render_none = "none";
