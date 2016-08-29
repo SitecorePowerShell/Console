@@ -9,6 +9,9 @@
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
+        <Stylesheet>
+          pre { margin: 2px;}
+        </Stylesheet>
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
@@ -34,7 +37,7 @@
               </Border>
             </Scrollbox>
             <pre>
-              <Literal ID="Result" class="resultsArea console pre" />
+              <Border ID="Result" class="resultsArea console pre" />
             </pre>
           </Scrollbox>
         </Scrollbox>
