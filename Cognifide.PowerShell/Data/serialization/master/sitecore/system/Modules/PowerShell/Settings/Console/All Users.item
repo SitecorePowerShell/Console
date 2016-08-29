@@ -22,14 +22,14 @@ name: FontSize
 key: fontsize
 content-length: 2
 
-12
+15
 ----field----
 field: {86ECC435-0924-4EA0-92D8-CCA12ED7E644}
 name: FontFamily
 key: fontfamily
-content-length: 8
+content-length: 6
 
-Consolas
+Monaco
 ----field----
 field: {F810EEC7-9A73-43E6-84C1-36E4951D2B3E}
 name: ForegroundColor
@@ -54,7 +54,7 @@ People/32x32/users1.png
 ----version----
 language: en
 version: 1
-revision: 8ac0d4a5-b5ab-4b33-9e06-ef2fd15c0ed1
+revision: d35287d1-82ea-44e7-b9ad-8a12453a981e
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -76,7 +76,7 @@ name: __Created
 key: __created
 content-length: 15
 
-20111016T133400
+20111016T113400
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -90,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8ac0d4a5-b5ab-4b33-9e06-ef2fd15c0ed1
+d35287d1-82ea-44e7-b9ad-8a12453a981e
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160824T150356
+20160829T005803
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
@@ -108,15 +108,29 @@ sitecore\admin
 ----version----
 language: ja-JP
 version: 1
-revision: 94975ccb-26fd-4462-838f-7aa2af06cb52
+revision: da220488-d8fa-4570-a31c-489eb17daf55
 
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 8
+
+すべてのユーザー
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\admin
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20160823T123653
+20160829T010259Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -130,14 +144,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-94975ccb-26fd-4462-838f-7aa2af06cb52
+da220488-d8fa-4570-a31c-489eb17daf55
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160823T123734
+20160829T010304Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
