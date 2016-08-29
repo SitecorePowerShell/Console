@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
         protected Item CurrentItem
         {
             get { return CurrentItemUri == null ? null : Database.GetItem(CurrentItemUri); }
-            set { CurrentItemUri = value?.Uri ?? null; }
+            set { CurrentItemUri = value?.Uri; }
         }
 
         protected Item SettingsItem
