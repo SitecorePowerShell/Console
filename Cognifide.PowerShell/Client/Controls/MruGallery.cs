@@ -113,7 +113,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 ContentDataContext.BeginUpdate();
                 ContentDataContext.Parameters = "databasename=" + InitialDatabase;
                 ContentTreeview.RefreshRoot();
-                ContentDataContext.Root = ApplicationSettings.ScriptLibraryRoot().ID.ToString();
+                ContentDataContext.Root = ApplicationSettings.ScriptLibraryRoot.ID.ToString();
 
                 if (!string.IsNullOrEmpty(itemId) && !string.IsNullOrEmpty(db))
                 {
@@ -266,7 +266,7 @@ namespace Cognifide.PowerShell.Client.Controls
             {
                 var scriptsFound = false;
                 // get all items in medialibrary
-                var rootID = ApplicationSettings.ScriptLibraryRoot().ID.ToShortID().ToString();
+                var rootID = ApplicationSettings.ScriptLibraryRoot.ID.ToShortID().ToString();
                 var query =
                     context.GetQueryable<SearchResultItem>()
                         .Where(

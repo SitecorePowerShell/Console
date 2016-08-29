@@ -61,7 +61,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 BuildDatabases();
 
-                if (db.Length > 0)
+                if (db?.Length > 0)
                 {
                     if (!string.IsNullOrEmpty(ScriptDataContext.Parameters))
                     {

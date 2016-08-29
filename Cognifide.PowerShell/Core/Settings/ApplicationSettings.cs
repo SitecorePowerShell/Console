@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
@@ -42,9 +43,10 @@ namespace Cognifide.PowerShell.Core.Settings
 
         private static readonly char[] invalidChars = {'\\', '/', ':', '"', '<', '>', '|', '[', ']', '.'};
 
-        private ApplicationSettings(string applicationName)
+        private ApplicationSettings(string applicationName, bool personalizedSettings)
         {
             ApplicationName = applicationName;
+            IsPersonalized = personalizedSettings;
         }
 
         public static string RulesDb
@@ -74,22 +76,23 @@ namespace Cognifide.PowerShell.Core.Settings
             }
         }
 
-        protected bool Loaded { get; private set; }
+        private bool Loaded { get; set; }
         public string LastScript { get; set; }
-        public bool SaveLastScript { get; set; }
+        public bool SaveLastScript { get; private set; }
         public int HostWidth { get; set; }
         public ConsoleColor ForegroundColor { get; set; }
         public ConsoleColor BackgroundColor { get; set; }
-        public string ApplicationName { get; private set; }
+        public string ApplicationName { get; }
         public int FontSize { get; set; }
-        public string FontFamily { get; set; }
+        private string FontFamily { get; set; }
+        public bool IsPersonalized { get; }
 
         public string FontFamilyStyle
         {
             get
             {
-                var db = Factory.GetDatabase(ApplicationSettings.ScriptLibraryDb);
-                var fonts = db.GetItem(ApplicationSettings.FontNamesPath);
+                var db = Factory.GetDatabase(ScriptLibraryDb);
+                var fonts = db.GetItem(FontNamesPath);
                 var font = string.IsNullOrEmpty(FontFamily) ? "Monaco" : FontFamily;
                 var fontItem = fonts.Children[font];
                 return fontItem != null
@@ -101,31 +104,15 @@ namespace Cognifide.PowerShell.Core.Settings
 
         public bool LiveAutocompletion { get; set; }
 
-        public string AppSettingsPath
-        {
-            get { return SettingsItemPath + ApplicationName + "/"; }
-        }
-
-        public string CurrentUserSettingsPath
-        {
-            get { return AppSettingsPath + CurrentDomain + "/" + CurrentUserName; }
-        }
-
-        public string AllUsersSettingsPath
-        {
-            get { return AppSettingsPath + IseSettingsItemAllUsers; }
-        }
+        private string AppSettingsPath => SettingsItemPath + ApplicationName + "/";
+        private string CurrentUserSettingsPath => AppSettingsPath + CurrentDomain + "/" + CurrentUserName;
+        private string AllUsersSettingsPath => AppSettingsPath + IseSettingsItemAllUsers;
 
         private static string CurrentUserName
         {
             get
             {
-                var currentUserName = User.Current.LocalName;
-                foreach (var invalidChar in invalidChars)
-                {
-                    currentUserName = currentUserName.Replace(invalidChar, '_');
-                }
-                return currentUserName;
+                return invalidChars.Aggregate(User.Current.LocalName, (current, invalidChar) => current.Replace(invalidChar, '_'));
             }
         }
 
@@ -133,21 +120,16 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             get
             {
-                var currentUserDomain = User.Current.Domain.Name;
-                foreach (var invalidChar in invalidChars)
-                {
-                    currentUserDomain = currentUserDomain.Replace(invalidChar, '_');
-                }
-                return currentUserDomain;
+                return invalidChars.Aggregate(User.Current.Domain.Name, (current, invalidChar) => current.Replace(invalidChar, '_'));
             }
         }
 
         private static void GetDatabaseName(ref string databaseName, string settingPath)
         {
-            if (String.IsNullOrEmpty(databaseName))
+            if (string.IsNullOrEmpty(databaseName))
             {
                 databaseName = Factory.GetString(settingPath, false);
-                if (String.IsNullOrEmpty(databaseName))
+                if (string.IsNullOrEmpty(databaseName))
                 {
                     databaseName = "master";
                 }
@@ -159,17 +141,12 @@ namespace Cognifide.PowerShell.Core.Settings
             return SettingsItemPath + GetSettingsName(applicationName, personalizedSettings);
         }
 
-        public static string GetSettingsName(string applicationName, bool personalizedSettings)
+        private static string GetSettingsName(string applicationName, bool personalizedSettings)
         {
             return applicationName +
                    (personalizedSettings
                        ? "/" + CurrentDomain + "/" + CurrentUserName
                        : "/All Users");
-        }
-
-        public static ApplicationSettings GetInstance(string applicationName)
-        {
-            return GetInstance(applicationName, true);
         }
 
         public static void ReloadInstance(string applicationName, bool personalizedSettings)
@@ -184,7 +161,7 @@ namespace Cognifide.PowerShell.Core.Settings
             }
         }
 
-        public static ApplicationSettings GetInstance(string applicationName, bool personalizedSettings)
+        public static ApplicationSettings GetInstance(string applicationName, bool personalizedSettings = true)
         {
             var settingsPath = GetSettingsName(applicationName, personalizedSettings);
             ApplicationSettings instance = null;
@@ -196,7 +173,7 @@ namespace Cognifide.PowerShell.Core.Settings
                 }
                 if (instance == null || !instance.Loaded)
                 {
-                    instance = new ApplicationSettings(applicationName);
+                    instance = new ApplicationSettings(applicationName, personalizedSettings);
                     instance.Load();
                     instances.Add(settingsPath, instance);
                 }
@@ -207,7 +184,11 @@ namespace Cognifide.PowerShell.Core.Settings
         private Item GetSettingsDto()
         {
             var db = Factory.GetDatabase(SettingsDb);
-            return db?.GetItem(CurrentUserSettingsPath) ?? db?.GetItem(AllUsersSettingsPath);
+            if (IsPersonalized)
+            {
+                return db?.GetItem(CurrentUserSettingsPath) ?? db?.GetItem(AllUsersSettingsPath);
+            }
+            return db?.GetItem(AllUsersSettingsPath);
         }
 
         private Item GetSettingsDtoForSave()
@@ -264,6 +245,10 @@ namespace Cognifide.PowerShell.Core.Settings
                             configuration[BackgroundColorSettingFieldName] = BackgroundColor.ToString();
                             configuration[FontSizeSettingFieldName] = FontSize.ToString();
                             configuration[FontFamilySettingFieldName] = FontFamily;
+                            if (IsPersonalized)
+                            {
+                                configuration.Fields[FieldIDs.DisplayName].Reset();
+                            }
                         });
                 }
             }
@@ -328,7 +313,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         private void SetToDefault()
         {
-            LastScript = String.Empty;
+            LastScript = string.Empty;
             SaveLastScript = true;
             LiveAutocompletion = false;
             HostWidth = 150;
@@ -354,10 +339,13 @@ namespace Cognifide.PowerShell.Core.Settings
         }
 
 
-        public static Item ScriptLibraryRoot()
+        public static Item ScriptLibraryRoot
         {
-            var db = Factory.GetDatabase(ScriptLibraryDb);
-            return db.GetItem(ScriptLibraryPath);
+            get
+            {
+                var db = Factory.GetDatabase(ScriptLibraryDb);
+                return db.GetItem(ScriptLibraryPath);
+            }
         }
     }
 }
