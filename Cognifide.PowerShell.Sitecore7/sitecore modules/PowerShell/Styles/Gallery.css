@@ -82,7 +82,7 @@
 }
 
 #Tabs { height: 95%; border: none; padding:4px;}
-.scTabs { border: none; }
+.scTabs { border: none; top: 24px; }
 .path { color:gray;}
 .name { float: left; padding: 5px 0;}
 .location { clear: both; }
@@ -93,3 +93,4 @@
 .selected.scMenuPanelItem { background: #D0EBF6 }
 .scInitialHeight { height: initial; width: 100%; }
 .noScript { text-align: center; }
+.scTabPage { border-top: 1px silver solid; }
