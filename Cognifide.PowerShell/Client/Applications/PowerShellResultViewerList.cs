@@ -9,7 +9,6 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;

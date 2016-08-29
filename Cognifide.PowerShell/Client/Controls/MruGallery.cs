@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch;
@@ -174,65 +174,87 @@ namespace Cognifide.PowerShell.Client.Controls
             var recentHeader = new MenuHeader();
             SearchResults.Controls.AddAt(0, recentHeader);
             Scripts.Controls.Clear();
-            if (string.IsNullOrEmpty(phrase))
+            try
             {
-                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_);
-                foreach (Item item in ApplicationSettings.GetIseMruContainerItem().Children)
+                if (string.IsNullOrEmpty(phrase))
                 {
-                    var messageString = item["Message"];
-                    var message = Message.Parse(null, messageString);
-                    var db = message.Arguments["db"];
-                    var id = message.Arguments["id"];
-                    var scriptItem = Factory.GetDatabase(db).GetItem(id);
-                    if (scriptItem != null)
+                    recentHeader.Header =
+                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_);
+                    foreach (Item item in ApplicationSettings.GetIseMruContainerItem().Children)
                     {
-                        RenderRecent(scriptItem);
+                        var messageString = item["Message"];
+                        var message = Message.Parse(null, messageString);
+                        var db = message.Arguments["db"];
+                        var id = message.Arguments["id"];
+                        var scriptItem = Factory.GetDatabase(db).GetItem(id);
+                        if (scriptItem != null)
+                        {
+                            RenderRecent(scriptItem);
+                        }
+                        else
+                        {
+                            item.Delete();
+                        }
                     }
-                    else
-                    {
-                        item.Delete();
-                    }
-                }
 
-            }
-            else if (database.Length > 0)
-            {
-                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database, phrase, database);
-                foreach (var index in ContentSearchManager.Indexes)
+                }
+                else if (database.Length > 0)
                 {
-                    if (index.Name.StartsWith("sitecore_" + database) &&
-                        index.Name.EndsWith("_index"))
+                    recentHeader.Header =
+                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in___1____database,
+                            phrase, database);
+                    foreach (var index in ContentSearchManager.Indexes)
                     {
-                        SearchDatabase(index.Name, phrase);
+                        if (index.Name.StartsWith("sitecore_" + database) &&
+                            index.Name.EndsWith("_index"))
+                        {
+                            SearchDatabase(index.Name, phrase);
+                        }
+                    }
+                }
+                else
+                {
+                    recentHeader.Header =
+                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases,
+                            phrase);
+                    var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
+                    var scriptsFound = SearchDatabase(masterIndex, phrase);
+                    foreach (var index in ContentSearchManager.Indexes)
+                    {
+                        if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) &&
+                            index.Name.StartsWith("sitecore_") &&
+                            index.Name.EndsWith("_index"))
+                        {
+                            scriptsFound |= SearchDatabase(index.Name, phrase);
+                        }
+                    }
+                    if (!scriptsFound)
+                    {
+                        ShowScriptEnumerationProblem();
                     }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                recentHeader.Header = Translate.Text(Texts.MruGallery_ChangeSearchPhrase_Scripts_matching____0___in_all_databases, phrase);
-                var masterIndex = "sitecore_" + ApplicationSettings.ScriptLibraryDb + "_index";
-                var scriptsFound = SearchDatabase(masterIndex, phrase);
-                foreach (var index in ContentSearchManager.Indexes)
-                {
-                    if (!string.Equals(masterIndex, index.Name, StringComparison.OrdinalIgnoreCase) &&
-                        index.Name.StartsWith("sitecore_") &&
-                        index.Name.EndsWith("_index"))
-                    {
-                        scriptsFound |= SearchDatabase(index.Name, phrase);
-                    }
-                }
-                if (!scriptsFound)
-                {
-                    Context.ClientPage.AddControl(Scripts,
-                        new Literal {Text = "<div class='noScript'><br/><br/>"+
-                        Translate.Text(Texts.MruGallery_ChangeSearchPhrase_No_scripts_found____Do_you_need_to_re_index_your_databases_)+
-                        "</div>" });
-                    Scripts.CssStyle = "text-align: center;";
-                }
+                PowerShellLog.Error("Error while Showing MRU entries", ex);
+                ShowScriptEnumerationProblem();
             }
             var writer = new HtmlTextWriter(new StringWriter());
             SearchResults.RenderControl(writer);
             SheerResponse.SetOuterHtml(SearchResults.ID, writer.InnerWriter.ToString());
+        }
+
+        private void ShowScriptEnumerationProblem()
+        {
+            Context.ClientPage.AddControl(Scripts,
+                new Literal
+                {
+                    Text = "<div class='noScript'><br/><br/>" +
+                           Translate.Text(
+                               Texts.MruGallery_ChangeSearchPhrase_No_scripts_found____Do_you_need_to_re_index_your_databases_) +
+                           "</div>"
+                });
+            Scripts.CssStyle = "text-align: center;";
         }
 
         private bool SearchDatabase(string indexName, string phrase)

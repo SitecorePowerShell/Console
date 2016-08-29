@@ -13,7 +13,6 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Common;
 using Sitecore.Configuration;

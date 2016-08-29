@@ -6,7 +6,6 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;

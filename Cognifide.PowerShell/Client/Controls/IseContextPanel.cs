@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch.Utilities;

@@ -12,7 +12,6 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
-using Cognifide.PowerShell.Properties;
 using Sitecore;
 using Sitecore.Controls;
 using Sitecore.Data;
