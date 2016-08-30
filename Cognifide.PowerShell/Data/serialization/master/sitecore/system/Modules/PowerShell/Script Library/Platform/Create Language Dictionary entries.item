@@ -13,16 +13,15 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 3352
+content-length: 3430
 
 $texts = [Cognifide.PowerShell.Texts] | Get-Member -static -MemberType Properties | % { [Cognifide.PowerShell.Texts]::($_.Name) }
 $ScDictionaryPath = "core:\system\Dictionary\PowerShell"
 $translationTest = $false
 $allEntries = @{}
-Get-ChildItem $ScDictionaryPath -Recurse | ? { $_.TemplateName -eq "Dictionary entry" } | %{ $allEntries[$_.ProviderPath] = $_ }
 
+Get-ChildItem $ScDictionaryPath -Recurse | ? { $_.TemplateName -eq "Dictionary entry" } | %{ $allEntries[$_.ProviderPath] = $_ }
 foreach($text in $texts){
-    $letter = $text.ToUpper()[0]
     $itemName = $text.
                     Replace(".","").Replace("[","").Replace("]","").
                     Replace("(","").Replace(")","").Replace(":","").
@@ -30,6 +29,8 @@ foreach($text in $texts){
                     Replace('{',"").Replace('}',"").Replace('?',"").
                     Replace('*',"").
                     Trim()
+    $itemName = $itemName.Substring(0,[Math]::Min(98,$itemName.Length));
+    $letter = $itemName.ToUpper()[0]
     $pathPart = "$letter\$itemName"
     $letterPath = "$ScDictionaryPath\$letter"
     $path = "$ScDictionaryPath\$pathpart"
@@ -93,7 +94,7 @@ $allEntries.Values | ft Name, Key, Phrase -AutoSize
 ----version----
 language: en
 version: 1
-revision: 59072bac-54b1-4bf0-81aa-d209217b988d
+revision: 7a827a0f-2bb2-4339-aa48-661ef3da19c4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -108,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-59072bac-54b1-4bf0-81aa-d209217b988d
+7a827a0f-2bb2-4339-aa48-661ef3da19c4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160826T151325
+20160830T105356
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
