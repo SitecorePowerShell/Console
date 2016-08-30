@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             if (!(Context.ClientPage.CodeBeside is PowerShellIse))
             {
                 Context.ClientPage.ClientResponse.CloseWindow();
-                Windows.Close();
+                Sitecore.Shell.Framework.Windows.Close();
             }
         }
     }

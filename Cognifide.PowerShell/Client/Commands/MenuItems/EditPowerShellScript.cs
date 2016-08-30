@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 urlString.Add("pfn", context.Parameters["frameName"]);
             }
-            Windows.RunApplication("PowerShell/PowerShellIse", urlString.ToString());
+            Sitecore.Shell.Framework.Windows.RunApplication("PowerShell/PowerShellIse", urlString.ToString());
         }
     }
 }

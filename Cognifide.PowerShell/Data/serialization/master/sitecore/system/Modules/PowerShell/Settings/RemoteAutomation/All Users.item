@@ -17,6 +17,13 @@ content-length: 3
 
 200
 ----field----
+field: {6F442AC9-7001-4124-9BC3-589875876C27}
+name: FontSize
+key: fontsize
+content-length: 2
+
+14
+----field----
 field: {86ECC435-0924-4EA0-92D8-CCA12ED7E644}
 name: FontFamily
 key: fontfamily
@@ -47,7 +54,7 @@ People/32x32/users1.png
 ----version----
 language: en
 version: 1
-revision: f784e834-835a-4645-a816-121fed70460f
+revision: c8d54478-450a-44bd-bddf-09a6c64bd337
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -83,14 +90,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f784e834-835a-4645-a816-121fed70460f
+c8d54478-450a-44bd-bddf-09a6c64bd337
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160829T002122
+20160829T212251
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -263,7 +263,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var parameters = new UrlString();
             parameters.Add("id", args.Parameters["id"]);
             parameters.Add("fo", args.Parameters["id"]);
-            Windows.RunApplication("Content Editor", parameters.ToString());
+            Sitecore.Shell.Framework.Windows.RunApplication("Content Editor", parameters.ToString());
         }
 
         protected void MruUpdate(Item scriptItem)

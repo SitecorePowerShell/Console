@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
                 var appItem =
                     Database.GetDatabase("core").GetItem("/sitecore/content/Applications/" + AppName);
-                Windows.RunApplication(appItem, Icon ?? appItem["Icon"], Title ?? appItem["Display name"],
+                Sitecore.Shell.Framework.Windows.RunApplication(appItem, Icon ?? appItem["Icon"], Title ?? appItem["Display name"],
                     urlString.Query);
             }
             else

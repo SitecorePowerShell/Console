@@ -93,7 +93,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 urlString.Add("sid", resultSig);
                 var appItem =
                     Database.GetDatabase("core").GetItem("/sitecore/content/Applications/PowerShell/PowerShellListView");
-                Windows.RunApplication(appItem, "Business/32x32/table_sql_view.png", Title, urlString.Query);
+                Sitecore.Shell.Framework.Windows.RunApplication(appItem, "Business/32x32/table_sql_view.png", Title, urlString.Query);
             }
             else
             {

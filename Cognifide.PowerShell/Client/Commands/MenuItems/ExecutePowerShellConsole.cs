@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             var urlString = new UrlString();
             urlString.Append("item", item.Paths.Path.ToLower().Replace("sitecore/", ""));
             urlString.Append("db", itemDb);
-            Windows.RunApplication("PowerShell/PowerShell Console", urlString.ToString());
+            Sitecore.Shell.Framework.Windows.RunApplication("PowerShell/PowerShell Console", urlString.ToString());
         }
 
         public override CommandState QueryState(CommandContext context)

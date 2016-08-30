@@ -202,7 +202,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (result.CloseRunner)
             {
-                Windows.Close();
+                Sitecore.Shell.Framework.Windows.Close();
             }
             else
             {
@@ -234,7 +234,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     urlParams.Add("la", item.Language.Name);
                     urlParams.Add("vs", item.Version.Number.ToString(CultureInfo.InvariantCulture));
                     urlParams.Add("sc_content", item.Database.Name);
-                    Windows.RunApplication("Content editor", urlParams.ToString());
+                    Sitecore.Shell.Framework.Windows.RunApplication("Content editor", urlParams.ToString());
                 }
             }
             ListViewer.Refresh();
