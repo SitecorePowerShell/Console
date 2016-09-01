@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 5846
+content-length: 5860
 
 Import-Function -Name Render-ReportField
 Import-Function -Name Get-ReportRule
@@ -56,7 +56,7 @@ if($result -eq "cancel"){
     exit
 }
 
-$rootItemId = @{$true=$ruleItems[$ruleIndex].RootItem; $false="master:\content"}[(Test-Path -Path "master:\$($ruleItems[$ruleIndex].RootItem)")]
+$rootItemId = @{$true=$ruleItems[$ruleIndex].RootItem; $false=[Sitecore.ItemIDs]::ContentRoot}[(Test-Path -Path "master:\$($ruleItems[$ruleIndex].RootItem)")]
 $root = Get-Item -Path "master:" -ID $rootItemId
 if($rootOverride) {
     $root = $rootOverride
@@ -158,7 +158,7 @@ Database/32x32/view.png
 ----version----
 language: en
 version: 1
-revision: 8d03ca29-6da0-4709-a540-e6a92bfd9c73
+revision: a97360c0-1c11-42bf-bc3b-7a6393c5a421
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -173,14 +173,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8d03ca29-6da0-4709-a540-e6a92bfd9c73
+a97360c0-1c11-42bf-bc3b-7a6393c5a421
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160709T170111
+20160831T183218
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
