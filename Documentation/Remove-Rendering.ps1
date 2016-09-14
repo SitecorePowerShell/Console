@@ -3,7 +3,7 @@
         Removes renderings from an item.
 
     .DESCRIPTION
-        Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner.
+        Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulative and narrowing the search in an "AND" manner.
 
     .PARAMETER Item
         The item to be processed.
@@ -40,10 +40,13 @@
 
     .PARAMETER Device
         Device for which the rendering should be removed.
-    
+
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.
+
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
         System.Void
 

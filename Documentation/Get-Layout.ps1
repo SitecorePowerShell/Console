@@ -6,8 +6,11 @@
         The Get-Layout command returns the layout for the specified item.
 
     .PARAMETER Device
-        Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
+        Layout Device for which the item should be returned. If not specified All layouts used will be returned.
         If Device is specified but no layout is specified the command will return an error that can be silenced
+
+    .PARAMETER FinalLayout
+        Returns the Final Layout. If not provided, the Shared Layout will be returned. Applies to Sitecore 8.0 and higher only.        
 
     .PARAMETER Item
         The item to be processed.
@@ -23,7 +26,7 @@
 
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
         Sitecore.Data.Items.Item
 

@@ -23,6 +23,9 @@
     .PARAMETER Device
         Device the rendering is assigned to. If not specified - default device will be used.
 
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.
+
     .PARAMETER Item
         The item to be processed.
 
@@ -34,10 +37,10 @@
 
     .PARAMETER Database
         Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
-   
+
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
         Sitecore.Layouts.RenderingDefinition
 

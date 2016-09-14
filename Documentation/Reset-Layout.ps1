@@ -5,6 +5,9 @@
     .DESCRIPTION
         The Reset-Layout command resets the layout for the specified item.
 
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.
+
     .PARAMETER Item
         The item to be processed.
 

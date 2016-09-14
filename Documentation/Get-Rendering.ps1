@@ -19,6 +19,7 @@
 
     .PARAMETER DataSource
         Data source filter - supports wildcards.
+
     .PARAMETER Rendering
         Item representing the sublayout/rendering. If matching the rendering will be returned.
 
@@ -39,10 +40,13 @@
 
     .PARAMETER Device
         Device for which the renderings will be retrieved.
-    
+
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.        
+
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
         Sitecore.Layouts.RenderingDefinition
 

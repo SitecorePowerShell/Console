@@ -5,9 +5,11 @@
     .DESCRIPTION
         Sets item layout for a specific device provided
 
-
     .PARAMETER Device
         Device for which to set layout.
+
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.
 
     .PARAMETER Layout
         Sitecore item defining the layout.
@@ -23,10 +25,10 @@
 
     .PARAMETER Database
         Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
-    
+
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
 
     .NOTES

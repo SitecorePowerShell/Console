@@ -23,6 +23,9 @@
     .PARAMETER Item
         The item to be processed.
 
+    .PARAMETER FinalLayout
+        Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only.
+
     .PARAMETER Path
         Path to the item to be processed - can work with Language parameter to narrow the publication scope.
 
@@ -31,12 +34,12 @@
 
     .PARAMETER Database
         Database containing the item to be processed - can work with Language parameter to narrow the publication scope.
-    
+
     .INPUTS
         Sitecore.Data.Items.Item
-    
+
     .OUTPUTS
-        
+
 
     .NOTES
         Help Author: Adam Najmanowicz, Michael West
