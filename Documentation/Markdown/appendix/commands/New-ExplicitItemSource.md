@@ -121,10 +121,10 @@ Add this parameter if you want to skip versions of the item from being included 
  
 Specifies what installer should do if the item already exists. Possible values:
        - Undefined - User will have to choose one of the below. But they probably don't really know what should be done so not a preferable option.
-       - Overwrite - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one.
-       - Merge - merge with existing item. How the item will be merged is defined with MergeMode parameter
+   	- Overwrite - All versions of the old item are removed and replaced with all versions of the new item. This option basically replaces the old item with new one.
+   	- Merge - merge with existing item. How the item will be merged is defined with MergeMode parameter
 - Skip - All versions remains unchanged. Other languages remains unchanged. All children remains unchanged.
-       - SideBySide - all new item will be created. 
+   	- SideBySide - all new item will be created. 
  
 <table>
     <thead></thead>

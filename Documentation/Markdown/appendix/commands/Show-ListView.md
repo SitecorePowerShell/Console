@@ -4,7 +4,7 @@ Sends output to an interactive table in a separate window.
  
 ## Syntax 
  
-Show-ListView [-PageSize &lt;Int32&gt;] [-Icon &lt;String&gt;] [-InfoTitle &lt;String&gt;] [-InfoDescription &lt;String&gt;] [-Modal] [-ActionData &lt;Object&gt;] [-ViewName &lt;String&gt;] [-MissingDataMessage &lt;String&gt;] [-ActionsInSession] -Data &lt;Object&gt; [-Property &lt;Object[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Show-ListView [-PageSize &lt;Int32&gt;] [-Icon &lt;String&gt;] [-InfoTitle &lt;String&gt;] [-InfoDescription &lt;String&gt;] [-Modal] [-ActionData &lt;Object&gt;] [-ViewName &lt;String&gt;] [-MissingDataMessage &lt;String&gt;] [-ActionsInSession] [-Show &lt;None | SharedExport | Filter | PagingAlways | SharedActions | StatusBar | All&gt;] -Data &lt;Object&gt; [-Property &lt;Object[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
@@ -296,6 +296,46 @@ If no Items were provided for -Data parameter the message provided in this param
 ### -ActionsInSession&nbsp; &lt;SwitchParameter&gt; 
  
 If this parameter is specified actions will be executed in the same session as the one in which the command is executed. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Show&nbsp; &lt;ShowListViewFeatures&gt; 
+ 
+Shows UI elements selectively in the results dialog
+-- All - shows all UI elements automatically - default value
+-- SharedExport - shows export filters that are not specific to this very `-ViewName report (left-most ribbon panel)
+-- Filter - shows filter panel
+-- PagingAlways - shows paging when list is shorter than the page specified
+-- SharedActions - shows actions that are not specific to this very `-ViewName report (right-most ribbon panel)
+-- StatusBar - shows status bar. 
  
 <table>
     <thead></thead>

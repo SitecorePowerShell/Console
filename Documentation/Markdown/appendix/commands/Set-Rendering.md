@@ -1,30 +1,265 @@
-# New-User 
+# Set-Rendering 
  
-Creates a new Sitecore user. 
+Updates rendering with new values. 
  
 ## Syntax 
  
-New-User [-Identity] &lt;AccountIdentity&gt; [-Password &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-Portrait &lt;String&gt;] [-Enabled] [-PassThru] 
+Set-Rendering [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
+ 
+Set-Rendering [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
+ 
+Set-Rendering [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
  
  
 ## Detailed Description 
  
-The New-User command creates a new user in Sitecore.
-
-The Identity parameter specifies the Sitecore user to create. You can specify a user by its local name or fully qualified name. 
+Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
+### -Instance&nbsp; &lt;RenderingDefinition&gt; 
  
-Specifies the Sitecore user by providing one of the following values.
-
-    Local Name
-        Example: developer
-    Fully Qualified Name
-        Example: sitecore\developer 
+Instance of the Rendering to be updated. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Parameter&nbsp; &lt;Hashtable&gt; 
+ 
+Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -PlaceHolder&nbsp; &lt;String&gt; 
+ 
+Placeholder path the Rendering should be added to - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -DataSource&nbsp; &lt;String&gt; 
+ 
+Data source of the Rendering - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Index&nbsp; &lt;Int32&gt; 
+ 
+If provided the rendering will be moved to the specified index. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Language&nbsp; &lt;String[]&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Item&nbsp; &lt;Item&gt; 
+ 
+The item to be processed. 
  
 <table>
     <thead></thead>
@@ -47,7 +282,7 @@ Specifies the Sitecore user by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -56,9 +291,9 @@ Specifies the Sitecore user by providing one of the following values.
     </tbody>
 </table> 
  
-### -Password&nbsp; &lt;String&gt; 
+### -Path&nbsp; &lt;String&gt; 
  
- 
+Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -69,7 +304,41 @@ Specifies the Sitecore user by providing one of the following values.
         </tr>
         <tr>
             <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
             <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String&gt; 
+ 
+Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -81,7 +350,7 @@ Specifies the Sitecore user by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -90,179 +359,9 @@ Specifies the Sitecore user by providing one of the following values.
     </tbody>
 </table> 
  
-### -Email&nbsp; &lt;String&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -FullName&nbsp; &lt;String&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Comment&nbsp; &lt;String&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Portrait&nbsp; &lt;String&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Enabled&nbsp; &lt;SwitchParameter&gt; 
- 
-Specifies that the account should be enabled. When enabled, the Password parameter is required. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -PassThru&nbsp; &lt;SwitchParameter&gt; 
- 
- 
+Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -298,14 +397,7 @@ Specifies that the account should be enabled. When enabled, the Password paramet
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the identity of a role. 
- 
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* None. 
+* Sitecore.Data.Items.Item 
  
 ## Notes 
  
@@ -313,40 +405,17 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
- 
- 
-```powershell   
- 
-PS master:\> New-User -Identity michael 
- 
-``` 
- 
-### EXAMPLE 2 
- 
- 
+change all rendering's placeholder from main to footer 
  
 ```powershell   
  
-PS master:\> New-User -Identity michael -Enabled -Password b -Email michaellwest@gmail.com -FullName "Michael West" 
- 
-``` 
- 
-### EXAMPLE 3 
- 
- 
- 
-```powershell   
- 
-PS master:\> New-User -Identity michael -PassThru
-
-Name                     Domain       IsAdministrator IsAuthenticated
-----                     ------       --------------- ---------------
-sitecore\michael2        sitecore     False           False 
+PS master:\> $item = Get-Item -Path master:\content\home
+PS master:\> Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object { $_.Placeholder = "footer"; Set-Rendering -Item $item -Instance $_ } 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* Set-User* Remove-User* Unlock-User
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout

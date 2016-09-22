@@ -6,7 +6,7 @@ Returns one or more Sitecore users using the specified criteria.
  
 Get-User [-Identity] &lt;AccountIdentity&gt; [-Authenticated] 
  
-Get-User -Filter &lt;String&gt; 
+Get-User -Filter &lt;String&gt; [-Authenticated] [-ResultPageSize &lt;Int32&gt;] 
  
 Get-User -Current 
  
@@ -148,6 +148,40 @@ To get all the users in a domain use the following command:
 ### -Authenticated&nbsp; &lt;SwitchParameter&gt; 
  
  
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -ResultPageSize&nbsp; &lt;Int32&gt; 
+ 
+Specifies the number of users to retrieve per request to the user provider. Each page of users is written to the pipeline before the next request is made. Without specifying this parameter all accounts are retrieved before passing down the pipeline. 
  
 <table>
     <thead></thead>

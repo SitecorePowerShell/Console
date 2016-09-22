@@ -1,61 +1,30 @@
-# Set-User 
+# Remove-ItemVersion 
  
-Sets the Sitecore user properties. 
+Removes Language/Version from a single item or a branch of items 
  
 ## Syntax 
  
-Set-User [-Identity] &lt;AccountIdentity&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Remove-ItemVersion -Language &lt;String[]&gt; [-Version &lt;String[]&gt;] [-ExcludeLanguage &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-MaxRecentVersions &lt;Int32&gt;] 
  
-Set-User -Instance &lt;User&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
+Remove-ItemVersion -Language &lt;String[]&gt; [-Version &lt;String[]&gt;] [-ExcludeLanguage &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-MaxRecentVersions &lt;Int32&gt;] 
+ 
+Remove-ItemVersion [-Language &lt;String[]&gt;] [-Version &lt;String[]&gt;] [-ExcludeLanguage &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-MaxRecentVersions &lt;Int32&gt;] 
  
  
 ## Detailed Description 
  
-The Set-User command sets a user profile properties in Sitecore.
-
-The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name. 
+Removes Language/Version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
+Language  parameter supports globbing so you can delete whole language groups using wildcards. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+The following abbreviations are aliases for this cmdlet:  
+* Remove-ItemLanguage 
  
 ## Parameters 
  
-### -IsAdministrator&nbsp; &lt;Boolean&gt; 
+### -Recurse&nbsp; &lt;SwitchParameter&gt; 
  
-Specifies whether the Sitecore user should be classified as an Administrator. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Portrait&nbsp; &lt;String&gt; 
- 
-Specifies the Sitecore user portrait image. 
+Deleted language versions from the item and all of its children. 
  
 <table>
     <thead></thead>
@@ -87,15 +56,153 @@ Specifies the Sitecore user portrait image.
     </tbody>
 </table> 
  
-### -Identity&nbsp; &lt;AccountIdentity&gt; 
+### -Language&nbsp; &lt;String[]&gt; 
  
-Specifies the Sitecore user by providing one of the following values.
+Language(s) that should be deleted form the provided item(s).
+A single language or a list of languages can be defined using the parameter. 
+Language parameter supports globbing so you can delete whole language groups using wildcards. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Version&nbsp; &lt;String[]&gt; 
+ 
+Version(s) that should be deleted form the provided item(s).
+A single version or a list of versions can be defined using the parameter. 
+Version parameter supports globbing so you can delete whole version groups using wildcards. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -ExcludeLanguage&nbsp; &lt;String[]&gt; 
+ 
+Language(s) that should NOT be deleted form the provided item(s).
+A single language or a list of languages can be defined using the parameter. 
+Language parameter supports globbing so you can delete whole language groups using wildcards.
 
-    Local Name
-        Example: admin
-    
-    Fully Qualified Name
-        Example: sitecore\admi 
+If Language parameter is not is not specified but ExcludeLanguage is provided, the default value of "*" is assumed for Language parameter. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -MaxRecentVersions&nbsp; &lt;Int32&gt; 
+ 
+If provided - trims the selected language to value specified by this parameter. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Item&nbsp; &lt;Item&gt; 
+ 
+The item/version to be processed. You can pipe a specific version of the item for it to be removed. 
  
 <table>
     <thead></thead>
@@ -118,7 +225,7 @@ Specifies the Sitecore user by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -127,9 +234,43 @@ Specifies the Sitecore user by providing one of the following values.
     </tbody>
 </table> 
  
-### -Instance&nbsp; &lt;User&gt; 
+### -Path&nbsp; &lt;String&gt; 
  
+Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
  
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String&gt; 
+ 
+Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -152,40 +293,6 @@ Specifies the Sitecore user by providing one of the following values.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Email&nbsp; &lt;String&gt; 
- 
-Specifies the Sitecore user email address. The value is validated for a properly formatted address. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
             <td>false</td>
         </tr>
         <tr>
@@ -195,179 +302,9 @@ Specifies the Sitecore user email address. The value is validated for a properly
     </tbody>
 </table> 
  
-### -FullName&nbsp; &lt;String&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Comment&nbsp; &lt;String&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -ProfileItemId&nbsp; &lt;ID&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -StartUrl&nbsp; &lt;String&gt; 
- 
-Specifies the url to navigate to once the user is logged in. The values are validated with a pretermined set. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Enabled&nbsp; &lt;SwitchParameter&gt; 
- 
-Specifies whether the Sitecore user should be enabled. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -CustomProperties&nbsp; &lt;Hashtable&gt; 
- 
-Specifies a hashtable of custom properties to assign to the Sitecore user profile. 
+Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -403,17 +340,7 @@ Specifies a hashtable of custom properties to assign to the Sitecore user profil
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* System.String
-Represents the identity of a user.
-
-Sitecore.Security.Accounts.User
-Represents the instance of a user. 
- 
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* None. 
+* Sitecore.Data.Items.Item 
  
 ## Notes 
  
@@ -423,61 +350,44 @@ Help Author: Adam Najmanowicz, Michael West
  
 ### EXAMPLE 1 
  
- 
+Remove Polish and Spanish language from /sitecore/content/home item in the master database 
  
 ```powershell   
  
-PS master:\> Set-User -Identity michael -Email michaellwest@gmail.com 
+PS master:\> Remove-ItemVersion -Path master:\content\home -Language "pl-pl", "es-es" 
  
 ``` 
  
 ### EXAMPLE 2 
  
- 
+Remove all english based languages defined in /sitecore/content/home item and all of its children in the master database 
  
 ```powershell   
  
-PS master:\> "michael","adam","mike" | Set-User -Enable $false 
+PS master:\> Remove-ItemVersion -Path master:\content\home -Language "en-*" -Recurse 
  
 ``` 
  
 ### EXAMPLE 3 
  
- 
+Remove all languages except those that are "en" based defined in /sitecore/content/home item and all of its children in the master database 
  
 ```powershell   
  
-PS master:\> Get-User -Filter * | Set-User -Comment "Sitecore user" 
+PS master:\> Remove-ItemVersion -Path master:\content\home -ExcludeLanguage "en*" -Recurse 
  
 ``` 
  
 ### EXAMPLE 4 
  
- 
- 
-```powershell   
- 
-PS master:\> Set-User -Identity michael -CustomProperties @{"Date"=(Get-Date)}
-PS master:\>(Get-User michael).Profile.GetCustomProperty("Date")
-
-7/3/2014 4:40:02 PM 
- 
-``` 
- 
-### EXAMPLE 5 
- 
- 
+Trim all languages to 3 latest versions for /sitecore/content/home item and all of its children in the master database 
  
 ```powershell   
  
-PS master:\> Set-User -Identity michael -IsAdministrator $true -CustomProperties @{"HireDate"="03/17/2010"}
-PS master:\>$user = Get-User -Identity michael
-PS master:\>$user.Profile.GetCustomProperty("HireDate")
-
-03/17/2010 
+PS master:\> Remove-ItemVersion -Path master:\content\home -Language * -Recurse 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Remove-User* Unlock-User
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-ItemVersion* Remove-Item* <a href='https://gist.github.com/AdamNaj/b36ea095e3668c22c07e' target='_blank'>https://gist.github.com/AdamNaj/b36ea095e3668c22c07e</a><br/>

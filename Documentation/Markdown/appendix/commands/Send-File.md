@@ -1,27 +1,29 @@
-# Set-Rendering 
+# Send-File 
  
-Updates rendering with new values. 
+Allows users to download files from server and file items from media library. 
  
 ## Syntax 
  
-Set-Rendering [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] 
+Send-File [-Path] &lt;String&gt; [-Message &lt;String&gt;] [-NoDialog] [-ShowFullPath] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
-Set-Rendering [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] 
- 
-Set-Rendering -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] 
+Send-File [-Item] &lt;Item&gt; [-Message &lt;String&gt;] [-NoDialog] [-ShowFullPath] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
  
-Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering. 
+Executing this command with file path on the server provides script users with means to download a file to their computer.
+Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
+If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+The following abbreviations are aliases for this cmdlet:  
+* Download-File 
  
 ## Parameters 
  
-### -Instance&nbsp; &lt;RenderingDefinition&gt; 
+### -Path&nbsp; &lt;String&gt; 
  
-Instance of the Rendering to be updated. 
+Path to the file to be downloaded. The file has to exist in the Data folder. Files from outside the Data folder are not downloadable. 
  
 <table>
     <thead></thead>
@@ -36,7 +38,7 @@ Instance of the Rendering to be updated.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -44,7 +46,7 @@ Instance of the Rendering to be updated.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>false</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -53,111 +55,9 @@ Instance of the Rendering to be updated.
     </tbody>
 </table> 
  
-### -Parameter&nbsp; &lt;Hashtable&gt; 
+### -Message&nbsp; &lt;String&gt; 
  
-Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -PlaceHolder&nbsp; &lt;String&gt; 
- 
-Placeholder path the Rendering should be added to - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -DataSource&nbsp; &lt;String&gt; 
- 
-Data source of the Rendering - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Index&nbsp; &lt;Int32&gt; 
- 
-If provided the rendering will be moved to the specified index. 
+Message to show the user in the download dialog. 
  
 <table>
     <thead></thead>
@@ -191,7 +91,7 @@ If provided the rendering will be moved to the specified index.
  
 ### -Item&nbsp; &lt;Item&gt; 
  
-The item to be processed. 
+The item to be downloaded. 
  
 <table>
     <thead></thead>
@@ -214,7 +114,7 @@ The item to be processed.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -223,9 +123,9 @@ The item to be processed.
     </tbody>
 </table> 
  
-### -Path&nbsp; &lt;String&gt; 
+### -NoDialog&nbsp; &lt;SwitchParameter&gt; 
  
-Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
+If this parameter is used the Dialog will not be shown but instead the file download will begin immediately. 
  
 <table>
     <thead></thead>
@@ -236,41 +136,7 @@ Path to the item to be processed - can work with Language parameter to narrow th
         </tr>
         <tr>
             <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
             <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Id&nbsp; &lt;String&gt; 
- 
-Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -291,9 +157,111 @@ Id of the item to be processed - can work with Language parameter to narrow the 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;String&gt; 
+### -ShowFullPath&nbsp; &lt;SwitchParameter&gt; 
  
-Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
+If this parameter is used the Dialog will display full path to the file downloaded in the dialog, otherwise only the file name will be shown. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Title&nbsp; &lt;String&gt; 
+ 
+Download dialog title. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Width&nbsp; &lt;Int32&gt; 
+ 
+Download dialog width. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Height&nbsp; &lt;Int32&gt; 
+ 
+Download dialog height. 
  
 <table>
     <thead></thead>
@@ -331,23 +299,38 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
+## Outputs 
+ 
+The output type is the type of the objects that the cmdlet emits. 
+ 
+* System.String 
+ 
 ## Notes 
  
 Help Author: Adam Najmanowicz, Michael West 
  
 ## Examples 
  
-### EXAMPLE 
+### EXAMPLE 1 
  
-change all rendering's placeholder from main to footer 
+Download File from server disk drive 
  
 ```powershell   
  
-PS master:\> $item = Get-Item -Path master:\content\home
-PS master:\> Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object { $_.Placeholder = "footer"; Set-Rendering -Item $item -Instance $_ } 
+PS master:\> Send-File -Path "C:\Projects\ZenGarden\Data\packages\Sitecore PowerShell Extensions-2.6.zip" 
+ 
+``` 
+ 
+### EXAMPLE 2 
+ 
+Download item from media library 
+ 
+```powershell   
+ 
+PS master:\> Get-Item "master:/media library/Showcase/cognifide_logo" | Send-File -Message "Cognifide Logo" 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

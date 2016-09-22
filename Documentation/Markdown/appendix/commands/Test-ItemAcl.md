@@ -173,7 +173,7 @@ Well known rights are:
 - item:rename - "Rename" - controls whether an account can change the name of an item. The rename access right requires the read access right.
 - item:create - "Create" - controls whether an account can create child items. The create access right requires the read access right.
 - item:delete - "Delete" - Delete right for items. controls whether an account can delete an item. The delete access right requires the read access right
-    Important!
+	Important!
 The Delete command also deletes all child items, even if the account has been denied Delete
 rights for one or more of the subitems. 
 - item:admin - "Administer" - controls whether an account can configure access rights on an item. The administer access right requires the read and write access rights.

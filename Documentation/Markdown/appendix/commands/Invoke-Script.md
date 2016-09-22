@@ -57,7 +57,7 @@ The script item to be executed.
 ### -Path&nbsp; &lt;String&gt; 
  
 Path to the script item to be executed.
-Path can be absolute or Relavie to Script library root.    e.g. the following two commands are equivalent:
+Path can be absolute or Relavie to Script library root.	e.g. the following two commands are equivalent:
 
 PS master:\&gt; Invoke-Script 'master:\system\Modules\PowerShell\Script Library\Examples\Script Testing\Long Running Script with Progress Demo'
 PS master:\&gt; Invoke-Script 'Examples\Script Testing\Long Running Script with Progress Demo' 

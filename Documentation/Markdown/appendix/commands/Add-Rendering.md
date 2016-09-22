@@ -1,27 +1,61 @@
-# New-Rendering 
+# Add-Rendering 
  
-Creates new rendering definition that can later be added to an item. 
+Adds a rendering to a chosen device for the presentation of an item. 
  
 ## Syntax 
  
-New-Rendering [-Item] &lt;Item&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
+Add-Rendering [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
-New-Rendering [-Path] &lt;String&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
+Add-Rendering [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
-New-Rendering -Id &lt;String&gt; [-Database &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;Item&gt;] [-Cacheable] [-VaryByData] [-VaryByDevice] [-VaryByLogin] [-VaryByParameters] [-VaryByQueryString] [-VaryByUser] 
+Add-Rendering [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
  
 ## Detailed Description 
  
-Creates new rendering definition that can later be added to an item. Most parameters can later be overriden when calling Add-Rendering. 
+Adds a rendering to a chosen device for the presentation of an item. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
+### -Instance&nbsp; &lt;RenderingDefinition&gt; 
+ 
+Rendering definition to be added to the item 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
 ### -Parameter&nbsp; &lt;Hashtable&gt; 
  
-Rendering parameters as hashtable 
+Rendering Parameters to be overriden on the Rendering that is being updated - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
  
 <table>
     <thead></thead>
@@ -55,7 +89,41 @@ Rendering parameters as hashtable
  
 ### -PlaceHolder&nbsp; &lt;String&gt; 
  
-Placeholder for the rendering to be placed into. 
+Placeholder path the Rendering should be added to - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -DataSource&nbsp; &lt;String&gt; 
+ 
+Data source of the Rendering - if not specified the value provided in rendering definition specified in the Instance parameter will be used. 
  
 <table>
     <thead></thead>
@@ -87,43 +155,9 @@ Placeholder for the rendering to be placed into.
     </tbody>
 </table> 
  
-### -DataSource&nbsp; &lt;Item&gt; 
+### -Index&nbsp; &lt;Int32&gt; 
  
-Datasource for the rendering. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Cacheable&nbsp; &lt;SwitchParameter&gt; 
- 
-Defined whether the rendering is cacheable. 
+Index at which the Rendering should be inserted. If not provided the rendering will be appended at the end of the list. 
  
 <table>
     <thead></thead>
@@ -155,43 +189,9 @@ Defined whether the rendering is cacheable.
     </tbody>
 </table> 
  
-### -VaryByData&nbsp; &lt;SwitchParameter&gt; 
+### -Device&nbsp; &lt;DeviceItem&gt; 
  
-Defines whether a data-specific cache version of the rendering should be kept. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -VaryByDevice&nbsp; &lt;SwitchParameter&gt; 
- 
-Defines whether a device-specific cache version of the rendering should be kept. 
+Device the rendering is assigned to. If not specified - default device will be used. 
  
 <table>
     <thead></thead>
@@ -223,43 +223,9 @@ Defines whether a device-specific cache version of the rendering should be kept.
     </tbody>
 </table> 
  
-### -VaryByLogin&nbsp; &lt;SwitchParameter&gt; 
+### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
  
-Defines whether a login - specific cache version of the rendering should be kept. 
  
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -VaryByParameters&nbsp; &lt;SwitchParameter&gt; 
- 
-Defines whether paremeter - specific cache version of the rendering should be kept. 
  
 <table>
     <thead></thead>
@@ -291,43 +257,9 @@ Defines whether paremeter - specific cache version of the rendering should be ke
     </tbody>
 </table> 
  
-### -VaryByQueryString&nbsp; &lt;SwitchParameter&gt; 
+### -Language&nbsp; &lt;String[]&gt; 
  
-Defines whether query string - specific cache version of the rendering should be kept. 
  
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -VaryByUser&nbsp; &lt;SwitchParameter&gt; 
- 
-Defines whether a user - specific cache version of the rendering should be kept. 
  
 <table>
     <thead></thead>
@@ -529,4 +461,4 @@ PS master:\> Add-Rendering -Item $item -PlaceHolder "main" -Rendering $rendering
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout

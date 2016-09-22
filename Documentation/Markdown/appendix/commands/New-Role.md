@@ -4,7 +4,7 @@ Creates a new Sitecore role.
  
 ## Syntax 
  
-New-Role [-Identity] &lt;AccountIdentity&gt; [-PassThru] 
+New-Role [-Identity] &lt;AccountIdentity&gt; 
  
  
 ## Detailed Description 
@@ -41,40 +41,6 @@ Role name including domain. If no domain is specified - 'sitecore' will be used 
         <tr>
             <td>Accept Pipeline Input?</td>
             <td>true (ByPropertyName)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -PassThru&nbsp; &lt;SwitchParameter&gt; 
- 
-Passes the processed object back into the pipeline. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>

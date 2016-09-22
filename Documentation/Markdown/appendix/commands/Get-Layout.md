@@ -4,11 +4,11 @@ Returns the layout for the specified item.
  
 ## Syntax 
  
-Get-Layout [-Item] &lt;Item&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Layout [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
-Get-Layout [-Path] &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Get-Layout [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
-Get-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] [-Device &lt;DeviceItem&gt;] 
+Get-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
  
  
 ## Detailed Description 
@@ -23,6 +23,74 @@ The Get-Layout command returns the layout for the specified item.
  
 Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
 If Device is specified but no layout is specified the command will return an error that can be silenced 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Language&nbsp; &lt;String[]&gt; 
+ 
+ 
  
 <table>
     <thead></thead>

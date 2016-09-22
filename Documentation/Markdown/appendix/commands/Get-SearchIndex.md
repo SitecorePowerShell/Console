@@ -4,7 +4,9 @@ Returns the available Sitecore indexes.
  
 ## Syntax 
  
-Get-SearchIndex [[-Name] &lt;String&gt;] 
+Get-SearchIndex [-Name &lt;String&gt;] 
+ 
+Get-SearchIndex [-Name &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -32,7 +34,7 @@ Name of the index to return.
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -40,7 +42,7 @@ Name of the index to return.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>

@@ -4,7 +4,9 @@ Suspends (pauses) the Sitecore index.
  
 ## Syntax 
  
-Suspend-SearchIndex [[-Name] &lt;String&gt;] 
+Suspend-SearchIndex [-Name &lt;String&gt;] 
+ 
+Suspend-SearchIndex [-Name &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -32,7 +34,7 @@ The name of the index to suspend (pause).
         </tr>
         <tr>
             <td>Position?</td>
-            <td>1</td>
+            <td>named</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -40,7 +42,7 @@ The name of the index to suspend (pause).
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>

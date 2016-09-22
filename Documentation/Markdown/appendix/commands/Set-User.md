@@ -1,39 +1,135 @@
-# Get-Rendering 
+# Set-User 
  
-Returns a RenderingDefinition for an item using the filtering parameters. 
+Sets the Sitecore user properties. 
  
 ## Syntax 
  
-Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
+Set-User [-Identity] &lt;AccountIdentity&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
-Get-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] 
- 
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] 
+Set-User -Instance &lt;User&gt; [-IsAdministrator &lt;Boolean&gt;] [-Portrait &lt;String&gt;] [-Email &lt;String&gt;] [-FullName &lt;String&gt;] [-Comment &lt;String&gt;] [-ProfileItemId &lt;ID&gt;] [-StartUrl &lt;String&gt;] [-Enabled] [-CustomProperties &lt;Hashtable&gt;] 
  
  
 ## Detailed Description 
  
-The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters. 
+The Set-User command sets a user profile properties in Sitecore.
+
+The Identity parameter specifies the Sitecore user to set. You can specify a user by its local name or fully qualified name. 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Item&nbsp; &lt;Item&gt; 
+### -IsAdministrator&nbsp; &lt;Boolean&gt; 
  
-The item to be processed. 
+Specifies whether the Sitecore user should be classified as an Administrator. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Portrait&nbsp; &lt;String&gt; 
+ 
+Specifies the Sitecore user portrait image. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Identity&nbsp; &lt;AccountIdentity&gt; 
+ 
+Specifies the Sitecore user by providing one of the following values.
+
+    Local Name
+        Example: admin
+    
+    Fully Qualified Name
+        Example: sitecore\admi 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Instance&nbsp; &lt;User&gt; 
+ 
+ 
  
 <table>
     <thead></thead>
@@ -56,7 +152,7 @@ The item to be processed.
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue, ByPropertyName)</td>
+            <td>true (ByValue)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -65,43 +161,9 @@ The item to be processed.
     </tbody>
 </table> 
  
-### -Path&nbsp; &lt;String&gt; 
+### -Email&nbsp; &lt;String&gt; 
  
-Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>true</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Id&nbsp; &lt;String&gt; 
- 
-Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
+Specifies the Sitecore user email address. The value is validated for a properly formatted address. 
  
 <table>
     <thead></thead>
@@ -133,43 +195,9 @@ Id of the item to be processed - can work with Language parameter to narrow the 
     </tbody>
 </table> 
  
-### -Database&nbsp; &lt;String&gt; 
+### -FullName&nbsp; &lt;String&gt; 
  
-Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -DataSource&nbsp; &lt;String&gt; 
- 
-Data source filter - supports wildcards. 
  
 <table>
     <thead></thead>
@@ -201,43 +229,9 @@ Data source filter - supports wildcards.
     </tbody>
 </table> 
  
-### -Rendering&nbsp; &lt;Item&gt; 
+### -Comment&nbsp; &lt;String&gt; 
  
-Item representing the sublayout/rendering. If matching the rendering will be returned. 
  
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Index&nbsp; &lt;Int32&gt; 
- 
-Index at which the rendering exists in the layout. The rendering at that index will be returned. 
  
 <table>
     <thead></thead>
@@ -269,43 +263,9 @@ Index at which the rendering exists in the layout. The rendering at that index w
     </tbody>
 </table> 
  
-### -PlaceHolder&nbsp; &lt;String&gt; 
+### -ProfileItemId&nbsp; &lt;ID&gt; 
  
-Place holder at which the rendering exists in the layout. Renderings at that place holder will be returned. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Parameter&nbsp; &lt;Hashtable&gt; 
- 
-Additional rendering parameter values. If both name and value match - the rendering will be returned. Values support wildcards. 
+Specifies the profile id to use for the user. 
  
 <table>
     <thead></thead>
@@ -337,9 +297,9 @@ Additional rendering parameter values. If both name and value match - the render
     </tbody>
 </table> 
  
-### -Instance&nbsp; &lt;RenderingDefinition&gt; 
+### -StartUrl&nbsp; &lt;String&gt; 
  
-Specific instance of rendering that should be returned. The instance could earlier be obtained through e.g. use of Get-Rendering. 
+Specifies the url to navigate to once the user is logged in. The values are validated with a pretermined set. 
  
 <table>
     <thead></thead>
@@ -350,7 +310,7 @@ Specific instance of rendering that should be returned. The instance could earli
         </tr>
         <tr>
             <td>Required?</td>
-            <td>true</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -371,9 +331,9 @@ Specific instance of rendering that should be returned. The instance could earli
     </tbody>
 </table> 
  
-### -UniqueId&nbsp; &lt;String&gt; 
+### -Enabled&nbsp; &lt;SwitchParameter&gt; 
  
-UniqueID of the rendering to be retrieved. 
+Specifies whether the Sitecore user should be enabled. 
  
 <table>
     <thead></thead>
@@ -384,7 +344,7 @@ UniqueID of the rendering to be retrieved.
         </tr>
         <tr>
             <td>Required?</td>
-            <td>true</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -405,9 +365,9 @@ UniqueID of the rendering to be retrieved.
     </tbody>
 </table> 
  
-### -Device&nbsp; &lt;DeviceItem&gt; 
+### -CustomProperties&nbsp; &lt;Hashtable&gt; 
  
-Device for which the renderings will be retrieved. 
+Specifies a hashtable of custom properties to assign to the Sitecore user profile. 
  
 <table>
     <thead></thead>
@@ -443,13 +403,17 @@ Device for which the renderings will be retrieved.
  
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
-* Sitecore.Data.Items.Item 
+* System.String
+Represents the identity of a user.
+
+Sitecore.Security.Accounts.User
+Represents the instance of a user. 
  
 ## Outputs 
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Layouts.RenderingDefinitio 
+* None. 
  
 ## Notes 
  
@@ -457,16 +421,63 @@ Help Author: Adam Najmanowicz, Michael West
  
 ## Examples 
  
-### EXAMPLE 
+### EXAMPLE 1 
  
-get all renderings for "Default" device, located in the any placeholder that has name in it or any of its sub-placeholders 
+ 
  
 ```powershell   
  
-PS master:\> Get-Item master:\content\home | Get-Rendering -Placeholder "*main*" -Device (Get-LayoutDevice "Default") 
+PS master:\> Set-User -Identity michael -Email michaellwest@gmail.com 
+ 
+``` 
+ 
+### EXAMPLE 2 
+ 
+ 
+ 
+```powershell   
+ 
+PS master:\> "michael","adam","mike" | Set-User -Enable $false 
+ 
+``` 
+ 
+### EXAMPLE 3 
+ 
+ 
+ 
+```powershell   
+ 
+PS master:\> Get-User -Filter * | Set-User -Comment "Sitecore user" 
+ 
+``` 
+ 
+### EXAMPLE 4 
+ 
+ 
+ 
+```powershell   
+ 
+PS master:\> Set-User -Identity michael -CustomProperties @{"Date"=(Get-Date)}
+PS master:\>(Get-User michael).Profile.GetCustomProperty("Date")
+
+7/3/2014 4:40:02 PM 
+ 
+``` 
+ 
+### EXAMPLE 5 
+ 
+ 
+ 
+```powershell   
+ 
+PS master:\> Set-User -Identity michael -IsAdministrator $true -CustomProperties @{"HireDate"="03/17/2010"}
+PS master:\>$user = Get-User -Identity michael
+PS master:\>$user.Profile.GetCustomProperty("HireDate")
+
+03/17/2010 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Remove-User* Unlock-User

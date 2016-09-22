@@ -1,27 +1,61 @@
-# Publish-Item 
+# Set-Layout 
  
-Publishes a Sitecore item. 
+Sets item layout for a device. 
  
 ## Syntax 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Set-Layout [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
  
-Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Set-Layout [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] 
+Set-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
  
  
 ## Detailed Description 
  
-The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing. 
+Sets item layout for a specific device provided 
  
 © 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
-### -Recurse&nbsp; &lt;SwitchParameter&gt; 
+### -Device&nbsp; &lt;DeviceItem&gt; 
  
-Specifies that subitems should also get published with the root item. 
+Device for which to set layout. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Layout&nbsp; &lt;Item&gt; 
+ 
+Sitecore item defining the layout. 
  
 <table>
     <thead></thead>
@@ -53,47 +87,9 @@ Specifies that subitems should also get published with the root item.
     </tbody>
 </table> 
  
-### -Target&nbsp; &lt;String[]&gt; 
+### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
  
-Specifies the publishing targets. The default target database is "web". 
  
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -PublishMode&nbsp; &lt;PublishMode&gt; 
- 
-Specified the Publish mode. Valid values are: 
-- Full
-- Incremental
-- SingleItem
-- Smart 
  
 <table>
     <thead></thead>
@@ -127,8 +123,7 @@ Specified the Publish mode. Valid values are:
  
 ### -Language&nbsp; &lt;String[]&gt; 
  
-Language of the item that should be published. Supports globbing/wildcards.
-Allows for more than one language to be provided at once. e.g. "en*", "pl-pl" 
+ 
  
 <table>
     <thead></thead>
@@ -162,7 +157,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
  
 ### -Item&nbsp; &lt;Item&gt; 
  
- 
+The item to be processed. 
  
 <table>
     <thead></thead>
@@ -196,7 +191,7 @@ Allows for more than one language to be provided at once. e.g. "en*", "pl-pl"
  
 ### -Path&nbsp; &lt;String&gt; 
  
-Path to the item that should be published - can work with Language parameter to narrow the publication scope. 
+Path to the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -230,7 +225,7 @@ Path to the item that should be published - can work with Language parameter to 
  
 ### -Id&nbsp; &lt;String&gt; 
  
-Id of the item that should be published - can work with Language parameter to narrow the publication scope. 
+Id of the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -264,7 +259,7 @@ Id of the item that should be published - can work with Language parameter to na
  
 ### -Database&nbsp; &lt;String&gt; 
  
- 
+Database containing the item to be processed - can work with Language parameter to narrow the publication scope. 
  
 <table>
     <thead></thead>
@@ -302,48 +297,22 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 * Sitecore.Data.Items.Item 
  
-## Outputs 
- 
-The output type is the type of the objects that the cmdlet emits. 
- 
-* None. 
- 
 ## Notes 
  
-Help Author: Michael West, Adam Najmanowicz 
+Help Author: Adam Najmanowicz, Michael West 
  
 ## Examples 
  
-### EXAMPLE 1 
+### EXAMPLE 
  
  
  
 ```powershell   
  
-PS master:\> Publish-Item -Path master:\content\home -Target Internet 
- 
-``` 
- 
-### EXAMPLE 2 
- 
- 
- 
-```powershell   
- 
-PS master:\> Get-Item -Path master:\content\home | Publish-Item -Recurse -PublishMode Incremental 
- 
-``` 
- 
-### EXAMPLE 3 
- 
- 
- 
-```powershell   
- 
-PS master:\> Get-Item -Path master:\content\home | Publish-Item -Recurse -Language "en*" 
+PS master:\> Set-Layout -Path master:\content\home 
  
 ``` 
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Reset-Layout
