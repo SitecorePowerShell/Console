@@ -42,42 +42,36 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
             switch (ParameterSetName)
             {
                 case "Role":
-                    DeserializeUser(Role.Name);
+                    DeserializeRole(Role.Name);
                     break;
                 case "Filter":
                     var filter = Filter;
                     if (!filter.Contains("?") && !filter.Contains("*")) return;
-                    DeserializeUser(filter);
+                    DeserializeRole(filter);
                     break;
                 case "Path":
-                    DeserializeUser(Path);
+                    DeserializeRole(Path);
                     break;
                 default:
-                    DeserializeUser(Identity.Name);
+                    DeserializeRole(Identity.Name);
                     break;
             }
         }
 
-        private void DeserializeUser(string userName)
+        private void DeserializeRole(string roleName)
         {
-            var fileName = userName;
-
-            // if path is not absolute - add the Root folder
-            if (!System.IO.Path.IsPathRooted(fileName))
-            {
-                var identity = new AccountIdentity(userName);
-                var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-                fileName = target + identity.Domain + @"\Roles\" + identity.Account + PathUtils.RoleExtension;
-            }
-
-            // make sure the path has the proper extension
-            if (!fileName.EndsWith(PathUtils.RoleExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                fileName += PathUtils.RoleExtension;
-            }
+            var fileName = roleName;
 
             if (fileName.Contains("?") || fileName.Contains("*"))
             {
+                // if path is not absolute - add the Root folder
+                if (!System.IO.Path.IsPathRooted(fileName))
+                {
+                    var identity = new AccountIdentity(roleName, true);
+                    var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
+                    fileName = target + identity.Domain + @"\Roles\";
+                }
+
                 var roles = System.IO.Path.GetDirectoryName(fileName);
                 var domainName = System.IO.Path.GetDirectoryName(roles);
                 var root = System.IO.Path.GetDirectoryName(domainName);
@@ -86,13 +80,27 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
                     var files = WildcardFilter(fileName, Directory.EnumerateFiles(domain + @"\Roles"), f => f).ToList();
                     foreach (var file in files)
                     {
-                        DeserializeRoleFile(userName, file);
+                        DeserializeRoleFile(roleName, file);
                     }
                 }
             }
             else
             {
-                DeserializeRoleFile(userName, fileName);
+                // if path is not absolute - add the Root folder
+                if (!System.IO.Path.IsPathRooted(fileName))
+                {
+                    var identity = new AccountIdentity(roleName);
+                    var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
+                    fileName = target + identity.Domain + @"\Roles\" + identity.Account + PathUtils.RoleExtension;
+                }
+
+                // make sure the path has the proper extension
+                if (!fileName.EndsWith(PathUtils.RoleExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    fileName += PathUtils.RoleExtension;
+                }
+
+                DeserializeRoleFile(roleName, fileName);
             }
         }
 

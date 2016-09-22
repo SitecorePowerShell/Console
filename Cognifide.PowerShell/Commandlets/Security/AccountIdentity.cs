@@ -9,7 +9,9 @@ namespace Cognifide.PowerShell.Commandlets.Security
 {
     public class AccountIdentity
     {
-        public AccountIdentity(string name)
+        public AccountIdentity(string name) : this(name, false) { }
+
+        internal AccountIdentity(string name, bool allowWildcard)
         {
             Assert.ArgumentNotNullOrEmpty(name, "name");
 
@@ -21,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Security
                 account = StringUtil.GetPostfix(name, '\\');
             }
 
-            if (!Regex.IsMatch(account, @"^\w[\w\s.\\_-]*$", RegexOptions.Compiled))
+            if (!Regex.IsMatch(account, @"^\w[\w\s.\\_-]*$", RegexOptions.Compiled) && (allowWildcard && !Regex.IsMatch(account, @"^\w[\w\s.\\_\\*-]*$", RegexOptions.Compiled)))
             {
                 throw new ArgumentException(
                     $"The name '{name}' is improperly formatted.\n\nThe name can only contain the following characters: a-z, 0-9, periods, dashes, underscores, backslashes, and spaces.", "name");
