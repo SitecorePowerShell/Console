@@ -64,23 +64,22 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
 
             if (fileName.Contains("?") || fileName.Contains("*"))
             {
+                string rootFolder = System.IO.Path.GetDirectoryName(fileName);
+                var identity = new AccountIdentity(roleName, true);
+
                 // if path is not absolute - add the Root folder
                 if (!System.IO.Path.IsPathRooted(fileName))
                 {
-                    var identity = new AccountIdentity(roleName, true);
-                    var target = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
-                    fileName = target + identity.Domain + @"\Roles\";
+                    rootFolder = string.IsNullOrEmpty(Root) || Root.EndsWith("\\") ? Root : Root + "\\";
                 }
-
-                var roles = System.IO.Path.GetDirectoryName(fileName);
-                var domainName = System.IO.Path.GetDirectoryName(roles);
-                var root = System.IO.Path.GetDirectoryName(domainName);
-                foreach (var domain in Directory.EnumerateDirectories(root))
+                
+                foreach (var domain in WildcardFilter(identity.Domain, Directory.EnumerateDirectories(rootFolder), d => System.IO.Path.GetFileName(d)))
                 {
-                    var files = WildcardFilter(fileName, Directory.EnumerateFiles(domain + @"\Roles"), f => f).ToList();
+                    var files = WildcardFilter(identity.Account, Directory.EnumerateFiles(domain + @"\Roles"), f => System.IO.Path.GetFileName(f)).ToList();
+
                     foreach (var file in files)
                     {
-                        DeserializeRoleFile(roleName, file);
+                        DeserializeRoleFile(identity.ToString(), file);
                     }
                 }
             }
