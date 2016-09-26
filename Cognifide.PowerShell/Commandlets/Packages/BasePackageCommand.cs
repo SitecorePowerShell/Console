@@ -2,10 +2,13 @@
 using System.IO;
 using System.Management.Automation;
 using Sitecore;
+using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Engines;
 using Sitecore.Data.Proxies;
 using Sitecore.Exceptions;
 using Sitecore.Globalization;
+using Sitecore.Install.Serialization;
 using Sitecore.SecurityModel;
 using Sitecore.Shell.Applications.Install;
 
@@ -30,6 +33,17 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         protected void PerformInstallAction(Action action)
         {
             PerformInstallAction("shell", action);
+        }
+
+        protected override void BeginProcessing()
+        {
+            // Ensure IOUtils created by touching IOUtils.SerializationContext
+            using (new DatabaseSwitcher(Factory.GetDatabase("core")))
+            {
+                var context = IOUtils.SerializationContext;
+            }
+
+            base.BeginProcessing();
         }
 
         protected void PerformInstallAction(string siteContext, Action action)
