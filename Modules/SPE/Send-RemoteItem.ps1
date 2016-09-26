@@ -82,8 +82,9 @@ function Send-RemoteItem {
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName = $true)]
         [ValidateNotNullOrEmpty()]
+        [Alias("FullName")]
         [string]$Path,
 
         [Parameter(ParameterSetName='Session')]
@@ -115,7 +116,7 @@ function Send-RemoteItem {
     }
 
     process {
-        
+
         $mediaId = [guid]::Empty
         $isMediaItem = $RootPath -eq "Media" -or [guid]::TryParse($Destination, [ref]$mediaId)
         
