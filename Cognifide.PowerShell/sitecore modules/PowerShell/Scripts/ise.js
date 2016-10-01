@@ -313,7 +313,7 @@
         cognifide.powershell.appendOutput = function(outputToAppend) {
             var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
-            $("#ScriptResult").scrollTop($("#ScriptResult")[0].scrollHeight);
+            $("#Result").scrollTop($("#Result")[0].scrollHeight);
         };
 
         cognifide.powershell.changeFontFamily = function(setting) {
