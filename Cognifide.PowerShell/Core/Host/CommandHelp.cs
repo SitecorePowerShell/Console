@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.Core.Host
                         .GetItem(ApplicationSettings.ScriptLibraryPath + "Internal/Context Help/Command Help");
                 }
                 session.ExecuteScriptPart(scriptItem[ScriptItemFieldNames.Script], true, true);
-                var sb = new StringBuilder("<div id=\"HelpClose\">X</div>");
+
                 if (session.Output.Count == 0 || session.Output[0].LineType == OutputLineType.Error)
                 {
                     return new[]
@@ -39,12 +39,16 @@ namespace Cognifide.PowerShell.Core.Host
                         "<div class='ps-help-command-name'>&nbsp;</div><div class='ps-help-header' align='center'>No Command in line or help information found</div><div class='ps-help-parameter' align='center'>Cannot provide help in this context.</div>"
                     };
                 }
+
+                var sb = new StringBuilder();
+
                 session.Output.ForEach(l => sb.Append(l.Text));
                 session.Output.Clear();
-                var result = new[] {sb.ToString()};
+
+                var result = new[] { sb.ToString() };
                 return result;
             }
-            return new[] {"No Command in line found - cannot provide help in this context."};
+            return new[] { "No Command in line found - cannot provide help in this context." };
         }
     }
 }

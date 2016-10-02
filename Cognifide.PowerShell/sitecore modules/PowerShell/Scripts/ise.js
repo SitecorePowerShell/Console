@@ -61,11 +61,7 @@
 			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
 			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 		}
-
-        $("body").on("click", "#HelpClose", function() {
-            $("#ajax-dialog").dialog("close");
-        });
-
+      
 		if(getQueryStringValue("sc_bw") === "1"){
 			$("#RibbonPanel").css("padding-top","50px");
 			$("#Wrapper").css("padding-top","0px");
@@ -255,19 +251,7 @@
                     }
                     var command = codeeditor.session.getTextRange(range);
                     if (command) {
-                        _getCommandHelp(command);
-                        var ajaxDialog = $("<div id=\"ajax-dialog\"/>").html($.commandHelp).appendTo("body");
-                        ajaxDialog.dialog({
-                            modal: true,
-                            close: function(event, ui) {
-                                $(this).remove();
-                            },
-                            height: $(window).height() - 20,
-                            width: $(window).width() * 18 / 20,
-                            show: "slow",
-                            hide: "slow"
-                        });
-                        $("#ajax-dialog").scrollTop("0");
+                        cognifide.powershell.showCommandHelp(command);
                     }
                 },
                 readOnly: true
@@ -487,9 +471,18 @@
 
         cognifide.powershell.showCommandHelp = function(command) {
             _getCommandHelp(command);
-            var ajaxDialog = $("<div id=\"ajax-dialog\"/>").html($.commandHelp).appendTo("body");
-            ajaxDialog.dialog({
+            if (cognifide.powershell.ajaxDialog)
+                cognifide.powershell.ajaxDialog.remove();
+            cognifide.powershell.ajaxDialog = $("<div id=\"ajax-dialog\"/>").append("<div id=\"HelpClose\">X</div>").append($.commandHelp).appendTo("body");
+            cognifide.powershell.ajaxDialog.dialog({
                 modal: true,
+                open: function () {
+                    $(this).scrollTop("0");
+
+                    $("#HelpClose, .ui-widget-overlay").on("click", function () {
+                        cognifide.powershell.ajaxDialog.dialog("close");
+                    });
+                },
                 close: function(event, ui) {
                     $(this).remove();
                 },
@@ -498,15 +491,11 @@
                 show: "slow",
                 hide: "slow"
             });
-            $("#ajax-dialog").scrollTop("0");
-            $("#HelpClose").click(function() {
-                $("#HelpClose").hide("slow", function() { $("#HelpClose").remove(); });
-            });
+
             return false;
         };
 
         $.commandHelp = "";
-        $("#Help").dialog({ autoOpen: false });
 
         cognifide.powershell.changeWindowTitle($("#ScriptName")[0].innerHTML, false);
         var tipIndex = Math.floor(Math.random() * tips.length);
