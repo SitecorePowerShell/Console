@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
@@ -41,7 +42,7 @@ namespace Cognifide.PowerShell.Core.Settings
         private static readonly Dictionary<string, ApplicationSettings> instances =
             new Dictionary<string, ApplicationSettings>();
 
-        private static readonly char[] invalidChars = {'\\', '/', ':', '"', '<', '>', '|', '[', ']', '.'};
+        private static readonly Regex validNameRegex = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
         private ApplicationSettings(string applicationName, bool personalizedSettings)
         {
@@ -112,7 +113,7 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             get
             {
-                return invalidChars.Aggregate(User.Current.LocalName, (current, invalidChar) => current.Replace(invalidChar, '_'));
+                return validNameRegex.Replace(User.Current.LocalName, "_");
             }
         }
 
@@ -120,7 +121,7 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             get
             {
-                return invalidChars.Aggregate(User.Current.Domain.Name, (current, invalidChar) => current.Replace(invalidChar, '_'));
+                return validNameRegex.Replace(User.Current.Domain.Name, "_");
             }
         }
 
