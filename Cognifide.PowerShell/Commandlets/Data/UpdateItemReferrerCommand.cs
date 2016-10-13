@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Data;
@@ -10,7 +11,7 @@ using Sitecore.Links;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {
-    [Cmdlet(VerbsData.Update, "ItemReferrer")]
+    [Cmdlet(VerbsData.Update, "ItemReferrer",SupportsShouldProcess = true)]
     public class UpdateItemReferrerCommand : BaseItemCommand
     {
 
@@ -67,9 +68,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 link.SourceItemVersion);
                             var itemField = referer.Fields[link.SourceFieldID];
                             var field = FieldTypeManager.GetField(itemField);
-                            referer.Editing.BeginEdit();
-                            field.Relink(link, NewTarget);
-                            referer.Editing.EndEdit();
+                            if (ShouldProcess(referer.GetProviderPath(), $"Changing link in field '{itemField.Name}' from '{linkedItem.GetProviderPath()}' to '{NewTarget.GetProviderPath()}' "))
+                            {
+
+                                referer.Editing.BeginEdit();
+                                field.Relink(link, NewTarget);
+                                referer.Editing.EndEdit();
+                            }
                         });
                 }
                 else
@@ -83,9 +88,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
                                 link.SourceItemVersion);
                             var itemField = referer.Fields[link.SourceFieldID];
                             var field = FieldTypeManager.GetField(itemField);
-                            referer.Editing.BeginEdit();
-                            field.RemoveLink(link);
-                            referer.Editing.EndEdit(false,false);
+                            if (ShouldProcess(referer.GetProviderPath(),
+                                $"Removing link to '{linkedItem.GetProviderPath()}' from field '{itemField.Name}'"))
+                            {
+                                referer.Editing.BeginEdit();
+                                field.RemoveLink(link);
+                                referer.Editing.EndEdit(false, false);
+                            }
                         });
                 }
             }
