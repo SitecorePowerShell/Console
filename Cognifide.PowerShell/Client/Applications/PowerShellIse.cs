@@ -182,7 +182,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             ContextItemDb = Context.ContentDatabase.Name;
             var contextItem = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath);
-            ContextItemId = contextItem != null ? contextItem.ID.ToString() : String.Empty;
+            ContextItemId = contextItem?.ID.ToString() ?? String.Empty;
 
             CurrentSessionId = DefaultSessionName;
             ParentFrameName = WebUtil.GetQueryString("pfn");
@@ -483,6 +483,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
+            Debugging = debug;
             var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
@@ -495,7 +496,6 @@ namespace Cognifide.PowerShell.Client.Applications
                 ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
                 : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
 
-            scriptSession.Debugging = false;
             if (debug)
             {
                 scriptSession.DebugFile = FileUtil.MapPath(Settings.TempFolderPath) + "\\" +
@@ -618,6 +618,10 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             try
             {
+                if (scriptSession.Debugging)
+                {
+                    scriptSession.InitBreakpoints();
+                }
                 scriptSession.ExecuteScriptPart(script);
             }
             finally
@@ -629,6 +633,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     scriptSession.ExecuteScriptPart("Get-PSBreakpoint | Remove-PSBreakpoint");
                 }
                 scriptSession.Debugging = false;
+                scriptSession.Interactive = false;
             }
         }
 
@@ -865,7 +870,6 @@ namespace Cognifide.PowerShell.Client.Applications
             var endLine = args.Parameters["EndLine"];
             var endColumn = args.Parameters["EndColumn"];
             var jobId = args.Parameters["JobId"];
-            Debugging = true;
             InBreakpoint = true;
             UpdateRibbon();
             SheerResponse.Eval(

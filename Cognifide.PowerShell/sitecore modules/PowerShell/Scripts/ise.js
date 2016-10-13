@@ -73,7 +73,7 @@
 
         cognifide.powershell.updateRibbon = function () {
             if (!codeeditor.getReadOnly()) {
-                window.scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+                scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
             }
         };
 
@@ -351,7 +351,7 @@
             } else {
                 codeeditor.session.clearBreakpoint(row);                
             }
-            scForm.postEvent(this, event, "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
+            scForm.postRequest("", "", "", "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
         }
 
         cognifide.powershell.breakpointSet = function(row, action) {
@@ -390,7 +390,7 @@
             scContent.ribbonNavigatorButtonClick(this, event, "PowerShellRibbon_Strip_ImageStrip");
         }
 
-        window.scForm.postRequest("", "", "", "ise:updatesettings");
+        scForm.postRequest("", "", "", "ise:updatesettings");
 
         cognifide.powershell.updateEditor = function() {
             codeeditor.getSession().setValue(editor.val());

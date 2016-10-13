@@ -185,14 +185,23 @@ namespace Cognifide.PowerShell.Console.Services
                             $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
                         List<object> results;
                         session.Output.SilenceOutput = true;
-                        if (session.TryInvokeInRunningSession(script, out results) && results != null)
+                        try
                         {
-                            defaultProps = session.IsRunning
-                                ? session.Output.SilencedOutput.ToString().Split('\n').Select(line => line.Trim()).ToArray()
-                                : results.Cast<string>().ToArray();
-                            session.Output.SilencedOutput?.Clear();
+                            if (session.TryInvokeInRunningSession(script, out results) && results != null)
+                            {
+                                defaultProps = session.IsRunning
+                                    ? (session.Output.SilencedOutput?.ToString()
+                                        .Split('\n')
+                                        .Select(line => line.Trim())
+                                        .ToArray() ?? new string[0])
+                                    : results.Cast<string>().ToArray();
+                                session.Output.SilencedOutput?.Clear();
+                            }
                         }
-                        session.Output.SilenceOutput = false;
+                        finally
+                        {
+                            session.Output.SilenceOutput = false;
+                        }
                     }
                     var variable = debugVariable.BaseObject();
                     if (variable is PSCustomObject)

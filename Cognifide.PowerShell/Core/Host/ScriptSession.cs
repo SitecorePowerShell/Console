@@ -226,6 +226,7 @@ namespace Cognifide.PowerShell.Core.Host
         public string DebugFile { get; set; }
         internal EngineIntrinsics Engine { get; set; }
         public bool DebuggingInBreakpoint { get; private set; }
+        public int[] Breakpoints { get; set; } = new int[0];
 
         public string CurrentLocation
         {
@@ -278,10 +279,22 @@ namespace Cognifide.PowerShell.Core.Host
         {
             lock (this)
             {
-                var bPointScript = breakpoints.Aggregate(string.Empty,
+                Breakpoints = breakpoints.ToArray();
+            }
+        }
+
+        public void InitBreakpoints()
+        {
+            lock (this)
+            {
+                var debugging = Debugging;
+                Debugging = false;
+                var breakpointsScript = Breakpoints.Aggregate(string.Empty,
                     (current, breakpoint) =>
                         current + $"Set-PSBreakpoint -Script {DebugFile} -Line {breakpoint + 1}\n");
-                ExecuteScriptPart(bPointScript, false, true, false);
+                ExecuteScriptPart(breakpointsScript, false, true, false);
+                Breakpoints = new int[0];
+                Debugging = debugging;
             }
         }
 
@@ -305,15 +318,11 @@ namespace Cognifide.PowerShell.Core.Host
 
         private void SendUiMessage(Message message)
         {
-            var sheerMessage = new SendMessageMessage(message, false);
             if (JobContext.IsJob)
             {
+                var sheerMessage = new SendMessageMessage(message, false);
                 message.Arguments.Add("JobId", Key);
                 JobContext.MessageQueue.PutMessage(sheerMessage);
-            }
-            else
-            {
-                sheerMessage.Execute();
             }
         }
 
