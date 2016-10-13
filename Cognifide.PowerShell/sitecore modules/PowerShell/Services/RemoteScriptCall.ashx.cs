@@ -12,6 +12,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -33,7 +34,16 @@ namespace Cognifide.PowerShell.Console.Services
     public class RemoteScriptCall : IHttpHandler, IRequiresSessionState
     {
         private SortedDictionary<string, SortedDictionary<string, ApiScript>> apiScripts;
-
+        private static Dictionary<string,string> apiVersionToServiceMapping = new Dictionary<string, string>()
+        {
+            { "POST/file" , WebServiceSettings.ServiceFileUpload },
+            { "POST/media" , WebServiceSettings.ServiceMediaUpload },
+            { "GET/1" , WebServiceSettings.ServiceRestfulv1 },
+            { "GET/2" , WebServiceSettings.ServiceRestfulv2 },
+            { "GET/file" , WebServiceSettings.ServiceFileDownload },
+            { "GET/media" , WebServiceSettings.ServiceMediaDownload },
+            { "GET/handle" , WebServiceSettings.ServiceHandleDownload },
+        };
         public void ProcessRequest(HttpContext context)
         {
             var request = HttpContext.Current.Request;
@@ -43,16 +53,31 @@ namespace Cognifide.PowerShell.Console.Services
             var pathParam = request.Params.Get("path");
             var originParam = request.Params.Get("scriptDb");
             var apiVersion = request.Params.Get("apiVersion");
+            var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             var unpackZip = request.Params.Get("skipunpack").IsNot("true");
             var skipExisting = request.Params.Get("skipexisting").Is("true");
+            var serviceName = apiVersionToServiceMapping.ContainsKey(serviceMappingKey)
+                ? apiVersionToServiceMapping[serviceMappingKey]
+                : string.Empty;
 
+            // verify that the service is enabled
             if (!CheckServiceEnabled(apiVersion, request.HttpMethod))
             {
                 PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as it is not enabled.");
                 return;
             }
 
+            // verify that the user is authorized to access the end point
+            var authUserName = string.IsNullOrEmpty(userName) ? Context.User.Name : userName;
+            if (!AuthorizationManager.IsUserAuthorized(serviceName, authUserName, false))
+            {
+                HttpContext.Current.Response.StatusCode = 401;
+                PowerShellLog.Error($"Attempt to call the '{apiVersion}' service failed as user '{userName}' was not authorized.");
+                return;
+            }
+
+            // login user if specified explicitly
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
                 var account = new AccountIdentity(userName);

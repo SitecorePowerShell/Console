@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Authentication;
+using System.Text;
 using System.Web.Services;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -33,20 +35,36 @@ namespace Cognifide.PowerShell.Console.Services
     // [System.Web.Script.Services.ScriptService]
     public class RemoteAutomation : WebService
     {
-        private void Login(string userName, string password)
+        private bool Login(string userName, string password)
         {
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
+                PowerShellLog.Info($"User '{userName}' calling the Remoting Automation service.");
+
                 if (!userName.Contains("\\"))
                 {
                     userName = "sitecore\\" + userName;
                 }
+
+                if (!AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceRemoting,userName,false))
+                {
+                    PowerShellLog.Error($"User `{userName}` tried to access the service but was not permitted to do so.");
+                    return false;
+                }
+
                 var loggedIn = AuthenticationManager.Login(userName, password, false);
                 if (!loggedIn)
                 {
-                    throw new AuthenticationException("Unrecognized user or password mismatch.");
+                    PowerShellLog.Error($"User '{userName}' was not recognized or provided wrong password.");
                 }
+                else
+                {
+                    PowerShellLog.Info($"User '{userName}' successfully logged in to the Remoting Automation service.");
+                }
+                return loggedIn;
             }
+            PowerShellLog.Info($"Unsuccessfuly login with empty username or password. Username: '{userName}'.");
+            return false;
         }
 
         [WebMethod]
@@ -56,7 +74,15 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return new NameValue[0];
             }
-            Login(userName, password);
+
+            if (!Login(userName, password))
+            {
+                return new[]
+                {
+                    new NameValue() { Name = "login failed", Value = "login failed" } 
+                };
+            }
+
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.ExecuteScriptPart(script);
@@ -114,7 +140,10 @@ namespace Cognifide.PowerShell.Console.Services
                 return string.Empty;
             }
 
-            Login(userName, password);
+            if (!Login(userName, password))
+            {
+                return "login failed";
+            }
 
             if (ScriptSessionManager.SessionExists(sessionId))
             {
@@ -134,7 +163,10 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return string.Empty;
             }
-            Login(userName, password);
+            if (!Login(userName, password))
+            {
+                return "<Objs xmlns=\"http://schemas.microsoft.com/powershell/2004/04\"><Obj RefId=\"0\"><S>login failed</S></Obj></Objs>";
+            }
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
@@ -174,7 +206,10 @@ namespace Cognifide.PowerShell.Console.Services
 
             try
             {
-                Login(userName, password);
+                if (!Login(userName, password))
+                {
+                    return false;
+                }
 
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
@@ -212,7 +247,10 @@ namespace Cognifide.PowerShell.Console.Services
 
             try
             {
-                Login(userName, password);
+                if (!Login(userName, password))
+                {
+                    return Encoding.ASCII.GetBytes("login failed");
+                }
 
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))

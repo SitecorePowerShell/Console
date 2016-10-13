@@ -6,6 +6,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.ContentSearch.Utilities;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
@@ -39,7 +40,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     patterns = new List<WildcardPattern>(SessionType.Length);
                     foreach (var type in SessionType)
                     {
-                        patterns.Add(GetWildcardPattern(type));
+                        patterns.Add(WildcardUtils.GetWildcardPattern(type));
                     }
                 }
                 if (!patterns.Any(pattern => pattern.IsMatch(session.ApplianceType)))

@@ -109,21 +109,9 @@ namespace Cognifide.PowerShell.Core.Settings
         private string CurrentUserSettingsPath => AppSettingsPath + CurrentDomain + "/" + CurrentUserName;
         private string AllUsersSettingsPath => AppSettingsPath + IseSettingsItemAllUsers;
 
-        private static string CurrentUserName
-        {
-            get
-            {
-                return validNameRegex.Replace(User.Current.LocalName, "_");
-            }
-        }
+        private static string CurrentUserName => validNameRegex.Replace(User.Current.LocalName, "_");
 
-        private static string CurrentDomain
-        {
-            get
-            {
-                return validNameRegex.Replace(User.Current.Domain.Name, "_");
-            }
-        }
+        private static string CurrentDomain => validNameRegex.Replace(User.Current.Domain.Name, "_");
 
         private static void GetDatabaseName(ref string databaseName, string settingPath)
         {

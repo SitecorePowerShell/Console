@@ -212,17 +212,6 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        protected static WildcardPattern GetWildcardPattern(string name)
-        {
-            if (String.IsNullOrEmpty(name))
-            {
-                name = "*";
-            }
-            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
-            var wildcard = new WildcardPattern(name, options);
-            return wildcard;
-        }
-
         protected override void GetItem(string path)
         {
             GetItemInternal(path, true).ForEach(WriteItem);
@@ -333,7 +322,7 @@ namespace Cognifide.PowerShell.Core.Provider
             // if language is forced get the item in proper language
             if (language != null || version != Version.Latest.Number)
             {
-                var pattern = GetWildcardPattern(language);
+                var pattern = WildcardUtils.GetWildcardPattern(language);
 
                 var allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
 

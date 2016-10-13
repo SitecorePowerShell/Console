@@ -5,6 +5,7 @@ using System.Web;
 using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;

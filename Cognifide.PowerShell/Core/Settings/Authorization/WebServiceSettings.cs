@@ -1,8 +1,9 @@
 ﻿using System;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.Security.Accounts;
 
-namespace Cognifide.PowerShell.Core.Settings
+namespace Cognifide.PowerShell.Core.Settings.Authorization
 {
     public static class WebServiceSettings
     {
@@ -30,6 +31,7 @@ namespace Cognifide.PowerShell.Core.Settings
             CommandWaitMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
             InitialPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
             MaxmimumPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 2500);
+            AuthorizationCacheExpirationSecs = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.AuthorizationCacheExpirationSecs", 10);
             var settingStr = Sitecore.Configuration.Settings.GetSetting("Cognifide.PowerShell.SerializationSizeBuffer", "5KB");
             var sizeLong = StringUtil.ParseSizeString(settingStr);
             SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
@@ -48,10 +50,11 @@ namespace Cognifide.PowerShell.Core.Settings
         public static int InitialPollMillis { get; private set; }
         public static int MaxmimumPollMillis { get; private set; }
         public static int SerializationSizeBuffer { get; private set; }
+        public static int AuthorizationCacheExpirationSecs { get; set; }
 
         private static bool IsServiceEnabled(string serviceName, bool defaultValue)
         {
-            var servicesNode = Factory.GetConfigNode(string.Format("powershell/services/{0}", serviceName));
+            var servicesNode = Factory.GetConfigNode($"powershell/services/{serviceName}");
             if (servicesNode == null)
             {
                 return defaultValue;

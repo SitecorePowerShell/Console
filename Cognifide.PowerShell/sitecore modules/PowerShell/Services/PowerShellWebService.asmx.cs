@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +15,7 @@ using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -39,46 +41,54 @@ namespace Cognifide.PowerShell.Console.Services
     [ScriptService]
     public class PowerShellWebService : WebService
     {
-        public const string StatusComplete = "complete";
-        public const string StatusPartial = "partial";
-        public const string StatusWorking = "working";
-        public const string StatusError = "error";
-        public static readonly string[] ImportantProperties = { "Name", "Title"};
+        private const string StatusComplete = "complete";
+        private const string StatusPartial = "partial";
+        private const string StatusWorking = "working";
+        private const string StatusError = "error";
+        private static readonly string[] ImportantProperties = { "Name", "Title"};
+        private static bool IsLoggedInUserAuthorized =>
+            WebServiceSettings.ServiceEnabledClient &&
+            Sitecore.Context.IsLoggedIn &&
+            AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Sitecore.Context.User.Name, false);
+
 
         [WebMethod(EnableSession = true)]
-        public void LoginUser(string userName, string password)
+        public bool LoginUser(string userName, string password)
         {
             if (!WebServiceSettings.ServiceEnabledClient)
             {
-                return;
+                return false;
+            }
+
+            if (!AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, userName, false))
+            {
+                return false;
             }
 
             if (!userName.Contains("\\"))
             {
                 userName = "sitecore\\" + userName;
             }
+
             if (Sitecore.Context.IsLoggedIn)
             {
                 if (Sitecore.Context.User.Name.Equals(userName, StringComparison.OrdinalIgnoreCase))
-                    return;
+                    return true;
                 Sitecore.Context.Logout();
             }
+
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
                 throw new AccessDeniedException("A required license is missing");
             Assert.IsTrue(Membership.ValidateUser(userName, password), "Unknown username or password.");
             var user = Sitecore.Security.Accounts.User.FromName(userName, true);
             UserSwitcher.Enter(user);
+            return true;
         }
 
         [WebMethod(EnableSession = true)]
         public object ExecuteRocksCommand(string guid, string command, string username, string password)
         {
-            if (!WebServiceSettings.ServiceEnabledClient)
-            {
-                return string.Empty;
-            }
-            LoginUser(username, password);
-            if (!Sitecore.Context.IsLoggedIn)
+            if (!LoginUser(username, password))
             {
                 return string.Empty;
             }
@@ -88,21 +98,16 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public object ExecuteCommand(string guid, string command, string stringFormat)
         {
-            if (!WebServiceSettings.ServiceEnabledClient)
-            {
-                return string.Empty;
-            }
             var serializer = new JavaScriptSerializer();
             var output = new StringBuilder();
 
-            if (!HttpContext.Current.Request.IsAuthenticated &&
-                !command.StartsWith("login-user", StringComparison.OrdinalIgnoreCase))
+            if (!IsLoggedInUserAuthorized)
             {
                 return serializer.Serialize(
                     new
                     {
                         result =
-                            "You need to be authenticated to use the PowerShell console. Please login to Sitecore first.",
+                            "You need to be authenticated and have sufficient privileges to use the PowerShell console. Please (re)login to Sitecore.",
                         prompt = "PS >",
                         background = OutputLine.ProcessHtmlColor(ConsoleColor.DarkBlue)
                     });
@@ -147,7 +152,7 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object KeepAlive(string guid)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
@@ -259,10 +264,11 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         protected void RunJob(ScriptSession session, string command)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return;
             }
+
             try
             {
                 if (!string.IsNullOrEmpty(command))
@@ -305,7 +311,7 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object PollCommandOutput(string guid, string handle, string stringFormat)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
@@ -370,26 +376,18 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public string[] CompleteRocksCommand(string guid, string command, string username, string password)
         {
-            if (!WebServiceSettings.ServiceEnabledClient)
-            {
-                return new string[0];
-            }
-            LoginUser(username, password);
-            if (!Sitecore.Context.IsLoggedIn)
-            {
-                return new string[0];
-            }
-            return GetTabCompletionOutputs(guid, command, false);
+            return !LoginUser(username, password) ? new string[0] : GetTabCompletionOutputs(guid, command, false);
         }
 
         [WebMethod(EnableSession = true)]
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteAceCommand(string guid, string command)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
+
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
@@ -399,7 +397,7 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteCommand(string guid, string command)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
@@ -412,7 +410,7 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetAutoCompletionPrefix(string guid, string command)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
@@ -432,7 +430,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        public static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
+        private static string[] GetTabCompletionOutputs(string guid, string command, bool lastTokenOnly)
         {
             var session = GetScriptSession(guid);
             try
@@ -453,7 +451,7 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetHelpForCommand(string guid, string command)
         {
-            if (!WebServiceSettings.ServiceEnabledClient || !Sitecore.Context.IsLoggedIn)
+            if (!IsLoggedInUserAuthorized)
             {
                 return string.Empty;
             }
@@ -462,7 +460,7 @@ namespace Cognifide.PowerShell.Console.Services
             return result;
         }
 
-        public static string[] GetHelpOutputs(string guid, string command)
+        private static string[] GetHelpOutputs(string guid, string command)
         {
             var session = GetScriptSession(guid);
             try

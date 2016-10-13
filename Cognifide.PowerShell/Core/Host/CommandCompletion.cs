@@ -8,7 +8,10 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Cognifide.PowerShell.Commandlets;
+using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
 
@@ -133,7 +136,7 @@ namespace Cognifide.PowerShell.Core.Host
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex) - variable may not be found if session does not exist
                     {
                         var varName = variableRegex.Matches(lastToken)[0].Value;
                         var message = $"Variable {varName} not found in session. Execute script first.";
@@ -231,19 +234,19 @@ namespace Cognifide.PowerShell.Core.Host
                 var nameToken = completeToken.Substring(lastDotPosition + 1);
                 if (endsWithDot)
                 {
-                    nameWildcard = BaseCommand.GetWildcardPattern("*");
+                    nameWildcard = WildcardUtils.GetWildcardPattern("*");
                 }
                 else
                 {
-                    nameWildcard = BaseCommand.GetWildcardPattern($"{nameToken}*");
+                    nameWildcard = WildcardUtils.GetWildcardPattern($"{nameToken}*");
                 }
                 namespaceToken = namespaceToken.Replace(".", "*.");
-                fullWildcard = BaseCommand.GetWildcardPattern($"{namespaceToken}*");
+                fullWildcard = WildcardUtils.GetWildcardPattern($"{namespaceToken}*");
             }
             else
             {
-                nameWildcard = BaseCommand.GetWildcardPattern($"{completeToken}*");
-                fullWildcard = BaseCommand.GetWildcardPattern($"{completeToken}.*");
+                nameWildcard = WildcardUtils.GetWildcardPattern($"{completeToken}*");
+                fullWildcard = WildcardUtils.GetWildcardPattern($"{completeToken}.*");
 
                 //autocomplete accelerators
                 var accelerators = TypeAccelerators.AllAccelerators;
@@ -277,7 +280,7 @@ namespace Cognifide.PowerShell.Core.Host
                                 .Select(type => $"Type|{type.Name} ({type.Namespace})|{position}|{type.FullName}"));
                     }
                 }
-                catch (Exception e)
+                catch //(Exception e)
                 {
                     // PowerShellLog.Error("Error enumerating types", e);
                     // Ignoring intentionally... 

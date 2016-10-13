@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -88,7 +90,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 paramPatterns = new Dictionary<string, WildcardPattern>();
                 foreach (var key in Parameter.Keys)
                 {
-                    var wildcardPattern = GetWildcardPattern(Parameter[key].ToString());
+                    var wildcardPattern = WildcardUtils.GetWildcardPattern(Parameter[key].ToString());
                     paramPatterns.Add(key.ToString(), wildcardPattern);
                 }
             }

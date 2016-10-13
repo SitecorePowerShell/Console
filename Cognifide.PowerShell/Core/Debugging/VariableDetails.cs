@@ -286,7 +286,6 @@ namespace Cognifide.PowerShell.Core.Debugging
                         // function that defines parameters and has been passed parameters.  
                         // If you open the $PSBoundParameters variable node in this scenario and see nothing, 
                         // this code is broken.
-                        int i = 0;
                         foreach (DictionaryEntry entry in dictionary)
                         {
                             if (childVariables.Count >= MaxArrayParseSize)

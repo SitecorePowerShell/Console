@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
 using System.Text;
-using Cognifide.PowerShell.Core.Settings;
-using Sitecore.ContentSearch.Utilities;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 
 namespace Cognifide.PowerShell.Core.Host
 {

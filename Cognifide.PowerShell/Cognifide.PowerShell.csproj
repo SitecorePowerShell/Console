@@ -134,6 +134,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />
+    <Compile Include="Core\Settings\Authorization\AuthorizationEntry.cs" />
     <Compile Include="Client\Applications\ConfirmChoice.cs" />
     <Compile Include="Client\Applications\DownloadFile.cs" />
     <Compile Include="Client\Applications\ExecutionMessages.cs" />
@@ -374,6 +376,7 @@
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Content.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeName.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
+    <Compile Include="Core\Settings\Authorization\AuthorizationManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />
@@ -407,7 +410,7 @@
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
-    <Compile Include="Core\Settings\WebServiceSettings.cs" />
+    <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
     <Compile Include="Core\Diagnostics\PowerShellLog.cs" />
     <Compile Include="Core\Utility\PathUtilities.cs" />
@@ -415,6 +418,7 @@
     <Compile Include="Core\Utility\SpeTimer.cs" />
     <Compile Include="Core\Utility\TemplateUtils.cs" />
     <Compile Include="Commandlets\Diagnostics\WriteLogCommand.cs" />
+    <Compile Include="Core\Utility\WildcardUtils.cs" />
     <Compile Include="Core\Utility\ZipUtils.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
     <Compile Include="Core\Validation\MiscAutocompleteSets.cs" />
