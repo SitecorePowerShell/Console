@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Client.Controls;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
@@ -149,6 +150,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 catch (Exception ex)
                 {
+                    PowerShellLog.Error($"Error while rendering editor in Read-Variable cmdlet for variable {name}", ex);
                     input = new Literal { Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor, Class = "varHint" };
                 }
                 var variableBorder = new Border();
