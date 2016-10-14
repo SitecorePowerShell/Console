@@ -37,6 +37,9 @@
         Get-ItemReferrer
 
     .LINK
+        Update-ItemReferrer
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
