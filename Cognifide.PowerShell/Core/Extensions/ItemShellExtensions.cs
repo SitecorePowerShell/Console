@@ -103,101 +103,98 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public static void ModifyProperty(Item item, string propertyName, object value)
         {
-            if (item != null)
-            {
-                item.Edit(
-                    args =>
+            item?.Edit(
+                args =>
+                {
+                    var newValue = value.BaseObject();
+                    var field = FieldTypeManager.GetField(item.Fields[propertyName]);
+
+                    if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
                     {
-                        var newValue = value.BaseObject();
-                        var field = FieldTypeManager.GetField(item.Fields[propertyName]);
+                        newValue =
+                            (newValue as object[]).Select(p => p.BaseObject())
+                                .Where(p => p is Item)
+                                .Cast<Item>()
+                                .ToList();
+                    }
+                    if (newValue is Item)
+                    {
+                        newValue = new List<Item> {newValue as Item};
+                    }
 
-                        if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
+                    if (newValue is List<Item>)
+                    {
+                        var items = newValue as List<Item>;
+                        var lastItem = items.Last();
+                        if (field is ImageField)
                         {
-                            newValue =
-                                (newValue as object[]).Select(p => p.BaseObject())
-                                    .Where(p => p is Item)
-                                    .Cast<Item>()
-                                    .ToList();
-                        }
-                        if (newValue is Item)
-                        {
-                            newValue = new List<Item> {newValue as Item};
-                        }
+                            var media = new MediaItem(lastItem);
+                            var imageField = field as ImageField;
 
-                        if (newValue is List<Item>)
-                        {
-                            var items = newValue as List<Item>;
-                            var lastItem = items.Last();
-                            if (field is ImageField)
+                            if (imageField.MediaID != media.ID)
                             {
-                                var media = new MediaItem(lastItem);
-                                var imageField = field as ImageField;
-
-                                if (imageField.MediaID != media.ID)
-                                {
-                                    imageField.Clear();
-                                    imageField.MediaID = media.ID;
-                                    imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
-                                }
+                                imageField.Clear();
+                                imageField.MediaID = media.ID;
+                                imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
                             }
-                            else if (field is LinkField)
+                        }
+                        else if (field is LinkField)
+                        {
+                            var linkField = field as LinkField;
+                            linkField.Clear();
+
+                            if (MediaManager.HasMediaContent(lastItem))
                             {
-                                var linkField = field as LinkField;
+                                linkField.LinkType = "media";
+                                linkField.Url = lastItem.Paths.MediaPath;
+                            }
+                            else
+                            {
+                                linkField.LinkType = "internal";
+                                linkField.Url = lastItem.Paths.ContentPath;
+                            }
+                            linkField.TargetID = lastItem.ID;
+                        }
+                        else if (field is MultilistField)
+                        {
+                            var linkField = field as MultilistField;
+                            linkField.Value = string.Empty;
+                            foreach (var linkedItem in items)
+                                linkField.Add(linkedItem.ID.ToString());
+                        }
+                        else if (field is FileField)
+                        {
+                            var linkField = field as FileField;
+
+                            if (MediaManager.HasMediaContent(lastItem))
+                            {
                                 linkField.Clear();
-
-                                if (MediaManager.HasMediaContent(lastItem))
-                                {
-                                    linkField.LinkType = "media";
-                                    linkField.Url = lastItem.Paths.MediaPath;
-                                }
-                                else
-                                {
-                                    linkField.LinkType = "internal";
-                                    linkField.Url = lastItem.Paths.ContentPath;
-                                }
-                                linkField.TargetID = lastItem.ID;
-                            }
-                            else if (field is MultilistField)
-                            {
-                                var linkField = field as MultilistField;
-                                linkField.Value = string.Empty;
-                                foreach (var linkedItem in items)
-                                    linkField.Add(linkedItem.ID.ToString());
-                            }
-                            else if (field is FileField)
-                            {
-                                var linkField = field as FileField;
-
-                                if (MediaManager.HasMediaContent(lastItem))
-                                {
-                                    linkField.Clear();
-                                    linkField.MediaID = lastItem.ID;
-                                    linkField.Src = MediaManager.GetMediaUrl(lastItem);
-                                }
-                            }
-                            else if (field is ValueLookupField)
-                            {
-                                field.Value = lastItem.Name;
-                            }
-                            else // LookupField, GroupedDroplinkField, ReferenceField, Other
-                            {
-                                field.Value = lastItem.ID.ToString();
+                                linkField.MediaID = lastItem.ID;
+                                linkField.Src = MediaManager.GetMediaUrl(lastItem);
                             }
                         }
-                        else if (newValue is DateTime)
+                        else if (field is ValueLookupField)
                         {
-                            item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
+                            field.Value = lastItem.Name;
                         }
-                        else if (newValue is bool)
+                        else // LookupField, GroupedDroplinkField, ReferenceField, Other
                         {
-                            item[propertyName] = ((bool) newValue) ? "1" : "";
+                            field.Value = lastItem.ID.ToString();
                         }
-                        else
-                        {
-                            item[propertyName] = newValue.ToString();
-                        }
-                    });
-            }
+                    }
+                    else if (newValue is DateTime)
+                    {
+                        item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
+                    }
+                    else if (newValue is bool)
+                    {
+                        item[propertyName] = ((bool) newValue) ? "1" : "";
+                    }
+                    else
+                    {
+                        item[propertyName] = newValue.ToString();
+                    }
+                });
         }
 
         public static PSObject WrapInItemOwner(SessionState provider, Item item, object o)
