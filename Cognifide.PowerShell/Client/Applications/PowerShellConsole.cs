@@ -37,6 +37,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected override void OnLoad(EventArgs e)
         {
             Assert.CanRunApplication("PowerShell/PowerShell Console");
+            Assert.IsTrue(AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient,Context.User.Name, false), "Application access denied.");
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");

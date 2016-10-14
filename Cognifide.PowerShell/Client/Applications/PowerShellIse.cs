@@ -11,6 +11,7 @@ using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
@@ -29,6 +30,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using JobManager = Sitecore.Jobs.JobManager;
+using AuthorizationManager = Cognifide.PowerShell.Core.Settings.Authorization.AuthorizationManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -146,6 +148,8 @@ namespace Cognifide.PowerShell.Client.Applications
         protected override void OnLoad(EventArgs e)
         {
             Assert.CanRunApplication("PowerShell/PowerShellIse");
+            Assert.IsTrue(AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Context.User.Name, false), "Application access denied.");
+
             base.OnLoad(e);
 
             if (Monitor == null)
