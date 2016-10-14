@@ -22,7 +22,7 @@ $date = [Sitecore.DateUtil]::IsoDateToDateTime($license.Expiration)
 $PSEmailServer = [Sitecore.Configuration.Settings]::MailServer
 
 $email = @{
-    To = "Michael West < michaellwest@gmail.com >"
+    To = "License Manager < noreply@test.com >"
     From = "SPE Team < noreply@spe.com >"
     Subject = "Sitecore license expiration : $($date.ToString('MM/dd/yyyy'))"
     BodyAsHtml = $true
