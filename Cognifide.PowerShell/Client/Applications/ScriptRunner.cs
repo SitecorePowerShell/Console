@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Applications.Dialogs.ProgressBoxes;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -36,6 +32,7 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             try
             {
+                Context.Language = Context.Job?.Options?.ClientLanguage ?? Context.Language;
                 Method(Session, Script);
                 if (Context.Job == null) return;
 

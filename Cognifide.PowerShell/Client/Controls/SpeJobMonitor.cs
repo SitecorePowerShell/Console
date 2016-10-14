@@ -33,7 +33,7 @@ namespace Cognifide.PowerShell.Client.Controls
             get
             {
                 var sessionId = HttpContext.Current.Session[JobHandle.ToString()];
-                return sessionId != null ? sessionId.ToString() : string.Empty;
+                return sessionId?.ToString() ?? string.Empty;
             }
             set
             {
@@ -116,9 +116,7 @@ namespace Cognifide.PowerShell.Client.Controls
         private void OnJobDisappeared()
         {
             JobHandle = Handle.Null;
-            if (JobDisappeared == null)
-                return;
-            JobDisappeared(this, EventArgs.Empty);
+            JobDisappeared?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -127,9 +125,7 @@ namespace Cognifide.PowerShell.Client.Controls
         private void OnJobFinished()
         {
             JobHandle = Handle.Null;
-            if (JobFinished == null)
-                return;
-            JobFinished(this, EventArgs.Empty);
+            JobFinished?.Invoke(this, EventArgs.Empty);
         }
 
         public void Start(string name, string category, ThreadStart task, JobOptions options = null)
@@ -146,7 +142,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 ContextUser = options?.ContextUser ?? Sitecore.Context.User,
                 AtomicExecution = false,
                 EnableSecurity = options?.EnableSecurity ?? true,
-                ClientLanguage = Sitecore.Context.ContentLanguage,
+                ClientLanguage = options?.ClientLanguage ?? Sitecore.Context.Language,
                 AfterLife = new TimeSpan(0,0,0,10),
             }).Handle;
             ScheduleCallback();
