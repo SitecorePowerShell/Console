@@ -13,19 +13,22 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2490
+content-length: 5536
 
 <#
     .SYNOPSIS
         Lists the items with broken links searching all or the latest version in the current language.
         
     .NOTES
-        Michael West
-        Adapted from the Advanced System Reporter module.
+        Adam Najmanowicz, Michael West, Daniel Scherrer
+        Adapted from the Advanced System Reporter module & Daniel Scherrer's external links checker: 
+        https://gist.github.com/daniiiol/143db3e2004afe9a55c1dd3e33048940
 #>
 
 $database = "master"
 $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+$linksToCheck =  @("internal","external")
+$linkTypes = [ordered]@{"Internal Links"="internal";"External Links"="external"};
 
 $versionOptions = [ordered]@{
     "Latest"="1"
@@ -34,7 +37,8 @@ $versionOptions = [ordered]@{
 $props = @{
     Parameters = @(
         @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."; Columns=9},
-        @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3"; Placeholder="All"}
+        @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3"; Placeholder="All"},
+        @{Name="linksToCheck"; Title="Link types to check"; Options=$linkTypes; Tooltip="which link types you want to check"; Editor="checklist"} 
     )
     Title = "Broken Links Report"
     Description = "Choose the criteria for the report."
@@ -59,34 +63,77 @@ filter HasBrokenLink {
     )
     
     if($Item) {
-        $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
-        if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
-            foreach($brokenLink in $brokenLinks) {
-                $brokenLink.GetSourceItem() | Initialize-Item
+        if($linksToCheck.Contains("internal")){
+            $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
+            if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
+                foreach($brokenLink in $brokenLinks) {
+                    $brokenItem = $brokenLink.GetSourceItem() | Initialize-Item
+                    Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ((Get-Item . -Database ($root.Database) -ID $brokenLink.SourceFieldID).Name)
+                    Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $brokenLink.TargetPath
+                    Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue "Missing Target Item"
+                    $brokenItem
+                }
+            }
+        }
+        
+        if($linksToCheck.Contains("external")){
+            if($IncludeAllVersions){
+                $allItems = Get-Item "$($item.Database.Name):" -Version * -Language * -Id $item.Id
+            } else {
+                $allItems = @(Get-Item "$($item.Database.Name):" -Language * -Id $item.Id)
+            }
+            foreach($checkedItem in $allItems){
+                foreach($field in $checkedItem.Fields) {
+                    if ($field.Type -eq 'General Link' -and $field.Value -like '*linktype="external"*') { 
+                        $found = $field.Value -match '.*url="(.*?)".*'
+                        if($found) {
+                            $url = $matches[1]
+                        }
+                        
+                        try{ 
+                            $response = Invoke-WebRequest $url -UseBasicParsing -method head
+                        } 
+                        catch {
+                            $statuscode = $_.Exception.Response.StatusCode.Value__
+                            
+                            if(!$statuscode) {
+                                $statuscode = "Not reachable"
+                            }
+                            
+                            $brokenItem = Get-Item "$($item.Database.Name):" -Version $checkedItem.Version -Language $checkedItem.Language -Id $checkedItem.Id
+                            Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ($field.Name)
+                            Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $url
+                            Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue $statuscode
+                            $brokenItem
+                        }
+                    }
+                }
             }
         }
     }
 }
-$searchVersion
+
 $items = Get-ChildItem -Path $root.ProviderPath -Recurse | HasBrokenLink -IncludeAllVersions (!$searchVersion)
 
 if($items.Count -eq 0){
     Show-Alert "There are no items found which have broken links in the current language."
 } else {
     $props = @{
-        InfoTitle = "Items with broken links"
-        InfoDescription = "Lists the items with broken links searching the latest version in the current language."
+        Title = "Broken links report"
+        InfoTitle = "$($items.Count) items with broken links found!"
+        InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
+        MissingDataMessage = "There are no items found which have broken links in the current language."
         PageSize = 25
     }
-    
+        
     $items |
-        Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
-            @{Label="Updated"; Expression={$_.__Updated} },
-            @{Label="Updated by"; Expression={$_."__Updated by"} },
-            @{Label="Created"; Expression={$_.__Created} },
-            @{Label="Created by"; Expression={$_."__Created by"} },
+        Show-ListView @props -Property "Status Code", "Broken Link Field","Target Url",
+            @{Label="Name"; Expression={$_.DisplayName} },
             @{Label="Path"; Expression={$_.ItemPath} },
-            @{Label="Version"; Expression={$_.Version}}
+            "Version",
+            "Language",
+            @{Label="Updated"; Expression={$_.__Updated} },
+            @{Label="Updated by"; Expression={$_."__Updated by"} }
 }
 Close-Window
 ----field----
@@ -99,7 +146,7 @@ Network/32x32/link_delete.png
 ----version----
 language: en
 version: 1
-revision: e0333a69-37fb-4c69-872d-7935b432fdb7
+revision: 5c535ea7-f095-46d2-b974-bd8322879b02
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -114,14 +161,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e0333a69-37fb-4c69-872d-7935b432fdb7
+5c535ea7-f095-46d2-b974-bd8322879b02
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150806T221546:635744961469431743
+20161016T224450
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
