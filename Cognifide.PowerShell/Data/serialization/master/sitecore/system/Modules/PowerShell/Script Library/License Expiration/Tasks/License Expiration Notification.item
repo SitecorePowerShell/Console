@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 933
+content-length: 930
 
 param([string]$name="Good morning")
 $license = [Sitecore.Reflection.Nexus]::LicenseApi
