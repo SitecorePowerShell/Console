@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Console.Services
                     userName = "sitecore\\" + userName;
                 }
 
-                if (!AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceRemoting,userName,false))
+                if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceRemoting,userName,false))
                 {
                     PowerShellLog.Error($"User `{userName}` tried to access the service but was not permitted to do so.");
                     return false;

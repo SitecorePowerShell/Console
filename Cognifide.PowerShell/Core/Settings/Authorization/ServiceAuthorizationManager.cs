@@ -9,7 +9,7 @@ using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
 {
-    public static class AuthorizationManager
+    public static class ServiceAuthorizationManager
     {
 
         private static Dictionary<string, List<AuthorizationEntry>> authorizationEntries =

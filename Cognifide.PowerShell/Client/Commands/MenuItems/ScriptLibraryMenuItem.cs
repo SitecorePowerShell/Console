@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -23,7 +24,10 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
         public override CommandState QueryState(CommandContext context)
         {
-            return CommandState.Enabled;
+            return ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
+                false)
+                ? CommandState.Enabled
+                : CommandState.Hidden;
         }
 
         public void SetupIntegrationPoint(CommandContext context)
@@ -107,6 +111,14 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 return;
             }
+
+            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
+                false))
+            {
+                return;
+            }
+
+
             var scriptTemplateId = new ID("{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}");
             var scriptLibaryTemplateId = new ID("{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}");
             foreach (var scriptItem in parent.Children.Where(p => p.TemplateID == scriptTemplateId || p.TemplateID == scriptLibaryTemplateId))

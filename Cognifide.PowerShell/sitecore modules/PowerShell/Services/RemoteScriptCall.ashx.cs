@@ -70,7 +70,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             // verify that the user is authorized to access the end point
             var authUserName = string.IsNullOrEmpty(userName) ? Context.User.Name : userName;
-            if (!AuthorizationManager.IsUserAuthorized(serviceName, authUserName, false))
+            if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName, false))
             {
                 HttpContext.Current.Response.StatusCode = 401;
                 PowerShellLog.Error($"Attempt to call the '{apiVersion}' service failed as user '{userName}' was not authorized.");

@@ -377,7 +377,7 @@
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Content.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeName.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
-    <Compile Include="Core\Settings\Authorization\AuthorizationManager.cs" />
+    <Compile Include="Core\Settings\Authorization\ServiceAuthorizationManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
     <Compile Include="Core\Host\ScriptingHost.cs" />

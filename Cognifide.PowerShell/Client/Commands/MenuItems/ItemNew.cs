@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings.Authorization;
+using Sitecore;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.HtmlControls;
 
@@ -15,6 +17,13 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 return controls;
             }
+            if (!
+                ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
+    false))
+            {
+                return controls;
+            }
+
 
             var menuItems = new List<Control>();
 

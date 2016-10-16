@@ -11,6 +11,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
         public const string ServiceClient = "client";
+        public const string ServiceExecution = "execution";
         public const string ServiceFileDownload = "fileDownload";
         public const string ServiceFileUpload = "fileUpload";
         public const string ServiceMediaDownload = "mediaDownload";

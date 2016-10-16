@@ -30,7 +30,6 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using JobManager = Sitecore.Jobs.JobManager;
-using AuthorizationManager = Cognifide.PowerShell.Core.Settings.Authorization.AuthorizationManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -148,7 +147,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected override void OnLoad(EventArgs e)
         {
             Assert.CanRunApplication("PowerShell/PowerShellIse");
-            Assert.IsTrue(AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Context.User.Name, false), "Application access denied.");
+            Assert.IsTrue(ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Context.User.Name, false), "Application access denied.");
 
             base.OnLoad(e);
 

@@ -1,5 +1,7 @@
 ﻿using System.Web.UI;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
@@ -16,6 +18,11 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
+            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
+                false))
+            {
+                return;
+            }
             var psButtons = button.GetChildren();
             foreach (Item psButton in psButtons)
             {
