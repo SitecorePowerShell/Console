@@ -19288,7 +19288,9 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <command:name>Out-Download</command:name>
       <gl:group>Download</gl:group>
       <maml:description>
-        <maml:para />
+        <maml:para>Send an object content to the client
+
+</maml:para>
       </maml:description>
       <maml:copyright>
         <maml:para>© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
@@ -19298,7 +19300,10 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <dev:version>4.1.0</dev:version>
     </command:details>
     <maml:description>
-      <maml:para />
+      <maml:para>The cmdlet allows to send content of an object (FileInfo, Stream, String, String[] or Byte[]) to the client. This is used for example by report scripts to send the report in HTML, Json or Excel without saving the content of the object to the disk drive.
+You can specify an object type and file name to make sure the downloaded file is interpreted properly by the browser.
+
+</maml:para>
       <maml:para>© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions</maml:para>
     </maml:description>
     <command:syntax>
@@ -19322,7 +19327,14 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named" variableLength="false">
         <maml:name>InputObject</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Object content to be sent to the client. Object must be of one of the following types:
+- FileInfo, 
+- Stream, 
+- String, 
+- String[], 
+- Byte[] 
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Object</command:parameterValue>
         <dev:type>
@@ -19336,7 +19348,19 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <command:parameter required="false" globbing="false" pipelineInput="false" position="named" variableLength="false">
         <maml:name>ContentType</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>The MIME content type of the object. In most cases you can skip this parameter and still have the content type be deduced by the browser from the 
+
+Common examples (after Wikipedia)
+- application/json
+- application/x-www-form-urlencoded
+- application/pdf
+- application/octet-stream
+- multipart/form-data
+- text/html
+- image/png
+- image/jpg
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -19350,7 +19374,9 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
       <command:parameter required="false" globbing="false" pipelineInput="true (ByPropertyName)" position="named" variableLength="false">
         <maml:name>Name</maml:name>
         <maml:description>
-          <maml:para />
+          <maml:para>Name of the file you want the user browser to save the object as.
+
+</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -19362,17 +19388,82 @@ PS master:\&gt; Get-Rendering -Item $item -PlaceHolder "main" | Foreach-Object {
         </dev:type>
       </command:parameter>
     </command:parameters>
-    <command xmlns="inputTypes" />
-    <command xmlns="returnValues" />
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.Object
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues>
+      <command:returnValue>
+        <dev:type>
+          <maml:name>System.Boolean
+
+</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para />
+          </maml:description>
+        </dev:type>
+        <maml:description>
+          <maml:para />
+        </maml:description>
+      </command:returnValue>
+    </command:returnValues>
     <command:terminatingErrors />
     <command:nonTerminatingErrors />
     <maml:alertSet>
       <maml:alert>
-        <maml:para />
+        <maml:para>Help Author: Adam Najmanowicz, Michael West
+
+</maml:para>
       </maml:alert>
     </maml:alertSet>
-    <command:examples />
-    <maml:relatedLinks />
+    <command:examples>
+      <command:example>
+        <maml:title>------------------EXAMPLE 1-----------------------</maml:title>
+        <dev:code>Get-Item "$SitecoreLogFolder\*.*" | select -first 1 | Out-Download
+
+</dev:code>
+        <dev:remarks>Send first log file to the user</dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 2-----------------------</maml:title>
+        <dev:code>"Hello World!" | Out-Download -Name hello-world.txt
+
+</dev:code>
+        <dev:remarks>Send Hello World text file to the user</dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>------------------EXAMPLE 3-----------------------</maml:title>
+        <dev:code>Import-Function -Name ConvertTo-Xlsx
+
+[byte[]]$outobject = Get-ChildItem master:\ | 
+    Select-Object -Property Name, ProviderPath, Language, Varsion | 
+    ConvertTo-Xlsx 
+
+Out-Download -Name "report-$datetime.xlsx" -InputObject $outobject
+
+</dev:code>
+        <dev:remarks>Get a list of sitecore branches under root item in the master database and send the list to user as excel file</dev:remarks>
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>https://github.com/SitecorePowerShell/Console/</maml:linkText>
+        <maml:uri />
+      </maml:navigationLink>
+    </maml:relatedLinks>
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/1" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:gl="http://schemas.sitecorepowershellextensions.com/maml/gl/2013/02" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10">
     <command:details>
