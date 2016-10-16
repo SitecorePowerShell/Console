@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8062
+content-length: 8101
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -147,7 +147,7 @@ Get-Item "master:\system\Settings\Rules\PowerShell" | Process-Item -Recurse -Act
 
 # Script Library
 Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 55
-$libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library'
+$libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | ? { -not $_.Name.StartsWith("__") } 
 $i = 0;
 $libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (55 + 25 / $libraries.Count * $i) }
 
@@ -199,7 +199,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: 4bb95a92-8d83-49e6-9e0b-99881b9c50e4
+revision: 5d50234e-4130-4da1-978c-cabbec674821
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -214,14 +214,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4bb95a92-8d83-49e6-9e0b-99881b9c50e4
+5d50234e-4130-4da1-978c-cabbec674821
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161013T141722
+20161016T205729
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 11898
+content-length: 11964
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -138,6 +138,7 @@ $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-Expl
 $package.Sources.Add($source);
 $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | 
     ? { -not ($_.Name -eq "Authorable Reports") } | # Skip Authorable Reports
+    ? { -not ($_.Name.StartsWith("__") } | # Skip test libraries
     %{ Get-ChildItem "$($_.ProviderPath)" -WithParent -Recurse} | 
     New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
 $package.Sources.Add($source);
@@ -262,7 +263,7 @@ Export-Package -Project $package -Path "$packageName.zip" -Zip
 ----version----
 language: en
 version: 1
-revision: b8f6071c-457a-4269-bb60-c72688001582
+revision: 92bc7d15-4629-4db5-8f7b-e39f96b3b8c8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -277,14 +278,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b8f6071c-457a-4269-bb60-c72688001582
+92bc7d15-4629-4db5-8f7b-e39f96b3b8c8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161013T124830
+20161016T205843
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
