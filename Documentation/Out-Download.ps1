@@ -40,6 +40,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Send-File
+
+    .LINK
+        Receive-File
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

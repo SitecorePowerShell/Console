@@ -58,6 +58,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Send-File
+
+    .LINK
+        Out-Download
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE

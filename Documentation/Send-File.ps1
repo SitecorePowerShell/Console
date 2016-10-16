@@ -41,6 +41,12 @@
         Help Author: Adam Najmanowicz, Michael West
 
     .LINK
+        Receive-File
+
+    .LINK
+        Out-Download
+
+    .LINK
         https://github.com/SitecorePowerShell/Console/
 
     .EXAMPLE
