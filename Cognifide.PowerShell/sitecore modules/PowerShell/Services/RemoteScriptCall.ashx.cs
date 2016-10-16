@@ -508,6 +508,12 @@ namespace Cognifide.PowerShell.Console.Services
                 Response.Clear();
                 Response.AddHeader("Content-Disposition", "attachment; filename=" + values.Name);
                 Response.ContentType = values.ContentType;
+                var fileContent = values.Content as FileInfo;
+                if (fileContent != null)
+                {
+                    Response.WriteFile(fileContent.FullName);
+                }
+
                 var strContent = values.Content as string;
                 if (strContent != null)
                 {

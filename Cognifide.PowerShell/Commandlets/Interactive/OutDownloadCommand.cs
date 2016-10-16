@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
-using Microsoft.PowerShell.Commands;
-using Sitecore.Analytics.Pipelines.StartTracking;
-using Sitecore.Configuration;
-using Sitecore.Data.Items;
-using Sitecore.IO;
-using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Applications.Install;
-using Sitecore.Text;
-using Sitecore.Web;
+using Cognifide.PowerShell.Core.Settings.Authorization;
+using AuthorizationManager = Cognifide.PowerShell.Core.Settings.Authorization.AuthorizationManager;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
@@ -52,6 +43,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         content = bytes;
                     }
                 }
+                else if (InputObject is FileInfo)
+                {
+                    content = InputObject;
+                }
                 else if (InputObject is string)
                 {
                     content = InputObject;
@@ -69,11 +64,23 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 {
                     WriteError(typeof(FormatException), "InputObject must be of type string, strings[], Stream byte[]",
                         ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
+                    WriteObject(false);
+                    return;
+                }
+
+                if (!WebServiceSettings.ServiceEnabledHandleDownload ||
+                    !AuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceHandleDownload,
+                        Sitecore.Context.User.Name, false))
+                {
+                    WriteError(typeof(FormatException), "Handle Download Service is disabled or user is not authorized.",
+                        ErrorIds.InsufficientSecurityRights, ErrorCategory.PermissionDenied, InputObject, true);
+                    WriteObject(false);
                     return;
                 }
 
                 LogErrors(() =>
                 {
+                    WriteObject(true);
                     PutMessage(new OutDownloadMessage(content, Name, ContentType));
                 });
             });
