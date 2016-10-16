@@ -2,7 +2,7 @@
 version: 1
 id: {107D0BBC-3125-4115-8BBC-42A89C039621}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Logged in Session Manager/Internal/List View/Ribbon
+path: /sitecore/system/Modules/PowerShell/Script Library/User Management/Internal/List View/Ribbon
 parent: {C0A51580-661D-4BDA-94C0-0F38341670CF}
 name: Ribbon
 master: {00000000-0000-0000-0000-000000000000}

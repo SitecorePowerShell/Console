@@ -1,0 +1,87 @@
+----item----
+version: 1
+id: {13E1A607-6064-42B9-AA6F-BD245E1F3555}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/User Management/Reports/Users/Recently logged in users
+parent: {C7FA7F43-8AB1-46A8-8CF5-620030B5947F}
+name: Recently logged in users
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1406
+
+<#
+    .SYNOPSIS
+        Lists all aliases and their linked items
+        
+    .NOTES
+        Adam Najmanowicz
+        Adapted from Stack Overflow answer by Derek Hunziker.
+        [http://stackoverflow.com/questions/38340617/sitecore-powershell-find-users-last-login]
+#>
+$props = @{
+        Title = "Recently logged in users"
+        PageSize = 25
+    }
+
+[System.Web.Security.Membership]::GetAllUsers() | Sort-Object -Property LastActivityDate -Descending |
+    Show-ListView @props -Property `
+        @{Label="Icon"; Expression={ 
+            if ($_.IsLockedOut){ "People/32x32/pawn_glass_yellow.png"} 
+            elseif (-not ($_.IsApproved)){ "People/32x32/pawn_glass_red.png"} 
+            elseif($_.IsOnline) { "People/32x32/pawn_glass_green.png" } 
+            else {"People/32x32/pawn_glass_white.png"}}},
+        @{Label="User"; Expression={ $_.UserName} },
+        @{Label="Is Online"; Expression={ $_.IsOnline} },
+        @{Label="Is Locked Out"; Expression={ $_.IsLockedOut} },
+        @{Label="Is Disabled"; Expression={ -not $_.IsApproved} },
+        @{Label="Is Administrator"; Expression={ $user = (Get-User $_.UserName); $user.IsAdministrator } },
+        @{Label="Creation Date"; Expression={ $_.CreationDate} },
+        @{Label="Last Login Date"; Expression={ $_.LastLoginDate} },
+        @{Label="Last Activity Date"; Expression={ $_.LastActivityDate } }
+
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 30
+
+People/32x32/user1_monitor.png
+----version----
+language: en
+version: 1
+revision: d1a6c350-bb3c-4512-80ef-6987d5a18f20
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20161016T145149
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+d1a6c350-bb3c-4512-80ef-6987d5a18f20
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20161016T194440
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
