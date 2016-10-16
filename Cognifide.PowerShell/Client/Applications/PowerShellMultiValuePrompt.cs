@@ -471,6 +471,11 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 edit = new Memo();
                 edit.Attributes.Add("rows", variable["lines"].ToString());
+                var placeholder = variable["Placeholder"];
+                if (placeholder is string)
+                {
+                edit.Attributes.Add("Placeholder", placeholder.ToString());
+                }
             }
             else if (variable["Options"] != null)
             {

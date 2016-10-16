@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6430
+content-length: 6684
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -49,11 +49,11 @@ else{
 $result = Read-Variable -Parameters `
     @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple" },
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
-    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false}, 
+    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"}, 
     @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
     @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
-    @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password";}, 
+    @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"}, 
     @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
     @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
     @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio" }, 
@@ -82,8 +82,8 @@ if($result -ne "ok")
 }
 
 $result = Read-Variable -Parameters `
-    @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"}, 
+    @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You see this when text box is empty"}, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
@@ -120,7 +120,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: 1ef4a4c8-2c01-4c80-a203-4da842d064af
+revision: 64cf24ab-bd0f-4231-b703-ce824be6b790
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -135,14 +135,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1ef4a4c8-2c01-4c80-a203-4da842d064af
+64cf24ab-bd0f-4231-b703-ce824be6b790
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20150902T141712
+20161016T120548
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

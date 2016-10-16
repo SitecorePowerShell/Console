@@ -84,8 +84,8 @@
         #
         $item = Get-Item master:\content\home
         $result = Read-Variable -Parameters `
-            @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"}, 
-            @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"}, 
+            @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
+            @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You will see this when text box is empty"}, 
             @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
             @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
             @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
@@ -101,8 +101,8 @@
         $item = Get-Item master:\content\home
         $result = Read-Variable -Parameters `
             @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
-            @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"}, 
-            @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"}, 
+            @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
+            @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
             @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"}, 
             @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"}, 
             @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"}, 
