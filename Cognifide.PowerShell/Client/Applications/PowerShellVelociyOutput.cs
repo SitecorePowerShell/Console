@@ -68,8 +68,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 var vs =
                     WebUtil.SafeEncode(WebUtil.GetQueryString("vs",
                         WebUtil.GetQueryString("version", Version.Latest.Number.ToString())));
+#pragma warning disable 618
                 currentItem = Factory.GetDatabase(db)
                     .GetItem(new ID(id), LanguageManager.GetLanguage(la), new Version(vs));
+#pragma warning restore 618
             }
             else
             {

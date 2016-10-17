@@ -7,7 +7,9 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.VersionSpecific.Client.Commands
 {
+#pragma warning disable 612
     public class WebEditScriptCommand : WebEditCommand
+#pragma warning restore 612
     {
         public override void Execute(CommandContext context)
         {

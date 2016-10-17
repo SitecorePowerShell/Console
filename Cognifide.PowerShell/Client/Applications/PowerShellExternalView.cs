@@ -13,10 +13,10 @@ using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
-    class PowerShellExternalView : BaseForm
+    public class PowerShellExternalView : BaseForm
     {
-        protected Literal Result;
-        protected Literal DialogHeader;
+        public Literal Result;
+        public Literal DialogHeader;
 
         protected override void OnLoad(EventArgs e)
         {
