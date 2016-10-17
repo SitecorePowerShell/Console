@@ -97,7 +97,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing GetChildItems(string path='{0}', string recurse='{1}')", path, recurse);
                 var wildcard = new WildcardPattern(Filter ?? "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
-                string language;
+                string[] language;
                 int version;
                 GetVersionAndLanguageParams(out version, out language);
 
@@ -137,7 +137,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        protected void GetChildItemsHelper(Item item, bool recurse, WildcardPattern wildcard, string language,
+        protected void GetChildItemsHelper(Item item, bool recurse, WildcardPattern wildcard, string[] language,
             int version)
         {
             var children = item.GetChildren();
@@ -221,12 +221,14 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             LogInfo("Executing GetItem(string path='{0}')", path);
 
-            string language;
+            string[] language;
             int version;
 
             GetVersionAndLanguageParams(out version, out language);
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+
+            // by Uri
             if (dic != null && dic.ContainsKey(UriParam) && dic[UriParam].IsSet)
             {
                 var uri = dic[UriParam].Value.ToString();
@@ -236,6 +238,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 yield return uriItem;
                 yield break;
             }
+
+            // by Query
             if (dic != null && dic.ContainsKey(QueryParam) && dic[QueryParam].IsSet)
             {
                 var query = dic[QueryParam].Value.ToString();
@@ -246,6 +250,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 yield break;
             }
+
+            // by Id
             if (dic != null && dic.ContainsKey(IdParam) && dic[IdParam].IsSet)
             {
                 var idParam = dic[IdParam].Value.ToString();
@@ -295,7 +301,7 @@ namespace Cognifide.PowerShell.Core.Provider
             WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
         }
 
-        private IEnumerable<Item> GetMatchingItem(string language, int version, Item item)
+        private IEnumerable<Item> GetMatchingItem(string[] language, int version, Item item)
         {
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             if (dic != null && dic.ContainsKey(AmbiguousPathsParam) && dic[AmbiguousPathsParam].IsSet)
@@ -317,24 +323,38 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        private IEnumerable<Item> GetMatchingItemEx(string language, int version, Item item)
+        private IEnumerable<Item> GetMatchingItemEx(string[] languages, int version, Item item)
         {
             // if language is forced get the item in proper language
-            if (language != null || version != Version.Latest.Number)
+            if (languages.Length > 0 || version != Version.Latest.Number)
             {
-                var pattern = WildcardUtils.GetWildcardPattern(language);
+                var allVersions = item.Versions.GetVersions(languages.Length > 0);
 
-                var allVersions = item.Versions.GetVersions(!string.IsNullOrEmpty(language));
-
-                foreach (var matchingItem in allVersions.Where(
-                    (curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
-                                (version == Int32.MaxValue ||
-                                 (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
-                                 (version == curItem.Version.Number)
-                                    )
-                        )))
+                if (languages.Length > 0)
                 {
-                    yield return matchingItem;
+                    foreach (var language in languages)
+                    {
+                        var pattern = WildcardUtils.GetWildcardPattern(language);
+                        foreach (var matchingItem in allVersions.Where(
+                        curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
+                                   (version == Int32.MaxValue ||
+                                    (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
+                                    (version == curItem.Version.Number)
+                                   )))
+                        {
+                            yield return matchingItem;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var matchingItem in allVersions.Where(
+                    curItem => version == Int32.MaxValue ||
+                               (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
+                               version == curItem.Version.Number))
+                    {
+                        yield return matchingItem;
+                    }
                 }
             }
             else

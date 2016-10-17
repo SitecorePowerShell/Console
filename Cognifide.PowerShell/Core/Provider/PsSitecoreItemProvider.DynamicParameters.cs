@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
@@ -226,17 +227,27 @@ namespace Cognifide.PowerShell.Core.Provider
         }
 
 
-        private void GetVersionAndLanguageParams(out int version, out string language)
+        private void GetVersionAndLanguageParams(out int version, out string[] language)
         {
             // language selection
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
             language = null;
             if (dic != null && dic[LanguageParam].IsSet)
             {
-                var forcedLanguage = dic[LanguageParam].Value.ToString();
-                language = forcedLanguage.Contains("*")
-                    ? forcedLanguage
-                    : LanguageManager.GetLanguage(forcedLanguage)?.Name;
+                var langs = dic[LanguageParam].Value as string[];
+                language = langs?.Select(lang =>
+                    lang.Contains("*")
+                        ? lang
+                        : LanguageManager.GetLanguage(lang)?.Name).ToArray();
+                if (langs == null)
+                {
+                    var lang = dic[LanguageParam].Value as string;
+                    language = new[] { (lang?.Contains("*") ?? true) ? lang : LanguageManager.GetLanguage(lang)?.Name };
+                }
+                if (langs == null)
+                {
+                    language = new string[0];
+                }
             }
 
             version = Version.Latest.Number;
@@ -260,7 +271,7 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing GetChildItemsDynamicParameters(string path='{0}', string recurse='{1}')", path, recurse);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            var paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
@@ -282,7 +293,7 @@ namespace Cognifide.PowerShell.Core.Provider
             LogInfo("Executing GetItemDynamicParameters(string path='{0}')", path);
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
-            var paramAdded = AddDynamicParameter(typeof (string), LanguageParam, ref dic);
+            var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, false);

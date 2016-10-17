@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
+using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Data.Items;
@@ -65,12 +67,18 @@ namespace Cognifide.PowerShell.Core.Provider
             var extension = GetDynamicParamValue(ExtensionParam, string.Empty);
             var encoding = GetDynamicParamValue(EncodingParam, FileSystemCmdletProviderEncoding.Unknown);
 
-            string language;
+            string[] language;
             int version;
             GetVersionAndLanguageParams(out version, out language);
 
+            if (language.Length != 1)
+            {
+                var exception = new IOException($"Cannot Write content to more than 1 language at a time.");
+                WriteError(new ErrorRecord(exception, ErrorIds.InvalidOperation.ToString(), ErrorCategory.InvalidArgument,
+                    path));
+            }
             return new ItemContentWriter(this, item, path, encoding, extension, IsDynamicParamSet(RawParam),
-                IsDynamicParamSet(FileBasedParam), IsDynamicParamSet(VersionedParam), language);
+                IsDynamicParamSet(FileBasedParam), IsDynamicParamSet(VersionedParam), language[0]);
         }
 
         public object GetContentWriterDynamicParameters(string path)
