@@ -13,7 +13,7 @@ Remove-Session [-Instance] &lt;Session&gt;
  
 The Remove-Session command removes user sessions in Sitecore. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -125,4 +125,4 @@ PS master:\> Get-Session -Identity michael | Remove-Session
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Session
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Get-Session](/appendix/commands/Get-Session.md)

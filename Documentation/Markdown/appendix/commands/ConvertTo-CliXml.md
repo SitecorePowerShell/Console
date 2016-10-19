@@ -11,7 +11,7 @@ ConvertTo-CliXml [-InputObject] &lt;PSObject&gt;
  
 The ConvertTo-CliXml command exports Microsoft .NET Framework objects from PowerShell to a CliXml string. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -84,4 +84,4 @@ PS master:\> $myCliXmlItem | ConvertFrom-CliXml
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* ConvertFrom-CliXml* ConvertFrom-Xml* ConvertTo-Xml* Export-CliXml* Import-CliXml
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [ConvertFrom-CliXml](/appendix/commands/ConvertFrom-CliXml.md)* ConvertFrom-Xml* ConvertTo-Xml* Export-CliXml* Import-CliXml

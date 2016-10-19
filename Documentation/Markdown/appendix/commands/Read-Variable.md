@@ -13,7 +13,7 @@ Prompts user to provide values for variables required by the script to perform i
 If user selects the "OK" button the command will return 'ok' as its value.
 If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the command will return 'cancel' as its value. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -342,8 +342,8 @@ The editors for some other are set by providing the "editor" value
  
 $item = Get-Item master:\content\home
 $result = Read-Variable -Parameters `
-    @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"}, 
+    @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You will see this when text box is empty"}, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
     @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
     @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
@@ -364,8 +364,8 @@ The editors for some other are set by providing the "editor" value
 $item = Get-Item master:\content\home
 $result = Read-Variable -Parameters `
     @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
-    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"}, 
-    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"}, 
+    @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
+    @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
     @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"}, 
     @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"}, 
     @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"}, 
@@ -394,4 +394,4 @@ if($result -ne "ok")
  
 ## Related Topics 
  
-* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Show-Alert](/appendix/commands/Show-Alert.md)* [Show-Application](/appendix/commands/Show-Application.md)* [Show-Confirm](/appendix/commands/Show-Confirm.md)* [Show-FieldEditor](/appendix/commands/Show-FieldEditor.md)* [Show-Input](/appendix/commands/Show-Input.md)* [Show-ListView](/appendix/commands/Show-ListView.md)* [Show-ModalDialog](/appendix/commands/Show-ModalDialog.md)* [Show-YesNoCancel](/appendix/commands/Show-YesNoCancel.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -15,7 +15,7 @@ The Wait-ScriptSession cmdlet waits for script session to complete before it dis
 When the commands in the script session are complete, Wait-ScriptSession displays the command prompt and returns a script session object so that you can pipe it to another command.
 You can use Wait-ScriptSession cmdlet to wait for script sessions, such as those that were started by using the Start-ScriptSession cmdlet. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -185,4 +185,4 @@ PS master:\> Wait-ScriptSession -Id "My Background Script Session"
  
 ## Related Topics 
  
-* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Stop-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>
+* [Get-ScriptSession](/appendix/commands/Get-ScriptSession.md)* [Receive-ScriptSession](/appendix/commands/Receive-ScriptSession.md)* [Remove-ScriptSession](/appendix/commands/Remove-ScriptSession.md)* [Start-ScriptSession](/appendix/commands/Start-ScriptSession.md)* [Stop-ScriptSession](/appendix/commands/Stop-ScriptSession.md)* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

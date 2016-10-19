@@ -16,7 +16,7 @@ Get-ScriptSession -Session &lt;ScriptSession[]&gt; [-SessionType &lt;String[]&gt
 The Get-ScriptSession command returns the list of PowerShell Extensions script sessions running in the system.
 To find all script sessions, running in the system type "Get-ScriptSession" without parameters. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -243,4 +243,4 @@ Console      $scriptSession$|zwlyrcmmzwisv22djsv0ej2a|8d5c3e63-3fed-0532-e7c5-76
  
 ## Related Topics 
  
-* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>
+* [Receive-ScriptSession](/appendix/commands/Receive-ScriptSession.md)* [Remove-ScriptSession](/appendix/commands/Remove-ScriptSession.md)* [Start-ScriptSession](/appendix/commands/Start-ScriptSession.md)* [Stop-ScriptSession](/appendix/commands/Stop-ScriptSession.md)* [Wait-ScriptSession](/appendix/commands/Wait-ScriptSession.md)* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>

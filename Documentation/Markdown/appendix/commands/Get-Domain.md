@@ -11,7 +11,7 @@ Get-Domain [-Name &lt;String&gt;]
  
 The Get-Domain command returns all the domains or the specified domain. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -99,4 +99,4 @@ default         default\        True                   False
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-Domain* New-Domain
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Remove-Domain](/appendix/commands/Remove-Domain.md)* [New-Domain](/appendix/commands/New-Domain.md)

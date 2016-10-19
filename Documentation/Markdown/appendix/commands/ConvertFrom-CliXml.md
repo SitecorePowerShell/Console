@@ -11,7 +11,7 @@ ConvertFrom-CliXml [-InputObject] &lt;String&gt;
  
 The ConvertFrom-CliXml command imports a CliXml string with data that represents Microsoft .NET Framework objects and creates the objects in PowerShell. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -84,4 +84,4 @@ PS master:\> $myCliXmlItem | ConvertFrom-CliXml
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* ConvertTo-CliXml* ConvertTo-Xml* ConvertFrom-Xml* Export-CliXml* Import-CliXml* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [ConvertTo-CliXml](/appendix/commands/ConvertTo-CliXml.md)* ConvertTo-Xml* ConvertFrom-Xml* Export-CliXml* Import-CliXml* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>

@@ -15,7 +15,7 @@ ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;]
  
 Converts an item from a clone to a fully independent item. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -185,4 +185,4 @@ PS master:\> ConvertFrom-ItemClone -Path master:\content\home
  
 ## Related Topics 
  
-* New-ItemClone* Get-ItemClone* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [New-ItemClone](/appendix/commands/New-ItemClone.md)* [Get-ItemClone](/appendix/commands/Get-ItemClone.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

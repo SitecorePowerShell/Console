@@ -15,7 +15,7 @@ Protect-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-PassThru]
  
 The Protect-Item command protects the item by making it read-only. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -233,4 +233,4 @@ Home                             False    {en, ja-JP, de-DE, da}   {110D559F-DEA
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Unprotect-Item* Get-Item
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Unprotect-Item](/appendix/commands/Unprotect-Item.md)* Get-Item

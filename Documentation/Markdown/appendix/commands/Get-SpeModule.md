@@ -19,7 +19,7 @@ Get-SpeModule [-Database &lt;String&gt;] -Name &lt;String&gt;
  
 The Get-SpeModule command returns the object that describes a Sitecore PowerShell Extensions Module. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -244,4 +244,4 @@ PS master:\> Get-item "master:\system\Modules\PowerShell\Script Library\Copy Ren
  
 ## Related Topics 
  
-* Get-SpeModuleFeatureRoot* <a href='http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/' target='_blank'>http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Get-SpeModuleFeatureRoot](/appendix/commands/Get-SpeModuleFeatureRoot.md)* <a href='http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/' target='_blank'>http://blog.najmanowicz.com/2014/11/01/sitecore-powershell-extensions-3-0-modules-proposal/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

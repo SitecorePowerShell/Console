@@ -14,7 +14,7 @@ Stop-ScriptSession -Session &lt;ScriptSession[]&gt;
 Aborts the pipeline of a session that is executing. This will stop the session immediately in its next PowerShell command.
 Caution! If your script is running a long operation in the .net code rather than in PowerShell - the session will abort after the code has finished and the control was returned to the script. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -119,4 +119,4 @@ PS master:\> Stop-ScriptSession -Id "My Background Script Session"
  
 ## Related Topics 
  
-* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Start-ScriptSession* Wait-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>
+* [Get-ScriptSession](/appendix/commands/Get-ScriptSession.md)* [Receive-ScriptSession](/appendix/commands/Receive-ScriptSession.md)* [Remove-ScriptSession](/appendix/commands/Remove-ScriptSession.md)* [Start-ScriptSession](/appendix/commands/Start-ScriptSession.md)* [Wait-ScriptSession](/appendix/commands/Wait-ScriptSession.md)* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

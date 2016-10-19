@@ -31,9 +31,9 @@ Remove-Rendering [-Language &lt;String[]&gt;] [-Device &lt;DeviceItem&gt;] [-Fin
  
 ## Detailed Description 
  
-Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulatice and narrowing the search in an "AND" manner. 
+Removes renderings from an item based on a number of qualifying criteria. The search criteria are cumulative and narrowing the search in an "AND" manner. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -447,7 +447,7 @@ Device for which the rendering should be removed.
  
 ### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
  
- 
+Targets the Final Layout. If not provided, the Shared Layout will be targeted. Applies to Sitecore 8.0 and higher only. 
  
 <table>
     <thead></thead>
@@ -563,4 +563,4 @@ PS master:\> Remove-Rendering -Path master:\content\home -PlaceHolder "main*" -D
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Get-Layout* Set-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Add-Rendering](/appendix/commands/Add-Rendering.md)* [New-Rendering](/appendix/commands/New-Rendering.md)* [Set-Rendering](/appendix/commands/Set-Rendering.md)* [Get-Rendering](/appendix/commands/Get-Rendering.md)* [Get-LayoutDevice](/appendix/commands/Get-LayoutDevice.md)* [Get-Layout](/appendix/commands/Get-Layout.md)* [Set-Layout](/appendix/commands/Set-Layout.md)

@@ -15,7 +15,7 @@ New-SecuritySource [-Filter] &lt;String[]&gt; [[-AccountType] &lt;Unknown | Role
  
 Creates new User &amp; Role source that can be added to a Sitecore package. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

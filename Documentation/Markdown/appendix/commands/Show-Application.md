@@ -11,7 +11,7 @@ Show-Application [-Application] &lt;String&gt; [[-Parameter] &lt;Hashtable&gt;] 
  
 Executes Sitecore Sheer application, allows for passing additional parameters, launching it on desktop in cooperative or in Modal mode. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -296,4 +296,4 @@ Show-Application `
  
 ## Related Topics 
  
-* Read-Variable* Show-Alert* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Read-Variable](/appendix/commands/Read-Variable.md)* [Show-Alert](/appendix/commands/Show-Alert.md)* [Show-Confirm](/appendix/commands/Show-Confirm.md)* [Show-FieldEditor](/appendix/commands/Show-FieldEditor.md)* [Show-Input](/appendix/commands/Show-Input.md)* [Show-ListView](/appendix/commands/Show-ListView.md)* [Show-ModalDialog](/appendix/commands/Show-ModalDialog.md)* [Show-Result](/appendix/commands/Show-Result.md)* [Show-YesNoCancel](/appendix/commands/Show-YesNoCancel.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

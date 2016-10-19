@@ -15,7 +15,7 @@ Get-TaskSchedule [[-Database] &lt;Database&gt;] [[-Name] &lt;String&gt;]
  
 The Get-TaskSchedule command returns one or more task schedule items, based on name/database filter, path or simply converting a Sitecore item. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -231,4 +231,4 @@ Check DSN Messages               master          True     False        False    
  
 ## Related Topics 
  
-* Start-TaskSchedule* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9' target='_blank'>https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9</a><br/>
+* [Start-TaskSchedule](/appendix/commands/Start-TaskSchedule.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9' target='_blank'>https://www.youtube.com/watch?v=N3xgZcU9FqQ&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=9</a><br/>

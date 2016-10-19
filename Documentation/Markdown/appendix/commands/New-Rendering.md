@@ -15,7 +15,7 @@ New-Rendering [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Parameter &lt;
  
 Creates new rendering definition that can later be added to an item. Most parameters can later be overriden when calling Add-Rendering. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -563,4 +563,4 @@ PS master:\> Add-Rendering -Item $item -PlaceHolder "main" -Rendering $rendering
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Get-Layout* Set-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Add-Rendering](/appendix/commands/Add-Rendering.md)* [Set-Rendering](/appendix/commands/Set-Rendering.md)* [Get-Rendering](/appendix/commands/Get-Rendering.md)* [Get-LayoutDevice](/appendix/commands/Get-LayoutDevice.md)* [Remove-Rendering](/appendix/commands/Remove-Rendering.md)* [Get-Layout](/appendix/commands/Get-Layout.md)* [Set-Layout](/appendix/commands/Set-Layout.md)

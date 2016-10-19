@@ -13,7 +13,7 @@ Remove-ScriptSession -Session &lt;ScriptSession[]&gt;
  
 Removes a persistent Script Session from memory. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -111,4 +111,4 @@ PS master:\> Remove-ScriptSession -Id "Long running script"
  
 ## Related Topics 
  
-* Get-ScriptSession* Receive-ScriptSession* Start-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>
+* [Get-ScriptSession](/appendix/commands/Get-ScriptSession.md)* [Receive-ScriptSession](/appendix/commands/Receive-ScriptSession.md)* [Start-ScriptSession](/appendix/commands/Start-ScriptSession.md)* [Stop-ScriptSession](/appendix/commands/Stop-ScriptSession.md)* [Wait-ScriptSession](/appendix/commands/Wait-ScriptSession.md)* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>

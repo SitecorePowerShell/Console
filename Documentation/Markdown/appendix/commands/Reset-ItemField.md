@@ -15,7 +15,7 @@ Reset-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStand
  
 Resets item fields, specified as either names, fields or template fields. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -307,4 +307,4 @@ PS master:\> Get-Item master:\content\home | Reset-ItemField -Name "a*"
  
 ## Related Topics 
  
-* Get-ItemTemplate* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Get-ItemTemplate](/appendix/commands/Get-ItemTemplate.md)* [Get-ItemField](/appendix/commands/Get-ItemField.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

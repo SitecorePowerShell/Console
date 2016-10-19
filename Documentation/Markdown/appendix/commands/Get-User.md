@@ -20,7 +20,7 @@ You can also specify user object variable, such as $&lt;user&gt;.
 
 To search for and retrieve more than one user, use the Filter parameter. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -295,4 +295,4 @@ sitecore\michael         sitecore     False           False
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Set-User* New-User* Remove-User* Unlock-User
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Set-User](/appendix/commands/Set-User.md)* [New-User](/appendix/commands/New-User.md)* [Remove-User](/appendix/commands/Remove-User.md)* [Unlock-User](/appendix/commands/Unlock-User.md)

@@ -4,6 +4,8 @@ Resumes the suspended (paused) Sitecore index.
  
 ## Syntax 
  
+Resume-SearchIndex -Index &lt;ISearchIndex&gt; 
+ 
 Resume-SearchIndex [-Name &lt;String&gt;] 
  
 Resume-SearchIndex [-Name &lt;String&gt;] 
@@ -13,9 +15,43 @@ Resume-SearchIndex [-Name &lt;String&gt;]
  
 The Resume-SearchIndex command resumes the suspended (paused) Sitecore index. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+### -Index&nbsp; &lt;ISearchIndex&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>true (ByValue)</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Name&nbsp; &lt;String&gt; 
  
@@ -95,4 +131,4 @@ PS master:\> Get-SearchIndex -Name sitecore_master_index | Resume-SearchIndex
  
 ## Related Topics 
  
-* Initialize-SearchIndex* Suspend-SearchIndex* Stop-SearchIndex* Get-SearchIndex* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Initialize-SearchIndex](/appendix/commands/Initialize-SearchIndex.md)* [Suspend-SearchIndex](/appendix/commands/Suspend-SearchIndex.md)* [Stop-SearchIndex](/appendix/commands/Stop-SearchIndex.md)* [Get-SearchIndex](/appendix/commands/Get-SearchIndex.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

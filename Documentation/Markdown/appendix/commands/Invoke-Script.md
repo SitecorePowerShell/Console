@@ -14,7 +14,7 @@ Invoke-Script [-Path] &lt;String&gt; [-ArgumentList &lt;Object[]&gt;]
  
 Executes a script from Sitecore PowerShell Extensions Script Library. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-Script 
  
@@ -156,4 +156,4 @@ PS master:\> Invoke-Script 'Examples\Script Testing\Long Running Script with Pro
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Import-Function
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Import-Function](/appendix/commands/Import-Function.md)

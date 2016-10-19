@@ -15,7 +15,7 @@ Executing this command with file path on the server provides script users with m
 Executing it for an Item located in Sitecore Media library allows the user to download the blob stored in that item.
 If the file has been downloaded the dialog returns "downloaded" string, otherwise "cancelled" is returned. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Download-File 
  
@@ -333,4 +333,4 @@ PS master:\> Get-Item "master:/media library/Showcase/cognifide_logo" | Send-Fil
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Receive-File](/appendix/commands/Receive-File.md)* [Out-Download](/appendix/commands/Out-Download.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

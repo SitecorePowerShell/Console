@@ -15,7 +15,7 @@ The Remove-User command removes a user from Sitecore.
 
 The Identity parameter specifies the Sitecore user to remove. You can specify a user by its local name or fully qualified name. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -146,4 +146,4 @@ PS master:\> Get-User -Filter sitecore\m* | Remove-User
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Set-User* Unlock-User
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Get-User](/appendix/commands/Get-User.md)* [New-User](/appendix/commands/New-User.md)* [Set-User](/appendix/commands/Set-User.md)* [Unlock-User](/appendix/commands/Unlock-User.md)

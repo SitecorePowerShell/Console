@@ -16,7 +16,7 @@ Remove-ItemVersion [-Language &lt;String[]&gt;] [-Version &lt;String[]&gt;] [-Ex
 Removes Language/Version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
 Language  parameter supports globbing so you can delete whole language groups using wildcards. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Remove-ItemLanguage 
  
@@ -390,4 +390,4 @@ PS master:\> Remove-ItemVersion -Path master:\content\home -Language * -Recurse
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-ItemVersion* Remove-Item* <a href='https://gist.github.com/AdamNaj/b36ea095e3668c22c07e' target='_blank'>https://gist.github.com/AdamNaj/b36ea095e3668c22c07e</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Add-ItemVersion](/appendix/commands/Add-ItemVersion.md)* Remove-Item* <a href='https://gist.github.com/AdamNaj/b36ea095e3668c22c07e' target='_blank'>https://gist.github.com/AdamNaj/b36ea095e3668c22c07e</a><br/>

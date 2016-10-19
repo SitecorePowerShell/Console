@@ -16,7 +16,7 @@ The Disable-User command gets a user and disables the account in Sitecore.
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

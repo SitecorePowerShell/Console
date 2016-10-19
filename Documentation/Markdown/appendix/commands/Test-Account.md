@@ -11,7 +11,7 @@ Test-Account [-Identity] &lt;AccountIdentity&gt; [-AccountType &lt;String&gt;]
  
 The Test-Account command determines if a Sitecore role or user account exists. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

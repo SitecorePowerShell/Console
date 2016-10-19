@@ -16,7 +16,7 @@ The Unlock-User command gets a user and unlocks the account in Sitecore.
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name.
 You can also specify user object variable, such as $&lt;user&gt;. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -132,4 +132,4 @@ PS master:\> Get-User -Filter * | Unlock-User
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-User* New-User* Remove-User* Set-User
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Get-User](/appendix/commands/Get-User.md)* [New-User](/appendix/commands/New-User.md)* [Remove-User](/appendix/commands/Remove-User.md)* [Set-User](/appendix/commands/Set-User.md)

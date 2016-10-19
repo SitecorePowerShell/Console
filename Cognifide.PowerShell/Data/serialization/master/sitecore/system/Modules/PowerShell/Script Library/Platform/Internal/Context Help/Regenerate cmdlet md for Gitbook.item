@@ -8,12 +8,13 @@ name: Regenerate cmdlet md for Gitbook
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20160914T194911:636094793510530000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1672
+content-length: 1783
 
 $path = "C:\Projects\sitecorepowershell\Trunk\Documentation\Markdown\"
 if(-not(Test-Path -Path $path)) {
@@ -33,27 +34,33 @@ if(Test-Path -Path $book) {
     Clear-Content -Path $bookcommandlist
 }
 
-$names = Get-Command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"} | % {$_.Name}
+$commandNames = Get-Command -CommandType Cmdlet | ? { $_.DLL -match "Cognifide"} | % {$_.Name}
 $hideOutput = $true
 $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding($false)
 
-foreach($name in $names)
+foreach($commandName in $commandNames)
 {
-    $helpFor = "$name"
-    $filename = "$($name).md"
-    $output = "$($path)$($filename)"
+    $helpFor = "$commandName"
+    $filename = "$($commandName).md"
+    $output = Join-Path "$($path)" "appendix\commands\$($filename)"
     Invoke-Script "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Context Help\Command Help - md"
-    [System.IO.File]::WriteAllLines($output, $builder.ToString(), $Utf8NoBomEncoding)
+    $commandMarkdown = $builder.ToString()
+    [System.IO.File]::WriteAllLines($output, $commandMarkdown, $Utf8NoBomEncoding)
+    
+    Write-Host "$helpFor -> $output"
 
-    # Output the md files for the gitbook that will pull the md from github. Crazy.
+    # Output the Markdown files for Gitbook
     if($buildBookFiles) {
         # Print out list for the gitbook commands-list.md
-        [System.IO.File]::AppendAllText($bookcommandlist, "* [$name](appendix/commands/$filename)`r", $Utf8NoBomEncoding)
+        [System.IO.File]::AppendAllText($bookcommandlist, "* [$commandName](appendix/commands/$filename)`r", $Utf8NoBomEncoding)
         
+        # Write out the Markdown for the command
         $bookreference = "$($book)appendix\commands\$($filename)"
-        $booklink = "{% include 'git+https://github.com/SitecorePowerShell/Console.git/Documentation/Markdown/$($filename)' %}"
-        [System.IO.File]::WriteAllLines($bookreference, $booklink, $Utf8NoBomEncoding)
+        [System.IO.File]::WriteAllLines($bookreference, $commandMarkdown, $Utf8NoBomEncoding)
+        
+        Write-Host "$helpFor -> $bookreference"
     }
+    
 }
 
 Write-Host "Done."
@@ -61,7 +68,7 @@ Write-Host "Done."
 ----version----
 language: en
 version: 1
-revision: 15b07347-7f07-4195-8dc3-eaacb40213f4
+revision: fbead49d-2654-4747-94f8-cb272ecaa6ef
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -76,14 +83,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-15b07347-7f07-4195-8dc3-eaacb40213f4
+fbead49d-2654-4747-94f8-cb272ecaa6ef
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20150912T153611:635776689716451530
+20161019T233506Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -16,7 +16,7 @@ Install-UpdatePackage.
     -UpgradeAction {Preview or Upgrade}
     -InstallMode {Install or Update} 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -180,4 +180,4 @@ PS master:\> Install-UpdatePackage -Path "C:\Projects\LaunchSitecore.TDSMaster.u
  
 ## Related Topics 
  
-* Export-UpdatePackage* Get-UpdatePackageDiff* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Export-UpdatePackage](/appendix/commands/Export-UpdatePackage.md)* [Get-UpdatePackageDiff](/appendix/commands/Get-UpdatePackageDiff.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

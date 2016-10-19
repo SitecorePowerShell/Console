@@ -11,7 +11,7 @@ Login-User [-Identity] &lt;GenericIdentity&gt; [-Password] &lt;String&gt;
  
 Logs a user in and performs further script instructions in the context of the user. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

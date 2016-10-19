@@ -15,7 +15,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
  
  
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

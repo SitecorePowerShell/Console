@@ -15,7 +15,7 @@ New-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] -Destination &lt;Ite
  
 Creates a new item clone based on the item provided. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -288,4 +288,4 @@ PS master:\> New-ItemClone -Path master:\content\home -Destination $newTarget -N
  
 ## Related Topics 
  
-* Get-ItemClone* ConvertFrom-ItemClone* New-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>
+* [Get-ItemClone](/appendix/commands/Get-ItemClone.md)* [ConvertFrom-ItemClone](/appendix/commands/ConvertFrom-ItemClone.md)* New-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/issues/218' target='_blank'>https://github.com/SitecorePowerShell/Console/issues/218</a><br/>

@@ -11,7 +11,7 @@ Import-Function [-Name] &lt;String&gt; [-Library &lt;String&gt;] [-Module &lt;St
  
 The Import-Function command imports a function script from the script library's "Functions" folder. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -148,4 +148,4 @@ PS master:\> Import-Function -Name Resolve-Error
  
 ## Related Topics 
  
-* Invoke-Script* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Invoke-Script](/appendix/commands/Invoke-Script.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

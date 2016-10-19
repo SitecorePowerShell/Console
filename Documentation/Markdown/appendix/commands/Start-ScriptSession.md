@@ -28,7 +28,7 @@ Start-ScriptSession -ScriptBlock &lt;ScriptBlock&gt; [-JobName &lt;String&gt;] [
 Starts a new Script Session and executes a script provided in it. 
 The session can be a background session or if the caller session is interactive providint the -Interactive switch can open a Windowd for the new sessio 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -499,4 +499,4 @@ Start-ScriptSession -ScriptBlock { cd master:\; Start-Sleep -Seconds 4 } -Id "Ba
  
 ## Related Topics 
  
-* Get-ScriptSession* Receive-ScriptSession* Remove-ScriptSession* Stop-ScriptSession* Wait-ScriptSession* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>
+* [Get-ScriptSession](/appendix/commands/Get-ScriptSession.md)* [Receive-ScriptSession](/appendix/commands/Receive-ScriptSession.md)* [Remove-ScriptSession](/appendix/commands/Remove-ScriptSession.md)* [Stop-ScriptSession](/appendix/commands/Stop-ScriptSession.md)* [Wait-ScriptSession](/appendix/commands/Wait-ScriptSession.md)* <a href='http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/' target='_blank'>http://blog.najmanowicz.com/2014/10/26/sitecore-powershell-extensions-persistent-sessions/</a><br/>* <a href='https://git.io/spe' target='_blank'>https://git.io/spe</a><br/>

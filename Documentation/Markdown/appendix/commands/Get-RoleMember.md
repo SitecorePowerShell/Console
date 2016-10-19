@@ -17,7 +17,7 @@ The Get-RoleMember command returns the Sitecore users in the specified role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -224,4 +224,4 @@ Name        : sitecore\Developer
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Get-Role* Remove-RoleMember* Add-RoleMember
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Get-Role](/appendix/commands/Get-Role.md)* [Remove-RoleMember](/appendix/commands/Remove-RoleMember.md)* [Add-RoleMember](/appendix/commands/Add-RoleMember.md)

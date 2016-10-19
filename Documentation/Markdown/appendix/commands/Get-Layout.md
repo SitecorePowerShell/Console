@@ -15,13 +15,13 @@ Get-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Device &lt;Device
  
 The Get-Layout command returns the layout for the specified item. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
 ### -Device&nbsp; &lt;DeviceItem&gt; 
  
-Layout Device for which the item should be returned. If not specified All layouts used will be returned. 
+Layout Device for which the item should be returned. If not specified All layouts used will be returned.
 If Device is specified but no layout is specified the command will return an error that can be silenced 
  
 <table>
@@ -56,7 +56,7 @@ If Device is specified but no layout is specified the command will return an err
  
 ### -FinalLayout&nbsp; &lt;SwitchParameter&gt; 
  
- 
+Returns the Final Layout. If not provided, the Shared Layout will be returned. Applies to Sitecore 8.0 and higher only. 
  
 <table>
     <thead></thead>
@@ -288,4 +288,4 @@ PS master:\> Get-Layout -Path master:\content\home
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-Rendering* New-Rendering* Set-Rendering* Get-Rendering* Get-LayoutDevice* Remove-Rendering* Set-Layout* Reset-Layout
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Add-Rendering](/appendix/commands/Add-Rendering.md)* [New-Rendering](/appendix/commands/New-Rendering.md)* [Set-Rendering](/appendix/commands/Set-Rendering.md)* [Get-Rendering](/appendix/commands/Get-Rendering.md)* [Get-LayoutDevice](/appendix/commands/Get-LayoutDevice.md)* [Remove-Rendering](/appendix/commands/Remove-Rendering.md)* [Set-Layout](/appendix/commands/Set-Layout.md)* [Reset-Layout](/appendix/commands/Reset-Layout.md)

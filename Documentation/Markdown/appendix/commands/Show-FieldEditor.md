@@ -23,7 +23,7 @@ Shows Field editor for a provided item allows for editing all or selected list o
 If user closes the dialog by pressing the "OK" button "ok" string will be returned. 
 Otherwise "cancel" will be returned. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -516,4 +516,4 @@ PS master:\> Get-Item "master:\content\home" | Show-FieldEditor -Name "*" -Inclu
  
 ## Related Topics 
  
-* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-Input* Show-ListView* Show-ModalDialog* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Read-Variable](/appendix/commands/Read-Variable.md)* [Show-Alert](/appendix/commands/Show-Alert.md)* [Show-Application](/appendix/commands/Show-Application.md)* [Show-Confirm](/appendix/commands/Show-Confirm.md)* [Show-Input](/appendix/commands/Show-Input.md)* [Show-ListView](/appendix/commands/Show-ListView.md)* [Show-ModalDialog](/appendix/commands/Show-ModalDialog.md)* [Show-Result](/appendix/commands/Show-Result.md)* [Show-YesNoCancel](/appendix/commands/Show-YesNoCancel.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

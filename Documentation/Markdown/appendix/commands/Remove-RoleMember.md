@@ -13,7 +13,7 @@ The Remove-RoleMember command gets a role and removes members of the Sitecore ro
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -121,4 +121,4 @@ PS master:\> Remove-RoleMember -Identity developer -Members "michael","adam","mi
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Add-RoleMember* Get-RoleMember
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Add-RoleMember](/appendix/commands/Add-RoleMember.md)* [Get-RoleMember](/appendix/commands/Get-RoleMember.md)

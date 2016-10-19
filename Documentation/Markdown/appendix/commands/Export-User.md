@@ -30,7 +30,7 @@ To search for and retrieve more than one user, use the Filter parameter.
 
 You can also pipe a user from the Get-user command. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -276,4 +276,4 @@ PS master:\> Export-User -Identify sitecore\admin
  
 ## Related Topics 
  
-* Export-Role* Import-User* Export-Item* Import-Role* Import-Item* Get-User* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Export-Role](/appendix/commands/Export-Role.md)* [Import-User](/appendix/commands/Import-User.md)* [Export-Item](/appendix/commands/Export-Item.md)* [Import-Role](/appendix/commands/Import-Role.md)* [Import-Item](/appendix/commands/Import-Item.md)* [Get-User](/appendix/commands/Get-User.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

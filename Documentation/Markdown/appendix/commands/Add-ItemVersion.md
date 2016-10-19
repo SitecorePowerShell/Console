@@ -16,7 +16,7 @@ Add-ItemVersion [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-I
 Creates a new version of the item in a specified language based on an existing language/version.
 Based on parameters you can make the command bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Add-ItemLanguage 
  
@@ -433,4 +433,4 @@ Get-ChildItem "master:\content\home" -Language "en" -Recurse | `
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-ItemVersion* New-Item* <a href='https://gist.github.com/AdamNaj/b36ea095e3668c22c07e' target='_blank'>https://gist.github.com/AdamNaj/b36ea095e3668c22c07e</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Remove-ItemVersion](/appendix/commands/Remove-ItemVersion.md)* New-Item* <a href='https://gist.github.com/AdamNaj/b36ea095e3668c22c07e' target='_blank'>https://gist.github.com/AdamNaj/b36ea095e3668c22c07e</a><br/>

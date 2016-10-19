@@ -11,7 +11,7 @@ Export-UpdatePackage [-CommandList] &lt;List`1&gt; [[-Name] &lt;String&gt;] [[-P
  
 The Export-UpdatePackage command generates a Sitecore update package containing a serialization diff list. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -238,4 +238,4 @@ Export-UpdatePackage -Path C:\temp\SerializationDiff.update -CommandList $diff -
  
 ## Related Topics 
  
-* Get-UpdatePackageDiff* Install-UpdatePackage* <a href='http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html' target='_blank'>http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html</a><br/>* <a href='https://github.com/adoprog/Sitecore-Courier' target='_blank'>https://github.com/adoprog/Sitecore-Courier</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Get-UpdatePackageDiff](/appendix/commands/Get-UpdatePackageDiff.md)* [Install-UpdatePackage](/appendix/commands/Install-UpdatePackage.md)* <a href='http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html' target='_blank'>http://sitecoresnippets.blogspot.com/2012/10/sitecore-courier-effortless-packaging.html</a><br/>* <a href='https://github.com/adoprog/Sitecore-Courier' target='_blank'>https://github.com/adoprog/Sitecore-Courier</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

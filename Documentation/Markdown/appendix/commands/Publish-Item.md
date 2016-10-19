@@ -15,7 +15,7 @@ Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Targ
  
 The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

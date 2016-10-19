@@ -13,7 +13,7 @@ Show-ModalDialog -Url &lt;String&gt; [-HandleParameters &lt;Hashtable&gt;] [-Tit
  
 Shows Sitecore Sheer control as a modal dialog. If control returns a value - the value will be passed back as the result of the command execution. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -285,4 +285,4 @@ PS master:\> Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Yes 
  
 ## Related Topics 
  
-* Read-Variable* Show-Alert* Show-Application* Show-Confirm* Show-FieldEditor* Show-Input* Show-ListView* Show-Result* Show-YesNoCancel* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Read-Variable](/appendix/commands/Read-Variable.md)* [Show-Alert](/appendix/commands/Show-Alert.md)* [Show-Application](/appendix/commands/Show-Application.md)* [Show-Confirm](/appendix/commands/Show-Confirm.md)* [Show-FieldEditor](/appendix/commands/Show-FieldEditor.md)* [Show-Input](/appendix/commands/Show-Input.md)* [Show-ListView](/appendix/commands/Show-ListView.md)* [Show-Result](/appendix/commands/Show-Result.md)* [Show-YesNoCancel](/appendix/commands/Show-YesNoCancel.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

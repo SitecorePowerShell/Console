@@ -19,7 +19,7 @@ Export-Role [-Role] &lt;Role&gt; -Path &lt;String&gt;
  
 The Export-Role command exports (serializes) Sitecore roles to the filesystem on the server. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -268,4 +268,4 @@ PS master:\> Export-Role -Path C:\my\Serialization\Folder\Authors.role -Identity
  
 ## Related Topics 
  
-* Import-Role* Export-User* Import-User* Export-Item* Import-Item* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Import-Role](/appendix/commands/Import-Role.md)* [Export-User](/appendix/commands/Export-User.md)* [Import-User](/appendix/commands/Import-User.md)* [Export-Item](/appendix/commands/Export-Item.md)* [Import-Item](/appendix/commands/Import-Item.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -15,7 +15,7 @@ Get-ItemTemplate -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse]
  
 The Get-ItemTemplate command returns the item template and its base templates. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -260,4 +260,4 @@ PS master:\> Get-Item -Path master:/content/Home | Get-ItemTemplate -Recurse | f
  
 ## Related Topics 
  
-* Get-ItemField* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Get-ItemField](/appendix/commands/Get-ItemField.md)* [Set-ItemTemplate](/appendix/commands/Set-ItemTemplate.md)* [Add-BaseTemplate](/appendix/commands/Add-BaseTemplate.md)* [Remove-BaseTemplate](/appendix/commands/Remove-BaseTemplate.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -14,7 +14,7 @@ Calling this command makes sense only when it's being used in script exposed as 
 For example the main script might be listing all logged in users. And than the "Kick" action might be closing sessions for selected rows and refreshing the List view to take into account that the sessions are no longer connected.
 Another example is Task Manager script you can find in Toolbox. The List View shown by it shows tasks and when they were last run. If you choose to execute a task the Update-ListView command will later be called to update the data to account for the fact that the task's "Last Run" date has been updated. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -144,4 +144,4 @@ Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.
  
 ## Related Topics 
  
-* Show-ListView* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Show-ListView](/appendix/commands/Show-ListView.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

@@ -15,7 +15,7 @@ The Get-Session command returns one or more Sitecore user sessions using the spe
 
 The Identity parameter specifies the Sitecore user to get. You can specify a user by its local name or fully qualified name. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -156,4 +156,4 @@ Created                LastRequest            SessionID                  UserNam
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* Remove-Session
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>* [Remove-Session](/appendix/commands/Remove-Session.md)

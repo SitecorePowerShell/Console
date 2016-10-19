@@ -11,7 +11,7 @@ New-Role [-Identity] &lt;AccountIdentity&gt;
  
 The New-Role command creates a new Sitecore role. 
  
-© 2010-2015 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
