@@ -242,12 +242,16 @@ namespace Cognifide.PowerShell.Core.Provider
                 if (langs == null)
                 {
                     var lang = dic[LanguageParam].Value as string;
-                    language = new[] { (lang?.Contains("*") ?? true) ? lang : LanguageManager.GetLanguage(lang)?.Name };
+                    language = new[] {(lang?.Contains("*") ?? true) ? lang : LanguageManager.GetLanguage(lang)?.Name};
                 }
                 if (langs == null)
                 {
                     language = new string[0];
                 }
+            }
+            else
+            {
+                language = new string[0];
             }
 
             version = Version.Latest.Number;
