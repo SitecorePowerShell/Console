@@ -40,6 +40,8 @@ namespace Cognifide.PowerShell
         public const string IseContextPanel_Render_Context = "Context";
         public const string IseContextPanel_Render_none = "none";
         public const string IseContextPanel_Render_Session = "Session";
+        public const string IseContextPanelEx_Render_Language = "Language";
+        public const string IseContextPanelEx_Render_User = "User";
         public const string MruGallery_ChangeSearchPhrase_Most_Recently_opened_scripts_ =
             "Most Recently opened scripts:";
         public const string MruGallery_ChangeSearchPhrase_No_scripts_found____Do_you_need_to_re_index_your_databases_ =

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.CodeDom;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management.Automation;
 using System.Text;
-using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
@@ -15,13 +11,13 @@ using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
-using Sitecore.Common;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
-using Sitecore.Jobs.AsyncUI;
+using Sitecore.Security.Accounts;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
@@ -36,6 +32,9 @@ namespace Cognifide.PowerShell.Client.Applications
     public class PowerShellIse : BaseForm, IHasCommandContext, IPowerShellRunner
     {
         public const string DefaultSessionName = "ISE Editing Session";
+        public const string DefaultUser = "CurrentUser";
+        public const string DefaultLanguage = "CurrentLanguage";
+
 
         protected Memo Editor;
         protected Literal Progress;
@@ -128,6 +127,18 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["CurrentSessionId"] = value; }
         }
 
+        public static string CurrentUser
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentUser"]); }
+            set { Context.ClientPage.ServerProperties["CurrentUser"] = value; }
+        }
+
+        public static string CurrentLanguage
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["CurrentLanguage"]); }
+            set { Context.ClientPage.ServerProperties["CurrentLanguage"] = value; }
+        }
+
         public SpeJobMonitor Monitor { get; private set; }
 
         public CommandContext GetCommandContext()
@@ -188,6 +199,8 @@ namespace Cognifide.PowerShell.Client.Applications
             ContextItemId = contextItem?.ID.ToString() ?? String.Empty;
 
             CurrentSessionId = DefaultSessionName;
+            CurrentUser = DefaultUser;
+            CurrentLanguage = DefaultLanguage;
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
         }
@@ -209,6 +222,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 context.Parameters["ParentFramename"] = ParentFrameName;
             }
 
+            if (context.Parameters.AllKeys.Contains("currLang"))
+            {
+                context.Parameters["currLang"] = CurrentLanguage;
+            }
             Dispatcher.Dispatch(message, context);
         }
 
@@ -256,6 +273,16 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(args, "args");
             LoadItem(args.Parameters["db"], args.Parameters["id"]);
+        }
+
+        
+        [HandleMessage("ise:changecontextaccount", true)]
+        protected void SecurityChangeContextAccount(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            args.CarryResultToNextProcessor = false;
+            args.AbortPipeline();
+            //LoadItem(args.Parameters["db"], args.Parameters["id"]);
         }
 
         [HandleMessage("item:load", true)]
@@ -557,7 +584,13 @@ namespace Cognifide.PowerShell.Client.Applications
             Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
-            Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
+            Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run,
+                LanguageManager.IsValidLanguageName(CurrentLanguage)
+                    ? LanguageManager.GetLanguage(CurrentLanguage)
+                    : Context.Language,
+                User.Exists(CurrentUser)
+                    ? User.FromName(CurrentUser, true)
+                    : Context.User);
 
             Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("cognifide.powershell.restoreResults();");
@@ -784,6 +817,9 @@ namespace Cognifide.PowerShell.Client.Applications
             Error.AssertItemFound(obj2, "/sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon");
             ribbon.CommandContext.RibbonSourceUri = obj2.Uri;
 
+            ribbon.CommandContext.Parameters["currentUser"] = string.IsNullOrEmpty(CurrentUser) ? DefaultUser : CurrentUser;
+            ribbon.CommandContext.Parameters["currentLanguage"] = string.IsNullOrEmpty(CurrentLanguage) ? DefaultLanguage : CurrentLanguage;
+
             ribbon.CommandContext.Parameters.Add("contextDB", UseContext ? ContextItemDb : string.Empty);
             ribbon.CommandContext.Parameters.Add("contextItem", UseContext ? ContextItemId : string.Empty);
             ribbon.CommandContext.Parameters.Add("scriptDB", ScriptItemDb);
@@ -805,6 +841,26 @@ namespace Cognifide.PowerShell.Client.Applications
             var sessionId = args.Parameters["id"];
             CurrentSessionId = sessionId;
             SheerResponse.Eval($"cognifide.powershell.changeSessionId('{sessionId}');");
+            UpdateRibbon();
+        }
+
+        [HandleMessage("ise:setlanguage", true)]
+        protected void SetCurrentLanguage(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var language = args.Parameters["language"];
+            CurrentLanguage = language;
+            new LanguageHistory().Add(language);
+            UpdateRibbon();
+        }
+
+        [HandleMessage("ise:setuser", true)]
+        protected void SetCurrentUser(ClientPipelineArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var user = args.Parameters["user"];
+            CurrentUser = user;
+            new UserHistory().Add(user);
             UpdateRibbon();
         }
 

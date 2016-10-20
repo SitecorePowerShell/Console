@@ -134,7 +134,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Commands\SelectUser.cs" />
+    <Compile Include="Client\Commands\Selectlanguage.cs" />
+    <Compile Include="Client\Controls\LanguageHistory.cs" />
+    <Compile Include="Client\Controls\UserGallery.cs" />
+    <Compile Include="Client\Controls\LanguageGallery.cs" />
+    <Compile Include="Client\Controls\IseContextPanelBase.cs" />
+    <Compile Include="Client\Controls\IseContextPanelEx.cs" />
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
+    <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />
     <Compile Include="Core\Settings\Authorization\AuthorizationEntry.cs" />
     <Compile Include="Client\Applications\ConfirmChoice.cs" />

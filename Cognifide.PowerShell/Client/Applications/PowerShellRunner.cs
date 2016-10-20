@@ -259,8 +259,10 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.SetVariable("RenderingId", RenderingId);
             scriptSession.Interactive = true;
 
-            var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent, string.IsNullOrEmpty(PersistentId));
-            Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run, scriptSession.JobOptions);
+            var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
+                string.IsNullOrEmpty(PersistentId));
+            Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run, Context.Language, Context.User,
+                scriptSession.JobOptions);
             Monitor.SessionID = scriptSession.Key;
         }
 

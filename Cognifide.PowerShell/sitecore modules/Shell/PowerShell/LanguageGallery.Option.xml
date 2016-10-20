@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<control xmlns:def="Definition" xmlns="http://schemas.sitecore.net/Visual-Studio-Intellisense" xmlns:shell="http://www.sitecore.net/shell">
+  <LanguageGallery.Option>
+    <Border RollOver="true" Class="$Class scMenuPanelItem" Click="$Click">
+        <Border Class="scClickFont" NoWrap="true" GridPanel.VAlign="top" Gridpanel.Width="64px">
+          <Literal Text="$LanguageIcon"/>
+        </Border>
+        <Border Padding="0px 0px 0px 8px" Style="display: inline-block">
+          <div class="name">
+            <Literal Text="$Name"/> <span class="path"> - [<Literal Text="$LanguageCode"/>]</span>
+          </div>
+        </Border>
+    </Border>
+  </LanguageGallery.Option>
+</control>

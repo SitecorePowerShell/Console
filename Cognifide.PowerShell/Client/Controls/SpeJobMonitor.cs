@@ -3,8 +3,10 @@ using System.Threading;
 using System.Web;
 using Sitecore;
 using Sitecore.Diagnostics;
+using Sitecore.Globalization;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Security.Accounts;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
@@ -128,22 +130,20 @@ namespace Cognifide.PowerShell.Client.Controls
             JobFinished?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Start(string name, string category, ThreadStart task, JobOptions options = null)
+        public void Start(string name, string category, ThreadStart task, Language language = null, User user = null,
+            JobOptions options = null)
         {
             Assert.ArgumentNotNullOrEmpty(name, "name");
             Assert.ArgumentNotNullOrEmpty(category, "category");
             Assert.ArgumentNotNull(task, "task");
-            var siteName = string.Empty;
-            var site = Sitecore.Context.Site;
-            if (site != null)
-                siteName = site.Name;                        
+            var siteName = Sitecore.Context.Site?.Name ?? string.Empty;
             JobHandle = JobManager.Start(new JobOptions(name, category, siteName, new TaskRunner(task), "Run")
             {
-                ContextUser = options?.ContextUser ?? Sitecore.Context.User,
+                ContextUser = user ?? options?.ContextUser ?? Sitecore.Context.User,
                 AtomicExecution = false,
                 EnableSecurity = options?.EnableSecurity ?? true,
-                ClientLanguage = options?.ClientLanguage ?? Sitecore.Context.Language,
-                AfterLife = new TimeSpan(0,0,0,10),
+                ClientLanguage = language ?? options?.ClientLanguage ?? Sitecore.Context.Language,
+                AfterLife = new TimeSpan(0, 0, 0, 10),
             }).Handle;
             ScheduleCallback();
         }
