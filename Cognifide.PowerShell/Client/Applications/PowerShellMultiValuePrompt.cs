@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Cognifide.PowerShell.Client.Controls;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
@@ -22,6 +25,7 @@ using Sitecore.Globalization;
 using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Shell.Applications.Dialogs.RulesEditor;
 using Sitecore.Shell.Applications.Rules;
+using Sitecore.StringExtensions;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -58,6 +62,27 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"] = value; }
         }
 
+        public static string Validator
+        {
+            get { return StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["Validator"]); }
+            set { Sitecore.Context.ClientPage.ServerProperties["Validator"] = value; }
+        }
+
+        public static Dictionary<string, string> FieldValidators
+        {
+            get
+            {
+                var fv = (Dictionary<string, string>) Sitecore.Context.ClientPage.ServerProperties["FieldValidators"];
+                if (fv == null)
+                {
+                    fv = new Dictionary<string, string>();
+                    Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = fv;
+                }
+                return fv;
+            }
+            set { Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = value; }
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -68,33 +93,36 @@ namespace Cognifide.PowerShell.Client.Applications
 
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
-            var variables = (object[]) HttpContext.Current.Cache[sid];
+            var message = (ShowMultiValuePromptMessage) HttpContext.Current.Cache[sid];
+            var variables = message.Parameters;
             HttpContext.Current.Cache.Remove(sid);
 
-            var title = WebUtil.GetQueryString("te");
-            ShowHints = WebUtil.GetQueryString("sh") == "1";
+            var title = message.Title;
+            ShowHints = message.ShowHints;
 
             if (!string.IsNullOrEmpty(title))
             {
                 DialogHeader.Text = title;
             }
 
-            var description = WebUtil.GetQueryString("ds");
+            var description = message.Description;
             if (!string.IsNullOrEmpty(description))
             {
                 DialogDescription.Text = description;
             }
-            var okText = WebUtil.GetQueryString("ob");
+            var okText = message.OkButtonName;
             if (!string.IsNullOrEmpty(okText))
             {
                 OKButton.Header = okText;
             }
 
-            var cancelText = WebUtil.GetQueryString("cb");
+            var cancelText = message.CancelButtonName;
             if (!string.IsNullOrEmpty(cancelText))
             {
                 CancelButton.Header = cancelText;
             }
+
+            Validator = message.Validator?.ToString();
 
             //MandatoryVariables =
             var mandatoryVariables =
@@ -104,27 +132,40 @@ namespace Cognifide.PowerShell.Client.Applications
             if (mandatoryVariables.Any())
             {
                 MandatoryVariables = (string) mandatoryVariables.Aggregate((accumulated, next) =>
-                    next + "," + accumulated);
+                        next + "," + accumulated);
             }
             AddControls(variables);
             SitecoreVersion.V82.OrNewer(() =>
-                CustomStyles.Text = "<style>.scContentButton { color: rgb(38, 148, 192);}</style>"
-                );
+                        CustomStyles.Text = "<style>.scContentButton { color: rgb(38, 148, 192);}</style>"
+            );
         }
 
         private void AddControls(object[] variables)
         {
             var tabs = new Dictionary<string, Border>(StringComparer.OrdinalIgnoreCase);
-            Tabstrip.Visible = variables.Cast<Hashtable>().Select(variable => variable["Tab"] as string).Any(tabName => !string.IsNullOrEmpty(tabName));
-
+            Tabstrip.Visible =
+                variables.Cast<Hashtable>()
+                    .Select(variable => variable["Tab"] as string)
+                    .Any(tabName => !string.IsNullOrEmpty(tabName));
+            var fieldValidators = FieldValidators;
             foreach (Hashtable variable in variables)
             {
-                var tabName = (variable["Tab"] as string) ?? "Other";
-                var name = (variable["Title"] as string) ?? (variable["Name"] as string);
-                var hint = (variable["Tip"] as string) ??
-                           (variable["Hint"] as string) ?? (variable["Tooltip"] as string);
-                var columns =  12;
+                var tabName = variable["Tab"] as string ?? "Other";
+                var name = variable["Name"] as string ?? string.Empty;
+                var title = variable["Title"] as string ?? name;
+                var hint = variable["Tip"] as string ??
+                           variable["Hint"] as string ?? variable["Tooltip"] as string;
+                var variableValue = variable["Value"];
+                var columns = 12;
                 var clearfix = false;
+                var height = variable["Height"] as string;
+                var validator = variable["Validator"] as ScriptBlock;
+
+                if (validator != null)
+                {
+                    fieldValidators.Add(name, validator.ToString());
+                }
+
                 if (variable["Columns"] != null)
                 {
                     var strColumns = variable["Columns"].ToString().Split(' ');
@@ -141,62 +182,85 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                     clearfix = strColumns.Contains("first", StringComparer.OrdinalIgnoreCase);
                 }
-                var container = GetContainer(tabs, tabName);
-                Control input;
 
+                // get the control in which the variable should be placed.
+                var container = GetContainer(tabs, tabName);
+
+                // retrieve the variable editor control.
+                Control variableEditor;
                 try
                 {
-                    input = GetVariableEditor(variable);
+                    variableEditor = GetVariableEditor(variable);
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Error while rendering editor in Read-Variable cmdlet for variable {name}", ex);
-                    input = new Literal { Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor, Class = "varHint" };
+                    PowerShellLog.Error($"Error while rendering editor in Read-Variable cmdlet for variable {title}", ex);
+                    variableEditor = new Literal
+                    {
+                        Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor,
+                        Class = "varHint"
+                    };
                 }
-                var variableBorder = new Border();
 
-                if (variable["Value"] == null || variable["Value"].GetType() != typeof(bool))
+                // create and set up the variable wrapper
+                var variableWrapper = new Border
                 {
-                    var label = new Literal { Text = name, Class = "varTitle" };
-                    variableBorder.Controls.Add(label);
+                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_")
+                };
+
+                // add variable title and tooltip if it's not a checkbox
+                if (variableValue == null || variableValue.GetType() != typeof(bool))
+                {
+                    var label = new Literal {Text = title, Class = "varTitle"};
+                    variableWrapper.Controls.Add(label);
                     if (ShowHints && !string.IsNullOrEmpty(hint))
                     {
-                        label = new Literal { Text = hint, Class = "varHint" };
-                        variableBorder.Controls.Add(label);
+                        label = new Literal {Text = hint, Class = "varHint"};
+                        variableWrapper.Controls.Add(label);
                     }
                 }
 
-                name = (string)variable["Name"];
-                variableBorder.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-
-                variableBorder.Controls.Add(input);
-                var height = variable["Height"] as string;
                 if (!string.IsNullOrEmpty(height))
                 {
-                    variableBorder.Height = new Unit(height);
-                    variableBorder.Class = "variableWrapper variableWrapperFixedHeight";
+                    variableWrapper.Height = new Unit(height);
+                    variableWrapper.Class = "variableWrapper variableWrapperFixedHeight";
                 }
                 else
                 {
-                    variableBorder.Class = "variableWrapper";
+                    variableWrapper.Class = "variableWrapper";
                 }
-                variableBorder.Class += " grid-" + columns;
+
+                variableWrapper.Class += " grid-" + columns;
                 if (clearfix)
                 {
-                    variableBorder.Class += " clearfix";
+                    variableWrapper.Class += " clearfix";
                 }
 
-                container.Controls.Add(variableBorder);
+                // add editor to the wrapper
+                variableWrapper.Controls.Add(variableEditor);
+
+                // add validator indicator
+                var variableValidator = new Border
+                {
+                    ID = $"var_{name}_validator",
+                    InnerHtml = "",
+                    Class = "validator"
+                };
+                variableWrapper.Controls.Add(variableValidator);
+
+                // add wrapper to the container
+                container.Controls.Add(variableWrapper);
             }
 
+            FieldValidators = fieldValidators;
             TabOffsetValue.Text = $"<script type='text/javascript'>var tabsOffset={(tabs.Count > 0 ? 24 : 0)};</script>";
         }
 
         public void tabstrip_OnChange(object sender, EventArgs e)
         {
             SitecoreVersion.V81.OrOlder(() =>
-                SheerResponse.Eval("ResizeDialogControls();")
-                );
+                        SheerResponse.Eval("ResizeDialogControls();")
+            );
         }
 
         private WebControl GetContainer(IDictionary<string, Border> tabs, string tabName)
@@ -224,7 +288,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var editor = variable["Editor"] as string;
             var type = value.GetType();
 
-            if (type == typeof (DateTime) ||
+            if (type == typeof(DateTime) ||
                 (!string.IsNullOrEmpty(editor) &&
                  (editor.IndexOf("date", StringComparison.OrdinalIgnoreCase) > -1 ||
                   editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1)))
@@ -241,7 +305,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var date = (DateTime) value;
                     if (date != DateTime.MinValue && date != DateTime.MaxValue)
                     {
-                        dateTimePicker.Value = (date.Kind != DateTimeKind.Utc)
+                        dateTimePicker.Value = date.Kind != DateTimeKind.Utc
                             ? DateUtil.ToIsoDate(TypeResolver.Resolve<IDateConverter>().ToServerTime(date))
                             : DateUtil.ToIsoDate(date);
                     }
@@ -255,7 +319,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!string.IsNullOrEmpty(editor) && editor.IndexOf("rule", StringComparison.OrdinalIgnoreCase) > -1)
             {
-                string editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name+"_");
+                var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                 Sitecore.Context.ClientPage.ServerProperties[editorId] = value;
 
                 var rulesBorder = new Border
@@ -264,7 +328,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     ID = editorId
                 };
 
-                Button rulesEditButton = new Button
+                var rulesEditButton = new Button
                 {
                     Header = Texts.PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule,
                     Class = "scButton edit-button rules-edit-button",
@@ -298,7 +362,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (value is IEnumerable<object>)
                 {
-                    List<Item> items = (value as IEnumerable<object>).Cast<Item>().ToList();
+                    var items = (value as IEnumerable<object>).Cast<Item>().ToList();
                     item = items.FirstOrDefault();
                     strValue = string.Join("|", items.Select(i => i.ID.ToString()).ToArray());
                 }
@@ -376,7 +440,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 treeList.Class += " treePicker";
                 return treeList;
             }
-            if (type == typeof (Item) ||
+            if (type == typeof(Item) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("item", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var item = value as Item;
@@ -414,13 +478,15 @@ namespace Cognifide.PowerShell.Client.Applications
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
                     Value = item != null ? item.ID.ToString() : string.Empty,
                     DataContext = dataContext.ID,
-                    AllowNone = !string.IsNullOrEmpty(editor) && (editor.IndexOf("allownone", StringComparison.OrdinalIgnoreCase) > -1)
+                    AllowNone =
+                        !string.IsNullOrEmpty(editor) &&
+                        (editor.IndexOf("allownone", StringComparison.OrdinalIgnoreCase) > -1)
                 };
                 treePicker.Class += " treePicker";
                 return treePicker;
             }
 
-            if (type == typeof (bool) ||
+            if (type == typeof(bool) ||
                 (!string.IsNullOrEmpty(editor) && (editor.IndexOf("bool", StringComparison.OrdinalIgnoreCase) > -1)))
             {
                 var checkboxBorder = new Border
@@ -451,7 +517,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     picker.Style.Add("float", "left");
                     picker.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                     picker.Class += " scContentControl textEdit clr" + value.GetType().Name;
-                    picker.Value = (value is IEnumerable<object>) ? String.Join("|", ((IEnumerable<object>)value).Select(x => x.ToString()).ToArray()) : value.ToString();
+                    picker.Value = value is IEnumerable<object>
+                        ? string.Join("|", ((IEnumerable<object>) value).Select(x => x.ToString()).ToArray())
+                        : value.ToString();
                     picker.ExcludeRoles = !showRoles;
                     picker.ExcludeUsers = !showUsers;
                     picker.DomainName = variable["Domain"] as string ?? variable["DomainName"] as string;
@@ -474,7 +542,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var placeholder = variable["Placeholder"];
                 if (placeholder is string)
                 {
-                edit.Attributes.Add("Placeholder", placeholder.ToString());
+                    edit.Attributes.Add("Placeholder", placeholder.ToString());
                 }
             }
             else if (variable["Options"] != null)
@@ -547,10 +615,13 @@ namespace Cognifide.PowerShell.Client.Applications
                         var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
                         var link =
                             new Literal(
-                                @"<div class='checkListActions'>"+
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id="+ editorId + @")')"">" + Translate.Text("Select all") + "</a> &nbsp;|&nbsp; " +
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" + editorId + @")')"">" + Translate.Text("Unselect all") + "</a> &nbsp;|&nbsp;" +
-                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" + editorId + @")')"">" + Translate.Text("Invert selection") + "</a>" +
+                                @"<div class='checkListActions'>" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:checkall(id=" +
+                                editorId + @")')"">" + Translate.Text("Select all") + "</a> &nbsp;|&nbsp; " +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:uncheckall(id=" +
+                                editorId + @")')"">" + Translate.Text("Unselect all") + "</a> &nbsp;|&nbsp;" +
+                                @"<a href='#' class='scContentButton' onclick=""javascript:return scForm.postEvent(this,event,'checklist:invert(id=" +
+                                editorId + @")')"">" + Translate.Text("Invert selection") + "</a>" +
                                 @"</div>");
                         checkBorder.Controls.Add(link);
                         var checkList = new PSCheckList
@@ -567,7 +638,10 @@ namespace Cognifide.PowerShell.Client.Applications
                         }
                         else if (value is IEnumerable)
                         {
-                            values = ((value as IEnumerable).Cast<object>().Select(s => s == null ? "" : s.ToString())).ToArray();
+                            values =
+                                (value as IEnumerable).Cast<object>()
+                                    .Select(s => s == null ? "" : s.ToString())
+                                    .ToArray();
                         }
                         else
                         {
@@ -628,7 +702,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     edit = new PasswordExtended();
                     if (placeholder is string)
                     {
-                        ((PasswordExtended)edit).PlaceholderText = placeholder.ToString();
+                        ((PasswordExtended) edit).PlaceholderText = placeholder.ToString();
                     }
                 }
                 else
@@ -636,12 +710,12 @@ namespace Cognifide.PowerShell.Client.Applications
                     edit = new EditExtended();
                     if (placeholder is string)
                     {
-                        ((EditExtended)edit).PlaceholderText = placeholder.ToString();
+                        ((EditExtended) edit).PlaceholderText = placeholder.ToString();
                     }
                 }
             }
-            var tip = (variable["Tooltip"] as string);
-            if (!String.IsNullOrEmpty(tip))
+            var tip = variable["Tooltip"] as string;
+            if (!string.IsNullOrEmpty(tip))
             {
                 edit.ToolTip = tip.RemoveHtmlTags();
             }
@@ -669,37 +743,72 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected void OKClick()
         {
+
             var sid = WebUtil.GetQueryString("sid");
             var mandatoryVariables = MandatoryVariables.Split(',').ToList();
 
             var scriptVariables = GetVariableValues();
-            var violatingVariables = new List<string>();
+            var varsHashtable = new Hashtable();
+            var canClose = true;
+            var fieldValidators = FieldValidators;
+            if (!Validator.IsNullOrEmpty())
+            {
+                foreach (var variable in scriptVariables)
+                {
+                    varsHashtable.Add(variable["Name"], variable);
+                }
+                using (var session = ScriptSessionManager.GetSession(string.Empty))
+                {
+                    session.SetVariable("Variables", varsHashtable);
+                    session.ExecuteScriptPart(Validator);
+                }
+            }
 
-            foreach (Hashtable variable in scriptVariables)
+            foreach (var variable in scriptVariables)
             {
                 var name = variable["Name"] as string;
                 if (string.IsNullOrEmpty(name)) continue;
 
-                var mandatory = mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
-                if (!mandatory) continue;
-                var title = (variable["Title"] as string)??name;
+                if (fieldValidators.ContainsKey(name))
+                {
+                    var fieldValidator = fieldValidators[name];
+                    using (var session = ScriptSessionManager.GetSession(string.Empty))
+                    {
+                        session.SetVariable("variable", variable);
+                        session.ExecuteScriptPart(fieldValidator);
+                    }
+                }
+
+                var error = variable["Error"] as string;
+                if (!string.IsNullOrEmpty(error))
+                {
+                    SheerResponse.SetInnerHtml($"var_{name}_validator", error);
+                    canClose = false;
+                    continue;
+                }
+                SheerResponse.SetInnerHtml($"var_{name}_validator", string.Empty);
+
+                if (!mandatoryVariables.Contains(name, StringComparer.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
                 var value = variable["Value"];
                 var valueType = value?.GetType().Name ?? "null";
 
                 switch (valueType)
                 {
-                    case ("String"):
+                    case "String":
                         if (!string.IsNullOrEmpty(value as string)) continue;
                         break;
-                    case ("String[]"):
-                        if ((value as String[]).Length > 0) continue;
+                    case "String[]":
+                        if ((value as string[]).Length > 0) continue;
                         break;
-                    case ("DateTime"):
-                        if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue) continue;
+                    case "DateTime":
+                        if ((DateTime) value != DateTime.MinValue && (DateTime) value != DateTime.MaxValue) continue;
                         break;
-                    case ("null"):
+                    case "null":
                         break;
-                    case ("List`1"):
+                    case "List`1":
                         if (value is List<Item>)
                         {
                             var itemList = value as List<Item>;
@@ -717,21 +826,15 @@ namespace Cognifide.PowerShell.Client.Applications
                     default:
                         continue;
                 }
-                violatingVariables.Add(title);
+                SheerResponse.SetInnerHtml($"var_{name}_validator", "Please provide a value.");
+                canClose = false;
             }
 
-            if (violatingVariables.Count == 1)
+            if (!canClose)
             {
-                SheerResponse.Alert($"\"{violatingVariables[0]}\" is mandatory.");
                 return;
             }
-            if (violatingVariables.Count > 1)
-            {
-                SheerResponse.Alert(
-                    $"{violatingVariables.Select(name => "\"" + name + "\"").Aggregate((accumulated, next) => accumulated + ", " + next)} are mandatory.");
-                return;
-            }
-            
+
             HttpContext.Current.Cache.Remove(sid);
             HttpContext.Current.Cache[sid] = scriptVariables;
             SheerResponse.SetDialogValue(sid);
@@ -750,7 +853,10 @@ namespace Cognifide.PowerShell.Client.Applications
                                 if (panel is Border)
                                     foreach (Sitecore.Web.UI.HtmlControls.Control editor in panel.Controls)
                                     {
-                                        GetEditorValue(editor, results);
+                                        if ("variableWrapper".IsSubstringOf(editor.Class))
+                                        {
+                                            GetEditorValue(editor, results);
+                                        }
                                     }
                 GetEditorValue(control, results);
             }
@@ -779,7 +885,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var controlId = control.ID;
             var parts = controlId.Split('_');
 
-            var result = new Hashtable(2) {{"Name", String.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray())}};
+            var result = new Hashtable(2) {{"Name", string.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray())}};
 
             var controlValue = control.Value;
             if (controlValue != null)
@@ -790,7 +896,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 else if (control is TreePicker)
                 {
-                    var picker = (control as TreePicker);
+                    var picker = control as TreePicker;
                     var contextID = picker.DataContext;
                     var context = (DataContext) DataContextPanel.FindControl(contextID);
                     result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
@@ -837,13 +943,13 @@ namespace Cognifide.PowerShell.Client.Applications
                             ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
                             : null);
                 }
-                else if (control is Border && ((Border)control).Class == "checkListWrapper")
+                else if (control is Border && ((Border) control).Class == "checkListWrapper")
                 {
                     var checkboxBorder = control as Border;
                     var checkList = checkboxBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
                     var values =
                         checkList?.Controls.Cast<Control>()
-                            .Where(item => (item is ChecklistItem))
+                            .Where(item => item is ChecklistItem)
                             .Cast<ChecklistItem>()
                             .Where(checkItem => checkItem.Checked)
                             .Select(checkItem => checkItem.Value)
@@ -854,9 +960,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     foreach (
                         var radioItem in
-                            control.Controls.OfType<Radiobutton>()
-                                .Select(item => item)
-                                .Where(radioItem => radioItem.Checked))
+                        control.Controls.OfType<Radiobutton>()
+                            .Select(item => item)
+                            .Where(radioItem => radioItem.Checked))
                     {
                         result.Add("Value", radioItem.Value);
                         break;
@@ -868,35 +974,35 @@ namespace Cognifide.PowerShell.Client.Applications
                     var type = GetClrTypeName(control.Class);
                     switch (type)
                     {
-                        case ("Int16"):
-                            result.Add("Value", Int16.Parse(value));
+                        case "Int16":
+                            result.Add("Value", short.Parse(value));
                             break;
-                        case ("Int32"):
-                            result.Add("Value", Int32.Parse(value));
+                        case "Int32":
+                            result.Add("Value", int.Parse(value));
                             break;
-                        case ("Int64"):
-                            result.Add("Value", Int64.Parse(value));
+                        case "Int64":
+                            result.Add("Value", long.Parse(value));
                             break;
-                        case ("UInt16"):
-                            result.Add("Value", UInt16.Parse(value));
+                        case "UInt16":
+                            result.Add("Value", ushort.Parse(value));
                             break;
-                        case ("UInt32"):
-                            result.Add("Value", UInt32.Parse(value));
+                        case "UInt32":
+                            result.Add("Value", uint.Parse(value));
                             break;
-                        case ("UInt64"):
-                            result.Add("Value", UInt64.Parse(value));
+                        case "UInt64":
+                            result.Add("Value", ulong.Parse(value));
                             break;
-                        case ("Byte"):
-                            result.Add("Value", Byte.Parse(value));
+                        case "Byte":
+                            result.Add("Value", byte.Parse(value));
                             break;
-                        case ("Single"):
-                            result.Add("Value", Single.Parse(value));
+                        case "Single":
+                            result.Add("Value", float.Parse(value));
                             break;
-                        case ("Double"):
-                            result.Add("Value", Double.Parse(value));
+                        case "Double":
+                            result.Add("Value", double.Parse(value));
                             break;
-                        case ("Decimal"):
-                            result.Add("Value", Decimal.Parse(value));
+                        case "Decimal":
+                            result.Add("Value", decimal.Parse(value));
                             break;
                         default:
                             result.Add("Value", value);
@@ -932,7 +1038,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void EditCondition(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            string id = args.Parameters["id"];
+            var id = args.Parameters["id"];
             if (string.IsNullOrEmpty(id))
             {
                 SheerResponse.Alert("Please select a rule");
@@ -941,7 +1047,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (!args.IsPostBack)
                 {
-                    string rule = Sitecore.Context.ClientPage.ServerProperties[id] as string;
+                    var rule = Sitecore.Context.ClientPage.ServerProperties[id] as string;
                     if (string.IsNullOrEmpty(rule))
                     {
                         rule = "<ruleset />";
@@ -971,8 +1077,8 @@ namespace Cognifide.PowerShell.Client.Applications
         private static string GetRuleConditionsHtml(string rule)
         {
             Assert.ArgumentNotNull(rule, "rule");
-            HtmlTextWriter output = new HtmlTextWriter(new StringWriter());
-            RulesRenderer renderer2 = new RulesRenderer(rule)
+            var output = new HtmlTextWriter(new StringWriter());
+            var renderer2 = new RulesRenderer(rule)
             {
                 SkipActions = true,
                 AllowMultiple = false
@@ -980,5 +1086,6 @@ namespace Cognifide.PowerShell.Client.Applications
             renderer2.Render(output);
             return output.InnerWriter.ToString();
         }
+
     }
 }

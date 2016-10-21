@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Management.Automation;
 using System.Web;
 using Cognifide.PowerShell.Client.Applications;
 using Sitecore;
-using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
+using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
@@ -17,7 +18,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         [NonSerialized] private readonly object[] parameters;
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName, bool showHints)
+            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator)
         {
             messageQueue = new MessageQueue();
             if (JobContext.IsJob)
@@ -32,6 +33,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             CancelButtonName = cancelButtonName ?? string.Empty;
             Description = description ?? string.Empty;
             ShowHints = showHints;
+            Validator = validator;
         }
 
         public object[] Parameters
@@ -47,6 +49,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string OkButtonName { get; private set; }
         public bool ShowHints { get; set; }
         public object Result { get; private set; }
+        public ScriptBlock Validator { get; private set; }
 
         /// <summary>
         ///     Starts the pipeline.
@@ -72,26 +75,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = false;
             }
 
-            HttpContext.Current.Cache[resultSig] = Parameters;
+            HttpContext.Current.Cache[resultSig] = this;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
-            if (!string.IsNullOrEmpty(Title))
-            {
-                urlString.Add("te", Title);
-            }
-            if (!string.IsNullOrEmpty(Description))
-            {
-                urlString.Add("ds", Description);
-            }
-            if (!string.IsNullOrEmpty(OkButtonName))
-            {
-                urlString.Add("ob", OkButtonName);
-            }
-            if (!string.IsNullOrEmpty(CancelButtonName))
-            {
-                urlString.Add("cb", CancelButtonName);
-            }
-            urlString.Add("sh", ShowHints ? "1" : "0");
             SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 

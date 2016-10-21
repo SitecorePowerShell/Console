@@ -27,6 +27,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public SwitchParameter ShowHints { get; set; }
 
+        [Parameter]
+        public ScriptBlock Validator { get; set; }
+
         protected override void ProcessRecord()
         {
             LogErrors(() =>
@@ -39,7 +42,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                 AssertDefaultSize(500, 300);
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
-                    OkButtonName, CancelButtonName, ShowHints);
+                    OkButtonName, CancelButtonName, ShowHints, Validator);
 
                 foreach (Hashtable result in Parameters)
                 {
