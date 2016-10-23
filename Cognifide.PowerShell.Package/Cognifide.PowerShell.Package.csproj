@@ -75,7 +75,7 @@ IF %25USERDOMAIN%25==DUNE (
 
 echo "Copy build for Mikey"
 IF EXIST C:\inetpub\wwwroot\Console (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
+    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\Websites\spe.dev.local\Website\bin\*.* /s /e /c /y
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

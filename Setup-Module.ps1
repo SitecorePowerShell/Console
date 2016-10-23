@@ -1,6 +1,6 @@
 ﻿$projectPath = "C:\Projects\sitecorepowershell\Trunk"
 if(-not (Test-Path -Path $projectPath)) {
-    $projectPath = "C:\inetpub\wwwroot\Console"
+    $projectPath = "C:\Websites\spe.dev.local"
 
     if(-not(Test-Path -Path $projectPath)) {
         Write-Error "The project path defined does not exist."

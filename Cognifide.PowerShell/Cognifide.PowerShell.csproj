@@ -76,11 +76,11 @@
     </Reference>
     <Reference Include="Sitecore.Analytics">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\bin\Sitecore.Analytics.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Client">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\bin\Sitecore.Client.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.Client.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch">
       <SpecificVersion>False</SpecificVersion>
@@ -92,7 +92,7 @@
     </Reference>
     <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\bin\Sitecore.Kernel.dll</HintPath>
+      <HintPath>$(LibrariesPath)\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Logging">
       <SpecificVersion>False</SpecificVersion>
@@ -659,9 +659,9 @@ IF %25USERDOMAIN%25==DUNE (
 
 echo "Copy build for Mikey"
 IF EXIST C:\inetpub\wwwroot\Console (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Console\Website\bin\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Console\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Console\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
+    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\Websites\spe.dev.local\Website\bin\*.* /s /e /c /y
+    xcopy $(ProjectDir)App_Config\Include\*.* C:\Websites\spe.dev.local\Website\App_Config\Include\*.* /s /e /c /y
+    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\Websites\spe.dev.local\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
