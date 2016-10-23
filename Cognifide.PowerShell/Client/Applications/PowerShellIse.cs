@@ -195,7 +195,8 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             ContextItemDb = Context.ContentDatabase.Name;
-            var contextItem = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath);
+            var contextItem = Context.ContentDatabase.GetItem(Context.Site.ContentStartPath) ??
+                              UIUtil.GetHomeItem(Context.User);
             ContextItemId = contextItem?.ID.ToString() ?? String.Empty;
 
             CurrentSessionId = DefaultSessionName;
