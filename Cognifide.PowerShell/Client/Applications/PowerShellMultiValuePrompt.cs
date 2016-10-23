@@ -757,11 +757,19 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     varsHashtable.Add(variable["Name"], variable);
                 }
-                using (var session = ScriptSessionManager.GetSession(string.Empty))
+                try
                 {
-                    session.SetVariable("Variables", varsHashtable);
-                    session.ExecuteScriptPart(Validator);
+                    using (var session = ScriptSessionManager.GetSession(string.Empty))
+                    {
+                        session.SetVariable("Variables", varsHashtable);
+                        session.ExecuteScriptPart(Validator);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    PowerShellLog.Error("Error while running form validation script.", ex);
+                }
+
             }
 
             foreach (var variable in scriptVariables)
@@ -772,10 +780,17 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (fieldValidators.ContainsKey(name))
                 {
                     var fieldValidator = fieldValidators[name];
-                    using (var session = ScriptSessionManager.GetSession(string.Empty))
+                    try
                     {
-                        session.SetVariable("variable", variable);
-                        session.ExecuteScriptPart(fieldValidator);
+                        using (var session = ScriptSessionManager.GetSession(string.Empty))
+                        {
+                            session.SetVariable("variable", variable);
+                            session.ExecuteScriptPart(fieldValidator);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PowerShellLog.Error($"Error while validating variable: {name}",ex);
                     }
                 }
 
