@@ -1,7 +1,7 @@
 # This is where your git-hub repository is located
 $projectPath = "C:\Projects\sitecorepowershell\Trunk"
 if(-not (Test-Path -Path $projectPath)) {
-    $projectPath = "C:\inetpub\wwwroot\Console"
+    $projectPath = "C:\Websites\spe.dev.local"
 
     if(-not(Test-Path -Path $projectPath)) {
         Write-Error "The project path defined does not exist."
@@ -19,7 +19,7 @@ $sites = @{Path = "C:\inetpub\wwwroot\sxa"; Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore71"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore72"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"},
-         @{Path = "C:\inetpub\wwwroot\Console"; Version="8"};
+         @{Path = "C:\Websites\spe.dev.local"; Version="8"};
 
 #Set the below to true to remove junction points only and not set them back
 $removeOnly = $false
