@@ -13,17 +13,42 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 387
+content-length: 1243
 
-foreach($index in [Sitecore.ContentSearch.ContentSearchManager]::Indexes) {
-    if($index.Name -eq $actionData.Index) {
-        Write-Log "Rebuilding the $($index.Name) search index."
-        $time = Measure-Command {
-            $index.Rebuild()
-        }
-        Write-Log "Completed rebuilding the $($index.Name) search index in $($time.TotalSeconds) seconds."        
-    }
+<#
+    .SYNOPSIS
+        Rebuilds search index.
+        
+    .NOTES
+        Michael West, Adam Najmanowicz 
+        https://gist.github.com/michaellwest/4118c8c285fcaf927e98
+#>
+
+$indexName  = $allData | select -first 1 | %{ $_.Fields["_indexname"] }
+if($indexName){
+    $index = Get-SearchIndex -Name $indexName
 }
+
+if(!$index){
+    $index = Get-SearchIndex -Name "*list*" | Select-Object -first 1
+}
+
+Write-Log "Rebuilding the $($index.Name) search index."
+$time = Measure-Command {
+    Write-Progress "Rebuilding the $($index.Name) search index."
+    Initialize-SearchIndex -Index $index
+    $job = [Sitecore.Jobs.JobManager]::GetJobs() | Where-Object { !$_.IsDone -and $_.Name -match ($index.Name) } | Select -First 1
+    while(!$job.IsDone){
+        Write-Progress -Activity "Rebuilding index: $($index.Name)" `
+            -Status "Indexing job is $($job.Status.State). Processed $($job.Status.Processed) documents"
+        Start-Sleep -Seconds 1
+    }
+    Write-Log "Completed rebuilding the $($index.Name) search index in $($time.TotalSeconds) seconds."        
+}
+Write-Progress -Activity "Index rebuild complete." -Status "Done"
+Start-Sleep -Seconds 1
+Write-Progress -Activity "."  -Status "."-Completed
+
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -34,7 +59,7 @@ Office/32x32/rebuild_index.png
 ----version----
 language: en
 version: 1
-revision: 5a47e2da-e772-410d-ba77-2028e70a082e
+revision: 32d897b6-4071-407f-9888-24d800fbcb41
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -49,14 +74,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-5a47e2da-e772-410d-ba77-2028e70a082e
+32d897b6-4071-407f-9888-24d800fbcb41
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150627T230856:635710433369898825
+20161024T133203
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
