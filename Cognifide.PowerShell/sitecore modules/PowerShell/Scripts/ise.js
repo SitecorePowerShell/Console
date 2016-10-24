@@ -428,11 +428,13 @@
 
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
-            var resultsHeight =$ise(window).height() -$ise("#ResultsSplitter").height() - $ise("#ResultsSplitter").height()-$ise("#StatusBar").height()-$ise("#CodeEditor").height()-$ise("#RibbonPanel").height()-resultsBottomOffset;
-	    $ise("#Result").height(resultsHeight);
-	    $ise("#Result").width($ise(window).width()-$ise("#Result").offset().left*2)
-
+            var resultsHeight =$ise(window).height() -$ise("#ResultsSplitter").offset().top - $ise("#ResultsSplitter").height() - $ise("#StatusBar").height() - resultsBottomOffset - 10;
+	        $ise("#Result").height(resultsHeight);
+	        $ise("#Result").width($ise(window).width()-$ise("#Result").offset().left*2)
+            $ise("#ProgressOverlay").css("top",($ise("#Result").offset().top+4)+"px");
+            $ise("#ResultsClose").css("top", ($ise("#Result").offset().top + 4) + "px");
         };
+
 
         cognifide.powershell.restoreResults = function() {
             $("#ResultsSplitter").show();

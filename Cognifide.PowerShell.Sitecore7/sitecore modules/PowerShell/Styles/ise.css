@@ -230,7 +230,7 @@ a.ps-link {
 }
 
 #ResultsClose:active {
-    position: relative;
+    position: absolute;
     top: 1px;
 }
 
@@ -239,6 +239,10 @@ a.ps-link {
     padding: 0 4px 0 4px;
 }
 
+#Result {
+    position: fixed;
+    bottom:25px;
+}
 
 #HelpClose {
     font-size: 18px;
@@ -263,7 +267,13 @@ a.ps-link {
 
 #ProgressOverlay #progressbar {
     margin-top: 8px;
-    width: 100%
+    width: 100%;
+}
+
+#ProgressOverlay {
+    left: 4px;
+    right:44px;
+    border-radius: 15px;
 }
 
 #OperationProgress {
