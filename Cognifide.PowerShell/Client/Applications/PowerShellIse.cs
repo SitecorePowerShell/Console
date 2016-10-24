@@ -174,7 +174,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Monitor = (SpeJobMonitor) Context.ClientPage.FindControl("Monitor");
                 }
             }
-
+            Monitor.JobFinished += MonitorOnJobFinished;
             if (Context.ClientPage.IsEvent)
                 return;
 
@@ -647,7 +647,6 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
                 SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
-                ScriptResult.Visible = true;
             }
         }
 
@@ -689,44 +688,38 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
             ScriptRunning = false;
-            UpdateResults(args);
         }
 
-        [HandleMessage("psr:updateresults", true)]
-        protected virtual void UpdateResults(ClientPipelineArgs args)
+        private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
         {
-            var job = JobManager.GetJob(Monitor.JobHandle);
-            var result = job?.Status?.Result as RunnerOutput;
+            var args = eventArgs as SessionCompleteEventArgs;
+            var result = args.RunnerOutput;
             if (result != null)
             {
                 PrintSessionUpdate(result.Output);
             }
 
-            if(result?.Exception !=null)
+            if (result?.Exception != null)
             {
                 var error = ScriptSession.GetExceptionString(result.Exception, ScriptSession.ExceptionStringFormat.Html);
                 PrintSessionUpdate($"<pre style='background:red;'>{error}</pre>");
             }
-            Context.ClientPage.ClientResponse.SetInnerHtml("PleaseWait", "");
-            Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(false);}");
+            SheerResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
-            ScriptResult.Visible = true;
             ScriptRunning = false;
             UpdateRibbon();
+            SheerResponse.Eval("cognifide.powershell.scriptExecutionEnded()");
         }
 
         [HandleMessage("ise:updateprogress", true)]
         protected virtual void UpdateProgress(ClientPipelineArgs args)
         {
-            var showProgress =
+            var showProgress = ScriptRunning &&
                 !string.Equals(args.Parameters["RecordType"], "Completed", StringComparison.OrdinalIgnoreCase);
-            //ScriptResult.Visible = !showProgress;
             ProgressOverlay.Visible = showProgress;
             var sb = new StringBuilder();
             if (showProgress)
             {
-                ProgressOverlay.Visible = true;
-
                 sb.AppendFormat("<h2>{0}</h2>", args.Parameters["Activity"]);
                 if (!string.IsNullOrEmpty(args.Parameters["StatusDescription"]))
                 {

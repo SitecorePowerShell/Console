@@ -671,7 +671,14 @@ namespace Cognifide.PowerShell.Core.Host
                 TryInvokeInRunningSession("quit");
             }
             PowerShellLog.Info($"Aborting script execution in ScriptSession '{Key}'.");
-            powerShell?.Stop();
+            try
+            {
+                powerShell?.Stop();
+            }
+            catch (Exception ex)
+            {
+                PowerShellLog.Error($"Error while aborting script execution in ScriptSession '{Key}'.", ex);
+            }
             abortRequested = true;
         }
 

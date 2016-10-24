@@ -236,13 +236,12 @@ namespace Cognifide.PowerShell.Client.Applications
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
                     var percentComplete = Int32.Parse(CurrentProgressValue.Text);
-                    SheerResponse.Eval(
-                        string.Format(@"updateProgress('#progressbar',{0});", percentComplete));
+                    SheerResponse.Eval($@"updateProgress('#progressbar',{percentComplete});");
                     PreviousProgressValue.Text = CurrentProgressValue.Text;
                 }
             }
+            Monitor.JobFinished += MonitorOnJobFinished;
         }
-
 
         [HandleMessage("psr:execute", true)]
         protected virtual void Execute(ClientPipelineArgs args)
@@ -271,12 +270,11 @@ namespace Cognifide.PowerShell.Client.Applications
             scriptSession.ExecuteScriptPart(script);
         }
 
-
-        [HandleMessage("psr:updateresults", true)]
-        protected virtual void UpdateResults(ClientPipelineArgs args)
+        private void MonitorOnJobFinished(object sender, EventArgs e)
         {
-            var job = JobManager.GetJob(Monitor.JobHandle);
-            var result = (RunnerOutput) job.Status.Result;
+            var args = e as SessionCompleteEventArgs;
+            var result = args.RunnerOutput;
+
             var printResults = result?.Output ??
                                Texts.PowerShellRunner_UpdateResults_Script_finished___no_results_to_display_;
             if (result?.Exception != null)
@@ -289,26 +287,27 @@ namespace Cognifide.PowerShell.Client.Applications
             SitecoreVersion.V80
                 .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
                 .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
-            
-            if (result != null)
-            {
-                SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
-                    (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
-                    result.HasErrors.ToString().ToLowerInvariant()));
-            }
+
+            SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
+                (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
+                result.HasErrors.ToString().ToLowerInvariant()));
+
             Title.Text = "Done!";
             OkButton.Visible = true;
             AbortButton.Visible = false;
             Monitor.SessionID = string.Empty;
-            if (result != null && result.CloseRunner)
-            {
-                if (Closed != null)
-                {
-                    Closed.Text = "close";
-                }
 
-                OkClick();
+            if (!result.CloseRunner)
+            {
+                return;
             }
+
+            if (Closed != null)
+            {
+                Closed.Text = "close";
+            }
+
+            OkClick();
         }
 
         [HandleMessage("psr:close", true)]

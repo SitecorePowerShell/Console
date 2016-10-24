@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Web;
+using Cognifide.PowerShell.Client.Applications;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
@@ -106,7 +107,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         iMessage.Execute();
                         if (iMessage is CompleteMessage)
                         {
-                            OnJobFinished();
+                            OnJobFinished((iMessage as CompleteMessage).RunnerOutput);
                             return;
                         }
                     }
@@ -124,10 +125,11 @@ namespace Cognifide.PowerShell.Client.Controls
         /// <summary>
         ///     Stops monitoring the job and fires up <see cref="E:Sitecore.Jobs.AsyncUI.JobMonitor.JobFinished" /> event.
         /// </summary>
-        private void OnJobFinished()
+        private void OnJobFinished(RunnerOutput runnerOutput)
         {
             JobHandle = Handle.Null;
-            JobFinished?.Invoke(this, EventArgs.Empty);
+            var eventArgs = new SessionCompleteEventArgs {RunnerOutput = runnerOutput};
+            JobFinished?.Invoke(this, eventArgs);
         }
 
         public void Start(string name, string category, ThreadStart task, Language language = null, User user = null,
@@ -185,8 +187,6 @@ namespace Cognifide.PowerShell.Client.Controls
             public void Run()
             {
                 task();
-                JobContext.MessageQueue.PutMessage(new CompleteMessage());
-                //JobContext.MessageQueue.GetResult();
             }
         }
     }

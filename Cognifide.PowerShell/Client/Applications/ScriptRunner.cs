@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Sitecore;
@@ -36,7 +37,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 Method(Session, Script);
                 if (Context.Job == null) return;
 
-                Context.Job.Status.Result = new RunnerOutput
+                var output = new RunnerOutput
                 {
                     Exception = null,
                     Output = Session.Output.GetHtmlUpdate(),
@@ -44,9 +45,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     CloseRunner = Session.CloseRunner
                 };
 
-                JobContext.PostMessage("psr:updateresults");
-                JobContext.Flush();
-
+                Context.Job.Status.Result = output;
+                var message = new CompleteMessage {RunnerOutput = output};
+                JobContext.MessageQueue.PutMessage(message);
             }
             catch (ThreadAbortException taex)
             {
@@ -62,7 +63,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 if (Context.Job != null)
                 {
-                    Context.Job.Status.Result = new RunnerOutput
+                    var output =  new RunnerOutput
                     {
                         Exception = exc,
                         Output = Session.Output.GetHtmlUpdate(),
@@ -70,8 +71,9 @@ namespace Cognifide.PowerShell.Client.Applications
                         CloseRunner = Session.CloseRunner
                     };
 
-                    JobContext.PostMessage("psr:updateresults");
-                    JobContext.Flush();
+                    Context.Job.Status.Result = output;
+                    var message = new CompleteMessage { RunnerOutput = output };
+                    JobContext.MessageQueue.PutMessage(message);
                 }
             }
             finally

@@ -76,6 +76,15 @@ namespace Cognifide.PowerShell.Client.Applications
             set { Context.ClientPage.ServerProperties["ScriptSessionId"] = value; }
         }
 
+        /// <summary>
+        ///     Indicates the window needs to be closed after the script finishes executing
+        /// </summary>
+        public bool CloseRunner
+        {
+            get { return StringUtil.GetString(ServerProperties["CloseRunner"]) == "1"; }
+            set { ServerProperties["CloseRunner"] = value ? "1" : ""; }
+        }
+
         public CommandContext GetCommandContext()
         {
             var itemNotNull = Sitecore.Client.CoreDatabase.GetItem("{98EF2F7D-C17A-4A53-83A8-0EA2C0517AD6}");
@@ -153,6 +162,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Monitor = (SpeJobMonitor) Context.ClientPage.FindControl("Monitor");
                 }
             }
+            Monitor.JobFinished += MonitorOnJobFinished;
 
             if (Context.ClientPage.IsEvent)
                 return;
@@ -194,13 +204,11 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
         }
 
-        [HandleMessage("psr:updateresults", true)]
-        protected virtual void UpdateResults(ClientPipelineArgs args)
+        private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
         {
-            var job = JobManager.GetJob(Monitor.JobHandle);
-            var result = (RunnerOutput) job.Status.Result;
-
-            if (result.CloseRunner)
+            var args = eventArgs as SessionCompleteEventArgs;
+            var result = args?.RunnerOutput;
+            if (result?.CloseRunner ?? false)
             {
                 Sitecore.Shell.Framework.Windows.Close();
             }

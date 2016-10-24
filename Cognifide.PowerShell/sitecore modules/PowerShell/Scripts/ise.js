@@ -397,6 +397,12 @@
             cognifide.powershell.clearBreakpoints();
         };
 
+        cognifide.powershell.scriptExecutionEnded = function () {
+            if (cognifide.powershell.preventCloseWhenRunning) {
+                cognifide.powershell.preventCloseWhenRunning(false);
+            }
+        };
+
         cognifide.powershell.clearBreakpoints = function() {
             var breakPoints = Object.keys(codeeditor.session.getBreakpoints());
             var bpCount = breakPoints.length;

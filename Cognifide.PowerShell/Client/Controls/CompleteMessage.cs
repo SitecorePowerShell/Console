@@ -1,8 +1,10 @@
-﻿using Sitecore.Jobs.AsyncUI;
+﻿using Cognifide.PowerShell.Client.Applications;
+using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Client.Controls
 {
-    internal class CompleteMessage : FlushMessage
+    public class CompleteMessage : FlushMessage
     {
+        public RunnerOutput RunnerOutput { get; set; }
     }
 }
