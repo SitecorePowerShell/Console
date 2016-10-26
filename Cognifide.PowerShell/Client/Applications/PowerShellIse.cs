@@ -225,7 +225,9 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (context.Parameters.AllKeys.Contains("currLang"))
             {
-                context.Parameters["currLang"] = CurrentLanguage;
+                context.Parameters["currLang"] = CurrentLanguage == DefaultLanguage
+                    ? Context.Language.Name
+                    : CurrentLanguage;
             }
             Dispatcher.Dispatch(message, context);
         }
