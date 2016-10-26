@@ -230,13 +230,16 @@ a.ps-link {
 }
 
 #ResultsClose:active {
-    position: absolute;
     top: 1px;
 }
 
 #ResultsSplitter {
     background: url(/sitecore%20modules/PowerShell/Assets/Splitter.png) no-repeat center;
     padding: 0 4px 0 4px;
+}
+
+#ResultsClose { 
+    position: fixed;
 }
 
 #Result {
