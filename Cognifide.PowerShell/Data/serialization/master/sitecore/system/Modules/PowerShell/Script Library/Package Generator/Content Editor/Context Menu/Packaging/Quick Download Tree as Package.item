@@ -8,6 +8,7 @@ name: Quick Download Tree as Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20160914T194849:636094793299930000
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -29,7 +30,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1370
+content-length: 2232
 
 Import-Function Resolve-Error
 
@@ -41,14 +42,28 @@ $version = $item.Version
 $Author = [Sitecore.Context]::User.Profile.FullName;
 $Publisher = [Sitecore.SecurityModel.License.License]::Licensee
 
+$installModeOptions = [ordered]@{
+    "Merge" = "Merge";
+    "Skip" = "Skip";
+    "Side By Side" = "SideBySide"
+};
+
+$mergeModeOptions = [ordered]@{
+    "Merge" = "Merge"
+    "Clear" = "Clear";
+    "Append" = "Append";
+};
+
 $result = Read-Variable -Parameters `
-    @{ Name = "packageName"; Title="Package Name"}, `
-    @{ Name = "Author"}, `
-    @{ Name = "Publisher"}, `
-    @{ Name = "Version"}, `
-    @{ Name = "Readme"; Title="Read me"; Lines=10} `
+    @{ Name = "packageName"; Title="Package Name"; Tab="Package Metadata"}, `
+    @{ Name = "Author"; Tab="Package Metadata"}, `
+    @{ Name = "Publisher"; Tab="Package Metadata"}, `
+    @{ Name = "Version"; Tab="Package Metadata"}, `
+    @{ Name = "Readme"; Title="Read me"; Lines=10; Tab="Package Metadata"}, `
+    @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"; Tab="Installation Options"}, `
+    @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"} `
     -Description "This Tool allows you to download the item tree as a package quickly." `
-    -Title "Download Tree as package" -Width 600 -Height 600
+    -Title "Download Tree as package" -Width 600 -Height 700 -ShowHints
 
 Resolve-Error
 if($result -ne "ok")
@@ -64,7 +79,9 @@ $package.Metadata.Publisher = $Publisher;
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = $Readme;
 
-$source = Get-Item . | New-ItemSource -Name "$path" -InstallMode Overwrite -MergeMode Merge
+$InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
+
+$source = Get-Item . | New-ItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
 $package.Sources.Add($source);
 
 $packageFileName = "$packageName-$version.zip";
@@ -83,7 +100,7 @@ Software/16x16/compress.png
 ----version----
 language: en
 version: 1
-revision: a32a6d1c-7923-473e-bf58-ac02cf198f57
+revision: 6c195f64-6846-43a6-a7e4-dde0b1fb5fa0
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -98,14 +115,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a32a6d1c-7923-473e-bf58-ac02cf198f57
+6c195f64-6846-43a6-a7e4-dde0b1fb5fa0
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160410T084953
+20161020T214842Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -8,6 +8,7 @@ name: Add Item to Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20160914T194849:636094793292670000
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -35,11 +36,40 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 219
+content-length: 1162
+
+Import-Function Resolve-Error
+
+$installModeOptions = [ordered]@{
+    "Merge" = "Merge";
+    "Skip" = "Skip";
+    "Side By Side" = "SideBySide"
+};
+
+$mergeModeOptions = [ordered]@{
+    "Merge" = "Merge"
+    "Clear" = "Clear";
+    "Append" = "Append";
+};
+
+$result = Read-Variable -Parameters `
+    @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
+    @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"} `
+    -Description "Set installation options for this package source." `
+    -Title "Installation options" -ShowHints
+
+Resolve-Error
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
 
 # Add Single Item 
+$InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
+
 $path = Get-Item . | ForEach-Object { $_.ProviderPath } 
-$source = Get-Item . | New-ExplicitItemSource -Name "$path" -InstallMode Overwrite -MergeMode Merge
+$source = Get-Item . | New-ExplicitItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
 $package.Sources.Add($source);
 Close-Window
 ----field----
@@ -66,29 +96,29 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: bb4b3d68-43af-455e-8b4b-0cd52c300a5a
+revision: 58ce843f-5b73-42ff-9918-378e8b1df13d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20130919T134300
+20130919T124300Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-bb4b3d68-43af-455e-8b4b-0cd52c300a5a
+58ce843f-5b73-42ff-9918-378e8b1df13d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20130919T170456:635152070964360938
+20161027T225132Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

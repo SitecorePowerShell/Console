@@ -8,6 +8,7 @@ name: Add Tree to Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20160914T194849:636094793294930000
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -35,12 +36,82 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 206
+content-length: 2386
 
-# Item branch
-$path = Get-Item . | ForEach-Object { $_.ProviderPath } 
-$source = Get-Item . | New-ItemSource -Name "$path" -InstallMode Overwrite -MergeMode Merge
-$package.Sources.Add($source);
+Import-Function Resolve-Error
+
+Function Add-ItemToPackage {
+    param (
+        $Package, 
+        $Item,
+        $IncludeDescendants
+    )
+    
+    $path = $Item.ProviderPath
+    
+    if ($IncludeDescendants) {
+        $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+    } else {
+        $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+    }
+    
+    $Package.Sources.Add($source);
+    
+    return $Package
+}
+
+$rootOptions = [ordered]@{
+    "Root and descendants" = "RootAndDescendants";
+    "Root and children" = "RootAndChildren";
+    "Descendants only" = "DescendantsOnly";
+    "Children only" = "ChildrenOnly";
+};
+
+$installModeOptions = [ordered]@{
+    "Merge" = "Merge";
+    "Skip" = "Skip";
+    "Side By Side" = "SideBySide"
+};
+
+$mergeModeOptions = [ordered]@{
+    "Merge" = "Merge"
+    "Clear" = "Clear";
+    "Append" = "Append";
+};
+
+$result = Read-Variable -Parameters `
+    @{ Name = "IncludeItems"; Title="Items to include in package"; Options=$rootOptions; Value="RootAndDescendants"; Editor="radio" }, `
+    @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
+    @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"} `
+    -Description "Set installation options for this package source." `
+    -Title "Installation options" -ShowHints
+
+Resolve-Error
+if($result -ne "ok")
+{
+    Close-Window
+    Exit
+}
+
+$InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
+
+
+if ($IncludeItems -eq "RootAndDescendants") {
+    
+    $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $True
+}
+else
+{
+    if ($IncludeItems -eq "RootAndChildren") {
+        $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $False
+    }
+    
+    # Iterate over the children and either add to include descendants or just themselves
+    Get-ChildItem . | % {
+        $package = Add-ItemToPackage -Package $package -Item $_ -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
+    }
+}
+
 Close-Window
 ----field----
 field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
@@ -59,29 +130,29 @@ Software/16x16/branch_add.png
 ----version----
 language: en
 version: 1
-revision: 47f8efba-e858-46b7-b923-a11e3f346966
+revision: 45c1550c-479b-4586-baff-57fd41fdcda5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20130919T134500
+20130919T124500Z
 ----field----
 field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
 name: __Revision
 key: __revision
 content-length: 36
 
-47f8efba-e858-46b7-b923-a11e3f346966
+45c1550c-479b-4586-baff-57fd41fdcda5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160410T084001
+20161027T225113Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
