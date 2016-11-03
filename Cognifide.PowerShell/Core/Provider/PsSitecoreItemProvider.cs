@@ -22,6 +22,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Exceptions;
 using Sitecore.Globalization;
+using Sitecore.StringExtensions;
 using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Core.Provider
@@ -571,6 +572,13 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
                     path, itemTypeName, newItemValue);
+                if (itemTypeName.IsNullOrEmpty())
+                {
+                    WriteError(
+                        new ErrorRecord(new InvalidOperationException("Template not provided, please specify -ItemType"),
+                            ErrorIds.TemplateNotFound.ToString(), ErrorCategory.InvalidType, path));
+                    return;
+                }
 
                 var templateItem = TemplateUtils.GetFromPath(itemTypeName, PSDriveInfo.Name);
 
