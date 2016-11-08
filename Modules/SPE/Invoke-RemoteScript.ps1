@@ -143,13 +143,11 @@ function Invoke-RemoteScript {
     if ($invokeWithArguments) {
         if(!$Arguments) { $Arguments = @{} }
 
-        $command = "Invoke-Command -ScriptBlock ({$(Convert-UsingScript $scriptBlock)}) -ArgumentList "
-        $variableNames = @()
+        $command = $ScriptBlock.ToString()
         foreach($usingVarValue in $usingVariableValues) {
             $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $variableNames += "`$params.$($usingVarValue.NewName.TrimStart('$'))"
+            $command = $command.Replace($usingVarValue.Name, "`$params.$($usingVarValue.NewName.TrimStart('$'))")
         }
-        $command += ($variableNames -join ",")
 
         $newScriptBlock = $command
     } else {
