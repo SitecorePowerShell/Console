@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 12103
+content-length: 13585
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -46,6 +46,12 @@ $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Debug\Script\Step Over' = 'Office/32x32/arrow_around.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Debug\Script\Stop' = 'Office/32x32/sign_stop.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'Office/32x32/selection_recycle.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Languages\Current language' = 'Office/32x32/sign_forbidden.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Languages\More Languages' = 'Office/16x16/globe.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Users\Current user' = 'Office/32x32/sign_forbidden.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Users\More Users' = 'Office/32x32/users3.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\ContextEx\UserLanguageContextPanel\Language' = 'Office/32x32/flag_generic.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\ContextEx\UserLanguageContextPanel\User' = 'Office/32x32/user.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Office/32x32/nav_right.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Office/32x32/rebuild_index.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Office/32x32/nav_refresh.png';
@@ -92,6 +98,12 @@ $icons7 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Debug\Script\Step Over' = 'Software/32x32/element_next.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Debug\Script\Stop' = 'Software/32x32/element_stop.png';
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Sessions\ISE editing session' = 'People/32x32/cpu_edit.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Languages\Current language' = 'Core2/32x32/cross.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Languages\More Languages' = 'Flags/32x32/flag_generic.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Users\Current user' = 'Core2/32x32/cross.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Menus\Users\More Users' = 'People/48x48/users1.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\ContextEx\UserLanguageContextPanel\Language' = 'Office/32x32/flag_generic.png';
+'core:\content\Applications\PowerShell\PowerShellIse\Ribbon\Script\ContextEx\UserLanguageContextPanel\User' = 'People/48x48/users1.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open' = 'Control/16x16/treeview.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Rebuild' = 'Applications/32x32/exchange.png';
 'master:/system/Modules/PowerShell/Script Library/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Refresh' = 'Applications/32x32/refresh.png';
@@ -144,7 +156,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: fa7a3ce6-54cb-463e-844f-c1dfedec9a84
+revision: 22fd9aeb-4104-4aa2-8d9f-c19408d98792
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -159,14 +171,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-fa7a3ce6-54cb-463e-844f-c1dfedec9a84
+22fd9aeb-4104-4aa2-8d9f-c19408d98792
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160810T171755
+20161109T160220
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

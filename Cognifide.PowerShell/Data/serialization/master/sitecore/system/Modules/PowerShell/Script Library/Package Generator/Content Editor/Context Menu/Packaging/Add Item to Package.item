@@ -8,7 +8,6 @@ name: Add Item to Package
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
-created: 20160914T194849:636094793292670000
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
