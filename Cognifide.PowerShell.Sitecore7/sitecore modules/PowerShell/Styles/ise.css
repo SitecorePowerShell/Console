@@ -219,7 +219,7 @@ a.ps-link {
     width: 24px;
     z-index: 10;
     position: absolute;
-    right: 0;
+    right: 4px;
     top: 0;
 }
 
@@ -230,13 +230,16 @@ a.ps-link {
 }
 
 #ResultsClose:active {
-    position: absolute;
     top: 1px;
 }
 
 #ResultsSplitter {
     background: url(/sitecore%20modules/PowerShell/Assets/Splitter.png) no-repeat center;
     padding: 0 4px 0 4px;
+}
+
+#ResultsClose { 
+    position: fixed;
 }
 
 #Result {
@@ -271,7 +274,7 @@ a.ps-link {
 }
 
 #ProgressOverlay {
-    left: 4px;
+    left: 8px;
     right:44px;
     border-radius: 15px;
 }
