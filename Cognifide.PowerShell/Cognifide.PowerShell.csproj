@@ -142,6 +142,7 @@
     <Compile Include="Client\Controls\LanguageGallery.cs" />
     <Compile Include="Client\Controls\IseContextPanelBase.cs" />
     <Compile Include="Client\Controls\IseContextPanelEx.cs" />
+    <Compile Include="Commandlets\Data\TestBaseTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />

@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Data.Items;
 
@@ -31,15 +33,17 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter(ParameterSetName = "Item from Path, set by Template", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from ID, set by Template", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from Pipeline, set by Template", Mandatory = true)]
-        public virtual string Template { get; set; }
+        [AutocompleteSet("Templates")]
+        public virtual string[] Template { get; set; }
+
+        public static string[] Templates => MiscAutocompleteSets.Templates;
 
         protected override void ProcessItem(Item item)
         {
+
             if (item.TemplateID != TemplateIDs.Template)
             {
-                WriteError(typeof (ArgumentException), "The specified item is not a template.", ErrorIds.InvalidItemType,
-                    ErrorCategory.InvalidArgument, null);
-                return;
+                item = item.Database.GetTemplate(item.TemplateID);
             }
 
             if (Template != null)
@@ -47,7 +51,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 // Get template item and implicitly cast to TemplateItem as this will perform a template-check on the
                 // item returned, to ensure it is a template.
 
-                TemplateItem = new[] { (TemplateItem)TemplateUtils.GetFromPath(Template, CurrentDrive) };
+                TemplateItem = Template.Select(templateName => (TemplateItem)TemplateUtils.GetFromPath(templateName, item.Database.Name)).ToArray();
             }
 
             ProcessTemplateItem(item);
