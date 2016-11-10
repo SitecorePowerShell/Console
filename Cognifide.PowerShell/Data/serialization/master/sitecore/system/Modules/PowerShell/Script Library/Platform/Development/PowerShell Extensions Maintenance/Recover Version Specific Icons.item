@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 13585
+content-length: 13325
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -64,7 +64,6 @@ $icons8 = @{
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Office/32x32/rebuild_all_indexes.png';
-'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild search indexes' = 'office/32x32/data.png';
 }
 
 $icons7 = @{
@@ -116,7 +115,6 @@ $icons7 = @{
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Business/32x32/data_ok.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'Business/32x32/data_refresh.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Database/32x32/db_sql_execute_h.png';
-'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild search indexes' = 'Applications/32x32/find.png';
 }
 
 
@@ -156,7 +154,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: 22fd9aeb-4104-4aa2-8d9f-c19408d98792
+revision: f1cda3b3-579d-46aa-9f94-5ccf0d3a07ef
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -171,14 +169,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-22fd9aeb-4104-4aa2-8d9f-c19408d98792
+f1cda3b3-579d-46aa-9f94-5ccf0d3a07ef
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161109T160220
+20161110T122441
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
