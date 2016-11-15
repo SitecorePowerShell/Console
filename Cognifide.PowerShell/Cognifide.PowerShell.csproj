@@ -660,7 +660,7 @@ IF %25USERDOMAIN%25==DUNE (
 )
 
 echo "Copy build for Mikey"
-IF EXIST C:\inetpub\wwwroot\Console (
+IF EXIST C:\Websites\spe.dev.local (
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\Websites\spe.dev.local\Website\bin\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\Websites\spe.dev.local\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\Websites\spe.dev.local\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
