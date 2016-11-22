@@ -689,6 +689,11 @@ namespace Cognifide.PowerShell.Client.Applications
                     currentSession.Dispose();
                 }
             }
+            else
+            {
+                ScriptRunning = false;
+                UpdateRibbon();
+            }
             ScriptRunning = false;
         }
 
