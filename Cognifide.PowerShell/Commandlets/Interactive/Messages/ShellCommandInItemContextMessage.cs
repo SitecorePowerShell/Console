@@ -10,35 +10,23 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShellCommandInItemContextMessage : BasePipelineMessage, IMessageWithResult
+    public class ShellCommandInItemContextMessage : BasePipelineMessageWithResult
     {
         private readonly string command;
         private readonly string itemDb;
         private readonly string itemUri;
-        private readonly Handle jobHandle;
-        [NonSerialized] private readonly MessageQueue messageQueue;
 
         public ShellCommandInItemContextMessage(Item item, string command)
         {
-            if (JobContext.IsJob)
-            {
-                jobHandle = JobContext.JobHandle;
-            }
-
-            messageQueue = new MessageQueue();
             if (item != null)
             {
                 itemUri = item.Uri.ToDataUri().ToString();
                 itemDb = item.Database.Name;
             }
-            jobHandle = JobContext.JobHandle;
             this.command = command;
         }
 
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
+        protected override bool WaitForPostBack => false;
 
         /// <summary>
         ///     Shows a confirmation dialog.
@@ -56,14 +44,19 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 context = new CommandContext();
             }
             context.Parameters.Add(Message.Parse(null, command).Arguments);
-            if (jobHandle != null)
+            if (JobHandle != null)
             {
-                context.Parameters.Add("jobHandle", jobHandle.ToString());
+                context.Parameters.Add("jobHandle", JobHandle.ToString());
             }
             var shellCommand = CommandManager.GetCommand(command);
             if (shellCommand == null)
                 return;
             shellCommand.Execute(context);
+        }
+
+        protected override object ProcessResult(bool hasResult, string result)
+        {
+            return result;
         }
     }
 }

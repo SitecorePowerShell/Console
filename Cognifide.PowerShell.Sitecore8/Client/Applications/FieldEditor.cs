@@ -172,9 +172,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
         protected virtual void StartFieldEditor(ClientPipelineArgs args)
         {
             var current = HttpContext.Current;
-            if (current == null)
-                return;
-            var page = current.Handler as Page;
+            var page = current?.Handler as Page;
             if (page == null)
                 return;
             var form = page.Request.Form;
@@ -209,10 +207,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
                 {
                     var jobHandle = Handle.Parse(strJobId);
                     var job = JobManager.GetJob(jobHandle);
-                    if (job != null)
-                    {
-                        job.MessageQueue.PutResult(args.HasResult ? "ok" : "cancel");
-                    }
+                    job?.MessageQueue.PutResult(args.HasResult ? "ok" : "cancel");
                 }
             }
         }

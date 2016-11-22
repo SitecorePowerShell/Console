@@ -11,20 +11,13 @@ using JobManager = Sitecore.Jobs.JobManager;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowMultiValuePromptMessage : IMessage, IMessageWithResult
+    public class ShowMultiValuePromptMessage : BasePipelineMessageWithResult
     {
-        private Handle jobHandle;
-        [NonSerialized] private readonly MessageQueue messageQueue;
         [NonSerialized] private readonly object[] parameters;
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator)
+            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator) : base()
         {
-            messageQueue = new MessageQueue();
-            if (JobContext.IsJob)
-            {
-                jobHandle = JobContext.JobHandle;
-            }
             this.parameters = parameters;
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
@@ -48,88 +41,29 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string CancelButtonName { get; private set; }
         public string OkButtonName { get; private set; }
         public bool ShowHints { get; set; }
-        public object Result { get; private set; }
         public ScriptBlock Validator { get; private set; }
-
-        /// <summary>
-        ///     Starts the pipeline.
-        /// </summary>
-        public void Execute()
-        {
-            Context.ClientPage.Start(this, "Pipeline");
-        }
-
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
 
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
-        protected virtual void ShowUI()
+        protected override void ShowUI()
         {
             var resultSig = Guid.NewGuid().ToString();
-            if (Context.ClientPage.CodeBeside is IPowerShellRunner)
-            {
-                (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = false;
-            }
-
             HttpContext.Current.Cache[resultSig] = this;
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
             urlString.Add("sid", resultSig);
             SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 
-        /// <summary>
-        ///     Entry point for a pipeline.
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        public void Pipeline(ClientPipelineArgs args)
+        protected override object ProcessResult(bool hasResult, string sig)
         {
-            if (!args.IsPostBack)
+            if (hasResult)
             {
-                if (jobHandle != null)
-                {
-                    Context.ClientPage.ServerProperties["#pipelineJob"] = jobHandle.ToString();
-                }
-                ShowUI();
-                args.WaitForPostBack();
+                var result = HttpContext.Current.Cache[sig];
+                HttpContext.Current.Cache.Remove(sig);
+                return result;
             }
-            else
-            {
-                if (args.HasResult)
-                {
-                    var result = HttpContext.Current.Cache[args.Result];
-                    HttpContext.Current.Cache.Remove(args.Result);
-                    Result = result;
-                }
-                else
-                {
-                    Result = null;
-                }
-
-
-                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
-                if (!String.IsNullOrEmpty(strJobId))
-                {
-                    jobHandle = Handle.Parse(strJobId);
-                    var job = JobManager.GetJob(jobHandle);
-                    if (job != null)
-                    {
-                        job.MessageQueue.PutResult(Result);
-                    }
-                }
-                else
-                {
-                    MessageQueue.PutResult(Result);
-                }
-
-                if (Context.ClientPage.CodeBeside is IPowerShellRunner)
-                {
-                    (Context.ClientPage.CodeBeside as IPowerShellRunner).MonitorActive = true;
-                }
-            }
+            return null;
         }
     }
 }

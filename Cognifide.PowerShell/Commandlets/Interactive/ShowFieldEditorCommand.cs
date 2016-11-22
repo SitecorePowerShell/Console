@@ -109,7 +109,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         ")");
 
                     PutMessage(message);
-                    var result = GetSheerResult(message).ToString();
+                    var result = message.GetResult().ToString();
                     WriteObject(result);
                 }
             });

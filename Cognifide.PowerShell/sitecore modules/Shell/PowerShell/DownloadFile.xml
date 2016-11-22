@@ -19,26 +19,28 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
 
       <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
-        <ThemedImage class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64"
+        <ThemedImage Id="DownloadImage" class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64"
                      Height="64" Margin="8px 0px 8px 16px" />
+        <ThemedImage Id="ErrorImage" class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Error.png" Width="64"
+                     Height="64" Margin="8px 0px 8px 16px" Visible="false" />
         <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
           <Literal ID="Text" />
           <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
             <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">
               <Border Padding="8px 8px 0px 8px">
-                <Literal Text="Path:" style="font-weight:bold;" />
+                <Literal ID="PathPrefix" Text="Path:" style="font-weight:bold; word-break: inherit;" class="scDialogMessage"/>
               </Border>
               <Border Padding="8px 8px 0px 0px">
-                <Literal ID="FileNameLabel" />
+                <Literal ID="FileNameLabel"  class="scDialogMessage"/>
               </Border>
               <Border Padding="2px 8px 0px 8px">
-                <Literal Text="Size:" style="font-weight:bold;" />
+                <Literal ID="SizePrefix" Text="Size:" style="font-weight:bold; word-break: inherit;"  class="scDialogMessage"/>
               </Border>
               <Border Padding="2px 8px 0px 0px">
-                <Literal ID="SizeLabel" />
+                <Literal ID="SizeLabel"  class="scDialogMessage"/>
               </Border>
               <Border Padding="2px 8px 0px 8px">
-                <Literal ID="DownloadLabel" />
+                <Literal ID="DownloadLabel"  class="scDialogMessage"/>
               </Border>
               <Border Padding="2px 8px 0px 0px" Align="Right">
               </Border>

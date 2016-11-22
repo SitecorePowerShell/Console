@@ -2,8 +2,9 @@
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
-    public interface IMessageWithResult
+    public interface IMessageWithResult : IMessage
     {
-        MessageQueue MessageQueue { get; }
+        object GetResult();
+
     }
 }

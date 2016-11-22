@@ -7,6 +7,7 @@ using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
@@ -40,21 +41,15 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 if (!CheckSessionCanDoInteractiveAction()) return;
 
                 AssertDefaultSize(700, 140);
-
-                var hashParams = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
+                DownloadMessage message = null;
                 if (Item != null)
                 {
-                    if (NoDialog.IsPresent)
-                    {
-                        PutMessage(new DownloadMessage(Item));
-                        return;
-                    }
-                    hashParams.Add("id", Item.ID);
-                    hashParams.Add("db", Item.Database.Name);
-                }
+                   message = new DownloadMessage(Item);
+                }               
                 else if (!string.IsNullOrEmpty(Path))
                 {
                     var file = FileUtil.MapPath(Path);
+
                     if (!File.Exists(file))
                     {
                         PutMessage(
@@ -62,33 +57,22 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         return;
                     }
 
-                    if (NoDialog.IsPresent)
-                    {
-                        PutMessage(new DownloadMessage(Path));
-                        return;
-                    }
-
-                    var str1 = FileUtil.MapPath("/");
-                    var str2 = FileUtil.MapPath(Settings.DataFolder);
-                    if (!file.StartsWith(str1, StringComparison.InvariantCultureIgnoreCase) &&
-                        !file.StartsWith(str2, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        PutMessage(new AlertMessage(
-                            "Files from outside of the Sitecore Data and Website folders cannot be downloaded.\n\n" +
-                            "Copy the file to the Sitecore Data folder and try again."));
-                        return;
-                    }
-                    hashParams.Add("fn", Path);
+                    message = new DownloadMessage(file);
                 }
-                hashParams.Add("te", Message ?? string.Empty);
-                hashParams.Add("cp", Title ?? string.Empty);
-                hashParams.Add("fp", ShowFullPath.IsPresent.ToString());
-                var response = JobContext.ShowModalDialog(
-                    hashParams,
-                    "DownloadFile",
-                    Width == 0 ? "600" : WidthString,
-                    Height == 0 ? "200" : HeightString);
-                WriteObject(response);
+
+                if (message != null)
+                {
+                    message.NoDialog = NoDialog;
+                    message.Message = Message;
+                    message.Title = Title;
+                    message.ShowFullPath = ShowFullPath;
+                    message.Width = Width == 0 ? "600" : WidthString;
+                    message.Height = Height == 0 ? "200" : HeightString;
+
+                    PutMessage(message);
+                    var result = message.GetResult().ToString();
+                    WriteObject(result);
+                }
             });
         }
     }

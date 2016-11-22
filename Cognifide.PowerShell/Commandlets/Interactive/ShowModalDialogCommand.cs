@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                     var message = new ShowModalDialogPsMessage(url.ToString(), WidthString, HeightString, HandleParameters);
                     PutMessage(message);
-                    response = (string)GetSheerResult(message);
+                    response = (string) message.GetResult();
 
                 }
                 WriteObject(response);

@@ -29,10 +29,5 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 message.Execute();
             }
         }
-
-        public static object GetSheerResult(IMessageWithResult message)
-        {
-            return JobContext.IsJob ? JobContext.MessageQueue.GetResult() : message.MessageQueue.GetResult();
-        }
     }
 }

@@ -12,18 +12,11 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowModalDialogPsMessage : IMessage, IMessageWithResult
+    public class ShowModalDialogPsMessage : BasePipelineMessageWithResult
     {
-        private Handle jobHandle;
-        [NonSerialized] private readonly MessageQueue messageQueue;
 
         public ShowModalDialogPsMessage(string url, string width, string height, Hashtable handleParams)
         {
-            messageQueue = new MessageQueue();
-            if (JobContext.IsJob)
-            {
-                jobHandle = JobContext.JobHandle;
-            }
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             HandleParams = handleParams;
@@ -31,27 +24,18 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Url = url;
         }
 
-        public string Width { get; private set; }
-        public string Height { get; private set; }
+        public string Width { get; }
+        public string Height { get; }
         public string Title { get; set; }
-        public string Url { get; private set; }
-        public Hashtable HandleParams { get; set; }
-        public bool ReceiveResults { get; set; }
+        public string Url { get; }
+        public Hashtable HandleParams { get; }
+        public bool ReceiveResults { get; }
 
-        /// <summary>
-        ///     Starts the pipeline.
-        /// </summary>
-        public void Execute()
-        {
-            Context.ClientPage.Start(this, "Pipeline");
-        }
-
-        public MessageQueue MessageQueue => messageQueue;
 
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
-        protected virtual void ShowUI()
+        protected override void ShowUI()
         {
             var urlString = new UrlString(Url);
             if (HandleParams != null && HandleParams.Count > 0)
@@ -79,43 +63,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
         }
 
-        /// <summary>
-        ///     Entry point for a pipeline.
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        public void Pipeline(ClientPipelineArgs args)
+        protected override object ProcessResult(bool hasResult, string result)
         {
-            if (!args.IsPostBack)
+            result = hasResult ? result : null;
+            if (string.IsNullOrEmpty(result))
             {
-                if (jobHandle != null)
-                {
-                    Context.ClientPage.ServerProperties["#pipelineJob"] = jobHandle.ToString();
-                }
-                ShowUI();
-                args.WaitForPostBack();
+                result = "undetermined";
             }
-            else
-            {
-                var result = args.HasResult ? args.Result : null;
-                if (string.IsNullOrEmpty(result))
-                {
-                    result = "undetermined";
-                }
-                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
-                if (!String.IsNullOrEmpty(strJobId))
-                {
-                    jobHandle = Handle.Parse(strJobId);
-                    var job = JobManager.GetJob(jobHandle);
-                    if (job != null)
-                    {
-                        job.MessageQueue.PutResult(result);
-                    }
-                }
-                else
-                {
-                    MessageQueue.PutResult(result);
-                }
-            }
+            return result;
         }
     }
 }

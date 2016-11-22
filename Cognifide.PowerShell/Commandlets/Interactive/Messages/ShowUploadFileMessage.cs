@@ -9,20 +9,13 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowUploadFileMessage : IMessage, IMessageWithResult
+    public class ShowUploadFileMessage : BasePipelineMessageWithResult
     {
-        private Handle jobHandle;
-        [NonSerialized] private readonly MessageQueue messageQueue;
 
         public ShowUploadFileMessage(string width, string height, string title, string description, string okButtonName,
             string cancelButtonName, string path, bool versioned, string language, bool overwrite, bool unpack,
             bool advancedDialog)
         {
-            messageQueue = new MessageQueue();
-            if (JobContext.IsJob)
-            {
-                jobHandle = JobContext.JobHandle;
-            }
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             Title = title ?? string.Empty;
@@ -51,22 +44,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public bool Versioned { get; set; }
 
         /// <summary>
-        ///     Starts the pipeline.
-        /// </summary>
-        public void Execute()
-        {
-            Context.ClientPage.Start(this, "Pipeline");
-        }
-
-        public MessageQueue MessageQueue
-        {
-            get { return messageQueue; }
-        }
-
-        /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
-        protected virtual void ShowUI()
+        protected override void ShowUI()
         {
             if (AdvancedDialog)
             {
@@ -98,43 +78,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             }
         }
 
-        /// <summary>
-        ///     Entry point for a pipeline.
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        public void Pipeline(ClientPipelineArgs args)
+        protected override object ProcessResult(bool hasResult, string result)
         {
-            if (!args.IsPostBack)
+            result = hasResult ? result : null;
+            if (string.IsNullOrEmpty(result) && AdvancedDialog)
             {
-                if (jobHandle != null)
-                {
-                    Context.ClientPage.ServerProperties["#pipelineJob"] = jobHandle.ToString();
-                }
-                ShowUI();
-                args.WaitForPostBack();
+                result = "undetermined";
             }
-            else
-            {
-                var result = args.HasResult ? args.Result : null;
-                if (string.IsNullOrEmpty(result) && AdvancedDialog)
-                {
-                    result = "undetermined";
-                }
-                var strJobId = StringUtil.GetString(Context.ClientPage.ServerProperties["#pipelineJob"]);
-                if (!String.IsNullOrEmpty(strJobId))
-                {
-                    jobHandle = Handle.Parse(strJobId);
-                    var job = JobManager.GetJob(jobHandle);
-                    if (job != null)
-                    {
-                        job.MessageQueue.PutResult(result);
-                    }
-                }
-                else
-                {
-                    MessageQueue.PutResult(result);
-                }
-            }
+            return result;
         }
     }
 }

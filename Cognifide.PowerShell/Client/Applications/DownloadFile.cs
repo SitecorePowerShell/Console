@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
+using Sitecore.IO;
+using Sitecore.Jobs.AsyncUI;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
 using Sitecore.Web;
@@ -19,36 +22,72 @@ namespace Cognifide.PowerShell.Client.Applications
     {
         protected Border Buttons;
         protected Literal FileNameLabel;
+        protected Literal PathPrefix;
+        protected Literal SizePrefix;
+        protected ThemedImage DownloadImage;
+        protected ThemedImage ErrorImage;
         protected Edit Hidden;
         protected Literal SizeLabel;
         protected Literal Text;
-        protected string FileName { get; set; }
-        protected string Id { get; set; }
-        protected string Db { get; set; }
+
+        public static string FileName
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["FileName"]); }
+            set { Context.ClientPage.ServerProperties["FileName"] = value; }
+        }
+
+        public static string ItemUri
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemUri"]); }
+            set { Context.ClientPage.ServerProperties["ItemUri"] = value; }
+        }
+
+        public static string ItemDb
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["ItemDb"]); }
+            set { Context.ClientPage.ServerProperties["ItemDb"] = value; }
+        }
 
         protected override void OnLoad(EventArgs e)
         {
             Assert.ArgumentNotNull(e, "e");
+            Assert.IsTrue(ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name, false), "Application access denied.");
             base.OnLoad(e);
-
-            FileName = WebUtil.SafeEncode(WebUtil.GetQueryString("fn"));
-
-            Id = WebUtil.SafeEncode(WebUtil.GetQueryString("id"));
-            Db = WebUtil.SafeEncode(WebUtil.GetQueryString("db"));
-            bool showFullPath;
-            if (!bool.TryParse(WebUtil.GetQueryString("fp"), out showFullPath))
-            {
-                showFullPath = false;
-            }
 
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             if (Context.ClientPage.IsEvent)
                 return;
-            Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te"));
 
-            if (!string.IsNullOrEmpty(Id))
+            UrlHandle handle = null;
+            if (!UrlHandle.TryGetHandle(out handle))
             {
-                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                FileNameLabel.Text =
+                    "Invalid dialog invocation.";
+                SizeLabel.Visible=false;
+                PathPrefix.Visible = false;
+                SizePrefix.Visible = false;
+                OK.Visible = false;
+                DownloadImage.Visible = false;
+                ErrorImage.Visible = true;
+                return;
+            }
+
+            FileName = handle["fn"];
+
+            ItemUri = handle["uri"];
+            ItemDb = handle["db"];
+
+            bool showFullPath;
+            if (!bool.TryParse(handle["fp"], out showFullPath))
+            {
+                showFullPath = false;
+            }
+
+            Text.Text = handle["te"];
+
+            if (!string.IsNullOrEmpty(ItemUri))
+            {
+                var item = Factory.GetDatabase(ItemDb).GetItem(new DataUri(ItemUri));
                 if (MediaManager.HasMediaContent(item))
                 {
                     FileNameLabel.Text = (showFullPath ? item.GetProviderPath() : item.Name)
@@ -63,6 +102,26 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else if (!string.IsNullOrEmpty(FileName))
             {
+                // check if file in approved location
+                var filePath = FileUtil.MapPath(FileName);
+                var webSitePath = FileUtil.MapPath("/");
+                var dataPath = FileUtil.MapPath(Settings.DataFolder);
+
+                if (!filePath.StartsWith(webSitePath, StringComparison.InvariantCultureIgnoreCase) &&
+                    !filePath.StartsWith(dataPath, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    FileNameLabel.Text =
+                        "Files from outside of the Sitecore Data and Website folders cannot be downloaded.\n\n" +
+                        "Copy the file to the Sitecore Data folder and try again.";
+                    SizeLabel.Visible = false;
+                    PathPrefix.Visible = false;
+                    SizePrefix.Visible = false;
+                    OK.Visible = false;
+                    DownloadImage.Visible = false;
+                    ErrorImage.Visible = true;
+                    return;
+                }
+
                 FileNameLabel.Text = showFullPath ? FileName : Path.GetFileName(FileName);
                 SheerResponse.Download(FileName);
                 Hidden.Value = "downloaded";
@@ -70,13 +129,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 SizeLabel.Text = ToFileSize(file.Length);
             }
 
-            var caption = WebUtil.SafeEncode(WebUtil.GetQueryString("cp"));
+            var caption = handle["cp"];
             Context.ClientPage.Title = caption;
             Assert.ArgumentNotNull(e, "e");
             base.OnLoad(e);
-            Text.Text = WebUtil.SafeEncode(WebUtil.GetQueryString("te"));
+            Text.Text = handle["te"];
             Hidden.Value = "cancelled";
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
+            UrlHandle.DisposeHandle(handle);
         }
 
         public static string ToFileSize(long size)
@@ -118,9 +178,9 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             Assert.ArgumentNotNull(sender, "sender");
             Assert.ArgumentNotNull(args, "args");
-            if (!string.IsNullOrEmpty(Id))
+            if (!string.IsNullOrEmpty(ItemUri))
             {
-                var item = Factory.GetDatabase(Db).GetItem(new ID(Id));
+                var item = Factory.GetDatabase(ItemDb).GetItem(new DataUri(ItemUri));
                 if (MediaManager.HasMediaContent(item))
                 {
                     var str = item.Uri.ToUrlString(string.Empty);
