@@ -104,13 +104,13 @@ content-length: 145
 field: {DEC8D2D5-E3CF-48B6-A653-8E69E2716641}
 name: __Security
 key: __security
-content-length: 67
+content-length: 50
 
-ar|sitecore\Sitecore Client Developing|pe|+item:read|pd|+item:read|
+ar|sitecore\Developer|pe|+item:read|pd|+item:read|
 ----version----
 language: en
 version: 1
-revision: 01245748-8910-43bb-a5be-b75838bace9d
+revision: 27cbde72-54f0-406b-b2ee-c2134579e4cb
 
 ----field----
 field: {67B6378B-C9F1-47C7-9CAC-BFA79B0727D9}
@@ -146,14 +146,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-01245748-8910-43bb-a5be-b75838bace9d
+27cbde72-54f0-406b-b2ee-c2134579e4cb
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20151129T142055
+20161122T042500
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
