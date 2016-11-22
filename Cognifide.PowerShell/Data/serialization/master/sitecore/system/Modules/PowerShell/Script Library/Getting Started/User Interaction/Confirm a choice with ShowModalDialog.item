@@ -13,16 +13,16 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 303
+content-length: 306
 
 # Uses Show-ModalDialog to execute the ConfirmChoice XML control
 # the buttons must be named btn_0, btn_1...
-Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Yes (returns btn_0)"; btn_1="No (returns btn_1)"; btn_2="return btn_2"; te="Message Text"; cp="My Caption"} -Height 120 -Width 400
+Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Yes (returns btn_0)"; btn_1="No (returns btn_1)"; btn_2="return btn_2"; te="Message Text"; cp="My Caption"} -Height 120 -Width 500
 
 ----version----
 language: en
 version: 1
-revision: 9e31346f-1ab1-45f5-900d-022d12802710
+revision: 06cd2cc7-775d-4b6a-822a-1b6f620e57b3
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -37,14 +37,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-9e31346f-1ab1-45f5-900d-022d12802710
+06cd2cc7-775d-4b6a-822a-1b6f620e57b3
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141227T175157:635552995178797578
+20161122T022552
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
