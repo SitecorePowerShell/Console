@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Cognifide.PowerShell.Console.Services;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
@@ -11,6 +12,7 @@ using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Security;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web.UI.HtmlControls;
@@ -36,8 +38,13 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected override void OnLoad(EventArgs e)
         {
-            Assert.CanRunApplication("PowerShell/PowerShell Console");
-            Assert.IsTrue(ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient,Context.User.Name, false), "Application access denied.");
+            if (!SecurityHelper.CanRunApplication("PowerShell/PowerShell Console") ||
+                ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceClient,
+                    Context.User?.Name))
+            {
+                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Console - denied.");
+                return;
+            }
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");

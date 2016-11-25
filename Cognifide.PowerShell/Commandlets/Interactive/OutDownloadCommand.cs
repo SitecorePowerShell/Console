@@ -68,8 +68,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
 
                 if (!WebServiceSettings.ServiceEnabledHandleDownload ||
-                    !ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceHandleDownload,
-                        Sitecore.Context.User.Name, false))
+                    !ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceHandleDownload,Sitecore.Context.User.Name))
                 {
                     WriteError(typeof(FormatException), "Handle Download Service is disabled or user is not authorized.",
                         ErrorIds.InsufficientSecurityRights, ErrorCategory.PermissionDenied, InputObject, true);

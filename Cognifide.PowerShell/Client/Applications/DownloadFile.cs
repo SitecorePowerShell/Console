@@ -51,9 +51,12 @@ namespace Cognifide.PowerShell.Client.Applications
         protected override void OnLoad(EventArgs e)
         {
             Assert.ArgumentNotNull(e, "e");
-            Assert.IsTrue(ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name, false), "Application access denied.");
-            base.OnLoad(e);
-
+            if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
+                Context.User?.Name))
+            {
+                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Download File dialog - denied.");
+                return;
+            }
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
             if (Context.ClientPage.IsEvent)
                 return;

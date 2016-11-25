@@ -18,8 +18,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 return controls;
             }
             if (!
-                ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
-    false))
+                ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name))
             {
                 return controls;
             }

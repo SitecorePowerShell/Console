@@ -18,8 +18,7 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
-                false))
+            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name))
             {
                 return;
             }

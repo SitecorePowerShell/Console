@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Xml;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
@@ -17,10 +19,14 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
         private static Dictionary<string, AuthCacheEntry> authorizationCache = new Dictionary<string, AuthCacheEntry>();
 
-        public static bool IsUserAuthorized(string serviceName, string userName, bool defaultValue)
+        public static bool IsUserAuthorized(string serviceName, string userName = null)
         {
             var authEntries = GetServiceAuthorizationInfo(serviceName);
             var cacheKey = GetAuthorizationCacheKey(serviceName, userName);
+            if (string.IsNullOrEmpty(userName))
+            {
+                return false;
+            }
 
             if (ExistsInCache(cacheKey))
             {
@@ -90,6 +96,19 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             }
 
             return allowed;
+        }
+
+        public static bool TerminateUnauthorizedRequest(string serviceName, string userName = null)
+        {
+            if(!IsUserAuthorized(serviceName,userName))
+            {
+                if (HttpContext.Current != null && Context.Site != null)
+                {
+                    HttpContext.Current.Response.Redirect(Context.Site.LoginPage, true);
+                }
+                return true;
+            }
+            return false;
         }
 
         private static bool ExistsInCache(string cacheKey)

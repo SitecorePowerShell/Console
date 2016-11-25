@@ -3,6 +3,7 @@ using System.Management.Automation;
 using System.Text;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
@@ -170,9 +171,15 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected override void OnLoad(EventArgs e)
         {
+            if (ServiceAuthorizationManager.TerminateUnauthorizedRequest(WebServiceSettings.ServiceExecution,
+                Context.User?.Name))
+            {
+                PowerShellLog.Error($"User {Context.User?.Name} attempt to access PowerShell Script Runner Dialog - denied.");
+                return;
+            }
+
             base.OnLoad(e);
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
-            Assert.IsTrue(ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name, false), "Application access denied.");
 
             if (!Context.ClientPage.IsEvent)
             {

@@ -24,8 +24,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
         public override CommandState QueryState(CommandContext context)
         {
-            return ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
-                false)
+            return ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name)
                 ? CommandState.Enabled
                 : CommandState.Hidden;
         }
@@ -112,8 +111,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 return;
             }
 
-            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name,
-                false))
+            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name))
             {
                 return;
             }

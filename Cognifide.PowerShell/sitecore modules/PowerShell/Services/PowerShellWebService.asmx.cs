@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.Console.Services
         private static bool IsLoggedInUserAuthorized =>
             WebServiceSettings.ServiceEnabledClient &&
             Sitecore.Context.IsLoggedIn &&
-            ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Sitecore.Context.User.Name, false);
+            ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Sitecore.Context.User?.Name);
 
 
         [WebMethod(EnableSession = true)]
@@ -60,7 +60,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return false;
             }
 
-            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, userName, false))
+            if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, userName))
             {
                 return false;
             }
@@ -164,104 +164,113 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetVariableValue(string guid, string variableName)
         {
-            var sessionExists = ScriptSessionManager.SessionExists(guid);
-            if (sessionExists)
+            if (!IsLoggedInUserAuthorized)
             {
-                var session = ScriptSessionManager.GetSession(guid);
-                try
-                {
-                    variableName = variableName.TrimStart('$');
-                    var debugVariable = session.GetDebugVariable(variableName);
-                    if (debugVariable == null)
-                    {
-                        return $"<div class='undefinedVariableType'>undefined</div>" +
-                               $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
-                    }
+                return string.Empty;
+            }
 
-                    var defaultProps = new string[0];
-                    if (debugVariable is PSObject)
+            var sessionExists = ScriptSessionManager.SessionExists(guid);
+            if (!sessionExists)
+            {
+                return "<div class='undefinedVariableType'>Session not found</div>" +
+                       "<div class='variableLine'>A script needs to be executed in the session<br/>before the variable value can be inspected.</div>";
+            }
+
+            var session = ScriptSessionManager.GetSession(guid);
+            try
+            {
+                variableName = variableName.TrimStart('$');
+                var debugVariable = session.GetDebugVariable(variableName);
+                if (debugVariable == null)
+                {
+                    return "<div class='undefinedVariableType'>undefined</div>" +
+                           $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>$null</span></div>";
+                }
+
+                var defaultProps = new string[0];
+                if (debugVariable is PSObject)
+                {
+                    var script =
+                        $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
+                    session.Output.SilenceOutput = true;
+                    try
                     {
-                        var script =
-                            $"${variableName}.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames";
                         List<object> results;
-                        session.Output.SilenceOutput = true;
-                        try
+                        if (session.TryInvokeInRunningSession(script, out results) && results != null)
                         {
-                            if (session.TryInvokeInRunningSession(script, out results) && results != null)
-                            {
-                                defaultProps = session.IsRunning
-                                    ? (session.Output.SilencedOutput?.ToString()
-                                        .Split('\n')
-                                        .Select(line => line.Trim())
-                                        .ToArray() ?? new string[0])
-                                    : results.Cast<string>().ToArray();
-                                session.Output.SilencedOutput?.Clear();
-                            }
-                        }
-                        finally
-                        {
-                            session.Output.SilenceOutput = false;
+                            defaultProps = session.IsRunning
+                                ? (session.Output.SilencedOutput?.ToString()
+                                       .Split('\n')
+                                       .Select(line => line.Trim())
+                                       .ToArray() ?? new string[0])
+                                : results.Cast<string>().ToArray();
+                            session.Output.SilencedOutput?.Clear();
                         }
                     }
-                    var variable = debugVariable.BaseObject();
-                    if (variable is PSCustomObject)
+                    finally
                     {
-                        variable = debugVariable;
+                        session.Output.SilenceOutput = false;
                     }
-                    VariableDetails details = new VariableDetails("$" + variableName, variable);
-                    var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
-                    varValue +=
-                        $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
-                    if (details.IsExpandable)
-                    {
-                        // sort only if the object is not an array otherwise the indexes will get scrambled.
-                        var children = details.ShowDotNetProperties
-                            ? details.GetChildren().OrderBy(d => d.Name).ToArray()
-                            : details.GetChildren();
-                        foreach (var child in children)
-                        {
-                            if (!child.IsExpandable ||
-                                defaultProps.Contains(child.Name, StringComparer.OrdinalIgnoreCase) ||
-                                ImportantProperties.Contains(child.Name, StringComparer.OrdinalIgnoreCase))
-                            {
-                                varValue +=
-                                    $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
-                            }
-                            else
-                            {
-                                if (details.ShowDotNetProperties)
-                                {
-                                    continue;
-                                }
-                                varValue +=
-                                    $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
-                                foreach (var subChild in child.GetChildren())
-                                {
-                                    if (!subChild.IsExpandable)
-                                    {
-                                        varValue +=
-                                            $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
-                                    }
-                                }
-                                varValue = varValue.TrimEnd(' ', ',');
-                                varValue += "}</span></span>";
-                            }
-                        }
-                        if (details.MaxArrayParseSizeExceeded)
-                        {
-                            varValue += $"<span class='varChild'><span class='varName'>... first {VariableDetails.MaxArrayParseSize} items shown.</span></span>";
-                        }
-                    }
-                    //var varValue = variable + " - "+ variable.GetType();
+                }
+                var variable = debugVariable.BaseObject();
+                if (variable is PSCustomObject)
+                {
+                    variable = debugVariable;
+                }
+                var details = new VariableDetails("$" + variableName, variable);
+                var varValue = $"<div class='variableType'>{variable.GetType().FullName}</div>";
+                varValue +=
+                    $"<div class='variableLine'><span class='varName'>${variableName}</span> : <span class='varValue'>{details.HtmlEncodedValueString}</span></div>";
+
+                if (!details.IsExpandable)
+                {
                     return varValue;
                 }
-                catch (Exception ex)
+
+                // sort only if the object is not an array otherwise the indexes will get scrambled.
+                var children = details.ShowDotNetProperties
+                    ? details.GetChildren().OrderBy(d => d.Name).ToArray()
+                    : details.GetChildren();
+
+                foreach (var child in children)
                 {
-                    return ex.Message;
+                    if (!child.IsExpandable ||
+                        defaultProps.Contains(child.Name, StringComparer.OrdinalIgnoreCase) ||
+                        ImportantProperties.Contains(child.Name, StringComparer.OrdinalIgnoreCase))
+                    {
+                        varValue +=
+                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{child.HtmlEncodedValueString}</span></span>";
+                    }
+                    else
+                    {
+                        if (details.ShowDotNetProperties)
+                        {
+                            continue;
+                        }
+                        varValue +=
+                            $"<span class='varChild'><span class='childName'>{child.Name}</span> : <span class='childValue'>{{";
+                        foreach (var subChild in child.GetChildren())
+                        {
+                            if (!subChild.IsExpandable)
+                            {
+                                varValue +=
+                                    $"<span class='childName'>{subChild.Name}</span> : {subChild.HtmlEncodedValueString}, ";
+                            }
+                        }
+                        varValue = varValue.TrimEnd(' ', ',');
+                        varValue += "}</span></span>";
+                    }
                 }
+                if (details.MaxArrayParseSizeExceeded)
+                {
+                    varValue += $"<span class='varChild'><span class='varName'>... first {VariableDetails.MaxArrayParseSize} items shown.</span></span>";
+                }
+                return varValue;
             }
-            return $"<div class='undefinedVariableType'>Session not found</div>" +
-                   $"<div class='variableLine'>A script needs to be executed in the session<br/>before the variable value can be inspected.</div>";
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
 
@@ -335,7 +344,7 @@ namespace Cognifide.PowerShell.Console.Services
                 result.status = StatusError;
                 result.result =
                     "Can't find your command result. This might mean that your job has timed out or your script caused the application to restart.";
-                result.prompt = string.Format("PS {0}>", session.CurrentLocation);
+                result.prompt = $"PS {session.CurrentLocation}>";
 
                 if (!session.Output.HasUpdates())
                 {
