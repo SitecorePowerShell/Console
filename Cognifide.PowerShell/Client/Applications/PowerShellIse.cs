@@ -1084,9 +1084,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (!args.IsPostBack)
             {
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
-                UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
-                url.Parameters["app"] = "ISE";
+                var url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
+                url.Parameters["app"] = SessionElevationManager.ISE;
                 TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
                 args.WaitForPostBack(true);
             }

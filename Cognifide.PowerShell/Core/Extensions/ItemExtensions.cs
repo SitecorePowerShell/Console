@@ -1,33 +1,37 @@
 ﻿using System;
 using Cognifide.PowerShell.Core.Settings;
+using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
     public static class ItemExtensions
     {
-        public static bool IsPowerShellScript(this Item item)
+        public static bool InheritsFrom(this Item item, ID templateID)
         {
             return item != null &&
-                   item.TemplateName.Equals(TemplateNames.ScriptTemplateName, StringComparison.InvariantCulture);
+                   TemplateManager.GetTemplate(item).InheritsFrom(templateID);
+        }
+
+        public static bool IsPowerShellScript(this Item item)
+        {
+            return item.InheritsFrom(TemplateIDs.ScriptTemplate);
         }
 
         public static bool IsPowerShellModule(this Item item)
         {
-            return item != null &&
-                   item.TemplateName.Equals(TemplateNames.ScriptModuleTemplateName, StringComparison.InvariantCulture);
+            return item.InheritsFrom(TemplateIDs.ScriptModuleTemplate);
         }
 
         public static bool IsPowerShellModuleFolder(this Item item)
         {
-            return item != null &&
-                   item.TemplateName.Equals(TemplateNames.ScriptModuleFolderTemplateName, StringComparison.InvariantCulture);
+            return item.InheritsFrom(TemplateIDs.ScriptModuleFolderTemplate);
         }
 
         public static bool IsPowerShellLibrary(this Item item)
         {
-            return item != null &&
-                   item.TemplateName.Equals(TemplateNames.ScriptLibraryTemplateName, StringComparison.InvariantCulture);
+            return item.InheritsFrom(TemplateIDs.ScriptLibraryTemplate);
         }
 
         public static void Edit(this Item item, Action<ItemEditArgs> action)
