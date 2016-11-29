@@ -4,10 +4,13 @@ function Wait-RemoteScriptSession {
             Polls for the specified job until it has completed.
 
         .DESCRIPTON
-            The Wait-RemoteScriptJob command waits for a ScriptSession to complete processing.
+            The Wait-RemoteScriptSession command waits for a ScriptSession to complete processing.
     
-        .PARAMETER Job
+        .PARAMETER Session
             The ScriptSession object to poll.
+
+        .PARAMETER Id
+            The id of the asynchronous job returned when calling Invoke-RemoteScript with the -AsJob switch.
 
         .PARAMETER Delay
             The polling interval in seconds.
@@ -45,7 +48,7 @@ function Wait-RemoteScriptSession {
         [ValidateNotNull()]
         [pscustomobject]$Session,
 
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [string]$Id,
 
         [int]$Delay = 1
@@ -67,7 +70,11 @@ function Wait-RemoteScriptSession {
 
     $keepRunning = $true
     while($keepRunning) {
-        $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript
+        $response = Invoke-RemoteScript -Session $session -ScriptBlock $doneScript -Verbose
+        if($response -eq $null) {
+            Write-Verbose "Stopped polling job $($id). No results were returned from the service."
+            break
+        }
         if($response -and $response.IsDone) {
             $keepRunning = $false
             Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
