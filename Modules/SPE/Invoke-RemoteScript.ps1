@@ -196,8 +196,11 @@ function Invoke-RemoteScript {
             $response = $singleConnection.Proxy.ExecuteScriptBlock2($Username, $Password, $newScriptBlock, $parameters, $SessionId)
             if($response) {
                 ConvertFrom-CliXml -InputObject $response
+            } elseif ($response -eq "login failed") {
+                Write-Verbose "Login with the specified account failed."
+                break            
             } else {
-                Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the session account has access."
+                Write-Verbose "No response returned by the service. If results were expected confirm that the service is enabled and the account has access."
             }
         }
     }
