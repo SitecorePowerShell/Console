@@ -441,6 +441,25 @@
             $ise("#ResultsClose").css("top", ($ise("#Result").offset().top + 4) + "px");
         };
 
+        function isEmpty(val) {
+            return (val === undefined || val == null || val.length <= 0) ? true : false;
+        }
+
+        cognifide.powershell.showInfoPanel = function(showPanel, updateFromMessage) {
+            if (showPanel) {
+                $ise("#InfoPanel").css("display", "block");
+            } else {
+                $ise("#InfoPanel").css("display", "none");
+            }
+            cognifide.powershell.resizeEditor();
+            if (!isEmpty(updateFromMessage)) {
+                scForm.invoke(updateFromMessage+"(elevationResult=1)");
+            }
+        }
+
+        cognifide.powershell.requestElevation = function() {
+                scForm.postRequest("", "", "", "ise:requestelevation");
+        }
 
         cognifide.powershell.restoreResults = function() {
             $("#ResultsSplitter").show();
@@ -566,6 +585,7 @@
         }
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
+	    cognifide.powershell.requestElevation();
             var datastring = JSON.stringify(callData);
             $.ajax({
                     type: "POST",

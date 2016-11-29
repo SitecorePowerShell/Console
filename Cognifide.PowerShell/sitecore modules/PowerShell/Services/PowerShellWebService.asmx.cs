@@ -45,7 +45,9 @@ namespace Cognifide.PowerShell.Console.Services
         private const string StatusPartial = "partial";
         private const string StatusWorking = "working";
         private const string StatusError = "error";
-        private static readonly string[] ImportantProperties = { "Name", "Title"};
+        private const string StatusElevationRequired = "unauthorized";
+        private static readonly string[] ImportantProperties = {"Name", "Title"};
+
         private static bool IsLoggedInUserAuthorized =>
             WebServiceSettings.ServiceEnabledClient &&
             Sitecore.Context.IsLoggedIn &&
@@ -76,7 +78,7 @@ namespace Cognifide.PowerShell.Console.Services
                     return true;
                 Sitecore.Context.Logout();
             }
-
+            
             if (!LicenseManager.HasContentManager && !LicenseManager.HasExpress)
                 throw new AccessDeniedException("A required license is missing");
             Assert.IsTrue(Membership.ValidateUser(userName, password), "Unknown username or password.");
@@ -86,28 +88,20 @@ namespace Cognifide.PowerShell.Console.Services
         }
 
         [WebMethod(EnableSession = true)]
-        public object ExecuteRocksCommand(string guid, string command, string username, string password)
-        {
-            if (!LoginUser(username, password))
-            {
-                return string.Empty;
-            }
-            return ExecuteCommand(guid, command, "text");
-        }
-
-        [WebMethod(EnableSession = true)]
         public object ExecuteCommand(string guid, string command, string stringFormat)
         {
             var serializer = new JavaScriptSerializer();
             var output = new StringBuilder();
 
-            if (!IsLoggedInUserAuthorized)
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
             {
                 return serializer.Serialize(
                     new
                     {
+                        status = StatusElevationRequired,
                         result =
-                            "You need to be authenticated and have sufficient privileges to use the PowerShell console. Please (re)login to Sitecore.",
+                        "You need to be authenticated, elevated and have sufficient privileges to use the PowerShell console. Please (re)login to Sitecore.",
                         prompt = "PS >",
                         background = OutputLine.ProcessHtmlColor(ConsoleColor.DarkBlue)
                     });
@@ -137,10 +131,13 @@ namespace Cognifide.PowerShell.Console.Services
                         new Result
                         {
                             status = StatusError,
-                            result = output + ScriptSession.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) + "\r\n" +
-                                     "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
-                                     "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
-                                     "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
+                            result =
+                                output +
+                                ScriptSession.GetExceptionString(ex, ScriptSession.ExceptionStringFormat.Console) +
+                                "\r\n" +
+                                "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
+                                "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
+                                "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
                             prompt = $"PS {session.CurrentLocation}>",
                             background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
                             color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
@@ -263,7 +260,8 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 if (details.MaxArrayParseSizeExceeded)
                 {
-                    varValue += $"<span class='varChild'><span class='varName'>... first {VariableDetails.MaxArrayParseSize} items shown.</span></span>";
+                    varValue +=
+                        $"<span class='varChild'><span class='varName'>... first {VariableDetails.MaxArrayParseSize} items shown.</span></span>";
                 }
                 return varValue;
             }
@@ -279,7 +277,6 @@ namespace Cognifide.PowerShell.Console.Services
             return ScriptSessionManager.GetSession(guid, ApplicationNames.AjaxConsole, false);
         }
 
-        [WebMethod(EnableSession = true)]
         protected void RunJob(ScriptSession session, string command)
         {
             if (!IsLoggedInUserAuthorized)
@@ -314,9 +311,12 @@ namespace Cognifide.PowerShell.Console.Services
                         PowerShellLog.Error("Error while executing PowerShell Extensions script.", ex);
                     }
                     job.Status.Messages.Add(exceptionMessage);
-                    job.Status.Messages.Add("Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
-                    job.Status.Messages.Add("Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
-                    job.Status.Messages.Add("We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
+                    job.Status.Messages.Add(
+                        "Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?");
+                    job.Status.Messages.Add(
+                        "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
+                    job.Status.Messages.Add(
+                        "We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
                 }
                 else
                 {
@@ -357,7 +357,7 @@ namespace Cognifide.PowerShell.Console.Services
                 result.handle = handle;
             }
 
-            if ( scriptJob != null && scriptJob.Status.Failed)
+            if (scriptJob != null && scriptJob.Status.Failed)
             {
                 result.status = StatusError;
                 var message =
@@ -392,16 +392,10 @@ namespace Cognifide.PowerShell.Console.Services
 
         [WebMethod(EnableSession = true)]
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
-        public string[] CompleteRocksCommand(string guid, string command, string username, string password)
-        {
-            return !LoginUser(username, password) ? new string[0] : GetTabCompletionOutputs(guid, command, false);
-        }
-
-        [WebMethod(EnableSession = true)]
-        [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteAceCommand(string guid, string command)
         {
-            if (!IsLoggedInUserAuthorized)
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
             {
                 return string.Empty;
             }
@@ -415,7 +409,8 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object CompleteCommand(string guid, string command)
         {
-            if (!IsLoggedInUserAuthorized)
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
             {
                 return string.Empty;
             }
@@ -428,7 +423,8 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetAutoCompletionPrefix(string guid, string command)
         {
-            if (!IsLoggedInUserAuthorized)
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
             {
                 return string.Empty;
             }
@@ -469,7 +465,8 @@ namespace Cognifide.PowerShell.Console.Services
         [ScriptMethod(UseHttpGet = false, ResponseFormat = ResponseFormat.Json)]
         public object GetHelpForCommand(string guid, string command)
         {
-            if (!IsLoggedInUserAuthorized)
+            if (!IsLoggedInUserAuthorized ||
+                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
             {
                 return string.Empty;
             }

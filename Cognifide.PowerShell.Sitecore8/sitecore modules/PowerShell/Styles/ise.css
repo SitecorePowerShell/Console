@@ -478,3 +478,17 @@ a.ps-link {
 #CodeEditor * {
     font-family: inherit !important;
 }
+
+.scEditorWarning {
+    background-color: #FEFAE6;
+    color: #E0B406;
+    padding: 5px;
+}
+
+.scEditorWarning td {
+    padding: 7px;
+}
+
+.scEditorWarningHelp {
+    padding-top: 5px;
+}

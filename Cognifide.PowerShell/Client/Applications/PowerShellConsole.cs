@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web;
 using Cognifide.PowerShell.Console.Services;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Diagnostics;
@@ -15,8 +18,10 @@ using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
+using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.Web.UI.WebControls;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -26,6 +31,26 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal Progress;
         protected Border ProgressOverlay;
         public ApplicationSettings Settings { get; set; }
+        protected GridPanel ElevationRequiredPanel;
+        protected GridPanel ElevatedPanel;
+        protected GridPanel ElevationBlockedPanel;
+        protected Border InfoPanel;
+
+        protected bool WasElevated
+        {
+            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1"; }
+            set { Context.ClientPage.ServerProperties["WasElevated"] = value ? "1" : string.Empty; }
+        }
+
+        protected string AppName
+        {
+            get
+            {
+                var appName = StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["AppName"]);
+                return string.IsNullOrEmpty(appName) ? SessionElevationManager.Console : appName;
+            }
+            set { Sitecore.Context.ClientPage.ServerProperties["AppName"] = value ?? SessionElevationManager.Console; }
+        }
 
         public bool MonitorActive
         {
@@ -46,6 +71,45 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
             base.OnLoad(e);
+
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console);
+
+            var controlContent = string.Empty;
+            var hidePanel = false;
+            var tokenAction = SessionElevationManager.GetToken(SessionElevationManager.Console).Action;
+            switch (tokenAction)
+            {
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
+                    // it is always elevated
+                    hidePanel = true;
+                    break;
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Password):
+                    // show that session elevation can be dropped
+                    if (isSessionElevated)
+                    {
+                        controlContent = HtmlUtil.RenderControl(ElevatedPanel);
+                    }
+                    else
+                    {
+                        if (WasElevated)
+                        {
+                            // we're cool devs know that session will need to be elevated.
+                            hidePanel = true;
+                        }
+                        else
+                        {
+                            controlContent = HtmlUtil.RenderControl(ElevationRequiredPanel);
+                        }
+                    }
+                    break;
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Block):
+                    controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
+                    break;
+            }
+
+            InfoPanel.InnerHtml = controlContent;
+            SheerResponse.Eval($"cognifide.powershell.showInfoPanel({(!hidePanel).ToString().ToLower()});");
+
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
@@ -150,6 +214,58 @@ namespace Cognifide.PowerShell.Client.Applications
             Progress.Text = sb.ToString();
 
             SheerResponse.Eval(@"$ise(function() { cognifide.powershell.resetAttempts(); });");
+        }
+
+        [HandleMessage("ise:elevatesession", true)]
+        protected virtual void ElevateSession(ClientPipelineArgs args)
+        {
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console);
+            var tokenAction = SessionElevationManager.GetToken(SessionElevationManager.Console).Action;
+            if (!isSessionElevated)
+            {
+                if (tokenAction == SessionElevationManager.TokenDefinition.ElevationAction.Block)
+                {
+                    SheerResponse.Eval(@"$ise(function() { cognifide.powershell.bootstrap(true); });");
+                }
+                else
+                {
+                    Context.ClientPage.Start(this, nameof(SessionElevationPipeline));
+                }
+            }
+            else
+            {
+                SheerResponse.Eval(@"$ise(function() { cognifide.powershell.bootstrap(false); });");
+            }
+        }
+
+        public void SessionElevationPipeline(ClientPipelineArgs args)
+        {
+            if (!args.IsPostBack)
+            {
+                //var session = ScriptSessionManager.GetSession(Monitor.SessionID);
+                UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
+                url.Parameters["app"] = "Console";
+                TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
+                args.WaitForPostBack(true);
+            }
+            else
+            {
+                WasElevated = true;
+                if (SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
+                {
+                    SheerResponse.Eval(@"$ise(function() { cognifide.powershell.bootstrap(); });");
+                }
+                else
+                {
+                    SheerResponse.Eval(@"$ise(function() { cognifide.powershell.showUnelevated(); });");
+                }
+            }
+        }
+
+        public void DropElevationButtonClick()
+        {
+            SessionElevationManager.DropSessionTokenElevation(SessionElevationManager.Console);
+            SheerResponse.Eval(@"$ise(function() { cognifide.powershell.showUnelevated(); });");
         }
 
     }

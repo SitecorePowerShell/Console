@@ -134,6 +134,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
     <Compile Include="Client\Commands\SelectUser.cs" />
     <Compile Include="Client\Commands\Selectlanguage.cs" />
     <Compile Include="Client\Controls\LanguageHistory.cs" />
@@ -388,6 +389,7 @@
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Content.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeName.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
+    <Compile Include="Core\Settings\Authorization\SessionElevationManager.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthorizationManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
     <Compile Include="Core\Settings\RenamedCommands.cs" />
@@ -434,6 +436,7 @@
     <Compile Include="Core\Utility\ZipUtils.cs" />
     <Compile Include="Core\Validation\AutocompleteSetAttribute.cs" />
     <Compile Include="Core\Validation\MiscAutocompleteSets.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\ISessionElevationWindowLauncher.cs" />
     <Compile Include="Core\VersionDecoupling\Interfaces\IImmediateDebugWindowLauncher.cs" />
     <Compile Include="Core\VersionDecoupling\Interfaces\IDateConverter.cs" />
     <Compile Include="Core\VersionDecoupling\CurrentVersion.cs" />

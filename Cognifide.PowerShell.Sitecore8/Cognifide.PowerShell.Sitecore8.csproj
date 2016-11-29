@@ -95,6 +95,7 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="Client\Applications\FieldEditor.cs" />
+    <Compile Include="Client\Applications\SessionElevationWindowLauncher.cs" />
     <Compile Include="Client\Applications\ImmediateDebugWindowLauncher.cs" />
     <Compile Include="Client\Commands\EditIseSettings.cs" />
     <Compile Include="Client\Commands\ExecuteFieldEditor.cs" />

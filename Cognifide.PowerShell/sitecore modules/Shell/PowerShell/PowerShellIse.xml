@@ -41,6 +41,45 @@
       <DataContext ID="DataContext" Root="/sitecore" DataViewName="Master" />
       <GridPanel ID="Wrapper" Width="100%" Height="100%" CellPadding="0" GridPanel.Height="100%" Background="#e9e9e9">
         <Border ID="RibbonPanel"/>
+        <Border ID="InfoPanel" class="scEditorWarning" />
+        <Border ID="Warnings" style="display:none">
+          <GridPanel ID="ElevationRequiredPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%" ID="ElevationRequiredBorder" >
+              <Border class="scEditorWarningTitle">
+                <Literal ID="InfoTitle" Text="Session privilege elevation is required to run the script." />
+              </Border>
+              <Border class="scEditorWarningHelp">
+                <Literal ID="Description" Text="The first time you will try to execute a script you will be asked for your password to elevate your session privileges so that your script can be executed." />
+              </Border>
+            </Border>
+          </GridPanel>
+          <GridPanel ID="ElevatedPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%">
+              <Border class="scEditorWarningHelp">
+                <Literal ID="InfoTitle2" Text="You have temporarily enabled script execution. " />
+                  <a href="#" class="scEditorWarningOption" style="font-weight: bold;" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
+                    <Literal Text="Drop elevated state"/>
+                  </a>
+                <Literal ID="InfoTitle3" Text=" if you no longer require it. For more information, refer to " />
+                <a href="http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/" class="scEditorWarningOption" target="_blank">
+                    <Literal Text="Documentation."/>
+                </a>
+                <Border class="scEditorWarningHelp">
+                </Border>
+              </Border>
+            </Border>
+          </GridPanel>          
+          <GridPanel ID="ElevationBlockedPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
+                     Columns="2">
+            <Border GridPanel.Width="100%" ID="ElevationBlockedBorder" >
+              <Border class="scEditorWarningTitle">
+                <Literal ID="InfoTitle4" Text="Session privilege elevation is blocked and you cannot run scripts in ISE." />
+              </Border>
+            </Border>
+          </GridPanel>
+        </Border>
         <GridPanel ID="Content" Width="100%" Height="100%" CellPadding="4" GridPanel.Height="100%">
           <GridPanel Columns="1" Width="100%" Height="100%" CellPadding="4">
             <GridPanel Columns="1" Height="100%" GridPanel.Height="200px" Width="100%" GridPanel.ID="ScriptPane">

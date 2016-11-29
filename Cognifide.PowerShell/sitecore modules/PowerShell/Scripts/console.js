@@ -33,8 +33,11 @@
     }, settings.keepAliveCheck);
 
     function getParam(name) {
-        if (name = (new RegExp("[?&]" + encodeURIComponent(name) + "=([^&]*)")).exec(location.search))
+        name = (new RegExp("[?&]" + encodeURIComponent(name) + "=([^&]*)")).exec(location.search);
+        if (name) {
             return decodeURIComponent(decodeURIComponent(name[1]));
+        }
+        return undefined;
     }
 
     function getSessionId() {
@@ -143,6 +146,8 @@
                             }
                         }, wait);
                     })(initialWait);
+                } else if (data["status"] === "unauthorized") {
+                    cognifide.powershell.elevateSession();
                 } else {
                     displayResult(term, data);
                     var handle = data["handle"];
@@ -239,10 +244,10 @@
     }
 
     var guid = getSessionId();
+    var terminal;
 
     $(function() {
-
-        var terminal =
+        terminal =
             $("#terminal").terminal(function(command, term) {
                 var buffer;
                 if (command.length > 0 && command.lastIndexOf(" `") == command.length - 1) {
@@ -271,14 +276,45 @@
                 onTabCompletionEnd: tabCompletionEnd,
                 onTabCompletionNoHints: tabCompletionNoHints
             });
+        cognifide.powershell.bootstrap(false);
+    });
 
-        if (!isBlank(getUrlParameter("item") && getUrlParameter("item") != "null")) {
-            callPowerShellHost(terminal, guid, "cd \"" + getUrlParameter("db") + ":\\" + myUnescape(getUrlParameter("item")) + "\"");
-        } else if (!isBlank(getUrlParameter("debug") && getUrlParameter("debug") === "true")) {
-            callPowerShellHost(terminal, guid, "Get-PSCallStack");
-        } else
-        {
-            callPowerShellHost(terminal, guid, "cd master:\\");
+    
+    cognifide.powershell.elevateSession = function() {
+        scForm.postRequest("", "", "", "ise:elevatesession");
+        cognifide.powershell.showInfoPanel(true);
+    };
+
+    cognifide.powershell.showUnelevated = function() {
+        terminal.resume();
+        $ise("#working").hide();
+	terminal.set_prompt("unelevated >")
+        cognifide.powershell.showInfoPanel(false);
+    }
+
+    cognifide.powershell.showInfoPanel = function(showPanel) {
+        if (showPanel) {
+            $ise("#InfoPanel").css("display", "block");
+            $ise("#terminal").css({ "top": $("#InfoPanel").outerHeight()+"px" });
+        } else {
+            $ise("#InfoPanel").css("display", "none");
+            $ise("#terminal").css({ "top": "0" });
+        }
+    }
+
+    cognifide.powershell.bootstrap = function(elevationBlocked) {
+	if(!elevationBlocked){
+          if (!isBlank(getUrlParameter("item") && getUrlParameter("item") != "null")) {
+              callPowerShellHost(terminal, guid, "cd \"" + getUrlParameter("db") + ":\\" + myUnescape(getUrlParameter("item")) + "\"");
+          } else if (!isBlank(getUrlParameter("debug") && getUrlParameter("debug") === "true")) {
+              callPowerShellHost(terminal, guid, "Get-PSCallStack");
+          } else {
+              callPowerShellHost(terminal, guid, "cd master:\\");
+          }
+        } else {
+          terminal.resume();
+          $("#working").hide();
+          terminal.echo("Script execution forbidden. Contact your Sitecore administrator if you need this functionality.");
         }
 
         window.parent.focus();
@@ -287,7 +323,7 @@
         function setFocusOnConsole() {
             $("body").focus();
         }
-
         setTimeout(setFocusOnConsole, 1000);
-    });
+    };
+
 }(jQuery, window, window.cognifide = window.cognifide || {}));
