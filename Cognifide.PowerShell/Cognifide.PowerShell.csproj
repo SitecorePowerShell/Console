@@ -147,6 +147,8 @@
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\BasePipelineMessageWithResult.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
+    <Compile Include="Core\Settings\Authorization\DropElevatedSessionState.cs" />
+    <Compile Include="Core\Settings\Authorization\ElevateSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />
     <Compile Include="Core\Settings\Authorization\AuthorizationEntry.cs" />
     <Compile Include="Client\Applications\ConfirmChoice.cs" />
@@ -389,6 +391,8 @@
     <Compile Include="Core\Provider\PsSitecoreItemProvider.Content.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeName.cs" />
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
+    <Compile Include="Core\Settings\Authorization\ContentEditorWarningScript.cs" />
+    <Compile Include="Core\Settings\Authorization\ScriptItemSecurityEventHandler.cs" />
     <Compile Include="Core\Settings\Authorization\SessionElevationManager.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthorizationManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
@@ -422,6 +426,7 @@
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
     <Compile Include="Core\Settings\ScriptItemFieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
+    <Compile Include="Core\Settings\TemplateIDs.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />

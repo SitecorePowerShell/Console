@@ -208,7 +208,7 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             var currentUserItem = GetInstance(ApplicationNames.IseConsole).GetSettingsDtoForSave();
             var mruItem = currentUserItem.Children["MRU"] ??
-                          currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
+                          currentUserItem.Add("MRU", new TemplateID(Sitecore.TemplateIDs.Folder));
             if (!mruItem.Publishing.NeverPublish)
             {
                 mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
