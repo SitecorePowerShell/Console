@@ -621,7 +621,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
                 {
                     var defaultWorkflow =
-                        createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[FieldIDs.DefaultWorkflow]);
+                        createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[Sitecore.FieldIDs.DefaultWorkflow]);
                     if (null != defaultWorkflow)
                     {
                         defaultWorkflow.Start(createdItem);

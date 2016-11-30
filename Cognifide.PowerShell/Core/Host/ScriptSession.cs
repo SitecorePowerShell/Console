@@ -594,10 +594,12 @@ namespace Cognifide.PowerShell.Core.Host
 
         public List<object> ExecuteScriptPart(Item scriptItem, bool stringOutput)
         {
+            if (!scriptItem.IsPowerShellScript())
+            {
+                return new List<object>();
+            }
             SetExecutedScript(scriptItem);
-            var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                : string.Empty;
+            var script = scriptItem[FieldIDs.Script] ?? string.Empty;
             return ExecuteScriptPart(script, stringOutput, false);
         }
 

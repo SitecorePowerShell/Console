@@ -1,6 +1,6 @@
 ﻿using Sitecore.Data;
 
-namespace Cognifide.PowerShell.Core.Settings
+namespace Cognifide.PowerShell
 {
     public static class TemplateIDs
     {

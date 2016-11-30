@@ -14,6 +14,7 @@ using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
@@ -22,13 +23,14 @@ using Sitecore.Security;
 using Sitecore.Security.Accounts;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using TemplateIDs = Cognifide.PowerShell.Core.Settings.TemplateIDs;
+using TemplateIDs = Cognifide.PowerShell.TemplateIDs;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -325,7 +327,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var db = scriptItem.Database.Name;
             var id = scriptItem.ID.ToString();
             var name = scriptItem.Name;
-            var icon = scriptItem[FieldIDs.Icon];
+            var icon = scriptItem[Sitecore.FieldIDs.Icon];
             var scriptName = scriptItem.Paths.Path.Substring(ApplicationSettings.ScriptLibraryPath.Length);
             ScriptName.Text = scriptName;
             SheerResponse.Eval(string.Format("cognifide.powershell.changeWindowTitle('{0}', false);", scriptName));
@@ -335,15 +337,15 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var openedScript = mruItems.FirstOrDefault(mruItem => mruItem["Message"].Contains(id)) ??
                                    mruMenu.Add(Guid.NewGuid().ToString("n"),
-                                       new TemplateID(ID.Parse("{998B965E-6AB8-4568-810F-8101D60D0CC3}")));
+                                       new TemplateID(Sitecore.TemplateIDs.MenuItem));
                 openedScript.Edit(args =>
                 {
-                    openedScript["Message"] = string.Format("ise:mruopen(id={0},db={1})", id, db);
+                    openedScript["Message"] = $"ise:mruopen(id={id},db={db})";
                     openedScript["Icon"] = icon;
-                    openedScript["__Icon"] = icon;
+                    openedScript[Sitecore.FieldIDs.Icon] = icon;
                     openedScript["Display name"] = name;
-                    openedScript["__Display name"] = name;
-                    openedScript[FieldIDs.Sortorder] = "0";
+                    openedScript[Sitecore.FieldIDs.DisplayName] = name;
+                    openedScript[Sitecore.FieldIDs.Sortorder] = "0";
                     openedScript.Publishing.NeverPublish = true;
                 });
 
@@ -360,7 +362,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         var item = mruItem;
                         item.Edit(args =>
                         {
-                            item[FieldIDs.Sortorder] = sortOrder.ToString("G");
+                            item[Sitecore.FieldIDs.Sortorder] = sortOrder.ToString("G");
                             item.Publishing.NeverPublish = true;
                             sortOrder++;
                         });
@@ -451,7 +453,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (scriptItem == null)
                     return;
                 scriptItem.Edit(
-                    editArgs => { scriptItem.Fields[ScriptItemFieldNames.Script].Value = Editor.Value; });
+                    editArgs => { scriptItem.Fields[FieldIDs.Script].Value = Editor.Value; });
                 SheerResponse.Eval("cognifide.powershell.updateModificationFlag(true);");
             }
         }
@@ -467,12 +469,16 @@ namespace Cognifide.PowerShell.Client.Applications
             Assert.ArgumentNotNull(id, "id");
             Assert.ArgumentNotNull(db, "db");
             var scriptItem = Factory.GetDatabase(db).GetItem(id);
-            if (scriptItem == null)
-                return;
 
-            if (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
+            if (!ScriptItem.IsPowerShellScript())
             {
-                Editor.Value = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
+                SessionElevationErrors.OperationFailedWrongDataTemplate();
+                return;
+            }
+
+            if (scriptItem[FieldIDs.Script] != null)
+            {
+                Editor.Value = scriptItem[FieldIDs.Script];
                 SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
@@ -563,7 +569,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
                 var script = ScriptItem;
-                sessionName = script != null ? script[ScriptItemFieldNames.PersistentSessionId] : string.Empty;
+                sessionName = script != null ? script[FieldIDs.PersistentSessionId] : string.Empty;
             }
 
             var autoDispose = string.IsNullOrEmpty(sessionName);
@@ -656,11 +662,14 @@ namespace Cognifide.PowerShell.Client.Applications
             string scriptDb = args.Parameters["scriptDb"];
             string scriptItem = args.Parameters["scriptId"];
             Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
-            scriptSession.SetVariable("scriptText", Editor.Value);
-            scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
-            scriptSession.SetVariable("scriptItem", ScriptItem);
-            scriptSession.Interactive = true;
-            JobExecuteScript(args, script[ScriptItemFieldNames.Script], scriptSession, true, false);
+            if (script.IsPowerShellScript())
+            {
+                scriptSession.SetVariable("scriptText", Editor.Value);
+                scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
+                scriptSession.SetVariable("scriptItem", ScriptItem);
+                scriptSession.Interactive = true;
+                JobExecuteScript(args, script[FieldIDs.Script], scriptSession, true, false);
+            }
         }
 
 
@@ -670,7 +679,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var script = args.Parameters["script"];
             if (!string.IsNullOrEmpty(script))
             {
-                Editor.Value = args.Parameters["script"];
+                Editor.Value = script;
             }
             SheerResponse.Eval("cognifide.powershell.updateEditor();");
         }
@@ -841,8 +850,8 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var name =
                     item != null &&
-                    !string.IsNullOrEmpty(item[ScriptItemFieldNames.PersistentSessionId])
-                        ? item[ScriptItemFieldNames.PersistentSessionId]
+                    !item[FieldIDs.PersistentSessionId].IsNullOrEmpty()
+                        ? item[FieldIDs.PersistentSessionId]
                         : null;
                 sessionName = string.Format(Texts.PowerShellIse_UpdateRibbon_Script_defined___0_,
                     name ?? Texts.PowerShellIse_UpdateRibbon_Single_execution);
@@ -1107,8 +1116,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 if (args.Parameters.AllKeys.Contains("elevationResult"))
                 {
-                    SheerResponse.Alert(
-                        "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again");
+                    SessionElevationErrors.OperationRequiresElevation();
                     return false;
                 }
                 var pipelineArgs = new ClientPipelineArgs();

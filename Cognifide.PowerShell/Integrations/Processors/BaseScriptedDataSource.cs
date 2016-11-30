@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Collections;
@@ -43,12 +44,14 @@ namespace Cognifide.PowerShell.Integrations.Processors
             Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
             var scriptItem = item.Database.GetItem(scriptSource);
+            if (!scriptItem.IsPowerShellScript())
+            {
+                return new[] {scriptItem};
+            }
             using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
-                var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                    ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                    : string.Empty;
-                script = string.Format("{0}\n{1}", ScriptSession.GetDataContextSwitch(item), script);
+                var script = scriptItem[FieldIDs.Script] ?? string.Empty;
+                script = $"{ScriptSession.GetDataContextSwitch(item)}\n{script}";
                 return session.ExecuteScriptPart(script, false).Cast<Item>();
             }
         }

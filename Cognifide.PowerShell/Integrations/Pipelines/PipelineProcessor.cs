@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -24,11 +25,13 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 
                 foreach (var scriptItem in libraryItem.Children.ToList())
                 {
+                    if (!scriptItem.IsPowerShellScript())
+                    {
+                        continue;
+                    }
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {
-                        var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                            ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                            : String.Empty;
+                        var script = scriptItem.Fields[FieldIDs.Script].Value ?? string.Empty;
                         session.SetVariable("pipelineArgs", args);
 
                         try
@@ -38,8 +41,8 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                         }
                         catch (Exception ex)
                         {
-                            PowerShellLog.Error($"Error while executing script in {GetType().FullName} pipeline processor.",ex)
-                            ;
+                            PowerShellLog.Error(
+                                $"Error while executing script in {GetType().FullName} pipeline processor.", ex);
                         }
                     }
                 }

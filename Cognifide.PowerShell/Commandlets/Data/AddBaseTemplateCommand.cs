@@ -21,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
             if (ShouldProcess(innerItem.GetProviderPath(), $"Add base template(s) '{TemplateItem.Select(t => t.InnerItem).GetProviderPaths()}'"))
             {
-                MultilistField baseTemplateField = innerItem.Fields[FieldIDs.BaseTemplate];
+                MultilistField baseTemplateField = innerItem.Fields[Sitecore.FieldIDs.BaseTemplate];
 
                 innerItem.Editing.BeginEdit();
 

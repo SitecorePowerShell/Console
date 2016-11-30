@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.ContentSearch.Linq;
 
@@ -19,7 +20,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public static ScriptSession GetSession(string persistentId, string defaultId)
         {
-            var sessionId = string.IsNullOrEmpty(persistentId) ? defaultId : persistentId;
+            var sessionId = persistentId.IfNullOrEmpty(defaultId);
             return GetSession(sessionId);
         }
 

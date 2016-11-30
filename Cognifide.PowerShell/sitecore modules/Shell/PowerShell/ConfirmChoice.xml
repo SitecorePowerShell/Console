@@ -54,7 +54,7 @@
           <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
                  Title="Show copyright..." />
           <Literal ID="PromoLiteral"
-                   Text="Sitecore PowerShell Extensions (c) 2010-2016 &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt; with &lt;a href='http://www.cognifide.com' target='_blank'&gt;Cognifide Limited&lt;/a&gt;, &lt;a href='http://michaellwest.blogspot.com/' target='_blank'&gt;Michael West&lt;/a&gt;." />
+                   Text="Sitecore PowerShell Extensions (c) 2010-2016 &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;, &lt;a href='http://michaellwest.blogspot.com/' target='_blank'&gt;Michael West&lt;/a&gt;." />
           <div class="footerOkCancel">
             <Border Align="Center" ID="Buttons">
             </Border>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -45,13 +46,17 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 {
                     foreach (Item scriptItem in libraryItem.Children)
                     {
+                        if (!scriptItem.IsPowerShellScript())
+                        {
+                            continue;
+                        }
                         if (item != null)
                         {
                             session.SetItemLocationContext(item);
                         }
                         session.SetExecutedScript(scriptItem);
                         session.SetVariable("eventArgs", args);
-                        var script = scriptItem[ScriptItemFieldNames.Script];
+                        var script = scriptItem[FieldIDs.Script];
                         if (!String.IsNullOrEmpty(script))
                         {
                             session.ExecuteScriptPart(script);

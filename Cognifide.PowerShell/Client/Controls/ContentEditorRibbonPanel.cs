@@ -1,4 +1,6 @@
 ﻿using System.Web.UI;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
@@ -35,7 +37,8 @@ namespace Cognifide.PowerShell.Client.Controls
                 }
 
                 var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
-                if (scriptItem == null || !RulesUtils.EvaluateRules(scriptItem["ShowRule"], context.Items[0]))
+
+                if (!scriptItem.IsPowerShellScript() || !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], context.Items[0]))
                 {
                     continue;
                 }
@@ -44,7 +47,7 @@ namespace Cognifide.PowerShell.Client.Controls
                     Translate.Text(scriptItem.DisplayName),
                     scriptItem["__Icon"], string.Empty,
                     psButton["Click"],
-                    RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.Items[0]),
+                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.Items[0]),
                     false, context);
 
                 return;

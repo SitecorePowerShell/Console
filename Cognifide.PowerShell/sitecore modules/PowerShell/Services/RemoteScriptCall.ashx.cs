@@ -431,7 +431,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessScript(HttpContext context, Item scriptItem)
         {
-            if (scriptItem?.Fields[ScriptItemFieldNames.Script] == null)
+            if(!scriptItem.IsPowerShellScript() || scriptItem?.Fields[FieldIDs.Script] == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
                 return;
@@ -439,7 +439,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
-                var script = scriptItem.Fields[ScriptItemFieldNames.Script].Value;
+                var script = scriptItem[FieldIDs.Script];
 
                 if (Context.Database != null)
                 {
@@ -562,7 +562,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
                 var rootPath = root.Paths.Path;
-                var query = $"{path}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\"]";
+                var query = $"{path}//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\"]";
                 try
                 {
                     var results = root.Database.SelectItems(query);

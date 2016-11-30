@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.UI;
+using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -37,16 +38,16 @@ namespace Cognifide.PowerShell.Client.Controls
 
                 foreach (Item psButton in psButtons)
                 {
-                    if (!RulesUtils.EvaluateRules(psButton["ShowRule"], ruleContext))
+                    if (!RulesUtils.EvaluateRules(psButton[FieldNames.ShowRule], ruleContext))
                     {
                         continue;
                     }
 
                     RenderLargeButton(output, ribbon, Control.GetUniqueID("script"),
                         Translate.Text(psButton.DisplayName),
-                        psButton["__Icon"], string.Empty,
+                        psButton[Sitecore.FieldIDs.Icon], string.Empty,
                         $"ise:runplugin(scriptDb={psButton.Database.Name},scriptId={psButton.ID})",
-                        context.Parameters["ScriptRunning"] == "0" && RulesUtils.EvaluateRules(psButton["EnableRule"], ruleContext),
+                        context.Parameters["ScriptRunning"] == "0" && RulesUtils.EvaluateRules(psButton[FieldNames.EnableRule], ruleContext),
                         false, context);
                 }
             }

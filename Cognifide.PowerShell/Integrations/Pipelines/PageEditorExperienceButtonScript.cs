@@ -69,7 +69,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
         {
             foreach (var scriptItem in libraryItem.Children.ToList())
             {
-                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], ruleContext))
+                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], ruleContext))
                 {
                     continue;
                 }

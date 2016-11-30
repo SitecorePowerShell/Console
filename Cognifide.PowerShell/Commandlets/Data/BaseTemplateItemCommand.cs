@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         protected override void ProcessItem(Item item)
         {
 
-            if (item.TemplateID != TemplateIDs.Template)
+            if (item.TemplateID != Sitecore.TemplateIDs.Template)
             {
                 item = item.Database.GetTemplate(item.TemplateID);
             }

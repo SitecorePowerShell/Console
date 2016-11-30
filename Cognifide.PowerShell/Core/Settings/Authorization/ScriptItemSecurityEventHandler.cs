@@ -38,8 +38,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
             if (!SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
             {
-                SheerResponse.Alert(
-                    "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again");
+                SessionElevationErrors.OperationRequiresElevation();
 
                 var creatingArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
                 if (creatingArgs != null)

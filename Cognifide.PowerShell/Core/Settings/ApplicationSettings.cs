@@ -236,7 +236,7 @@ namespace Cognifide.PowerShell.Core.Settings
                             configuration[FontFamilySettingFieldName] = FontFamily;
                             if (IsPersonalized)
                             {
-                                configuration.Fields[FieldIDs.DisplayName].Reset();
+                                configuration.Fields[Sitecore.FieldIDs.DisplayName].Reset();
                             }
                         });
                 }

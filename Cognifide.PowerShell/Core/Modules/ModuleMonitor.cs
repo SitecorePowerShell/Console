@@ -89,7 +89,7 @@ namespace Cognifide.PowerShell.Core.Modules
                 var item = sargs.Parameters[0] as Item;
                 if (item.TemplateID == ModuleTemplateId)
                 {
-                    item[FieldIDs.Icon] = item["Enabled"] == "1"
+                    item[Sitecore.FieldIDs.Icon] = item["Enabled"] == "1"
                         ? "Software/32x32/jar_bean.png"
                         : "Software/32x32/jar_delete.png";
                 }

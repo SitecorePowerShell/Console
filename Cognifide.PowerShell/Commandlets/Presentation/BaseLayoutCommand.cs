@@ -22,11 +22,11 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         {
             base.BeginProcessing();
 
-            LayoutFieldId = FieldIDs.LayoutField;
+            LayoutFieldId = Sitecore.FieldIDs.LayoutField;
             if (FinalLayout)
             {
                 SitecoreVersion.V80.OrNewer(
-                    () => LayoutFieldId = FieldIDs.FinalLayoutField)
+                    () => LayoutFieldId = Sitecore.FieldIDs.FinalLayoutField)
                     .ElseWriteWarning(this, nameof(FinalLayout), true);
             }
         }

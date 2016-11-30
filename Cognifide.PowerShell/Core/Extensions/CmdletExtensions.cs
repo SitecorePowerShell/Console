@@ -19,7 +19,7 @@ namespace Cognifide.PowerShell.Core.Extensions
     {
         public static bool CanChangeReadOnly(this Cmdlet command, Item item)
         {
-            if (item.Fields[FieldIDs.ReadOnly] == null)
+            if (item.Fields[Sitecore.FieldIDs.ReadOnly] == null)
             {
                 var error = $"Item '{item.Name}' does not have a ReadOnly field.";
                 command.WriteError(new ErrorRecord(new PSInvalidOperationException(error), 
@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Core.Extensions
                 return false;
             }
 
-            if (!item.Fields[FieldIDs.ReadOnly].CanWrite)
+            if (!item.Fields[Sitecore.FieldIDs.ReadOnly].CanWrite)
             {
                 var error = $"Cannot modify item '{item.Name}' because the ReadOnly field cannot be written.";
                 command.WriteError(new ErrorRecord(new SecurityException(error), 

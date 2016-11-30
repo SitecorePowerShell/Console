@@ -32,6 +32,8 @@ namespace Cognifide.PowerShell.Core.Extensions
             return (value ?? string.Empty).IndexOf(option.ToString(), StringComparison.OrdinalIgnoreCase) != -1;
         }
 
+        public static string IfNullOrEmpty(this string value, string useIfEmpty) =>
+            string.IsNullOrEmpty(value) ? useIfEmpty : value;
 
         public static string EllipsisString(this string rawString, int maxLength = 30, char delimiter = '\\')
         {

@@ -4,6 +4,7 @@ using System.Web.UI;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -35,14 +36,14 @@ namespace Cognifide.PowerShell.Client.Controls
                 Item scriptItem in
                     ModuleManager.GetFeatureRoots(IntegrationPoints.ListViewExportFeature)
                         .SelectMany(parent => parent.Children)
-                        .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem["ShowRule"], ruleContext, !showShared)))
+                        .Where(scriptItem => RulesUtils.EvaluateRulesForView(scriptItem[FieldNames.ShowRule], ruleContext, !showShared)))
             {
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),
-                    scriptItem["__Icon"], string.Empty,
+                    scriptItem[Sitecore.FieldIDs.Icon], string.Empty,
                     string.Format("export:results(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                         scriptItem.ID),
-                    RulesUtils.EvaluateRules(scriptItem["EnableRule"], context.CustomData as Item) &&
+                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.CustomData as Item) &&
                     context.Parameters["ScriptRunning"] == "0",
                     false);
             }

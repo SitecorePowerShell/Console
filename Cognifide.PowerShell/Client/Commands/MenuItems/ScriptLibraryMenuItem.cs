@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
@@ -117,11 +118,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             }
 
 
-            var scriptTemplateId = new ID("{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}");
-            var scriptLibaryTemplateId = new ID("{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}");
-            foreach (var scriptItem in parent.Children.Where(p => p.TemplateID == scriptTemplateId || p.TemplateID == scriptLibaryTemplateId))
+            foreach (var scriptItem in parent.Children.Where(p => p.IsPowerShellScript() || p.IsPowerShellLibrary()))
             {
-                if (!RulesUtils.EvaluateRules(scriptItem["ShowRule"], contextItem))
+                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], contextItem))
                 {
                     continue;
                 }
@@ -131,7 +130,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     Header = scriptItem.DisplayName,
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
-                    Disabled = !RulesUtils.EvaluateRules(scriptItem["EnableRule"], contextItem)
+                    Disabled = !RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], contextItem)
                 };
 
                 if (scriptItem.IsPowerShellScript())

@@ -392,6 +392,7 @@
     <Compile Include="Core\Rules\PowerShellExperienceButtonChromeType.cs" />
     <Compile Include="Core\Settings\Authorization\ContentEditorWarningScript.cs" />
     <Compile Include="Core\Settings\Authorization\ScriptItemSecurityEventHandler.cs" />
+    <Compile Include="Core\Settings\Authorization\SessionElevationErrors.cs" />
     <Compile Include="Core\Settings\Authorization\SessionElevationManager.cs" />
     <Compile Include="Core\Settings\Authorization\ServiceAuthorizationManager.cs" />
     <Compile Include="Core\Settings\PredefinedVariables.cs" />
@@ -423,9 +424,10 @@
     <Compile Include="Core\Serialization\SingleEntry.cs" />
     <Compile Include="Core\Settings\ApplicationNames.cs" />
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
-    <Compile Include="Core\Settings\ScriptItemFieldNames.cs" />
+    <Compile Include="FieldIds.cs" />
+    <Compile Include="Core\Settings\FieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
-    <Compile Include="Core\Settings\TemplateIDs.cs" />
+    <Compile Include="TemplateIDs.cs" />
     <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />

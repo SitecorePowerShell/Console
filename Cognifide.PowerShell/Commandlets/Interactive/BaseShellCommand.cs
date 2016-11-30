@@ -1,6 +1,10 @@
-﻿using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+﻿using System.Management.Automation;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.Data.Items;
 using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
@@ -28,6 +32,18 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 message.Execute();
             }
+        }
+
+        protected bool IsPowerShellScriptItem(Item scriptItem)
+        {
+            if (!scriptItem.IsPowerShellScript())
+            {
+                WriteError(typeof(CmdletInvocationException),
+                    SessionElevationErrors.Message_OperationFailedWrongDataTemplate,
+                    ErrorIds.InvalidItemType, ErrorCategory.InvalidArgument, HostData.ScriptingHost.SessionId);
+                return false;
+            }
+            return true;
         }
     }
 }

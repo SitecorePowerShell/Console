@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.ContentSearch.Utilities;
@@ -107,10 +108,10 @@ namespace Cognifide.PowerShell.Commandlets.Session
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                string query = string.IsNullOrEmpty(Library)
-                    ? $"{path}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{name}\"]"
-                    : $"{path}/#{Library}#//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\" and @@Key=\"{name}\"]";
-                Item[] scriptItems = root.Database.SelectItems(query);
+                var query = string.IsNullOrEmpty(Library)
+                    ? $"{path}//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\" and @@Key=\"{name}\"]"
+                    : $"{path}/#{Library}#//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\" and @@Key=\"{name}\"]";
+                var scriptItems = root.Database.SelectItems(query);
                 if (scriptItems?.Length > 0)
                 {
                     functionItems.AddRange(scriptItems);
@@ -120,20 +121,26 @@ namespace Cognifide.PowerShell.Commandlets.Session
             if (functionItems.Count > 1)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
-                    $"Ambiguous function name '{Name}' detected, please narrow your search by specifying sub-library and/or module name."), "sitecore_ambiguous_name", ErrorCategory.InvalidData, null));
+                        $"Ambiguous function name '{Name}' detected, please narrow your search by specifying sub-library and/or module name."),
+                    "sitecore_ambiguous_name", ErrorCategory.InvalidData, null));
                 return;
             }
 
             if (functionItems.Count == 0)
             {
                 WriteError(new ErrorRecord(new AmbiguousMatchException(
-                    String.Format(
-                        "Function item with name '{0}' could not be found in the specified module or library or it does not exist.",
-                        Name)), "sitecore_function_not_found", ErrorCategory.ObjectNotFound, null));
+                        $"Function item with name '{Name}' could not be found in the specified module or library or it does not exist."),
+                    "sitecore_function_not_found", ErrorCategory.ObjectNotFound, null));
                 return;
             }
 
-            var script = functionItems[0][ScriptItemFieldNames.Script];
+            if (!IsPowerShellScriptItem(functionItems[0]))
+            {
+                return;
+            }
+
+            var script = functionItems[0][FieldIDs.Script];
+
             if (ShouldProcess(functionItems[0].GetProviderPath(), "Import functions"))
             {
                 var sendToPipeline = InvokeCommand.InvokeScript(script, false,
@@ -165,9 +172,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                var query = string.Format(
-                    "{0}//*[@@TemplateId=\"{{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}}\"]",
-                    path);
+                var query = $"{path}//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\"]";
                 try
                 {
                     var results = root.Database.SelectItems(query);

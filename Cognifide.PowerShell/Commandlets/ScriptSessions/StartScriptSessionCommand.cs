@@ -6,8 +6,10 @@ using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.ContentSearch.Utilities;
@@ -18,6 +20,7 @@ using Sitecore.Jobs;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 using JobManager = Sitecore.Jobs.JobManager;
+using TemplateIDs = Cognifide.PowerShell.TemplateIDs;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -151,7 +154,11 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             if (Item != null)
             {
                 scriptItem = Item;
-                script = Item[ScriptItemFieldNames.Script];
+                if (!IsPowerShellScriptItem(scriptItem))
+                {
+                    return;
+                }
+                script = Item[FieldIDs.Script];
             }
             else if (Path != null)
             {
@@ -165,7 +172,13 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                         ErrorIds.ItemNotFound, ErrorCategory.ObjectNotFound, Path);
                     return;
                 }
-                script = scriptItem[ScriptItemFieldNames.Script];
+
+                if (!IsPowerShellScriptItem(scriptItem))
+                {
+                    return;
+                }
+
+                script = scriptItem[FieldIDs.Script];
             }
             
             if (!ShouldProcess(scriptItem?.GetProviderPath() ?? string.Empty, "Start new script session")) return;
@@ -231,6 +244,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
             ProcessSession(ScriptSessionManager.GetSession(string.Empty, ApplicationNames.BackgroundJob, false));
         }
+
 
         protected void RunJob(ScriptSession session, string command)
         {

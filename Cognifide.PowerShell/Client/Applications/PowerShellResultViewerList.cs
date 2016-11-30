@@ -9,6 +9,7 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -16,6 +17,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -418,20 +420,25 @@ namespace Cognifide.PowerShell.Client.Applications
             UpdateRibbon();
             var scriptDb = Database.GetDatabase(message.Arguments["scriptDb"]);
             var scriptItem = scriptDb.GetItem(message.Arguments["scriptID"]);
-            var sessionId = string.IsNullOrEmpty(ListViewer.Data.SessionId)
-                ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
-                : ListViewer.Data.SessionId;
+            if (!scriptItem.IsPowerShellScript())
+            {
+                return;
+            }
+            var sessionId = ListViewer.Data.SessionId.IfNullOrEmpty(scriptItem[FieldIDs.PersistentSessionId]);
             var scriptSession = ScriptSessionManager.GetSession(sessionId);
             ExecuteScriptJob(scriptItem, scriptSession, message, string.IsNullOrEmpty(sessionId));
         }
 
         private void ExecuteScriptJob(Item scriptItem, ScriptSession scriptSession, Message message, bool autoDispose)
         {
-            var script = (scriptItem.Fields[ScriptItemFieldNames.Script] != null)
-                ? scriptItem.Fields[ScriptItemFieldNames.Script].Value
-                : string.Empty;
-            SetVariables(scriptSession, message);
+            if (!scriptItem.IsPowerShellScript())
+            {
+                SessionElevationErrors.OperationFailedWrongDataTemplate();
+                return;
+            }
 
+            var script = scriptItem[FieldIDs.Script] ?? string.Empty;
+            SetVariables(scriptSession, message);
             scriptSession.SetExecutedScript(scriptItem);
             scriptSession.Interactive = true;
             ScriptSessionId = scriptSession.ID;

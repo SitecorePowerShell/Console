@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Data;
@@ -24,15 +26,21 @@ namespace Cognifide.PowerShell.Integrations.Workflows
 
             var dataItem = args.DataItem;
 
-            if (string.IsNullOrEmpty(actionItem[ScriptItemFieldNames.Script]))
+            if (string.IsNullOrEmpty(actionItem[FieldIDs.Script]))
             {
                 return;
             }
 
-            var scriptItem = actionItem.Database.GetItem(new ID(actionItem[ScriptItemFieldNames.Script]));
+            var scriptItem = actionItem.Database.GetItem(new ID(actionItem[FieldIDs.WorkflowActionScript]));
 
-            if (RulesUtils.EvaluateRules(actionItem[ScriptItemFieldNames.EnableRule], dataItem) &&
-                RulesUtils.EvaluateRules(scriptItem[ScriptItemFieldNames.EnableRule], dataItem))
+            if (!scriptItem.IsPowerShellScript())
+            {
+                Context.ClientPage.ClientResponse.Broadcast(SessionElevationErrors.OperationFailedWrongDataTemplate(), "Shell");
+                return;
+            }
+
+            if (RulesUtils.EvaluateRules(actionItem[FieldNames.EnableRule], dataItem) &&
+                RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], dataItem))
             {
                 var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
                 str.Append("id", dataItem.ID.ToString());

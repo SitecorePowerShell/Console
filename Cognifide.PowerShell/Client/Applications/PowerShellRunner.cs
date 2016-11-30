@@ -4,6 +4,7 @@ using System.Text;
 using System.Web;
 using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
@@ -18,6 +19,7 @@ using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
@@ -206,17 +208,22 @@ namespace Cognifide.PowerShell.Client.Applications
                 Copyright.Alt = Texts.PowerShellRunner_OnLoad_Show_copyright__;
                 Title.Text = Texts.PowerShellRunner_UpdateProgress_Running_script___;
 
-                if (!string.IsNullOrEmpty(ScriptId) && !string.IsNullOrEmpty(ScriptId))
+                if (!ScriptId.IsNullOrEmpty() && !ScriptDb.IsNullOrEmpty())
                 {
                     var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
+                    if (!scriptItem.IsPowerShellScript())
+                    {
+                        Title.Text = SessionElevationErrors.Message_OperationFailedWrongDataTemplate;
+                        DialogHeader.Text = "Execution prevented!";
+                        AbortButton.Header = "OK";
+                        return;
+                    }
                     scriptItem.Fields.ReadAll();
                     Icon.Src = scriptItem.Appearance.Icon;
 
-                    PersistentId = string.IsNullOrEmpty(WebUtil.GetQueryString("sessionKey"))
-                        ? scriptItem[ScriptItemFieldNames.PersistentSessionId]
-                        : WebUtil.GetQueryString("sessionKey");
+                    PersistentId = WebUtil.GetQueryString("sessionKey").IfNullOrEmpty(scriptItem[FieldIDs.PersistentSessionId]);
 
-                    ScriptContent = scriptItem[ScriptItemFieldNames.Script];
+                    ScriptContent = scriptItem[FieldIDs.Script];
                     DialogHeader.Text = scriptItem.DisplayName;
                 }
                 else

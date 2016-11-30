@@ -1,4 +1,5 @@
 ﻿using System;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Data.Items;
@@ -14,12 +15,15 @@ namespace Cognifide.PowerShell.Integrations.Tasks
             {
                 foreach (var item in items)
                 {
-                    var script = item[ScriptItemFieldNames.Script];
-                    if (!String.IsNullOrEmpty(script))
+                    if (item.IsPowerShellScript())
                     {
-                        session.SetExecutedScript(item);
-                        session.SetItemLocationContext(item);
-                        session.ExecuteScriptPart(script);
+                        var script = item[FieldIDs.Script];
+                        if (!String.IsNullOrEmpty(script))
+                        {
+                            session.SetExecutedScript(item);
+                            session.SetItemLocationContext(item);
+                            session.ExecuteScriptPart(script);
+                        }
                     }
                 }
             }

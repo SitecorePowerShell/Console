@@ -268,7 +268,7 @@
                     callPowerShellHost(term, guid, command);
                 }
             }, {
-                greetings: "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-2016 Adam Najmanowicz - Cognifide, Michael West. All rights Reserved.\r\n",
+                greetings: "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-2016 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
                 name: "mainConsole",
                 tabcompletion: true,
                 onTabCompletionInit: tabCompletionInit,

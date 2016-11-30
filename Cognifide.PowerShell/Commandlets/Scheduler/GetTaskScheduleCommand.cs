@@ -52,7 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Scheduler
 
         private bool CheckItemTypeMatch(Item item)
         {
-            if (!TemplateManager.GetTemplate(item).DescendsFromOrEquals(TemplateIDs.Schedule))
+            if (!TemplateManager.GetTemplate(item).DescendsFromOrEquals(Sitecore.TemplateIDs.Schedule))
             {
                 WriteError(
                     new ErrorRecord(

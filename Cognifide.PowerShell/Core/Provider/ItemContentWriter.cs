@@ -199,7 +199,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     if (Item.IsPowerShellScript())
                     {
                         memWriter = new StreamWriter(Stream);
-                        memWriter.Write(Item[ScriptItemFieldNames.Script]);
+                        memWriter.Write(Item[FieldIDs.Script]);
                         memWriter.Flush();
                     }
                 }
