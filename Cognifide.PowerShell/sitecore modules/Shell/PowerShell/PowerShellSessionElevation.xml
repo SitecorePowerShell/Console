@@ -65,11 +65,11 @@
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
           <Border>
             <Border Class="DialogHeader">
-              <Literal Text="Script Execution Access" ID="DialogHeader" style="margin-top:10px;"/>
+              <Literal Text="Script {0} Access" ID="DialogHeader" style="margin-top:10px;"/>
             </Border>
             <Border Class="DialogHeaderDescription">
               <Literal
-                Text="Running an arbitrary script requires that your session state is elevated to allow execution access."
+                Text="Performing '{0}' action on a script requires that your session state is elevated."
                 ID="DialogDescription" />
             </Border>
           </Border>
@@ -84,7 +84,7 @@
               </Border>
             </Border>
             <Border style="padding: 15px 5px;">
-              <Literal Text="You have requested access to execute a script and are required to validate your credentials below." ID="DialogMessage" />
+              <Literal Text="You have requested access to {0} a script and are required to validate your credentials below." ID="DialogMessage" />
             </Border>
             <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" Columns="2">
               <Literal GridPanel.style="text-align: right; padding: 10px 4px 20px 4px;" Text="Username:" />

@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
         public override void Execute(CommandContext context)
         {
-            SessionElevationManager.DropSessionTokenElevation(SessionElevationManager.ItemSave);
+            SessionElevationManager.DropSessionTokenElevation(ApplicationNames.ItemSave);
             Context.ClientPage.SendMessage(this, $"item:refresh(id={context.Items[0]})");
         }
     }

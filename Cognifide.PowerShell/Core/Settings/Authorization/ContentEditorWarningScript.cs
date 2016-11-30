@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
@@ -20,13 +21,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 return;
             }
 
-            var action = SessionElevationManager.GetToken(SessionElevationManager.ItemSave).Action;
+            var action = SessionElevationManager.GetToken(ApplicationNames.ItemSave).Action;
 
             var warning = new GetContentEditorWarningsArgs.ContentEditorWarning();
             switch (action)
             {
                 case SessionElevationManager.TokenDefinition.ElevationAction.Password:
-                    if (SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ItemSave))
+                    if (SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
                     {
                         warning.Title = "You have temporarily enabled script viewing and editing.";
                         warning.Text =

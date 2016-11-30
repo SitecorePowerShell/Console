@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         "Gallery.Versions.Option");
                     Context.ClientPage.AddControl(Sessions, control);
 
-                    var icon = session.ApplianceType == ApplicationNames.AjaxConsole
+                    var icon = session.ApplianceType == ApplicationNames.Console
                         ? "powershell/16x16/console.png"
                         : "powershell/16x16/PowerShell_Runner.png";
                     var builder = new ImageBuilder

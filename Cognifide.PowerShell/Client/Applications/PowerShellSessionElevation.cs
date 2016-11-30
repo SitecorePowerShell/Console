@@ -22,6 +22,9 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal Result;
         protected Literal UserName;
         protected PasswordExtended PasswordBox;
+        protected Literal DialogHeader;
+        protected Literal DialogDescription;
+        protected Literal DialogMessage;
 
         protected string AppName
         {
@@ -36,8 +39,16 @@ namespace Cognifide.PowerShell.Client.Applications
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
             AppName = WebUtil.GetQueryString("app");
+            var actionName = WebUtil.GetQueryString("action");
+            if (string.IsNullOrEmpty(actionName))
+            {
+                actionName = SessionElevationManager.ExecuteAction;
+            }
             UserName.Text = Sitecore.Context.User?.Name ?? string.Empty;
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
+            DialogHeader.Text = String.Format(DialogHeader.Text, actionName);
+            DialogDescription.Text = String.Format(DialogDescription.Text, actionName);
+            DialogMessage.Text = String.Format(DialogMessage.Text, actionName);
         }
 
         protected void CancelClick()

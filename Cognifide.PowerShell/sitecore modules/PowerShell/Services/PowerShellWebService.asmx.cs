@@ -94,7 +94,7 @@ namespace Cognifide.PowerShell.Console.Services
             var output = new StringBuilder();
 
             if (!IsLoggedInUserAuthorized ||
-                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console))
             {
                 return serializer.Serialize(
                     new
@@ -274,7 +274,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static ScriptSession GetScriptSession(string guid)
         {
-            return ScriptSessionManager.GetSession(guid, ApplicationNames.AjaxConsole, false);
+            return ScriptSessionManager.GetSession(guid, ApplicationNames.Console, false);
         }
 
         protected void RunJob(ScriptSession session, string command)
@@ -395,7 +395,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object CompleteAceCommand(string guid, string command)
         {
             if (!IsLoggedInUserAuthorized ||
-                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE))
             {
                 return string.Empty;
             }
@@ -410,7 +410,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object CompleteCommand(string guid, string command)
         {
             if (!IsLoggedInUserAuthorized ||
-                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console))
             {
                 return string.Empty;
             }
@@ -424,7 +424,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object GetAutoCompletionPrefix(string guid, string command)
         {
             if (!IsLoggedInUserAuthorized ||
-                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE))
             {
                 return string.Empty;
             }
@@ -466,7 +466,7 @@ namespace Cognifide.PowerShell.Console.Services
         public object GetHelpForCommand(string guid, string command)
         {
             if (!IsLoggedInUserAuthorized ||
-                !SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
+                !SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE))
             {
                 return string.Empty;
             }

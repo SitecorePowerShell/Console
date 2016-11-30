@@ -206,7 +206,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         public static Item GetIseMruContainerItem()
         {
-            var currentUserItem = GetInstance(ApplicationNames.IseConsole).GetSettingsDtoForSave();
+            var currentUserItem = GetInstance(ApplicationNames.ISE).GetSettingsDtoForSave();
             var mruItem = currentUserItem.Children["MRU"] ??
                           currentUserItem.Add("MRU", new TemplateID(Sitecore.TemplateIDs.Folder));
             if (!mruItem.Publishing.NeverPublish)

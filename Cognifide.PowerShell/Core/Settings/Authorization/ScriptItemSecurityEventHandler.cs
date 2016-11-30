@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
@@ -29,7 +30,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 return;
             }
 
-            if (!SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ItemSave))
+            if (HttpContext.Current?.Session == null)
+            {
+                // allow jobs to modify scripts as otherwise all kind of things break
+                return;
+            }
+
+            if (!SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
             {
                 SheerResponse.Alert(
                     "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again");

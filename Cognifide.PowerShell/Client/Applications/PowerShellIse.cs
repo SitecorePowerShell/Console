@@ -17,7 +17,6 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
-using Sitecore.Exceptions;
 using Sitecore.IO;
 using Sitecore.Security;
 using Sitecore.Security.Accounts;
@@ -29,8 +28,7 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using JobManager = Sitecore.Jobs.JobManager;
-using Link = Sitecore.Shell.Applications.ContentEditor.Link;
+using TemplateIDs = Cognifide.PowerShell.Core.Settings.TemplateIDs;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -199,7 +197,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (Context.ClientPage.IsEvent)
                 return;
 
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
 
             if (settings.SaveLastScript)
             {
@@ -387,6 +385,11 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void SaveAs(ClientPipelineArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
+            args.Parameters["message"] = "ise:saveas";
+            if (!RequestSessionElevationEx(args,ApplicationNames.ItemSave,SessionElevationManager.SaveAction))
+            {
+                return;
+            }
             if (args.IsPostBack)
             {
                 if (!args.HasResult)
@@ -394,8 +397,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 var path = args.Result.Split(':');
                 var db = Factory.GetDatabase(path[0]);
-                var itemTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script");
-                var libraryTemplate = db.GetTemplate("Modules/PowerShell Console/PowerShell Script Library");
+                var itemTemplate = db.GetTemplate(TemplateIDs.ScriptTemplate);
+                var libraryTemplate = db.GetTemplate(TemplateIDs.ScriptLibraryTemplate);
                 var scriptItem = db.CreateItemPath(path[1], libraryTemplate, itemTemplate);
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
@@ -439,6 +442,11 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             else
             {
+                args.Parameters["message"] = "ise:save";
+                if (!RequestSessionElevationEx(args, ApplicationNames.ItemSave, SessionElevationManager.SaveAction))
+                {
+                    return;
+                }
                 var scriptItem = ScriptItem;
                 if (scriptItem == null)
                     return;
@@ -480,12 +488,13 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:run", true)]
         protected virtual void ClientExecute(ClientPipelineArgs args)
         {
-            if (!SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
+            args.Parameters["message"] = "ise:run";
+            if (!RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction))
             {
-                Context.ClientPage.Start(this, nameof(SessionElevationPipeline));
+                return;
             }
 
-            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true))
+            using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true))
             {
                 var settings = scriptSession.Settings;
                 try
@@ -545,20 +554,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
         protected virtual void JobExecuteScript(ClientPipelineArgs args, string scriptToExecute, bool debug)
         {
-            if (!SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
-            {
-                if (string.IsNullOrEmpty(args.Parameters["elevationResult"]))
-                {
-                    if (SessionElevationManager.GetToken(SessionElevationManager.ISE).Action ==
-                        SessionElevationManager.TokenDefinition.ElevationAction.Password)
-                    {
-                        Context.ClientPage.Start(this, nameof(SessionElevationPipeline), args);
-                    }
-                    else
-                    {
-                        SheerResponse.Alert("Script execution is forbidden.");
-                    }
-                }
+            if (!RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction))
+            {                
                 return;
             }
             Debugging = debug;
@@ -571,8 +568,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
             var autoDispose = string.IsNullOrEmpty(sessionName);
             var scriptSession = autoDispose
-                ? ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true)
-                : ScriptSessionManager.GetSession(sessionName, ApplicationNames.IseConsole, true);
+                ? ScriptSessionManager.NewSession(ApplicationNames.ISE, true)
+                : ScriptSessionManager.GetSession(sessionName, ApplicationNames.ISE, true);
 
             if (debug)
             {
@@ -643,7 +640,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Monitor.SessionID = scriptSession.ID;
             SheerResponse.Eval("cognifide.powershell.restoreResults();");
 
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
             if (settings.SaveLastScript)
             {
                 settings.Load();
@@ -655,7 +652,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:runplugin", true)]
         protected void RunPlugin(ClientPipelineArgs args)
         {
-            ScriptSession scriptSession = ScriptSessionManager.NewSession(ApplicationNames.IseConsole, true);
+            ScriptSession scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true);
             string scriptDb = args.Parameters["scriptDb"];
             string scriptItem = args.Parameters["scriptId"];
             Item script = Factory.GetDatabase(scriptDb).GetItem(scriptItem);
@@ -879,11 +876,11 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters.Add("scriptItem", ScriptItemId);
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
 
-            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE);
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE);
 
             var controlContent = string.Empty;
             var hidePanel = false;
-            var tokenAction = SessionElevationManager.GetToken(SessionElevationManager.ISE).Action;
+            var tokenAction = SessionElevationManager.GetToken(ApplicationNames.ISE).Action;
             switch (tokenAction)
             {
                 case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
@@ -981,7 +978,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:updatesettings", true)]
         protected virtual void UpdateSettings(ClientPipelineArgs args)
         {
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.IseConsole);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.ISE);
             var backgroundColor = OutputLine.ProcessHtmlColor(settings.BackgroundColor);
             var bottomPadding = CurrentVersion.IsAtLeast(SitecoreVersion.V80) ? 0 : 10;
             SheerResponse.Eval(
@@ -1085,29 +1082,49 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!args.IsPostBack)
             {
                 var url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
-                url.Parameters["app"] = SessionElevationManager.ISE;
+                url.Parameters["action"] = args.Parameters["action"];
+                url.Parameters["app"] = args.Parameters["app"];
                 TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
                 args.WaitForPostBack(true);
             }
             else
             {
                 WasElevated = true;
-                UpdateRibbon(args.Parameters["message"]);
+                var message = args.Parameters["message"] + "(elevationResult=1)";
+                UpdateRibbon(message);
             }
         }
 
         [HandleMessage("ise:requestelevation", true)]
-        protected virtual void RequestSessionElevation(ClientPipelineArgs args)
+        protected virtual void RequestSessionExecuteElevation(ClientPipelineArgs args)
         {
-            if (!SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.ISE))
+            RequestSessionElevationEx(args, ApplicationNames.ISE, SessionElevationManager.ExecuteAction);
+        }
+
+        private bool RequestSessionElevationEx(ClientPipelineArgs args, string appName, string action)
+        {
+            if (!SessionElevationManager.IsSessionTokenElevated(appName))
             {
-                Context.ClientPage.Start(this, nameof(SessionElevationPipeline));
+                if (args.Parameters.AllKeys.Contains("elevationResult"))
+                {
+                    SheerResponse.Alert(
+                        "Operation cannot be performed due to session elevation restrictions. Elevate your session and try again");
+                    return false;
+                }
+                var pipelineArgs = new ClientPipelineArgs();
+                pipelineArgs.Parameters["message"] = args.Parameters["message"];
+                pipelineArgs.Parameters["app"] = appName;
+                pipelineArgs.Parameters["action"] = action;
+                Context.ClientPage.Start(this, nameof(SessionElevationPipeline), pipelineArgs);
+                return false;
             }
+            return true;
+
         }
 
         public void DropElevationButtonClick()
         {
-            SessionElevationManager.DropSessionTokenElevation(SessionElevationManager.ISE);
+            SessionElevationManager.DropSessionTokenElevation(ApplicationNames.ISE);
             UpdateRibbon();
         }
     }

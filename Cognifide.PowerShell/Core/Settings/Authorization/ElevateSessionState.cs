@@ -26,7 +26,8 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             if (!args.IsPostBack)
             {
                 var url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
-                url.Parameters["app"] = SessionElevationManager.ItemSave;
+                url.Parameters["app"] = ApplicationNames.ItemSave;
+                url.Parameters["action"] = SessionElevationManager.SaveAction;
                 TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
                 args.WaitForPostBack(true);
             }

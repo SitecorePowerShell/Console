@@ -11,9 +11,8 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         private const string SessionCacheToken = "SPE_Session_Elevation_{0}";
         private static Dictionary<string, TokenDefinition> tokens;
 
-        public const string Console = "Console";
-        public const string ISE = "ISE";
-        public const string ItemSave = "ItemSave";
+        public const string SaveAction = "Save";
+        public const string ExecuteAction = "Execute";
 
         static SessionElevationManager()
         {

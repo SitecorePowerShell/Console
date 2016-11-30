@@ -47,9 +47,9 @@ namespace Cognifide.PowerShell.Client.Applications
             get
             {
                 var appName = StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["AppName"]);
-                return string.IsNullOrEmpty(appName) ? SessionElevationManager.Console : appName;
+                return string.IsNullOrEmpty(appName) ? ApplicationNames.Console : appName;
             }
-            set { Sitecore.Context.ClientPage.ServerProperties["AppName"] = value ?? SessionElevationManager.Console; }
+            set { Sitecore.Context.ClientPage.ServerProperties["AppName"] = value ?? ApplicationNames.Console; }
         }
 
         public bool MonitorActive
@@ -72,11 +72,11 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             base.OnLoad(e);
 
-            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console);
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console);
 
             var controlContent = string.Empty;
             var hidePanel = false;
-            var tokenAction = SessionElevationManager.GetToken(SessionElevationManager.Console).Action;
+            var tokenAction = SessionElevationManager.GetToken(ApplicationNames.Console).Action;
             switch (tokenAction)
             {
                 case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
@@ -112,7 +112,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
-            var settings = ApplicationSettings.GetInstance(ApplicationNames.AjaxConsole, false);
+            var settings = ApplicationSettings.GetInstance(ApplicationNames.Console, false);
 
             if (!Context.ClientPage.IsEvent)
             {
@@ -219,8 +219,8 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:elevatesession", true)]
         protected virtual void ElevateSession(ClientPipelineArgs args)
         {
-            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console);
-            var tokenAction = SessionElevationManager.GetToken(SessionElevationManager.Console).Action;
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console);
+            var tokenAction = SessionElevationManager.GetToken(ApplicationNames.Console).Action;
             if (!isSessionElevated)
             {
                 if (tokenAction == SessionElevationManager.TokenDefinition.ElevationAction.Block)
@@ -243,14 +243,14 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!args.IsPostBack)
             {
                 UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
-                url.Parameters["app"] = SessionElevationManager.Console;
+                url.Parameters["app"] = ApplicationNames.Console;
                 TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
                 args.WaitForPostBack(true);
             }
             else
             {
                 WasElevated = true;
-                if (SessionElevationManager.IsSessionTokenElevated(SessionElevationManager.Console))
+                if (SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console))
                 {
                     SheerResponse.Eval(@"$ise(function() { cognifide.powershell.bootstrap(); });");
                 }
@@ -263,7 +263,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void DropElevationButtonClick()
         {
-            SessionElevationManager.DropSessionTokenElevation(SessionElevationManager.Console);
+            SessionElevationManager.DropSessionTokenElevation(ApplicationNames.Console);
             SheerResponse.Eval(@"$ise(function() { cognifide.powershell.showUnelevated(); });");
         }
 
