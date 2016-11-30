@@ -164,7 +164,6 @@
     <Compile Include="Client\Applications\PowerShellResultViewerText.cs" />
     <Compile Include="Client\Applications\PowerShellRunner.cs" />
     <Compile Include="Client\Applications\PowerShellScriptBrowser.cs" />
-    <Compile Include="Client\Applications\PowerShellVelociyOutput.cs" />
     <Compile Include="Client\Applications\RunnerOutput.cs" />
     <Compile Include="Client\Applications\ScriptRunner.cs" />
     <Compile Include="Client\Applications\UploadFile\PowerShellUploadFileForm.cs" />
@@ -462,13 +461,6 @@
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
-    <Compile Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx.cs">
-      <DependentUpon>VelocityScriptOutput.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx.designer.cs">
-      <DependentUpon>VelocityScriptOutput.aspx</DependentUpon>
-    </Compile>
     <Compile Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx.cs">
       <DependentUpon>PowerShellWebService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -523,7 +515,6 @@
     <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
     <Content Include="sitecore modules\PowerShell\Assets\warning.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
-    <Content Include="sitecore modules\PowerShell\Layouts\VelocityScriptOutput.aspx" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ext-beautify.js" />
@@ -588,10 +579,11 @@
     <Content Include="sitecore modules\Shell\PowerShell\ContextGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\DownloadFile.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\GetStringResponse.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.Option.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\LanguageGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.SearchItem.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\MruGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellExternalView.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PowerShellVelociyOutput.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellConsole.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellIse.xml">
       <SubType>Designer</SubType>
@@ -603,12 +595,15 @@
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerText.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellSessionElevation.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PsHSplitter.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.Option.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\SessionIDGallery.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile.aspx" />
     <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\UploadFile\PowerShellUploadFile2.aspx" />
+    <Content Include="sitecore modules\Shell\PowerShell\UserGallery.Option.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\UserGallery.xml" />
     <Content Include="sitecore\shell\Themes\Standard\PowerShell.zip" />
   </ItemGroup>
   <ItemGroup>

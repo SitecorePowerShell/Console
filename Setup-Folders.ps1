@@ -76,7 +76,6 @@ function Create-ProjectJunctions{
 	
     New-Item  "$path\Website\sitecore modules" -Name "PowerShell" -ItemType Directory 
     Create-Junction "$path\Website\sitecore modules\PowerShell\Assets" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Assets"
-    Create-Junction "$path\Website\sitecore modules\PowerShell\Layouts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Layouts"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Scripts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Scripts"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Services" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Services"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Styles" "$projectPath\Cognifide.PowerShell.Sitecore$version\sitecore modules\PowerShell\Styles"
