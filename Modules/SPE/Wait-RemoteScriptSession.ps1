@@ -74,7 +74,11 @@ function Wait-RemoteScriptSession {
         if($response -eq $null) {
             Write-Verbose "Stopped polling job $($id). No results were returned from the service."
             break
+        } elseif ($response -eq "login failed") {
+            Write-Verbose "Stopped polling job. Login with the specified account failed."
+            break            
         }
+        
         if($response -and $response.IsDone) {
             $keepRunning = $false
             Write-Verbose "Polling job $($response.Name). Status : $($response.Status)."
