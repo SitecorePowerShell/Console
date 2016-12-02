@@ -21,6 +21,10 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
         public static bool IsUserAuthorized(string serviceName, string userName = null)
         {
+            if (!WebServiceSettings.IsEnabled(serviceName))
+            {
+                return false;
+            }
             var authEntries = GetServiceAuthorizationInfo(serviceName);
             var cacheKey = GetAuthorizationCacheKey(serviceName, userName);
             if (string.IsNullOrEmpty(userName))

@@ -70,7 +70,7 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public NameValue[] ExecuteScript(string userName, string password, string script, string returnVariables)
         {
-            if (!WebServiceSettings.ServiceEnabledRemoting)
+            if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
             {
                 return new NameValue[0];
             }
@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public string DisposeScriptSession(string userName, string password, string sessionId)
         {
-            if (!WebServiceSettings.ServiceEnabledRemoting)
+            if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
             {
                 return string.Empty;
             }
@@ -159,7 +159,7 @@ namespace Cognifide.PowerShell.Console.Services
         public string ExecuteScriptBlockinSite2(string userName, string password, string script, string cliXmlArgs,
             string siteName, string sessionId)
         {
-            if (!WebServiceSettings.ServiceEnabledRemoting)
+            if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
             {
                 return string.Empty;
             }
@@ -199,7 +199,7 @@ namespace Cognifide.PowerShell.Console.Services
         public bool UploadFile(string userName, string password, string filePath, byte[] fileContent, string database,
             string language)
         {
-            if (!WebServiceSettings.ServiceEnabledRemoting)
+            if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
             {
                 return false;
             }
@@ -240,7 +240,7 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod]
         public byte[] DownloadFile(string userName, string password, string filePath, string database, string language)
         {
-            if (!WebServiceSettings.ServiceEnabledRemoting)
+            if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
             {
                 return new byte[0];
             }

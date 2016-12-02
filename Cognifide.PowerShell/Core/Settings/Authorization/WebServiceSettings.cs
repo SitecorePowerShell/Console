@@ -1,12 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Xml;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Security.Accounts;
+using Sitecore.Visual;
+using Cognifide.PowerShell.Core.Extensions;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
 {
     public static class WebServiceSettings
     {
+
+        private class ServiceState
+        {
+            public bool Enabled { get; set; }
+            public bool RequireSecureConnection { get; set; }
+        }
+
+        private static Dictionary<string,ServiceState> services = new Dictionary<string,ServiceState>();
+
         public const string ServiceRestfulv1 = "restfulv1";
         public const string ServiceRestfulv2 = "restfulv2";
         public const string ServiceRemoting = "remoting";
@@ -17,18 +32,20 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         public const string ServiceMediaDownload = "mediaDownload";
         public const string ServiceMediaUpload = "mediaUpload";
         public const string ServiceHandleDownload = "handleDownload";
-
+        
         static WebServiceSettings()
         {
-            ServiceEnabledRestfulv1 = IsServiceEnabled(ServiceRestfulv1, false);
-            ServiceEnabledRestfulv2 = IsServiceEnabled(ServiceRestfulv2, true);
-            ServiceEnabledClient = IsServiceEnabled(ServiceClient, true);
-            ServiceEnabledRemoting = IsServiceEnabled(ServiceRemoting, false);
-            ServiceEnabledFileDownload = IsServiceEnabled(ServiceFileDownload, false);
-            ServiceEnabledFileUpload = IsServiceEnabled(ServiceFileUpload, false);
-            ServiceEnabledMediaDownload = IsServiceEnabled(ServiceMediaDownload, false);
-            ServiceEnabledMediaUpload = IsServiceEnabled(ServiceMediaUpload, false);
-            ServiceEnabledHandleDownload = IsServiceEnabled(ServiceHandleDownload, true);
+            var servicesNodes = Factory.GetConfigNode($"powershell/services").ChildNodes;
+            foreach (XmlElement xmlDefinition in servicesNodes)
+            {
+                var service = new ServiceState()
+                {
+                    Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
+                    RequireSecureConnection = xmlDefinition.Attributes["requireSecureConnection"]?.Value?.Is("true") == true
+                };
+                services.Add(xmlDefinition.Name,service);
+            }
+
             CommandWaitMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.CommandWaitMillis", 25);
             InitialPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.InitialPollMillis", 100);
             MaxmimumPollMillis = Sitecore.Configuration.Settings.GetIntSetting("Cognifide.PowerShell.MaxmimumPollMillis", 2500);
@@ -38,30 +55,21 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             SerializationSizeBuffer = (int) (sizeLong < int.MaxValue ? sizeLong : int.MaxValue);
         }
 
-        public static bool ServiceEnabledFileDownload { get; private set; }
-        public static bool ServiceEnabledFileUpload { get; private set; }
-        public static bool ServiceEnabledMediaDownload { get; private set; }
-        public static bool ServiceEnabledMediaUpload { get; private set; }
-        public static bool ServiceEnabledHandleDownload { get; private set; }
-        public static bool ServiceEnabledRestfulv1 { get; private set; }
-        public static bool ServiceEnabledRestfulv2 { get; private set; }
-        public static bool ServiceEnabledRemoting { get; private set; }
-        public static bool ServiceEnabledClient { get; private set; }
         public static int CommandWaitMillis { get; private set; }
         public static int InitialPollMillis { get; private set; }
         public static int MaxmimumPollMillis { get; private set; }
         public static int SerializationSizeBuffer { get; private set; }
         public static int AuthorizationCacheExpirationSecs { get; set; }
 
-        private static bool IsServiceEnabled(string serviceName, bool defaultValue)
+        public static bool IsEnabled(string serviceName)
         {
-            var servicesNode = Factory.GetConfigNode($"powershell/services/{serviceName}");
-            if (servicesNode == null)
+            if (!services.Keys.Contains(serviceName))
             {
-                return defaultValue;
+                return false;
             }
-            return string.Equals(servicesNode.Attributes["enabled"].InnerText, "true",
-                StringComparison.OrdinalIgnoreCase);
+            var service = services[serviceName];
+            return service.Enabled &&
+                   (HttpContext.Current == null || !service.RequireSecureConnection || HttpContext.Current.Request?.IsSecureConnection == true);
         }
     }
 }

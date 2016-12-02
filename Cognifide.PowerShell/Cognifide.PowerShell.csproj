@@ -428,7 +428,6 @@
     <Compile Include="Core\Settings\FieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="TemplateIDs.cs" />
-    <Compile Include="Core\Settings\TemplateNames.cs" />
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />

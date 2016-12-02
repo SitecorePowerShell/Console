@@ -183,7 +183,7 @@ namespace Cognifide.PowerShell.Console.Services
             switch (apiVersion)
             {
                 case "1":
-                    if (!WebServiceSettings.ServiceEnabledRestfulv1)
+                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv1))
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         HttpContext.Current.Response.StatusDescription = disabledMessage;
@@ -191,7 +191,7 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     break;
                 case "2":
-                    if (!WebServiceSettings.ServiceEnabledRestfulv2)
+                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv2))
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         HttpContext.Current.Response.StatusDescription = disabledMessage;
@@ -199,8 +199,8 @@ namespace Cognifide.PowerShell.Console.Services
                     }
                     break;
                 case "file":
-                    if ((WebServiceSettings.ServiceEnabledFileUpload && httpMethod.Is("POST")) ||
-                        (WebServiceSettings.ServiceEnabledFileDownload && httpMethod.Is("GET")))
+                    if ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileUpload) && httpMethod.Is("POST")) ||
+                        (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileDownload) && httpMethod.Is("GET")))
                     {
                         break;
                     }
@@ -209,8 +209,8 @@ namespace Cognifide.PowerShell.Console.Services
                     isEnabled = false;
                     break;
                 case "media":
-                    if ((WebServiceSettings.ServiceEnabledMediaUpload && httpMethod.Is("POST")) ||
-                        (WebServiceSettings.ServiceEnabledMediaDownload && httpMethod.Is("GET")))
+                    if ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaUpload) && httpMethod.Is("POST")) ||
+                        (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaDownload) && httpMethod.Is("GET")))
                     {
                         break;
                     }
@@ -219,7 +219,7 @@ namespace Cognifide.PowerShell.Console.Services
                     isEnabled = false;
                     break;
                 case "handle":
-                    if (!WebServiceSettings.ServiceEnabledHandleDownload)
+                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceHandleDownload))
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         HttpContext.Current.Response.StatusDescription = disabledMessage;

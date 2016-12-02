@@ -49,7 +49,6 @@ namespace Cognifide.PowerShell.Console.Services
         private static readonly string[] ImportantProperties = {"Name", "Title"};
 
         private static bool IsLoggedInUserAuthorized =>
-            WebServiceSettings.ServiceEnabledClient &&
             Sitecore.Context.IsLoggedIn &&
             ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, Sitecore.Context.User?.Name);
 
@@ -57,11 +56,6 @@ namespace Cognifide.PowerShell.Console.Services
         [WebMethod(EnableSession = true)]
         public bool LoginUser(string userName, string password)
         {
-            if (!WebServiceSettings.ServiceEnabledClient)
-            {
-                return false;
-            }
-
             if (!ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceClient, userName))
             {
                 return false;
