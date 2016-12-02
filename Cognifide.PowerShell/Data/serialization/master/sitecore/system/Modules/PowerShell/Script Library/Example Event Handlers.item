@@ -44,7 +44,7 @@ Software/32x32/jar_delete.png
 ----version----
 language: en
 version: 1
-revision: f9178d96-1ebe-4505-98cf-8563c4454fa6
+revision: 670d47b2-bdda-47e0-925c-1a192f54db42
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -59,14 +59,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f9178d96-1ebe-4505-98cf-8563c4454fa6
+670d47b2-bdda-47e0-925c-1a192f54db42
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150516T002526:635673327265469029
+20161130T234557
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

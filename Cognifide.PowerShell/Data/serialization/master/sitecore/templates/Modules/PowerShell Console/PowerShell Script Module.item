@@ -13,9 +13,9 @@ templatekey: Template
 field: {12C33F3F-86C5-43A5-AEB4-5598CEC45116}
 name: __Base template
 key: __base template
-content-length: 38
+content-length: 0
 
-{A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
+
 ----field----
 field: {F7D48A55-2158-4F02-9356-756654404F73}
 name: __Standard values
@@ -33,7 +33,7 @@ software/32x32/jar.png
 ----version----
 language: en
 version: 1
-revision: df8006ed-8391-4435-9723-22c211c908b2
+revision: 6ea0b5b5-8346-4d6a-9b66-f58f1fb6bd9c
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -62,14 +62,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-df8006ed-8391-4435-9723-22c211c908b2
+6ea0b5b5-8346-4d6a-9b66-f58f1fb6bd9c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141125T030217:635524813377391795
+20161130T234557
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
