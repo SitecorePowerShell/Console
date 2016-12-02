@@ -6,6 +6,7 @@ using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Events;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
@@ -20,30 +21,41 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         {
             Item item = null;
             var scArgs = args as SitecoreEventArgs;
-            if (scArgs == null)
-            {
-                return;
-            }
-            item = scArgs.Parameters[0] as Item;
-            if (item != null && !item.InheritsFrom(TemplateIDs.ScriptTemplate) && !item.InheritsFrom(TemplateIDs.ScriptLibraryTemplate))
-            {
-                return;
-            }
-
-            if (HttpContext.Current?.Session == null)
+            if (scArgs == null || HttpContext.Current?.Session == null)
             {
                 // allow jobs to modify scripts as otherwise all kind of things break
                 return;
             }
 
+            item = scArgs.Parameters[0] as Item;
+            if (item != null && !item.IsPowerShellScript() && !item.IsPowerShellLibrary())
+            {
+                // not a PowerShell related item
+                return;
+            }
+
+            var itemCreatingEventArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
+            if (itemCreatingEventArgs != null)
+            {
+
+                var template = TemplateManager.GetTemplate(itemCreatingEventArgs.TemplateId,
+                    itemCreatingEventArgs.Parent.Database);
+                if (!template.InheritsFrom(TemplateIDs.ScriptTemplate) &&
+                    !template.InheritsFrom(TemplateIDs.ScriptLibraryTemplate))
+                {
+                    // not creating Script or Library
+                    return;
+                }
+            }
+
+
             if (!SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ItemSave))
             {
                 SessionElevationErrors.OperationRequiresElevation();
 
-                var creatingArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
-                if (creatingArgs != null)
+                if (itemCreatingEventArgs != null)
                 {
-                    creatingArgs.Cancel = true;
+                    itemCreatingEventArgs.Cancel = true;
                 }
 
                 scArgs.Result.Cancel = true;

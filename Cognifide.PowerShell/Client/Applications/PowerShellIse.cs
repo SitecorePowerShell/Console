@@ -470,7 +470,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Assert.ArgumentNotNull(db, "db");
             var scriptItem = Factory.GetDatabase(db).GetItem(id);
 
-            if (!ScriptItem.IsPowerShellScript())
+            if (!scriptItem.IsPowerShellScript())
             {
                 SessionElevationErrors.OperationFailedWrongDataTemplate();
                 return;

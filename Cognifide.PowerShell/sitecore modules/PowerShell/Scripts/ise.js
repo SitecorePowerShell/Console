@@ -585,7 +585,9 @@
         }
 
         function getPowerShellResponse(callData, remotefunction, doneFunction, errorFunction) {
-	    cognifide.powershell.requestElevation();
+            if(remotefunction != "GetVariableValue"){
+                cognifide.powershell.requestElevation();
+            };
             var datastring = JSON.stringify(callData);
             $.ajax({
                     type: "POST",
