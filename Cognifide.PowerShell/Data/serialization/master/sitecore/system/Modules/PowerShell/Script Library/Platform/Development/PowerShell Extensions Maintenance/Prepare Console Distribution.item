@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 11965
+content-length: 11818
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -159,9 +159,6 @@ $package.Sources.Add($source);
 $source = Get-Item 'core:\layout\Layouts\Applications\*PowerShell*' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
 $package.Sources.Add($source);
 
-$source = Get-Item 'master:\layout\Layouts\PowerShell' | New-ItemSource "Master Layouts" -InstallMode Overwrite
-$package.Sources.Add($source);
-
 # Start Menu
 $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
 $package.Sources.Add($source);
@@ -263,7 +260,7 @@ Export-Package -Project $package -Path "$packageName.zip" -Zip
 ----version----
 language: en
 version: 1
-revision: 4b8341e3-b174-4655-8577-e231d7221879
+revision: d900d73b-38c2-4764-9907-bca43777a8f4
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -278,14 +275,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-4b8341e3-b174-4655-8577-e231d7221879
+d900d73b-38c2-4764-9907-bca43777a8f4
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161110T121825
+20161202T160447
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
