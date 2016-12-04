@@ -90,7 +90,14 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             path = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
             var parent = PathUtilities.GetParentFromPath(path);
-            var name = PathUtilities.GetLeafFromPath(path).Trim('*');
+            var name = PathUtilities.GetLeafFromPath(path);
+            //try get literal path
+            var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem($"/sitecore{parent}/{name}");
+            if (literalItem != null)
+            {
+                return new[] {$"{literalItem.Database.Name}:{literalItem.Paths.Path.Substring(9).Replace('/', '\\')}"};
+            }
+            name = name.Trim(Convert.ToChar("*"));
             if (parent.Contains("-") || parent.Contains(" "))
             {
                 var segments = parent.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -102,11 +109,9 @@ namespace Cognifide.PowerShell.Core.Provider
                 parent = escapedPath.ToString();
             }
             var items = Factory.GetDatabase(PSDriveInfo.Name).SelectItems(
-                string.Format("/sitecore{0}/*[startswith(@@Name, '{1}')] ",
-                    parent, name));
+                $"/sitecore{parent}/*[startswith(@@Name, '{name}')] ");
             var results = items.Select(
-                item => string.Format("{0}:{1}",
-                    item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'))).ToArray();
+                item => $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}").ToArray();
             return results;
         }
 
