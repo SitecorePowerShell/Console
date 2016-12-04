@@ -73,7 +73,7 @@ namespace Cognifide.PowerShell.Commandlets
             }
         }
 
-        protected List<Item> LatestVersionInFilteredLanguages(Item item)
+        protected virtual List<Item> LatestVersionInFilteredLanguages(Item item)
         {
             var publishedLangs = new List<string>();
             var result = new List<Item>();

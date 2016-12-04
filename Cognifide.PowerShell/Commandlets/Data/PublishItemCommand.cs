@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
@@ -9,6 +10,7 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.Publish;
 
@@ -155,5 +157,56 @@ namespace Cognifide.PowerShell.Commandlets.Data
                 }
             }
         }
+
+        protected override List<Item> LatestVersionInFilteredLanguages(Item item)
+        {
+            var languagePatterns = new List<WildcardPattern>();
+            IEnumerable<string> fullyQualifiedLanguages = new List<string>();
+            if (Language != null && Language.Any())
+            {
+                languagePatterns =
+                    Language.Where(lang => lang.Contains('*') || lang.Contains('?')).Select(
+                            language =>
+                                new WildcardPattern(language,
+                                    WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant))
+                        .ToList();
+                fullyQualifiedLanguages = Language.Where(lang => !lang.Contains('*') && !lang.Contains('?'));
+            }
+
+
+            var publishedLangs = new List<string>();
+            var result = new List<Item>();
+
+            foreach (var langName in fullyQualifiedLanguages)
+            {
+                var language = LanguageManager.GetLanguage(langName);
+                var langItem = item.Database.GetItem(item.ID, language);
+                if (!publishedLangs.Contains(langItem.Language.Name))
+                {
+                    publishedLangs.Add(langItem.Language.Name);
+                    result.Add(langItem);
+                }
+            }
+
+            // if there are any wildcards - filter item in all languages
+            if (languagePatterns.Any())
+            {
+                foreach (
+                    var langItem in
+                    item.Versions.GetVersions(true).Reverse())
+                {
+
+                    // publish latest version of each language
+                    if (LanguageWildcardPatterns.Any(wildcard => !publishedLangs.Contains(langItem.Language.Name) &&
+                                                                 wildcard.IsMatch(langItem.Language.Name)))
+                    {
+                        publishedLangs.Add(langItem.Language.Name);
+                        result.Add(langItem);
+                    }
+                }
+            }
+            return result;
+        }
+
     }
 }
