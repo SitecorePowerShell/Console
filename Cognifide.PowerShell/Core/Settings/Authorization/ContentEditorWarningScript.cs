@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     {
                         warning.Title = "You have temporarily enabled script viewing and editing.";
                         warning.Text =
-                            "Drop access if you no longer require it. For more information, refer to our <a href=\"http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
+                            "Drop access if you no longer require it. For more information, refer to our <a href=\"https://sitecorepowershell.com/session-state-elevation/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
                         warning.AddOption("Drop access", "item:dropelevatescriptedit");
                         args.Warnings.Add(warning);
                     }
@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                         warning.HideFields = true;
                         warning.Title = "Elevated session state is required to view and edit scripts.";
                         warning.Text =
-                            "A security dialog will prompt you for your credentials before allowing access to view and edit scripts. For more information, refer to our <a href=\"http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
+                            "A security dialog will prompt you for your credentials before allowing access to view and edit scripts. For more information, refer to our <a href=\"https://sitecorepowershell.com/session-state-elevation/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
                         warning.AddOption("Elevate session", "item:elevatescriptedit");
                         args.Warnings.Add(warning);
                     }
@@ -49,7 +49,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     warning.HideFields = true;
                     warning.Title = "Elevated session state is blocked. Access to view and edit scripts is disabled.";
                     warning.Text =
-                        "For more information, refer to our <a href=\"http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
+                        "For more information, refer to our <a href=\"https://sitecorepowershell.com/session-state-elevation/\" class=\"scEditorWarningOption\" target=\"_blank\">Documentation.</a>";
                     args.Warnings.Add(warning);
                     break;
             }

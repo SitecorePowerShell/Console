@@ -58,7 +58,7 @@
                   <Literal Text="Drop elevated session state"/>
                 </a>
               <Literal ID="InfoTitle3" Text=" if you no longer require it. For more information, refer to " />
-              <a href="http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/" class="scEditorWarningOption" target="_blank">
+              <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
                   <Literal Text="Documentation."/>
               </a>
               <Border class="scEditorWarningHelp">
