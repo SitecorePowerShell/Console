@@ -8,19 +8,16 @@
 
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server"
-              x:placeholder="Scripts">
-      </Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/VariablePrompt.js"></Script>
 
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
-                  x:placeholder="Stylesheets" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
-                  x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server" x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server" x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/ise.css" runat="server" x:placeholder="Stylesheets" />
 
       <script>
         function OnTabSelect() {
@@ -60,16 +57,16 @@
 
       <Literal ID="CustomStyles" />
 
-      <Border class="scFlexColumnContainer scStretch">
-        <Border class="scDialogHeader" style="background-color: antiquewhite; color: darkgoldenrod; padding-top:15px;">
+      <Border class="scFlexColumnContainer scStretch spe-secured-app">
+        <Border class="scDialogHeader">
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
           <Border>
             <Border Class="DialogHeader">
-              <Literal Text="Script {0} Access" ID="DialogHeader" style="margin-top:10px;"/>
+              <Literal Text="Elevate Session State" ID="DialogHeader" style="margin-top:10px;"/>
             </Border>
             <Border Class="DialogHeaderDescription">
               <Literal
-                Text="Performing '{0}' action on a script requires that your session state is elevated."
+                Text="Performing '{0}' action on a script requires an elevated session state."
                 ID="DialogDescription" />
             </Border>
           </Border>
@@ -84,7 +81,7 @@
               </Border>
             </Border>
             <Border style="padding: 15px 5px;">
-              <Literal Text="You have requested access to {0} a script and are required to validate your credentials below." ID="DialogMessage" />
+              <Literal Text="Enter your credentials to validate access to {0} a script." ID="DialogMessage" />
             </Border>
             <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" Columns="2">
               <Literal GridPanel.style="text-align: right; padding: 10px 4px 20px 4px;" Text="Username:" />

@@ -32,7 +32,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                 if (!scriptItem.IsPowerShellScript())
                 {
-                    return new[] { SessionElevationErrors.Message_OperationFailedWrongDataTemplate };
+                    return new[] { SessionElevationErrors.MessageOperationFailedWrongDataTemplate };
                 }
 
                 session.ExecuteScriptPart(scriptItem[FieldIDs.Script], true, true);

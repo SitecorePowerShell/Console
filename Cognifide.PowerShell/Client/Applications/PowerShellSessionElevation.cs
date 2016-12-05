@@ -46,7 +46,6 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             UserName.Text = Sitecore.Context.User?.Name ?? string.Empty;
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
-            DialogHeader.Text = String.Format(DialogHeader.Text, actionName);
             DialogDescription.Text = String.Format(DialogDescription.Text, actionName);
             DialogMessage.Text = String.Format(DialogMessage.Text, actionName);
         }

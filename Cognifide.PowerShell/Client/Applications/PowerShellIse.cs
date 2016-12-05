@@ -14,7 +14,6 @@ using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
@@ -30,7 +29,6 @@ using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using TemplateIDs = Cognifide.PowerShell.TemplateIDs;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -39,7 +37,6 @@ namespace Cognifide.PowerShell.Client.Applications
         public const string DefaultSessionName = "ISE Editing Session";
         public const string DefaultUser = "CurrentUser";
         public const string DefaultLanguage = "CurrentLanguage";
-
 
         protected Memo Editor;
         protected Literal Progress;

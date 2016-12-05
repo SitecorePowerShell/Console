@@ -34,17 +34,18 @@
           </p>
         </Border>
       </Border>
-
-      <Border ID="InfoPanel" class="scEditorWarning"/>
+      <Border class="spe-secured-app">
+        <Border ID="InfoPanel" class="scEditorWarning"/>
+      </Border>
       <Border ID="Warnings" style="display:none">
         <GridPanel ID="ElevationRequiredPanel" border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable"
                    Columns="2">
           <Border GridPanel.Width="100%" ID="ElevationRequiredBorder" >
             <Border class="scEditorWarningTitle">
-              <Literal ID="InfoTitle" Text="Session privilege elevation is required to run the script." />
+              <Literal ID="InfoTitle" Text="Elevated session state is required to run the script." />
             </Border>
             <Border class="scEditorWarningHelp">
-              <Literal ID="Description" Text="The first time you will try to execute a script you will be asked for your password to elevate your session privileges so that your script can be executed." />
+              <Literal ID="Description" Text="A security dialog will prompt you for your credentials upon first execution." />
             </Border>
           </Border>
         </GridPanel>
@@ -53,8 +54,8 @@
           <Border GridPanel.Width="100%">
             <Border class="scEditorWarningHelp">
               <Literal ID="InfoTitle2" Text="You have temporarily enabled script execution. " />
-                <a href="#" class="scEditorWarningOption" style="font-weight: bold;" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
-                  <Literal Text="Drop elevated state"/>
+                <a href="#" class="scEditorWarningOption" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
+                  <Literal Text="Drop elevated session state"/>
                 </a>
               <Literal ID="InfoTitle3" Text=" if you no longer require it. For more information, refer to " />
               <a href="http://blog.najmanowicz.com/session-state-elevation-concept-in-sitecore-powershell-extensions/" class="scEditorWarningOption" target="_blank">

@@ -213,7 +213,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
                     if (!scriptItem.IsPowerShellScript())
                     {
-                        Title.Text = SessionElevationErrors.Message_OperationFailedWrongDataTemplate;
+                        Title.Text = SessionElevationErrors.MessageOperationFailedWrongDataTemplate;
                         DialogHeader.Text = "Execution prevented!";
                         AbortButton.Header = "OK";
                         return;
