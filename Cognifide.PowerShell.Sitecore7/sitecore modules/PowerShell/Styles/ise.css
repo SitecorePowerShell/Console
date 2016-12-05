@@ -345,18 +345,6 @@ a.ps-link {
 
 /* List view Page*/
 
-.scEditorWarningIcon { margin: 0 16px 0 8px; }
-
-.scEditorWarningTitle {
-    float: left;
-    width: 100%;
-}
-
-.scEditorWarningHelp {
-    float: left;
-    width: 100%;
-}
-
 .checked {
     background-image: url("/sitecore modules/PowerShell/Assets/checked.png");
     height: 13px;
@@ -505,4 +493,57 @@ a.ps-link {
 
 #CodeEditor * {
     font-family: inherit !important;
+}
+
+.scWizardWarning img {
+    margin: 0 10px 0 0;
+    float: left;
+}
+.scEditorWarningIcon { margin: 0 16px 0 8px; }
+
+.scEditorWarning {
+    background-color: #FCE99C;
+    color: #897B2F;
+    padding: 0px;
+    min-height: 33px;
+}
+
+.scEditorWarning td {
+    padding: 7px;
+}
+
+.scEditorWarningHelp {
+    float: left;
+    width: 100%;
+}
+
+.scEditorWarningIcon { margin: 0 16px 0 8px; }
+
+.scEditorWarningTitle {
+    float: left;
+    width: 100%;
+    font-weight: bold;
+}
+
+.spe-secured-app .scEditorWarning {
+    background-color: #FCE99C;
+}
+
+.spe-secured-app .scEditorWarningTitle {
+    color: #897B2F;
+}
+
+.spe-secured-app .scEditorWarningHelp {
+    color: #897B2F;
+}
+
+.spe-secured-app .scEditorWarningOption {
+    color: black;
+    font-weight: bold;
+}
+
+.spe-secured-app .scDialogHeader {
+    background-color: #FCE99C;
+    color: #897B2F;
+    padding-top: 15px;
 }

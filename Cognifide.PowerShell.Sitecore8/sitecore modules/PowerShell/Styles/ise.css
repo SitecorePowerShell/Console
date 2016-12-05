@@ -468,8 +468,8 @@ a.ps-link {
 }
 
 .scEditorWarning {
-    background-color: #FEFAE6;
-    color: #E0B406;
+    background-color: #FCE99C;
+    color: #897B2F;
     padding: 5px;
     min-height: 33px;
 }
@@ -492,15 +492,15 @@ a.ps-link {
 }
 
 .spe-secured-app .scEditorWarning {
-    background-color: #B33A3A;
+    background-color: #FCE99C;
 }
 
 .spe-secured-app .scEditorWarningTitle {
-    color: white;
+    color: #897B2F;
 }
 
 .spe-secured-app .scEditorWarningHelp {
-    color: white;
+    color: #897B2F;
 }
 
 .spe-secured-app .scEditorWarningOption {
@@ -509,7 +509,7 @@ a.ps-link {
 }
 
 .spe-secured-app .scDialogHeader {
-    background-color: #B33A3A;
-    color: white;
+    background-color: #FCE99C;
+    color: #897B2F;
     padding-top: 15px;
 }
