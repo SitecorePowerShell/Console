@@ -25,6 +25,12 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 {
                     Name = xmlDefinition.Attributes["name"].Value
                 };
+
+                if (tokenDefinitions.ContainsKey(token.Name))
+                {
+                    throw new ArgumentException($"A duplicate token was detected in the configuration. The token '{token.Name}' already exists.");
+                }
+
                 TimeSpan expiration;
                 if (TimeSpan.TryParse(xmlDefinition.Attributes["expiration"].Value, out expiration))
                 {
@@ -41,7 +47,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             var xmlApps = Factory.GetConfigNodes("powershell/userAccountControl/gates/gate");
             foreach (XmlElement xmlApp in xmlApps)
             {
-                tokens.Add(xmlApp.Attributes["name"].Value,tokenDefinitions[xmlApp.Attributes["token"].Value]);
+                var name = xmlApp.Attributes["name"].Value;
+                if (tokens.ContainsKey(name))
+                {
+                    throw new ArgumentException($"A duplicate gate was detected in the configuration. The gate '{name}' already exists.");
+                }
+
+                tokens.Add(name, tokenDefinitions[xmlApp.Attributes["token"].Value]);
             }
         }
 
@@ -61,7 +73,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     var sessionvar = HttpContext.Current?.Session[string.Format(SessionCacheToken, token.Name)];
                     if (sessionvar != null && ((DateTime)sessionvar < DateTime.Now))
                     {
-                        PowerShellLog.Warn($"Session elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
+                        PowerShellLog.Warn($"Session state elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
                         HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token.Name));
                         sessionvar = null;
                     }
@@ -74,7 +86,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         public static void ElevateSessionToken(string appName)
         {
             var token = GetToken(appName);
-            PowerShellLog.Warn($"Session elevated for '{appName}' by user: {Sitecore.Context.User?.Name}");
+            PowerShellLog.Warn($"Session state elevated for '{appName}' by user: {Sitecore.Context.User?.Name}");
             HttpContext.Current.Session[string.Format(SessionCacheToken, token?.Name)] = DateTime.Now + token.Expiration;
         }
 
@@ -82,7 +94,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         {
             var token = GetToken(appName);
             HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token?.Name));
-            PowerShellLog.Warn($"Session elevation dropped for '{appName}' by user: {Sitecore.Context.User?.Name}");
+            PowerShellLog.Warn($"Session state elevation dropped for '{appName}' by user: {Sitecore.Context.User?.Name}");
         }
 
         internal class TokenDefinition

@@ -38,6 +38,11 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             var servicesNodes = Factory.GetConfigNode($"powershell/services").ChildNodes;
             foreach (XmlElement xmlDefinition in servicesNodes)
             {
+                if (services.ContainsKey(xmlDefinition.Name))
+                {
+                    throw new ArgumentException($"A duplicate service name was detected in the configuration. The service '{xmlDefinition.Name}' already exists.");
+                }
+
                 var service = new ServiceState()
                 {
                     Enabled = xmlDefinition.Attributes["enabled"]?.Value?.Is("true") == true,
