@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 11818
+content-length: 11819
 
 # Clear test items:
 # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
@@ -22,7 +22,7 @@ Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\D
 Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\Development\PowerShell Extensions Maintenance\Recover Version Specific Icons"
 
 if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
-  $sitecore7Warning = ""
+  $sitecore7Warning = "" 
 } else {
   $sitecore7Warning = @"
 ******************************************************
@@ -42,8 +42,8 @@ $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
 $package = new-package "Sitecore PowerShell Extensions";
 $package.Sources.Clear();
 
-$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
-$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Author = "Adam Najmanowicz, Michael West";
+$package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = '
 This module provides 2 immediately usable interfaces 
@@ -74,10 +74,10 @@ http://bit.ly/ScPsIss
 
 Thank you for using Sitecore PowerShell Extensions.
 
-Copyright (c) 2010-2015 Adam Najmanowicz - Cognifide
-Copyright (c) 2013-2015 Michael West
+Copyright (c) 2010-2016 Adam Najmanowicz
+Copyright (c) 2013-2016 Michael West
 
-http://www.cognifide.com/
+https://sitecorepowershell.com/
 http://blog.najmanowicz.com/
 http://michaellwest.blogspot.com/'
 
@@ -227,8 +227,8 @@ $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
 $package = new-package "Sitecore PowerShell Extensions - Authorable Reports";
 $package.Sources.Clear();
 
-$package.Metadata.Author = "Adam Najmanowicz - Cognifide, Michael West";
-$package.Metadata.Publisher = "Cognifide Limited";
+$package.Metadata.Author = "Adam Najmanowicz, Michael West";
+$package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = '
 This module provides 2 reports based on 
@@ -240,10 +240,10 @@ The reports are:
 
 Thank you for using Sitecore PowerShell Extensions.
 
-Copyright (c) 2010-2016 Adam Najmanowicz - Cognifide
+Copyright (c) 2010-2016 Adam Najmanowicz
 Copyright (c) 2013-2016 Michael West
 
-http://www.cognifide.com/
+https://sitecorepowershell.com/
 http://blog.najmanowicz.com/
 http://michaellwest.blogspot.com/'
 
@@ -260,7 +260,7 @@ Export-Package -Project $package -Path "$packageName.zip" -Zip
 ----version----
 language: en
 version: 1
-revision: d900d73b-38c2-4764-9907-bca43777a8f4
+revision: f834f7eb-6abf-4dd0-a59d-03ab8822bfb5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -275,14 +275,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d900d73b-38c2-4764-9907-bca43777a8f4
+f834f7eb-6abf-4dd0-a59d-03ab8822bfb5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161202T160447
+20161205T172818
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

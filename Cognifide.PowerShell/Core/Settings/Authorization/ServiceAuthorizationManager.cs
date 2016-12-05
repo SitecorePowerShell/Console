@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Xml;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -152,6 +153,10 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 foreach (XmlNode node in servicesNode.ChildNodes)
                 {
                     AuthorizationEntry entry;
+                    if (node.Name.Is("#comment"))
+                    {
+                        continue;
+                    }
                     if (AuthorizationEntry.TryParse(node, out entry))
                     {
                         authEntryList.Add(entry);
