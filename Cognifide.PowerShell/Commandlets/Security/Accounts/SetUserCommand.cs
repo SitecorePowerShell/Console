@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Web.Security;
 using System.Xml;
 using Cognifide.PowerShell.Core.Validation;
-using Sitecore.Analytics.Tracking;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Resources;

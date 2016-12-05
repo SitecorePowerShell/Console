@@ -121,7 +121,7 @@ body.ie { overflow: hidden; }
     width: 100%;
 }
 
-.scWizardButtons > .scButton { margin-top: 10px; }
+.scWizardButtons > .scButton { margin-top: 10px; float: right;}
 
 .scWizardPageContainer {
     bottom: 40px;
@@ -198,10 +198,6 @@ fieldset { padding: 6px 8px 8px 10px; }
 
 .ff .scButton {
     margin-left: 6px;
-}
-
-#CancelButton {
-    float: right;
 }
 
 #ValuePanel {

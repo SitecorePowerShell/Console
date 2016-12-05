@@ -3,6 +3,8 @@ using System.IO;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -58,11 +60,13 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
+            base.OnLoad(e);
+
             if (Context.ClientPage.IsEvent)
                 return;
 
             UrlHandle handle = null;
-            if (!UrlHandle.TryGetHandle(out handle))
+            if (!TypeResolver.Resolve<IUrlHandleWrapper>().TryGetHandle(out handle))
             {
                 FileNameLabel.Text =
                     "Invalid dialog invocation.";
@@ -135,11 +139,10 @@ namespace Cognifide.PowerShell.Client.Applications
             var caption = handle["cp"];
             Context.ClientPage.Title = caption;
             Assert.ArgumentNotNull(e, "e");
-            base.OnLoad(e);
             Text.Text = handle["te"];
             Hidden.Value = "cancelled";
             Context.ClientPage.ClientResponse.SetDialogValue(Hidden.Value);
-            UrlHandle.DisposeHandle(handle);
+            TypeResolver.Resolve<IUrlHandleWrapper>().DisposeHandle(handle);
         }
 
         public static string ToFileSize(long size)

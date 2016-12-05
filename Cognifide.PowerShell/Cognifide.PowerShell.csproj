@@ -424,6 +424,7 @@
     <Compile Include="Core\Serialization\SingleEntry.cs" />
     <Compile Include="Core\Settings\ApplicationNames.cs" />
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
+    <Compile Include="Core\VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
     <Compile Include="FieldIds.cs" />
     <Compile Include="Core\Settings\FieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />

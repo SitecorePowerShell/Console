@@ -421,9 +421,9 @@ namespace Cognifide.PowerShell.Client.Applications
                         Database = dbName,
                         ItemID = item?.ID.ToString() ?? ItemIDs.Null.ToString(),
                         Source = variable["Source"] as string ?? "",
-                        ItemLanguage = Sitecore.Context.Language.Name,
                         Value = item?.ID.ToString() ?? ""
                     };
+                    SitecoreVersion.V71.OrNewer(() => tree.ItemLanguage = Sitecore.Context.Language.Name);
                     tree.Class += " textEdit";
                     return tree;
                 }

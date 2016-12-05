@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
     {
         public void ShowSessionElevationWindow(UrlString url)
         {
-            SheerResponse.ShowModalDialog(url.ToString(), "450", "400", string.Empty, true);
+            SheerResponse.ShowModalDialog(url.ToString(), "400", "350", string.Empty, true);
         }
 
     }

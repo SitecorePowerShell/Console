@@ -51,10 +51,6 @@
       <Border def:placeholder="Buttons" Class="footerOkCancel">
         <Button ID="CancelButton" Header="Close" Click="Close" KeyCode="27" />
       </Border>
-
-      <script type="text/javascript">
-        document.getElementById('ConfirmMessage').innerHTML = scForm.getDialogArguments().message;
-      </script>
     </FormDialog>
   </DownloadFile>
 </control>

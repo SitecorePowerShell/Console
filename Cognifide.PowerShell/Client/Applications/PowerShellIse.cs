@@ -1096,7 +1096,11 @@ namespace Cognifide.PowerShell.Client.Applications
             else
             {
                 WasElevated = true;
-                var message = args.Parameters["message"] + "(elevationResult=1)";
+                var message = args.Parameters["message"];
+                if (!message.IsNullOrEmpty())
+                {
+                    message = args.Parameters["message"] + "(elevationResult=1)";
+                }
                 UpdateRibbon(message);
             }
         }

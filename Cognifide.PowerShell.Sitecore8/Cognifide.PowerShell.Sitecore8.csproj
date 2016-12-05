@@ -103,6 +103,7 @@
     <Compile Include="Integrations\Pipelines\PageEditorNotificationScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DateConverter.cs" />
+    <Compile Include="Utility\UrlHandleWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cognifide.PowerShell\Cognifide.PowerShell.csproj">
