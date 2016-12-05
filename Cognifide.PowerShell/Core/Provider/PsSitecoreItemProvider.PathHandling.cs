@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
@@ -92,8 +93,9 @@ namespace Cognifide.PowerShell.Core.Provider
             var parent = PathUtilities.GetParentFromPath(path);
             var name = PathUtilities.GetLeafFromPath(path);
             //try get literal path
-            var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem($"/sitecore{parent}/{name}");
-            if (literalItem != null)
+            var literalName = $"/sitecore{parent}/{name}";
+            var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem(literalName);
+            if (literalItem != null && literalName.Is(literalItem.Paths.Path))
             {
                 return new[] {$"{literalItem.Database.Name}:{literalItem.Paths.Path.Substring(9).Replace('/', '\\')}"};
             }
