@@ -100,7 +100,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
 
             var handle = string.IsNullOrEmpty(JobName) ? ID.NewID.ToString() : JobName;
-            var jobOptions = new JobOptions(GetJobId(session.ID, handle), "PowerShell", "shell", this, "RunJob",
+            var jobOptions = new JobOptions(GetJobId(session.ID, handle), "PowerShell", "shell", this, nameof(RunJob),
                 new object[] { session, scriptBlock.ToString() })
             {
                 AfterLife = new TimeSpan(0, 0, 1),

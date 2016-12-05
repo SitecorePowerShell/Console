@@ -101,12 +101,14 @@ namespace Cognifide.PowerShell.Console.Services
                     });
             }
 
+            PowerShellLog.Info($"Arbitrary script execution in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+
             var session = GetScriptSession(guid);
             session.Interactive = true;
             try
             {
                 var handle = ID.NewID.ToString();
-                var jobOptions = new JobOptions(GetJobId(guid, handle), "PowerShell", "shell", this, "RunJob",
+                var jobOptions = new JobOptions(GetJobId(guid, handle), "PowerShell", "shell", this, nameof(RunJob),
                     new object[] {session, command})
                 {
                     AfterLife = new TimeSpan(0, 0, 20),
@@ -394,6 +396,8 @@ namespace Cognifide.PowerShell.Console.Services
                 return string.Empty;
             }
 
+            PowerShellLog.Info($"Auto completion requested for command in ISE session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, true));
             return result;
@@ -408,6 +412,9 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return string.Empty;
             }
+
+            PowerShellLog.Info($"Auto completion requested for command in Console session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetTabCompletionOutputs(guid, command, false));
             return result;
@@ -422,6 +429,9 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return string.Empty;
             }
+
+            PowerShellLog.Info($"Auto completion requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+
             var serializer = new JavaScriptSerializer();
             var session = GetScriptSession(guid);
             try
@@ -464,6 +474,9 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return string.Empty;
             }
+
+            PowerShellLog.Info($"Help message requested in session '{guid}' by user: '{Sitecore.Context.User?.Name}'");
+
             var serializer = new JavaScriptSerializer();
             var result = serializer.Serialize(GetHelpOutputs(guid, command));
             return result;

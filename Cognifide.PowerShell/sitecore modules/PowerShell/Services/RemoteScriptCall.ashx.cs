@@ -95,6 +95,9 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
+            PowerShellLog.Info($"'{apiVersion}' called by user: '{userName}'");
+            PowerShellLog.Debug($"'{request.Url}'");
+
             if (isUpload)
             {
                 switch (apiVersion)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 using System.Xml;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Sitecore.Configuration;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
@@ -58,7 +59,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     return true;
                 case TokenDefinition.ElevationAction.Password:
                     var sessionvar = HttpContext.Current?.Session[string.Format(SessionCacheToken, token.Name)];
-                    return sessionvar != null && ((DateTime)sessionvar > DateTime.Now);
+                    if (sessionvar != null && ((DateTime)sessionvar < DateTime.Now))
+                    {
+                        PowerShellLog.Warn($"Session elevation expired for '{appName}' for user: {Sitecore.Context.User?.Name}");
+                        HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token.Name));
+                        sessionvar = null;
+                    }
+                    return sessionvar != null;
                 default:
                     return false;
             }
@@ -67,6 +74,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         public static void ElevateSessionToken(string appName)
         {
             var token = GetToken(appName);
+            PowerShellLog.Warn($"Session elevated for '{appName}' by user: {Sitecore.Context.User?.Name}");
             HttpContext.Current.Session[string.Format(SessionCacheToken, token?.Name)] = DateTime.Now + token.Expiration;
         }
 
@@ -74,6 +82,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         {
             var token = GetToken(appName);
             HttpContext.Current.Session.Remove(string.Format(SessionCacheToken, token?.Name));
+            PowerShellLog.Warn($"Session elevation dropped for '{appName}' by user: {Sitecore.Context.User?.Name}");
         }
 
         internal class TokenDefinition

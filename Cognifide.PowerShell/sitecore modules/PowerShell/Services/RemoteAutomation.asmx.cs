@@ -83,6 +83,8 @@ namespace Cognifide.PowerShell.Console.Services
                 };
             }
 
+            PowerShellLog.Info($"Script executed through remoting by user: '{userName}' in disposable session.");
+
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
                 scriptSession.ExecuteScriptPart(script);
@@ -145,6 +147,8 @@ namespace Cognifide.PowerShell.Console.Services
                 return "login failed";
             }
 
+            PowerShellLog.Info($"Session '{sessionId}' disposed by user: '{Sitecore.Context.User?.Name}'");
+
             if (ScriptSessionManager.SessionExists(sessionId))
             {
                 var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
@@ -167,6 +171,8 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 return "<Objs xmlns=\"http://schemas.microsoft.com/powershell/2004/04\"><Obj RefId=\"0\"><S>login failed</S></Obj></Objs>";
             }
+
+            PowerShellLog.Info($"Script executed in session {sessionId} through remoting by user: '{userName}'");
 
             var scriptSession = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
 
@@ -211,6 +217,8 @@ namespace Cognifide.PowerShell.Console.Services
                     return false;
                 }
 
+                PowerShellLog.Info($"File '{filePath}' uploaded through remoting by user: '{userName}'");
+
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))
                 {
@@ -221,7 +229,7 @@ namespace Cognifide.PowerShell.Console.Services
                 mco.Database = Factory.GetDatabase(database);
                 mco.Language = Language.Parse(language);
                 mco.Versioned = Settings.Media.UploadAsVersionableByDefault;
-                mco.Destination = string.Format("{0}/{1}", dirName, Path.GetFileNameWithoutExtension(filePath));
+                mco.Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filePath)}";
 
                 var mc = new MediaCreator();
                 using (var stream = new MemoryStream(fileContent))
@@ -251,6 +259,8 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     return Encoding.ASCII.GetBytes("login failed");
                 }
+
+                PowerShellLog.Info($"File '{filePath}' downloaded through remoting by user: '{userName}'");
 
                 var dirName = (Path.GetDirectoryName(filePath) ?? string.Empty).Replace('\\', '/');
                 if (!dirName.StartsWith(Constants.MediaLibraryPath))

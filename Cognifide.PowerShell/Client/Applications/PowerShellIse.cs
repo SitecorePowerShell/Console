@@ -497,6 +497,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
+            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
+
             using (var scriptSession = ScriptSessionManager.NewSession(ApplicationNames.ISE, true))
             {
                 var settings = scriptSession.Settings;
@@ -561,6 +563,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {                
                 return;
             }
+
             Debugging = debug;
             var sessionName = CurrentSessionId;
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
@@ -603,6 +606,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             ScriptRunning = true;
             UpdateRibbon();
+
+            PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
 
             scriptSession.SetExecutedScript(ScriptItem);
             var parameters = new object[]

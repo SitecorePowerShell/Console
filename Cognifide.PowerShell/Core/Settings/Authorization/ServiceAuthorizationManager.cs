@@ -158,7 +158,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     }
                     else
                     {
-                        PowerShellLog.Error($"Invalid permission entry for service {serviceName}");
+                        PowerShellLog.Error($"Invalid permission entry for service '{serviceName}'");
                     }
                 }
             }

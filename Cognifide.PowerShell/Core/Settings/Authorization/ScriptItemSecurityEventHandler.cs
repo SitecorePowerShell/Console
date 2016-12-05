@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
@@ -60,6 +61,22 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
                 scArgs.Result.Cancel = true;
                 scArgs.Result.Messages.Add("Item save prevented");
+                return;
+            }
+
+            if (itemCreatingEventArgs != null)
+            {
+                PowerShellLog.Info(
+                    $" Script/Library '{itemCreatingEventArgs.Parent.Paths.Path}/{itemCreatingEventArgs.ItemName}' created by user '{Context.User?.Name}'");
+            }
+            else
+            {
+                PowerShellLog.Info(
+                    $" Script/Library saved '{item?.Parent.Paths.Path}' by user '{Context.User?.Name}'");
+                if (item.IsPowerShellScript())
+                {
+                    PowerShellLog.Debug(item[FieldIDs.Script]);
+                }
             }
         }
     }
