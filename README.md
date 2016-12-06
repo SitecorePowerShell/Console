@@ -46,9 +46,9 @@ If you have any questions, comments, or suggegstions with the SPE module, please
 
 Enjoy!
 
-[Adam Najmanowicz](http://blog.najmanowicz.com/) - [Cognifide](http://www.cognifide.com/) -and SPE Senior Developer
+[Adam Najmanowicz](http://blog.najmanowicz.com/) - - Founder, Architect & Lead Developer
 
-[Michael West](http://michaellwest.blogspot.com) - SPE Developer
+[Michael West](http://michaellwest.blogspot.com) - Developer & Documentation Lead
 
 [Mike Reynolds](http://sitecorejunkie.com/) - SPE Evangelist
 
