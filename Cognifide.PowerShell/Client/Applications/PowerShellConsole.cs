@@ -36,12 +36,6 @@ namespace Cognifide.PowerShell.Client.Applications
         protected GridPanel ElevationBlockedPanel;
         protected Border InfoPanel;
 
-        protected bool WasElevated
-        {
-            get { return StringUtil.GetString(Context.ClientPage.ServerProperties["WasElevated"]) == "1"; }
-            set { Context.ClientPage.ServerProperties["WasElevated"] = value ? "1" : string.Empty; }
-        }
-
         protected string AppName
         {
             get
@@ -72,43 +66,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             base.OnLoad(e);
 
-            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console);
-
-            var controlContent = string.Empty;
-            var hidePanel = false;
-            var tokenAction = SessionElevationManager.GetToken(ApplicationNames.Console).Action;
-            switch (tokenAction)
-            {
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
-                    // it is always elevated
-                    hidePanel = true;
-                    break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Password):
-                    // show that session elevation can be dropped
-                    if (isSessionElevated)
-                    {
-                        controlContent = HtmlUtil.RenderControl(ElevatedPanel);
-                    }
-                    else
-                    {
-                        if (WasElevated)
-                        {
-                            // we're cool devs know that session will need to be elevated.
-                            hidePanel = true;
-                        }
-                        else
-                        {
-                            controlContent = HtmlUtil.RenderControl(ElevationRequiredPanel);
-                        }
-                    }
-                    break;
-                case (SessionElevationManager.TokenDefinition.ElevationAction.Block):
-                    controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
-                    break;
-            }
-
-            InfoPanel.InnerHtml = controlContent;
-            SheerResponse.Eval($"cognifide.powershell.showInfoPanel({(!hidePanel).ToString().ToLower()});");
+            UpdateWarning();
 
             Settings = ApplicationSettings.GetInstance(ApplicationNames.Context, false);
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
@@ -127,6 +85,33 @@ namespace Cognifide.PowerShell.Client.Applications
                                $"font-family: inherit;" + "}</style>";
             }
             SheerResponse.SetDialogValue("ok");
+        }
+
+        private void UpdateWarning()
+        {
+            var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console);
+
+            var controlContent = string.Empty;
+            var hidePanel = false;
+            var tokenAction = SessionElevationManager.GetToken(ApplicationNames.Console).Action;
+            switch (tokenAction)
+            {
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Allow):
+                    // it is always elevated
+                    hidePanel = true;
+                    break;
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Password):
+                    // show that session elevation can be dropped
+                    controlContent = HtmlUtil.RenderControl(isSessionElevated ? ElevatedPanel : ElevationRequiredPanel);
+                    break;
+                case (SessionElevationManager.TokenDefinition.ElevationAction.Block):
+                    controlContent = HtmlUtil.RenderControl(ElevationBlockedPanel);
+                    break;
+            }
+
+            InfoPanel.InnerHtml = controlContent;
+            InfoPanel.Visible = !hidePanel;
+            SheerResponse.Eval($"cognifide.powershell.showInfoPanel({(!hidePanel).ToString().ToLower()});");
         }
 
         [HandleMessage("item:load", true)]
@@ -242,22 +227,16 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (!args.IsPostBack)
             {
-                UrlString url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
+                var url = new UrlString(UIUtil.GetUri("control:PowerShellSessionElevation"));
                 url.Parameters["app"] = ApplicationNames.Console;
                 TypeResolver.Resolve<ISessionElevationWindowLauncher>().ShowSessionElevationWindow(url);
                 args.WaitForPostBack(true);
             }
             else
             {
-                WasElevated = true;
-                if (SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console))
-                {
-                    SheerResponse.Eval(@"$ise(function() { cognifide.powershell.bootstrap(); });");
-                }
-                else
-                {
-                    SheerResponse.Eval(@"$ise(function() { cognifide.powershell.showUnelevated(); });");
-                }
+                SheerResponse.Eval(SessionElevationManager.IsSessionTokenElevated(ApplicationNames.Console)
+                    ? @"$ise(function() { cognifide.powershell.bootstrap(); });"
+                    : @"$ise(function() { cognifide.powershell.showUnelevated(); });");
             }
         }
 
@@ -265,7 +244,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             SessionElevationManager.DropSessionTokenElevation(ApplicationNames.Console);
             SheerResponse.Eval(@"$ise(function() { cognifide.powershell.showUnelevated(); });");
-        }
 
+            UpdateWarning();
+        }
     }
 }

@@ -288,8 +288,8 @@
     cognifide.powershell.showUnelevated = function() {
         terminal.resume();
         $ise("#working").hide();
-	terminal.set_prompt("unelevated >")
-        cognifide.powershell.showInfoPanel(false);
+        terminal.set_prompt("unelevated >");
+        cognifide.powershell.showInfoPanel(true);
     }
 
     cognifide.powershell.showInfoPanel = function(showPanel) {

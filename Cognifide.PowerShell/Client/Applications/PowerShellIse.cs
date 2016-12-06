@@ -831,7 +831,7 @@ namespace Cognifide.PowerShell.Client.Applications
         /// <summary>
         ///     Updates the ribbon.
         /// </summary>
-        private void UpdateRibbon(string updateFromMessage = "")
+        private void UpdateRibbon()
         {
             var ribbon = new Ribbon {ID = "PowerShellRibbon"};
             var item = ScriptItem;
@@ -887,6 +887,11 @@ namespace Cognifide.PowerShell.Client.Applications
             ribbon.CommandContext.Parameters.Add("scriptItem", ScriptItemId);
             RibbonPanel.InnerHtml = HtmlUtil.RenderControl(ribbon);
 
+            UpdateWarning();
+        }
+
+        private void UpdateWarning(string updateFromMessage = "")
+        {
             var isSessionElevated = SessionElevationManager.IsSessionTokenElevated(ApplicationNames.ISE);
 
             var controlContent = string.Empty;
@@ -925,8 +930,8 @@ namespace Cognifide.PowerShell.Client.Applications
             InfoPanel.InnerHtml = controlContent;
             InfoPanel.Visible = !hidePanel;
             SheerResponse.Eval($"cognifide.powershell.showInfoPanel({(!hidePanel).ToString().ToLower()}, '{updateFromMessage}');");
-        }
 
+        }
 
         [HandleMessage("item:updated", true)]
         protected void FieldEditor(ClientPipelineArgs args)
@@ -1106,7 +1111,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     message = args.Parameters["message"] + "(elevationResult=1)";
                 }
-                UpdateRibbon(message);
+                UpdateWarning(message);
             }
         }
 
