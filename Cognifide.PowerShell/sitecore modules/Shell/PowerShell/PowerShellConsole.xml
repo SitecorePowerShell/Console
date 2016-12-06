@@ -44,7 +44,10 @@
                 <Literal ID="InfoTitle" Text="Elevated session state is required to run the script." />
               </Border>
               <Border class="scEditorWarningHelp">
-                <Literal ID="Description" Text="A security dialog will prompt you for your credentials upon first execution." />
+                <Literal ID="Description" Text="A security dialog will prompt you for your credentials upon first execution. For more information, refer to " />
+                <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
+                    <Literal Text="Documentation."/>
+                </a>
               </Border>
             </Border>
           </GridPanel>
