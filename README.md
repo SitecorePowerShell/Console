@@ -1,6 +1,13 @@
 Sitecore PowerShell Extensions
 =======
 
+```diff
+- If you are using version 4.2 or older in your environments, please update them to 4.3 ASAP
+- Please be mindful that we recommend that you DO NOT install it on Content Delivery servers
+- or run it in setups that face the Internet in an unprotected connections 
+- (e.g. outside of a VPN protected environment)
+```
+
 The Sitecore PowerShell Extensions module (SPE) provides a robust environment for automating tasks within Sitecore.
 
 Consider some of the following examples to see how SPE can improve your quality of life as a Sitecore developer/administrator:
