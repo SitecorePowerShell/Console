@@ -64,4 +64,4 @@ See a whole [variety of links to SPE material](http://blog.najmanowicz.com/sitec
 
 Watch some quick start [training videos](http://www.youtube.com/playlist?list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b).
 
-A bit "Thank you!" to [Cognifide](http://www.cognifide.com/) for letting Adam spent some of his working time working on the module!
+A big "Thank you!" to [Cognifide](http://www.cognifide.com/) for letting Adam spent some of his working time working on the module!
