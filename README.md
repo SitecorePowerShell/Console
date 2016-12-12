@@ -34,9 +34,9 @@ gci "master:\media library\Images" | % { rni $_.ItemPath -NewName ($_.Name + "-o
 
 **Note:** Aliases and positional parameters were used in the above examples. Use *Get-Alias* to see them all.
 
-* gci = Get-ChildItem
-* ri = Remove-Item
-* rni = Rename-Item
+* `gci` = `Get-ChildItem`
+* `ri` = `Remove-Item`
+* `rni` = `Rename-Item`
 
 If you can answer yes to any of those (and more), you will certainly find this module a powerful and necessary tool.
 
