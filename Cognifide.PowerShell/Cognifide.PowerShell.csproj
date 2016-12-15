@@ -502,6 +502,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\bg_middle.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
+    <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
     <Content Include="sitecore modules\PowerShell\Assets\error.png" />
