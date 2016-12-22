@@ -148,6 +148,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     .Select(variable => variable["Tab"] as string)
                     .Any(tabName => !string.IsNullOrEmpty(tabName));
             var fieldValidators = FieldValidators;
+            var fieldNames = new HashSet<string>();
             foreach (Hashtable variable in variables)
             {
                 var tabName = variable["Tab"] as string ?? "Other";
@@ -160,6 +161,14 @@ namespace Cognifide.PowerShell.Client.Applications
                 var clearfix = false;
                 var height = variable["Height"] as string;
                 var validator = variable["Validator"] as ScriptBlock;
+
+                if (fieldNames.Contains(name))
+                {
+                    PowerShellLog.Error($"Error while evaluating variable names in Read-Variable command. Duplicate name '{name}' encountered.");
+                    throw new ArgumentException("A duplicate variable name encountered while calling Read-Variable.", "name");
+                }
+
+                fieldNames.Add(name);
 
                 if (validator != null)
                 {
@@ -194,7 +203,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
                 catch (Exception ex)
                 {
-                    PowerShellLog.Error($"Error while rendering editor in Read-Variable cmdlet for variable {title}", ex);
+                    PowerShellLog.Error($"Error while rendering editor in Read-Variable command for variable '{title}'.", ex);
                     variableEditor = new Literal
                     {
                         Text = Texts.PowerShellMultiValuePrompt_AddControls_Error_while_rendering_this_editor,
