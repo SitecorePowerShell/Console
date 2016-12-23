@@ -8,19 +8,21 @@ name: Create Integration Points
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20141203T011327Z
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2591
+content-length: 2615
 
 $integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
 $options = New-Object System.Collections.Specialized.OrderedDictionary
-$moduleRootPath = (Get-Item .).ProviderPath
+$currentItem = Get-Item .
+$moduleRootPath = $currentItem.ProviderPath
 
-if($moduleRootPath.TemplateId -ne "{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" ){
+if($currentItem.TemplateId -ne "{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" ){
     $moduleRootPath = "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryPath)"
 }
 
@@ -68,7 +70,7 @@ foreach($pointToCreate in $pointsToCreate){
 ----version----
 language: en
 version: 1
-revision: 1bb90b72-c1d1-40d8-ac77-e728f43fee91
+revision: e7ae6fd2-8298-441d-b93b-a52bcb3f929d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -83,18 +85,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-1bb90b72-c1d1-40d8-ac77-e728f43fee91
+e7ae6fd2-8298-441d-b93b-a52bcb3f929d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20161108T151854
+20161223T090029Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
 content-length: 14
 
-sitecore\admin
+sitecore\Admin
