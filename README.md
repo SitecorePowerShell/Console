@@ -1,5 +1,6 @@
-Sitecore PowerShell Extensions
-=======
+# Sitecore PowerShell Extensions: a CLI and scripting tool
+
+![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-console-ise.png)
 
 ```diff
 - If you are using version 4.2 or older in your environments, please update them to 4.3 ASAP
@@ -51,6 +52,11 @@ Enjoy!
 [Michael West](http://michaellwest.blogspot.com) - Developer & Documentation Lead
 
 [Mike Reynolds](http://sitecorejunkie.com/) - SPE Evangelist
+
+
+[![Adam Najmanowicz](https://avatars2.githubusercontent.com/u/1209953?v=3&s=144)](https://github.com/AdamNaj) | [![Michael West](https://gravatar.com/avatar/a2914bafbdf4e967701eb4732bde01c5?s=144)](https://github.com/michaellwest) | [![Mike Reynolds](https://gravatar.com/avatar/cb60f2c25deefe0f05b4157cc638fad5?s=144)](https://github.com/scjunkie)
+---|---|---
+[Adam Najmanowicz](https://blog.najmanowicz.com) | [Michael West](https://michaellwest.blogspot.com) | [Mike Reynolds](https://sitecorejunkie.com)
 
 ---
 
