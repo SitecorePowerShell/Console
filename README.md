@@ -9,6 +9,8 @@
 - (e.g. outside of a VPN protected environment)
 ```
 
+[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
+
 The Sitecore PowerShell Extensions module (SPE) provides a robust environment for automating tasks within Sitecore.
 
 ![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-ise.gif)
