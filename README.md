@@ -11,6 +11,8 @@
 
 The Sitecore PowerShell Extensions module (SPE) provides a robust environment for automating tasks within Sitecore.
 
+![Sitecore PowerShell Extensions](https://raw.githubusercontent.com/SitecorePowerShell/Console/master/readme-ise.gif)
+
 Consider some of the following examples to see how SPE can improve your quality of life as a Sitecore developer/administrator:
 
 - Make changes to a large number of pages:
