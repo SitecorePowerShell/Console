@@ -49,16 +49,10 @@ If you have any questions, comments, or suggegstions with the SPE module, please
 
 Enjoy!
 
-[Adam Najmanowicz](http://blog.najmanowicz.com/) - - Founder, Architect & Lead Developer
-
-[Michael West](http://michaellwest.blogspot.com) - Developer & Documentation Lead
-
-[Mike Reynolds](http://sitecorejunkie.com/) - SPE Evangelist
-
-
-[![Adam Najmanowicz](https://avatars2.githubusercontent.com/u/1209953?v=3&s=144)](https://github.com/AdamNaj) | [![Michael West](https://gravatar.com/avatar/a2914bafbdf4e967701eb4732bde01c5?s=144)](https://github.com/michaellwest) | [![Mike Reynolds](https://gravatar.com/avatar/cb60f2c25deefe0f05b4157cc638fad5?s=144)](https://github.com/scjunkie)
+| [![Adam Najmanowicz](https://avatars2.githubusercontent.com/u/1209953?v=3&s=220)](https://github.com/AdamNaj) | [![Michael West](https://gravatar.com/avatar/a2914bafbdf4e967701eb4732bde01c5?s=220)](https://github.com/michaellwest) | [![Mike Reynolds](https://gravatar.com/avatar/cb60f2c25deefe0f05b4157cc638fad5?s=220)](https://github.com/scjunkie) |
 ---|---|---
-[Adam Najmanowicz](https://blog.najmanowicz.com) | [Michael West](https://michaellwest.blogspot.com) | [Mike Reynolds](https://sitecorejunkie.com)
+| [Adam Najmanowicz](https://blog.najmanowicz.com) | [Michael West](https://michaellwest.blogspot.com) | [Mike Reynolds](https://sitecorejunkie.com) |
+| Founder, Architect & Lead Developer | Developer & Documentation Lead | SPE Evangelist |
 
 ---
 
