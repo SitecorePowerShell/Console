@@ -18,12 +18,15 @@ function Get-UsingVariableValues {
         try {
             $value = $null
             $isRunspace = ($MyInvocation.CommandOrigin -eq [System.Management.Automation.CommandOrigin]::Runspace -or $MyInvocation.CommandOrigin -eq [System.Management.Automation.CommandOrigin]::Internal)
-            if ($isRunspace) {
-                $value = Get-Variable -Name $Var.SubExpression.VariablePath.UserPath
+            $userpath = $Var.SubExpression.VariablePath.UserPath
+            if ($isRunspace -and (Test-Path -Path "variable:\$($userpath)")) {
+                Write-Verbose "Checking the Runspace for the variable $($userpath)."
+                $value = Get-Variable -Name $userpath
             }
 
             if($value -eq $null -or [string]::IsNullOrEmpty($value.Value)) {
-                $value = ($PSCmdlet.SessionState.PSVariable.Get($var.SubExpression.VariablePath.UserPath))
+                Write-Verbose "Checking the SessionState for the variable $($userpath)."
+                $value = ($PSCmdlet.SessionState.PSVariable.Get($userpath))
                 if ([string]::IsNullOrEmpty($value)) {
                     throw 'No value!'
                 }
