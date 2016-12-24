@@ -16,10 +16,13 @@ function Get-UsingVariableValues {
     $usingVar = $usingVar | Group SubExpression | ForEach {$_.Group | Select -First 1}        
     ForEach ($var in $usingVar) {
         try {
+            $value = $null
             $isRunspace = ($MyInvocation.CommandOrigin -eq [System.Management.Automation.CommandOrigin]::Runspace -or $MyInvocation.CommandOrigin -eq [System.Management.Automation.CommandOrigin]::Internal)
             if ($isRunspace) {
                 $value = Get-Variable -Name $Var.SubExpression.VariablePath.UserPath
-            } else {
+            }
+
+            if($value -eq $null -or [string]::IsNullOrEmpty($value.Value)) {
                 $value = ($PSCmdlet.SessionState.PSVariable.Get($var.SubExpression.VariablePath.UserPath))
                 if ([string]::IsNullOrEmpty($value)) {
                     throw 'No value!'
