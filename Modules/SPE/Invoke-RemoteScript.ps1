@@ -143,10 +143,14 @@ function Invoke-RemoteScript {
     if ($invokeWithArguments) {
         if(!$Arguments) { $Arguments = @{} }
 
+        $paramsPrefix = "`$params."
+        if($AsJob.IsPresent) {
+            $paramsPrefix = "$"
+        }
         $command = $ScriptBlock.ToString()
         foreach($usingVarValue in $usingVariableValues) {
             $Arguments[($usingVarValue.NewName.TrimStart('$'))] = $usingVarValue.Value
-            $command = $command.Replace($usingVarValue.Name, "`$params.$($usingVarValue.NewName.TrimStart('$'))")
+            $command = $command.Replace($usingVarValue.Name, "$($paramsPrefix)$($usingVarValue.NewName.TrimStart('$'))")
         }
 
         $newScriptBlock = $command
