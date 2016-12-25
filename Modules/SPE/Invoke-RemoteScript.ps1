@@ -177,8 +177,8 @@ function Invoke-RemoteScript {
         }
         
         foreach($singleConnection in $Connection) {
-            if(!$singleConnection.Uri.AbsoluteUri.EndsWith(".asmx")) {
-                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+            if($singleConnection.Uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
+                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
             }
     
             if(!$singleConnection.Proxy) {

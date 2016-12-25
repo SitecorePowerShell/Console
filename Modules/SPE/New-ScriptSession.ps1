@@ -89,10 +89,10 @@ function New-ScriptSession {
 
             $baseUri = $uri
 
-            if(!$uri.AbsoluteUri.EndsWith(".asmx")) {
-                $uri = "$($uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+            if($uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
+                $uri = [Uri]"$($uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
             }
-            $uri = $uri + "?wsdl"
+
             $proxyProps = @{
                 Uri = $uri
             }

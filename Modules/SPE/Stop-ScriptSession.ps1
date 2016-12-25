@@ -86,8 +86,8 @@ function Stop-ScriptSession {
     }
     
     foreach($singleConnection in $Connection) {
-        if(!$singleConnection.Uri.AbsoluteUri.EndsWith(".asmx")) {
-            $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx"
+        if($singleConnection.Uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
+            $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
         }
 
         if(!$singleConnection.Proxy) {
@@ -108,7 +108,7 @@ function Stop-ScriptSession {
 
         $response = $singleConnection.Proxy.DisposeScriptSession($Username, $Password, $SessionId)
         if($response) {
-            Write-Verbose "Server returned a response of '$($response)'."
+            Write-Verbose "Server $($singleConnection.BaseUri.AbsoluteUri) returned a response of '$($response)'."
         }
     }
 }
