@@ -92,7 +92,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        protected override void GetChildItems(string path, bool recurse)
+        protected override void GetChildItems(string path, bool recurse, uint depth)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    GetChildItemsHelper(item, recurse, wildcard, language, version);
+                    GetChildItemsHelper(item, recurse, wildcard, language, version, 0, depth);
                 }
             }
             catch (Exception ex)
@@ -138,8 +138,13 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
+        protected override void GetChildItems(string path, bool recurse)
+        {
+            GetChildItems(path, recurse, 0);
+        }
+
         protected void GetChildItemsHelper(Item item, bool recurse, WildcardPattern wildcard, string[] language,
-            int version)
+            int version, uint currentDepth, uint depth)
         {
             var children = item.GetChildren();
             foreach (Item childItem in children)
@@ -150,9 +155,10 @@ namespace Cognifide.PowerShell.Core.Provider
                     GetMatchingItem(language, version, child).ForEach(WriteItem);
                 }
 
-                if (recurse)
+                if (recurse && currentDepth < depth)
                 {
-                    GetChildItemsHelper(child, true, wildcard, language, version);
+                    var nextDepth = currentDepth + 1;
+                    GetChildItemsHelper(child, true, wildcard, language, version, nextDepth, depth);
                 }
             }
         }

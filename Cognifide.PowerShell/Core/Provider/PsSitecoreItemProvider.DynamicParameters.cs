@@ -281,7 +281,6 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithParentParam, ref dic, false, false);
-            
 
             return paramAdded ? dic : null;
         }
