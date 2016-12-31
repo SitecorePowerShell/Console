@@ -87,11 +87,17 @@ namespace Cognifide.PowerShell.Console.Services
             var isAuthenticated = Context.IsLoggedIn;
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated || string.IsNullOrEmpty(originParam) || originParam.Is("current");
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
-            var dbName = scriptDb.Name;
+            var dbName = scriptDb?.Name;
 
             if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
             {
                 PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as - user not logged in, authentication failed or no credentials provided.");
+                return;
+            }
+
+            if (scriptDb == null && !apiVersion.Is("file") && !apiVersion.Is("handle"))
+            {
+                PowerShellLog.Error($"The {apiVersion} service requires a database but none was found in parameters or Context.");
                 return;
             }
 
@@ -539,6 +545,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private void UpdateCache(string dbName)
         {
+            Assert.ArgumentNotNullOrEmpty(dbName, "dbName");
             if (apiScripts == null)
             {
                 apiScripts = new SortedDictionary<string, SortedDictionary<string, ApiScript>>(StringComparer.OrdinalIgnoreCase);
