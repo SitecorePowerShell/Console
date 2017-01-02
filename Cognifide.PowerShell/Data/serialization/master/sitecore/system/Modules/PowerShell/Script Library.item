@@ -8,6 +8,7 @@ name: Script Library
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
+created: 20161022T030250:636127021703770000
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -26,7 +27,7 @@ content-length: 77
 ----version----
 language: en
 version: 1
-revision: 8ea45de2-2793-44df-8b23-51ac5505b967
+revision: dc0b6068-8614-4ce1-af3e-807de410a09d
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -36,12 +37,26 @@ content-length: 14
 
 Script Library
 ----field----
+field: {577F1689-7DE4-4AD2-A15F-7FDC1759285F}
+name: __Long description
+key: __long description
+content-length: 60
+
+Contains PowerShell scripts stored in libraries and modules.
+----field----
+field: {9541E67D-CE8C-4225-803D-33F7F29F09EF}
+name: __Short description
+key: __short description
+content-length: 46
+
+Sitecore PowerShell Extensions script library.
+----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20121128T205245
+20121129T025245Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -55,14 +70,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-8ea45de2-2793-44df-8b23-51ac5505b967
+dc0b6068-8614-4ce1-af3e-807de410a09d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160824T150304
+20170102T185736Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
