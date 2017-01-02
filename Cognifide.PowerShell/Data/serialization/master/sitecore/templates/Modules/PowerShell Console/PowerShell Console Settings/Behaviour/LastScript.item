@@ -34,7 +34,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: a27824bc-81a0-4912-8c0a-b58f52350d03
+revision: f690cbf7-59a0-4251-bb12-a0f806fe0906
 
 ----field----
 field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
@@ -47,16 +47,16 @@ Last executed script
 field: {577F1689-7DE4-4AD2-A15F-7FDC1759285F}
 name: __Long description
 key: __long description
-content-length: 195
+content-length: 185
 
-Last script executed in the PowerShell ISE. This is typically helpful when the script has not been saved in the script library and the Content Editor is refreshed or the PowerShell ISE is closed.
+Last script executed in the PowerShell ISE. This is helpful when the script has not been saved in the script library and the Content Editor is refreshed or the PowerShell ISE is closed.
 ----field----
 field: {9541E67D-CE8C-4225-803D-33F7F29F09EF}
 name: __Short description
 key: __short description
-content-length: 49
+content-length: 51
 
-Script restored to the PowerShell ISE when opened
+Script restored to the PowerShell ISE when reopened
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -84,14 +84,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a27824bc-81a0-4912-8c0a-b58f52350d03
+f690cbf7-59a0-4251-bb12-a0f806fe0906
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 16
 
-20170102T193958Z
+20170102T194716Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
