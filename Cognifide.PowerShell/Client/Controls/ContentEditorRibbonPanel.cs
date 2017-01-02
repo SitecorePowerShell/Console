@@ -45,7 +45,7 @@ namespace Cognifide.PowerShell.Client.Controls
 
                 RenderLargeButton(output, ribbon, Control.GetUniqueID("script"),
                     Translate.Text(scriptItem.DisplayName),
-                    scriptItem["__Icon"], string.Empty,
+                    scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],
                     psButton["Click"],
                     RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.Items[0]),
                     false, context);
