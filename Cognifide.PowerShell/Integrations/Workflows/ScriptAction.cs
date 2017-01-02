@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.Integrations.Workflows
             }
 
             if (RulesUtils.EvaluateRules(actionItem[FieldNames.EnableRule], dataItem) &&
-                RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], dataItem))
+                RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], dataItem))
             {
                 var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
                 str.Append("id", dataItem.ID.ToString());
