@@ -8,6 +8,7 @@ name: PersistentSessionId
 master: {00000000-0000-0000-0000-000000000000}
 template: {455A3E98-A627-4B40-8035-E683A0331AC7}
 templatekey: Template field
+created: 20161022T030247:636127021675800000
 
 ----field----
 field: {AB162CC0-DC80-4ABF-8871-998EE5D7BA32}
@@ -33,15 +34,29 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 362dbc69-4bc3-4065-b4cc-2a90e3e81e50
+revision: 165bdf03-2204-4bf1-adf6-eb6553f702c3
 
 ----field----
 field: {19A69332-A23E-4E70-8D16-B2640CB24CC8}
 name: Title
 key: title
-content-length: 193
+content-length: 21
 
-Persistent Session ID - context scripts with this ID will execute in a single session, leave empty to discard sessions after execution otherwise they will be stored in memory for further re-use
+Persistent Session ID
+----field----
+field: {577F1689-7DE4-4AD2-A15F-7FDC1759285F}
+name: __Long description
+key: __long description
+content-length: 166
+
+Scripts with the specified ID will use a single shared session; after which those sessions will remain in memory. When left empty, sessions will close after each use.
+----field----
+field: {9541E67D-CE8C-4225-803D-33F7F29F09EF}
+name: __Short description
+key: __short description
+content-length: 63
+
+Scripts with this ID will execute using a single shared session
 ----field----
 field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
 name: __Owner
@@ -53,9 +68,9 @@ sitecore\admin
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 15
+content-length: 16
 
-20130430T091218
+20130430T141218Z
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -69,14 +84,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-362dbc69-4bc3-4065-b4cc-2a90e3e81e50
+165bdf03-2204-4bf1-adf6-eb6553f702c3
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20150501T220658:635661148182929687
+20170102T050908Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
