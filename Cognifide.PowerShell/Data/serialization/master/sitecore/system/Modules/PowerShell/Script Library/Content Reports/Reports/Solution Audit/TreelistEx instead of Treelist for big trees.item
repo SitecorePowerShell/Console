@@ -8,38 +8,39 @@ name: TreelistEx instead of Treelist for big trees
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030256:636127021761700000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1964
+content-length: 1989
 
-# Which of my Templates use TreeList fields?
-#
-# Sitecore recommendation:
-#    Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants — 
-#    or have lots of Treelist fields in one single item. TreelistEx only computes the tree 
-#    when you click Edit whereas a Treelist will compute it every time it is rendered.
-#
-# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
-#
+<#
+  Which of my Templates use TreeList fields?
+ 
+  Sitecore recommendation:
+     Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants — 
+     or have lots of Treelist fields in one single item. TreelistEx only computes the tree 
+     when you click Edit whereas a Treelist will compute it every time it is rendered.
+ 
+  Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#>
 
-$item = gi master:\templates
+$item = Get-Item -Path "master:\templates"
 $result = Read-Variable -Parameters `
     @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
     -Description "Sitecore recommendation: Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants" `
     -Title "Which of my templates use TreeList fields?" -Width 500 -Height 280 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
 
-if($result -ne "ok")
-{
+if($result -ne "ok") {
     Close-Window
     Exit
 }
 
-get-childitem $item.ProviderPath -recurse | `
-  where-object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Treelist" } |  `
+Get-ChildItem -Path $item.ProviderPath -Recurse |
+  Where-Object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Treelist" } |  `
     Show-ListView -Property Name, @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
         @{Name="Source"; Expression={$_._Source }} `
         -Title "Templates using TreeList fields" `
@@ -49,7 +50,6 @@ get-childitem $item.ProviderPath -recurse | `
                           when you click Edit whereas a Treelist will compute it every time it is rendered. <br/><br/>
                           This report shows which of your templates use TreeList fields."
 Close-Window
-  format-table Template, Name
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -60,7 +60,7 @@ People/32x32/tree.png
 ----version----
 language: en
 version: 1
-revision: ad616af9-7b96-46aa-8e15-5a7e0342014a
+revision: e8afbd40-8df6-4224-8b88-b473c3247a3c
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -82,14 +82,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ad616af9-7b96-46aa-8e15-5a7e0342014a
+e8afbd40-8df6-4224-8b88-b473c3247a3c
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20140222T093612:635286585726399531
+20170103T001934Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

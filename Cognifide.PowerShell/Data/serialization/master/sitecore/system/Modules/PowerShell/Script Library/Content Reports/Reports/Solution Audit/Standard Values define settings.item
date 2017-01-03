@@ -8,28 +8,30 @@ name: Standard Values define settings
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030256:636127021761300000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 4323
+content-length: 4324
 
-# How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
-#
-# Sitecore recommendation:
-#    _Standard Values — Define layout details, initial workflow, and insert options to a template. 
-#    This reduces administration and centrally manages system settings, rather than setting them on individual items.
-#
-# Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
-#
-# How to read this report?
-# ------------------------
-# The report will show you all templates in your solution that have no __Standard Values in the first list.
-# Such templates cannot even begin to adhere to this practice as the required settings are set on __Standard Values.
-# the second List will show you templates with standard values and will show whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.
-# Just because SV does not define one or more of those values, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience.
-#
+<#
+  How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
+ 
+  Sitecore recommendation:
+     _Standard Values — Define layout details, initial workflow, and insert options to a template. 
+     This reduces administration and centrally manages system settings, rather than setting them on individual items.
+ 
+  Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+ 
+  How to read this report?
+  ------------------------
+  The report will show you all templates in your solution that have no __Standard Values in the first list.
+  Such templates cannot even begin to adhere to this practice as the required settings are set on __Standard Values.
+  the second List will show you templates with standard values and will show whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.
+  Just because SV does not define one or more of those values, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience.
+#>
 
 $prompt = @{
     Parameters = @{
@@ -64,7 +66,7 @@ $has_sv = $template_sv | Group-Object _SV | Where-Object { $_.Name -eq "True" } 
 $has_no_sv = $template_sv | Group-Object _SV | Where-Object { $_.Name -eq "False" } | Select-object Count
 Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined."
 
-$results = @{
+$props = @{
     Property = "Name", @{n="Standard Values";  e={$_.Children["__Standard Values"] -ne $null}},
         @{n="Default Workflow"; e={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}},
         @{n="Insert Options";   e={$_.Children["__Standard Values"]["__masters"] -ne ""}},
@@ -80,7 +82,7 @@ $results = @{
                           Lack of <i>__Standard Values</i>, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user's experience."
 }
 
-$templates | Show-ListView @results
+$templates | Show-ListView @props
 Close-Window
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -92,7 +94,7 @@ Network/32x32/fingerprint.png
 ----version----
 language: en
 version: 1
-revision: 21781293-bcae-4a44-8d70-72175ae69ea0
+revision: f343c6ef-01c1-4697-9eeb-199588eb3866
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -114,14 +116,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-21781293-bcae-4a44-8d70-72175ae69ea0
+f343c6ef-01c1-4697-9eeb-199588eb3866
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20130929T145239:635160631596566122
+20170103T001532Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

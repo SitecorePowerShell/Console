@@ -8,42 +8,43 @@ name: Limit the number of items under any given node
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030256:636127021760300000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2476
+content-length: 2370
 
-# Which of my items have most children? Are there too many?
-#
-# Sitecore recommendation:
-#    Limit the number of items under any given node that share the same parent, to 100 items or less for performance and usability.
-#
-# Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
-#
-# How to read this report?
-# ------------------------
-# The report will show you all the nodes that have more than 50 direct descendants to allow you to address any potential issues arising. 
-# If the list is empty (no results shown) it means your solution is not even close to violating the recommendation and you can give yourself a pat on the back.
-#
+<#
+  Which of my items have most children? Are there too many?
+ 
+  Sitecore recommendation:
+     Limit the number of items under any given node that share the same parent, to 100 items or less for performance and usability.
+ 
+  Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
+ 
+  How to read this report?
+  ------------------------
+  The report will show you all the nodes that have more than 50 direct descendants to allow you to address any potential issues arising. 
+  If the list is empty (no results shown) it means your solution is not even close to violating the recommendation and you can give yourself a pat on the back.
+#>
 
-$item = gi master:\content
+$item = Get-Item -Path "master:\content"
 $result = Read-Variable -Parameters `
     @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
     @{ Name = "maxCount"; Value=50; Title="Children number threshhold"; Tooltip="List items with more than this number of children.";} `
-    -Description "The report will show you all the nodes that have more than your selected number of direct descendants to allow you to address any potential issues arising. " `
-    -Title "Which of my items have most children? Are there too many?" -Width 500 -Height 280 `
+    -Description "Which of my items have most children? Are there too many? The report will show you all the nodes that have more than your selected number of direct descendants to allow you to address any potential issues arising. " `
+    -Title "Report Filter" -Width 500 -Height 280 `
     -OkButtonName "Proceed" -CancelButtonName "Abort" 
 
-if($result -ne "ok")
-{
+if($result -ne "ok") {
     Close-Window
     Exit
 }
 
-#get-childitem -recurse | select-object ItemPath, @{Name="ChildrenCount"; Expression={$_.Children.Count;} } | where-object { $_.ChildrenCount -gt 50 } | sort ChildrenCount -descending
-get-childitem $item.ProviderPath -recurse | where-object { $_.Children.Count -gt $maxCount } | Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} | `
+Get-ChildItem -Path $item.ProviderPath -Recurse | Where-Object { $_.Children.Count -gt $maxCount } | 
+    Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} |
     Show-ListView -Property Name, `
         @{Name="Children"; Expression={$_.Children.Count}}, `
         @{Name="Path"; Expression={$_.ItemPath}} `
@@ -63,7 +64,7 @@ WordProcessing/32x32/sort_descending.png
 ----version----
 language: en
 version: 1
-revision: 59b3da70-ef4b-4b7f-bb15-47da72200876
+revision: 9f3c0a83-a514-4d8f-b82e-87dcf3a46e6f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -78,14 +79,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-59b3da70-ef4b-4b7f-bb15-47da72200876
+9f3c0a83-a514-4d8f-b82e-87dcf3a46e6f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20130913T211218:635147035388384765
+20170103T001200Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

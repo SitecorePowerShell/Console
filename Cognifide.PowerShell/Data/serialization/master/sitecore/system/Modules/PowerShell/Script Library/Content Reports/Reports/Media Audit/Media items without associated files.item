@@ -8,12 +8,13 @@ name: Media items without associated files
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030255:636127021755130000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1748
+content-length: 1781
 
 <#
     .SYNOPSIS
@@ -51,9 +52,10 @@ function Get-MediaItemFileBasedLost {
 $items = Get-MediaItemFileBasedLost
 
 if($items.Count -eq 0) {
-    Show-Alert "There are no media items without associated files"
+    Show-Alert "There are no media items without associated files."
 } else {
     $props = @{
+        Title = $PSScript.Name
         InfoTitle = "Media items without associated files"
         InfoDescription = "Lists all file system based media items which associated files on the file system no longer exists."
         PageSize = 25
@@ -80,7 +82,7 @@ Applications/16x16/harddisk_error.png
 ----version----
 language: en
 version: 1
-revision: 0c5b8c30-fc49-4f2f-b0ae-1c2488e1a562
+revision: f5b10a6b-ff71-4ed4-bd50-eb165dea48ae
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +97,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0c5b8c30-fc49-4f2f-b0ae-1c2488e1a562
+f5b10a6b-ff71-4ed4-bd50-eb165dea48ae
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20151231T162908
+20170102T234838Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

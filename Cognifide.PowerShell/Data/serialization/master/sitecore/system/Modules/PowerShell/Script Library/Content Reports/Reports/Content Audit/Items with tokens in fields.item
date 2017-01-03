@@ -8,12 +8,13 @@ name: Items with tokens in fields
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030254:636127021749100000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1773
+content-length: 1816
 
 <#
     .SYNOPSIS
@@ -45,6 +46,7 @@ if($items.Count -eq 0) {
     Show-Alert "There are no content items that have tokens in fields"
 } else {
     $props = @{
+        Title = "Item Field Token Report"
         InfoTitle = "Content items with tokens in fields"
         InfoDescription = 'Lists all content items that contain one of the following tokens in at least one field - $name, $date, $parentname, $time, $now, $id, $parentid.'
         PageSize = 25
@@ -72,7 +74,7 @@ Applications/32x32/document_warning.png
 ----version----
 language: en
 version: 1
-revision: 6fd9973e-e0cf-4e48-8a94-7edb7f27543d
+revision: 3737feac-5a56-4c15-98b7-7a04abffb8b8
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -87,14 +89,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6fd9973e-e0cf-4e48-8a94-7edb7f27543d
+3737feac-5a56-4c15-98b7-7a04abffb8b8
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160405T231412
+20170102T233112Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

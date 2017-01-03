@@ -8,12 +8,13 @@ name: Items with template
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030254:636127021748600000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2204
+content-length: 2245
 
 <#
     .SYNOPSIS
@@ -41,7 +42,7 @@ $props = @{
 
 $result = Read-Variable @props
 
-if($result -eq "cancel"){
+if($result -eq "cancel") {
     exit
 }
 
@@ -66,6 +67,7 @@ if($items.Count -eq 0) {
     Show-Alert "There are no content items that inherit from this template"
 } else {
     $props = @{
+        Title = "Item Template Report"
         InfoTitle = "Items that inherit from the '$($baseTemplate.Name)' template"
         InfoDescription = "The following items all inherit from the '$($baseTemplate.FullPath)' template."
         PageSize = 25
@@ -92,7 +94,7 @@ Applications/16x16/form_blue.png
 ----version----
 language: en
 version: 1
-revision: 6acf0f87-2cc3-43d1-9193-c778c132eb89
+revision: e4334eaf-fc91-4916-aedd-cfb8061167d9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -107,14 +109,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6acf0f87-2cc3-43d1-9193-c778c132eb89
+e4334eaf-fc91-4916-aedd-cfb8061167d9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 15
+content-length: 16
 
-20160418T220839
+20170102T232959Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
