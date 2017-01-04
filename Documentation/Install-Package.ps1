@@ -67,5 +67,5 @@
         https://www.youtube.com/watch?v=60BGRDNONo0&list=PLph7ZchYd_nCypVZSNkudGwPFRqf1na0b&index=7
 
     .EXAMPLE
-        PS master:\> Install-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge
+        PS master:\> Install-Package -Path SitecorePowerShellConsole.zip -InstallMode Merge -MergeMode Merge
 #>
