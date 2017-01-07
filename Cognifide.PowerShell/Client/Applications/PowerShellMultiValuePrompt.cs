@@ -364,6 +364,15 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 Item item = null;
                 var strValue = string.Empty;
+                if(value is PSObject)
+                {
+                    var tempValue = value as PSObject;
+                    if(tempValue.BaseObject is Item)
+                    {
+                        value = tempValue.BaseObject as Item;
+                    }
+                }
+
                 if (value is Item)
                 {
                     item = (Item) value;
