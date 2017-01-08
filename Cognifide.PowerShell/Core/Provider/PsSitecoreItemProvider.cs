@@ -24,6 +24,9 @@ using Sitecore.Exceptions;
 using Sitecore.Globalization;
 using Sitecore.StringExtensions;
 using Version = Sitecore.Data.Version;
+using System.Threading.Tasks;
+using Sitecore.Collections;
+using Sitecore.Data.Fields;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
@@ -470,6 +473,17 @@ namespace Cognifide.PowerShell.Core.Provider
                 var transferedItem = destinationItem.PasteItem(outerXml,
                     transferOptions.HasFlag(TransferOptions.ChangeId),
                     Force ? PasteMode.Overwrite : PasteMode.Undefined);
+                if (sourceItem.Paths.IsMediaItem)
+                {
+                    if (sourceItem.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
+                    {
+                        TransferVersionedMediaItemBlob(sourceItem, destinationItem, recurse);
+                    }
+                    else
+                    {
+                        TransferMediaItemBlob(sourceItem, destinationItem, recurse);
+                    }
+                }
                 Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
                 PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
                     AuditFormatter.FormatItem(destinationItem));
@@ -479,6 +493,72 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 return transferedItem;
+            }
+        }
+
+        private void TransferVersionedMediaItemBlob(Item source, Item destination, bool processChildren)
+        {
+            Assert.IsNotNull(source, "source is null");
+            Assert.IsNotNull(destination, "destination is null");
+            Parallel.ForEach(source.Languages, (language =>
+            {
+                var itemByLanguage = source.Database.GetItem(source.ID, language);
+                if (itemByLanguage == null || itemByLanguage.Versions.Count <= 0) { return; }
+                var versions = ItemManager.GetVersions(itemByLanguage);
+                if (versions == null) { return; }
+                foreach (var version in versions)
+                {
+                    var itemByLanguageAndVersion = itemByLanguage.Database.GetItem(source.ID, language, version);
+                    if (itemByLanguageAndVersion != null)
+                    {
+                        TransferMediaItemBlob(itemByLanguageAndVersion, destination, processChildren);
+                    }
+                }
+            }));
+        }
+
+        private void TransferMediaItemBlob(Item source, Item destination, bool processChildren)
+        {
+            Assert.IsNotNull(source, "source is null");
+            Assert.IsNotNull(destination, "destination is null");
+            foreach (Field field in source.Fields)
+            {
+                if (field.IsBlobField)
+                {
+                    string str = field.Value;
+                    if (str.Length > 38)
+                    {
+                        str = str.Substring(0, 38);
+                    }
+                    var guid = MainUtil.GetGuid(str, Guid.Empty);
+                    if (!(guid == Guid.Empty))
+                    {
+                        var blobStream = ItemManager.GetBlobStream(guid, ProxyManager.GetRealDatabase(source));
+                        if (blobStream != null)
+                        {
+                            using (blobStream)
+                            {
+                                ItemManager.SetBlobStream(blobStream, guid, ProxyManager.GetRealDatabase(destination));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!processChildren) { return; }
+            foreach (Item child in source.Children)
+            {
+                if (child != null)
+                {
+                    if (child.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(child))
+                    {
+                        TransferVersionedMediaItemBlob(child, destination, processChildren);
+                    }
+                    else
+                    {
+                        TransferMediaItemBlob(child, destination, processChildren);
+                    }
+                }
             }
         }
 
