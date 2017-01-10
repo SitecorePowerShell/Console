@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 8031
+content-length: 8154
 
 $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
 $dryRun = $false;
@@ -71,7 +71,7 @@ function ConvertTo-LegacyDate {
 		}
 
 		if ($Recurse) {
-			#Write-Host "$($item.ProviderPath), Going deep" -f Cyan
+			Write-Verbose "$($item.ProviderPath), Going deep"
 			Get-ChildItem $item.ProviderPath -Recurse | ConvertTo-LegacyDate -Recurse
 		}
 	}
@@ -99,20 +99,23 @@ function Process-Item {
 		if ($PercentComplete -ne 0) {
 
 			$TheActivity = @{ $true = 'Deserializing '; $false = 'Serializing ' }[$updateItems] + "$Activity"
-			#Write-Host "$TheActivity $PercentComplete%" -Fo Yellow
+			Write-Verbose "$TheActivity $PercentComplete%"
 			Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
 		}
-		#Write-Host "$($item.ProviderPath), $Recurse"
-		ConvertTo-LegacyDate -Item $Item -Recurse:$Recurse
+		Write-Verbose "$($item.ProviderPath), $Recurse"
 
-		if (-not $dryRun) {
-			if ($updateItems) {
-				Import-Item $Item -Recurse:$Recurse -ForceUpdate
-			} else {
-				Export-Item $Item -Recurse:$Recurse
-			}
+		$allLangs = Get-Item -Path $Item.ProviderPath -Language *
+		foreach($langItem in $allLangs){
+    		ConvertTo-LegacyDate -Item $langItem -Recurse:$Recurse
 		}
 
+    	if (-not $dryRun) {
+    		if ($updateItems) {
+    			Import-Item $langItem -Recurse:$Recurse -ForceUpdate
+    		} else {
+    			Export-Item $langItem -Recurse:$Recurse
+    		}
+		}
 	}
 }
 
@@ -198,7 +201,7 @@ if ($showIcons) {
 ----version----
 language: en
 version: 1
-revision: d6e449a8-b064-4920-964f-b84014e78944
+revision: 3a0fcb45-e074-41bc-a63c-6b4f08cef376
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -213,14 +216,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d6e449a8-b064-4920-964f-b84014e78944
+3a0fcb45-e074-41bc-a63c-6b4f08cef376
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161130T100416
+20161208T111329
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
