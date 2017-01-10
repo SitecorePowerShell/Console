@@ -5,10 +5,12 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
+using Sitecore.Data;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Events;
+using Sitecore.SecurityModel;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -22,9 +24,11 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         {
             Item item = null;
             var scArgs = args as SitecoreEventArgs;
-            if (scArgs == null || HttpContext.Current?.Session == null)
+            if (scArgs == null || HttpContext.Current?.Session == null || scArgs.Parameters.Length < 1 ||
+                SecurityDisabler.CurrentValue == SecurityState.Disabled)
             {
                 // allow jobs to modify scripts as otherwise all kind of things break
+                // allow modifying scripts from the admin website - as this is how update packages are applied
                 return;
             }
 
@@ -36,13 +40,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             }
 
             var itemCreatingEventArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
-            if (itemCreatingEventArgs != null)
+            if (itemCreatingEventArgs?.Parent?.Database != null && itemCreatingEventArgs.TemplateId != (ID)null)
             {
 
                 var template = TemplateManager.GetTemplate(itemCreatingEventArgs.TemplateId,
                     itemCreatingEventArgs.Parent.Database);
-                if (!template.InheritsFrom(TemplateIDs.ScriptTemplate) &&
-                    !template.InheritsFrom(TemplateIDs.ScriptLibraryTemplate))
+                if (template == null || (!template.InheritsFrom(TemplateIDs.ScriptTemplate) &&
+                                         !template.InheritsFrom(TemplateIDs.ScriptLibraryTemplate)))
                 {
                     // not creating Script or Library
                     return;
@@ -67,7 +71,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             if (itemCreatingEventArgs != null)
             {
                 PowerShellLog.Info(
-                    $" Script/Library '{itemCreatingEventArgs.Parent.Paths.Path}/{itemCreatingEventArgs.ItemName}' created by user '{Context.User?.Name}'");
+                    $" Script/Library '{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}' created by user '{Context.User?.Name}'");
             }
             else
             {
