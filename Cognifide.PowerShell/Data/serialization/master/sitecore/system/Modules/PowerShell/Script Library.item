@@ -8,7 +8,6 @@ name: Script Library
 master: {00000000-0000-0000-0000-000000000000}
 template: {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
 templatekey: PowerShell Script Library
-created: 20161022T030250:636127021703770000
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -54,9 +53,9 @@ Sitecore PowerShell Extensions script library.
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20121129T025245Z
+20121129T025245
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -75,9 +74,9 @@ dc0b6068-8614-4ce1-af3e-807de410a09d
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20170102T185736Z
+20170102T185736
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

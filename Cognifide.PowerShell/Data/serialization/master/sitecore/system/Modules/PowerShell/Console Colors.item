@@ -8,7 +8,6 @@ name: Console Colors
 master: {00000000-0000-0000-0000-000000000000}
 template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
 templatekey: Folder
-created: 20161022T030250:636127021702470000
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -47,9 +46,9 @@ Colors available for customizing the PowerShell Console.
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
 name: __Created
 key: __created
-content-length: 16
+content-length: 15
 
-20130625T161759Z
+20130625T161759
 ----field----
 field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
 name: __Created by
@@ -68,9 +67,9 @@ e90add79-a401-4c5b-8846-b56282db985d
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 16
+content-length: 15
 
-20170102T185541Z
+20170102T185541
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
