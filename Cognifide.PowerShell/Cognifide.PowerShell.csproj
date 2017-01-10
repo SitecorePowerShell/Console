@@ -641,6 +641,7 @@ IF %25USERDOMAIN%25==DUNE (
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82\Website\bin\*.* /s /e /c /y
+    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82u1\Website\bin\*.* /s /e /c /y
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
     xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
@@ -649,6 +650,7 @@ IF %25USERDOMAIN%25==DUNE (
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore81\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82\Website\App_Config\Include\*.* /s /e /c /y
+    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82u1\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore75\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore72\Website\App_Config\Include\*.* /s /e /c /y
     xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore71\Website\App_Config\Include\*.* /s /e /c /y
@@ -658,6 +660,7 @@ IF %25USERDOMAIN%25==DUNE (
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore8\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore81\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
+    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82u1\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore75\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore72\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
     xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore71\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
