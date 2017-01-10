@@ -28,7 +28,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 SecurityDisabler.CurrentValue == SecurityState.Disabled)
             {
                 // allow jobs to modify scripts as otherwise all kind of things break
-                // allow modifying scripts from the admin website - as this is how update packages are applied
+                // allow modifying scripts when SecurityDisabler is active - needed for Update Packages to function
                 return;
             }
 
