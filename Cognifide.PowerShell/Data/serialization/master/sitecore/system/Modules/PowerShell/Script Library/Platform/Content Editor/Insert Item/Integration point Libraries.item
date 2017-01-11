@@ -8,6 +8,7 @@ name: Integration point Libraries
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030300:636127021802730000
 
 ----field----
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
@@ -26,10 +27,14 @@ content-length: 280
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 103
+content-length: 440
 
 $module = Get-Item .
-Execute-Script "Platform/Development/Integration points/Create Integration Points"
+if($module.TemplateId -ne "{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" ){
+    $module = Get-Item -Path "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryPath)"
+}
+$createScriptItem = Get-Item -Path "master:" -ID "{785CB68F-0999-4543-A5E1-AFED0C152A17}" # Create Integration Points
+Invoke-Script -Item $createScriptItem
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -40,7 +45,7 @@ Software/32x32/jar_edit.png
 ----version----
 language: en
 version: 1
-revision: e37826d6-e419-4f64-9312-69af1b25a1a9
+revision: 3e6d4b0b-85a2-46fa-80ac-3fc10a3e9278
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -55,14 +60,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e37826d6-e419-4f64-9312-69af1b25a1a9
+3e6d4b0b-85a2-46fa-80ac-3fc10a3e9278
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 16
 
-20150618T092905:635702165458508125
+20170111T025056Z
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
