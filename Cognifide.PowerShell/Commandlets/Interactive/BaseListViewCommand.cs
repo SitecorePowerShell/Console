@@ -105,9 +105,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             LogErrors(() =>
             {
-                var script = (Property == null && SessionState.PSVariable.Get("formatPropertyStr") != null)
-                    ? "$ScPsSlvPipelineObject | select-object -Property " +
-                      SessionState.PSVariable.Get("formatPropertyStr").Value
+                var formatProperty = SessionState.PSVariable.Get("formatPropertyStr")?.Value;
+                var script = (formatProperty != null)
+                    ? "$ScPsSlvPipelineObject | select-object -Property " + formatProperty
                     : "$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties";
 
                 var scriptBlock = InvokeCommand.NewScriptBlock(script);
@@ -123,11 +123,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         Id = CumulativeData.Count
                     };
 
-                    if (Property == null)
-                    {
-                        //last effort to recover property list for further reuse
-                        Property = result[0]?.Properties?.Select(resultItem => resultItem.Name).Cast<object>().ToArray();
-                    }
                     foreach (var psPropertyInfo in result[0].Properties)
                     {
                         slvDataObject.Display.Add(psPropertyInfo.Name, (psPropertyInfo.Value ?? string.Empty).ToString());

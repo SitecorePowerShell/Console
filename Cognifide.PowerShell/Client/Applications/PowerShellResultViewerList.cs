@@ -308,8 +308,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public void UpdateList(string sessionId)
         {
-            var session = ScriptSessionManager.GetSession(sessionId);
-            var varValue = session.GetVariable("allDataInternal").BaseObject();
+            var key = $"allDataInternal|{sessionId}";
+            var varValue = HttpRuntime.Cache.Remove(key).BaseObject();            
             ListViewer.Data.Data = varValue.BaseList<BaseListViewCommand.DataObject>();
             UpdatePage(1);
             ListViewer.Refresh();

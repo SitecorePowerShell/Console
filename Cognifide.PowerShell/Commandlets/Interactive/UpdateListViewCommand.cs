@@ -1,4 +1,7 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
+using System.Web;
+using System.Web.Caching;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 
@@ -16,7 +19,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             if (CheckSessionCanDoInteractiveAction())
             {
-                LogErrors(() => SessionState.PSVariable.Set("allDataInternal", CumulativeData));
+                HttpRuntime.Cache.Add($"allDataInternal|{HostData.SessionId}", CumulativeData, null, Cache.NoAbsoluteExpiration,
+                    new TimeSpan(0, 1, 0), CacheItemPriority.Normal, null);
                 var message = Message.Parse(null, "pslv:update");
                 message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
                 PutMessage(new SendMessageMessage(message, false));
