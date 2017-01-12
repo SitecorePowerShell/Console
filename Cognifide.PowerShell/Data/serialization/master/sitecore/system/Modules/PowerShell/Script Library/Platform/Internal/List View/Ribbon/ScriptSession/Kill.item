@@ -27,11 +27,13 @@ content-length: 11
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 332
+content-length: 397
 
 foreach($session in $selectedData){
     $session.Dispose();
 }
+
+Invoke-Script "Platform\Reusable\Get-StateField"
 
 $sessions = Get-ScriptSession
 $current = Get-ScriptSession -Current
@@ -53,7 +55,7 @@ People/16x16/skull.png
 ----version----
 language: en
 version: 1
-revision: 769b2831-557f-4777-8006-9bdb99ebdbc2
+revision: 3fee617e-1331-42cf-97b6-c4adbbd7b23a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -68,18 +70,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-769b2831-557f-4777-8006-9bdb99ebdbc2
+3fee617e-1331-42cf-97b6-c4adbbd7b23a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20141027T184059:635500320592414609
+20170112T170319
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
 content-length: 14
 
-sitecore\admin
+sitecore\Admin

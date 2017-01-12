@@ -1,0 +1,79 @@
+----item----
+version: 1
+id: {5482355C-96B1-48A9-9EFF-84447AF336F7}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Reusable/Get-StateField
+parent: {00D055C8-A6E6-4AF3-B5A4-2A92D0613C3B}
+name: Get-StateField
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+created: 20170112T170049Z
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 299
+
+function Get-StateField{
+    param(
+        [string]$state
+        )
+  if($state -match "Available") {
+      return "<span style='color:green'>$state</span>"
+  }
+  elseif($state -match "Busy") {
+      return "<span style='color:red'>$state</span>"
+  }
+  else {
+      return $state
+  }
+}
+----version----
+language: en
+version: 1
+revision: c28e6424-1d4b-49c0-8607-5a9fac80e3f0
+
+----field----
+field: {52807595-0F8F-4B20-8D2A-CB71D28C6103}
+name: __Owner
+key: __owner
+content-length: 14
+
+sitecore\Admin
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20170112T170049
+----field----
+field: {5DD74568-4D4B-44C1-B513-0AF5F4CDA34F}
+name: __Created by
+key: __created by
+content-length: 14
+
+sitecore\Admin
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+c28e6424-1d4b-49c0-8607-5a9fac80e3f0
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20170112T170121
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\Admin
