@@ -292,7 +292,7 @@ namespace Cognifide.PowerShell.Client.Applications
 
         private Control GetVariableEditor(IDictionary variable)
         {
-            var value = variable["Value"];
+            var value = variable["Value"].BaseObject();
             var name = (string) variable["Name"];
             var editor = variable["Editor"] as string;
             var type = value.GetType();
@@ -364,14 +364,6 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 Item item = null;
                 var strValue = string.Empty;
-                if(value is PSObject)
-                {
-                    var tempValue = value as PSObject;
-                    if(tempValue.BaseObject is Item)
-                    {
-                        value = tempValue.BaseObject as Item;
-                    }
-                }
 
                 if (value is Item)
                 {
