@@ -47,6 +47,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                             ph?.BackgroundColor.ToString() ?? string.Empty);
 
                         PutMessage(message);
+                        var results = (object[])message.GetResult();
                     }
                 }
                 else if (Parameters != null)

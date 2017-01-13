@@ -8,7 +8,7 @@ using Sitecore.Web.UI.Sheer;
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
     [Serializable]
-    public class ShowResultsMessage : BasePipelineMessage
+    public class ShowResultsMessage : BasePipelineMessageWithResult
     {
         public ShowResultsMessage(string html, string width, string height, string foregroundColor, string backgroundColor)
         {
@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 urlString.Add("bc", BackgroundColor);
             }
-            SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
+            SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height,"", true);
         }
     }
 }
