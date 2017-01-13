@@ -1,16 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Web;
 using System.Web.Caching;
+using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
     [Cmdlet(VerbsData.Update, "ListView")]
-    [OutputType(typeof (string))]
+    [OutputType(typeof(string))]
     public class UpdateListViewCommand : BaseListViewCommand
     {
+        public class UpdateListViewData
+        {
+            public List<DataObject> CumulativeData { get; set; } = new List<DataObject>();
+            public bool InfoTitleChange { get; set; }
+            public string InfoTitle { get; set; }
+            public bool InfoDescriptionChange { get; set; }
+            public string InfoDescription { get; set; }
+            public bool MissingDataMessageChange { get; set; }
+            public string MissingDataMessage { get; set; }
+            public bool IconChange { get; set; }
+            public string Icon { get; set; }
+        }
+
         public override string Title { get; set; }
         public override int Width { get; set; }
         public override int Height { get; set; }
@@ -19,8 +34,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         {
             if (CheckSessionCanDoInteractiveAction())
             {
-                HttpRuntime.Cache.Add($"allDataInternal|{HostData.SessionId}", CumulativeData, null, Cache.NoAbsoluteExpiration,
-                    new TimeSpan(0, 1, 0), CacheItemPriority.Normal, null);
+                var updateData = new UpdateListViewData
+                {
+                    CumulativeData = CumulativeData,
+                    InfoDescriptionChange = IsParameterSpecified(nameof(InfoDescription)),
+                    InfoDescription = InfoDescription,
+                    InfoTitleChange = IsParameterSpecified(nameof(InfoTitle)),
+                    InfoTitle = InfoTitle,
+                    MissingDataMessageChange = IsParameterSpecified(nameof(MissingDataMessage)),
+                    MissingDataMessage = MissingDataMessage,
+                    IconChange = IsParameterSpecified(nameof(Icon)),
+                    Icon = Icon
+                };
+                HttpRuntime.Cache.Add($"allDataInternal|{HostData.SessionId}", updateData, null,
+                    Cache.NoAbsoluteExpiration, new TimeSpan(0, 1, 0), CacheItemPriority.Normal, null);
                 var message = Message.Parse(null, "pslv:update");
                 message.Arguments.Add("ScriptSession.Id", HostData.SessionId);
                 PutMessage(new SendMessageMessage(message, false));

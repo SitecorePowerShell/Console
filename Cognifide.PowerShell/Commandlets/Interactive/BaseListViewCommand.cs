@@ -11,6 +11,18 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
     {
         protected readonly List<DataObject> CumulativeData = new List<DataObject>();
 
+        [Parameter]
+        public string InfoTitle { get; set; }
+
+        [Parameter]
+        public string InfoDescription { get; set; }
+
+        [Parameter]
+        public string MissingDataMessage { get; set; }
+
+        [Parameter]
+        public string Icon { get; set; }
+
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Data { get; set; }
 

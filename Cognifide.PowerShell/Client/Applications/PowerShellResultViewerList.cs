@@ -176,20 +176,20 @@ namespace Cognifide.PowerShell.Client.Applications
             ListViewer.View = "Details";
             ListViewer.DblClick = "OnDoubleClick";
             StatusBar.Visible = ListViewer.Data.VisibleFeatures.HasFlag(ShowListViewFeatures.StatusBar);
-            if (ListViewer.Data.Data.Count == 0)
-            {
-                ListViewer.Visible = false;
-                EmptyPanel.Visible = true;
-                EmptyDataMessageText.Visible = true;
-                if (ListViewer.Data?.MissingDataMessage != null)
-                {
-                    EmptyDataMessageText.Text = ListViewer.Data.MissingDataMessage;
-                }
-            }
             var infoTitle = ListViewer.Data.InfoTitle;
             var infoDescription = ListViewer.Data.InfoDescription;
+            var missingDataMessage = ListViewer.Data.MissingDataMessage;
+            var icon = ListViewer.Data.Icon;
 
-            if (string.IsNullOrEmpty(infoTitle) && string.IsNullOrEmpty(infoDescription))
+            UpdateInfoPanel(infoTitle, infoDescription, icon, missingDataMessage);
+
+            ParentFrameName = WebUtil.GetQueryString("pfn");
+            UpdateRibbon();
+        }
+
+        private void UpdateInfoPanel(string infoTitle, string infoDescription, string icon, string missingDataMessage)
+        {
+            if (infoTitle.IsNullOrEmpty() && infoDescription.IsNullOrEmpty())
             {
                 InfoPanel.Visible = false;
             }
@@ -197,13 +197,28 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 InfoTitle.Text = infoTitle ?? string.Empty;
                 Description.Text = infoDescription ?? string.Empty;
-                if (!string.IsNullOrEmpty(ListViewer.Data.Icon))
+
+                if (!icon.IsNullOrEmpty())
                 {
-                    InfoIcon.Src = ListViewer.Data.Icon;
+                    Image image = new Image(icon)
+                    {
+                        Height = 24,
+                        Width  = 24
+                    };
+                    Context.ClientPage.ClientResponse.SetOuterHtml("InfoIcon", image);
                 }
             }
-            ParentFrameName = WebUtil.GetQueryString("pfn");
-            UpdateRibbon();
+            if (!missingDataMessage.IsNullOrEmpty())
+            {
+                EmptyDataMessageText.Text = missingDataMessage;
+            }
+
+            if (ListViewer.Data.Data.Count == 0)
+            {
+                ListViewer.Visible = false;
+                EmptyPanel.Visible = true;
+                EmptyDataMessageText.Visible = true;
+            }
         }
 
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
@@ -309,10 +324,18 @@ namespace Cognifide.PowerShell.Client.Applications
         public void UpdateList(string sessionId)
         {
             var key = $"allDataInternal|{sessionId}";
-            var varValue = HttpRuntime.Cache.Remove(key).BaseObject();            
-            ListViewer.Data.Data = varValue.BaseList<BaseListViewCommand.DataObject>();
-            UpdatePage(1);
-            ListViewer.Refresh();
+            var updateData = HttpRuntime.Cache.Remove(key) as UpdateListViewCommand.UpdateListViewData;
+            if (updateData != null)
+            {
+                ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
+                UpdatePage(1);
+                ListViewer.Refresh();
+                UpdateInfoPanel(updateData.InfoTitleChange ? updateData.InfoTitle : InfoTitle.Text,
+                    updateData.InfoDescriptionChange ? updateData.InfoDescription : Description.Text,
+                    updateData.IconChange ? updateData.Icon : string.Empty,
+                    updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text);
+
+            }
         }
 
         private void ExportResults(Message message)

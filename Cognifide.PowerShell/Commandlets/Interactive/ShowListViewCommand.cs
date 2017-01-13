@@ -13,15 +13,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         public int PageSize { get; set; }
 
         [Parameter]
-        public string Icon { get; set; }
-
-        [Parameter]
-        public string InfoTitle { get; set; }
-
-        [Parameter]
-        public string InfoDescription { get; set; }
-
-        [Parameter]
         public SwitchParameter Modal { get; set; }
 
         [Parameter]
@@ -29,9 +20,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         [Parameter]
         public string ViewName { get; set; }
-
-        [Parameter]
-        public string MissingDataMessage { get; set; }
 
         [Parameter]
         public SwitchParameter ActionsInSession { get; set; }
