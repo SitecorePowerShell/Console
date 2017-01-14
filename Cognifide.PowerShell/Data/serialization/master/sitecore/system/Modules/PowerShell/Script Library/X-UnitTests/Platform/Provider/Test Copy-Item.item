@@ -1,0 +1,105 @@
+----item----
+version: 1
+id: {20CFB53D-FBEF-4FED-B054-0AEF37FC5B15}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/X-UnitTests/Platform/Provider/Test Copy-Item
+parent: {D21B2B70-3D3E-4BAE-B7BF-0D10CE51A425}
+name: Test Copy-Item
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+created: 20170112T025025:636197862256930000
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 2774
+
+Import-Module -Name Pester
+
+Describe "Copy-Item methods" {
+    BeforeEach {
+        $sourceMediaPath = "master:\media library\Images\SPE"
+        $remoteMediaPath = "web:\media library\Images\SPE-Test"
+        $localMediaPath = "master:\media library\Images\SPE-Test"
+        if(Test-Path -Path $remoteMediaPath) {
+            Remove-Item -Path $remoteMediaPath -Recurse
+            
+        }
+        New-Item -Path $remoteMediaPath -ItemType "System/Media/Media folder" | Out-Null
+        
+        if(Test-Path -Path $localMediaPath) {
+            Remove-Item -Path $localMediaPath -Recurse
+            
+        }
+        New-Item -Path $localMediaPath -ItemType "System/Media/Media folder" | Out-Null
+    }
+    Context "Copy-Item destination item matches source" {
+        It "copy image from master to web with the same ID" {
+            $source = "$($sourceMediaPath)\kitten1"
+            $destination = "$($remoteMediaPath)\kitten1"
+            Copy-Item -Path $source -Destination $destination -TransferOptions None
+            Test-Path -Path $destination | Should Be $true
+            $destinationId = Get-Item -Path $destination | Select-Object -ExpandProperty ID
+            (Get-Item -Path "web:" -ID $destinationId).Fields["blob"].HasBlobStream | Should Be $true
+        }
+        It "copy image from master to web with different ID" {
+            $source = "$($sourceMediaPath)\kitten1"
+            $destination = "$($remoteMediaPath)\kitten1"
+            Copy-Item -Path $source -Destination $destination
+            Test-Path -Path $destination | Should Be $true
+            $destinationId = Get-Item -Path $destination | Select-Object -ExpandProperty ID
+            (Get-Item -Path "web:" -ID $destinationId).Fields["blob"].HasBlobStream | Should Be $true
+        }
+        It "copy image from master to web with default values" {
+            $source = "$($sourceMediaPath)\kitten1"
+            $destination = "$($remoteMediaPath)\kitten1"
+            $copiedItem = Copy-Item -Path $source -Destination $destination -TransferOptions AllowDefaultValues -PassThru
+            $copiedItem | Should Not Be $null
+            Test-Path -Path $destination | Should Be $true
+            $copiedItem.Fields["Alt"].Value | Should Not Be ""
+        }
+        It "copy image from master to web with standard values" {
+            $source = "$($sourceMediaPath)\kitten1"
+            $destination = "$($remoteMediaPath)\kitten1"
+            $copiedItem = Copy-Item -Path $source -Destination $destination -TransferOptions AllowStandardValues -PassThru
+            $copiedItem | Should Not Be $null
+            Test-Path -Path $destination | Should Be $true
+            # TODO: Check for default value
+        }
+    }
+}
+----version----
+language: en
+version: 1
+revision: 41ce1ff1-269f-455d-9b4a-00c0a505367a
+
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20170112T025025
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+41ce1ff1-269f-455d-9b4a-00c0a505367a
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20170113T050037
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
