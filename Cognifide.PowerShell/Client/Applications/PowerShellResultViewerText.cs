@@ -41,6 +41,7 @@ namespace Cognifide.PowerShell.Client.Applications
             All.Style.Add("background-color", backgroundColor);
             Promo.Style.Add("background-color", backgroundColor);            
             HttpContext.Current.Session.Remove(sid);
+            SheerResponse.SetDialogValue(sid);
         }
     }
 }
