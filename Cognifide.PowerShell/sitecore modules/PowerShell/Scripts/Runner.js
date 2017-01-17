@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 });
 
 function undeterminateProgress(id) {
-    var progressWidth = $("#Progress").width();
+    var progressWidth = $ise("#Progress").width();
     var widget = $ise(id);
     widget.empty().VistaProgressBar({
         mode: "indeterminate",
