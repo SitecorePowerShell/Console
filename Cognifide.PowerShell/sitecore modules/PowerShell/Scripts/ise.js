@@ -39,6 +39,14 @@
         codeeditor.setShowPrintMargin(false);
         codeeditor.session.setValue(editor.val());
         codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
+
+        var proxied = codeeditor.onPaste;
+        codeeditor.onPaste = function () {
+            var result = proxied.apply(this, arguments);
+            cognifide.powershell.updateRibbon();
+            return result;
+        };
+
         codeeditor.session.on("change", function () {
             editor.val(codeeditor.session.getValue());
 
