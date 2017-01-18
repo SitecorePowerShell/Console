@@ -80,6 +80,7 @@ function Create-ProjectJunctions{
     Create-Junction "$path\Website\sitecore modules\PowerShell\Scripts" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Scripts"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Services" "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\Services"
     Create-Junction "$path\Website\sitecore modules\PowerShell\Styles" "$projectPath\Cognifide.PowerShell.Sitecore$version\sitecore modules\PowerShell\Styles"
+    Copy-Item       "$projectPath\Cognifide.PowerShell\sitecore modules\PowerShell\web.config" "$path\Website\sitecore modules\PowerShell\web.config"
 
     if(-not (Test-Path "$path\Website\sitecore modules\Shell")){
         New-Item  "$path\Website\sitecore modules" -Name "Shell" -ItemType Directory | Out-Null
