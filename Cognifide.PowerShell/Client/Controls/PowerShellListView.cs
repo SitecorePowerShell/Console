@@ -72,11 +72,12 @@ namespace Cognifide.PowerShell.Client.Controls
             {
                 if (filteredItems == null)
                 {
-                    var filter = Filter;
-                    filteredItems = string.IsNullOrEmpty(filter)
+                    var filterComplete = Filter;
+                    var filters = filterComplete.Split();
+                    filteredItems = string.IsNullOrEmpty(filterComplete)
                         ? Data.Data
-                        : Data.Data.FindAll(p => p.Display.Values.Any(
-                            value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1));
+                        : Data.Data.FindAll(p => filters.All(filter => p.Display.Values.Any(
+                            value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1)));
                 }
                 return filteredItems;
             }
