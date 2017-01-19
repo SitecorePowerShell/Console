@@ -38,11 +38,6 @@
     margin: 2px 0 4px 2px;
 }
 
-.varCheckbox {
-    float: left;
-    margin-top: 20px;
-}
-
 .scContentControl, .scRadioGroup {
     border: 1px solid #ccc;
     padding-left: 4px;
