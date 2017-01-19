@@ -8,25 +8,35 @@ name: Test New-User
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030308:636127021889030000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 537
+content-length: 928
 
 Import-Module -Name Pester
 
 Describe "New-User methods" {
     Context "User object contains the expected values" {
         
-        Mock New-User {
-            return [Sitecore.Security.Accounts.User]::Current 
+        Mock -CommandName New-User -Verifiable -MockWith {
+            param($Identity)
+            return [pscustomobject]@{
+                "Name" = $Identity
+            } 
         }
         
         It "returns a new User" {
-            $actual = New-User -Identity "admin" | Select-Object -ExpandProperty Name
-            $expected = [Sitecore.Context]::User.Name
+            $actual = New-User -Identity "test1" | Select-Object -ExpandProperty Name
+            $expected = "sitecore\test1"
+            $actual | Should Be $expected
+            Assert-MockCalled New-User -Scope It -Times 1
+        }
+        It "returns a new User with an email id" {
+            $actual = New-User -Identity "test1@test.com" | Select-Object -ExpandProperty Name
+            $expected = "sitecore\test1@test.com"
             $actual | Should Be $expected
             Assert-MockCalled New-User -Scope It -Times 1
         }
@@ -35,7 +45,7 @@ Describe "New-User methods" {
 ----version----
 language: en
 version: 1
-revision: 13dd8668-66af-4480-832c-063fff780d45
+revision: 998013e1-9587-400e-9dbd-ad08539566ed
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -50,14 +60,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-13dd8668-66af-4480-832c-063fff780d45
+998013e1-9587-400e-9dbd-ad08539566ed
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160516T050515
+20170116T043356
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
