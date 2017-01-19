@@ -32,6 +32,52 @@
           </PropertySet>
         </Members>
       </MemberSet>
+      <ScriptProperty>
+        <Name>BaseTemplate</Name>
+        <GetScriptBlock>
+          [Sitecore.Data.Managers.TemplateManager]::GetTemplate($this).GetBaseTemplates()
+        </GetScriptBlock>
+      </ScriptProperty>
+      <PropertySet>
+        <Name>PSImage</Name>
+        <ReferencedProperties>
+          <Name>Name</Name>
+          <Name>Id</Name>
+          <Name>Alt</Name>
+          <Name>Width</Name>
+          <Name>Height</Name>
+          <Name>Extension</Name>
+          <Name>Size</Name>
+        </ReferencedProperties>
+      </PropertySet>
+      <PropertySet>
+        <Name>PSTemplate</Name>
+        <ReferencedProperties>
+          <Name>Name</Name>
+          <Name>Id</Name>
+          <Name>BaseTemplate</Name>
+        </ReferencedProperties>
+      </PropertySet>
+      <PropertySet>
+        <Name>PSSchedule</Name>
+        <ReferencedProperties>
+          <Name>Name</Name>
+          <Name>Id</Name>
+          <Name>Schedule</Name>
+          <Name>Last Run</Name>
+          <Name>Command</Name>
+          <Name>Items</Name>
+        </ReferencedProperties>
+      </PropertySet>
+      <PropertySet>
+        <Name>PSSecurity</Name>
+        <ReferencedProperties>
+          <Name>Name</Name>
+          <Name>Id</Name>
+          <Name>__Owner</Name>
+          <Name>__Security</Name>
+        </ReferencedProperties>
+      </PropertySet>
     </Members>
   </Type>
   <Type>
