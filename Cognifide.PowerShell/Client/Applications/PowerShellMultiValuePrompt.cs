@@ -32,6 +32,7 @@ using Sitecore.Web.UI.Sheer;
 using Button = Sitecore.Web.UI.HtmlControls.Button;
 using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
 using Control = System.Web.UI.Control;
+using Convert = System.Convert;
 using DateTime = System.DateTime;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
@@ -41,7 +42,7 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellMultiValuePrompt : DialogPage
     {
-        private static readonly Regex TypeRegex = new Regex(@".*clr(?<type>[\w]+)\s*",
+        private static readonly Regex TypeRegex = new Regex(@".*clr(?<type>[\w-\.]+)\s*",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
         protected Button CancelButton;
@@ -731,7 +732,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             edit.Style.Add("float", "left");
             edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
-            edit.Class += " scContentControl textEdit clr" + value.GetType().Name;
+            edit.Class += " scContentControl textEdit clr" + value.GetType().FullName.Replace(".","-");
             edit.Value = value.ToString();
 
             return edit;
@@ -995,50 +996,8 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (control is Edit || control is Memo)
                 {
                     var value = control.Value;
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        result.Add("Value", String.Empty);
-                    }
-                    else
-                    {
-                        var type = GetClrTypeName(control.Class);
-                        switch (type)
-                        {
-                            case "Int16":
-                                result.Add("Value", short.Parse(value));
-                                break;
-                            case "Int32":
-                                result.Add("Value", int.Parse(value));
-                                break;
-                            case "Int64":
-                                result.Add("Value", long.Parse(value));
-                                break;
-                            case "UInt16":
-                                result.Add("Value", ushort.Parse(value));
-                                break;
-                            case "UInt32":
-                                result.Add("Value", uint.Parse(value));
-                                break;
-                            case "UInt64":
-                                result.Add("Value", ulong.Parse(value));
-                                break;
-                            case "Byte":
-                                result.Add("Value", byte.Parse(value));
-                                break;
-                            case "Single":
-                                result.Add("Value", float.Parse(value));
-                                break;
-                            case "Double":
-                                result.Add("Value", double.Parse(value));
-                                break;
-                            case "Decimal":
-                                result.Add("Value", decimal.Parse(value));
-                                break;
-                            default:
-                                result.Add("Value", value);
-                                break;
-                        }
-                    }
+                    var typeName = GetClrTypeName(control.Class);
+                    result.Add("Value", TryParse(value, typeName));
                 }
                 else if (control is UserPicker)
                 {
@@ -1051,7 +1010,24 @@ namespace Cognifide.PowerShell.Client.Applications
         protected string GetClrTypeName(string classNames)
         {
             var typeMatch = TypeRegex.Match(classNames);
-            return typeMatch.Success ? typeMatch.Groups["type"].Value : string.Empty;
+            return typeMatch.Success ? typeMatch.Groups["type"].Value.Replace("-", ".") : string.Empty;
+        }
+
+        protected object TryParse(string inputValue, string typeName)
+        {
+            try
+            {
+                var targetType = Type.GetType(typeName);
+                if (typeof(IConvertible).IsAssignableFrom(targetType))
+                {
+                    return Convert.ChangeType(inputValue, Type.GetType(typeName));
+                }
+                return inputValue;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         protected void CancelClick()

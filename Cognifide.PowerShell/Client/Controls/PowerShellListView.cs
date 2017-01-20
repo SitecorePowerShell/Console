@@ -81,7 +81,6 @@ namespace Cognifide.PowerShell.Client.Controls
                     var phrases = new List<string>();
                     filters = filters.Where(filter =>
                     {
-                        var processed = false;
                         if (filter.StartsWith("\"") && !inPhrase)
                         {
                             inPhrase = !inPhrase;
