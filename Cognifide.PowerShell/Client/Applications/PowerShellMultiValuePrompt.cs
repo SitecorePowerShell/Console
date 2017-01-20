@@ -896,11 +896,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 foreach (Sitecore.Web.UI.HtmlControls.Control control in parent.Controls)
                 {
                     controlId = control.ID;
-                    if (controlId != null && controlId.StartsWith("variable_"))
-                    {
-                        var result = GetVariableValue(control);
-                        results.Add(result);
-                    }
+                    if (controlId == null || !controlId.StartsWith("variable_")) continue;
+
+                    var result = GetVariableValue(control);
+                    results.Add(result);
                 }
             }
         }
@@ -996,42 +995,49 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (control is Edit || control is Memo)
                 {
                     var value = control.Value;
-                    var type = GetClrTypeName(control.Class);
-                    switch (type)
+                    if (String.IsNullOrEmpty(value))
                     {
-                        case "Int16":
-                            result.Add("Value", short.Parse(value));
-                            break;
-                        case "Int32":
-                            result.Add("Value", int.Parse(value));
-                            break;
-                        case "Int64":
-                            result.Add("Value", long.Parse(value));
-                            break;
-                        case "UInt16":
-                            result.Add("Value", ushort.Parse(value));
-                            break;
-                        case "UInt32":
-                            result.Add("Value", uint.Parse(value));
-                            break;
-                        case "UInt64":
-                            result.Add("Value", ulong.Parse(value));
-                            break;
-                        case "Byte":
-                            result.Add("Value", byte.Parse(value));
-                            break;
-                        case "Single":
-                            result.Add("Value", float.Parse(value));
-                            break;
-                        case "Double":
-                            result.Add("Value", double.Parse(value));
-                            break;
-                        case "Decimal":
-                            result.Add("Value", decimal.Parse(value));
-                            break;
-                        default:
-                            result.Add("Value", value);
-                            break;
+                        result.Add("Value", String.Empty);
+                    }
+                    else
+                    {
+                        var type = GetClrTypeName(control.Class);
+                        switch (type)
+                        {
+                            case "Int16":
+                                result.Add("Value", short.Parse(value));
+                                break;
+                            case "Int32":
+                                result.Add("Value", int.Parse(value));
+                                break;
+                            case "Int64":
+                                result.Add("Value", long.Parse(value));
+                                break;
+                            case "UInt16":
+                                result.Add("Value", ushort.Parse(value));
+                                break;
+                            case "UInt32":
+                                result.Add("Value", uint.Parse(value));
+                                break;
+                            case "UInt64":
+                                result.Add("Value", ulong.Parse(value));
+                                break;
+                            case "Byte":
+                                result.Add("Value", byte.Parse(value));
+                                break;
+                            case "Single":
+                                result.Add("Value", float.Parse(value));
+                                break;
+                            case "Double":
+                                result.Add("Value", double.Parse(value));
+                                break;
+                            case "Decimal":
+                                result.Add("Value", decimal.Parse(value));
+                                break;
+                            default:
+                                result.Add("Value", value);
+                                break;
+                        }
                     }
                 }
                 else if (control is UserPicker)
