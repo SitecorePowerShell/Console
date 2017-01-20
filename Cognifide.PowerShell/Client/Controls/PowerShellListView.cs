@@ -7,7 +7,9 @@ using System.Web;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Sitecore;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
+using Sitecore.StringExtensions;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
@@ -73,7 +75,37 @@ namespace Cognifide.PowerShell.Client.Controls
                 if (filteredItems == null)
                 {
                     var filterComplete = Filter;
-                    var filters = filterComplete.Split();
+                    var filters = filterComplete.Split().ToList();
+                    var inPhrase = false;
+                    var phraseinProgress = string.Empty;
+                    var phrases = new List<string>();
+                    filters = filters.Where(filter =>
+                    {
+                        var processed = false;
+                        if (filter.StartsWith("\"") && !inPhrase)
+                        {
+                            inPhrase = !inPhrase;
+                        }
+                        if (inPhrase)
+                        {
+                           phraseinProgress += " " + filter;
+                        }
+                        if (filter.EndsWith("\"") && inPhrase)
+                        {
+                            inPhrase = !inPhrase;
+                            phrases.Add(phraseinProgress.Trim('"',' ','\t'));
+                            phraseinProgress = string.Empty;
+                            return false;
+                        }
+                        return !inPhrase;
+                    }).ToList();
+
+                    if (!phraseinProgress.IsNullOrEmpty())
+                    {
+                        phrases.Add(phraseinProgress.Trim('"', ' ', '\t'));
+                    }
+
+                    filters.AddRange(phrases);
                     filteredItems = string.IsNullOrEmpty(filterComplete)
                         ? Data.Data
                         : Data.Data.FindAll(p => filters.All(filter => p.Display.Values.Any(
