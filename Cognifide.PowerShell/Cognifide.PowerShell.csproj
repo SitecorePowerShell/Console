@@ -146,6 +146,8 @@
     <Compile Include="Commandlets\Data\TestBaseTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\BasePipelineMessageWithResult.cs" />
+    <Compile Include="Commandlets\Interactive\Messages\InvokeJavaScriptMessage.cs" />
+    <Compile Include="Commandlets\Interactive\InvokeJavaScriptCommand.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Settings\Authorization\DropElevatedSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\ElevateSessionState.cs" />
