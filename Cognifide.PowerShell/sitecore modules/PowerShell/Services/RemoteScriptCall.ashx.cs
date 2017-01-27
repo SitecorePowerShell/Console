@@ -301,6 +301,9 @@ namespace Cognifide.PowerShell.Console.Services
                 case "app":
                     folder = HttpRuntime.AppDomainAppPath;
                     break;
+                case "index":
+                    folder = Settings.IndexFolder;
+                    break;
                 default:
                     if (Path.IsPathRooted(pathParam))
                     {
