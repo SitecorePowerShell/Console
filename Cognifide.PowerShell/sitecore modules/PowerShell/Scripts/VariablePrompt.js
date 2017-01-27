@@ -2,7 +2,7 @@
     $("#Copyright").each(function() { // Notice the .each() loop, discussed below
         $(this).qtip({
             content: {
-                text: "Copyright &copy; 2010-2016 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
+                text: "Copyright &copy; 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
                 title: "Sitecore PowerShell Extensions"
             },
             position: {
