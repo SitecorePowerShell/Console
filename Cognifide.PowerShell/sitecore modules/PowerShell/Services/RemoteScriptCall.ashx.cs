@@ -311,7 +311,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (folder != pathParam && !string.IsNullOrEmpty(pathParam))
             {
-                folder = Path.GetFullPath(StringUtil.EnsurePostfix('\\', folder) + pathParam);
+                folder = FileUtil.MapPath(StringUtil.EnsurePostfix('\\', folder) + pathParam);
             }
 
             return folder;
