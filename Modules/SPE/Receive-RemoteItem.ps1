@@ -230,7 +230,10 @@ function Receive-RemoteItem {
                     }
                     
                     # If a media item is requested it will use the filename as the last part.
-                    $output = $output.TrimEnd([System.IO.Path]::GetFileNameWithoutExtension($Path))
+                    $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($Path)
+                    if($output.EndsWith($filenameWithoutExtension)) {
+                        $output = $output.Substring(0, $output.Length - $filenameWithoutExtension.Length)        
+                    }
                     $output = Join-Path -Path $output -ChildPath $filename
                     
                 } else {
