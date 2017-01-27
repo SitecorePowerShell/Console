@@ -121,7 +121,7 @@ function Receive-RemoteItem {
 
     process {
 
-        $isMediaItem = ![string]::IsNullOrEmpty($Database) -or $RootPath -ieq "media"
+        $isMediaItem = ![string]::IsNullOrEmpty($Database) -or ($RootPath -eq "media" -and ![System.IO.Path]::HasExtension($Path))
         
         if($isMediaItem -and !$Database){
             $Database = "master"
