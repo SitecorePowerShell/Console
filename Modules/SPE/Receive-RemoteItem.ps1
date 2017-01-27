@@ -191,7 +191,7 @@ function Receive-RemoteItem {
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
 
-            if($response -and $response.Length -gt 0) {
+            if($response -and $response.Length -gt 0 -or $webclient.ResponseHeaders.Count -gt 0) {
                 $contentType = $webclient.ResponseHeaders["Content-Type"]
                 $contentDisposition = $webclient.ResponseHeaders["Content-Disposition"]
                 $filename = ""
@@ -240,7 +240,9 @@ function Receive-RemoteItem {
                 if(-not(Test-Path $output -PathType Leaf) -or $Force.IsPresent) {
                     Write-Verbose "Creating a new file $($output)"
                     New-Item -Path $output -ItemType File -Force | Out-Null
-                    [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
+                    if($response) {
+                        [System.IO.File]::WriteAllBytes((Convert-Path -Path $output), $response)
+                    }
                 } else {
                     Write-Verbose "Skipping the save of $($output) because it already exists."
                 }
