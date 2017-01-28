@@ -14,11 +14,11 @@ created: 20161022T030300:636127021807630000
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2615
+content-length: 2568
 
 $integrationPoints = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::Libraries;
 Import-Function -Name Create-IntegrationPoint
-$options = New-Object System.Collections.Specialized.OrderedDictionary
+$options = [ordered]@{}
 $currentItem = Get-Item .
 $moduleRootPath = $currentItem.ProviderPath
 
@@ -70,7 +70,7 @@ foreach($pointToCreate in $pointsToCreate){
 ----version----
 language: en
 version: 1
-revision: e7ae6fd2-8298-441d-b93b-a52bcb3f929d
+revision: ca6b5e93-b53f-4cd1-b5d0-03b121e6a1d9
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -85,18 +85,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-e7ae6fd2-8298-441d-b93b-a52bcb3f929d
+ca6b5e93-b53f-4cd1-b5d0-03b121e6a1d9
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161223T090029
+20170128T024721
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
 content-length: 14
 
-sitecore\Admin
+sitecore\admin

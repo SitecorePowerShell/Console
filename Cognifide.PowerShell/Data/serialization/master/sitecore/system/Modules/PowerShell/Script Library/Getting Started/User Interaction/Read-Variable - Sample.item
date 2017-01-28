@@ -8,12 +8,13 @@ name: Read-Variable - Sample
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030258:636127021780570000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6684
+content-length: 5932
 
 $item = get-item master:\content\Home
 $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
@@ -24,27 +25,8 @@ $checklistItems =  @(4,16)
 $radioListItems = 3
 $rule = (Get-Item "master:\system\Modules\PowerShell\Script Library\Task Management\Content Editor\Context Menu\Run Task Schedule").ShowRule
 
-if($PSVersionTable.PsVersion.Major -gt 2){
-    # this will only work on PowerShell in version over 2.0
-    $options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
-    $selection = [ordered]@{One=1;Two=2;"Three (selected)"=3;Four=4};
-}
-else{
-    #If your PowerShell version is lower than 3 you need to use the following syntax:
-    $options = New-Object System.Collections.Specialized.OrderedDictionary
-    $options.Add("Monday", 1)
-    $options.Add("Wednesday", 2)
-    $options.Add("Wednesday (Selected)", 4)
-    $options.Add("Thursday", 8)
-    $options.Add("Friday (Selected)", 16)
-    $options.Add("Saturday", 32)
-    $options.Add("Sunday", 64)
-    $selection = New-Object System.Collections.Specialized.OrderedDictionary
-    $selection.Add("One",1);
-    $selection.Add("Two",2);
-    $selection.Add("Three (selected)",3)
-    $selection.Add("Four",4);
-}
+$options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
+$selection = [ordered]@{One=1;Two=2;"Three (selected)"=3;Four=4};
 
 $result = Read-Variable -Parameters `
     @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple" },
@@ -120,7 +102,7 @@ $checklistItems
 ----version----
 language: en
 version: 1
-revision: 64cf24ab-bd0f-4231-b703-ce824be6b790
+revision: 32e44605-37f4-44c7-b93e-fd40277b0c0d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -135,14 +117,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-64cf24ab-bd0f-4231-b703-ce824be6b790
+32e44605-37f4-44c7-b93e-fd40277b0c0d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161016T120548
+20170128T024552
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
