@@ -17,8 +17,10 @@ namespace Cognifide.PowerShell.Core.Extensions
 {
     public class ItemShellExtensions
     {
-        private static readonly Dictionary<ID, Dictionary<ID, string>> allPropertySets = new Dictionary<ID, Dictionary<ID, string>>();
-        private static readonly string helperClassName = typeof (ItemShellExtensions).FullName;
+        private static readonly Dictionary<ID, Dictionary<ID, string>> allPropertySets =
+            new Dictionary<ID, Dictionary<ID, string>>();
+
+        private static readonly string helperClassName = typeof(ItemShellExtensions).FullName;
 
         private static readonly Dictionary<string, string> customGetters = new Dictionary<string, string>
         {
@@ -52,6 +54,10 @@ namespace Cognifide.PowerShell.Core.Extensions
                 }
                 allPropertySets.Add(item.TemplateID, propertySet);
             }
+
+            var typedFieldGetter = new CustomFieldAccessor(item);
+            psobj.Properties.Add(new PSNoteProperty("_", typedFieldGetter));
+            psobj.Properties.Add(new PSNoteProperty("PSFields", typedFieldGetter));
 
             foreach (var fieldKey in propertySet.Keys)
             {
@@ -109,13 +115,13 @@ namespace Cognifide.PowerShell.Core.Extensions
                     var newValue = value.BaseObject();
                     var field = FieldTypeManager.GetField(item.Fields[propertyName]);
 
-                    if (newValue is object[] && (newValue as object[])[0].BaseObject() is Item)
+                    if ((newValue as object[])?[0].BaseObject() is Item)
                     {
                         newValue =
                             (newValue as object[]).Select(p => p.BaseObject())
-                                .Where(p => p is Item)
-                                .Cast<Item>()
-                                .ToList();
+                            .Where(p => p is Item)
+                            .Cast<Item>()
+                            .ToList();
                     }
                     if (newValue is Item)
                     {
@@ -226,12 +232,11 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             Assert.ArgumentNotNull(args, "args");
             var isreErgs = args as ItemSavedRemoteEventArgs;
-            if (isreErgs?.Item != null && isreErgs.Item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
+            if (isreErgs?.Item != null &&
+                isreErgs.Item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
             {
                 allPropertySets.Clear();
             }
         }
-
-
     }
 }
