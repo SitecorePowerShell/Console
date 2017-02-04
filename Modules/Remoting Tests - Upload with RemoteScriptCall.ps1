@@ -62,6 +62,13 @@ Describe "Upload with RemoteScriptCall" {
             }
             $details.Size | Should Not Be $details2.Size
         }
+        It "upload to the Media Library a compressed archive" {
+            $filename = "kittens.zip"
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+            Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Get-ChildItem -Path "master:\media library\images\spe-test\" -Recurse | Measure-Object | Select-Object -ExpandProperty Count
+            } | Should BeGreaterThan 0
+        }
     }
 }
 

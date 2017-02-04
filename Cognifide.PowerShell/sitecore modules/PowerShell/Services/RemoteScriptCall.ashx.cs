@@ -117,7 +117,7 @@ namespace Cognifide.PowerShell.Console.Services
                             {
                                 foreach (var zipEntry in packageReader.Entries)
                                 {
-                                    if (!zipEntry.IsDirectory)
+                                    if (!zipEntry.IsDirectory && zipEntry.Size > 0)
                                     {
                                         ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
                                     }
@@ -346,6 +346,12 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     dirName += "/" + Path.GetDirectoryName(entryName).Replace('\\', '/');
                     filename = Path.GetFileName(entryName);
+                }
+
+                if (String.IsNullOrEmpty(filename))
+                {
+                    PowerShellLog.Warn($"The filename cannot be determined for the entry {entryName}.");
+                    return;
                 }
 
                 var mco = new MediaCreatorOptions
