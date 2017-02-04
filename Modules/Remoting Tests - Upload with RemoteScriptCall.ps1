@@ -25,13 +25,13 @@ Describe "Upload with RemoteScriptCall" {
             $filename = "kitten.jpg"
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
             Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
-            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)" } | Should Be $true
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" } | Should Be $true
         }
         It "upload to the Media Library with different name" {
             $filename = "kitten.jpg"
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
             Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/kitten1.jpg"
-            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)1" } | Should Be $true
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)1" } | Should Be $true
         }
         It "upload to the Media Library and replace using a guid" {
             $filename = "kitten.jpg"
@@ -39,7 +39,7 @@ Describe "Upload with RemoteScriptCall" {
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
             Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/"
             # Verify the file was uploaded
-            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)" } | Should Be $true
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" } | Should Be $true
             # Keep track of the current Id and Size
             $details = Invoke-RemoteScript -Session $session -ScriptBlock { 
                 $item = Get-Item -Path "master:media library\images\spe-test\kitten"
