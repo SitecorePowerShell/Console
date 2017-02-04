@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
@@ -322,8 +323,15 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessMediaUpload(Stream content, Database db, string itemParam, string entryName, bool skipExisting = false)
         {
+            var guidPattern = @"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})";
+
             var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
                             db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+            if (mediaItem == null && Regex.IsMatch(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            {
+                var id = Regex.Match(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
+                mediaItem = db.GetItem(id);
+            }
 
             if (mediaItem == null)
             {
