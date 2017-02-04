@@ -1,21 +1,24 @@
-﻿$VerbosePreference = "SilentlyContinue"
-Import-Module -Name SPE -Force
-$VerbosePreference = "Continue"
+﻿Import-Module -Name SPE -Force
+Import-Module -Name Pester -Force
 
-# If you need to connect to more than one instance of Sitecore add it to the list.
-$instanceUrls = @("https://spe.dev.local","https://spe.dev.local")
-$session = New-ScriptSession -Username michael -Password b -ConnectionUri $instanceUrls
-
-Write-Host "Testing session with no parameters" -ForegroundColor Yellow
-Invoke-RemoteScript -Session $session -ScriptBlock { $env:computername }
-
-Write-Host "Testing without a session and with no parameters" -ForegroundColor Yellow
-Invoke-RemoteScript -Username michael -Password b -ConnectionUri $instanceUrls -ScriptBlock { $env:computername }
-
-Write-Host "Testing session with the `$Using variable" -ForegroundColor Yellow
-$identity = "michael"
-Invoke-RemoteScript -Session $session -ScriptBlock {
-    Get-User -Id $using:identity
+Describe "Invoke remote scripts with RemotingAutomation" {
+    BeforeEach {
+        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
+    }
+    AfterEach {
+        Stop-ScriptSession -Session $session
+    }
+    Context "Remote Script" {
+        It "returns when no parameters passed" {
+            $expected = $env:COMPUTERNAME
+            $actual = Invoke-RemoteScript -Session $session -ScriptBlock { $env:computername }
+            $actual | Should Be $expected
+        }
+        It "returns when the '`$Using' variable passed" {
+            $expected = "sitecore\admin"
+            $actual = Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -Id $using:expected | Select-Object -ExpandProperty Name }
+            $actual | Should Be $expected
+        }
+    }
 }
 
-Stop-ScriptSession -Session $session
