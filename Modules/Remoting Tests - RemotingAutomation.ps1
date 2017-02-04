@@ -21,4 +21,3 @@ Describe "Invoke remote scripts with RemotingAutomation" {
         }
     }
 }
-

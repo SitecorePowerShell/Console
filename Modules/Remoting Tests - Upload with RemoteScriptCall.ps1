@@ -1,17 +1,71 @@
 ﻿Import-Module -Name SPE -Force
+Import-Module -Name Pester -Force
 
-$props = @{
-    Session = (New-ScriptSession -Username "admin" -Password "b" -ConnectionUri "http://console")
-    Verbose = $true
+Describe "Upload with RemoteScriptCall" {
+    BeforeEach {
+        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
+        $localFilePath = Join-Path -Path $PSScriptRoot -ChildPath "spe-test"
+    }
+    AfterEach {
+        Invoke-RemoteScript -Session $session -ScriptBlock { Remove-Item -Path "master:\media library\images\spe-test\" -Recurse }
+        Stop-ScriptSession -Session $session
+    }
+    Context "Upload files with RemoteScriptCall" {
+        It "upload to the App root path" {
+            $filename = "data.xml"
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath App
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($AppPath)\$($using:filename)" } | Should Be $true
+        }
+        It "upload to the Package root path" {
+            $filename = "data.xml"
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Package -Destination "\"
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($SitecorePackageFolder)\$($using:filename)" } | Should Be $true
+        }
+        It "upload to the Media Library" {
+            $filename = "kitten.jpg"
+            $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)" } | Should Be $true
+        }
+        It "upload to the Media Library with different name" {
+            $filename = "kitten.jpg"
+            $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/kitten1.jpg"
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)1" } | Should Be $true
+        }
+        It "upload to the Media Library and replace using a guid" {
+            $filename = "kitten.jpg"
+            $filenameReplacement = "kitten-replacement.jpg"
+            $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
+            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/"
+            # Verify the file was uploaded
+            Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\$($using:filenameWithoutExtension)" } | Should Be $true
+            # Keep track of the current Id and Size
+            $details = Invoke-RemoteScript -Session $session -ScriptBlock { 
+                $item = Get-Item -Path "master:media library\images\spe-test\kitten"
+                [PSCustomObject]@{
+                    "Id" = $item.ID
+                    "Size" = $item.Size
+                }
+            }
+
+            # Verify that we can get details about the file
+            $details | Should Not Be $null            
+            Get-Item -Path "$($localFilePath)\$($filenameReplacement)" | Send-RemoteItem -Session $session -RootPath Media -Destination $details.Id
+            # Verify that the file size has changed
+            $details2 = Invoke-RemoteScript -Session $session -ScriptBlock { 
+                $item = Get-Item -Path "master:media library\images\spe-test\kitten"
+                [PSCustomObject]@{
+                    "Id" = $item.ID
+                    "Size" = $item.Size
+                }
+            }
+            $details.Size | Should Not Be $details2.Size
+        }
+    }
 }
 
-# Upload single file
-Get-Item -Path C:\temp\data.xml | Send-RemoteItem @props -RootPath App
-Get-Item -Path C:\temp\data.xml | Send-RemoteItem @props -RootPath Package -Destination "\"
-Get-Item -Path C:\temp\largeimage.jpg | Send-RemoteItem @props -RootPath App -Destination "\upload\images\"
-Get-Item -Path C:\temp\image.png | Send-RemoteItem @props -RootPath Media -Destination "Images/"
-Get-Item -Path C:\temp\image.png | Send-RemoteItem @props -RootPath Media -Destination "/sitecore/media library/Images/image2.png"
-Get-Item -Path C:\temp\cover.jpg | Send-RemoteItem @props -Destination "{04DAD0FD-DB66-4070-881F-17264CA257E1}"
+exit
 
 # Upload single file using full qualified path
 Send-RemoteItem @props -Path "C:\temp\data.xml" -Destination "C:\inetpub\wwwroot\Console\Website\upload\data1.xml"
@@ -23,6 +77,3 @@ Get-ChildItem -Path "C:\temp\" -Filter "*.xml" | Send-RemoteItem -Session $sessi
 
 # Upload multiple files in a compressed zip to maintain directory structure
 Get-Item -Path C:\temp\Kittens.zip | Send-RemoteItem @props -RootPath Media -Destination "Images/" -SkipExisting
-
-# Close out the existing session
-Stop-ScriptSession -Session $props.Session
