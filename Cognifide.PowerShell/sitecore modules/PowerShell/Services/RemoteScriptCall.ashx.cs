@@ -40,11 +40,14 @@ namespace Cognifide.PowerShell.Console.Services
             { "POST/file" , WebServiceSettings.ServiceFileUpload },
             { "POST/media" , WebServiceSettings.ServiceMediaUpload },
             { "GET/1" , WebServiceSettings.ServiceRestfulv1 },
+            { "POST/1" , WebServiceSettings.ServiceRestfulv1 },
             { "GET/2" , WebServiceSettings.ServiceRestfulv2 },
+            { "POST/2" , WebServiceSettings.ServiceRestfulv2 },
             { "GET/file" , WebServiceSettings.ServiceFileDownload },
             { "GET/media" , WebServiceSettings.ServiceMediaDownload },
             { "GET/handle" , WebServiceSettings.ServiceHandleDownload },
         };
+
         public void ProcessRequest(HttpContext context)
         {
             var request = HttpContext.Current.Request;
@@ -71,74 +74,44 @@ namespace Cognifide.PowerShell.Console.Services
 
             // verify that the user is authorized to access the end point
             var authUserName = string.IsNullOrEmpty(userName) ? Context.User.Name : userName;
-            if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, authUserName))
+            var identity = new AccountIdentity(authUserName);
+
+            if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, identity.Name))
             {
                 HttpContext.Current.Response.StatusCode = 401;
-                PowerShellLog.Error($"Attempt to call the '{apiVersion}' service failed as user '{userName}' was not authorized.");
+                PowerShellLog.Error(
+                    $"Attempt to call the '{serviceMappingKey}' service failed as user '{userName}' was not authorized.");
                 return;
             }
 
             // login user if specified explicitly
             if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
             {
-                var account = new AccountIdentity(userName);
-                AuthenticationManager.Login(account.Name, password, false);
+                AuthenticationManager.Login(identity.Name, password, false);
             }
 
             var isAuthenticated = Context.IsLoggedIn;
-            var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated || string.IsNullOrEmpty(originParam) || originParam.Is("current");
+            var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
+                                     string.IsNullOrEmpty(originParam) || originParam.Is("current");
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
             var dbName = scriptDb?.Name;
 
             if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
             {
-                PowerShellLog.Error($"Attempt to call the {apiVersion} service failed as - user not logged in, authentication failed or no credentials provided.");
+                PowerShellLog.Error(
+                    $"Attempt to call the {serviceMappingKey} service failed as - user not logged in, authentication failed or no credentials provided.");
                 return;
             }
 
             if (scriptDb == null && !apiVersion.Is("file") && !apiVersion.Is("handle"))
             {
-                PowerShellLog.Error($"The {apiVersion} service requires a database but none was found in parameters or Context.");
+                PowerShellLog.Error(
+                    $"The '{serviceMappingKey}' service requires a database but none was found in parameters or Context.");
                 return;
             }
 
-            PowerShellLog.Info($"'{apiVersion}' called by user: '{userName}'");
+            PowerShellLog.Info($"'{serviceMappingKey}' called by user: '{userName}'");
             PowerShellLog.Debug($"'{request.Url}'");
-
-            if (isUpload)
-            {
-                switch (apiVersion)
-                {
-                    case "media":
-                        if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
-                        {
-                            PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
-                            using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
-                            {
-                                foreach (var zipEntry in packageReader.Entries)
-                                {
-                                    if (!zipEntry.IsDirectory && zipEntry.Size > 0)
-                                    {
-                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name, skipExisting);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
-                        }
-                        break;
-
-                    case "file":
-                        ProcessFileUpload(request.InputStream, originParam, pathParam);
-                        break;
-                    default:
-                        PowerShellLog.Error($"Requested API/Version ({apiVersion}) is not supported.");
-                        break;
-                }
-                return;
-            }
 
             Item scriptItem;
 
@@ -149,22 +122,54 @@ namespace Cognifide.PowerShell.Console.Services
                                  scriptDb.GetItem(ApplicationSettings.ScriptLibraryPath + itemParam);
                     break;
                 case "media":
-                    ProcessMediaDownload(scriptDb, itemParam);
+                    if (isUpload)
+                    {
+                        if (ZipUtils.IsZipContent(request.InputStream) && unpackZip)
+                        {
+                            PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
+                            using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
+                            {
+                                foreach (var zipEntry in packageReader.Entries)
+                                {
+                                    if (!zipEntry.IsDirectory && zipEntry.Size > 0)
+                                    {
+                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name,
+                                            skipExisting);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
+                        }
+                    }
+                    else
+                    {
+                        ProcessMediaDownload(scriptDb, itemParam);
+                    }
                     return;
                 case "file":
-                    ProcessFileDownload(originParam, pathParam);
+                    if (isUpload)
+                    {
+                        ProcessFileUpload(request.InputStream, originParam, pathParam);
+                    }
+                    else
+                    {
+                        ProcessFileDownload(originParam, pathParam);
+                    }
                     return;
                 case "handle":
                     ProcessHandle(originParam);
                     return;
-                default:
+                case "2":
                     UpdateCache(dbName);
                     if (!apiScripts.ContainsKey(dbName))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
                         return;
                     }
-                    var dbScripts = apiScripts[scriptDb.Name];
+                    var dbScripts = apiScripts[dbName];
                     if (!dbScripts.ContainsKey(itemParam))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
@@ -173,6 +178,9 @@ namespace Cognifide.PowerShell.Console.Services
                     scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
                     apiScripts = null;
                     break;
+                default:
+                    PowerShellLog.Error($"Requested API/Version ({serviceMappingKey}) is not supported.");
+                    return;
             }
 
             ProcessScript(context, scriptItem);
