@@ -243,6 +243,11 @@
             <Width>15</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsEnabled</Label>
+            <Width>15</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -258,6 +263,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>IsAuthenticated</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>IsEnabled</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
@@ -489,54 +497,6 @@
       </TableControl>
     </View>
     <View>
-      <Name>ScriptSession</Name>
-      <ViewSelectedBy>
-        <TypeName>Cognifide.PowerShell.PowerShellIntegrations.Host.ScriptSession</TypeName>
-      </ViewSelectedBy>
-      <TableControl>
-        <TableHeaders>
-          <TableColumnHeader>
-            <Label>Type</Label>
-            <Width>12</Width>
-            <Alignment>left</Alignment>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Label>Key</Label>
-            <Width>80</Width>
-            <Alignment>left</Alignment>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Label>Location</Label>
-            <Width>40</Width>
-            <Alignment>left</Alignment>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Label>Auto Disposed</Label>
-            <Width>14</Width>
-            <Alignment>Left</Alignment>
-          </TableColumnHeader>
-        </TableHeaders>
-        <TableRowEntries>
-          <TableRowEntry>
-            <TableColumnItems>
-              <TableColumnItem>
-                <PropertyName>ApplianceType</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>Key</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>CurrentLocation</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <PropertyName>AutoDispose</PropertyName>
-              </TableColumnItem>
-            </TableColumnItems>
-          </TableRowEntry>
-        </TableRowEntries>
-      </TableControl>
-    </View>
-<View>
       <Name>SitecoreAccessRule</Name>
       <ViewSelectedBy>
         <TypeName>Sitecore.Security.AccessControl.AccessRule</TypeName>
@@ -717,6 +677,11 @@
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>Key</Label>
+            <Width>80</Width>
+            <Alignment>left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>State</Label>
             <Width>15</Width>
             <Alignment>left</Alignment>
@@ -742,6 +707,9 @@
             <TableColumnItems>
               <TableColumnItem>
                 <PropertyName>ID</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Key</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>State</PropertyName>

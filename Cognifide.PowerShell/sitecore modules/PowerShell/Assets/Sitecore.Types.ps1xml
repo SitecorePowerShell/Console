@@ -195,5 +195,32 @@
         </Members>
       </MemberSet>
     </Members>
-  </Type> 
+  </Type>
+  <Type>
+    <Name>Sitecore.Security.Accounts.User</Name>
+    <Members>
+      <MemberSet>
+        <Name>PsStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>Name</Name>
+              <Name>Domain</Name>
+              <Name>IsAdministrator</Name>
+              <Name>IsAuthenticated</Name>             
+              <Name>IsEnabled</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+      <ScriptProperty>
+        <Name>IsEnabled</Name>
+        <GetScriptBlock>
+          [System.Web.Security.Membership]::GetUser($this.Name).IsApproved
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  
 </Types>
