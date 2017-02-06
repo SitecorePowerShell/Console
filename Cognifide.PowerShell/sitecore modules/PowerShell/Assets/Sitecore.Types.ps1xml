@@ -220,6 +220,12 @@
           [System.Web.Security.Membership]::GetUser($this.Name).IsApproved
         </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Roles</Name>
+        <GetScriptBlock>
+          Get-Role -Filter * | Where-Object { $_.IsMember($this,$true,$true) } 
+        </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
   
