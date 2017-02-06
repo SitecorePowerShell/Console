@@ -92,8 +92,8 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void Write(string value)
         {
-            var lastline = Output[Output.Count - 1];
-            if (!lastline.Terminated)
+            var lastline = Output.LastOrDefault();
+            if (!(lastline?.Terminated ?? true))
             {
                 lastline.Text += value;
                 if (value.EndsWith("\n"))
