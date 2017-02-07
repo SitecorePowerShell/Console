@@ -1,9 +1,17 @@
-﻿Import-Module -Name SPE -Force
-Import-Module -Name Pester -Force
+﻿param(
+    [Parameter()]
+    [string]$protocolHost = "http://spe.dev.local"
+)
+
+Import-Module -Name SPE -Force
+
+if(!$protocolHost){
+    $protocolHost = "http://spe.dev.local"
+}
 
 Describe "Upload with RemoteScriptCall" {
     BeforeEach {
-        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
+        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
         $localFilePath = Join-Path -Path $PSScriptRoot -ChildPath "spe-test"
     }
     AfterEach {

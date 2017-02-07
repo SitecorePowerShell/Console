@@ -1,5 +1,9 @@
-﻿Import-Module -Name SPE -Force
-Import-Module -Name Pester -Force
+﻿param(
+    [Parameter()]
+    [string]$protocolHost = "http://spe.dev.local"
+)
+
+Import-Module -Name SPE -Force
 
 # Download single file
 Describe "Download with RemoteScriptCall" {
@@ -10,7 +14,7 @@ Describe "Download with RemoteScriptCall" {
         }
         New-Item -Path $destinationMediaPath -ItemType Directory | Out-Null
 
-        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
+        $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
     }
     AfterEach {
         Stop-ScriptSession -Session $session
@@ -59,7 +63,7 @@ Describe "Download with RemoteScriptCall" {
             Test-Path -Path $destination | Should Be $true
         }
         It "download from the Package root path" {
-            $filename = "SPE Remoting-3.2.zip"
+            $filename = "readme.txt"
             $destination = Join-Path -Path $destinationMediaPath -ChildPath $filename
             Receive-RemoteItem -Session $session -Destination $destination -Path $filename -RootPath Package
             Test-Path -Path $destination | Should Be $true
@@ -79,8 +83,8 @@ Describe "Download with RemoteScriptCall" {
     }
     Context "Single fully qualified file" {
         It "download fully qualified file" {
-            $filename = "sc-ee.js"
-            $pathFolder = "C:\Websites\spe.dev.local\Data\tools\phantomjs\"
+            $filename = "kitten.jpg"
+            $pathFolder = Join-Path -Path $PSScriptRoot -ChildPath "spe-test"
             $path = Join-Path -Path $pathFolder -ChildPath $filename
             $destination = Join-Path -Path $destinationMediaPath -ChildPath $filename
             Receive-RemoteItem -Session $session -Path $path -Destination $destination
@@ -118,23 +122,51 @@ Describe "Download with RemoteScriptCall" {
             Test-Path -Path $destination | Should Be $true
         }
     }
+    Context "Advanced/mixed scenarios" {
+        It "Download first 3 log files" {
+            $files = Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | Select-Object -Expand Name -First 3
+            } 
+            
+            $files | 
+                ForEach-Object { 
+                    $destination = Join-Path -Path $destinationMediaPath -ChildPath $_
+                    Receive-RemoteItem -Session $session -Destination $destination -Path $_ -RootPath Log
+                    Test-Path -Path $destination | Should Be $true
+                }
+        }
+
+        It "Download all SPE log files as ZIP" {
+            $archiveFileName = Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Import-Function -Name Compress-Archive
+                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer -and $_.Name -match "spe.log." } | 
+                Compress-Archive -DestinationPath "$($SitecoreTempFolder)\archived.SPE.logs.zip" | Select-Object -Expand FullName
+            } 
+            
+            $destination = Join-Path -Path $destinationMediaPath -ChildPath (Split-Path -Path $archiveFileName -Leaf)
+            Receive-RemoteItem -Session $session -Destination $destination -Path $archiveFileName 
+
+            Test-Path -Path $destination | Should Be $true
+
+            Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Remove-Item -Path "$($using:archiveFileName)"
+                Test-Path "$($using:archiveFileName)"
+            } | Should Be $false
+        }
+        It "Download first 10 Media Items from Media Library" {
+            $mediaItemNames = Invoke-RemoteScript -Session $session -ScriptBlock { 
+                Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | Where-Object { $_.Size -gt 0 } | 
+                Select-Object -First 10 | Foreach-Object { "$($_.ItemPath).$($_.Extension)" } 
+            } 
+
+            $mediaItemNames | Foreach-Object { 
+                $source= Join-Path ([System.IO.Path]::GetDirectoryName($_)) ([System.IO.Path]::GetFileNameWithoutExtension($_))
+                $destination = Join-Path -Path $destinationMediaPath -ChildPath $_
+                Receive-RemoteItem -Session $session -Destination $destination -Path $source -Database master
+                Test-Path -Path $destination | Should Be $true
+            } 
+
+
+        }
+    }
 }
-
-exit
-# Download multiple files using the filename.
-Invoke-RemoteScript @props -ScriptBlock { 
-    Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | Select-Object -Expand Name 
-} | Receive-RemoteItem @receiveProps -RootPath Log
-
-# Download single zip file using the fully qualified name.
-Invoke-RemoteScript @props -ScriptBlock {
-    Import-Function -Name Compress-Archive
-    Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer } | 
-        Compress-Archive -DestinationPath "$($SitecoreDataFolder)archived.zip" | Select-Object -Expand FullName
-} | Receive-RemoteItem @receiveProps
-
-# Download multiple media items
-Invoke-RemoteScript @props -ScriptBlock { 
-    Get-ChildItem -Path "master:/sitecore/media library/" -Recurse | Where-Object { $_.Size -gt 0 } | 
-        Select-Object -First 10 | Select-Object -Expand ItemPath 
-} | Receive-RemoteItem @receiveProps -Database master
