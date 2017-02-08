@@ -139,10 +139,11 @@ Describe "Download with RemoteScriptCall" {
         It "Download all SPE log files as ZIP" {
             $archiveFileName = Invoke-RemoteScript -Session $session -ScriptBlock { 
                 Import-Function -Name Compress-Archive
-                Get-ChildItem -Path "$($SitecoreLogFolder)" | Where-Object { !$_.PSIsContainer -and $_.Name -match "spe.log." } | 
-                Compress-Archive -DestinationPath "$($SitecoreTempFolder)\archived.SPE.logs.zip" | Select-Object -Expand FullName
+                
+                Get-ChildItem -Path "$($SitecoreLogFolder)" -File | Where-Object { $_.Name -match "spe.log." } | 
+                    Compress-Archive -DestinationPath "$($SitecoreTempFolder)\archived.SPE.logs.zip" | Select-Object -Expand FullName
             } 
-            
+
             $destination = Join-Path -Path $destinationMediaPath -ChildPath (Split-Path -Path $archiveFileName -Leaf)
             Receive-RemoteItem -Session $session -Destination $destination -Path $archiveFileName 
 
@@ -164,9 +165,7 @@ Describe "Download with RemoteScriptCall" {
                 $destination = Join-Path -Path $destinationMediaPath -ChildPath $_
                 Receive-RemoteItem -Session $session -Destination $destination -Path $source -Database master
                 Test-Path -Path $destination | Should Be $true
-            } 
-
-
+            }
         }
     }
 }
