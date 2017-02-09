@@ -74,8 +74,8 @@ http://bit.ly/ScPsIss
 
 Thank you for using Sitecore PowerShell Extensions.
 
-Copyright (c) 2010-2016 Adam Najmanowicz
-Copyright (c) 2013-2016 Michael West
+Copyright (c) 2010-2017 Adam Najmanowicz
+Copyright (c) 2013-2017 Michael West
 
 https://sitecorepowershell.com/
 http://blog.najmanowicz.com/
@@ -260,7 +260,7 @@ Export-Package -Project $package -Path "$packageName.zip" -Zip
 ----version----
 language: en
 version: 1
-revision: f834f7eb-6abf-4dd0-a59d-03ab8822bfb5
+revision: 82ea6a6c-a138-46a1-a165-322476cbab58
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -275,14 +275,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-f834f7eb-6abf-4dd0-a59d-03ab8822bfb5
+82ea6a6c-a138-46a1-a165-322476cbab58
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161205T172818
+20170209T094110
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
