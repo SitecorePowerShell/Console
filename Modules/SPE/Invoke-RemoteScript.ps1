@@ -121,6 +121,18 @@ function Invoke-RemoteScript {
         [switch]$AsJob
     )
 
+    $isVerbose = $false
+    if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+        $isVerbose = $true
+        $functionScriptBlock = {
+            function Write-Verbose {
+                param([string]$Message)
+                Microsoft.PowerShell.Utility\Write-Verbose -Message $Message -Verbose 4>&1
+            }
+        }
+        $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
+    }
+
     if($AsJob.IsPresent) {
         $nestedScript = $ScriptBlock.ToString()
         $ScriptBlock = [scriptblock]::Create("Start-ScriptSession -ScriptBlock { $($nestedScript) } -ArgumentList `$params | Select-Object -ExpandProperty ID")
@@ -199,7 +211,17 @@ function Invoke-RemoteScript {
 
             $response = $singleConnection.Proxy.ExecuteScriptBlock2($Username, $Password, $newScriptBlock, $parameters, $SessionId)
             if($response) {
-                ConvertFrom-CliXml -InputObject $response
+                if($isVerbose) {
+                    foreach($record in ConvertFrom-CliXml -InputObject $response) {
+                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
+                            Write-Verbose $record.ToString()
+                        } else {
+                            $record
+                        }
+                    }
+                } else {
+                    ConvertFrom-CliXml -InputObject $response
+                }
             } elseif ($response -eq "login failed") {
                 Write-Verbose "Login with the specified account failed."
                 break            
