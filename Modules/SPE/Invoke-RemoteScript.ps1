@@ -85,7 +85,7 @@ function Invoke-RemoteScript {
 
     #>
     
-    [CmdletBinding(DefaultParameterSetName="InProcess")]
+    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
         
         [Parameter(ParameterSetName='InProcess')]
@@ -121,13 +121,35 @@ function Invoke-RemoteScript {
         [switch]$AsJob
     )
 
-    $isVerbose = $false
-    if($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $isVerbose = $true
+    if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
         $functionScriptBlock = {
+            $WhatIfPreference = $true
+        }
+        $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
+    }
+    $hasRedirectedMessages = $false
+    if($PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent -or $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+        $hasRedirectedMessages = $true
+        $functionScriptBlock = {
+            function Write-Debug {
+                param([string]$Message)
+                $DebugPreference = "Continue"
+                Microsoft.PowerShell.Utility\Write-Debug -Message $Message 5>&1
+            }
             function Write-Verbose {
                 param([string]$Message)
-                Microsoft.PowerShell.Utility\Write-Verbose -Message $Message -Verbose 4>&1
+                $VerbosePreference = "Continue"
+                Microsoft.PowerShell.Utility\Write-Verbose -Message $Message 4>&1
+            }
+            function Write-Warning {
+                param([string]$Message)
+                $WarningPreference = "Continue"
+                Microsoft.PowerShell.Utility\Write-Warning -Message $Message 3>&1
+            }
+            function Write-Error {
+                param([string]$Message)
+                $WarningPreference = "Continue"
+                Microsoft.PowerShell.Utility\Write-Error -Message $Message 2>&1
             }
         }
         $ScriptBlock = [scriptblock]::Create($functionScriptBlock.ToString() + $ScriptBlock.ToString());
@@ -211,10 +233,16 @@ function Invoke-RemoteScript {
 
             $response = $singleConnection.Proxy.ExecuteScriptBlock2($Username, $Password, $newScriptBlock, $parameters, $SessionId)
             if($response) {
-                if($isVerbose) {
+                if($hasRedirectedMessages) {
                     foreach($record in ConvertFrom-CliXml -InputObject $response) {
-                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
+                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
+                            Write-Debug $record.ToString()
+                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
                             Write-Verbose $record.ToString()
+                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
+                            Write-Warning $record.ToString()
+                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
+                            Write-Error $record.ToString()
                         } else {
                             $record
                         }
