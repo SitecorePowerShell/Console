@@ -131,6 +131,13 @@ function Invoke-RemoteScript {
     if($PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent -or $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
         $hasRedirectedMessages = $true
         $functionScriptBlock = {
+            if($PSVersionTable.PSVersion.Major -ge 5) {
+                function Write-Information {
+                    param([string]$Message)
+                    $InformationPreference = "Continue"
+                    Microsoft.PowerShell.Utility\Write-Information -Message $Message 6>&1
+                }
+            }
             function Write-Debug {
                 param([string]$Message)
                 $DebugPreference = "Continue"
@@ -235,10 +242,12 @@ function Invoke-RemoteScript {
             if($response) {
                 if($hasRedirectedMessages) {
                     foreach($record in ConvertFrom-CliXml -InputObject $response) {
-                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
-                            Write-Debug $record.ToString()
-                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
+                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
                             Write-Verbose $record.ToString()
+                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
+                            Write-Information $record.ToString()
+                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
+                            Write-Debug $record.ToString()
                         } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
                             Write-Warning $record.ToString()
                         } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
