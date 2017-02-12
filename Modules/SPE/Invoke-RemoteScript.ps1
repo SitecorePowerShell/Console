@@ -2,6 +2,22 @@ function Invoke-RemoteScript {
     <#
         .SYNOPSIS
             Run scripts in Sitecore PowerShell Extensions via web service calls.
+
+        .DESCRIPTION
+            When using commands such as Write-Verbose, be sure the preference settings are configured properly.
+
+            Change each of these to "Continue" in order to see the message appear in the console.
+
+            Example values:
+
+            ConfirmPreference              High
+            DebugPreference                SilentlyContinue
+            ErrorActionPreference          Continue
+            InformationPreference          SilentlyContinue
+            ProgressPreference             Continue
+            VerbosePreference              SilentlyContinue
+            WarningPreference              Continue
+            WhatIfPreference               False
     
         .EXAMPLE
             The following example remotely executes a script in Sitecore using a reusable session.
