@@ -44,6 +44,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string FileBasedParam = "FileBased";
         private const string VersionedParam = "Versioned";
         private const string WithParentParam = "WithParent";
+        private const string DepthParam = "Depth";
 
         public object GetDynamicParameters()
         {
@@ -213,7 +214,7 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             // language selection
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            bool defined = (dic != null && dic[paramName].IsSet);
+            bool defined = dic != null && dic.ContainsKey(paramName) && dic[paramName].IsSet;
             result = defined ? (T)dic[paramName].Value : default(T);
             return defined;
         }
@@ -281,8 +282,15 @@ namespace Cognifide.PowerShell.Core.Provider
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
             paramAdded |= AddDynamicParameter(typeof(string), IdParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithParentParam, ref dic, false, false);
-
+            paramAdded = AppendDepthParameterIfNotNativelySupported(paramAdded, ref dic);
             return paramAdded ? dic : null;
+        }
+
+        protected virtual bool AppendDepthParameterIfNotNativelySupported(bool paramAdded,
+            ref RuntimeDefinedParameterDictionary dic)
+        {
+            paramAdded |= AddDynamicParameter(typeof(uint), DepthParam, ref dic, false, false);
+            return paramAdded;
         }
 
         protected override object GetChildNamesDynamicParameters(string path)

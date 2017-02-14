@@ -150,6 +150,9 @@
     <Compile Include="Commandlets\Interactive\InvokeJavaScriptCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
+    <Compile Include="Core\Extensions\TypeExtensions.cs" />
+    <Compile Include="Core\Provider\PsSitecoreItemProvider5.cs" />
+    <Compile Include="Core\Provider\PsSitecoreItemProviderFactory.cs" />
     <Compile Include="Core\Settings\Authorization\DropElevatedSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\ElevateSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />

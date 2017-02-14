@@ -95,7 +95,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        protected override void GetChildItems(string path, bool recurse, uint depth)
+        protected void GetChildItemsWithDepth(string path, bool recurse, uint depth)
         {
             try
             {
@@ -143,7 +143,12 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetChildItems(string path, bool recurse)
         {
-            GetChildItems(path, recurse, 0);
+            uint depth;
+            if (!TryGetDynamicParam(DepthParam, out depth))
+            {
+                depth = uint.MaxValue;
+            }
+            GetChildItemsWithDepth(path, recurse, depth);
         }
 
         protected void GetChildItemsHelper(Item item, bool recurse, WildcardPattern wildcard, string[] language,

@@ -165,12 +165,11 @@ namespace Cognifide.PowerShell.Core.Host
                     state.ApartmentState = Thread.CurrentThread.GetApartmentState();
                     foreach (var key in PredefinedVariables.Variables.Keys)
                     {
-                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key], "Sitecore PowerShell Extensions Predefined Variable"));
+                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key],
+                            "Sitecore PowerShell Extensions Predefined Variable"));
                     }
-                    // PS 5 only?
-                    //state.ExecutionPolicy = ExecutionPolicy.Bypass;
                     state.UseFullLanguageModeInDebugger = true;
-                    PsSitecoreItemProvider.AppendToSessionState(state);                    
+                    PsSitecoreItemProviderFactory.AppendToSessionState(state);
                 }
                 return state;
             }

@@ -59,20 +59,5 @@ namespace Cognifide.PowerShell.Core.Provider
 
             return result;
         }
-
-        internal static void AppendToRunSpace(RunspaceConfiguration runspaceConfiguration)
-        {
-            runspaceConfiguration.Providers.Append(new ProviderConfigurationEntry("CmsItemProvider",
-                typeof (PsSitecoreItemProvider),
-                string.Empty));
-        }
-
-        public static void AppendToSessionState(InitialSessionState state)
-        {
-            state.Providers.Add(new SessionStateProviderEntry("CmsItemProvider",
-                typeof(PsSitecoreItemProvider),
-                string.Empty));
-        }
-
     }
 }
