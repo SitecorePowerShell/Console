@@ -675,6 +675,14 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 var parentItem = GetItemForPath(PathUtilities.GetParentFromPath(path));
 
+                if (parentItem == null)
+                {
+                    WriteError(
+                        new ErrorRecord(new InvalidOperationException($"Could not find a part of the path '{path}'"),
+                            ErrorIds.NewItemIOError.ToString(), ErrorCategory.WriteError, path));
+                    return;
+                }
+
                 var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
                 if (dic != null && dic[ParentParam].IsSet)
                 {

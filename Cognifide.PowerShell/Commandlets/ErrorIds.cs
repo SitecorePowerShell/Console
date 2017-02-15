@@ -19,6 +19,7 @@ namespace Cognifide.PowerShell.Commandlets
         ScriptSessionNotFound,
         DatabaseNotFound,
         TemplateNotFound,
-        InvalidItemType
+        InvalidItemType,
+        NewItemIOError
     }
 }
