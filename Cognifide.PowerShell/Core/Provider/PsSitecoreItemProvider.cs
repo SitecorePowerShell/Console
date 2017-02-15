@@ -132,6 +132,12 @@ namespace Cognifide.PowerShell.Core.Provider
                     GetChildItemsHelper(item, recurse, wildcard, language, version, 0, depth);
                 }
             }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. if we did:
+                // Get-ChildItem master:\ | Select-Object -First 1 
+                // we can relax now - no more items needed
+            }
             catch (Exception ex)
             {
                 LogError(ex,
@@ -218,6 +224,12 @@ namespace Cognifide.PowerShell.Core.Provider
                     WriteInvalidPathError(path);
                 }
             }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. if we did:
+                // Get-ChildItem master:\ | Select-Object -First 1 
+                // we can relax now - no more items needed
+            }
             catch (Exception ex)
             {
                 LogError(ex,
@@ -229,7 +241,16 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetItem(string path)
         {
-            GetItemInternal(path, true).ForEach(WriteItem);
+            try
+            {
+                GetItemInternal(path, true).ForEach(WriteItem);
+            }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. if we did:
+                // Get-Item master:\ -Language * | Select-Object -First 1 
+                // we can relax now - no more items needed
+            }
         }
 
         internal IEnumerable<Item> GetItemInternal(string path, bool errorIfNotFound)
@@ -434,6 +455,10 @@ namespace Cognifide.PowerShell.Core.Provider
                     ? sourceItem.CopyTo(destinationItem, leafName, new ID(Guid.NewGuid()), recurse)
                     : TransferItem(sourceItem, destinationItem, leafName, recurse);
                 WriteItem(itemCopy);
+            }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. by `Select-Object -First 1`
             }
             catch (Exception ex)
             {
@@ -728,6 +753,10 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 WriteItem(createdItem);
+            }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. by `Select-Object -First 1`
             }
             catch (Exception ex)
             {
