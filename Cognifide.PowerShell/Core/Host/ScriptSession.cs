@@ -81,6 +81,11 @@ namespace Cognifide.PowerShell.Core.Host
         static ScriptSession()
         {
             TypeAccelerators.AddSitecoreAccelerators();
+            using (var ps = System.Management.Automation.PowerShell.Create())
+            {
+                var psVersionTable = ps.Runspace.SessionStateProxy.GetVariable("PSVersionTable") as Hashtable;
+                PsVersion = (Version)psVersionTable["PSVersion"];
+            }
         }
 
         internal ScriptSession(string applianceType, bool personalizedSettings)
@@ -557,18 +562,14 @@ namespace Cognifide.PowerShell.Core.Host
                     proxy.SetVariable("SitecoreAuthority", serverAuthority);
                 }
 
-                var psVersionTable = proxy.GetVariable("PSVersionTable") as Hashtable;
+                ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
+
+                var psVersionTable = GetVariable("PSVersionTable") as Hashtable;
                 if (psVersionTable != null)
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
-
-                    if (PsVersion == null)
-                    {
-                        PsVersion = (Version)psVersionTable["PSVersion"];
-                    }
                 }
 
-                ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
             }
         }
 
