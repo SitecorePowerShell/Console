@@ -14,16 +14,29 @@ namespace Cognifide.PowerShell.Core.Settings
             ["AppVPath"] = HttpRuntime.AppDomainAppVirtualPath,
             ["tempPath"] = Environment.GetEnvironmentVariable("temp"),
             ["tmpPath"] = Environment.GetEnvironmentVariable("tmp"),
-            ["SitecoreDataFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.DataFolder),
-            ["SitecoreDebugFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.DebugFolder),
-            ["SitecoreIndexFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.IndexFolder),
-            ["SitecoreLayoutFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.LayoutFolder),
-            ["SitecoreLogFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.LogFolder),
-            ["SitecoreMediaFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.MediaFolder),
-            ["SitecorePackageFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.PackagePath),
-            ["SitecoreSerializationFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.SerializationFolder),
-            ["SitecoreTempFolder"] = FileUtil.MapPath(Sitecore.Configuration.Settings.TempFolderPath),
+            ["SitecoreDataFolder"] = MapPath(Sitecore.Configuration.Settings.DataFolder),
+            ["SitecoreDebugFolder"] = MapPath(Sitecore.Configuration.Settings.DebugFolder),
+            ["SitecoreIndexFolder"] = MapPath(Sitecore.Configuration.Settings.IndexFolder),
+            ["SitecoreLayoutFolder"] = MapPath(Sitecore.Configuration.Settings.LayoutFolder),
+            ["SitecoreLogFolder"] = MapPath(Sitecore.Configuration.Settings.LogFolder),
+            ["SitecoreMediaFolder"] = MapPath(Sitecore.Configuration.Settings.MediaFolder),
+            ["SitecorePackageFolder"] = MapPath(Sitecore.Configuration.Settings.PackagePath),
+            ["SitecoreSerializationFolder"] = MapPath(Sitecore.Configuration.Settings.SerializationFolder),
+            ["SitecoreTempFolder"] = MapPath(Sitecore.Configuration.Settings.TempFolderPath),
             ["SitecoreVersion"] = SitecoreVersion.Current
         };
+
+        private static string MapPath(string path)
+        {
+            try
+            {
+                return FileUtil.MapPath(path);
+            }
+            catch
+            {
+                // above can fail on UNC's with scheme - return regular path in this case.
+                return path;
+            }
+        }
     }
 }
