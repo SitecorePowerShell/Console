@@ -35,7 +35,7 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1162
+content-length: 1316
 
 Import-Function Resolve-Error
 
@@ -53,7 +53,8 @@ $mergeModeOptions = [ordered]@{
 
 $result = Read-Variable -Parameters `
     @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
-    @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"} `
+    @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"}, `
+    @{ Name = "info"; Title="Click OK to add item to your package or Cancel to abort."; Value="Item: '$((Get-Item .).ProviderPath)'" ; Editor="info"} `
     -Description "Set installation options for this package source." `
     -Title "Installation options" -ShowHints
 
@@ -95,7 +96,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 58ce843f-5b73-42ff-9918-378e8b1df13d
+revision: 960a8b2e-867c-4f1d-b714-a0fe40111455
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -110,14 +111,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-58ce843f-5b73-42ff-9918-378e8b1df13d
+960a8b2e-867c-4f1d-b714-a0fe40111455
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161027T225132
+20170222T101550
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

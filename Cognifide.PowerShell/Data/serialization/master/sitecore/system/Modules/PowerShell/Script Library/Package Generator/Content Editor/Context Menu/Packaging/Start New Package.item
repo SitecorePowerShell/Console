@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 212
+content-length: 482
 
 $package = new-package "Content Package";
 $package.Sources.Clear();
@@ -38,6 +38,8 @@ $package.Metadata.Author = "$me";
 $package.Metadata.Publisher = "";
 $package.Metadata.Version = "";
 $package.Metadata.Readme = '';
+
+Show-Alert "New packaging session started.`n`n You can add items and branches to it from Content Editor context menu now.`n`nWhen you are done with adding content, use the `"Download Package`" in the context menu to download your content as Sitecore package."
 Close-Window
 ----field----
 field: {7FA141B7-7473-44A9-9BD9-2739C51FF8DA}
@@ -63,7 +65,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+revision: f13487b0-7b49-4c23-8e4e-0afeab203e1f
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -78,14 +80,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-43d5c590-ce18-4f08-ae5a-5f6db8e411dc
+f13487b0-7b49-4c23-8e4e-0afeab203e1f
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20130919T142424:635151974648433204
+20170222T095244
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
