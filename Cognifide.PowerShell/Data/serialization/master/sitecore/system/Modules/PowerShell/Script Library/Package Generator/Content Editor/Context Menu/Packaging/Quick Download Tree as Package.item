@@ -29,7 +29,7 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2232
+content-length: 2306
 
 Import-Function Resolve-Error
 
@@ -83,7 +83,8 @@ $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
 $source = Get-Item . | New-ItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
 $package.Sources.Add($source);
 
-$packageFileName = "$packageName-$version.zip";
+[string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-');
+$packageFileName = "$packageName.zip";
 
 Export-Package -Project $package -Path "$packageFileName" -Zip
 Download-File "$SitecorePackageFolder\$packageFileName"
@@ -99,7 +100,7 @@ Software/16x16/compress.png
 ----version----
 language: en
 version: 1
-revision: 6c195f64-6846-43a6-a7e4-dde0b1fb5fa0
+revision: 2eb6ff23-59b9-4dd4-82d6-b5aa00c9d3c5
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -114,14 +115,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-6c195f64-6846-43a6-a7e4-dde0b1fb5fa0
+2eb6ff23-59b9-4dd4-82d6-b5aa00c9d3c5
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20161020T214842
+20170222T092255
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

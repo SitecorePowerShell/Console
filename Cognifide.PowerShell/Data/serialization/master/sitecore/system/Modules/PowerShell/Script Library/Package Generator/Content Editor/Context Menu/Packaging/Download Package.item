@@ -35,7 +35,7 @@ content-length: 306
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1180
+content-length: 1228
 
 if($Author -eq $null)
 {
@@ -67,8 +67,8 @@ $package.Metadata.Author = $Author;
 $package.Metadata.Publisher = $Publisher;
 $package.Metadata.Version = $Version;
 $package.Metadata.Readme = $Readme;
-
-$packageFileName = "$($package.Name)-$($package.Metadata.Version).zip";
+[string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-');
+$packageFileName = "$packageName.zip";
 
 Export-Package -Project $package -Path "$packageFileName" -Zip
 Download-File "$SitecorePackageFolder\$packageFileName"
@@ -91,7 +91,7 @@ People/16x16/box_next.png
 ----version----
 language: en
 version: 1
-revision: d088c590-9f05-49c1-b614-103d0aa321f6
+revision: 002eb7c3-07e6-4725-a4ef-dc92a4c60dbd
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -106,14 +106,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d088c590-9f05-49c1-b614-103d0aa321f6
+002eb7c3-07e6-4725-a4ef-dc92a4c60dbd
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160411T211534
+20170222T090525
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
