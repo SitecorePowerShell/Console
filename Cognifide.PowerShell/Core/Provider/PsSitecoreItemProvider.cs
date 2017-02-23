@@ -137,6 +137,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 // pipeline stopped e.g. if we did:
                 // Get-ChildItem master:\ | Select-Object -First 1 
                 // we can relax now - no more items needed
+                throw;
             }
             catch (Exception ex)
             {
@@ -229,6 +230,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 // pipeline stopped e.g. if we did:
                 // Get-ChildItem master:\ | Select-Object -First 1 
                 // we can relax now - no more items needed
+                throw;
             }
             catch (Exception ex)
             {
@@ -241,16 +243,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetItem(string path)
         {
-            try
-            {
-                GetItemInternal(path, true).ForEach(WriteItem);
-            }
-            catch (PipelineStoppedException)
-            {
-                // pipeline stopped e.g. if we did:
-                // Get-Item master:\ -Language * | Select-Object -First 1 
-                // we can relax now - no more items needed
-            }
+            GetItemInternal(path, true).ForEach(WriteItem);
         }
 
         internal IEnumerable<Item> GetItemInternal(string path, bool errorIfNotFound)
@@ -459,6 +452,7 @@ namespace Cognifide.PowerShell.Core.Provider
             catch (PipelineStoppedException)
             {
                 // pipeline stopped e.g. by `Select-Object -First 1`
+                throw;
             }
             catch (Exception ex)
             {
@@ -757,6 +751,7 @@ namespace Cognifide.PowerShell.Core.Provider
             catch (PipelineStoppedException)
             {
                 // pipeline stopped e.g. by `Select-Object -First 1`
+                throw;
             }
             catch (Exception ex)
             {
