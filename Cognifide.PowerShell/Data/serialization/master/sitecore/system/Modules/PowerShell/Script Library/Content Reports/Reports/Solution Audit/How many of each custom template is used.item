@@ -1,0 +1,96 @@
+----item----
+version: 1
+id: {4ED80E5E-F349-4642-BFCA-D52BD30EAF56}
+database: master
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/How many of each custom template is used
+parent: {A608590E-6B4D-4BD0-BEBE-9753037072CC}
+name: How many of each custom template is used
+master: {00000000-0000-0000-0000-000000000000}
+template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+templatekey: PowerShell Script
+created: 20170227T014802:636237568825000000
+
+----field----
+field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
+name: Script
+key: script
+content-length: 1428
+
+<#
+  How many custom templates are in use in your solution?
+ 
+  Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+#>
+Import-Function Render-ReportField
+
+$ignorePattern = "^(" + ("Branches/System","Common","List Manager", "Sample", "System" -join "|") + ")"
+$templates = [Sitecore.Data.Managers.TemplateManager]::GetTemplates((Get-Database "master"))
+$reportItems = @()
+foreach($template in $templates) {
+    if($template -and ($template.Value.FullName -notmatch $ignorePattern) -and -not ($template.GetType().Name -match "ErrorRecord")) {
+        $templateItem = Get-Item master:\ -ID $template.Value.ID
+        $items =@(Get-ItemReferrer -Database "master" -ID $template.Value.ID | Where-Object { $template.Name -ne "__Standard Values"})
+        $reportItem = [PSCustomObject]@{
+            "Icon" = $templateItem."__Icon"
+            "Name"=$template.Value.Name
+            "UsageCount"=$items.Count
+        }
+        $reportItems += $reportItem
+    }
+}
+
+$reportItems |
+  Sort-Object count -Descending |
+        Show-ListView -Property Icon,@{Name="Template Name"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.UsageCount}}`
+            -Title "Custom templates report" `
+            -InfoTitle "Usage Data"`
+            -InfoDescription "Count of custom templates used." 
+
+Close-Window
+----field----
+field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
+name: __Icon
+key: __icon
+content-length: 28
+
+Core2/32x32/colour_wheel.png
+----version----
+language: en
+version: 1
+revision: 48216e96-44b7-4541-8aa3-0fabcf49a5ca
+
+----field----
+field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
+name: __Display name
+key: __display name
+content-length: 41
+
+How many of each custom template is used?
+----field----
+field: {25BED78C-4957-4165-998A-CA1B52F67497}
+name: __Created
+key: __created
+content-length: 15
+
+20121203T180757
+----field----
+field: {8CDC337E-A112-42FB-BBB4-4143751E123F}
+name: __Revision
+key: __revision
+content-length: 36
+
+48216e96-44b7-4541-8aa3-0fabcf49a5ca
+----field----
+field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
+name: __Updated
+key: __updated
+content-length: 15
+
+20170227T021634
+----field----
+field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
+name: __Updated by
+key: __updated by
+content-length: 14
+
+sitecore\admin
