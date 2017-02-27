@@ -8,19 +8,20 @@ name: Test Get-Role
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
+created: 20161022T030308:636127021887200000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 653
+content-length: 968
 
 Import-Module -Name Pester
 
 Describe "Get-Role methods" {
     Context "Role object matches expected values" {
         It "returns the specified role" {
-            $actual = Get-Role -Name "sitecore\Developer" | Select-Object -ExpandProperty Name
+            $actual = Get-Role -Identity "sitecore\Developer" | Select-Object -ExpandProperty Name
             $expected = "sitecore\Developer"
             $actual | Should Be $expected
         }
@@ -30,12 +31,18 @@ Describe "Get-Role methods" {
             $expected = 2
             $actual | Should Be $expected
         }
+        It "returns the memberOf for a given Role" {
+            $actual = Get-Role -Identity "sitecore\Developer" | Select-Object -ExpandProperty MemberOf |
+                Measure-Object | Select-Object -ExpandProperty Count
+            $expected = 5
+            $actual | Should Be $expected
+        }
     }
 }
 ----version----
 language: en
 version: 1
-revision: a231801b-0b94-4586-8717-919dd81e8761
+revision: de4d1c15-6c3a-43b3-8f76-06e9bd51564a
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -50,14 +57,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a231801b-0b94-4586-8717-919dd81e8761
+de4d1c15-6c3a-43b3-8f76-06e9bd51564a
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160515T225848
+20170227T002333
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

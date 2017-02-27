@@ -226,7 +226,36 @@
           Get-Role -Filter * | Where-Object { $_.IsMember($this,$true,$true) } 
         </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>MemberOf</Name>
+        <GetScriptBlock>
+          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForUser($this, $false) | Select-Object -ExpandProperty Name
+        </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
-  
+  <Type>
+    <Name>Sitecore.Security.Accounts.Role</Name>
+    <Members>
+      <MemberSet>
+        <Name>PsStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>Name</Name>
+              <Name>Domain</Name>
+              <Name>IsEveryone</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+      <ScriptProperty>
+        <Name>MemberOf</Name>
+        <GetScriptBlock>
+          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForRole($this, $false) | Select-Object -ExpandProperty Name
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>  
 </Types>
