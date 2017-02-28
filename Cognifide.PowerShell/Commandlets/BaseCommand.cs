@@ -154,10 +154,19 @@ namespace Cognifide.PowerShell.Commandlets
             {
                 action();
             }
+            catch (PipelineStoppedException)
+            {
+                // pipeline stopped e.g. if we did:
+                // Invoke-Cmdlet | Select-Object -First 1 
+                // When it returns more than 1 entry and operates in an iterative manner
+                // we can relax now - no more items needed
+                throw;
+            }
             catch (Exception ex)
             {
                 PowerShellLog.Error($"Error while executing '{GetType().FullName}' command", ex);
-                WriteError(ex.GetType(), $"An error was encountered while executing the command '{this}'", ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
+                WriteError(ex.GetType(), $"An error was encountered while executing the command '{this}'",
+                    ErrorIds.InvalidOperation, ErrorCategory.NotSpecified, null);
             }
         }
 
