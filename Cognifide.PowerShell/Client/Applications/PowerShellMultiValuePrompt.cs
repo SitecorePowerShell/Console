@@ -160,6 +160,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var variableValue = variable["Value"];
                 var columns = 12;
                 var clearfix = false;
+                var floatRight = false;
                 var height = variable["Height"] as string;
                 var validator = variable["Validator"] as ScriptBlock;
 
@@ -191,6 +192,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         break;
                     }
                     clearfix = strColumns.Contains("first", StringComparer.OrdinalIgnoreCase);
+                    floatRight = strColumns.Contains("last", StringComparer.OrdinalIgnoreCase);
                 }
 
                 // get the control in which the variable should be placed.
@@ -245,6 +247,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     variableWrapper.Class += " clearfix";
                 }
+                if (floatRight)
+                {
+                    variableWrapper.Class += " floatRight";
+                }
+
 
                 // add editor to the wrapper
                 variableWrapper.Controls.Add(variableEditor);
