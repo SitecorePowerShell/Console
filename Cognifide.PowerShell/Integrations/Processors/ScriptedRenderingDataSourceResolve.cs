@@ -14,7 +14,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             if (IsScripted(source))
             {
                 var items = RunEnumeration(source, Context.Item);
-                args.Datasource = items.First().Paths.Path;
+                args.Datasource = items.Select(item => item.ID.ToString()).Aggregate((current, next) => current + "|" + next);
             }
         }
     }
