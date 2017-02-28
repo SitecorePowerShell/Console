@@ -8,18 +8,24 @@ name: How many of each custom template is used
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
-created: 20170227T014802:636237568825000000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 1428
+content-length: 1615
 
 <#
-  How many custom templates are in use in your solution?
- 
-  Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+    .SYNOPSIS
+        How many custom templates are in use in your solution?
+        Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+        
+    .NOTES
+        Michael West
+        Adam najmanowicz
+
+    .LINKS
+        https://gist.github.com/AdamNaj/3b1f7c9519c3c36ecb8ccbe5401f3966
 #>
 Import-Function Render-ReportField
 
@@ -40,7 +46,7 @@ foreach($template in $templates) {
 }
 
 $reportItems |
-  Sort-Object count -Descending |
+  Sort-Object UsageCount -Descending |
         Show-ListView -Property Icon,@{Name="Template Name"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.UsageCount}}`
             -Title "Custom templates report" `
             -InfoTitle "Usage Data"`
@@ -57,7 +63,7 @@ Core2/32x32/colour_wheel.png
 ----version----
 language: en
 version: 1
-revision: 48216e96-44b7-4541-8aa3-0fabcf49a5ca
+revision: fab8a41b-3df8-4b3f-9858-f4193fced1fe
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -79,14 +85,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-48216e96-44b7-4541-8aa3-0fabcf49a5ca
+fab8a41b-3df8-4b3f-9858-f4193fced1fe
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20170227T021634
+20170228T155947
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
