@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -7,6 +8,7 @@ using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Modules
 {
+    [DebuggerDisplay("Module: {Name}, {Path}")]
     public class Module
     {
         public Module(Item moduleItem, bool alwaysEnabled)
