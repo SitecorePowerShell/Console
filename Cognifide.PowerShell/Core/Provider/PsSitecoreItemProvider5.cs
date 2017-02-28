@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Management.Automation.Runspaces;
-using System.Web;
-using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
-    [CmdletProvider("PsSitecoreItemProvider",
+    [CmdletProvider("PsSitecoreItemProvider5",
        ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
     [OutputType(typeof(Item), ProviderCmdlet = "Get-ChildItem")]
     [OutputType(typeof(Item), ProviderCmdlet = "Get-Item")]

@@ -12,17 +12,17 @@ namespace Cognifide.PowerShell.Core.Provider
     {
         public static void AppendToSessionState(InitialSessionState state)
         {
-            if (NativeDepthSupport)
-            {
-                AddProvider5(state);
-            }
-            else
+            if (!NativeDepthSupport)
             {
                 AddProvider4(state);
             }
+            else
+            {
+                AddProvider5(state);
+            }
         }
 
-        public static bool NativeDepthSupport { get; } = typeof(ContainerCmdletProvider).GetMethodsBySig("GetChildItems", typeof(void), typeof(string),
+        private static bool NativeDepthSupport { get; } = typeof(ContainerCmdletProvider).GetMethodsBySig("GetChildItems", typeof(void), typeof(string),
             typeof(bool), typeof(uint)).Any();
 
         private static void AddProvider4(InitialSessionState state)

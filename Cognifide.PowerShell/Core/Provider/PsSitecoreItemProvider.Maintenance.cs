@@ -47,16 +47,25 @@ namespace Cognifide.PowerShell.Core.Provider
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             var result = new Collection<PSDriveInfo>();
-
-            foreach (var drive in Factory.GetDatabases().Select(database => new PSDriveInfo(database.Name,
-                providerInfo,
-                database.Name + ":", //"\\sitecore\\",
-                string.Format("Sitecore '{0}' database.", database.Name),
-                PSCredential.Empty)))
+            var i = 0;
+            foreach (var database in Factory.GetDatabases().Where(db=> !db.ReadOnly))
             {
-                result.Add(drive);
+                i++;
+                var dbName = database?.Name ?? $"sitecore{i}";
+                try
+                {
+                    var drive = new PSDriveInfo(dbName,
+                        providerInfo,
+                        dbName + ":",
+                        $"Sitecore '{dbName}' database.",
+                        PSCredential.Empty);
+                    result.Add(drive);
+                }
+                catch (Exception ex)
+                {
+                    PowerShellLog.Error($"Error while adding PowerShell drive for database {dbName}", ex);
+                }
             }
-
             return result;
         }
     }
