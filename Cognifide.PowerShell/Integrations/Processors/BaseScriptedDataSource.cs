@@ -41,9 +41,9 @@ namespace Cognifide.PowerShell.Integrations.Processors
         protected static IEnumerable<Item> RunEnumeration(string scriptSource, Item item)
         {
             Assert.ArgumentNotNull(scriptSource, "scriptSource");
-            Assert.ArgumentNotNull(item, "item");
             scriptSource = scriptSource.Replace("script:", "").Trim();
-            var scriptItem = item.Database.GetItem(scriptSource);
+            var database = item?.Database ?? Sitecore.Context.ContentDatabase ?? Sitecore.Context.Database;
+            var scriptItem = database.GetItem(scriptSource);
             if (!scriptItem.IsPowerShellScript())
             {
                 return new[] {scriptItem};
@@ -52,7 +52,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             {
                 var script = scriptItem[FieldIDs.Script] ?? string.Empty;
                 script = $"{ScriptSession.GetDataContextSwitch(item)}\n{script}";
-                return session.ExecuteScriptPart(script, false).Cast<Item>();
+                return session.ExecuteScriptPart(script, false).Where(i => i is Item).Cast<Item>();
             }
         }
     }
