@@ -46,10 +46,10 @@ Describe "Get-User methods" {
             $expected = 2
             $actual | Should Be $expected
         }
-        It "returns the memberOf for a given User" {
+        It "returns the MemberOf for a given User" {
             $actual = Get-User -Identity "sitecore\michael" | Select-Object -ExpandProperty MemberOf |
                 Measure-Object | Select-Object -ExpandProperty Count
-            $expected = 1
+            $expected = 2
             $actual | Should Be $expected            
         }
     }
@@ -57,7 +57,7 @@ Describe "Get-User methods" {
 ----version----
 language: en
 version: 1
-revision: 0cebb0ac-9514-427c-a675-c173ee594917
+revision: d49393f3-6da6-4de4-a8bb-2f4f93f567d1
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -72,14 +72,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0cebb0ac-9514-427c-a675-c173ee594917
+d49393f3-6da6-4de4-a8bb-2f4f93f567d1
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20170227T002846
+20170228T233848
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

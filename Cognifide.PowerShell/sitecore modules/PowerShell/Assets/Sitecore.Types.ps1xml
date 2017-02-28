@@ -223,15 +223,13 @@
       <ScriptProperty>
         <Name>Roles</Name>
         <GetScriptBlock>
-          Get-Role -Filter * | Where-Object { $_.IsMember($this,$true,$true) } 
+          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForUser($this, $false)
         </GetScriptBlock>
       </ScriptProperty>
-      <ScriptProperty>
+      <AliasProperty>
         <Name>MemberOf</Name>
-        <GetScriptBlock>
-          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForUser($this, $false) | Select-Object -ExpandProperty Name
-        </GetScriptBlock>
-      </ScriptProperty>
+        <ReferencedMemberName>Roles</ReferencedMemberName>
+      </AliasProperty>
     </Members>
   </Type>
   <Type>
@@ -251,11 +249,15 @@
         </Members>
       </MemberSet>
       <ScriptProperty>
-        <Name>MemberOf</Name>
+        <Name>Roles</Name>
         <GetScriptBlock>
-          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForRole($this, $false) | Select-Object -ExpandProperty Name
+          [Sitecore.Security.Accounts.RolesInRolesManager]::GetRolesForRole($this, $false)
         </GetScriptBlock>
       </ScriptProperty>
+      <AliasProperty>
+        <Name>MemberOf</Name>
+        <ReferencedMemberName>Roles</ReferencedMemberName>
+      </AliasProperty>
     </Members>
   </Type>  
 </Types>
