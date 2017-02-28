@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             var scriptItem = database.GetItem(scriptSource);
             if (!scriptItem.IsPowerShellScript())
             {
-                return new[] {scriptItem};
+                return new[] {scriptItem ?? item};
             }
             using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
