@@ -12,18 +12,20 @@ namespace Cognifide.PowerShell.Core.Provider
 {
     public partial class PsSitecoreItemProvider
     {
-        protected override ProviderInfo Start(ProviderInfo sitecoreProviderInfo)
+        private ProviderInfo providerInfo;
+
+        protected override ProviderInfo Start(ProviderInfo providerInfo)
         {
             try
             {
-                sitecoreProviderInfo.Description = "Sitcore Content Provider";
-                providerInfo = sitecoreProviderInfo;
-                LogInfo("Executing Start(string providerInfo='{0}')", sitecoreProviderInfo.Name);
-                return sitecoreProviderInfo;
+                providerInfo.Description = "Sitecore Content Provider";
+                this.providerInfo = providerInfo;
+                PowerShellLog.Info($"Executing {GetType().Name}.Start(providerInfo='{providerInfo?.Name ?? "null"}')");
+                return providerInfo;
             }
             catch (Exception ex)
             {
-                LogError(ex, "Error while executing Start(string providerInfo='{0}')", sitecoreProviderInfo.Name);
+                PowerShellLog.Info($"Error while executing {GetType().Name}.Start(providerInfo='{providerInfo?.Name ?? "null"}')", ex);
                 throw;
             }
         }

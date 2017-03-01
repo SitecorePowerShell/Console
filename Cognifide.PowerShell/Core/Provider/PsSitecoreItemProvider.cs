@@ -38,7 +38,6 @@ namespace Cognifide.PowerShell.Core.Provider
     [OutputType(typeof (Item), ProviderCmdlet = "Copy-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
-        private ProviderInfo providerInfo;
 
         /// <summary>
         ///     Moves page to recycle bin on remove-item
