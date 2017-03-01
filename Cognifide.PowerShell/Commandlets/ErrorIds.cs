@@ -4,22 +4,23 @@ namespace Cognifide.PowerShell.Commandlets
     {
         AccountAlreadyExists,
         AccountNotFound,
+        DatabaseNotFound,
         DomainAlreadyExists,
         DomainNotFound,
+        FieldNotFound,
         FileAlreadyExists,
         InsufficientSecurityRights,
         InvalidOperation,
+        InvalidItemType,
         ItemNotFound,
         LanguageNotFound,
+        NewItemIOError,
         OriginatingScriptSessionNotInteractive,
         RenderingNotFound,
         ScriptSessionBusy,
         ScriptSessionCannotBeStopped,
         ScriptSessionIsNotInteractive,
         ScriptSessionNotFound,
-        DatabaseNotFound,
         TemplateNotFound,
-        InvalidItemType,
-        NewItemIOError
     }
 }
