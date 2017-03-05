@@ -8,13 +8,12 @@ name: Recover Version Specific Icons
 master: {00000000-0000-0000-0000-000000000000}
 template: {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
 templatekey: PowerShell Script
-created: 20161022T030302:636127021826800000
 
 ----field----
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 13605
+content-length: 13880
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -66,6 +65,7 @@ $icons8 = @{
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Office/32x32/rebuild_all_indexes.png';
+'master:\system\Modules\PowerShell\Script Library\Platform\Toolbox\Rebuild script integration points' = 'Office/32x32/arrow_mix.png';
 }
 
 $icons7 = @{
@@ -118,6 +118,7 @@ $icons7 = @{
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Business/32x32/data_ok.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'Business/32x32/data_refresh.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Database/32x32/db_sql_execute_h.png';
+'master:\system\Modules\PowerShell\Script Library\Platform\Toolbox\Rebuild script integration points' = 'Applications/32x32/exchange.png';
 }
 
 
@@ -157,7 +158,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: b920dee2-9e2a-4920-bcb1-167e089ad204
+revision: 64ecb11d-8c7f-414c-b82b-c20a7d9e5777
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -172,14 +173,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b920dee2-9e2a-4920-bcb1-167e089ad204
+64ecb11d-8c7f-414c-b82b-c20a7d9e5777
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20170122T233219
+20170305T204900
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -41,10 +41,17 @@ key: __icon
 content-length: 26
 
 Software/32x32/console.png
+----field----
+field: {DEC8D2D5-E3CF-48B6-A653-8E69E2716641}
+name: __Security
+key: __security
+content-length: 112
+
+ar|sitecore\Developer|pe|+item:read|pd|+item:read|ar|sitecore\Sitecore Client Users|pe|-item:read|pd|-item:read|
 ----version----
 language: en
 version: 1
-revision: 66882a58-a1f5-48d3-80ad-2d93e33c487c
+revision: b8ce1fdb-f82f-42e8-b733-7b3dfedd1aed
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -59,18 +66,18 @@ name: __Revision
 key: __revision
 content-length: 36
 
-66882a58-a1f5-48d3-80ad-2d93e33c487c
+b8ce1fdb-f82f-42e8-b733-7b3dfedd1aed
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20170112T170254
+20170305T203020
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
 key: __updated by
 content-length: 14
 
-sitecore\Admin
+sitecore\admin
