@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter(ParameterSetName = "Module from ID", Mandatory = true)]
         public override string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Module from ID", ValueFromPipeline = true, Mandatory = true)]
         [Parameter(ParameterSetName = "Module from Database", ValueFromPipeline = true, Mandatory = true,
             ValueFromPipelineByPropertyName = true)]

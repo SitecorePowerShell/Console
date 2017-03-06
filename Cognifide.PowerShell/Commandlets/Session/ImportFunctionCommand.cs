@@ -28,15 +28,15 @@ namespace Cognifide.PowerShell.Commandlets.Session
 
 
         [Parameter(Mandatory = true, Position = 0)]
-        [AutocompleteSet("Functions")]
+        [AutocompleteSet(nameof(Functions))]
         public string Name { get; set; }
 
         [Parameter]
-        [AutocompleteSet("Libraries")]
+        [AutocompleteSet(nameof(Libraries))]
         public string Library { get; set; }
 
         [Parameter]
-        [AutocompleteSet("Modules")]
+        [AutocompleteSet(nameof(Modules))]
         public string Module { get; set; }
 
         public static string[] Functions

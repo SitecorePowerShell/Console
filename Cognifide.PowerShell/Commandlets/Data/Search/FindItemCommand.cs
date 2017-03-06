@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             get { return ContentSearchManager.Indexes.Select(i => i.Name).ToArray(); }
         }
 
-        [AutocompleteSet("Indexes")]
+        [AutocompleteSet(nameof(Indexes))]
         [Parameter(Mandatory = true, Position = 0)]
         public string Index { get; set; }
         

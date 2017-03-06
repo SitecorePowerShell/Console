@@ -34,12 +34,13 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter(ParameterSetName = "Item from ID, return ItemLink", Mandatory = true)]
         public override string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Item from ID, return Item")]
         [Parameter(ParameterSetName = "Item from ID, return ItemLink")]
         public override string Database { get; set; }
 
         [Alias("Languages")]
+        [AutocompleteSet(nameof(Cultures))]
         [Parameter(ParameterSetName = "Item from Path, return Item")]
         [Parameter(ParameterSetName = "Item from ID, return Item")]
         [Parameter(ParameterSetName = "Item from Path, return ItemLink")]

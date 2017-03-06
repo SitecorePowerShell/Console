@@ -9,7 +9,7 @@ namespace Cognifide.PowerShell.Commandlets
     {
         public static readonly string[] Indexes = ContentSearchManager.Indexes.Select(i => i.Name).ToArray();
 
-        [AutocompleteSet("Indexes")]
+        [AutocompleteSet(nameof(Indexes))]
         [Parameter(ParameterSetName = "Name")]
         [Parameter(ParameterSetName = "Item")]
         [ValidateNotNullOrEmpty]

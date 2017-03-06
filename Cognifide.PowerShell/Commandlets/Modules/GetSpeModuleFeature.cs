@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.Commandlets.Modules
         [Parameter]
         public SwitchParameter ReturnPath { get; set; }
 
-        [AutocompleteSet("Features")]
+        [AutocompleteSet(nameof(Features))]
         [Parameter(Mandatory = true, Position = 0)]
         public string Feature { get; set; }
 

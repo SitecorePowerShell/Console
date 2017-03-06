@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data.Items;
 using Sitecore.Install.Configuration;
 using Sitecore.Install.Items;
@@ -21,6 +22,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
         [Parameter(Position = 1)]
         public SwitchParameter SkipVersions { get; set; }
 
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(Position = 2, ValueFromPipelineByPropertyName = true)]
         public string Database { get; set; }
 

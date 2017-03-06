@@ -22,6 +22,8 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public class BaseCommand : PSCmdlet
     {
+        public static readonly string[] Databases = Factory.GetDatabaseNames().Where(name => name != "filesystem").ToArray();
+
         protected bool IsCurrentDriveSitecore => SessionState.Drive.Current.Provider.ImplementingType == typeof (PsSitecoreItemProvider) ||
                                                  SessionState.Drive.Current.Provider.ImplementingType.IsSubclassOf(typeof (PsSitecoreItemProvider));
 
@@ -102,7 +104,7 @@ namespace Cognifide.PowerShell.Commandlets
         {
             if (item == null)
             {
-                if (string.IsNullOrEmpty(path))
+                if (String.IsNullOrEmpty(path))
                 {
                     return database ?? CurrentDatabase;
                 }
@@ -121,7 +123,7 @@ namespace Cognifide.PowerShell.Commandlets
         {
             if (item != null) return item;
 
-            if (!string.IsNullOrEmpty(id))
+            if (!String.IsNullOrEmpty(id))
             {
                 var currentDb = String.IsNullOrEmpty(databaseName) ? CurrentDatabase : Factory.GetDatabase(databaseName);
                 if (currentDb != null)
@@ -129,7 +131,7 @@ namespace Cognifide.PowerShell.Commandlets
                     item = currentDb.GetItem(new ID(id));
                 }
             }
-            else if (!string.IsNullOrEmpty(path))
+            else if (!String.IsNullOrEmpty(path))
             {
                 path = path.Replace('\\', '/');
                 item = PathUtilities.GetItem(path, CurrentDrive, CurrentPath);

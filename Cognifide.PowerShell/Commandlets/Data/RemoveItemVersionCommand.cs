@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
 
@@ -17,6 +18,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public SwitchParameter Recurse { get; set; }
 
         [Alias("Languages")]
+        [AutocompleteSet(nameof(Cultures))]
         [Parameter(ParameterSetName = "Item from Path", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from Pipeline")]

@@ -24,7 +24,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter]
         public PSObject InputObject  { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter]
         public string RuleDatabase { get; set; }
 

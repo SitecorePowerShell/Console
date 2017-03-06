@@ -36,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         public ActionIfExists IfExist { get; set; }
 
         [Parameter]
-        [AutocompleteSet("Cultures")]
+        [AutocompleteSet(nameof(Cultures))]
         public string[] TargetLanguage { get; set; }
 
         [Parameter]

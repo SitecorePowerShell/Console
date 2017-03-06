@@ -19,7 +19,7 @@ namespace Cognifide.PowerShell.Commandlets
             Cultures = cultures.ToArray();
         }
 
-        [AutocompleteSet("Cultures")]
+        [AutocompleteSet(nameof(Cultures))]
         [Alias("Languages")]
         [Parameter(ParameterSetName = "Item from Path")]
         [Parameter(ParameterSetName = "Item from ID")]

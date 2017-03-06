@@ -18,7 +18,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         public virtual AccountIdentity Identity { get; set; }
 
         [Parameter(Mandatory = true, Position = 1)]
-        [AutocompleteSet("WellKnownRights")]
+        [AutocompleteSet(nameof(WellKnownRights))]
         public string AccessRight { get; set; }
 
         [Parameter(Mandatory = true, Position = 2)]

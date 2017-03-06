@@ -40,7 +40,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
         [Parameter(ParameterSetName = "Item from Path, set by Template", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from ID, set by Template", Mandatory = true)]
         [Parameter(ParameterSetName = "Item from Pipeline, set by Template", Mandatory = true)]
-        [AutocompleteSet("Templates")]
+        [AutocompleteSet(nameof(Templates))]
         public virtual string Template { get; set; }
 
         [Parameter()]

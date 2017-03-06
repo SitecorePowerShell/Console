@@ -37,7 +37,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
         public override string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Rendering by filter, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by instance, Item from ID")]
         [Parameter(ParameterSetName = "Rendering by unique ID, Item from ID")]
@@ -98,7 +98,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
         protected override void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device)
         {
-            if (device == null || device.Renderings == null)
+            if (device?.Renderings == null)
             {
                 return;
             }

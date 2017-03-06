@@ -23,7 +23,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         public bool IsAdministrator { get; set; }
 
         [Parameter]
-        [AutocompleteSet("Portraits")]
+        [AutocompleteSet(nameof(Portraits))]
         public string Portrait { get; set; }
 
         public SetUserCommand()

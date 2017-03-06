@@ -35,7 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account ID, Item from Path", Mandatory = true)]
         [Parameter(ParameterSetName = "Account ID, Item from ID", Mandatory = true)]
         [Parameter(ParameterSetName = "Account ID, Item from Pipeline", Mandatory = true)]
-        [AutocompleteSet("WellKnownRights")]
+        [AutocompleteSet(nameof(WellKnownRights))]
         public string AccessRight { get; set; }
 
         protected override void ProcessItem(Item item)

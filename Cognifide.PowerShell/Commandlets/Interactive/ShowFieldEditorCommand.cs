@@ -57,12 +57,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter(ParameterSetName = "Item from ID, Named Section", Mandatory = true)]
         public override string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from ID, Named Section")]
         public override string Database { get; set; }
 
         [Alias("Languages")]
+        [AutocompleteSet(nameof(Cultures))]
         [Parameter(ParameterSetName = "Item from Path, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from ID, Preserve Sections")]
         [Parameter(ParameterSetName = "Item from Path, Named Section")]

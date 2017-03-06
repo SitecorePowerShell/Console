@@ -46,7 +46,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
         [Parameter(ParameterSetName = "Account Filter, Item from ID", Mandatory = true)]
         public override string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Account ID, Item from ID")]
         [Parameter(ParameterSetName = "Account Filter, Item from ID")]
         public override string Database { get; set; }

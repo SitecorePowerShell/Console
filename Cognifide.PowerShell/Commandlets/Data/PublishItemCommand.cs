@@ -25,7 +25,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         [Parameter]
         [Alias("Targets")]
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         public string[] Target { get; set; }
 
         [Parameter]

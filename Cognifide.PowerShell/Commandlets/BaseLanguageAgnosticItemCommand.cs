@@ -10,8 +10,6 @@ namespace Cognifide.PowerShell.Commandlets
 {
     public abstract class BaseLanguageAgnosticItemCommand : BaseShellCommand
     {
-        public static readonly string[] Databases = Factory.GetDatabaseNames().Where(name => name != "filesystem").ToArray();
-
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Item from Pipeline", Mandatory = true, Position = 0)]
         public virtual Item Item { get; set; }
@@ -23,7 +21,7 @@ namespace Cognifide.PowerShell.Commandlets
         [Parameter(ParameterSetName = "Item from ID", Mandatory = true)]
         public virtual string Id { get; set; }
 
-        [AutocompleteSet("Databases")]
+        [AutocompleteSet(nameof(Databases))]
         [Parameter(ParameterSetName = "Item from ID")]
         public virtual string Database { get; set; }
 
