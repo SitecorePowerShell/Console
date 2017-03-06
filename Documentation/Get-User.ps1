@@ -95,4 +95,13 @@
         Name                     Domain       IsAdministrator IsAuthenticated
         ----                     ------       --------------- ---------------
         sitecore\michael         sitecore     False           False
+
+    .EXAMPLE
+        # Expand the MemberOf property to see a list of roles that the specified user is a member.
+        PS master:\> Get-User -Identity sitecore\michael | Select-Object -ExpandProperty MemberOf
+
+        Name                                     Domain       IsEveryone
+        ----                                     ------       ----------
+        sitecore\PowerShell Extensions Remoting  sitecore     False
+        sitecore\Developer                       sitecore     False
 #>

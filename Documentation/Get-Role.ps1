@@ -48,14 +48,14 @@
         Get-RoleMember       
 
     .EXAMPLE
-        PS master:\> Get-Role -Identity developer
+        PS master:\> Get-Role -Identity sitecore\developer
 
         Name                                     Domain       IsEveryone
         ----                                     ------       ----------
         sitecore\developer                       sitecore     False
 
     .EXAMPLE
-        PS master:\> "developer","author" | Get-Role
+        PS master:\> "sitecore\developer","sitecore\author" | Get-Role
 
         Name                                     Domain       IsEveryone
         ----                                     ------       ----------
@@ -69,4 +69,16 @@
         ----                                     ------       ----------
         sitecore\Designer                        sitecore     False
         sitecore\Developer                       sitecore     False
+
+    .EXAMPLE
+        # Expand the MemberOf property to see a list of roles that the specified role is a member.
+        PS master:\> Get-Role -Identity sitecore\developer | Select-Object -ExpandProperty MemberOf
+
+        Name                                     Domain       IsEveryone
+        ----                                     ------       ----------
+        sitecore\Sitecore Client Configuring     sitecore     False
+        sitecore\Sitecore Client Developing      sitecore     False
+        sitecore\Designer                        sitecore     False
+        sitecore\Author                          sitecore     False
+        sitecore\Sitecore Client Maintaining     sitecore     False
 #>
