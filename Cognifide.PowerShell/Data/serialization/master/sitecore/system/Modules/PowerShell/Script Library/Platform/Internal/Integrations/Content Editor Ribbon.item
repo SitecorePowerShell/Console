@@ -29,127 +29,156 @@ content-length: 52
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 6206
+content-length: 5846
 
 $stripsPath = 'core:\content\Applications\Content Editor\Ribbons\Strips'
 
 $roots = Get-SpeModuleFeatureRoot "ContentEditorRibbon"
 
-Write-Host "Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
-Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts"
 
-foreach($root in $roots){
-    $scriptLibPath = "$($root.Database.Name):$($root.Paths.Path)"
-
-    #Adding missing strips
-    Get-Childitem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
-      $scriptLibrary = $_;
-      $strip = Get-Item "$stripsPath/$($scriptLibrary.Name)" -ErrorAction SilentlyContinue
-      if($strip -eq $null){
-        Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
-        $strip = New-Item -path "$stripsPath" -Name "$($scriptLibrary.Name)" -ItemType "System/Ribbon/Strip"
-        $strip.Header = $scriptLibrary.Name
-      }
-    
-        # Adding missing chunks
-        Get-Childitem $scriptLibrary.ProviderPath | ForEach-Object {
-            $chunkLibrary = $_
-            $chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)" -ErrorAction SilentlyContinue
-            if($chunk -eq $null){
-              Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
-            $chunk = New-Item -path "$($strip.ProviderPath)" -Name "$($chunkLibrary.Name)" -ItemType "System/Ribbon/Chunk"
-            $chunk.Header = $chunkLibrary.Name
-            }
-    
-        if($chunk.TemplateName -eq "Reference") {
-            $chunk = Get-Item "core:/" -ID $chunk.Reference
-            Write-Host "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" -ForegroundColor Blue    
-        } else {
-            Write-Host "Using chunk directly '$($chunk.ProviderPath)'" -ForegroundColor Blue
-        }
-    
-        #Creating Script references    
-        Get-Childitem $chunkLibrary.ProviderPath | ForEach-Object {
-          $script = $_
-          if($script.TemplateName -eq "PowerShell Script"){
-              $button = Get-Item "$($chunk.ProviderPath)/$($script.Name)/$($script.Name)" -ErrorAction SilentlyContinue
-              if($button -eq $null){
-                $panel = New-Item -path "$($chunk.ProviderPath)" -Name "$($script.Name)" -ItemType "System/Ribbon/Panel"
-                $panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
-                $button = New-Item -path "$($panel.ProviderPath)" -Name "$($script.Name)" -ItemType "System/Ribbon/Large Button"
-                Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
-              } else { 
-                if($button.Click -match "item:executescript"){
-                  Write-Host "Updating Script '$($script.Name)' in Chunk '$($chunk.Name)'." -f Green
-                } else {
-                  Write-Host "Cannot Update Script '$($script.Name)' in Chunk '$($chunk.Name)'. It's not a PowerShell Extensions button" -f Green
-                  continue
-                }
-              }
-              $button.__Icon = $script.__Icon; 
-              $button.Icon = $script.__Icon; 
-              $button.Header = $script.Name;
-              $button.__Sortorder = $script.__Sortorder;
-              $button.Click = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
-          }
-        }
-      }
-    }
-}
 #Remove non existing scripts from Control Panel
 Write-Host "Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
 Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
-Get-Childitem $stripsPath | ForEach-Object {
-    $strip = $_;
-    Get-Childitem $strip.ProviderPath | ForEach-Object {
-        $chunk = $_;
-        $chunkName = $_.Name;
-        if($chunk.TemplateName -eq "Reference") {
-            $chunk = Get-Item "core:/" -ID $chunk.Reference
-        }
-        Get-Childitem $chunk.ProviderPath | ForEach-Object {
-            $button = $_
-            $panel = $_
-            if($panel.TemplateName -eq "Panel"){
-                $button = Get-ChildItem "$($panel.ProviderPath)" | Select-Object -First 1
-            }
-            if($button.Click -match "item:executescript"){
-                $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$button.Click)
-                $scriptDb = $message.Arguments["scriptDb"]
-                $scriptId = $message.Arguments["script"];
-                $script = Get-Item "$($scriptDb):/" -Id $scriptId -ErrorAction SilentlyContinue
-                if($button.ID -eq $panel.Id)
-                {
-                    $panel | remove-item -Recurse
-                    Write-Host "Removing old non-rule-respecting button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon" -f y
-                }
-                elseif($script -eq $null -or $script.Name -ne $button.Name){
-                    Write-Host "Removing button '$($button.Name)' from Chunk $($chunk.Name)' from Content Editor Ribbon as the script no longer exists" -f y
-                    $panel | remove-item -Recurse
-                } else {
-                    if(!(Get-SpeModule -Item $script).Enabled){
-                        Write-Host "Removing '$($chunk.Name)/$($button.Name)' from Content Editor Ribbon as the module is no longer active." -ForegroundColor Magenta
-                        $panel | remove-item -Recurse
-                    } else {
-                        #Write-Host "Keeping script '$($chunk.Name)/$($button.Name)'" -ForegroundColor Yellow
-                    }
-                }
-            }
-        }
+Get-ChildItem $stripsPath | ForEach-Object {
+	$strip = $_;
+	Get-ChildItem $strip.ProviderPath | ForEach-Object {
+		$chunk = $_;
+		$chunkName = $_.Name;
+		if ($chunk.TemplateName -eq "Reference") {
+			$chunk = Get-Item "core:/" -Id $chunk.Reference
+		}
+		Get-ChildItem $chunk.ProviderPath | ForEach-Object {
+			$panel = $_
+			if ($panel.TemplateName -eq "Panel" -and $panel.Type -like "*Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel*") {
+				$panel | Remove-Item -Recurse
+			}
+		}
 
-        if($chunk.Children.Count -eq 0)
-        {
-            Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
-            $chunk | Remove-Item
-        }
-    }
-    if($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
-    {
-        Write-Host "Removing Strip '$($strip.Name)'" -f y
-        $strip | Remove-Item
-    }
+		if ($chunk.Children.Count -eq 0)
+		{
+			Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+			$chunk | Remove-Item
+		}
+	}
+	if ($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
+	{
+		Write-Host "Removing Strip '$($strip.Name)'" -f y
+		$strip | Remove-Item
+	}
 }
-#Close-Window
+
+# Re-creating buttons
+Write-Host "Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
+Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts"
+
+foreach ($root in $roots) {
+	$scriptLibPath = "$($root.Database.Name):$($root.Paths.Path)"
+
+	#Adding missing strips
+	Get-ChildItem $scriptLibPath | ? { $_.TemplateName -eq "PowerShell Script Library" } | % {
+		$scriptLibrary = $_;
+		$strip = Get-Item "$stripsPath/$($scriptLibrary.Name)" -ErrorAction SilentlyContinue
+		if ($strip -eq $null) {
+			Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
+			$strip = New-Item -Path $stripsPath -Name $scriptLibrary.Name -ItemType "System/Ribbon/Strip"
+			$strip.Header = $scriptLibrary.Name
+		}
+
+		# Adding missing chunks
+		Get-ChildItem $scriptLibrary.ProviderPath | ForEach-Object {
+			$chunkLibrary = $_
+			$chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)" -ErrorAction SilentlyContinue
+			if ($chunk -eq $null) {
+				Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+				$chunk = New-Item -Path core: -Parent $strip -Name $chunkLibrary.Name -ItemType "System/Ribbon/Chunk"
+				$chunk.Header = $chunkLibrary.Name
+			}
+
+			if ($chunk.TemplateName -eq "Reference") {
+				$chunk = Get-Item "core:/" -Id $chunk.Reference
+				Write-Verbose "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" #-ForegroundColor Blue
+			} else {
+				Write-Verbose "Using chunk directly '$($chunk.ProviderPath)'" #-ForegroundColor Blue
+			}
+
+			$panel = $null;
+			$smallCount = 0
+			#Creating Script references
+			Get-ChildItem $chunkLibrary.ProviderPath | ForEach-Object {
+				$script = $_
+				if ($script.TemplateName -eq "PowerShell Script" -or $script.TemplateName -eq "PowerShell Script Library") {
+
+					$name = $script.Name;
+					$buttonTemplate = ""
+					$isSmall = $false;
+
+					if ($script.Name.Contains("$")) {
+						$nameTypeArray = $script.Name.Split('$')
+						$name = $nameTypeArray[1].Trim();
+						$buttonTemplate = $nameTypeArray[0].Trim();
+					}
+					$isSmall = $buttonTemplate -like "*Small*"
+					$isCombo = $buttonTemplate -like "*Combo*" -or $script.HasChildren
+
+					$buttonTemplate = "System/Ribbon/"
+					if($isSmall){
+					    $buttonTemplate += "Small "
+					} else {
+                        $buttonTemplate += "Large "
+					}
+					
+					if($isCombo){
+					    $buttonTemplate += "Menu Combo Button"
+					} else {
+                        $buttonTemplate += "Button"
+					}
+
+					if (!$panel -or (($smallCount % 2) -eq 1 -and !$isSmall)) {
+						$panel = New-Item -Path "core:" -Parent $chunk -Name $name -ItemType "System/Ribbon/Panel"
+						$panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
+						$panel.__Sortorder = $script.__Sortorder
+						$smallCount = 0
+						Write-Host "Adding Panel '$($panel.Name)' to Chunk '$($chunk.Name)'." -f Green
+					}
+					$button = New-Item -Path "core:" -Name $name -Parent $panel -ItemType $buttonTemplate
+					Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+
+					$button.__Icon = $script.__Icon;
+					$button.Icon = $script.__Icon;
+					$button.Header = $name;
+					$button.__Sortorder = $script.__Sortorder;
+					if (Get-Member -InputObject $button -Name "Click" -MemberType Properties) {
+						$button.Click = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+					}
+					if (Get-Member -InputObject $button -Name "Command" -MemberType Properties) {
+						$button.Command = "item:executescript(id=`$ItemID,script=$($script.ID),scriptDb=$($script.Database.Name))"
+					}
+
+					#build menu
+					if ($isCombo) {
+						$button.Menu = $button.Paths.Path
+						Get-ChildItem $script.ProviderPath | % {
+							$itemScript = $_
+							$menuItem = New-Item -Path "core:" -Parent $button -Name $itemScript.Name -ItemType 'System/Menus/Menu item'
+							Write-Host "Adding Menu Item Script '$($menuItem.Name)' to Dropdown Button '$($button.Name)'." -f Green
+
+							$menuItem.__Icon = $itemScript.__Icon;
+							$menuItem.Icon = $itemScript.__Icon;
+							$menuItem."Display name" = $itemScript.Name;
+							$menuItem.__Sortorder = $itemScript.__Sortorder;
+							$menuItem.Message = "item:executescript(id=`$ItemID,script=$($itemScript.ID),scriptDb=$($itemScript.Database.Name))"
+
+						}
+					}
+					if ($isSmall) {
+						$smallCount++
+					}
+				}
+			}
+		}
+	}
+}
+
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -160,7 +189,7 @@ Control/16x16/toolbar.png
 ----version----
 language: en
 version: 1
-revision: 64be6aec-c0c8-46b7-9ae2-7f5de25abd8a
+revision: 69a842b6-894d-4f5b-8010-f837d7a84998
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -175,14 +204,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-64be6aec-c0c8-46b7-9ae2-7f5de25abd8a
+69a842b6-894d-4f5b-8010-f837d7a84998
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150831T231817:635766598979241887
+20170306T025038
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

@@ -5,6 +5,7 @@ using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
@@ -27,7 +28,8 @@ namespace Cognifide.PowerShell.Client.Controls
             var psButtons = button.GetChildren();
             foreach (Item psButton in psButtons)
             {
-                var msg = Message.Parse(this, psButton["Click"]);
+                var command = (psButton.Fields["Click"] ?? psButton.Fields["Command"]).Value;
+                var msg = Message.Parse(this, command);
                 var scriptDb = msg.Arguments["scriptDB"];
                 var scriptId = msg.Arguments["script"];
 
@@ -38,38 +40,79 @@ namespace Cognifide.PowerShell.Client.Controls
 
                 var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
 
-                if (!scriptItem.IsPowerShellScript() || !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], context.Items[0]))
+                if (!scriptItem.IsPowerShellScript() ||
+                    !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], context.Items[0]))
                 {
                     continue;
                 }
 
-                RenderLargeButton(output, ribbon, Control.GetUniqueID("script"),
-                    Translate.Text(scriptItem.DisplayName),
-                    scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],
-                    psButton["Click"],
-                    RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.Items[0]),
-                    false, context);
-
-                return;
+                RenderButton(output, psButton.TemplateID, ribbon, Control.GetUniqueID("script"),
+                    Translate.Text(psButton.DisplayName), scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],
+                    command, RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.Items[0]), context,
+                    psButton.Paths.Path);
             }
         }
 
-        public void RenderLargeButton(HtmlTextWriter output, Ribbon ribbon, string id, string header, string icon,
-            string tooltip, string command, bool enabled, bool down, CommandContext context)
+        public void RenderButton(HtmlTextWriter output, ID buttonTemplateId, Ribbon ribbon, string id, string header, string icon,
+            string tooltip, string command, bool enabled, CommandContext context, string menuPath)
         {
             var buttonId = Control.GetUniqueID("script");
-            var largeButton = new LargeButton
+            if (buttonTemplateId == Ribbon.LargeButton)
             {
-                ID = buttonId,
-                Header = header,
-                Icon = icon,
-                Down = down,
-                Enabled = enabled,
-                ToolTip = tooltip,
-                Command = GetClick(command, context, buttonId),
-            };
-
-            largeButton.RenderControl(output);
+                var button = new LargeButton
+                {
+                    ID = buttonId,
+                    Header = header,
+                    Icon = icon,
+                    Enabled = enabled,
+                    ToolTip = tooltip,
+                    Command = GetClick(command, context, buttonId),
+                };
+                button.RenderControl(output);
+            }
+            else if (buttonTemplateId == Ribbon.LargeMenuComboButton)
+            {
+                var button = new LargeMenuComboButton
+                {
+                    ID = buttonId,
+                    Header = header,
+                    Icon = icon,
+                    Enabled = enabled,
+                    ToolTip = tooltip,
+                    Command = GetClick(command, context, buttonId),
+                    CommandContext = context,
+                    Menu = menuPath
+                };
+                button.RenderControl(output);
+            }
+            else if (buttonTemplateId == Ribbon.SmallButton)
+            {
+                var button = new SmallButton
+                {
+                    ID = buttonId,
+                    Header = header,
+                    Icon = icon,
+                    Enabled = enabled,
+                    ToolTip = tooltip,
+                    Command = GetClick(command, context, buttonId),
+                };
+                ribbon.RenderSmallButton(output, button);
+            }
+            else if (buttonTemplateId == Ribbon.SmallMenuComboButton)
+            {
+                var button = new SmallMenuComboButton
+                {
+                    ID = buttonId,
+                    Header = header,
+                    Icon = icon,
+                    Enabled = enabled,
+                    ToolTip = tooltip,
+                    Command = GetClick(command, context, buttonId),
+                    CommandContext = context,
+                    Menu = menuPath
+                };
+                ribbon.RenderSmallButton(output, button);
+            }
         }
 
         private static string GetClick(string click, CommandContext commandContext, string buttonId)
