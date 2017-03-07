@@ -60,7 +60,7 @@ Specifies the Sitecore role by providing one of the following values.
     </tbody>
 </table> 
  
-### -Recursive&nbsp; &lt;SwitchParameter&gt; 
+### -Recurse&nbsp; &lt;SwitchParameter&gt; 
  
  
  

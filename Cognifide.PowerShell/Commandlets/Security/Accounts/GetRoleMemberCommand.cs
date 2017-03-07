@@ -16,7 +16,8 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         public AccountIdentity Identity { get; set; }
 
         [Parameter]
-        public SwitchParameter Recursive { get; set; }
+        [Alias("Recursive")]
+        public SwitchParameter Recurse { get; set; }
 
         [Parameter(ParameterSetName = "UsersOnly")]
         public SwitchParameter UsersOnly { get; set; }
@@ -35,13 +36,13 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             switch (ParameterSetName)
             {
                 case "Id":
-                    WriteObject(RolesInRolesManager.GetRoleMembers(role, Recursive), true);
+                    WriteObject(RolesInRolesManager.GetRoleMembers(role, Recurse), true);
                     break;
                 case "UsersOnly":
-                    WriteObject(RolesInRolesManager.GetUsersInRole(role, Recursive), true);
+                    WriteObject(RolesInRolesManager.GetUsersInRole(role, Recurse), true);
                     break;
                 case "RolesOnly":
-                    WriteObject(RolesInRolesManager.GetRolesInRole(role, Recursive), true);
+                    WriteObject(RolesInRolesManager.GetRolesInRole(role, Recurse), true);
                     break;
             }
         }

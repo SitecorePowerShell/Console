@@ -12,7 +12,7 @@
     .PARAMETER Name
         Name of the item clone.
 
-    .PARAMETER Recursive
+    .PARAMETER Recurse
         Add the parameter to clone thw whole branch rather than a single item.
 
     .PARAMETER Item

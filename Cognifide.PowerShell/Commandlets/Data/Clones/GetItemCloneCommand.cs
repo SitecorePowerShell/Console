@@ -2,9 +2,9 @@
 using System.Management.Automation;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Clones
 {
-    [Cmdlet("Get", "ItemClone")]
+    [Cmdlet(VerbsCommon.Get, "ItemClone")]
     [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class GetItemCloneCommand : BaseLanguageAgnosticItemCommand
     {

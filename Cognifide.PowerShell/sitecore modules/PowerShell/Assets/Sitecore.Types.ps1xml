@@ -260,4 +260,29 @@
       </AliasProperty>
     </Members>
   </Type>  
+  <Type>
+    <Name>Sitecore.Data.Clones.Notification</Name>
+    <Members>
+      <MemberSet>
+        <Name>PsStandardMembers</Name>
+        <Members>
+          <PropertySet>
+            <Name>DefaultDisplayPropertySet</Name>
+            <ReferencedProperties>
+              <Name>ID</Name>
+              <Name>Processed</Name>
+              <Name>Type</Name>
+              <Name>Ury</Name>
+            </ReferencedProperties>
+          </PropertySet>
+        </Members>
+      </MemberSet>
+      <ScriptProperty>
+        <Name>Type</Name>
+        <GetScriptBlock>
+          $this.GetType().Name
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>  
 </Types>

@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             var args = new ItemEditArgs();
             try
             {
-                bool wasEditing = item.Editing.IsEditing;
+                var wasEditing = item.Editing.IsEditing;
                 if (!wasEditing)
                 {
                     item.Editing.BeginEdit();
@@ -73,17 +73,11 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public class ItemEditArgs
         {
-            public ItemEditArgs()
-            {
-                UpdateStatistics = true;
-                Save = true;
-            }
-
             /// <summary>
             ///     is set to true this instance will update statistics
             ///     default: true
             /// </summary>
-            public bool UpdateStatistics { get; set; }
+            public bool UpdateStatistics { get; set; } = true;
 
             /// <summary>
             ///     if set to true this instance is silent
@@ -95,7 +89,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             ///     if set to true a succesful operation will result in item being saved
             ///     default: true
             /// </summary>
-            public bool Save { get; set; }
+            public bool Save { get; set; } = true;
 
             /// <summary>
             ///     if set to true the edited item will get saved despite exceptions in clause code

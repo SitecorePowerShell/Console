@@ -3,9 +3,9 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 
-namespace Cognifide.PowerShell.Commandlets.Data
+namespace Cognifide.PowerShell.Commandlets.Data.Clones
 {
-    [Cmdlet("ConvertFrom", "ItemClone", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsData.ConvertFrom, "ItemClone", SupportsShouldProcess = true)]
     [OutputType(typeof (Item), ParameterSetName = new[] {"Item from Pipeline", "Item from Path", "Item from ID"})]
     public class ConvertFromItemCloneCommand : BaseLanguageAgnosticItemCommand
     {

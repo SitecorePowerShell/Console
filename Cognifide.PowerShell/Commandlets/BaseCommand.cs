@@ -31,7 +31,6 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected string CurrentDrive => SessionState.Drive.Current.Name;
 
-        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         protected Database CurrentDatabase
         {
             get

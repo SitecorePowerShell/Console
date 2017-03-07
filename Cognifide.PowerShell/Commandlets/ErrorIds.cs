@@ -14,6 +14,7 @@ namespace Cognifide.PowerShell.Commandlets
         InvalidItemType,
         ItemNotFound,
         LanguageNotFound,
+        MethodNotFound,
         NewItemIOError,
         OriginatingScriptSessionNotInteractive,
         RenderingNotFound,
