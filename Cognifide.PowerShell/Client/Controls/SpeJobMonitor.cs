@@ -101,13 +101,12 @@ namespace Cognifide.PowerShell.Client.Controls
                 }
                 else
                 {
-                    IMessage iMessage;
-                    while (job.MessageQueue.GetMessage(out iMessage))
+                    while (job.MessageQueue.GetMessage(out IMessage iMessage))
                     {
                         iMessage.Execute();
-                        if (iMessage is CompleteMessage)
+                        if (iMessage is CompleteMessage completeMessage)
                         {
-                            OnJobFinished((iMessage as CompleteMessage).RunnerOutput);
+                            OnJobFinished(completeMessage.RunnerOutput);
                             return;
                         }
                     }

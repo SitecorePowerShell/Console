@@ -816,8 +816,7 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:scriptchanged")]
         protected void NotifyScriptModified(Message message)
         {
-            bool modified;
-            Boolean.TryParse(message.Arguments["modified"], out modified);
+            Boolean.TryParse(message.Arguments["modified"], out bool modified);
             ScriptModified = modified;
             UpdateRibbon();
         }

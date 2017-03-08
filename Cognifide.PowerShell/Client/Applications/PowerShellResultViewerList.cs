@@ -250,8 +250,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (firstDataItem != null)
             {
                 var originalData = firstDataItem.Original;
-                var item = originalData as Item;
-                if (item != null)
+                if (originalData is Item item)
                 {
                     var urlParams = new UrlString();
                     urlParams.Add("id", item.ID.ToString());
@@ -324,8 +323,7 @@ namespace Cognifide.PowerShell.Client.Applications
         public void UpdateList(string sessionId)
         {
             var key = $"allDataInternal|{sessionId}";
-            var updateData = HttpRuntime.Cache.Remove(key) as UpdateListViewCommand.UpdateListViewData;
-            if (updateData != null)
+            if (HttpRuntime.Cache.Remove(key) is UpdateListViewCommand.UpdateListViewData updateData)
             {
                 ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
                 UpdatePage(1);

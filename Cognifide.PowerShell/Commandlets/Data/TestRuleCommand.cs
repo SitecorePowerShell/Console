@@ -14,8 +14,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
     [OutputType(typeof (bool))]
     public class TestRuleCommand : BaseCommand
     {
-        public static readonly string[] Databases = Factory.GetDatabaseNames(); 
-
         private RuleList<RuleContext> rules;
 
         [Parameter]

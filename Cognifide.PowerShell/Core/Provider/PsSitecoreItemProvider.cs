@@ -49,8 +49,7 @@ namespace Cognifide.PowerShell.Core.Provider
             try
             {
                 LogInfo("Executing ConvertPath(string path='{0}', string recurse='{1}')", path, recurse);
-                Item item;
-                if (!TryGetDynamicParam(ItemParam, out item))
+                if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
                     item = GetItemForPath(path);
                 }
@@ -100,21 +99,18 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing GetChildItems(string path='{0}', string recurse='{1}')", path, recurse);
                 var wildcard = new WildcardPattern(Filter ?? "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
-                string[] language;
-                int version;
-                GetVersionAndLanguageParams(out version, out language);
 
-                Item item;
-                if (!TryGetDynamicParam(ItemParam, out item))
+                GetVersionAndLanguageParams(out int version, out string[] language);
+
+                if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
-                    string id;
                     path = path.Replace("\\", "/");
                     if (path.Contains("../"))
                     {
                         path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
                     }
 
-                    item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
+                    item = TryGetDynamicParam(IdParam, out string id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
 
                 if (IsDynamicParamSet(WithParentParam))
@@ -149,8 +145,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override void GetChildItems(string path, bool recurse)
         {
-            uint depth;
-            if (!TryGetDynamicParam(DepthParam, out depth))
+            if (!TryGetDynamicParam(DepthParam, out uint depth))
             {
                 depth = uint.MaxValue;
             }
@@ -249,10 +244,8 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             LogInfo("Executing GetItem(string path='{0}')", path);
 
-            string[] language;
-            int version;
 
-            GetVersionAndLanguageParams(out version, out language);
+            GetVersionAndLanguageParams(out int version, out string[] language);
 
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
@@ -331,13 +324,16 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private IEnumerable<Item> GetMatchingItem(string[] language, int version, Item item)
         {
-            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            if (dic != null && dic.ContainsKey(AmbiguousPathsParam) && dic[AmbiguousPathsParam].IsSet)
+            if (DynamicParameters is RuntimeDefinedParameterDictionary dic && 
+                dic.ContainsKey(AmbiguousPathsParam) &&
+                dic[AmbiguousPathsParam].IsSet)
             {
                 var ambiguousItems =
                     item.Parent.GetChildren()
                         .Where(child => string.Equals(child.Name, item.Name, StringComparison.CurrentCultureIgnoreCase));
-                foreach (var resultItem in ambiguousItems.SelectMany(ambiguousItem => GetMatchingItemEx(language, version, ambiguousItem)))
+                foreach (
+                    var resultItem in
+                    ambiguousItems.SelectMany(ambiguousItem => GetMatchingItemEx(language, version, ambiguousItem)))
                 {
                     yield return resultItem;
                 }
@@ -409,8 +405,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing CopyItem(string path='{0}', string destination='{1}', bool recurse={2}", path,
                     destination, recurse);
 
-                Item sourceItem;
-                if (!TryGetDynamicParam(ItemParam, out sourceItem))
+                if (!TryGetDynamicParam(ItemParam, out Item sourceItem))
                 {
                     sourceItem = GetItemForPath(path);
                 }
@@ -421,8 +416,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     return;
                 }
 
-                Item destinationItem;
-                if (!TryGetDynamicParam(DestinationItemParam, out destinationItem))
+                if (!TryGetDynamicParam(DestinationItemParam, out Item destinationItem))
                 {
                     destinationItem = GetItemForPath(destination);
                 }
@@ -592,8 +586,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 LogInfo("Executing MoveItem(string path='{0}', string destination='{1}')",
                     path, destination);
                 
-                Item sourceItem;
-                if (!TryGetDynamicParam(ItemParam, out sourceItem))
+                if (!TryGetDynamicParam(ItemParam, out Item sourceItem))
                 {
                     sourceItem = GetItemForPath(path);
                 }
@@ -604,8 +597,7 @@ namespace Cognifide.PowerShell.Core.Provider
                     return;
                 }
 
-                Item destinationItem;
-                if (!TryGetDynamicParam(DestinationItemParam, out destinationItem))
+                if (!TryGetDynamicParam(DestinationItemParam, out Item destinationItem))
                 {
                     if (destination.IndexOf(':') < 0 && path.IndexOf(':') > 0)
                     {

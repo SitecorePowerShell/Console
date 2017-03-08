@@ -87,7 +87,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Tabstrip.OnTabClicked += tabstrip_OnChange;
+            Tabstrip.OnTabClicked += Tabstrip_OnChange;
 
             if (Sitecore.Context.ClientPage.IsEvent)
                 return;
@@ -273,7 +273,7 @@ namespace Cognifide.PowerShell.Client.Applications
             TabOffsetValue.Text = $"<script type='text/javascript'>var tabsOffset={(tabs.Count > 0 ? 24 : 0)};</script>";
         }
 
-        public void tabstrip_OnChange(object sender, EventArgs e)
+        public void Tabstrip_OnChange(object sender, EventArgs e)
         {
             SitecoreVersion.V81.OrOlder(() =>
                         SheerResponse.Eval("ResizeDialogControls();")
@@ -317,9 +317,8 @@ namespace Cognifide.PowerShell.Client.Applications
                                (!string.IsNullOrEmpty(editor) &&
                                 editor.IndexOf("time", StringComparison.OrdinalIgnoreCase) > -1)
                 };
-                if (value is DateTime)
+                if (value is DateTime date)
                 {
-                    var date = (DateTime) value;
                     if (date != DateTime.MinValue && date != DateTime.MaxValue)
                     {
                         dateTimePicker.Value = date.Kind != DateTimeKind.Utc
@@ -751,8 +750,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (requestParams.StartsWith("UserPickerClick("))
             {
                 var controlId = requestParams.Substring(16, requestParams.IndexOf(')') - 16);
-                var picker = ValuePanel.FindControl(controlId) as UserPicker;
-                if (picker != null)
+                if (ValuePanel.FindControl(controlId) is UserPicker picker)
                 {
                     Sitecore.Context.ClientPage.Start(picker, "Clicked");
                 }

@@ -188,8 +188,7 @@ namespace Cognifide.PowerShell.Console.Services
                     session.Output.SilenceOutput = true;
                     try
                     {
-                        List<object> results;
-                        if (session.TryInvokeInRunningSession(script, out results) && results != null)
+                        if (session.TryInvokeInRunningSession(script, out List<object> results) && results != null)
                         {
                             defaultProps = session.IsRunning
                                 ? (session.Output.SilencedOutput?.ToString()

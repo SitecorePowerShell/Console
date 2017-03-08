@@ -258,13 +258,12 @@ namespace Cognifide.PowerShell.Core.Provider
             version = Version.Latest.Number;
             if (dic != null && dic[VersionParam].IsSet)
             {
-                int forcedVersion;
                 var versionParam = dic[VersionParam].Value.ToString();
                 if (versionParam == "*")
                 {
                     version = Int32.MaxValue;
                 }
-                else if (Int32.TryParse(dic[VersionParam].Value.ToString(), out forcedVersion))
+                else if (Int32.TryParse(dic[VersionParam].Value.ToString(), out int forcedVersion))
                 {
                     version = forcedVersion;
                 }

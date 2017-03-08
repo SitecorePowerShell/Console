@@ -44,9 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
 
             if (AccessRules == null)
             {
-                AccessRight accessRight;
-
-                if (!this.TryParseAccessRight(AccessRight, out accessRight)) return;
+                if (!this.TryParseAccessRight(AccessRight, out AccessRight accessRight)) return;
 
                 Account account = this.GetAccountFromIdentity(Identity);
 
@@ -54,9 +52,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Items
                 accessRules.Add(accessRule);
 
                 if (ShouldProcess(item.GetProviderPath(),
-                    string.Format(
-                        "Add access right '{0}' with PropagationType '{1}', SecurityPermission '{2}' for '{3}'",
-                        accessRight.Name, PropagationType, SecurityPermission, Identity.Name)))
+                    $"Add access right '{accessRight.Name}' with PropagationType '{PropagationType}', SecurityPermission '{SecurityPermission}' for '{Identity.Name}'"))
                 {
                     item.Security.SetAccessRules(accessRules);
                 }

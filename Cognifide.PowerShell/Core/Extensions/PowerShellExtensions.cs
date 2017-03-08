@@ -4,7 +4,7 @@ using System.Management.Automation;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
-    internal static class PowerShellExtensions
+    public static class PowerShellExtensions
     {
         public static object BaseObject(this object obj)
         {

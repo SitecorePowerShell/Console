@@ -306,8 +306,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             if (Interactive)
             {
-                var breakpoint = args.Breakpoint as LineBreakpoint;
-                if (breakpoint != null)
+                if (args.Breakpoint is LineBreakpoint breakpoint)
                 {
                     if (string.Equals(breakpoint.Script, DebugFile, StringComparison.OrdinalIgnoreCase))
                     {
@@ -388,8 +387,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                     while (resumeAction == null && !abortRequested)
                     {
-                        var commandString = ImmediateCommand as string;
-                        if (commandString != null)
+                        if (ImmediateCommand is string commandString)
                         {
                             PowerShellLog.Info($"Executing a debug command in ScriptSession '{Key}'.");
                             PowerShellLog.Debug(commandString);
@@ -438,26 +436,19 @@ namespace Cognifide.PowerShell.Core.Host
         }
 
         public bool TryInvokeInRunningSession(string script, bool stringOutput = false)
-        {
-            List<object> results;
-            return TryInvokeInRunningSessionInternal(script, out results, stringOutput);
-        }
+            => TryInvokeInRunningSessionInternal(script, out List<object> results, stringOutput);
+
 
         public bool TryInvokeInRunningSession(string script, out List<object> results, bool stringOutput = false)
-        {
-            return TryInvokeInRunningSessionInternal(script, out results, stringOutput);
-        }
+            => TryInvokeInRunningSessionInternal(script, out results, stringOutput);
+
 
         public bool TryInvokeInRunningSession(Command command, bool stringOutput = false)
-        {
-            List<object> results;
-            return TryInvokeInRunningSessionInternal(command, out results, stringOutput);
-        }
+            => TryInvokeInRunningSessionInternal(command, out List<object> results, stringOutput);
 
         public bool TryInvokeInRunningSession(Command command, out List<object> results, bool stringOutput = false)
-        {
-            return TryInvokeInRunningSessionInternal(command, out results, stringOutput);
-        }
+            => TryInvokeInRunningSessionInternal(command, out results, stringOutput);
+        
 
         private bool TryInvokeInRunningSessionInternal(object executable, out List<object> results, bool stringOutput)
         {
@@ -564,8 +555,7 @@ namespace Cognifide.PowerShell.Core.Host
 
                 ExecuteScriptPart(RenamedCommands.AliasSetupScript, false, true, false);
 
-                var psVersionTable = GetVariable("PSVersionTable") as Hashtable;
-                if (psVersionTable != null)
+                if (GetVariable("PSVersionTable") is Hashtable psVersionTable)
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
                 }
@@ -685,14 +675,11 @@ namespace Cognifide.PowerShell.Core.Host
         }
 
         public static Command OutDefaultCommand
-        {
-            get
+            => new Command("Out-Default")
             {
-                var command = new Command("Out-Default");
-                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
-                return command;
-            }
-        }
+                MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
+            };
+
         /// <summary>
         /// command for formatted output of everything.
         /// </summary>
@@ -700,14 +687,10 @@ namespace Cognifide.PowerShell.Core.Host
         /// "Out-Default" is not suitable for external apps, output goes to console.
         /// </remarks>
         public static Command OutHostCommand
-        {
-            get
+            => new Command("Out-Host")
             {
-                var command = new Command("Out-Host");
-                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
-                return command;
-            }
-        }
+                MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
+            };
 
         /// <summary>
         /// command for formatted output of everything.
@@ -716,14 +699,10 @@ namespace Cognifide.PowerShell.Core.Host
         /// "Out-Default" is not suitable for external apps, output goes to console.
         /// </remarks>
         public static Command OutNullCommand
-        {
-            get
+            => new Command("Out-Null")
             {
-                var command = new Command("Out-Null");
-                command.MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error;
-                return command;
-            }
-        }
+                MergeUnclaimedPreviousCommandResults = PipelineResultTypes.Output | PipelineResultTypes.Error
+            };
 
         private List<object> ExecuteCommand(bool stringOutput, bool marshallResults = true)
         {
