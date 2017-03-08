@@ -41,7 +41,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Clones
             {
                 if (!item.IsItemClone)
                 {
-                    WriteError(typeof(InvalidTypeException), "The specified item is not a clone.", ErrorIds.InvalidItemType, ErrorCategory.InvalidType, null);
+                    WriteError(typeof(InvalidTypeException), $"Item `{item.GetProviderPath()}` is not a clone.",
+                        ErrorIds.InvalidItemType, ErrorCategory.InvalidType, item);
                 }
             }
             if (Recurse)
