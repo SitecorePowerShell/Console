@@ -13,14 +13,20 @@ templatekey: PowerShell Script
 field: {1C76313E-3C8C-4807-A826-135D10C39299}
 name: ShowRule
 key: showrule
-content-length: 504
+content-length: 1015
 
 <ruleset>
   <rule uid="{5D28FA9D-7CF5-47F9-8044-AEF073988BDF}">
     <conditions>
-      <or uid="D882D1E5CBE74E1EBA6CC0393C24CBE8">
-        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="28B5627BF98349CDA20530EBE1240DAE" templateid="{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" />
-        <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="04109C1E03F74103A68BF54E3FC49F2F" templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+      <or uid="B0500B92A09743AA80FEE5F7169B8AA6">
+        <and uid="919E21ACA030494A8575F9A30E3CFD3B">
+          <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="28B5627BF98349CDA20530EBE1240DAE" templateid="{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}" />
+          <condition id="{61C016A2-5210-4F1D-A663-BDA18BE487F6}" uid="2DEFB01EAB5D4C7780D2F77BA456A6B8" fieldname="Script" operatorid="{2E67477C-440C-4BCA-A358-3D29AED89F47}" value="Pester" />
+        </and>
+        <and uid="BBC8A1D56E6443FFBFB0D18D82910659">
+          <condition id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}" uid="04109C1E03F74103A68BF54E3FC49F2F" templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+          <condition id="{4B889F07-94D4-4371-B522-9FFE8AF0BE12}" uid="511C6FF14A7349DA874663F54BFBC9E8" operatorid="{2E67477C-440C-4BCA-A358-3D29AED89F47}" value="test" />
+        </and>
       </or>
     </conditions>
   </rule>
@@ -29,25 +35,35 @@ content-length: 504
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 716
+content-length: 1056
 
 $scriptTemplateId = "{DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}"
 $scriptLibraryTemplateId = "{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}"
-$contextItem = Get-Item -Path "."
-if($contextItem) {
-    if($contextItem.TemplateId -eq $scriptTemplateId) {
-        Execute-Script $contextItem
-    } elseif($contextItem.TemplateId -eq $scriptLibraryTemplateId) {
-        $childItems = Get-ChildItem -Path "$($contextItem.Database.Name):\" -ID $contextItem.ID -Recurse | 
-            Where-Object { $_.TemplateId -eq $scriptTemplateId } | 
-            Foreach-Object { Execute-Script -Item $_ }
-    } else {
-        Write-Output "No script or script library specified."
+
+function Invoke-TestsForItem {
+	[CmdletBinding()]
+	param(
+	    [ValidateNotNullOrEmpty()]
+	    [item]$ContextItem
+	)
+    if($contextItem) {
+        if($contextItem.TemplateId -eq $scriptTemplateId -and $contextItem.Script -Like "*Import-Module*Pester*") {
+            Write-Verbose "Invoking scripts in $($contextItem.ProviderPath)"
+            Execute-Script $contextItem
+        } elseif($contextItem.TemplateId -eq $scriptLibraryTemplateId) {
+            $childItems = Get-ChildItem -Path "$($contextItem.Database.Name):\" -ID $contextItem.ID -Recurse | 
+                Where-Object { $_.TemplateId -eq $scriptTemplateId } | 
+                Foreach-Object { Invoke-TestsForItem -ContextItem $_ }
+        } else {
+            Write-Verbose "$($contextItem.ProviderPath) does not contain any Pester tests"
+        }
     }
-    
-    Show-Result -Text
-    Close-Window
 }
+
+Invoke-TestsForItem (Get-Item -Path ".")
+Show-Result -Text
+Close-Window
+
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -58,7 +74,7 @@ Office/32x32/clipboard_checks.png
 ----version----
 language: en
 version: 1
-revision: b55c817a-b0fe-4ef0-960d-4955b63e7e2a
+revision: 03f0c676-e9d9-4b4e-9be8-70f4d2c7f44b
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -73,14 +89,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-b55c817a-b0fe-4ef0-960d-4955b63e7e2a
+03f0c676-e9d9-4b4e-9be8-70f4d2c7f44b
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160518T221822
+20170308T152449
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
