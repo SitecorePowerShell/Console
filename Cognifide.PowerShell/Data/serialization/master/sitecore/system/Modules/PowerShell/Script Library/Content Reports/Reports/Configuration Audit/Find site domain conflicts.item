@@ -13,63 +13,79 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 2606
+content-length: 2835
 
 $sites = [Sitecore.Sites.SiteManager]::GetSites()
 $usedUrls = @();
 $outSites = @();
 $conflicts = 0;
-$progress= 0;
+$progress = 0;
+$ignoredSites = @() #@("shell", "system", "publisher", "scheduler", "login", "admin", "service", "modules_shell", "modules_website");
 
-foreach($siteObj in $sites){
-    Write-Progress -PercentComplete ($progress / $sites.Count) -Activity "Processing Sites List" -CurrentOperation "Analysing $($siteObj.Name)" -Status "Analysing"
-    $site = $siteObj.Properties;
-    $hostName = $site["hostName"];
-    if($hostName -ne $null -and $hostName -ne ""){
-        $currUrls = $site["hostName"].Split("|") | %{ $_+$site["virtualFolder"] };
-        #$domains | %{ $_+ " | "+$siteObj.Name 
-        $conflicted = $false
-        foreach($currUrl in $currUrls){
-            foreach($url in $usedUrls){
-                if($currUrl.StartsWith($url.Url)){
-                    if(-not $conflicted){
-                        #"New conflict"
-                        Add-Member -InputObject $siteObj -MemberType NoteProperty -Name "Conflict" -Value "<i>$currUrl</i>&nbsp; hidden by <i>$($url.url)</i> from <b>$($url.UsedBy)</b>"
-                    }
-                    else {
-                        #"Conflicted already"
-                        $siteObj.Conflict = "$($siteObj.Conflict) <span style='color:red;'>|</span> <i>$currUrl</i>&nbsp; hidden by <i>$($url.url)</i> from <b>$($url.UsedBy)</b>"
-                    }
-                    $conflicted = $true
-                }
-            }
-            $usedUrls += @{Url=$currUrl; UsedBy=$siteObj.Name};
-        }
-        if($conflicted){
-            $conflicts++
-        }
-    $outSites += ,$siteObj;
-    }
+foreach ($siteObj in $sites) {
+
+	Write-Progress -PercentComplete ($progress / $sites.Count) -Activity "Processing Sites List" -CurrentOperation "Analysing $($siteObj.Name)" -Status "Analysing";
+	$site = $siteObj.Properties;
+	$hostName = $site["hostName"];
+    $sitename = $siteObj.Name;
+    
+	if ($hostName -eq $null -or $hostName -eq "") {
+		$hostName = "*";
+	}
+	if($ignoredSites -contains $sitename){
+	    continue;
+	}
+
+    $virtualVolder = if($site["virtualFolder"]) {$site["virtualFolder"].Trim("/")} else {[string]::Empty};
+	$currUrls = $hostName.Split("|") | % { $hostName + "/" + $virtualVolder };
+
+	$conflicted = $false
+	foreach ($currUrl in $currUrls) {
+		foreach ($url in $usedUrls) {
+			if ($currUrl -like $url.Url) {
+				$conflictText = "<italics>$currUrl</italics>&nbsp; hidden by <italics>$($url.url)</italics> from <b>$($url.UsedBy)</b>";
+				if (-not $conflicted) {
+					#"New conflict"
+					if (Get-Member -InputObject $siteObj -Name "Conflict" -MemberType NoteProperty) {
+						$siteObj.Conflict = $conflictText;
+					} else
+					{
+						Add-Member -InputObject $siteObj -MemberType NoteProperty -Name "Conflict" -Value $conflictText;
+					}
+				}
+				else {
+					#"Conflicted already"
+					$siteObj.Conflict = "$($siteObj.Conflict) <span style='color:red;'>and</span> $conflictText";
+				}
+				$conflicted = $true;
+			}
+		}
+		$usedUrls += @{ Url = $currUrl; UsedBy = $siteObj.Name };
+	}
+	if ($conflicted) {
+		$conflicts++;
+	}
+	$outSites +=,$siteObj;
 }
 
 
-if($conflicts -gt 0) {
-    $conflictText = "There are <b>$conflicts</b> conflicts in your site management configuration.<br/>"+`
-        "Consider moving the more generic sites that hide your other sites down the list so they don't hijack the requests.";
+if ($conflicts -gt 0) {
+	$conflictText = "There are <b>$conflicts</b> conflicts in your site management configuration.<br/>" + `
+ 		"Consider moving the more generic sites that hide your other sites down the list so they don't hijack the requests.";
 } else {
-    $conflictText = "Congratulations your Sitecore instance has no domain collisions!";
+	$conflictText = "Congratulations your Sitecore instance has no domain collisions!";
 }
 
-$outSites | Show-ListView  -Title "Site Manager Report" -InfoTitle "Site domain collision report" -InfoDescription $conflictText -MissingDataMessage "No domains defined" `
-    -Property `
-     @{Label="Site"; Expression={$_.Name}}, 
-     @{Label="Host"; Expression={$_.Properties["hostName"]}},
-     @{Label="Virtual Folder"; Expression={$_.Properties["virtualFolder"]}},
-     @{Label="State"; Expression={ if ($_.Conflict -ne $null) {"Conflict"} else {"OK"}}},
-     @{Label="Hidden domains"; Expression={$_.Conflict}},
-     @{Label="Icon"; Expression={ if ($_.Conflict -ne $null) {"Applications/32x32/forbidden.png"} else {"Applications/32x32/check.png"}}}
+$outSites | Show-ListView -Title "Site Manager Report" -InfoTitle "Site domain collision report" -InfoDescription $conflictText -MissingDataMessage "No domains defined" `
+ 	-Property `
+ 	@{ Label = "Site"; Expression = { $_.Name } },
+@{ Label = "Host"; Expression = { $_.Properties["hostName"] } },
+@{ Label = "Virtual Folder"; Expression = { $_.Properties["virtualFolder"] } },
+@{ Label = "State"; Expression = { if ($_.Conflict -ne $null) { "Conflict" } else { "OK" } } },
+@{ Label = "Hidden domains"; Expression = { $_.Conflict } },
+@{ Label = "Icon"; Expression = { if ($_.Conflict -ne $null) { "Applications/32x32/forbidden.png" } else { "Applications/32x32/check.png" } } };
 
-Close-Window
+Close-Window 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
 name: __Icon
@@ -80,7 +96,7 @@ Applications/32x32/help_earth.png
 ----version----
 language: en
 version: 1
-revision: d9005677-35c5-4d93-9827-75c227f474f4
+revision: 7ac7a6ab-840b-4bc0-a97e-74230c4c4841
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -95,14 +111,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-d9005677-35c5-4d93-9827-75c227f474f4
+7ac7a6ab-840b-4bc0-a97e-74230c4c4841
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20150125T145218:635577943385849609
+20170309T124055
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

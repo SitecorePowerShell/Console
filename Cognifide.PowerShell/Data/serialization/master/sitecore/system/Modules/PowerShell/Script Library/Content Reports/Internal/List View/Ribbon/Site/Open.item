@@ -2,7 +2,7 @@
 version: 1
 id: {A328DBB5-DC6C-4307-AD7C-BC1E330F011A}
 database: master
-path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/Site/Open
+path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Internal/List View/Ribbon/Site/Open
 parent: {F6129B06-151D-40DB-ABBD-53E41727CACA}
 name: Open
 master: {00000000-0000-0000-0000-000000000000}
