@@ -27,7 +27,9 @@ namespace Cognifide.PowerShell.Core.Extensions
             {"ItemPath", "$this.Paths.Path"},
             {"FullPath", "$this.Paths.FullPath"},
             {"MediaPath", "$this.Paths.MediaPath"},
-            {"ContentPath", "$this.Paths.ContentPath"}
+            {"ContentPath", "$this.Paths.ContentPath"},
+            {"ProviderPath", "[Cognifide.PowerShell.Core.Utility.PathUtilities]::GetProviderPath($this)"},
+            {"BaseTemplate", "[Sitecore.Data.Managers.TemplateManager]::GetTemplate($this).GetBaseTemplates()"}
         };
 
         //internal static PSObject GetPSObject(CmdletProvider provider, Item item)
@@ -92,9 +94,12 @@ namespace Cognifide.PowerShell.Core.Extensions
 
             foreach (var customGetter in customGetters.Keys)
             {
-                psobj.Properties.Add(new PSScriptProperty(
-                    customGetter,
-                    provider.InvokeCommand.NewScriptBlock(customGetters[customGetter])));
+                if (psobj.Properties[customGetter] == null)
+                {
+                    psobj.Properties.Add(new PSScriptProperty(
+                        customGetter,
+                        provider.InvokeCommand.NewScriptBlock(customGetters[customGetter])));
+                }
             }
 
 
