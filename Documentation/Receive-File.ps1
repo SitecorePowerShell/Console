@@ -69,7 +69,7 @@
     .EXAMPLE
         # Upload text.txt file to server disk drive.
         # A new file is created with a non-conflicting name and the path to it is returned
-        PS master:\> Receive-File -Folder "C:\temp\upload"
+        PS master:\> Receive-File -Path "C:\temp\upload"
 	C:\temp\upload\text_029.txt
     .EXAMPLE
         # Upload text.txt file to media library under the 'master:\media library\Files' item
