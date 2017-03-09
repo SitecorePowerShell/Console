@@ -33,6 +33,12 @@
         </Members>
       </MemberSet>
       <ScriptProperty>
+        <Name>ProviderPath</Name>
+        <GetScriptBlock>
+          [Cognifide.PowerShell.Core.Utility.PathUtilities]::GetProviderPath($this)
+        </GetScriptBlock>
+      </ScriptProperty>          
+      <ScriptProperty>
         <Name>BaseTemplate</Name>
         <GetScriptBlock>
           [Sitecore.Data.Managers.TemplateManager]::GetTemplate($this).GetBaseTemplates()
