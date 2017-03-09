@@ -22,7 +22,7 @@ name: Click
 key: click
 content-length: 139
 
-ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=430,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})
+ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})
 ----field----
 field: {CCD6BDE9-0A7A-4DA3-B0ED-D3C0F65379FE}
 name: KeyCode
@@ -61,7 +61,7 @@ content-length: 0
 ----version----
 language: en
 version: 1
-revision: ef085695-7dc2-4b92-96fc-068bf5eced00
+revision: 93c342a0-8630-4805-bd1d-48c2e5bde408
 
 ----field----
 field: {4DF6DA21-E745-444C-956E-1D4A96AB8821}
@@ -104,14 +104,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-ef085695-7dc2-4b92-96fc-068bf5eced00
+93c342a0-8630-4805-bd1d-48c2e5bde408
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
-content-length: 34
+content-length: 15
 
-20160129T104519:635896611196811957
+20170309T130433
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by

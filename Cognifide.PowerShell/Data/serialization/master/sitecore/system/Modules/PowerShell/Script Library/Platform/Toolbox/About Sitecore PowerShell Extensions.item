@@ -16,7 +16,7 @@ key: script
 content-length: 198
 
 Close-Window
-Invoke-ShellCommand -Path master:\ -Name "ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=430,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
+Invoke-ShellCommand -Path master:\ -Name "ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
 
 ----field----
 field: {06D5295C-ED2F-4A54-9BF2-26228D113318}
@@ -35,7 +35,7 @@ content-length: 3
 ----version----
 language: en
 version: 1
-revision: 0c07a158-1fa0-4edb-a782-9b35ce9439b9
+revision: 06a0acee-5e98-475d-b70d-2a2ebb97768d
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -50,14 +50,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-0c07a158-1fa0-4edb-a782-9b35ce9439b9
+06a0acee-5e98-475d-b70d-2a2ebb97768d
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160530T150357
+20170309T130351
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
