@@ -27,14 +27,14 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private static void AddProvider4(InitialSessionState state)
         {
-            state.Providers.Add(new SessionStateProviderEntry("CmsItemProvider",
+            state.Providers.Add(new SessionStateProviderEntry("Sitecore",
                 typeof(PsSitecoreItemProvider),
                 string.Empty));
         }
 
         private static void AddProvider5(InitialSessionState state)
         {
-            state.Providers.Add(new SessionStateProviderEntry("CmsItemProvider",
+            state.Providers.Add(new SessionStateProviderEntry("Sitecore",
                 typeof(PsSitecoreItemProvider5),
                 string.Empty));
         }
