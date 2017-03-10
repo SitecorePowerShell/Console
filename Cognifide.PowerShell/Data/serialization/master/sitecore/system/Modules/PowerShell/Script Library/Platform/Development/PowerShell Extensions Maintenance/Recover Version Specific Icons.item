@@ -13,7 +13,7 @@ templatekey: PowerShell Script
 field: {B1A94FF0-6897-47C0-9C51-AA6ACB80B1F0}
 name: Script
 key: script
-content-length: 13880
+content-length: 13894
 
 $icons8 = @{
 'core:\content\Applications\PowerShell\PowerShellIse\Menus\Context\Do not set location' = 'Office/32x32/sign_forbidden.png';
@@ -59,7 +59,7 @@ $icons8 = @{
 'master:/system/Modules/PowerShell/Script Library/Index On Demand/Content Editor/Context Menu/Index this' = 'office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/Index On Demand/Content Editor/Context Menu/Index this and descendants' = 'office/32x32/rebuild_all_indexes.png';
 'master:/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/Item/Open' = 'Office/32x32/nav_right.png';
-'master:/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/Site/Open' = 'Office/32x32/nav_right.png';
+'master:/system/Modules/PowerShell/Script Library/Content Reports/Internal/List View/Ribbon/Site/Open' = 'Office/32x32/nav_right.png';
 'master:/system/Modules/PowerShell/Script Library/Platform/Toolbox/About Sitecore PowerShell Extensions' = 'Office/32x32/information.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up database tables' = 'office/32x32/data.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Office/32x32/data.png';
@@ -112,7 +112,7 @@ $icons7 = @{
 'master:/system/Modules/PowerShell/Script Library/Index On Demand/Content Editor/Context Menu/Index this' = 'Database/32x32/db_sql_execute.png';
 'master:/system/Modules/PowerShell/Script Library/Index On Demand/Content Editor/Context Menu/Index this and descendants' = 'Database/32x32/db_sql_execute_h.png';
 'master:/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/Item/Open' = 'Control/16x16/treeview.png';
-'master:/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/Site/Open' = 'Control/16x16/treeview.png';
+'master:/system/Modules/PowerShell/Script Library/Content Reports/Internal/List View/Ribbon/Site/Open' = 'Control/16x16/treeview.png';
 'master:/system/Modules/PowerShell/Script Library/Platform/Toolbox/About Sitecore PowerShell Extensions' = 'Applications/32x32/about.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up database tables' = 'Business/32x32/data_replace.png';
 'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up databases' = 'Business/32x32/data_ok.png';
@@ -158,7 +158,7 @@ foreach($path in $icons.Keys){
 ----version----
 language: en
 version: 1
-revision: 64ecb11d-8c7f-414c-b82b-c20a7d9e5777
+revision: 9e9e4284-b61e-44b4-ad1e-919071d59343
 
 ----field----
 field: {25BED78C-4957-4165-998A-CA1B52F67497}
@@ -173,14 +173,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-64ecb11d-8c7f-414c-b82b-c20a7d9e5777
+9e9e4284-b61e-44b4-ad1e-919071d59343
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20170305T204900
+20170309T144803
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
