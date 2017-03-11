@@ -74,41 +74,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Analytics">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Analytics.dll</HintPath>
+    <Reference Include="Sitecore.Analytics, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Analytics.NoReferences.8.2.161221\lib\NET452\Sitecore.Analytics.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Client">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Client.dll</HintPath>
+    <Reference Include="Sitecore.Client, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Client.NoReferences.8.2.161221\lib\NET452\Sitecore.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.NoReferences.8.2.161221\lib\NET452\Sitecore.ContentSearch.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Linq">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Linq, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.Linq.NoReferences.8.2.161221\lib\NET452\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Kernel">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Kernel.dll</HintPath>
+    <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.161221\lib\NET452\Sitecore.Kernel.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Logging">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
+    <Reference Include="Sitecore.Logging, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Logging.NoReferences.8.2.161221\lib\NET452\Sitecore.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.NVelocity">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.NVelocity.dll</HintPath>
+    <Reference Include="Sitecore.Update, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Update.NoReferences.8.2.161221\lib\NET452\Sitecore.Update.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Update">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
-    </Reference>
-    <Reference Include="Sitecore.Zip">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Zip.dll</HintPath>
+    <Reference Include="Sitecore.Zip, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Zip.NoReferences.8.2.161221\lib\NET452\Sitecore.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -515,6 +503,7 @@
     <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
+    <Content Include="packages.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
     <Content Include="sitecore modules\PowerShell\Assets\error.png" />
