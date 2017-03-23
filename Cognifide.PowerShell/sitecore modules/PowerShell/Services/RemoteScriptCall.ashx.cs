@@ -25,6 +25,7 @@ using Sitecore.Resources.Media;
 using Sitecore.Security.Authentication;
 using Sitecore.SecurityModel;
 using Sitecore.Web;
+using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -524,47 +525,42 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessHandle(string originParam)
         {
-            if (string.IsNullOrEmpty(originParam))
+            if (originParam.IsNullOrEmpty())
             {
                 HttpContext.Current.Response.StatusCode = 404;
             }
             else
             {
                 // download handle
-                var values = WebUtil.GetSessionValue(originParam) as OutDownloadMessage;
-                if (values == null)
+                if (!(WebUtil.GetSessionValue(originParam) is OutDownloadMessage message))
                 {
                     HttpContext.Current.Response.StatusCode = 404;
                     return;
                 }
                 WebUtil.RemoveSessionValue(originParam);
-                var Response = HttpContext.Current.Response;
-                Response.Clear();
-                Response.AddHeader("Content-Disposition", "attachment; filename=" + values.Name);
-                Response.ContentType = values.ContentType;
-                var fileContent = values.Content as FileInfo;
-                if (fileContent != null)
+                var response = HttpContext.Current.Response;
+                response.Clear();
+                response.AddHeader("Content-Disposition", "attachment; filename=" + message.Name);
+                response.ContentType = message.ContentType;
+                switch (message.Content)
                 {
-                    Response.WriteFile(fileContent.FullName);
+                    case FileInfo fileContent:
+                        response.WriteFile(fileContent.FullName);
+                        break;
+                    case string strContent:
+                        response.Output.Write(strContent);
+                        //Adam: Removing the below - to remedy Issue #863
+                        //response.AddHeader("Content-Length",
+                        //    strContent.Length.ToString(CultureInfo.InvariantCulture));
+                        break;
+                    case byte[] byteContent:
+                        response.OutputStream.Write(byteContent, 0, byteContent.Length);
+                        response.AddHeader("Content-Length",
+                            byteContent.Length.ToString(CultureInfo.InvariantCulture));
+                        break;
                 }
 
-                var strContent = values.Content as string;
-                if (strContent != null)
-                {
-                    Response.Output.Write("{0}", strContent);
-                    Response.AddHeader("Content-Length",
-                        strContent.Length.ToString(CultureInfo.InvariantCulture));
-                }
-
-                var byteContent = values.Content as byte[];
-                if (byteContent != null)
-                {
-                    Response.OutputStream.Write(byteContent, 0, byteContent.Length);
-                    Response.AddHeader("Content-Length",
-                    byteContent.Length.ToString(CultureInfo.InvariantCulture));
-                }
-
-                Response.End();
+                response.End();
             }
         }
 

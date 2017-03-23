@@ -7,6 +7,7 @@ using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
+using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
@@ -21,10 +22,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public OutDownloadMessage(object content, string name, string contentType)
         {
             Content = content;
-            ContentType= string.IsNullOrEmpty(contentType)
+            ContentType= contentType.IsNullOrEmpty()
                             ? "application/octet-stream"
                             : contentType;
-            Name = string.IsNullOrEmpty(name) ? "document.txt" : name;
+            Name = name.IsNullOrEmpty() ? "document.txt" : name;
             Handle = ID.NewID.ToShortID().ToString();
         }
 

@@ -61,7 +61,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 else
                 {
-                    WriteError(typeof(FormatException), "InputObject must be of type string, strings[], Stream byte[]",
+                    WriteError(typeof(FormatException), "InputObject must be of type string, string[], byte[], Stream or FileInfo",
                         ErrorIds.InvalidItemType, ErrorCategory.InvalidType, InputObject, true);
                     WriteObject(false);
                     return;
