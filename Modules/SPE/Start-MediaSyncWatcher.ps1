@@ -219,14 +219,10 @@ function global:Stop-FolderMediaSync {
 
 
 function Stop-MediaSyncWatcher {
-	param(
-		[Parameter(Mandatory = $true,Position = 0)]
-		[string]$configPath
-	)
 	<#
 
     .SYNOPSIS
-        Synchronize local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
+        Stops synchronization of local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
 
     .DESCRIPTION
         The script allows you to work with SXA Themes in a more comfortable way.
@@ -248,6 +244,10 @@ function Stop-MediaSyncWatcher {
 
     #>
 
+	param(
+		[Parameter(Mandatory = $true,Position = 0)]
+		[string]$configPath
+	)
 
 	$themeFolders = global:GetConfigNodeValues $configPath "mediaSync/folder/@path"
 	foreach ($themeFolder in $themeFolders)
@@ -257,15 +257,11 @@ function Stop-MediaSyncWatcher {
 }
 
 function Start-MediaSyncWatcher {
-	param(
-		[Parameter(Mandatory = $true,Position = 0)]
-		[string]$configPath
-	)
 	<#
 
     .SYNOPSIS
-        Stops synchronization of local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
-
+		Synchronize local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance        
+    
     .DESCRIPTION
         The script allows you to stops synchronization of local folder (with subfolders) with Media Library (matching structure) on a remote Sitecore instance
 
@@ -278,36 +274,41 @@ function Start-MediaSyncWatcher {
 
 		The script requires xml config file with a following structure
 		
-		<?xml version="1.0" encoding="utf-8"?>
-		<mediaSync>
-			<folder path="C:\Projects\Showcase">
-				<site>
-					<host>http://sxa</host>
-					<credentials>
-						<login>sitecore\admin</login>
-						<password>b</password>
-					</credentials>
-				</site>
-				<media>
-					<mediaFolder>Project/Showcase</mediaFolder>			
-					<skippedPaths>
-						<mask>.sass-cache*</mask>
-						<mask>*optimized*</mask>				
-						<mask>Styles.css</mask>
-						<mask>node_modules*</mask>
-						<mask>Showcase.zip</mask>
-						<mask>Scripts\concat.js</mask>				
-					</skippedPaths>
-				</media>
-			</folder>			<!-- it's possible to add here few more folders for sync -->			
-		</mediaSync>
-
+	    <?xml version="1.0" encoding="utf-8"?>
+	    <mediaSync>
+            <folder path="C:\Projects\Showcase">
+                <site>
+                    <host>http://sxa</host>
+                    <credentials>
+                        <login>sitecore\admin</login>
+                        <password>b</password>
+                    </credentials>
+                </site>
+                <media>
+                    <mediaFolder>Project/Showcase</mediaFolder>			
+                    <skippedPaths>
+                        <mask>.sass-cache*</mask>
+                        <mask>*optimized*</mask>				
+                        <mask>Styles.css</mask>
+                        <mask>node_modules*</mask>
+                        <mask>Showcase.zip</mask>
+                        <mask>Scripts\concat.js</mask>				
+                    </skippedPaths>
+                </media>
+            </folder>			<!-- it's possible to add here few more folders for sync -->			
+        </mediaSync>
+		
     .NOTES
 
 	Author PowerShell:  Adam Najmanowicz
 	Version: 1.0.0 29.March.2017
 
     #>
+
+	param(
+		[Parameter(Mandatory = $true,Position = 0)]
+		[string]$configPath
+	)
     	
 	$themeFolders = global:GetConfigNodeValues $configPath "mediaSync/folder/@path"
 	foreach ($themeFolder in $themeFolders)
