@@ -74,6 +74,7 @@
         '.\Stop-ScriptSession.ps1',
         '.\Test-RemoteConnection.ps1',
         '.\Wait-RemoteScriptSession.ps1',
+        '.\Start-MediaSyncWatcher.ps1',
         '.\Wait-RemoteSitecoreJob.ps1'
     )
     
@@ -90,6 +91,8 @@
         'Stop-ScriptSession',
         'Test-RemoteConnection',
         'Wait-RemoteScriptSession',
+        'Start-MediaSyncWatcher',
+        'Stop-MediaSyncWatcher',
         'Wait-RemoteSitecoreJob'
     )
 
