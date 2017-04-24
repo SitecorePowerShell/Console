@@ -62,6 +62,8 @@ namespace Cognifide.PowerShell.Console.Services
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
             var unpackZip = request.Params.Get("skipunpack").IsNot("true");
             var skipExisting = request.Params.Get("skipexisting").Is("true");
+            var scDB = request.Params.Get("sc_database");
+
             var serviceName = apiVersionToServiceMapping.ContainsKey(serviceMappingKey)
                 ? apiVersionToServiceMapping[serviceMappingKey]
                 : string.Empty;
@@ -92,6 +94,13 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             var isAuthenticated = Context.IsLoggedIn;
+
+            // in some cases we need to set the database as it's still set to web after authentication
+            if (!scDB.IsNullOrEmpty())
+            {
+                Context.Database = Database.GetDatabase(scDB);
+            }
+
             var useContextDatabase = apiVersion.Is("file") || apiVersion.Is("handle") || !isAuthenticated ||
                                      string.IsNullOrEmpty(originParam) || originParam.Is("current");
             var scriptDb = useContextDatabase ? Context.Database : Database.GetDatabase(originParam);
