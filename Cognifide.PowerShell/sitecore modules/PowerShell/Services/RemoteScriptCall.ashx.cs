@@ -149,7 +149,11 @@ namespace Cognifide.PowerShell.Console.Services
                                 }
                             }
                         }
-                        else
+                        else if (request.Files?.AllKeys?.Length > 0)
+                        {
+                            ProcessMediaUpload(request.Files[0].InputStream, scriptDb, itemParam, null, skipExisting);
+                        }
+                        else 
                         {
                             ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
                         }
