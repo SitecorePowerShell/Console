@@ -139,11 +139,12 @@ namespace Cognifide.PowerShell.Console.Services
                             PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
                             using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                             {
+                                itemParam = Path.GetDirectoryName(itemParam.TrimEnd('\\','/'));
                                 foreach (var zipEntry in packageReader.Entries)
                                 {
                                     if (!zipEntry.IsDirectory && zipEntry.Size > 0)
                                     {
-                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, itemParam, zipEntry.Name,
+                                        ProcessMediaUpload(zipEntry.GetStream(), scriptDb, $"{itemParam}/{zipEntry.Name}",
                                             skipExisting);
                                     }
                                 }
@@ -151,11 +152,16 @@ namespace Cognifide.PowerShell.Console.Services
                         }
                         else if (request.Files?.AllKeys?.Length > 0)
                         {
-                            ProcessMediaUpload(request.Files[0].InputStream, scriptDb, itemParam, null, skipExisting);
+                            foreach (string fileName in request.Files.Keys)
+                            {
+                                var file = request.Files[fileName];
+                                ProcessMediaUpload(file.InputStream, scriptDb, $"{itemParam}/{file.FileName}",
+                                    skipExisting);
+                            }
                         }
                         else 
                         {
-                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, null, skipExisting);
+                            ProcessMediaUpload(request.InputStream, scriptDb, itemParam, skipExisting);
                         }
                     }
                     else
@@ -343,36 +349,41 @@ namespace Cognifide.PowerShell.Console.Services
             return folder;
         }
 
-        private static void ProcessMediaUpload(Stream content, Database db, string itemParam, string entryName, bool skipExisting = false)
+        private static void ProcessMediaUpload(Stream content, Database db, string path, bool skipExisting = false)
         {
             var guidPattern = @"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})";
 
-            var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
-                            db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
-            if (mediaItem == null && Regex.IsMatch(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            path = path.Replace('\\', '/').TrimEnd('/');
+            path = (path.StartsWith("/") ? path : "/" + path);
+            var originalPath = path;
+            var dotIndex = path.IndexOf(".",StringComparison.OrdinalIgnoreCase);
+            if (dotIndex > -1)
             {
-                var id = Regex.Match(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
+                path = path.Substring(0,dotIndex);
+            }
+
+            if (!path.StartsWith(Constants.MediaLibraryPath))
+            {
+                path = Constants.MediaLibraryPath + (path.StartsWith("/") ? path : "/" + path);
+            }
+
+            var mediaItem = (MediaItem)db.GetItem(path);
+
+            if (mediaItem == null && Regex.IsMatch(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            {
+                var id = Regex.Match(originalPath, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
                 mediaItem = db.GetItem(id);
             }
 
             if (mediaItem == null)
             {
-                var filename = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
-                var dirName = (Path.GetDirectoryName(filename) ?? string.Empty).Replace('\\', '/');
-                if (!dirName.StartsWith(Constants.MediaLibraryPath))
-                {
-                    dirName = Constants.MediaLibraryPath + (dirName.StartsWith("/") ? dirName : "/" + dirName);
-                }
+                var fileName = Path.GetFileName(originalPath);
+                var itemName = Path.GetFileNameWithoutExtension(path);
+                var dirName = (Path.GetDirectoryName(path) ?? string.Empty).Replace('\\','/');
 
-                if (!String.IsNullOrEmpty(entryName))
+                if (String.IsNullOrEmpty(fileName))
                 {
-                    dirName += "/" + Path.GetDirectoryName(entryName).Replace('\\', '/');
-                    filename = Path.GetFileName(entryName);
-                }
-
-                if (String.IsNullOrEmpty(filename))
-                {
-                    PowerShellLog.Warn($"The filename cannot be determined for the entry {entryName}.");
+                    PowerShellLog.Warn($"The filename cannot be determined for the entry {fileName}.");
                     return;
                 }
 
@@ -380,14 +391,14 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     Database = db,
                     Versioned = Settings.Media.UploadAsVersionableByDefault,
-                    Destination = $"{dirName}/{Path.GetFileNameWithoutExtension(filename)}",
+                    Destination = $"{dirName}/{itemName}",
                 };
 
                 var mc = new MediaCreator();
                 using (var ms = new MemoryStream())
                 {
                     content.CopyTo(ms);
-                    mc.CreateFromStream(ms, Path.GetFileName(filename), mco);
+                    mc.CreateFromStream(ms, fileName, mco);
                 }
             }
             else

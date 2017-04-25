@@ -75,7 +75,7 @@ Describe "Upload with RemoteScriptCall" {
             Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
             Invoke-RemoteScript -Session $session -ScriptBlock { 
                 Get-ChildItem -Path "master:\media library\images\spe-test\" -Recurse | Measure-Object | Select-Object -ExpandProperty Count
-            } | Should BeGreaterThan 0
+            } | Should Be 5
         }
     }
 }
