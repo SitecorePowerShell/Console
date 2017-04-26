@@ -21,9 +21,7 @@ namespace Cognifide.PowerShell.Commandlets
 
         [AutocompleteSet(nameof(Cultures))]
         [Alias("Languages")]
-        [Parameter(ParameterSetName = "Item from Path")]
-        [Parameter(ParameterSetName = "Item from ID")]
-        [Parameter(ParameterSetName = "Item from Pipeline")]
+        [Parameter]
         public virtual string[] Language { get; set; }
 
         protected List<WildcardPattern> LanguageWildcardPatterns { get; private set; }
