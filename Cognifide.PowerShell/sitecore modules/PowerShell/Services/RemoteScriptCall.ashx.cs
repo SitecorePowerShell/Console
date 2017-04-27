@@ -442,9 +442,13 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessMediaDownload(Database db, string itemParam)
         {
-            itemParam = itemParam.TrimEnd('/', '\\').Replace('\\', '/');
-            var mediaItem = (MediaItem)db.GetItem(itemParam) ?? db.GetItem(itemParam.TrimStart('/', '\\')) ??
-                            db.GetItem(ApplicationSettings.MediaLibraryPath + itemParam);
+            var indexOfDot = itemParam.IndexOf(".");
+            itemParam = indexOfDot == -1 ? itemParam : itemParam.Substring(0, indexOfDot);
+            itemParam = itemParam.Replace('\\', '/').TrimEnd('/');
+            itemParam = itemParam.StartsWith("/") ? itemParam : $"/{itemParam}";
+            itemParam = itemParam.StartsWith(ApplicationSettings.MediaLibraryPath,StringComparison.OrdinalIgnoreCase) ? itemParam : $"{ApplicationSettings.MediaLibraryPath}{itemParam}";
+
+            var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
