@@ -35,6 +35,7 @@ namespace Cognifide.PowerShell.Console.Services
     /// </summary>
     public class RemoteScriptCall : IHttpHandler, IRequiresSessionState
     {
+        private static object loginLock = new object();
         private SortedDictionary<string, SortedDictionary<string, ApiScript>> apiScripts;
         private static Dictionary<string,string> apiVersionToServiceMapping = new Dictionary<string, string>()
         {
@@ -87,10 +88,13 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            // login user if specified explicitly
-            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+            lock (loginLock)
             {
-                AuthenticationManager.Login(identity.Name, password, false);
+                // login user if specified explicitly
+                if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+                {
+                    AuthenticationManager.Login(identity.Name, password, false);
+                }
             }
 
             var isAuthenticated = Context.IsLoggedIn;
