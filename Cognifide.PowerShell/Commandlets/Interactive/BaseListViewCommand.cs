@@ -117,8 +117,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             LogErrors(() =>
             {
-                var formatProperty = SessionState.PSVariable.Get("formatPropertyStr")?.Value;
-                var script = (formatProperty != null)
+                var formatProperty = SessionState.PSVariable.Get("ScPsSlvProperties")?.Value;
+                var script = (formatProperty is string)
                     ? "$ScPsSlvPipelineObject | select-object -Property " + formatProperty
                     : "$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties";
 
