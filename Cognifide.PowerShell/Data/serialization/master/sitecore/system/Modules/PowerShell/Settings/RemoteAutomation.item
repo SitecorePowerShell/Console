@@ -9,10 +9,17 @@ master: {00000000-0000-0000-0000-000000000000}
 template: {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
 templatekey: Folder
 
+----field----
+field: {DEC8D2D5-E3CF-48B6-A653-8E69E2716641}
+name: __Security
+key: __security
+content-length: 87
+
+ar|sitecore\Developer|pd|+item:rename|+item:create|+item:write|+item:read|+item:delete|
 ----version----
 language: en
 version: 1
-revision: a636ed13-fc36-46e0-a901-99c0301263e0
+revision: 1e49d022-5c54-49d4-a0b0-45fe660fb719
 
 ----field----
 field: {B5E02AD9-D56F-4C41-A065-A133DB87BDEB}
@@ -48,14 +55,14 @@ name: __Revision
 key: __revision
 content-length: 36
 
-a636ed13-fc36-46e0-a901-99c0301263e0
+1e49d022-5c54-49d4-a0b0-45fe660fb719
 ----field----
 field: {D9CF14B1-FA16-4BA6-9288-E8A174D4D522}
 name: __Updated
 key: __updated
 content-length: 15
 
-20160824T150357
+20170529T152826
 ----field----
 field: {BADD9CF9-53E0-4D0C-BCC0-2D784C282F6A}
 name: __Updated by
