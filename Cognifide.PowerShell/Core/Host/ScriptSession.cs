@@ -821,15 +821,6 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        public void SetExecutedScript(string database, string path)
-        {
-            if (!string.IsNullOrEmpty(database) && !string.IsNullOrEmpty(path))
-            {
-                var scriptItem = Factory.GetDatabase(database).GetItem(new ID(path));
-                SetExecutedScript(scriptItem);
-            }
-        }
-
         public void SetExecutedScript(Item scriptItem)
         {
             if (scriptItem != null)

@@ -230,7 +230,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     PersistentId = string.IsNullOrEmpty(WebUtil.GetQueryString("sessionKey"))
                         ? string.Empty
-                        : WebUtil.GetQueryString("sessionKey");
+                        : HttpUtility.UrlDecode(WebUtil.GetQueryString("sessionKey"));
                     ScriptContent = ScriptSessionManager.GetSession(PersistentId).JobScript;
                 }
 
@@ -267,14 +267,24 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var scriptSession = ScriptSessionManager.GetSession(PersistentId, Settings.ApplicationName, false);
             scriptSession.SetItemLocationContext(CurrentItem);
-            scriptSession.SetExecutedScript(ScriptDb, ScriptId);
+            var jobName = "Interactive Script Execution";
+            if (!ScriptDb.IsNullOrEmpty() && !ScriptId.IsNullOrEmpty())
+            {
+                var scriptItem = Factory.GetDatabase(ScriptDb).GetItem(new ID(ScriptId));
+                jobName = $"SPE - \"{scriptItem?.Name}\"";
+                scriptSession.SetExecutedScript(scriptItem);
+            }
+            if (scriptSession?.JobOptions != null)
+            {
+                jobName = scriptSession.JobOptions?.JobName;
+            }
             scriptSession.SetVariable("Page", PageItem);
             scriptSession.SetVariable("RenderingId", RenderingId);
             scriptSession.Interactive = true;
 
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
                 string.IsNullOrEmpty(PersistentId));
-            Monitor.Start("ScriptExecution", "PowerShellRunner", runner.Run, Context.Language, Context.User,
+            Monitor.Start(jobName, "PowerShellRunner", runner.Run, Context.Language, Context.User,
                 scriptSession.JobOptions);
             Monitor.SessionID = scriptSession.Key;
         }

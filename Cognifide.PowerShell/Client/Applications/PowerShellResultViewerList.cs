@@ -465,7 +465,7 @@ namespace Cognifide.PowerShell.Client.Applications
             ScriptSessionId = scriptSession.ID;
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, script, autoDispose);
-            Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run);
+            Monitor.Start($"SPE - \"{ListViewer?.Data?.Title}\" - \"{scriptItem?.Name}\"", "UI", progressBoxRunner.Run);
             LvProgressOverlay.Visible = false;
             Monitor.SessionID = scriptSession.ID;
         }

@@ -290,7 +290,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
         public static string GetJobId(string sessionGuid, string handle)
         {
-            return "PowerShell-Background-" + sessionGuid + "-" + handle;
+            return string.IsNullOrEmpty(handle) ? "PowerShell-Background-" + sessionGuid : handle;
         }
 
     }

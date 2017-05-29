@@ -637,7 +637,7 @@ namespace Cognifide.PowerShell.Client.Applications
             Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(true);}");
 
             scriptSession.Debugging = debug;
-            Monitor.Start("ScriptExecution", "UI", progressBoxRunner.Run,
+            Monitor.Start($"{DefaultSessionName}", "ISE", progressBoxRunner.Run,
                 LanguageManager.IsValidLanguageName(CurrentLanguage)
                     ? LanguageManager.GetLanguage(CurrentLanguage)
                     : Context.Language,

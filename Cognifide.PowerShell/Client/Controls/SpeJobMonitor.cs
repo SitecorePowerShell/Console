@@ -138,7 +138,7 @@ namespace Cognifide.PowerShell.Client.Controls
             Assert.ArgumentNotNullOrEmpty(category, "category");
             Assert.ArgumentNotNull(task, "task");
             var siteName = Sitecore.Context.Site?.Name ?? string.Empty;
-            JobHandle = JobManager.Start(new JobOptions(name, category, siteName, new TaskRunner(task), "Run")
+            JobHandle = JobManager.Start(new JobOptions($"{name} - {Sitecore.Context.User?.Name}", category, siteName, new TaskRunner(task), "Run")
             {
                 ContextUser = user ?? options?.ContextUser ?? Sitecore.Context.User,
                 AtomicExecution = false,
