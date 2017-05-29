@@ -174,33 +174,35 @@ function Send-RemoteItem {
             if($Credential) {
                 $webclient.Credentials = $Credential
             }
-
+            Write-Host $serviceUrl
             [byte[]]$response = & {
                 try {
                     Write-Verbose -Message "Uploading $($Path)"
                     [System.Net.HttpWebResponse]$script:errorResponse = $null;
-                    $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
-                    $bytes = New-Object byte[] 1024
-                    $totalBytesToRead = $fileStream.Length
-                    $bytesRead = 0
-                    $bytesToRead = $bytes.Length
-                    if($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
-                        $bytesToRead = $totalBytesToRead - $bytesRead
-                    }
-                    $bytes = New-Object byte[] $bytesToRead
-
-                    $webStream = $webclient.OpenWrite($url)
-                    while(($bytesToRead = $fileStream.Read($bytes, 0, $bytes.Length)) -gt 0) {
-                        $webStream.Write($bytes, 0, $bytes.Length)
-                        $bytesRead += $bytes.Length
-                        if($totalBytesToRead - $bytesRead -lt $bytes.Length) {
+                    Invoke-UsingObject($fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()){
+                        $bytes = New-Object byte[] 1024
+                        $totalBytesToRead = $fileStream.Length
+                        $bytesRead = 0
+                        $bytesToRead = $bytes.Length
+                        if($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
                             $bytesToRead = $totalBytesToRead - $bytesRead
                         }
                         $bytes = New-Object byte[] $bytesToRead
-                    }                   
-                    $webStream.Close()
-                    $fileStream.Close()
-                    Write-Verbose -Message "Upload complete."
+
+                        Invoke-UsingObject($webStream = $webclient.OpenWrite($url)){
+                            while(($bytesToRead = $fileStream.Read($bytes, 0, $bytes.Length)) -gt 0) {
+                                $webStream.Write($bytes, 0, $bytes.Length)
+                                $bytesRead += $bytes.Length
+                                if($totalBytesToRead - $bytesRead -lt $bytes.Length) {
+                                    $bytesToRead = $totalBytesToRead - $bytesRead
+                                }
+                                $bytes = New-Object byte[] $bytesToRead
+                            }                   
+                            $webStream.Close()
+                            $fileStream.Close()
+                            Write-Verbose -Message "Upload complete."
+                        }
+                    }
                 } catch [System.Net.WebException] {
                     [System.Net.WebException]$script:ex = $_.Exception
                     [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
