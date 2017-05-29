@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.IO;
+using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Core.Utility
 {
@@ -14,16 +16,7 @@ namespace Cognifide.PowerShell.Core.Utility
         public static Item GetItem(string drive, string itemPath)
         {
             var currentDb = Factory.GetDatabase(drive);
-            itemPath = itemPath.Replace('\\', '/');
-            if (!itemPath.StartsWith("/"))
-            {
-                itemPath = '/' + itemPath;
-            }
-            if (!itemPath.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
-            {
-                itemPath = "/sitecore" + itemPath;
-            }
-            return currentDb.GetItem(itemPath);
+            return currentDb.GetItem(EnsureItemPath(itemPath));
         }
 
         public static string GetDrive(string path, string currentDb)
@@ -49,9 +42,25 @@ namespace Cognifide.PowerShell.Core.Utility
 
         private static string EnsureItemPath(string path)
         {
-            path = path.Replace('\\', '/');
+            path = path.Replace('\\', '/').Trim('/');
 
-            if (String.IsNullOrEmpty(path) || path == "/")
+            var lastOpeningBracket = path.LastIndexOf("{", StringComparison.Ordinal);
+            var lastClosingBracket = path.LastIndexOf("}", StringComparison.Ordinal);
+            if (lastOpeningBracket > -1 && lastOpeningBracket < lastClosingBracket)
+            {
+                var idPath = path.Substring(lastOpeningBracket, lastClosingBracket - lastOpeningBracket + 1);
+                if (ID.IsID(idPath))
+                {
+                    return idPath;
+                }
+            }
+
+            if (ID.IsID(path))
+            {
+                return path;
+            }
+
+            if (path.IsNullOrEmpty() || path == "/")
             {
                 return "/sitecore";
             }

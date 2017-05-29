@@ -6,6 +6,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
@@ -15,17 +16,19 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private Item GetItemForPath(string path)
         {
-            var relativePath = path.Substring(path.IndexOf(':') + 1).Replace('\\', '/');
-            var databaseName = path.IndexOf(':') < 0 ? PSDriveInfo.Name : path.Substring(0, path.IndexOf(':'));
+            var colonIndex = path.IndexOf(':');
+            var relativePath = path.Substring(colonIndex + 1).Replace('\\', '/');
+            var databaseName = colonIndex < 0 ? PSDriveInfo.Name : path.Substring(0, colonIndex);
             var currentItem = PathUtilities.GetItem(databaseName, relativePath);
             return currentItem;
         }
 
-        private Item GetItemById(string partialPath,string id)
+        private Item GetItemById(string partialPath, string id)
         {
-            var databaseName = partialPath.IndexOf(':') < 0 ? PSDriveInfo.Name : partialPath.Substring(0, partialPath.IndexOf(':'));
+            var colonIndex = partialPath.IndexOf(':');
+            var databaseName = colonIndex < 0 ? PSDriveInfo.Name : partialPath.Substring(0, colonIndex);
             var db = Factory.GetDatabase(databaseName);
-            return db != null ? db.GetItem(Sitecore.Data.ID.Parse(id)) : null;
+            return db?.GetItem(Sitecore.Data.ID.Parse(id));
         }
 
         protected override bool IsValidPath(string path)
@@ -120,7 +123,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private string NormalizePath(string path)
         {
             string normalizedPath = path;
-            if (!string.IsNullOrEmpty(path))
+            if (!path.IsNullOrEmpty())
             {
                 normalizedPath = path.Replace('/', '\\');
                 if (PathUtilities.HasRelativePathTokens(path))

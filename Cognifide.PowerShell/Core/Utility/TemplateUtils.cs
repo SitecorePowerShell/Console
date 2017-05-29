@@ -4,6 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using System.Web;
+using Sitecore.Configuration;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Core.Utility
@@ -19,7 +21,9 @@ namespace Cognifide.PowerShell.Core.Utility
 
             itemPath = itemPath.Replace('\\', '/').Trim('/');
 
-            var templateItem = PathUtilities.GetItem(currentDrive, "/" + itemPath);
+            var templateItem = ID.IsID(itemPath)
+                ? Factory.GetDatabase(currentDrive).GetItem(ID.Parse(itemPath))
+                : PathUtilities.GetItem(currentDrive, "/" + itemPath);
 
             if (templateItem == null)
             {
