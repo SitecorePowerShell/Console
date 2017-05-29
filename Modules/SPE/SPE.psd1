@@ -66,6 +66,7 @@
         '.\ConvertFrom-CliXml.ps1'
         '.\ConvertTo-CliXml.ps1',
         '.\Invoke-RemoteScript.ps1',
+        '.\MediaSyncWatcher.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
         '.\Receive-MediaItem.ps1',
@@ -74,7 +75,6 @@
         '.\Stop-ScriptSession.ps1',
         '.\Test-RemoteConnection.ps1',
         '.\Wait-RemoteScriptSession.ps1',
-        '.\Start-MediaSyncWatcher.ps1',
         '.\Wait-RemoteSitecoreJob.ps1'
     )
     
