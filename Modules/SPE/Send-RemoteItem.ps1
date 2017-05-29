@@ -179,7 +179,7 @@ function Send-RemoteItem {
                 try {
                     Write-Verbose -Message "Uploading $($Path)"
                     [System.Net.HttpWebResponse]$script:errorResponse = $null;
-                    Invoke-UsingObject($fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()){
+                    New-UsingBlock($fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()) {
                         $bytes = New-Object byte[] 1024
                         $totalBytesToRead = $fileStream.Length
                         $bytesRead = 0
@@ -189,7 +189,7 @@ function Send-RemoteItem {
                         }
                         $bytes = New-Object byte[] $bytesToRead
 
-                        Invoke-UsingObject($webStream = $webclient.OpenWrite($url)){
+                        New-UsingBlock($webStream = $webclient.OpenWrite($url)) {
                             while(($bytesToRead = $fileStream.Read($bytes, 0, $bytes.Length)) -gt 0) {
                                 $webStream.Write($bytes, 0, $bytes.Length)
                                 $bytesRead += $bytes.Length

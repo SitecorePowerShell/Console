@@ -23,7 +23,7 @@
     CompanyName = 'Sitecore PowerShell Extensions'
 
     # Copyright statement for this module
-    Copyright = '(c) 2010-2016 Adam Najmanowicz, Michael West. All rights Reserved.'
+    Copyright = '(c) 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.'
 
     # Description of the functionality provided by this module
     # Description = ''

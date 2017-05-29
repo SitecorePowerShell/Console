@@ -82,8 +82,7 @@ function Convert-UsingScript {
     }
 }
 
-function Invoke-UsingObject
-{
+function New-UsingBlock {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -98,12 +97,9 @@ function Invoke-UsingObject
         $ScriptBlock
     )
  
-    try
-    {
+    try {
         . $ScriptBlock
-    }
-    finally
-    {
+    } finally {
         if ($null -ne $InputObject -and $InputObject -is [System.IDisposable])
         {
             $InputObject.Dispose()
