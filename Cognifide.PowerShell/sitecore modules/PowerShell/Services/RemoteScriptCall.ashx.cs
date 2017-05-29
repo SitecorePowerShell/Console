@@ -207,7 +207,21 @@ namespace Cognifide.PowerShell.Console.Services
                     return;
             }
 
-            ProcessScript(context, scriptItem);
+            var streams = new Dictionary<string, Stream>();
+
+            if (request.Files?.AllKeys?.Length > 0)
+            {
+                foreach (HttpPostedFile file in request.Files)
+                {
+                    streams.Add(file.FileName,file.InputStream);
+                }
+            }
+            else if(request.InputStream != null)
+            {
+                streams.Add("stream", request.InputStream);
+            }
+
+            ProcessScript(context, scriptItem, streams);
         }
 
         public bool IsReusable => true;
@@ -496,7 +510,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
         }
 
-        private static void ProcessScript(HttpContext context, Item scriptItem)
+        private static void ProcessScript(HttpContext context, Item scriptItem, Dictionary<string, Stream> streams)
         {
             if(!scriptItem.IsPowerShellScript() || scriptItem?.Fields[FieldIDs.Script] == null)
             {
@@ -540,6 +554,8 @@ namespace Cognifide.PowerShell.Console.Services
                         session.SetVariable(param, paramValue);
                     }
                 }
+
+                session.SetVariable("requestStreams", streams);
 
                 session.SetVariable("scriptArguments", scriptArguments);
 
