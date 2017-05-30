@@ -32,6 +32,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string ItemParam = "Item";
         private const string DestinationItemParam = "DestinationItem";
         private const string IdParam = "ID";
+        private const string ForceIdParam = "ForceId";
         private const string DatabaseParam = "Database";
         private const string UriParam = "Uri";
         private const string ParentParam = "Parent";
@@ -333,6 +334,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var paramAdded = AddDynamicParameter(typeof (SwitchParameter), StartWorkflowParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), LanguageParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (Item), ParentParam, ref dic, true);
+            paramAdded |= AddDynamicParameter(typeof(string), ForceIdParam, ref dic);
             return paramAdded ? dic : null;
         }
     }

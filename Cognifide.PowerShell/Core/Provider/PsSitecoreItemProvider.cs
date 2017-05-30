@@ -673,6 +673,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing NewItem(string path='{0}', string itemTypeName='{1}', string newItemValue='{2}')",
                     path, itemTypeName, newItemValue);
+
                 if (itemTypeName.IsNullOrEmpty())
                 {
                     WriteError(
@@ -682,7 +683,6 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
 
                 var templateItem = TemplateUtils.GetFromPath(itemTypeName, PSDriveInfo.Name);
-
                 var parentItem = GetItemForPath(PathUtilities.GetParentFromPath(path));
 
                 if (parentItem == null)
@@ -699,15 +699,32 @@ namespace Cognifide.PowerShell.Core.Provider
                     parentItem = dic[ParentParam].Value as Item;
                 }
 
-                if (!ShouldProcess(PathUtilities.GetParentFromPath(path), "Create item '" + PathUtilities.GetLeafFromPath(path) + "' of type '" + itemTypeName + "'")) return;
+                if (!ShouldProcess(PathUtilities.GetParentFromPath(path),
+                    "Create item '" + PathUtilities.GetLeafFromPath(path) + "' of type '" + itemTypeName + "'"))
+                {
+                    return;
+                }
+
+                var forcedId = ID.Null;
+
+                if (dic != null && dic[ForceIdParam].IsSet)
+                {
+                    var forcedIdString = dic[ForceIdParam].Value as String;
+                    if (ID.IsID(forcedIdString))
+                    {
+                        forcedId = ID.Parse(forcedIdString);
+                    }
+                }
 
                 var name = PathUtilities.GetLeafFromPath(path);
-                Item createdItem = null;
+                Item createdItem;
 
                 switch (TemplateUtils.GetType(templateItem))
                 {
                     case TemplateItemType.Template:
-                        createdItem = parentItem.Add(name, (TemplateItem)templateItem);
+                        createdItem = forcedId != ID.Null
+                            ? parentItem.Add(name, (TemplateItem) templateItem, forcedId)
+                            : parentItem.Add(name, (TemplateItem) templateItem);
                         break;
                     case TemplateItemType.Branch:
                         createdItem = parentItem.Add(name, (BranchItem)templateItem);
@@ -731,10 +748,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     var defaultWorkflow =
                         createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[Sitecore.FieldIDs.DefaultWorkflow]);
-                    if (null != defaultWorkflow)
-                    {
-                        defaultWorkflow.Start(createdItem);
-                    }
+                    defaultWorkflow?.Start(createdItem);
                 }
 
                 WriteItem(createdItem);
