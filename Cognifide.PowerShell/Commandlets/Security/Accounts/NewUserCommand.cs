@@ -2,6 +2,7 @@
 using System.Data;
 using System.Management.Automation;
 using System.Web.Security;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data;
 using Sitecore.Security.Accounts;
 
@@ -9,12 +10,13 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.New, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
     [OutputType(typeof (User))]
-    public class NewUserCommand : BaseCommand
+    public class NewUserCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 0,
             ParameterSetName = "Id")]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(UserNames))]
         public AccountIdentity Identity { get; set; }
 
         [Parameter(ValueFromPipelineByPropertyName = true)]

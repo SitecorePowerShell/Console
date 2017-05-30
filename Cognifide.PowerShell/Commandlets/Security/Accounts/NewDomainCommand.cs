@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Domains;
 using Sitecore.SecurityModel;
 
@@ -8,10 +9,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.New, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
     [OutputType(typeof (Domain))]
-    public class NewDomainCommand : BaseCommand
+    public class NewDomainCommand : BaseSecurityCommand
     {
         [Parameter(ParameterSetName = "Name", Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(DomainNames))]
         public string Name { get; set; }
 
         [Parameter]

@@ -142,6 +142,7 @@
     <Compile Include="Commandlets\Interactive\Messages\InvokeJavaScriptMessage.cs" />
     <Compile Include="Commandlets\Interactive\InvokeJavaScriptCommand.cs" />
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
+    <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Extensions\TypeExtensions.cs" />

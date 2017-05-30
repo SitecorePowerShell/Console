@@ -1,18 +1,20 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Get, "RoleMember", DefaultParameterSetName = "Id")]
     [OutputType(typeof (Role), typeof (User))]
-    public class GetRoleMemberCommand : BaseCommand
+    public class GetRoleMemberCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "UsersOnly", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "RolesOnly", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(RoleNames))]
         public AccountIdentity Identity { get; set; }
 
         [Parameter]

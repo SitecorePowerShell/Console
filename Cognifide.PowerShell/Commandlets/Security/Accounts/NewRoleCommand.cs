@@ -2,17 +2,19 @@
 using System.Data;
 using System.Management.Automation;
 using System.Web.Security;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.New, "Role", DefaultParameterSetName = "Id")]
     [OutputType(typeof (Role))]
-    public class NewRoleCommand : BaseCommand
+    public class NewRoleCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 0, ParameterSetName = "Id")]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(RoleNames))]
         public AccountIdentity Identity { get; set; }
 
         protected override void ProcessRecord()

@@ -1,17 +1,19 @@
 ﻿using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsLifecycle.Disable, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    public class DisableUserCommand : BaseCommand
+    public class DisableUserCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
             ParameterSetName = "Id")]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(UserNames))]
         public AccountIdentity Identity { get; set; }
 
         [Parameter(Mandatory = true, ValueFromPipeline = true,

@@ -1,17 +1,19 @@
 ﻿using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Set, "UserPassword", DefaultParameterSetName = "Set password", SupportsShouldProcess = true)]
-    public class SetUserPasswordCommand : BaseCommand
+    public class SetUserPasswordCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(ParameterSetName = "Set password", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Reset password", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(UserNames))]
         public AccountIdentity Identity { get; set; }
 
         [ValidateNotNullOrEmpty]

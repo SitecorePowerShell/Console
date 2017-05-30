@@ -2,20 +2,23 @@
 using System.Data;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Remove, "RoleMember", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    public class RemoveRoleMemberCommand : BaseCommand
+    public class RemoveRoleMemberCommand : BaseSecurityCommand
     {
         [Alias("Name")]
         [Parameter(ParameterSetName = "Id", ValueFromPipeline = true, Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(RoleNames))]
         public AccountIdentity Identity { get; set; }
 
         [Parameter(Mandatory = true)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(RoleAndUserNames))]
         public AccountIdentity[] Members { get; set; }
 
         protected override void ProcessRecord()

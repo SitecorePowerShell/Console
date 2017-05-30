@@ -3,16 +3,18 @@ using System.Data;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Security.Accounts;
 using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Remove, "Domain", DefaultParameterSetName = "Name", SupportsShouldProcess = true)]
-    public class RemoveDomainCommand : BaseCommand
+    public class RemoveDomainCommand : BaseSecurityCommand
     {
         [Parameter(ParameterSetName = "Name", Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(DomainNames))]
         public string Name { get; set; }
 
         [Parameter]

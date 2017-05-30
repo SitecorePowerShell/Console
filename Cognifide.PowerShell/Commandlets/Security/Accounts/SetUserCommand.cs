@@ -15,7 +15,7 @@ using Sitecore.Text;
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
     [Cmdlet(VerbsCommon.Set, "User", DefaultParameterSetName = "Id", SupportsShouldProcess = true)]
-    public class SetUserCommand : BaseCommand
+    public class SetUserCommand : BaseSecurityCommand
     {
         private static readonly string[] Portraits;
 
@@ -45,6 +45,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0,
             ParameterSetName = "Id")]
         [ValidateNotNullOrEmpty]
+        [AutocompleteSet(nameof(UserNames))]
         public AccountIdentity Identity { get; set; }
 
         [Parameter(Mandatory = true, ValueFromPipeline = true,
