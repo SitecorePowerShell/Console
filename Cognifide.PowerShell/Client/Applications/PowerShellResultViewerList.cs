@@ -81,11 +81,6 @@ namespace Cognifide.PowerShell.Client.Applications
         /// <summary>
         ///     Indicates the window needs to be closed after the script finishes executing
         /// </summary>
-        public bool CloseRunner
-        {
-            get { return StringUtil.GetString(ServerProperties["CloseRunner"]) == "1"; }
-            set { ServerProperties["CloseRunner"] = value ? "1" : ""; }
-        }
 
         public CommandContext GetCommandContext()
         {

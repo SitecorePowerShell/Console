@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -28,6 +29,13 @@ namespace Cognifide.PowerShell.Core.Host
             get { return ScriptingHost.CloseRunner; }
             internal set { ScriptingHost.CloseRunner = value; }
         }
+
+        public List<string> CloseMessages
+        {
+            get { return ScriptingHost.CloseMessages; }
+            internal set { ScriptingHost.CloseMessages = value; }
+        }
+
 
         public ConsoleColor BackgroundColor
         {

@@ -42,7 +42,8 @@ namespace Cognifide.PowerShell.Client.Applications
                     Exception = null,
                     Output = Session.Output.GetHtmlUpdate(),
                     HasErrors = Session.Output.HasErrors,
-                    CloseRunner = Session.CloseRunner
+                    CloseRunner = Session.CloseRunner,
+                    CloseMessages = Session.CloseMessages
                 };
 
                 Context.Job.Status.Result = output;
@@ -68,7 +69,8 @@ namespace Cognifide.PowerShell.Client.Applications
                         Exception = exc,
                         Output = Session.Output.GetHtmlUpdate(),
                         HasErrors = true,
-                        CloseRunner = Session.CloseRunner
+                        CloseRunner = Session.CloseRunner,
+                        CloseMessages = Session.CloseMessages
                     };
 
                     Context.Job.Status.Result = output;

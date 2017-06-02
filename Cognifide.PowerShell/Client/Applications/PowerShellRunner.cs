@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Web;
@@ -15,8 +17,6 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
@@ -25,7 +25,6 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Version = Sitecore.Data.Version;
-using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {
@@ -320,7 +319,11 @@ namespace Cognifide.PowerShell.Client.Applications
             OkButton.Visible = true;
             AbortButton.Visible = false;
             Monitor.SessionID = string.Empty;
-
+            if (result.CloseMessages.Any())
+            {
+                SheerResponse.SetDialogValue(
+                    result.CloseMessages.Aggregate((serialized, message) => serialized + "\n" + message));
+            }
             if (!result.CloseRunner)
             {
                 return;
@@ -346,6 +349,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     currentSession.Dispose();
                 }
             }
+
             if (AppMode)
             {
                 SheerResponse.Eval("window.parent.scWin.closeWindow()");

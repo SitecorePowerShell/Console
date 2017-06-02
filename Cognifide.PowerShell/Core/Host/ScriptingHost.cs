@@ -31,6 +31,7 @@ namespace Cognifide.PowerShell.Core.Host
             privateData = new ScriptingHostPrivateData(this);
             sessionState = initialState;
             CloseRunner = false;
+            CloseMessages = new List<string>();
         }
 
         /// <summary>
@@ -65,6 +66,7 @@ namespace Cognifide.PowerShell.Core.Host
         public string SessionId { get; internal set; }
 
         public bool CloseRunner { get; internal set; }
+        public List<string> CloseMessages { get; internal set; }
         public string User { get; internal set; }
         public string JobName { get; internal set; }
         public bool Interactive { get; internal set; }

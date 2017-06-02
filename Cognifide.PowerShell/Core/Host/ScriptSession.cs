@@ -16,10 +16,7 @@ using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Jobs;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Security.Accounts;
@@ -192,6 +189,12 @@ namespace Cognifide.PowerShell.Core.Host
         {
             get { return host.CloseRunner; }
             internal set { host.CloseRunner = value; }
+        }
+
+        public List<string> CloseMessages
+        {
+            get { return host.CloseMessages; }
+            internal set { host.CloseMessages = value; }
         }
 
         public string ID

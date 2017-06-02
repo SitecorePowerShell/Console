@@ -4,6 +4,7 @@ using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework.Commands;
+using Sitecore.StringExtensions;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 
@@ -49,6 +50,13 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 Context.ClientPage.SendMessage(this, $"item:refresh(id={itemId})");
                 Context.ClientPage.SendMessage(this, $"item:refreshchildren(id={itemId})");
+                if (args.HasResult && !args.Result.IsNullOrEmpty())
+                {
+                    foreach (var closeMessage in args.Result.Split('\n'))
+                    {
+                        Context.ClientPage.SendMessage(this, closeMessage);
+                    }
+                }
             }
             else
             {
@@ -62,7 +70,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 }
                 str.Append("scriptId", scriptId);
                 str.Append("scriptDb", scriptDb);
-                SheerResponse.ShowModalDialog(str.ToString(), "400", "260", "PowerShell Script Results", true);
+                SheerResponse.ShowModalDialog(str.ToString(), "400", "260", "", true);
                 args.WaitForPostBack();
             }
         }
