@@ -211,9 +211,9 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (request.Files?.AllKeys?.Length > 0)
             {
-                foreach (HttpPostedFile file in request.Files)
+                foreach (string fileName in request.Files.AllKeys)
                 {
-                    streams.Add(file.FileName,file.InputStream);
+                    streams.Add(fileName, request.Files[fileName].InputStream);
                 }
             }
             else if(request.InputStream != null)
