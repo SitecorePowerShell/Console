@@ -44,7 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     PutMessage(new ShowListViewMessage(CumulativeData, pageSize, Title ?? "PowerShell Script Results",
                         Icon, WidthString, HeightString, Modal.IsPresent, InfoTitle, InfoDescription,
                         ActionsInSession ? HostData.SessionId : "",
-                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, Show));
+                        ActionData, ProcessedProperty, ViewName, MissingDataMessage, MissingDataIcon, Show));
                 }
             });
         }

@@ -54,8 +54,7 @@
                               Multiselect="true" runat="server">
           </PowerShellListView>
           <Border ID="EmptyPanel" border="0" class="emptyResultsPanel" Visible="false">
-            <Image ID="EmptyIcon" Src="/sitecore modules/PowerShell/Assets/error.png" Width="64" Height="64"
-                   Class="scEditorWarningIcon" Alt="Error icon" />
+            <Image ID="EmptyIcon" Src="/sitecore modules/PowerShell/Assets/error.png" Class="scEditorWarningIcon" Alt="Error icon" />
             <Border class="emptyResultsText" GridPanel.Width="100%" ID="EmptyDataMessage">
               <Literal ID="EmptyDataMessageText" Text="No items available" Visible="false" />
             </Border>

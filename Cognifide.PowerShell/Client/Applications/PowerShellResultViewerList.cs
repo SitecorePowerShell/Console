@@ -32,6 +32,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal CurrentPage;
         protected Literal Description;
         protected Literal EmptyDataMessageText;
+        protected Image EmptyIcon;
         protected Border EmptyPanel;
         protected Image InfoIcon;
         protected Border InfoPanel;
@@ -174,15 +175,17 @@ namespace Cognifide.PowerShell.Client.Applications
             var infoTitle = ListViewer.Data.InfoTitle;
             var infoDescription = ListViewer.Data.InfoDescription;
             var missingDataMessage = ListViewer.Data.MissingDataMessage;
+            var missingDataIcon = ListViewer.Data.MissingDataIcon;
             var icon = ListViewer.Data.Icon;
 
-            UpdateInfoPanel(infoTitle, infoDescription, icon, missingDataMessage);
+            UpdateInfoPanel(infoTitle, infoDescription, icon, missingDataMessage, missingDataIcon);
 
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
         }
 
-        private void UpdateInfoPanel(string infoTitle, string infoDescription, string icon, string missingDataMessage)
+        private void UpdateInfoPanel(string infoTitle, string infoDescription, string icon, 
+            string missingDataMessage, string missingDataIcon)
         {
             if (infoTitle.IsNullOrEmpty() && infoDescription.IsNullOrEmpty())
             {
@@ -203,9 +206,17 @@ namespace Cognifide.PowerShell.Client.Applications
                     Context.ClientPage.ClientResponse.SetOuterHtml("InfoIcon", image);
                 }
             }
+
             if (!missingDataMessage.IsNullOrEmpty())
             {
                 EmptyDataMessageText.Text = missingDataMessage;
+            }
+
+            if (!missingDataIcon.IsNullOrEmpty())
+            {
+                EmptyIcon.Src = missingDataIcon.IsNullOrEmpty()
+                    ? "/sitecore modules/PowerShell/Assets/error.png"
+                    : missingDataIcon;
             }
 
             if (ListViewer.Data.Data.Count == 0)
@@ -326,7 +337,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 UpdateInfoPanel(updateData.InfoTitleChange ? updateData.InfoTitle : InfoTitle.Text,
                     updateData.InfoDescriptionChange ? updateData.InfoDescription : Description.Text,
                     updateData.IconChange ? updateData.Icon : string.Empty,
-                    updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text);
+                    updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text,
+                    updateData.MissingDataIconChange ? updateData.MissingDataIcon : EmptyIcon.Src
+                    );
 
             }
         }

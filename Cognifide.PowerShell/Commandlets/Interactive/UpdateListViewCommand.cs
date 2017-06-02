@@ -22,6 +22,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             public string InfoDescription { get; set; }
             public bool MissingDataMessageChange { get; set; }
             public string MissingDataMessage { get; set; }
+            public bool MissingDataIconChange { get; set; }
+            public string MissingDataIcon { get; set; }
             public bool IconChange { get; set; }
             public string Icon { get; set; }
         }
@@ -43,6 +45,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     InfoTitle = InfoTitle,
                     MissingDataMessageChange = IsParameterSpecified(nameof(MissingDataMessage)),
                     MissingDataMessage = MissingDataMessage,
+                    MissingDataIconChange = IsParameterSpecified(nameof(MissingDataIcon)),
+                    MissingDataIcon = MissingDataIcon,
                     IconChange = IsParameterSpecified(nameof(Icon)),
                     Icon = Icon
                 };
