@@ -109,10 +109,10 @@ namespace Cognifide.PowerShell.Client.Applications
             set { ServerProperties["PageVer"] = value; }
         }
 
-        public bool AppMode
+        public bool CallerFullScreen
         {
-            get { return StringUtil.GetString(ServerProperties["AppMode"]) == "1"; }
-            set { ServerProperties["AppMode"] = value ? "1" : string.Empty; }
+            get { return StringUtil.GetString(ServerProperties["CallerFullScreen"]) == "1"; }
+            set { ServerProperties["CallerFullScreen"] = value ? "1" : string.Empty; }
         }
         
         public bool HasScript
@@ -193,7 +193,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 PageLang = WebUtil.GetQueryString("pageLang");
                 PageVer = WebUtil.GetQueryString("pageVer");
 
-                AppMode = WebUtil.GetQueryString("AppMode") == "1";
+                CallerFullScreen = WebUtil.GetQueryString("cfs") == "1";
                 HasScript = WebUtil.GetQueryString("HasScript") == "1";
 
                 ScriptId = WebUtil.GetQueryString("scriptId");
@@ -279,6 +279,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
             scriptSession.SetVariable("Page", PageItem);
             scriptSession.SetVariable("RenderingId", RenderingId);
+            scriptSession.SetVariable("SitecoreFullScreen", CallerFullScreen);
             scriptSession.Interactive = true;
 
             var runner = new ScriptRunner(ExecuteInternal, scriptSession, ScriptContent,
@@ -350,15 +351,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 }
             }
 
-            if (AppMode)
-            {
-                SheerResponse.Eval("window.parent.scWin.closeWindow()");
-            }
-            else
-            {
-                SheerResponse.CloseWindow();
-            }
-
+            SheerResponse.CloseWindow();
         }
 
         [HandleMessage("psr:delayedclose", true)]

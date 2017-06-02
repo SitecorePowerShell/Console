@@ -67,6 +67,10 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     str.Append("db", itemDb);
                     str.Append("lang", itemLang);
                     str.Append("ver", itemVer);
+                    if ((bool) (args.Properties["UsesBrowserWindows"] ?? false))
+                    {
+                        str.Append("cfs", "1");
+                    }
                 }
                 str.Append("scriptId", scriptId);
                 str.Append("scriptDb", scriptDb);

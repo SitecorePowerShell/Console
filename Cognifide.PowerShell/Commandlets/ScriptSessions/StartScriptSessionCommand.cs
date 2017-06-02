@@ -122,7 +122,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     session.JobScript = scriptBlock.ToString();
                     session.JobOptions = jobOptions;
                 }
-                appParams.Add("appMode", "1");
+                appParams.Add("cfs", "1");
                 appParams.Add("sessionKey", session.Key);
 
                 var message = new ShowApplicationMessage("PowerShell/PowerShell Runner", "PowerShell", "", "500", "360",
