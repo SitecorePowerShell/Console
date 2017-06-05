@@ -1,0 +1,95 @@
+﻿---
+ID: "6857d035-ab70-4dac-8e7f-c6534bb8141f"
+Parent: "6ffcbb47-d21b-4861-8f1c-2eac23ceb450"
+Template: "eb06cec0-5e2d-4dc4-875b-01adcc577d13"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: powershell/32x32/ise8.png
+- ID: "094829c2-d7a7-4c38-b025-b99ff2001b56"
+  Hint: Disable close
+  Type: checkbox
+  Value: 0
+- ID: "2b3ecbbc-432a-4cea-bb75-ce481b644ff8"
+  Hint: Disable resize
+  Type: checkbox
+  Value: 0
+- ID: "3549bd09-8f13-4563-8113-4d50ae5d3717"
+  Hint: Height
+  Value: 
+- ID: "53f846b3-f26a-4d37-896b-2f744a802dfe"
+  Hint: Width
+  Value: 
+- ID: "b03569b1-1534-43f2-8c83-bd064b7d782c"
+  Hint: __Renderers
+  Value: 
+- ID: "b4e951ee-906f-4249-b2c6-68e31c82e118"
+  Hint: Disable maximize
+  Type: checkbox
+  Value: 0
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 0
+- ID: "bde5f757-a8a4-4ffd-a38b-e0dcca84f210"
+  Hint: Window type
+  Value: Window
+- ID: "c687aa26-a85d-4c42-b32e-11e5faecdf05"
+  Hint: Chrome
+  Value: WindowChrome
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\Developer|pe|+item:read|pd|+item:read|
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Type: layout
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{D8E646FE-C705-4CE2-8C10-CACC6DB32334}" />
+    </r>
+- ID: "f54c1557-f8ce-4130-90a7-b89575c4cdbe"
+  Hint: Disable minimize
+  Type: checkbox
+  Value: 0
+- ID: "fc2b18b3-1631-4c3f-9e47-51df05030026"
+  Hint: Icon
+  Value: powershell/32x32/ise8.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "14dca483-aac7-4d87-ae27-3163d21798b7"
+      Hint: Tool tip
+      Value: Create PowerShell Scripts
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121128T121700
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
+      Hint: Display name
+      Value: PowerShell ISE
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "14dca483-aac7-4d87-ae27-3163d21798b7"
+      Hint: Tool tip
+      Value: PowerShell スクリプトの作成
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T075957
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "67b6378b-c9f1-47c7-9cac-bfa79b0727d9"
+      Hint: Display name
+      Value: PowerShell ISE

@@ -1,0 +1,54 @@
+﻿---
+ID: "633d0055-5e83-495c-8d07-d882c062e5eb"
+Parent: "90dc2831-3508-415f-8af3-40160577ac47"
+Template: "e037642c-ce8e-437f-8a61-8d32d0ce54e1"
+Path: /sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter/Filter
+DB: core
+SharedFields:
+- ID: "11a849ff-e8a4-4335-8143-ce8ea8cee0e3"
+  Hint: Icon
+  Value: WordProcessing/32x32/replace_b.png
+- ID: "b9b2d23e-411c-4af2-b656-400d6ed8fb32"
+  Hint: Access Key
+  Value: 
+- ID: "ed8fbc7c-3ad5-45b6-ac54-e4da0fac4002"
+  Hint: ID
+  Value: Filter
+- ID: "f3e500bc-9c6a-48cb-b40a-8cce8ddcfb13"
+  Hint: Click
+  Value: "pslv:filter"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130908T092600
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
+      Hint: Header
+      Value: Filter
+    - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
+      Hint: Tooltip
+      Value: Filter the report
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T080000
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "7fe3a2cb-a592-46ab-837e-1f2354ef7e9f"
+      Hint: Header
+      Value: フィルター
+    - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
+      Hint: Tooltip
+      Value: レポートのフィルタ

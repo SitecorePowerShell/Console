@@ -1,0 +1,34 @@
+﻿---
+ID: "5fa3cb60-f4c3-4b93-8fc9-e118a544da4b"
+Parent: "97909803-e651-41e4-a13a-ba1a831685b3"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/User Interaction/Using Colors
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Write-Host "This is a multi-colored line sample: " -nonewline;
+    Write-Host "Red " -f Red -nonewline;
+    Write-Host "Green " -f Green -nonewline;
+    Write-Host "Blue " -f Blue -nonewline;
+    Write-Host "Yellow " -f Yellow; 
+    
+    Set-HostProperty -f Magenta; 
+    Write-Host Now we are writing to host in Magenta by default.; 
+    
+    Set-HostProperty -f Cyan;
+    Write-Host Now everything you write to host is  Cyan by default.;
+    
+    Set-HostProperty -f DarkBlue -b White;
+    Write-Host Hey! We can change background color too!
+    
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130625T113436

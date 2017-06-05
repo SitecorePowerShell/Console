@@ -1,0 +1,22 @@
+﻿---
+ID: "bb17eaff-8290-4685-8a1e-dc46736a07d5"
+Parent: "355170a5-ac4a-4b04-9d00-dbf0e0aabd5c"
+Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
+Path: /sitecore/system/Dictionary/PowerShell/D/Done
+DB: core
+SharedFields:
+- ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
+  Hint: Key
+  Value: "Done!"
+Languages:
+- Language: en
+  Fields:
+  - ID: "2ba3454a-9a9c-4cdf-a9f8-107fd484eb6e"
+    Hint: Phrase
+    Value: "Done!"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160826T085241

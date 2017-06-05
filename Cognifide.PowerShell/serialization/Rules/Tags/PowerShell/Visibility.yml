@@ -1,0 +1,18 @@
+﻿---
+ID: "4d18fbc7-0f2a-4d75-a027-bc45b006c2ec"
+Parent: "da76ac33-156c-419f-a469-d410cc5e2d82"
+Template: "aa91a868-02f2-41d3-8b78-1cad91b4dcae"
+Path: /sitecore/system/Settings/Rules/Definitions/Tags/PowerShell/Visibility
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20131231T141936
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

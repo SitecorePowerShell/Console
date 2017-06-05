@@ -1,0 +1,48 @@
+﻿---
+ID: "7bfee1f0-9778-4a33-96b9-43bf0435c204"
+Parent: "72abee96-fac4-4c83-906c-ba75b2d794f0"
+Template: "9f62ebd5-2280-4a35-be51-a210d831d687"
+Path: /sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Page/Last
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/navigate_down2.png
+- ID: "4c2dedb4-40fb-4166-8221-c4dd3e914478"
+  Hint: Click
+  Value: "pslvnav:last"
+- ID: "8e40ab40-8c83-4ff7-9d33-38ed9458de1e"
+  Hint: Icon
+  Value: Applications/32x32/navigate_down2.png
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 150
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20090424T171900
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
+      Hint: Header
+      Value: Last
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T080001
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
+      Hint: Header
+      Value: 最後に移動

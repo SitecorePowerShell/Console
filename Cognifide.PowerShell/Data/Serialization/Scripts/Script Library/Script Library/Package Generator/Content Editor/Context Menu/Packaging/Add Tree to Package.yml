@@ -1,0 +1,119 @@
+﻿---
+ID: "e6b36111-8411-414b-a7e9-58e75b365ea7"
+Parent: "c83cc1ee-a860-4e64-9715-e9c3bbb885f0"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Software/16x16/branch_add.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: <ruleset />
+- ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
+  Hint: PersistentSessionId
+  Value: packageBuilder
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function Resolve-Error
+    
+    Function Add-ItemToPackage {
+        param (
+            $Package, 
+            $Item,
+            $IncludeDescendants
+        )
+        
+        $path = $Item.ProviderPath
+        
+        if ($IncludeDescendants) {
+            $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+        } else {
+            $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+        }
+        
+        $Package.Sources.Add($source);
+        
+        return $Package
+    }
+    
+    $rootOptions = [ordered]@{
+        "Root and descendants" = "RootAndDescendants";
+        "Root and children" = "RootAndChildren";
+        "Descendants only" = "DescendantsOnly";
+        "Children only" = "ChildrenOnly";
+    };
+    
+    $installModeOptions = [ordered]@{
+        "Merge" = "Merge";
+        "Skip" = "Skip";
+        "Side By Side" = "SideBySide"
+    };
+    
+    $mergeModeOptions = [ordered]@{
+        "Merge" = "Merge"
+        "Clear" = "Clear";
+        "Append" = "Append";
+    };
+    
+    $result = Read-Variable -Parameters `
+        @{ Name = "IncludeItems"; Title="Items to include in package"; Options=$rootOptions; Value="RootAndDescendants"; Editor="radio" }, `
+        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
+        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"}, `
+        @{ Name = "info"; Title="Click OK to add branch to your package or Cancel to abort."; Value="Root: '$((Get-Item .).ProviderPath)'" ; Editor="info"} `
+        -Description "Set installation options for this package source." `
+        -Title "Installation options" -ShowHints
+    
+    Resolve-Error
+    if($result -ne "ok")
+    {
+        Close-Window
+        Exit
+    }
+    
+    $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
+    
+    
+    if ($IncludeItems -eq "RootAndDescendants") {
+        
+        $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $True
+    }
+    else
+    {
+        if ($IncludeItems -eq "RootAndChildren") {
+            $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $False
+        }
+        
+        # Iterate over the children and either add to include descendants or just themselves
+        Get-ChildItem . | % {
+            $package = Add-ItemToPackage -Package $package -Item $_ -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
+        }
+    }
+    
+    Close-Window
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{53E0EE5B-77EB-4FE5-AFC3-C676DE31736E}">
+        <conditions>
+          <condition
+            id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}"
+            uid="5E3F148A40024D15A7E2F6E789A78A08"
+            persistentsessionid="packageBuilder" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130919T124500

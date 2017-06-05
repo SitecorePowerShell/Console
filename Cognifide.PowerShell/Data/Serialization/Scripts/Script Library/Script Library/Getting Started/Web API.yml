@@ -1,0 +1,14 @@
+﻿---
+ID: "c86f2d40-b80e-425b-9721-ad7162982a69"
+Parent: "ed2cf34e-1a59-444d-806e-51db1e560093"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Web API
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130913T041748

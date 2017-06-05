@@ -1,0 +1,25 @@
+﻿---
+ID: "f5f55071-697b-4769-a992-2a755fc379e5"
+Parent: "3ebec263-b57e-4a3c-a232-7c70519f9908"
+Template: "58119a3e-560e-4da6-97c6-1ace8a5b1219"
+Path: /sitecore/system/Tasks/Commands/PowerShellScriptCommand
+DB: master
+SharedFields:
+- ID: "4bc75539-d5c4-487b-af35-ff13d62bd286"
+  Hint: Method
+  Value: Update
+- ID: "752579a7-ef2f-45b7-b9d1-9b682308b7a5"
+  Hint: Type
+  Value: Cognifide.PowerShell.Integrations.Tasks.ExecuteScriptTask, Cognifide.PowerShell
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20111128T102700
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

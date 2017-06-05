@@ -1,0 +1,25 @@
+﻿---
+ID: "fafe4d11-ce8d-4875-acf0-ccdf54df46f9"
+Parent: "4c794de3-fa37-46e2-afec-fd458211c11a"
+Template: "3619f992-4177-4124-89dd-dabfc2baf6bb"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Context/ActionsScripts
+DB: core
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
+- ID: "c78d9b41-ffeb-402d-93e8-e1270d8bb787"
+  Hint: Type
+  Value: Cognifide.PowerShell.Client.Controls.IseContextPanel,Cognifide.PowerShell
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130208T163000
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

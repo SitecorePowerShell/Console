@@ -1,0 +1,71 @@
+﻿---
+ID: "35aa85fc-ce35-43ae-9d76-d7e4e04bc92a"
+Parent: "d6c55bb3-43d3-4516-a1a9-9836702b29fe"
+Template: "97b61451-9a75-4f59-93a5-dbd8d4f44421"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Ribbon/Script/Write/New
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/insert_option.png
+- ID: "3f5bd18e-8cee-4cd5-9ee3-77863947b312"
+  Hint: Menu
+  Value: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/New
+- ID: "a0b2e8b4-cd06-47f1-a721-68e108495046"
+  Hint: KeyCode
+  Value: a78
+- ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
+  Hint: __Workflow
+  Value: 
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
+- ID: "f5a07916-7bca-4fba-857c-a5d166c332d4"
+  Hint: Icon
+  Value: Office/32x32/insert_option.png
+- ID: "fc6b80f1-406d-47f0-a2b3-fcd7a8ea9d74"
+  Hint: Click
+  Value: "ise:new"
+Languages:
+- Language: en
+  Fields:
+  - ID: "b11f9f5f-88fc-48c5-9501-2e827ef40ead"
+    Hint: Header
+    Value: New
+  - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
+    Hint: Tooltip
+    Value: Clear Editor and start creating a new script
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20060721T095628
+    - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
+      Hint: __Workflow state
+      Value: 
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
+      Hint: __Valid from
+      Value: 20060320T102016
+- Language: "ja-JP"
+  Fields:
+  - ID: "b11f9f5f-88fc-48c5-9501-2e827ef40ead"
+    Hint: Header
+    Value: 新規
+  - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
+    Hint: Tooltip
+    Value: エディタをクリアして新しいスクリプトの作成を開始
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T075958
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

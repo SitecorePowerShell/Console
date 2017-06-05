@@ -1,0 +1,14 @@
+﻿---
+ID: "0078756a-12c3-4104-b263-d52a73a69cc6"
+Parent: "ed2cf34e-1a59-444d-806e-51db1e560093"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/Beginner Tutorials
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150215T030733

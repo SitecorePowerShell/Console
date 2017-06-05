@@ -1,0 +1,14 @@
+﻿---
+ID: "3920d8df-54f4-4ff1-bb08-e6ab2f393be5"
+Parent: "adb4f1b1-6234-4ebb-87be-4618030df653"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Media Library Maintenance/Content Editor/Context Menu
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141129T162915

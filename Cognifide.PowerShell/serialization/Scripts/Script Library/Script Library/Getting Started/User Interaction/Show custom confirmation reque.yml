@@ -1,0 +1,26 @@
+﻿---
+ID: "39d40ffa-60ec-4a80-899f-67ed186ffa77"
+Parent: "97909803-e651-41e4-a13a-ba1a831685b3"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/User Interaction/Show custom confirmation request
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $foo = New-Object System.Management.Automation.Host.ChoiceDescription "&Foo",""
+    $bar = New-Object System.Management.Automation.Host.ChoiceDescription "&Bar",""
+    $choices = [System.Management.Automation.Host.ChoiceDescription[]]($foo,$bar)
+    $caption = "Warning!"
+    $message = "Foo or bar?"
+    $result = $Host.UI.PromptForChoice($caption, $message, $choices,0)
+    if($result -eq 0) { Write-Host "You answered FOO" }
+    if($result -eq 1) { Write-Host "You answered BAR" }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140409T184356

@@ -1,0 +1,93 @@
+﻿---
+ID: "a008e2a4-625f-40a8-b476-ac798eeeb0a4"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Standard Values define settings
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Network/32x32/fingerprint.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+      How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?
+     
+      Sitecore recommendation:
+         _Standard Values — Define layout details, initial workflow, and insert options to a template. 
+         This reduces administration and centrally manages system settings, rather than setting them on individual items.
+     
+      Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+     
+      How to read this report?
+      ------------------------
+      The report will show you all templates in your solution that have no __Standard Values in the first list.
+      Such templates cannot even begin to adhere to this practice as the required settings are set on __Standard Values.
+      the second List will show you templates with standard values and will show whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.
+      Just because SV does not define one or more of those values, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user experience.
+    #>
+    
+    $prompt = @{
+        Parameters = @{
+            Name = "item"
+            Title = "Template branch to analyse"
+            Tooltip = "Branch you want to analyse."
+            Root = "/sitecore/templates"
+        }
+        Description = "Sitecore <i>__Standard Values</i> recommendation"
+        Title = "How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?"
+        Height = 280
+        Width = 500
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+    }
+    
+    $item = Get-Item master:\templates
+    $result = Read-Variable @prompt
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $templates = Get-ChildItem -Path $item.ProviderPath -Recurse | Where-Object { $_.TemplateName -eq "Template" }
+    
+    $template_sv = $templates |
+        Select-Object @{Name="Template"; Expression={ $_.ItemPath -replace "/Sitecore/templates/", "" }}, 
+            @{Name="_SV"; Expression={$_.Children["__Standard Values"] -ne $null }}    
+    
+    $has_sv = $template_sv | Group-Object _SV | Where-Object { $_.Name -eq "True" } | Select-object Count
+    $has_no_sv = $template_sv | Group-Object _SV | Where-Object { $_.Name -eq "False" } | Select-object Count
+    Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined."
+    
+    $props = @{
+        Property = "Name", @{n="Standard Values";  e={$_.Children["__Standard Values"] -ne $null}},
+            @{n="Default Workflow"; e={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}},
+            @{n="Insert Options";   e={$_.Children["__Standard Values"]["__masters"] -ne ""}},
+            @{n="Insert Rules";     e={$_.Children["__Standard Values"]["__Insert Rules"] -ne ""}},
+            @{n="Has Renderings";   e={$_.Children["__Standard Values"]["__Renderings"] -ne "" }},
+            @{n="Path";             e={ $_.Paths.Path -replace "/Sitecore/templates/", ""}}
+        Title = "Standard values recommendations compliance."
+        InfoTitle = "Sitecore recommendation:"
+        InfoDescription = "<i>__Standard Values</i> — Define layout details, initial workflow, and insert options to a template. This reduces administration and centrally manages system settings, rather than setting them on individual items.<br/><br/>
+                              Found <b>$($template_sv.Count)</b> templates. <b>$($has_no_sv.Count)</b> of those have no <i>__Standard Values</i> defined, while the remaining <b>$($has_sv.Count)</b> do.<br/>
+                              Templates that do not define <i>__Standard Values</i> cannot even begin to adhere to this practice as the required settings are set on <i>__Standard Values</i>.<br/>
+                              For the templates that have standard values defined you can see  whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.<br/>
+                              Lack of <i>__Standard Values</i>, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide whether you can improve your user's experience."
+    }
+    
+    $templates | Show-ListView @props
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Standard Values should define layout details, initial workflow, and insert options to a template.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130205T154857

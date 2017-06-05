@@ -1,0 +1,18 @@
+﻿---
+ID: "a46515d1-6f87-4b60-acad-a6c432782717"
+Parent: "fa21db1e-3f70-4201-9245-98a864582651"
+Template: "a87a00b1-e6db-45ab-8b54-636fec3b5523"
+Path: /sitecore/layout/Layouts/Applications/PowerShell
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: powershell/32x32/powershell8.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170605T102130Z

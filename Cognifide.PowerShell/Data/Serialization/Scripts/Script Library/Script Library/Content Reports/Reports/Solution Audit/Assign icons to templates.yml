@@ -1,0 +1,61 @@
+﻿---
+ID: "e3bff71b-2e1e-4dc4-ba01-7746f621cdaa"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Solution Audit/Assign icons to templates
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: People/32x32/palette_preferences.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+      How many of my templates define or no an icon? Which templates I need to examine to check if adding an icon would benefit my users?
+     
+      Sitecore recommendation:
+         Assign icons to templates — 
+           This provides a visual clue to the type of item that will be created.
+     
+      Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+    #>
+    
+    $item = Get-Item -Path "master:\templates"
+    $result = Read-Variable -Parameters `
+        @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
+        -Description "This report will analyse the template branch and will tell you which templates do not have any icon assigned." `
+        -Title "Find templates without an icon" -Width 500 -Height 280 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $template_icons = Get-ChildItem -Path $item.ProviderPath -Recurse |
+        Where-Object { $_.TemplateName -eq "Template" } |
+        Select-Object @{ Name="HasIcon"; Expression={-not [string]::IsNullOrEmpty($_.__Icon)} } |
+        Group-Object HasIcon
+    
+    $has_icon = $template_icons | Where-Object {$_.Name -eq "True" } | Select-object Count
+    $has_no_icon = $template_icons | Where-Object {$_.Name -eq "False" } | Select-Object Count
+    $title = "Found $($has_icon.Count + $has_no_icon.Count) templates. $($has_icon.Count) of those have icons defined while $($has_no_icon.Count) don't specify an icon."
+    Write-Host -f Yellow $title
+    
+    Get-ChildItem -Path $item.ProviderPath -Recurse | `
+        Where-Object { $_.TemplateName -eq "Template" -and $_.__icon -eq ""} |  `
+            Show-ListView -Property Name, `
+                @{Name="Path"; Expression={$_.ItemPath}} `
+                -Title "Items Missing Icon.Report" `
+                -InfoTitle "Found $($has_icon.Count + $has_no_icon.Count) templates." `
+                -InfoDescription "$($has_icon.Count) templates have icons defined while $($has_no_icon.Count) do not specify an icon. Double click on a template to open it."
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130205T141957

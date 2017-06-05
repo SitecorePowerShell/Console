@@ -1,0 +1,22 @@
+﻿---
+ID: "6b4e4627-40c7-464e-9fb0-54350fbd3850"
+Parent: "dfec044d-cbd7-428b-a53a-e53f9c2d1d3a"
+Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
+Path: /sitecore/system/Dictionary/PowerShell/C/Context
+DB: core
+SharedFields:
+- ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
+  Hint: Key
+  Value: Context
+Languages:
+- Language: en
+  Fields:
+  - ID: "2ba3454a-9a9c-4cdf-a9f8-107fd484eb6e"
+    Hint: Phrase
+    Value: Context
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160826T134826

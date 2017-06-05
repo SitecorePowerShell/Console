@@ -1,0 +1,88 @@
+﻿---
+ID: "59e3e841-a68b-42d2-b52b-d0efe822435a"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Locked Items
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/document_lock.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all the items locked by the specified user.
+            
+        .NOTES
+            Adam Najmanowicz, Michael West
+    #>
+    
+    $item = Get-Item -Path master:\content\
+    
+    $user = ""
+    
+    $props = @{
+        Title = "Items Locked"
+        Description = "This report will analyse the branch and will tell you which items havehave beenn locked. If user is selected only items locked by the user will be shown."
+        Width = 600
+        Height = 300
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Parameters = @(
+            @{ Name = "item"; Title="Root Item"; Tooltip="Branch you want to analyse."},
+            @{ Name = "user"; Title="Locking User"; Tooltip="Tooltip for user"; Editor="user"},
+            @{ Name = "since"; Title="Locked Since (leave empty is to ignore)"; Tooltip="Locked since"; Editor="date time"}
+        )
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    if($user) {
+        $owner = $user.Replace("\","\\")
+        $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -match "owner=""$owner""" }
+    } else{
+        $items = Get-ChildItem -Path $item.ProviderPath -Recurse -Version * -Language * | Where-Object { $_.__Lock -and (-not ($_.__Lock -match "<r />"))}
+    }
+    
+    if($since.Year -ne 1) {
+        $items = $items | Where-Object { $since -lt ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date}
+    }
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no items items locked by the specified user."
+    } else {
+        $props = @{
+            Title = "Locked Items Report"
+            InfoTitle = "Items Locked"
+            InfoDescription = 'Lists all the items locked by the specified user.'
+            PageSize = 25
+        }
+    
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Owner"; Expression={ $_.__Owner} },
+                @{Label="Locked"; Expression={ ([Sitecore.Data.Fields.LockField]($_.Fields["__Lock"])).Date} },
+                @{Label="Locked by"; Expression={$_.Locking.GetOwner() } },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130911T014607

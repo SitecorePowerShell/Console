@@ -1,0 +1,43 @@
+﻿---
+ID: "b0e0fea4-d27b-4c72-96c4-0241ff0b3f01"
+Parent: "1509f408-f9eb-4cf3-ab9a-f4a28d8bd01c"
+Template: "998b965e-6ab8-4568-810f-8101d60d0cc3"
+Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Languages/Current language
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/sign_forbidden.png
+- ID: "335c6760-6c0e-4c6c-814c-a53d203f553e"
+  Hint: Icon
+  Value: Office/32x32/sign_forbidden.png
+- ID: "cab694fc-e37c-44eb-9012-488b775cf638"
+  Hint: Message
+  Value: "ise:setlanguage(language=CurrentLanguage)"
+Languages:
+- Language: en
+  Fields:
+  - ID: "9b72a62b-2775-423d-b17a-ec34a9f31af8"
+    Hint: Display name
+    Value: Current language
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130506T044250
+- Language: "ja-JP"
+  Fields:
+  - ID: "9b72a62b-2775-423d-b17a-ec34a9f31af8"
+    Hint: Display name
+    Value: 設定不可
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160823T075957
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

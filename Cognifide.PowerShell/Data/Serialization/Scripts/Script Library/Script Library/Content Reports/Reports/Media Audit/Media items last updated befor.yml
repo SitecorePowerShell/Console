@@ -1,0 +1,85 @@
+﻿---
+ID: "9845904d-a13b-41cb-9d31-c189186883a2"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Media Audit/Media items last updated before date
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/history.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all media items last updated earlier than the date selected.
+        
+        .NOTES
+            Michael West
+    #>
+    
+    $settings = @{
+        Title = "Report Filter"
+        Width = "350"
+        Height = "250"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter the results for items updated on or before the specified date"
+        Parameters = @{ 
+            Name = "before"
+            Value = [System.DateTime]::Now
+            Title = "Before Date"
+            Tooltip = "Filter the results for items updated on or before the specified date"
+            Editor = "date time"
+        }
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    function Get-MediaItem {
+        param(
+            [datetime]$Before=([datetime]::Today)
+        )
+        
+        $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
+        
+        foreach($item in $items) {
+            if($item."__Updated" -le $Before) {
+                $item
+            }
+        }
+    }
+    
+    $items = Get-MediaItem -Before $before
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no media items updated on or before the specified date."
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "Media items last updated before date"
+            InfoDescription = "Lists all media items last updated earlier than the date selected."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140408T083523

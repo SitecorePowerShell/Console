@@ -1,0 +1,22 @@
+﻿---
+ID: "0190469e-0ef3-40e6-9bee-94559a07986b"
+Parent: "97909803-e651-41e4-a13a-ba1a831685b3"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Getting Started/User Interaction/Confirm a choice with ShowModalDialog
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # Uses Show-ModalDialog to execute the ConfirmChoice XML control
+    # the buttons must be named btn_0, btn_1...
+    Show-ModalDialog -Control "ConfirmChoice" -Parameters @{btn_0="Yes (returns btn_0)"; btn_1="No (returns btn_1)"; btn_2="return btn_2"; te="Message Text"; cp="My Caption"} -Height 120 -Width 500
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130515T120756

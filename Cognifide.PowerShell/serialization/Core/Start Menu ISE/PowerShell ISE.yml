@@ -1,0 +1,60 @@
+﻿---
+ID: "10052e00-df82-4271-93c4-994f9d4d6b80"
+Parent: "6b72e616-1173-4a0d-b773-c2132d7aa71a"
+Template: "72450c9c-98c4-4117-88b7-573110c7e0c0"
+Path: /sitecore/content/Documents and settings/All users/Start menu/Right/Development Tools/PowerShell ISE
+DB: core
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: powershell/32x32/ise8.png
+- ID: "238a40da-15f2-4412-b720-8f192ffa7491"
+  Hint: Icon
+  Value: powershell/32x32/ise8.png
+- ID: "8a1ac797-0304-4c50-aaac-4d9dbbff435f"
+  Hint: Application
+  Value: |
+    <link id="{6857D035-AB70-4DAC-8E7F-C6534BB8141F}" querystring="" url="/Applications/PowerShell/PowerShellIse" target="" linktype="internal" />
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 0
+Languages:
+- Language: 
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: "20120907T141142:634826239021620928"
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130722T002226
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
+      Hint: Display name
+      Value: PowerShell ISE
+- Language: "ja-JP"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160825T104819
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
+      Hint: Display name
+      Value: PowerShell ISE

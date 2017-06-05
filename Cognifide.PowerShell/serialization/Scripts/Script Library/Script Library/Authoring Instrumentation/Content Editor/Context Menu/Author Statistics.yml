@@ -1,0 +1,41 @@
+﻿---
+ID: "1876d433-4fae-46b2-b2ef-aaa0fda110e7"
+Parent: "47ba2b5b-36cb-4061-9dc0-bee85700780e"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Authoring Instrumentation/Content Editor/Context Menu/Author Statistics
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Business/32x32/businessmen.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $runScript = Show-Confirm "This script might take a long while on a larger branches - are you sure you want to run this script?"
+    
+    Set-HostProperty -HostWidth 60
+    
+    if($runScript -eq "yes"){
+        get-childitem -recurse | `
+        Group-Object "__Updated By" | `
+            Sort count -descending | `
+            Show-ListView -property Name, `
+            @{Label="Items Updated"; Expression={$_.count}}, `
+            @{Label="Icon"; Expression={ [Sitecore.Security.Accounts.User]::FromName("$($_.name)", $false).Profile.Portrait } } `
+            -Modal -Width 690 -Height 600
+    #    Show-Result -Text
+        Close-Window
+    } else {
+      Close-Window
+    }
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121129T134604

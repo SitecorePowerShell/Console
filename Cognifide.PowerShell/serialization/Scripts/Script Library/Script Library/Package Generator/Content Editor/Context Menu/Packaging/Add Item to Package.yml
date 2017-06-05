@@ -1,0 +1,81 @@
+﻿---
+ID: "a6d3ce99-9bde-4344-911d-cfb3fb742de6"
+Parent: "c83cc1ee-a860-4e64-9715-e9c3bbb885f0"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Package Generator/Content Editor/Context Menu/Packaging/Add Item to Package
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Software/16x16/element_add.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: <ruleset />
+- ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
+  Hint: PersistentSessionId
+  Value: packageBuilder
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function Resolve-Error
+    
+    $installModeOptions = [ordered]@{
+        "Merge" = "Merge";
+        "Skip" = "Skip";
+        "Side By Side" = "SideBySide"
+    };
+    
+    $mergeModeOptions = [ordered]@{
+        "Merge" = "Merge"
+        "Clear" = "Clear";
+        "Append" = "Append";
+    };
+    
+    $result = Read-Variable -Parameters `
+        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
+        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"}, `
+        @{ Name = "info"; Title="Click OK to add item to your package or Cancel to abort."; Value="Item: '$((Get-Item .).ProviderPath)'" ; Editor="info"} `
+        -Description "Set installation options for this package source." `
+        -Title "Installation options" -ShowHints
+    
+    Resolve-Error
+    if($result -ne "ok")
+    {
+        Close-Window
+        Exit
+    }
+    
+    # Add Single Item 
+    $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
+    
+    $path = Get-Item . | ForEach-Object { $_.ProviderPath } 
+    $source = Get-Item . | New-ExplicitItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+    $package.Sources.Add($source);
+    Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 250
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{54A4A57F-713F-47B7-9038-AD97EF87D0D5}">
+        <conditions>
+          <condition
+            id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}"
+            uid="C413ABE8553E479092A909DB95E47F35"
+            persistentsessionid="packageBuilder" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130919T124300

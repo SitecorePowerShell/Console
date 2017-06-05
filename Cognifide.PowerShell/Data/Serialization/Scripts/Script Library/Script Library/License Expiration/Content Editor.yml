@@ -1,0 +1,14 @@
+﻿---
+ID: "9903831a-4afc-4a49-8b48-5134d7ce1a40"
+Parent: "05a448ff-22b3-4449-93a7-9977f94d8941"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/License Expiration/Content Editor
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150601T231815

@@ -1,0 +1,40 @@
+﻿---
+ID: "a870e3ea-a75e-447c-ac9c-00eb74ea7268"
+Parent: "badf38b6-238f-4c44-92fd-088c2a4343a1"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Automatically show quick info section/Pipelines/LoggedIn/Automatically show quick info
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Adapted from:
+        http://www.sitecore.net/Learn/Blogs/Technical-Blogs/John-West-Sitecore-Blog/Posts/2012/12/Automatically-Show-the-Quick-Info-Section-in-the-Content-Editor-of-the-Sitecore-ASPNET-CMS.aspx
+    #>
+    
+    $args = Get-Variable -Name args -ValueOnly
+    $username = $args.UserName
+    
+    $user = Get-User -Identity $username -Authenticated
+    $domain = Get-Domain -Name "sitecore"
+    
+    if($user.Domain -ne $domain.Name -or $user.Name -eq $domain.AnonymousUserName) {
+        Write-Log "Unexpected domain or user: $($user.Name)" -Log Warning
+        return
+    }
+    
+    $key = "/" + $username + "/UserOptions.ContentEditor.ShowQuickInfo"
+    if([System.String]::IsNullOrEmpty($user.Profile[$key])) {
+        Write-Log "Configuring the ShowQuickInfo to be visible."
+        $user.Profile[$key] = "true"
+        $user.Profile.Save()
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150201T174520

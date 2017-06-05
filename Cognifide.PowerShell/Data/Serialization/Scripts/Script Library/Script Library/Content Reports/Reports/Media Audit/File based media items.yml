@@ -1,0 +1,69 @@
+﻿---
+ID: "2c3337ff-e4d2-4281-a250-97383d75338f"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Media Audit/File based media items
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/16x16/harddisk_information.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all media items that are file system based.
+        
+        .NOTES
+            Michael West
+    #>
+    function IsFileBased {
+        param(
+            $Item
+        )
+        
+        (New-Object Sitecore.Data.Items.MediaItem $item).FileBased
+    }
+    
+    function Get-MediaItemFileBased {
+        $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
+        
+        foreach($item in $items) {
+            if(IsFileBased($item)) {
+                $item
+            }
+        }
+    }
+    
+    $items = Get-MediaItemFileBased
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no file-based media items."
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "File based media items"
+            InfoDescription = "Lists all media items that are file system based."
+            PageSize = 25
+        }
+        
+        Get-MediaItemFileBased |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} },
+                @{Label="File Path"; Expression={$_."File Path"} }
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140407T191241

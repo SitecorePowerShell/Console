@@ -1,0 +1,14 @@
+﻿---
+ID: "89278b36-ad44-4234-81fd-f50951f69554"
+Parent: "482be2eb-5ccd-4e6f-a63c-51fac5b34b7a"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Internal
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170309T120143

@@ -1,0 +1,32 @@
+﻿---
+ID: "2184c5ce-b775-4eea-ae9a-7bd561abc131"
+Parent: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/templates/Modules/PowerShell Console/PowerShell Script Library/__Standard Values
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: powershell/32x32/PowerShell_Library.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Type: TreelistEx
+  Value: |
+    {DD22F1B3-BD87-4DB2-9E7D-F7A496888D43}
+    {AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}
+- ID: "a0cb3965-8884-4c7a-8815-b6b2e5ced162"
+  Hint: __Editors
+  Type: TreelistEx
+  Value: "{A0C460F4-DBAE-4A5A-8F3A-C4ADFCDACEEA}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121129T114600
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

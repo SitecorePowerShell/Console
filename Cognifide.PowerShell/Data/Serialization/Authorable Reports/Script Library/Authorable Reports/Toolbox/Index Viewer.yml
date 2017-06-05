@@ -1,0 +1,150 @@
+﻿---
+ID: "2805c06c-f17d-4c8e-813d-7304564078eb"
+Parent: "b85e2336-26ab-47a7-b2bf-91cde1a7e3ba"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Toolbox/Index Viewer
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/index2.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function Render-ReportField
+    Close-Window
+    
+    $indexOptions = @{}
+    foreach($index in Get-SearchIndex) {
+        $indexOptions[$index.Name] = $index.Name
+    }
+    
+    $index="sitecore_master_index";
+    
+    $props = @{
+        Parameters = @(
+            @{Name="index"; Title="Choose the report index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
+        )
+        Title = "Index Viewer"
+        Description = "Choose the filtering criteria for the report."
+        Width = 450
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -eq "cancel"){
+        exit
+    }
+    
+    $database = Find-Item -Index $index -First 1 | % { $_.DatabaseName } 
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    
+    $propertyOptions = [ordered]@{}
+    $searchResultItem = New-Object Sitecore.ContentSearch.SearchTypes.SearchResultItem
+    $properties = $searchResultItem.GetType().GetProperties() | Sort-Object -Property Name
+    foreach($property in $properties) {
+        $attribute = $property.GetCustomAttributes($false) | Where-Object { $_.IndexFieldName } | Select-Object -First 1
+        if($attribute) {
+            $propertyOptions[$property.Name] = $attribute.IndexFieldName
+        }
+    }
+    
+    $topOptions = [ordered]@{"25"=25;"100"=100;"1000"=1000}
+    
+    $filterOptions = [ordered]@{
+        "Contains"="Contains"
+        "DecendentOf"="DecendentOf"
+        "EndsWith"="EndsWith"
+        "Equals"="Equals"
+        "ExclusiveRange"="ExclusiveRange"
+        "Fuzzy"="Fuzzy"
+        "InclusiveRange"="InclusiveRange"
+        "StartsWith"="StartsWith"
+    }
+    
+    $versionOptions = [ordered]@{
+        "Latest"="1"
+        "Previous"="0"
+    }
+    
+    $languageOptions = [ordered]@{}
+    $languages = [Sitecore.Context]::Database.GetLanguages() | Sort-Object -Property Title
+    foreach($language in $languages) {
+        $languageOptions[$language.Title] = $language.Name
+    }
+    
+    $props.Parameters = @(
+        @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."; Columns=7},
+        @{Name="topCount"; Value="25"; Title="Choose how much to return"; Options=$topOptions; Tooltip="Only the top results will be returned."; Columns=5; Placeholder="All"},
+        @{Name="searchField"; Value="_content"; Title="Search Field"; Options=$propertyOptions; Tooltip="Choose an indexed field."; Columns="3 first"},
+        @{Name="searchOperator"; Value="Fuzzy"; Title="Search Filter"; Options=$filterOptions; Tooltip="Choose a comparison method."; Columns="3"},
+        @{Name="searchText"; Value=""; Title="Search Value"; Tooltip="Enter the text to search."; Columns="6"; Placeholder="Sample Item"},
+        @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3 first"; Placeholder="All"},
+        @{Name="searchLanguage"; Value="Language"; Title="Language"; Options=$languageOptions; Tooltip="Choose enabled languages."; Columns="3"; Placeholder="All"}
+    )
+    $props.Width = 780
+    $props.Height = 350
+    $result = Read-Variable @props
+    
+    if($result -eq "cancel") {
+        exit
+    }
+    
+    $data = @{
+        Index = $index
+        Criteria = @(@{
+            Filter = "DescendantOf"
+            Value = $root
+        })
+    }
+    
+    if($searchText) {
+        $data.Criteria += @{
+            Field = $searchField
+            Filter = $searchOperator
+            Value = $searchText
+        }
+    }
+    
+    if($searchVersion) {
+        $data.Criteria += @{
+            Field = "_latestversion"
+            Filter = "Equals"
+            Value = $searchVersion
+        }
+    }
+    
+    if($searchLanguage) {
+        $data.Criteria += @{
+            Field = "_language"
+            Filter = "Equals"
+            Value = $searchLanguage
+        }
+    }
+    
+    $details = @"
+    Documents: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::GetIndexNumberOfDocuments($data.Index)),
+    Fields: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::NumberOfFields($data.Index)),
+    Modified: $([Sitecore.ContentSearch.Utilities.IndexHealthHelper]::LastModified($data.Index))
+    "@
+    if($topCount) {
+        $data.First = $topCount
+        $details += ", Showing the top $($topCount)"
+    }
+    
+    $script = Get-Item master:\ -ID "{EE75FFCF-7B3A-46CD-86AB-6536AD8675AA}"
+    
+    Find-Item @data | 
+        Show-ListView -Property Name, Language, Version, Url, Path,  
+            @{Label="Fields"; Expression={ Render-ScriptInvoker $script @{index=$index; itemId="$($_.Fields['_uniqueid'])"} "Show Full Info" } } `
+            -Title "Index Viewer" -ActionData $data -InfoTitle "Index: $($data.Index)" -InfoDescription $details
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150626T235351

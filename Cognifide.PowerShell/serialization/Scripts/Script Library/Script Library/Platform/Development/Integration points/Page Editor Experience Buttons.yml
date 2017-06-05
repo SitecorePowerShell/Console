@@ -1,0 +1,14 @@
+﻿---
+ID: "b10a0006-2bfe-4676-a0b4-debcbb9d3523"
+Parent: "5398f7ea-3ecb-4c84-946e-49c63ecd8dcd"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Page Editor Experience Buttons
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20151223T173538

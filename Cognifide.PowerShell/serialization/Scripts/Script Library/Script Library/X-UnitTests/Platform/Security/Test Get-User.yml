@@ -1,0 +1,56 @@
+﻿---
+ID: "82ac6467-7fc6-4397-bcd8-3a00b8b07ba3"
+Parent: "5173c131-3db8-4cde-98d7-9094db962967"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/X-UnitTests/Platform/Security/Test Get-User"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .LINK
+            http://sitecoreworld.blogspot.com/2014/09/querying-items-from-sitecore.html
+    #>
+    
+    Import-Module -Name Pester
+    
+    Describe "Get-User methods" {
+        Context "User object matches expected values" {
+            It "returns an authenticated user" {
+                $actual = Get-User -Id "admin" -Authenticated | Select-Object -ExpandProperty IsAuthenticated
+                $expected = $true
+                $actual | Should Be $expected
+            }
+            It "returns an unauthenticated user" {
+                $actual = Get-User -Id "admin" | Select-Object -ExpandProperty IsAuthenticated
+                $expected = $false
+                $actual | Should Be $expected
+            }
+            It "returns the current user" {
+                $actual = Get-User -Current | Select-Object -ExpandProperty Name
+                $expected = [Sitecore.Context]::User.Name
+                $actual | Should BeExactly $expected
+            }
+            It "returns two users using wildcard sitecore\*" {
+                $actual = Get-User -Filter "sitecore\*" | Select-Object -First 2 | 
+                    Measure-Object | Select-Object -ExpandProperty Count
+                $expected = 2
+                $actual | Should Be $expected
+            }
+            It "returns the MemberOf for a given User" {
+                $actual = Get-User -Identity "sitecore\michael" | Select-Object -ExpandProperty MemberOf |
+                    Measure-Object | Select-Object -ExpandProperty Count
+                $expected = 2
+                $actual | Should Be $expected            
+            }
+        }
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160515T214606

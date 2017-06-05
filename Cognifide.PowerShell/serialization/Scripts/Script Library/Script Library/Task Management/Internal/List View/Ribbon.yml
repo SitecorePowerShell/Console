@@ -1,0 +1,14 @@
+﻿---
+ID: "2ee41c49-5fcb-472b-a720-f7dfaa3e233d"
+Parent: "c0f29ec2-1ddc-4625-ab50-b1e25c62d297"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Task Management/Internal/List View/Ribbon
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141126T025446

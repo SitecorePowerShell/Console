@@ -1,0 +1,177 @@
+﻿---
+ID: "44178c08-fba0-44f5-bac8-b73506693f4e"
+Parent: "33dd6099-7aa8-48b2-9183-c5a54d3a4f8c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/Task Management/Functions/Edit-TaskSchedule"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    function Parse-TaskSchedule {
+    	[CmdletBinding()]
+    	param(
+    	    [ValidateNotNullOrEmpty()]
+    	    [item]$scheduleItem,
+    
+    	    [ValidateNotNullOrEmpty()]
+    	    [string]$column
+    	)
+    	
+    	$ScSchedule = $scheduleItem.Schedule.Split('|');
+    	switch ($column) {
+    		from { [Sitecore.DateUtil]::IsoDateToDateTime($ScSchedule[0]); break; }
+    		to {
+    			$fieldValue = $ScSchedule[1];
+    			if ([string]::IsNullOrEmpty($fieldValue)) {
+    				[datetime]::MaxValue;
+    			}
+    			else {
+    				[Sitecore.DateUtil]::IsoDateToDateTime($fieldValue);
+    			}
+    			break;
+    		}
+    		weekdays {
+    			$weekDays = @( 1,2,4,8,16,32,64);
+    			[int]$scDays = $ScSchedule[2];
+    			$weekDays | Where-Object { $_ -band $scDays };
+    			break;
+    		}
+    		strWeekdays {
+    			$weekDays = @{ 1 = "Sunday"; 2 = "Monday"; 4 = "Tuesday"; 8 = "Wednesday"; 16 = "Thursday"; 32 = "Friday"; 64 = "Saturday" };
+    			[int]$days = $ScSchedule[2];
+    			$weekDays.Keys | Where-Object { $_ -band $days } | Sort-Object | ForEach-Object { $daysStr += "$($weekDays.Get_Item($_)), " };
+    			if ($daysStr -ne $null) {
+    				$daysStr = $daysStr.Trim(',',' ');
+    			}
+    			return $daysStr;
+    			break;
+    		}
+    		interval { 
+    		    if ($ScSchedule[3] -eq $null) {
+    				return [string]::Empty
+    			} else {
+    				return $ScSchedule[3]
+    			}
+    			break;
+    		}
+    	}
+    }
+    
+    function Format-TaskSchedule {
+    	[CmdletBinding()]
+    	param(
+    		[ValidateNotNullOrEmpty()]
+    		[datetime]$from,
+    		
+    		[ValidateNotNullOrEmpty()]
+    		[datetime]$to,
+    		
+    		[ValidateNotNull()]
+    		$days,
+    		
+    		[ValidateNotNullOrEmpty()]
+    		[string]$interval
+    	)
+    
+    	if (($from -eq [datetime]0) -or ($from -eq [datetime]::MaxValue) -or ($from -eq [datetime]::MinValue)) {
+    		$fromStr = "";
+    	} else {
+    		$fromStr = $([Sitecore.DateUtil]::ToIsoDate($from));
+    	}
+    
+    	if (($from -eq [datetime]0) -or ($from -eq [datetime]::MaxValue) -or ($from -eq [datetime]::MinValue)) {
+    		$toStr = [string]::Empty;
+    	} else {
+    		$toStr = $([Sitecore.DateUtil]::ToIsoDate($to));
+    	}
+    	[int]$scDays = ($days | Measure-Object -Sum).Sum;
+    	
+    	return "$fromStr|$toStr|$scDays|$interval";
+    }
+    
+    function Edit-TaskSchedule {
+    	[CmdletBinding()]
+    
+    	param(
+    		[ValidateNotNullOrEmpty()]
+    		[item]$Item
+    	)
+    
+    	$weekDayOptions = [ordered]@{
+    	    "Sunday" = 1;
+    	    "Monday" = 2;
+    	    "Tuesday" = 4;
+    	    "Wednesday" = 8;
+    	    "Thursday" = 16;
+    	    "Friday" = 32;
+    	    "Saturday" = 64;
+    	};
+    
+    	$from = Parse-TaskSchedule $Item "from";
+    	$to = Parse-TaskSchedule $Item "to";
+    	$weekdays = Parse-TaskSchedule $Item "weekdays";
+    	$interval = Parse-TaskSchedule $Item "interval";
+    	$tsInterval = [timespan]::Zero;
+    	[timespan]::TryParse($interval,[ref]$tsInterval) | Out-Null;
+    	$intDays = $tsInterval.Days;
+    	$intHours = $tsInterval.Hours;
+    	$intMinutes = $tsInterval.Minutes;
+    	$intSeconds = $tsInterval.Seconds;
+    	$intMilis = $tsInterval.Milliseconds;
+    
+    	$result = Read-Variable -Parameters `
+     		@{ Name = "from"; Title = "Starts running at"; Editor = "date time"; Tip = "Date the task should start for the first time."; Columns = 6 },
+    	    @{ Name = "to"; Title = "Stops running at"; Editor = "date time"; Tip = "Date the task should end being run."; Columns = 6 },
+    	    @{ Name = "weekdays"; Title = "Days to run"; Options = $weekDayOptions; Editor = "checklist"; Tip = "Select the days of the week the task should run." },
+    	    @{ Name = "intervalInfo"; Title = "Interval"; Tip = "Specify how often the task should be launched"; Editor = "info" },
+    	    @{ Name = "intDays"; Title = "Days"; Columns = 2 },
+    	    @{ Name = "intHours"; Title = "Hours"; Columns = 2 },
+    	    @{ Name = "intMinutes"; Title = "Minutes"; Columns = 2 },
+    	    @{ Name = "intSeconds"; Title = "Seconds"; Columns = 2 },
+    	    @{ Name = "intMilis"; Title = "Milliseconds"; Columns = 2 } `
+     		-Description "Specify schedule for task '$($Item.DisplayName)'. You can edit the date/time task becomes active and when it should stop running, what days it will run on and how often." `
+     		-Title "Schedule for task: $($Item.DisplayName)" -Width 600 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints;
+    
+    	$tsInterval = [timespan]"$($intDays).$($intHours):$($intMinutes):$($intSeconds).$($intMilis)";
+    	$interval = $tsInterval.ToString();
+    
+    	if ($result -eq "ok") {
+    		$Item.Schedule = Format-TaskSchedule $from $to $weekdays $interval;
+    	}
+    }
+    
+    function Format-TaskScheduleDate {
+    	param(
+    		[datetime]$Date,
+    		[string]$Text
+    	)
+    
+    	if (($Date -le [datetime]::MinValue -or $Date -ge [datetime]::MaxValue) -and $Text) {
+    		return $Text;
+    	} else {
+    		return $Date;
+    	}
+    }
+    
+    function Format-TaskScheduleDay {
+    	param(
+    		[string]$Days,
+    		[string]$Text
+    	)
+    
+    	$everyDay = [enum]::GetNames("dayofweek") -join ", ";
+    	if ($Days -eq $everyDay -and $Text) {
+    		return $Text;
+    	} else {
+    		return $Days;
+    	}
+    } 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140520T050534

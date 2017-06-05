@@ -1,0 +1,56 @@
+﻿---
+ID: "910d33b7-ab6e-429a-9e56-8923346bed66"
+Parent: "6b3434f0-4398-4be8-9c14-73efc3367fc4"
+Template: "69316117-03a6-4679-a34a-21e8ce8701d5"
+Path: /sitecore/system/Modules/PowerShell/Settings/Default/All Users
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: People/32x32/users1.png
+- ID: "6f442ac9-7001-4124-9bc3-589875876c27"
+  Hint: FontSize
+  Value: 14
+- ID: "86ecc435-0924-4ea0-92d8-cca12ed7e644"
+  Hint: FontFamily
+  Value: Monaco
+- ID: "aeeb1bb0-87b9-4e16-b5de-d4cc544a992f"
+  Hint: BackgroundColor
+  Value: DarkBlue
+- ID: "f59378a5-f21d-4e07-b7de-7986dda3a510"
+  Hint: HostWidth
+  Value: 200
+- ID: "f810eec7-9a73-43e6-84c1-36e4951d2b3e"
+  Hint: ForegroundColor
+  Value: White
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: All Users
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20111016T113400
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+- Language: "ja-JP"
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: すべてのユーザー
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160829T010235
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

@@ -1,0 +1,28 @@
+﻿---
+ID: "6ec0bb6e-5d84-4932-a9d6-c8574d5a9eed"
+Parent: "64668dde-2255-4d6b-bf9c-fbbdeb0f129a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Export/XML
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: WordProcessing/32x32/imp_exp_xml_h.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    $format = & ([scriptblock]::Create($exportProperty))        
+    
+    ([psCustomObject]$exportData | 
+        Select-Object -Property $format | 
+        ConvertTo-Xml -NoTypeInformation).OuterXml | 
+            Out-Download -Name "report-$datetime.xml"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130911T153307

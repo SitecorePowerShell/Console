@@ -1,0 +1,14 @@
+﻿---
+ID: "a29c833b-50c6-439d-b65f-8b894a37e824"
+Parent: "418c783b-071e-406e-97aa-b6921bae6b9e"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Internal/List View/Ribbon/ScriptSession
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20131216T120335

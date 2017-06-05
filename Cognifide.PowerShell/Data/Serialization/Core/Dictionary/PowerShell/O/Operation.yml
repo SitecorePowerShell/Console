@@ -1,0 +1,22 @@
+﻿---
+ID: "b5c9c506-4ec0-4eb1-af2b-15cf93cc9c70"
+Parent: "15464719-ec61-44c7-b35f-0341575da338"
+Template: "6d1cd897-1936-4a3a-a511-289a94c2a7b1"
+Path: /sitecore/system/Dictionary/PowerShell/O/Operation
+DB: core
+SharedFields:
+- ID: "580c75a8-c01a-4580-83cb-987776ceb3af"
+  Hint: Key
+  Value: "Operation:"
+Languages:
+- Language: en
+  Fields:
+  - ID: "2ba3454a-9a9c-4cdf-a9f8-107fd484eb6e"
+    Hint: Phrase
+    Value: "Operation:"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160826T125200

@@ -1,0 +1,69 @@
+﻿---
+ID: "8193727a-d008-4634-ae9d-6a2cbbf8c856"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Content Reports/Reports/Content Audit/Aliases
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: network/32x32/spy.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all aliases and their linked items
+            
+        .NOTES
+            Alex Washtell
+            Adapted from the Advanced System Reporter module.
+    #>
+    
+    
+    function Get-LinkedItem {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$AliasItem
+        )
+        
+        if($AliasItem) {
+            
+            [Sitecore.Data.Fields.LinkField]$linkField = $AliasItem.Fields["Linked item"]
+            
+            if ($linkField)
+            {
+                return $linkField.TargetItem
+            }
+        }
+    }
+    
+    $aliasPath = "/sitecore/system/aliases/"
+    $items = Get-ChildItem -Path "master:$aliasPath" -Recurse
+    
+    if($items.Count -eq 0){
+        Show-Alert "There are no aliases."
+    } else {
+        $props = @{
+            InfoTitle = "Aliases"
+            InfoDescription = "Lists all aliases and their linked items."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Alias"; Expression={ $_.Paths.FullPath -replace $aliasPath, "" } },
+                @{Label="Target Item"; Expression={($_ | Get-LinkedItem).Paths.FullPath}},
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} }
+                
+    }
+    Close-Window
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160410T100802

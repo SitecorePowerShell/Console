@@ -1,0 +1,14 @@
+﻿---
+ID: "15464719-ec61-44c7-b35f-0341575da338"
+Parent: "9a49571c-d574-4525-b37e-f519fa1eaa1e"
+Template: "267d9ac7-5d85-4e9d-af89-99ab296cc218"
+Path: /sitecore/system/Dictionary/PowerShell/O
+DB: core
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160826T124019

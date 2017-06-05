@@ -1,0 +1,14 @@
+﻿---
+ID: "88a942fb-4328-4279-b99c-430a9348655b"
+Parent: "5398f7ea-3ecb-4c84-946e-49c63ecd8dcd"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Logged In Pipeline
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T012003

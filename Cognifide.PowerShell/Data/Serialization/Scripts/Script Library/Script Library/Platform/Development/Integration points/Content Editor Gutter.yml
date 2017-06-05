@@ -1,0 +1,14 @@
+﻿---
+ID: "ffd1c46f-d75c-4b7b-afe4-be2fa52651a8"
+Parent: "5398f7ea-3ecb-4c84-946e-49c63ecd8dcd"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Platform/Development/Integration points/Content Editor Gutter
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T011456

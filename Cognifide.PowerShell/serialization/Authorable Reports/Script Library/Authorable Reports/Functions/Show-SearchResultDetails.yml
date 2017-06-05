@@ -1,0 +1,75 @@
+﻿---
+ID: "ee75ffcf-7b3a-46cd-86ab-6536ad8675aa"
+Parent: "90b71926-6fc4-41e1-bfdb-828d6f9e243b"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/Authorable Reports/Functions/Show-SearchResultDetails"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    function Show-SearchResultDetails { 
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory=$true, Position=0)]
+            [string]$Index,
+            [Parameter(Mandatory=$true, Position=1)]
+            [string]$Uri
+            )
+            process {
+                Find-Item -Index $index -Criteria @{Filter = "Equals"; Field = "_uniqueid"; Value = "$Uri"}
+            }
+    }
+    
+    if($itemId -eq $null)
+    {
+        $itemId = (gi master:\content).Uri
+        $index = "sitecore_master_index" 
+    }
+    
+    $item = Show-SearchResultDetails  $index $itemId
+    
+    $info = "" <#+ 
+        "<b>Name: </b> $($item.Name)<br/>" + 
+        "<b>Url: </b> $($item.Url)<br/>"+
+        "<b>Path: </b> $($item.Path)<br/>"+
+        "<b>Language: </b> $($item.Language)<br/>"+
+        "<b>Template: </b> $($item.TemplateName) - $($item.TemplateId)<br/><br/><br/>"+
+        "<h1>Fields:</h1>"#>
+        
+    $keys = $item.Fields.Keys;
+    if($keys -eq $null)
+    {
+        $keys = $item | Get-Member -MemberType Property | %{ $_.Name}
+        foreach($fieldKey in ($keys | sort)){
+          $info += "<b>$($fieldKey): </b> $($item.$fieldKey)<br/>"
+        }
+    }
+    else
+    {
+        foreach($fieldKey in ($item.Fields.Keys | sort))
+        {
+            $info += "<b>$($fieldKey): </b> $($item.Fields[$fieldKey])<br/>"
+        }
+    }
+    
+    $props = @{
+        Parameters = @(
+            @{Name="info"; Title=""; editor="info"}
+        )
+        Title = "'$($item.Name)' Fields Viewer"
+        Description = "Details fo the index item at $($item.DatabaseName):$($item.Path)."
+        Width = 900
+        Height = 800
+    }
+    
+    $result = Read-Variable @props
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150717T111816
