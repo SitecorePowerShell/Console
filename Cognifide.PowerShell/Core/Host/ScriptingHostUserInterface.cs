@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Core.Host
                     ["Value"] = string.Empty
                 };
                 JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false, null));
+                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false, null, null));
                 var values = (object[])JobContext.MessageQueue.GetResult() ?? new object[] { string.Empty };
                 return ((Hashtable)values[0])["Value"] as string;
             }
@@ -82,7 +82,7 @@ namespace Cognifide.PowerShell.Core.Host
                     ["Editor"] = "password"
                 };
                 JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200",
-                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false, null));
+                    "Sitecore PowerShell Extensions", " ", string.Empty, string.Empty, false, null, null));
                 var values = (object[]) JobContext.MessageQueue.GetResult() ?? new object[] {string.Empty};
 
                 return ToSecureString(((Hashtable)values[0])["Value"] as string);
@@ -199,7 +199,7 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 JobContext.MessageQueue.PutMessage(new ShowMultiValuePromptMessage(options, "600", "200", 
                     string.IsNullOrEmpty(caption)? "Sitecore PowerShell Extensions" : caption,
-                    string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, false, null));
+                    string.IsNullOrEmpty(message) ? " " : message, string.Empty, string.Empty, false, null, null));
                 var values = (object[]) JobContext.MessageQueue.GetResult();
 
                 return values?.Cast<Hashtable>()

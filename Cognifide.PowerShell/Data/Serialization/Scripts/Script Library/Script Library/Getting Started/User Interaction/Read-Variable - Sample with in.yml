@@ -23,6 +23,8 @@ SharedFields:
             Adam Najmanowicz - https://gist.github.com/AdamNaj/37ad58e1a9350604e4815ca586acf39e
     #>
     
+    $minPassLength = 6
+    
     $result = Read-Variable -Parameters `
         @{ Name = "userName"; Value=""; Title="UserName"; Placeholder="User name goes here"; Mandatory=$true},
         @{ Name = "password"; Value=""; Title="Password"; Editor="password"; Placeholder="Password goes here"},
@@ -33,7 +35,6 @@ SharedFields:
         -Description "This Dialog shows how to provide a validator for values" `
         -Title "Password entry" -Width 450 -Height 410 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints `
         -Validator { 
-            $minPassLength = 6
             $pass = $variables.password.Value;
             if($pass.Length -ge $minPassLength)
             {
@@ -62,7 +63,8 @@ SharedFields:
             {
                 $variables.password.Error = "Password must be at least " + $minPassLength + " characters long"
             }
-        }
+        } `
+        -ValidatorParameters @{minPassLength = $minPassLength}
     
     $userName
     $password

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Management.Automation;
 using System.Web;
 using Cognifide.PowerShell.Client.Applications;
@@ -16,7 +17,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         [NonSerialized] private readonly object[] parameters;
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator) : base()
+            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator,
+            Hashtable validatorParameters) : base()
         {
             this.parameters = parameters;
             Width = width ?? string.Empty;
@@ -27,21 +29,20 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Description = description ?? string.Empty;
             ShowHints = showHints;
             Validator = validator;
+            ValidatorParameters = validatorParameters;
         }
 
-        public object[] Parameters
-        {
-            get { return parameters; }
-        }
+        public object[] Parameters => parameters;
 
-        public string Width { get; private set; }
-        public string Height { get; private set; }
-        public string Title { get; private set; }
-        public string Description { get; private set; }
-        public string CancelButtonName { get; private set; }
-        public string OkButtonName { get; private set; }
-        public bool ShowHints { get; set; }
-        public ScriptBlock Validator { get; private set; }
+        public string Width { get; }
+        public string Height { get; }
+        public string Title { get; }
+        public string Description { get; }
+        public string CancelButtonName { get; }
+        public string OkButtonName { get; }
+        public bool ShowHints { get; }
+        public ScriptBlock Validator { get; }
+        public Hashtable ValidatorParameters { get; }
 
         /// <summary>
         ///     Shows a confirmation dialog.

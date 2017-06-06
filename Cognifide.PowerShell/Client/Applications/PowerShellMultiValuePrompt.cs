@@ -68,6 +68,12 @@ namespace Cognifide.PowerShell.Client.Applications
             get { return StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["Validator"]); }
             set { Sitecore.Context.ClientPage.ServerProperties["Validator"] = value; }
         }
+        public Hashtable ValidatorParameters
+        {
+            get { return (Hashtable) Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"]; }
+            set { Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"] = value; }
+        }
+
 
         public static Dictionary<string, string> FieldValidators
         {
@@ -124,6 +130,7 @@ namespace Cognifide.PowerShell.Client.Applications
             }
 
             Validator = message.Validator?.ToString();
+            ValidatorParameters = message.ValidatorParameters;
 
             //MandatoryVariables =
             var mandatoryVariables =
@@ -773,11 +780,13 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     varsHashtable.Add(variable["Name"], variable);
                 }
+
                 try
                 {
                     using (var session = ScriptSessionManager.GetSession(string.Empty))
                     {
                         session.SetVariable("Variables", varsHashtable);
+                        SetValidatorParameters(session);
                         session.ExecuteScriptPart(Validator);
                     }
                 }
@@ -801,6 +810,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         using (var session = ScriptSessionManager.GetSession(string.Empty))
                         {
                             session.SetVariable("variable", variable);
+                            SetValidatorParameters(session);
                             session.ExecuteScriptPart(fieldValidator);
                         }
                     }
@@ -870,6 +880,18 @@ namespace Cognifide.PowerShell.Client.Applications
             HttpContext.Current.Cache[sid] = scriptVariables;
             SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
+        }
+
+        private void SetValidatorParameters(ScriptSession session)
+        {
+            var valParams = ValidatorParameters;
+            if (valParams != null)
+            {
+                foreach (var valParam in valParams.Keys)
+                {
+                    session.SetVariable(valParam.ToString(), valParams[valParam]);
+                }
+            }
         }
 
         private Hashtable[] GetVariableValues()
