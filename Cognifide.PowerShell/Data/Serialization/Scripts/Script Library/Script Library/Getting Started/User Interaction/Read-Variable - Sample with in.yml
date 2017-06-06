@@ -18,7 +18,8 @@ SharedFields:
             $userName uses simplest "Mandatory" validator that only checks that string is not empty - this validator works only on some fields.
             $password is validated in the global validator at the end of the command.
             $description is validated by a local parameter "Validator" script block that only checks a single entry        
-        
+            $minPassLength is a number that is passed to validator as a parameter and used for password length validation
+    
         .NOTES
             Adam Najmanowicz - https://gist.github.com/AdamNaj/37ad58e1a9350604e4815ca586acf39e
     #>
