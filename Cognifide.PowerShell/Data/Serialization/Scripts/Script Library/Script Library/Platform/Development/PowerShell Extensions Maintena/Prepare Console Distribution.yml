@@ -75,7 +75,7 @@ SharedFields:
     http://michaellwest.blogspot.com/'
     
     # Item templates
-    $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Overwrite
+    $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
     $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
@@ -149,15 +149,15 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Application Layouts
-    $source = Get-Item 'core:\layout\Layouts\Applications\PowerShell' | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # Start Menu
-    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/'  -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
+    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Documents and settings/All users/Start menu/' -Recurse | New-ExplicitItemSource "Start Menu Icons" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # Content Editor Context Menu integration
-    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/'  -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Merge -MergeMode Clear
+    $source = Get-ChildItem '*PowerShell*' -path 'core:/content/Applications/Content Editor/Context Menues/Default/' -Recurse | New-ExplicitItemSource "Content Editor Context Menu integration #1" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
     $source = Get-Item 'core:/content/Applications/Content Editor/Context Menues/Default/Edit Script/' | New-ExplicitItemSource "Content Editor Context Menu integration #2" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
