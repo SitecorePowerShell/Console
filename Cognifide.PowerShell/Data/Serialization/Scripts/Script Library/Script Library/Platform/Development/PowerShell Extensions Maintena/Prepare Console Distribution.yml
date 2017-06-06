@@ -173,7 +173,7 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Files
-    $source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.*" | New-ExplicitFileSource -Name "Disabled Configuration Files"
+    $source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.*" | ? {-not $_.Name.Contains("Serialization") } | New-ExplicitFileSource -Name "Configuration Files"
     $package.Sources.Add($source);
     $source = Get-Item "$AppPath\bin\Cognifide.PowerShell*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
     $package.Sources.Add($source);
