@@ -269,7 +269,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 return int.Parse(dialogResult.Substring(4));
             }
-            return -1;
+            return defaultChoice;
         }
 
         public Collection<int> PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices)
