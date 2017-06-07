@@ -42,7 +42,6 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             var itemCreatingEventArgs = scArgs.Parameters[0] as ItemCreatingEventArgs;
             if (itemCreatingEventArgs?.Parent?.Database != null && itemCreatingEventArgs.TemplateId != (ID)null)
             {
-
                 var template = TemplateManager.GetTemplate(itemCreatingEventArgs.TemplateId,
                     itemCreatingEventArgs.Parent.Database);
                 if (template == null || (!template.InheritsFrom(TemplateIDs.ScriptTemplate) &&
@@ -61,6 +60,13 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 if (itemCreatingEventArgs != null)
                 {
                     itemCreatingEventArgs.Cancel = true;
+                    PowerShellLog.Warn(
+                        $"Prevented Script/Library '{itemCreatingEventArgs.Parent?.Paths?.Path}/{itemCreatingEventArgs.ItemName}' creation by '{Context.User?.Name}'.");
+                }
+                else
+                {
+                    PowerShellLog.Warn(
+                        $"Prevented Script/Library save '{item?.Parent.Paths.Path}' by user '{Context.User?.Name}'.");
                 }
 
                 scArgs.Result.Cancel = true;
