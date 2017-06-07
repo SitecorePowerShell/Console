@@ -27,6 +27,7 @@ using Version = Sitecore.Data.Version;
 using System.Threading.Tasks;
 using Sitecore.Collections;
 using Sitecore.Data.Fields;
+using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
@@ -723,8 +724,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     case TemplateItemType.Template:
                         createdItem = forcedId != ID.Null
-                            ? parentItem.Add(name, (TemplateItem) templateItem, forcedId)
-                            : parentItem.Add(name, (TemplateItem) templateItem);
+                            ? ItemManager.CreateItem(name, parentItem, templateItem.ID, forcedId, SecurityCheck.Enable)
+                            : ItemManager.CreateItem(name, parentItem, templateItem.ID);
                         break;
                     case TemplateItemType.Branch:
                         createdItem = parentItem.Add(name, (BranchItem)templateItem);
