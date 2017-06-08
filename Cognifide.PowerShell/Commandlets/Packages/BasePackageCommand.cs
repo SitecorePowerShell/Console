@@ -63,7 +63,8 @@ namespace Cognifide.PowerShell.Commandlets.Packages
             {
                 using (new SecurityDisabler())
                 {
-                    using (new ProxyDisabler())
+                    //Proxies are deprecated since Sitecore 6.5 - support removed
+                    //using (new ProxyDisabler())
                     {
                         using (new SyncOperationContext())
                         {

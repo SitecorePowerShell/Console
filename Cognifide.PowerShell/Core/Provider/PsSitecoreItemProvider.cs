@@ -459,7 +459,8 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private Item TransferItem(Item sourceItem, Item destinationItem, string leafName, bool recurse)
         {
-            using (new ProxyDisabler())
+            //Proxies are deprecated since Sitecore 6.5 - support removed
+            //using (new ProxyDisabler())
             {
                 if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
                 {
