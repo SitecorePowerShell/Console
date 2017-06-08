@@ -308,6 +308,8 @@
               callPowerShellHost(terminal, guid, "cd \"" + getUrlParameter("db") + ":\\" + myUnescape(getUrlParameter("item")) + "\"");
           } else if (!isBlank(getUrlParameter("debug") && getUrlParameter("debug") === "true")) {
               callPowerShellHost(terminal, guid, "Get-PSCallStack");
+          } else if (!isBlank(getUrlParameter("suspend") && getUrlParameter("suspend") === "true")) {
+              callPowerShellHost(terminal, guid, ""); //just initialize the prompt
           } else {
               callPowerShellHost(terminal, guid, "cd master:\\");
           }

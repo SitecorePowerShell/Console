@@ -13,7 +13,7 @@ SharedFields:
   Value: Office/32x32/selection_recycle.png
 - ID: "cab694fc-e37c-44eb-9012-488b775cf638"
   Hint: Message
-  Value: "ise:setsessionid(id=ISE Editing Session)"
+  Value: "ise:setsessionid(id=ISE_Editing_Session)"
 Languages:
 - Language: en
   Fields:

@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         /// </summary>
         public void Execute()
         {
-            Context.ClientPage.Start(this, "Pipeline");
+            Context.ClientPage.Start(this, nameof(Pipeline));
         }
 
         protected abstract void ShowUI();

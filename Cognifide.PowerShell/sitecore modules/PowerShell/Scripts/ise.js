@@ -18,7 +18,7 @@
             "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
-            "You can find more documentation in the Sitecore PowerShell Extensions <a href='http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/' target='_blank'>book</a>."
+            "You can find more documentation in the Sitecore PowerShell Extensions <a href='http://doc.sitecorepowershell.com/' target='_blank'>book</a>."
         ];
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;

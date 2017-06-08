@@ -1,12 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
+using Microsoft.PowerShell.Commands;
+using Sitecore;
+using Sitecore.Jobs.AsyncUI;
+using Sitecore.Text;
+using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Host
 {
@@ -16,6 +24,8 @@ namespace Cognifide.PowerShell.Core.Host
         private readonly Stack<Runspace> pushedRunspaces;
         private readonly ScriptingHostUserInterface ui;
         private readonly InitialSessionState sessionState;
+        public int NestedLevel { get; private set; }
+        public int UiNestedLevel { get; private set; }
 
         public System.Management.Automation.PowerShell PowerShell { get; private set; }
 
@@ -64,6 +74,7 @@ namespace Cognifide.PowerShell.Core.Host
         ///     instantiation time.
         /// </summary>
         public string SessionId { get; internal set; }
+        public string SessionKey { get; internal set; }
 
         public bool CloseRunner { get; internal set; }
         public List<string> CloseMessages { get; internal set; }
@@ -135,13 +146,64 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public void EndNestedPromptSuspension()
+        {
+            UiNestedLevel--;
+        }
         /// <summary>
         ///     Not implemented by this example class. The call fails with
         ///     a NotImplementedException exception.
         /// </summary>
         public override void EnterNestedPrompt()
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            NestedLevel++;
+            UiNestedLevel++;
+            var resultSig = Guid.NewGuid().ToString();
+
+            UrlString str = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
+            str.Add("sid", resultSig);
+            str.Add("fc", privateData.ForegroundColor.ToString());
+            str.Add("bc", privateData.BackgroundColor.ToString());
+            str.Add("id", SessionKey);
+            str.Add("suspend", "true");
+
+            var currentNesting = NestedLevel;
+            JobContext.MessageQueue.PutMessage(
+                new ShowSuspendDialogMessage(SessionKey, str.ToString(), "900", "600", new Hashtable())
+                {
+                    ReceiveResults = true,
+                });
+
+            var scriptSession = ScriptSessionManager.GetSession(SessionKey);
+            while (currentNesting <= UiNestedLevel)
+            {
+                if (currentNesting == UiNestedLevel)
+                {
+                    if (scriptSession.ImmediateCommand is string commandString)
+                    {
+                        scriptSession.ImmediateCommand = null;
+                        PowerShellLog.Info($"Executing a command in ScriptSession '{SessionKey}'.");
+                        PowerShellLog.Debug(commandString);
+                        try
+                        {
+                            var result =
+                                scriptSession.InvokeInNewPowerShell(commandString, ScriptSession.OutTarget.OutHost);
+                        }
+                        catch (Exception ex)
+                        {
+                            PowerShellLog.Error("Error while executing Debugging command.", ex);
+                            UI.WriteErrorLine(ScriptSession.GetExceptionString(ex));
+                        }
+                    }
+                    else
+                    {
+                        Thread.Sleep(20);
+                    }
+                }
+            }
+            JobContext.MessageQueue.GetResult();
+
+            ScriptSessionManager.GetSession(SessionKey).InvokeInNewPowerShell("exit", ScriptSession.OutTarget.OutHost);
         }
 
         /// <summary>
@@ -150,8 +212,7 @@ namespace Cognifide.PowerShell.Core.Host
         /// </summary>
         public override void ExitNestedPrompt()
         {
-            throw new NotImplementedException(
-                "The method or operation is not implemented.");
+            NestedLevel--;
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace Cognifide.PowerShell.Core.Utility
 {
     public static class SpeTimer
     {
-        public static T Measure<T>(string message, Func<T> action) where T : class
+        public static T Measure<T>(string message, bool log, Func<T> action) where T : class
         {
             var stopWatch = new Stopwatch();
             try
@@ -18,7 +18,10 @@ namespace Cognifide.PowerShell.Core.Utility
                 var result = action();
 
                 stopWatch.Stop();
-                PowerShellLog.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
+                if (log)
+                {
+                    PowerShellLog.Info($"The {message} completed in {stopWatch.ElapsedMilliseconds} ms.");
+                }
                 return result;
             }
             catch (Exception)

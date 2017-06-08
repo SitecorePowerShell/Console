@@ -272,7 +272,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     job.Status.Messages.Add(
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.Status.Messages.Add(
-                        "We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
+                        "We also have a user guide here http://doc.sitecorepowershell.com/.");
                 }
                 else
                 {

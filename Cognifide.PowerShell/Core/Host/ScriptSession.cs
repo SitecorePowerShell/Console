@@ -57,7 +57,6 @@ namespace Cognifide.PowerShell.Core.Host
 
         private bool disposed;
         private bool initialized;
-        //private Pipeline pipeline;
         private readonly ScriptingHost host;
         private static InitialSessionState state;
         private bool abortRequested;
@@ -224,7 +223,12 @@ namespace Cognifide.PowerShell.Core.Host
 
         public List<ErrorRecord> LastErrors { get; set; }
 
-        public string Key { get; internal set; }
+        public string Key
+        {
+            get { return host.SessionKey; }
+            internal set { host.SessionKey = value; }
+        }
+
         public ApplicationSettings Settings { get; }
         public OutputBuffer Output => host.Output;
         public RunspaceAvailability State => host.Runspace.RunspaceAvailability;
@@ -455,7 +459,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         private bool TryInvokeInRunningSessionInternal(object executable, out List<object> results, bool stringOutput)
         {
-            if (Debugging)
+            if (Debugging || host.NestedLevel > 0)
             {
                 ImmediateCommand = executable;
                 var tries = 20;
@@ -518,8 +522,8 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private object ImmediateCommand { get; set; }
-        private object ImmediateResults { get; set; }
+        internal object ImmediateCommand { get; set; }
+        internal object ImmediateResults { get; set; }
 
         public List<PSVariable> Variables
         {
@@ -619,13 +623,17 @@ namespace Cognifide.PowerShell.Core.Host
                 Runspace.DefaultRunspace = host.Runspace;
             }
 
-            PowerShellLog.Info($"Executing a script in ScriptSession '{Key}'.");
-            PowerShellLog.Debug(script);
+            if (!internalScript)
+            {
+                PowerShellLog.Info($"Executing a script in ScriptSession '{Key}'.");
+                PowerShellLog.Debug(script);
+            }
 
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
-            return SpeTimer.Measure($"script execution in ScriptSession '{Key}'", () =>
+            return SpeTimer.Measure($"script execution in ScriptSession '{Key}'", !internalScript, () =>
             {
+                var _pipeline = powerShell;
                 try
                 {
                     using (powerShell = NewPowerShell())
@@ -636,7 +644,7 @@ namespace Cognifide.PowerShell.Core.Host
                 }
                 finally
                 {
-                    powerShell = null;
+                    powerShell = _pipeline;
                 }
             });
         }
@@ -645,6 +653,7 @@ namespace Cognifide.PowerShell.Core.Host
         {
             // Create a pipeline, and populate it with the script given in the
             // edit box of the form.
+            var _pipeline = powerShell;
             try
             {
                 using (powerShell = NewPowerShell())
@@ -655,7 +664,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
             finally
             {
-                powerShell = null;
+                powerShell = _pipeline;
             }
         }
 

@@ -23,6 +23,7 @@ using Sitecore.Diagnostics;
 using Sitecore.Exceptions;
 using Sitecore.Jobs;
 using Sitecore.Security.Accounts;
+using Sitecore.StringExtensions;
 using LicenseManager = Sitecore.SecurityModel.License.LicenseManager;
 using PSCustomObject = System.Management.Automation.PSCustomObject;
 using PSObject = System.Management.Automation.PSObject;
@@ -133,7 +134,7 @@ namespace Cognifide.PowerShell.Console.Services
                                 "\r\n" +
                                 "\r\n[[;#f00;#000]Uh oh, looks like the command you ran is invalid or something else went wrong. Is it something we should know about?]\r\n" +
                                 "[[;#f00;#000]Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.]\r\n\r\n" +
-                                "[[;#f00;#000]We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.]\r\n\r\n",
+                                "[[;#f00;#000]We also have a user guide here http://doc.sitecorepowershell.com/.]\r\n\r\n",
                             prompt = $"PS {session.CurrentLocation}>",
                             background = OutputLine.ProcessHtmlColor(session.PrivateData.BackgroundColor),
                             color = OutputLine.ProcessHtmlColor(session.PrivateData.ForegroundColor)
@@ -311,7 +312,7 @@ namespace Cognifide.PowerShell.Console.Services
                     job.Status.Messages.Add(
                         "Please submit a support ticket here https://git.io/spe with error details, screenshots, and anything else that might help.");
                     job.Status.Messages.Add(
-                        "We also have a user guide here http://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/.");
+                        "We also have a user guide here http://doc.sitecorepowershell.com/.");
                 }
                 else
                 {
@@ -359,7 +360,8 @@ namespace Cognifide.PowerShell.Console.Services
                     string.Join(Environment.NewLine, scriptJob.Status.Messages.Cast<string>().ToArray())
                         .Replace("[", "&#91;")
                         .Replace("]", "&#93;");
-                result.result = "[[;#f00;#000]" + (message.Length > 0 ? message : "Command failed") + "]";
+                result.result = "[[;#f00;#000]" +
+                                (message.IsNullOrEmpty() ? "Command failed" : HttpUtility.HtmlEncode(message)) + "]";
                 result.prompt = $"PS {session.CurrentLocation}>";
                 session.Output.Clear();
                 return serializer.Serialize(result);

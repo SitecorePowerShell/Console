@@ -34,7 +34,7 @@ namespace Cognifide.PowerShell.Client.Applications
 {
     public class PowerShellIse : BaseForm, IHasCommandContext, IPowerShellRunner
     {
-        public const string DefaultSessionName = "ISE Editing Session";
+        public const string DefaultSessionName = "ISE_Editing_Session";
         public const string DefaultUser = "CurrentUser";
         public const string DefaultLanguage = "CurrentLanguage";
 

@@ -24,13 +24,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Url = url;
         }
 
+
         public string Width { get; }
         public string Height { get; }
         public string Title { get; set; }
         public string Url { get; }
         public Hashtable HandleParams { get; }
-        public bool ReceiveResults { get; }
-
+        public bool ReceiveResults { get; set; }
 
         /// <summary>
         ///     Shows a confirmation dialog.
@@ -53,7 +53,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                     }
                     else
                     {
-                        handle[key] = value != null ? value.ToString() : string.Empty;
+                        handle[key] = value?.ToString() ?? string.Empty;
                     }
                 }
                 handle.Add(urlString);
