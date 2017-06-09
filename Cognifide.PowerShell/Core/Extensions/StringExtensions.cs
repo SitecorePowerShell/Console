@@ -32,6 +32,10 @@ namespace Cognifide.PowerShell.Core.Extensions
             return (value ?? string.Empty).IndexOf(option.ToString(), StringComparison.OrdinalIgnoreCase) != -1;
         }
 
+        public static bool IsWildcard(this string @string) =>
+            !string.IsNullOrEmpty(@string) && (@string.Contains("*") || @string.Contains("?"));
+
+
         public static string IfNullOrEmpty(this string value, string useIfEmpty) =>
             string.IsNullOrEmpty(value) ? useIfEmpty : value;
 

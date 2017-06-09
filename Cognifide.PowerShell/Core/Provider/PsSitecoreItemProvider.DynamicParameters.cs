@@ -45,6 +45,7 @@ namespace Cognifide.PowerShell.Core.Provider
         private const string FileBasedParam = "FileBased";
         private const string VersionedParam = "Versioned";
         private const string WithParentParam = "WithParent";
+        private const string WithMissingLanguagesParam = "WithMissingLanguages";
         private const string DepthParam = "Depth";
 
         public object GetDynamicParameters()
@@ -201,7 +202,7 @@ namespace Cognifide.PowerShell.Core.Provider
         protected bool IsDynamicParamSet(string paramName)
         {
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-            return dic != null && dic[paramName].IsSet;
+            return dic != null && dic.ContainsKey(paramName) && dic[paramName].IsSet;
         }
 
         protected static bool FailSilentlyDynamicParameters(ref RuntimeDefinedParameterDictionary dic)
@@ -277,6 +278,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
             var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithMissingLanguagesParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (SwitchParameter), AmbiguousPathsParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof(Item), ItemParam, ref dic, true);
@@ -305,6 +307,7 @@ namespace Cognifide.PowerShell.Core.Provider
             var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
 
             var paramAdded = AddDynamicParameter(typeof (string[]), LanguageParam, ref dic);
+            paramAdded |= AddDynamicParameter(typeof(SwitchParameter), WithMissingLanguagesParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), VersionParam, ref dic);
             paramAdded |= AddDynamicParameter(typeof (string), QueryParam, ref dic, false, false);
             paramAdded |= AddDynamicParameter(typeof (string), IdParam, ref dic, false, false);

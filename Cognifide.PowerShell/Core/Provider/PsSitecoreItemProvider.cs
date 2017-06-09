@@ -354,20 +354,27 @@ namespace Cognifide.PowerShell.Core.Provider
             if (languages.Length > 0 || version != Version.Latest.Number)
             {
                 var allVersions = item.Versions.GetVersions(languages.Length > 0);
+                TryGetDynamicParam(WithMissingLanguagesParam, out SwitchParameter addMissingLanguages);
 
                 if (languages.Length > 0)
                 {
                     foreach (var language in languages)
                     {
+                        var languageHandled = false;
                         var pattern = WildcardUtils.GetWildcardPattern(language);
                         foreach (var matchingItem in allVersions.Where(
-                        curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
-                                   (version == Int32.MaxValue ||
-                                    (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
-                                    (version == curItem.Version.Number)
-                                   )))
+                            curItem => (language == null || pattern.IsMatch(curItem.Language.Name)) &&
+                                       (version == Int32.MaxValue ||
+                                        (version == Version.Latest.Number && curItem.Versions.IsLatestVersion()) ||
+                                        (version == curItem.Version.Number)
+                                       )))
                         {
+                            languageHandled = true;
                             yield return matchingItem;
+                        }
+                        if (addMissingLanguages && !languageHandled && !language.IsWildcard())
+                        {
+                            yield return item.Database.GetItem(item.ID, LanguageManager.GetLanguage(language));
                         }
                     }
                 }
