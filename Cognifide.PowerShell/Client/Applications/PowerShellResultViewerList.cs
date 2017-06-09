@@ -214,9 +214,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!missingDataIcon.IsNullOrEmpty())
             {
-                EmptyIcon.Src = missingDataIcon.IsNullOrEmpty()
-                    ? "/sitecore modules/PowerShell/Assets/error.png"
-                    : missingDataIcon;
+                Image image = new Image(missingDataIcon);
+                Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
             }
 
             if (ListViewer.Data.Data.Count == 0)
@@ -338,7 +337,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     updateData.InfoDescriptionChange ? updateData.InfoDescription : Description.Text,
                     updateData.IconChange ? updateData.Icon : string.Empty,
                     updateData.MissingDataMessageChange ? updateData.MissingDataMessage : EmptyDataMessageText.Text,
-                    updateData.MissingDataIconChange ? updateData.MissingDataIcon : EmptyIcon.Src
+                    updateData.MissingDataIconChange ? updateData.MissingDataIcon : string.Empty
                     );
 
             }
