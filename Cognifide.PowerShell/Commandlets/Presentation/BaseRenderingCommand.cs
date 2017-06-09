@@ -168,10 +168,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 }
                 renderings = paramFilteredRenderings;
             }
-            ProcessRenderings(item, layout, device, renderings);
+            ProcessRenderings(item, layout, device, renderings.ToList());
         }
 
         protected abstract void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
-            IEnumerable<RenderingDefinition> renderings);
+            List<RenderingDefinition> renderings);
     }
 }

@@ -6,6 +6,7 @@ using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using System.Data;
+using Sitecore.Data.Fields;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
@@ -14,7 +15,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
     public class RemoveRenderingCommand : BaseRenderingCommand
     {
         protected override void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
-            IEnumerable<RenderingDefinition> renderings)
+            List<RenderingDefinition> renderings)
         {
             if (renderings.Any())
             {
@@ -35,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    Item[LayoutFieldId] = outputXml;
+                    LayoutField.SetFieldValue(Item.Fields[LayoutFieldId], outputXml);
                 });
             }
             else

@@ -19,7 +19,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         protected override void ProcessItem(Item item)
         {
             LayoutField layoutField = item.Fields[LayoutFieldId];
-            if (layoutField == null || string.IsNullOrEmpty(layoutField.Value))
+            if (string.IsNullOrEmpty(layoutField?.Value))
             {
                 return;
             }

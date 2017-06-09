@@ -3,6 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;
 using Sitecore.Text;
@@ -86,7 +87,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             item.Edit(p =>
             {
                 var outputXml = layout.ToXml();
-                Item[LayoutFieldId] = outputXml;
+                LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
             });
         }
     }

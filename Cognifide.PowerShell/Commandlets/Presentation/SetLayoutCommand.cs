@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 item.Edit(p =>
                 {
                     var outputXml = layout.ToXml();
-                    layoutField.Value = outputXml;
+                    LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
                 });
             }
         }

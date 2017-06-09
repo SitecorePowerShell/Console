@@ -17,29 +17,31 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         protected override void ProcessItem(Item item)
         {
             LayoutField layoutField = item.Fields[LayoutFieldId];
-            if (layoutField != null && !string.IsNullOrEmpty(layoutField.Value))
+            if (string.IsNullOrEmpty(layoutField?.Value))
             {
-                var layout = LayoutDefinition.Parse(layoutField.Value);
-                if (Device == null)
-                {
-                    Device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault);
-                }
+                return;
+            }
 
-                if (Device == null)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            new ObjectNotFoundException(
-                                "Device not provided and no default device in the system is defined."),
-                            "sitecore_device_not_found", ErrorCategory.InvalidData, null));
-                    return;
-                }
+            var layout = LayoutDefinition.Parse(layoutField.Value);
+            if (Device == null)
+            {
+                Device = CurrentDatabase.Resources.Devices.GetAll().FirstOrDefault(d => d.IsDefault);
+            }
 
-                var device = layout.GetDevice(Device.ID.ToString());
-                if (device != null)
-                {
-                    ProcessLayout(item, layout, device);
-                }
+            if (Device == null)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new ObjectNotFoundException(
+                            "Device not provided and no default device in the system is defined."),
+                        "sitecore_device_not_found", ErrorCategory.InvalidData, null));
+                return;
+            }
+
+            var device = layout.GetDevice(Device.ID.ToString());
+            if (device != null)
+            {
+                ProcessLayout(item, layout, device);
             }
         }
 

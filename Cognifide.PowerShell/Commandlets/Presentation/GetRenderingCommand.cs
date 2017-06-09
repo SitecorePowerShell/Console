@@ -12,9 +12,9 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
     public class GetRenderingCommand : BaseRenderingCommand
     {
         protected override void ProcessRenderings(Item item, LayoutDefinition layout, DeviceDefinition device,
-            IEnumerable<RenderingDefinition> renderings)
+            List<RenderingDefinition> renderings)
         {
-            renderings.ToList().ForEach(r => WriteObject(ItemShellExtensions.WrapInItemOwner(SessionState, item, r)));
+            renderings.ForEach(r => WriteObject(ItemShellExtensions.WrapInItemOwner(SessionState, item, r)));
         }
     }
 }
