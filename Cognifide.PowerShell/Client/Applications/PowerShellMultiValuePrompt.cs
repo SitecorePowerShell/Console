@@ -729,6 +729,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     {
                         ((PasswordExtended) edit).PlaceholderText = placeholder.ToString();
                     }
+                    edit.Attributes["type"] = "password";
                 }
                 else
                 {
@@ -736,6 +737,21 @@ namespace Cognifide.PowerShell.Client.Applications
                     if (placeholder is string)
                     {
                         ((EditExtended) edit).PlaceholderText = placeholder.ToString();
+                    }
+                    if (!string.IsNullOrEmpty(editor))
+                    {
+                        if (editor.IndexOf("number", StringComparison.OrdinalIgnoreCase) > -1)
+                        {
+                            edit.Attributes["type"] = "number";
+                        }
+                        else if (editor.IndexOf("email", StringComparison.OrdinalIgnoreCase) > -1)
+                        {
+                            edit.Attributes["type"] = "email";
+                        }
+                        else
+                        {
+                            edit.Attributes["type"] = "text";
+                        }
                     }
                 }
             }

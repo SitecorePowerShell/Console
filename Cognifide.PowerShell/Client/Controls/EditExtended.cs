@@ -8,10 +8,7 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public string PlaceholderText
         {
-            get
-            {
-                return GetViewStateString("Placeholder");
-            }
+            get => GetViewStateString("Placeholder");
             set
             {
                 if (PlaceholderText == value) { return; }
