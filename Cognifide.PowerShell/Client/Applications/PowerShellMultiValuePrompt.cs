@@ -59,19 +59,19 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public static string MandatoryVariables
         {
-            get { return StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"]); }
-            set { Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"] = value; }
+            get => StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"]);
+            set => Sitecore.Context.ClientPage.ServerProperties["MandatoryVariables"] = value;
         }
 
         public static string Validator
         {
-            get { return StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["Validator"]); }
-            set { Sitecore.Context.ClientPage.ServerProperties["Validator"] = value; }
+            get => StringUtil.GetString(Sitecore.Context.ClientPage.ServerProperties["Validator"]);
+            set => Sitecore.Context.ClientPage.ServerProperties["Validator"] = value;
         }
         public Hashtable ValidatorParameters
         {
-            get { return (Hashtable) Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"]; }
-            set { Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"] = value; }
+            get => (Hashtable) Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"];
+            set => Sitecore.Context.ClientPage.ServerProperties["ValidatorParameters"] = value;
         }
 
 
@@ -80,14 +80,13 @@ namespace Cognifide.PowerShell.Client.Applications
             get
             {
                 var fv = (Dictionary<string, string>) Sitecore.Context.ClientPage.ServerProperties["FieldValidators"];
-                if (fv == null)
-                {
-                    fv = new Dictionary<string, string>();
-                    Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = fv;
-                }
+                if (fv != null) return fv;
+
+                fv = new Dictionary<string, string>();
+                Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = fv;
                 return fv;
             }
-            set { Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = value; }
+            set => Sitecore.Context.ClientPage.ServerProperties["FieldValidators"] = value;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -351,19 +350,21 @@ namespace Cognifide.PowerShell.Client.Applications
                     ID = editorId
                 };
 
+                var showActions = editor.IndexOf("action", StringComparison.OrdinalIgnoreCase) > -1;
                 var rulesEditButton = new Button
                 {
                     Header = Texts.PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule,
                     Class = "scButton edit-button rules-edit-button",
-                    Click = "EditConditionClick(\\\"" + editorId + "\\\")"
+                    Click = $"EditConditionClick(\"{editorId}\",\"{showActions}\")"
                 };
 
                 rulesBorder.Controls.Add(rulesEditButton);
+
+                var rule = string.IsNullOrEmpty(value as string) ? "<ruleset />" : value as string;
                 var rulesRender = new Literal
                 {
                     ID = editorId + "_renderer",
-                    Text = GetRuleConditionsHtml(
-                        string.IsNullOrEmpty(value as string) ? "<ruleset />" : value as string)
+                    Text = GetRuleConditionsHtml(rule, showActions)
                 };
                 rulesRender.Class = rulesRender.Class + " varRule";
                 rulesBorder.Controls.Add(rulesRender);
@@ -500,7 +501,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var treePicker = new TreePicker
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
-                    Value = item != null ? item.ID.ToString() : string.Empty,
+                    Value = item?.ID.ToString() ?? string.Empty,
                     DataContext = dataContext.ID,
                     AllowNone =
                         !string.IsNullOrEmpty(editor) &&
@@ -664,7 +665,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         {
                             values =
                                 (value as IEnumerable).Cast<object>()
-                                    .Select(s => s == null ? "" : s.ToString())
+                                    .Select(s => s?.ToString() ?? "")
                                     .ToArray();
                         }
                         else
@@ -885,12 +886,11 @@ namespace Cognifide.PowerShell.Client.Applications
         private void SetValidatorParameters(ScriptSession session)
         {
             var valParams = ValidatorParameters;
-            if (valParams != null)
+            if (valParams == null) return;
+
+            foreach (var valParam in valParams.Keys)
             {
-                foreach (var valParam in valParams.Keys)
-                {
-                    session.SetVariable(valParam.ToString(), valParams[valParam]);
-                }
+                session.SetVariable(valParam.ToString(), valParams[valParam]);
             }
         }
 
@@ -940,96 +940,95 @@ namespace Cognifide.PowerShell.Client.Applications
             var result = new Hashtable(2) {{"Name", string.Join("_", parts.Skip(1).Take(parts.Length - 2).ToArray())}};
 
             var controlValue = control.Value;
-            if (controlValue != null)
+            if (controlValue == null) return result;
+
+            if (control is DateTimePicker)
             {
-                if (control is DateTimePicker)
+                result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
+            }
+            else if (control is TreePicker)
+            {
+                var picker = (TreePicker) control;
+                var contextId = picker.DataContext;
+                var context = (DataContext) DataContextPanel.FindControl(contextId);
+                result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
+            }
+            else if (control is Border && ((Border) control).Class == "checkBoxWrapper")
+            {
+                var checkboxBorder = (Border) control;
+                foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))
                 {
-                    result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
-                }
-                else if (control is TreePicker)
-                {
-                    var picker = control as TreePicker;
-                    var contextID = picker.DataContext;
-                    var context = (DataContext) DataContextPanel.FindControl(contextID);
-                    result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
-                }
-                else if (control is Border && ((Border) control).Class == "checkBoxWrapper")
-                {
-                    var checkboxBorder = control as Border;
-                    foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))
-                    {
-                        result.Add("Value", boolValue);
-                    }
-                }
-                else if (control is Border && (control as Border).Class == "rulesWrapper")
-                {
-                    result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
-                }
-                else if (control is Combobox)
-                {
-                    var boolValue = (control as Combobox).Value;
                     result.Add("Value", boolValue);
                 }
-                else if (control is TreeList)
+            }
+            else if (control is Border && ((Border) control).Class == "rulesWrapper")
+            {
+                result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
+            }
+            else if (control is Combobox)
+            {
+                var boolValue = ((Combobox) control).Value;
+                result.Add("Value", boolValue);
+            }
+            else if (control is TreeList)
+            {
+                var treeList = (TreeList) control;
+                var strIds = treeList.GetValue();
+                var ids = strIds.Split('|');
+                var db = Database.GetDatabase(treeList.DatabaseName);
+                var items = ids.Select(p => db.GetItem(p)).ToList();
+                result.Add("Value", items);
+            }
+            else if (control is MultilistEx)
+            {
+                var multilist = (MultilistEx) control;
+                var strIds = multilist.GetValue();
+                var ids = strIds.Split('|');
+                var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
+                result.Add("Value", items);
+            }
+            else if (control is LookupEx)
+            {
+                var lookup = (LookupEx) control;
+                result.Add("Value",
+                    !string.IsNullOrEmpty(lookup.Value)
+                        ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
+                        : null);
+            }
+            else if (control is Border && ((Border) control).Class == "checkListWrapper")
+            {
+                var checkboxBorder = (Border) control;
+                var checkList = checkboxBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
+                var values =
+                    checkList?.Controls.Cast<Control>()
+                        .Where(item => item is ChecklistItem)
+                        .Cast<ChecklistItem>()
+                        .Where(checkItem => checkItem.Checked)
+                        .Select(checkItem => checkItem.Value)
+                        .ToArray();
+                result.Add("Value", values);
+            }
+            else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
+            {
+                foreach (
+                    var radioItem in
+                    control.Controls.OfType<Radiobutton>()
+                        .Select(item => item)
+                        .Where(radioItem => radioItem.Checked))
                 {
-                    var treeList = control as TreeList;
-                    var strIds = treeList.GetValue();
-                    var ids = strIds.Split('|');
-                    var db = Database.GetDatabase(treeList.DatabaseName);
-                    var items = ids.Select(p => db.GetItem(p)).ToList();
-                    result.Add("Value", items);
+                    result.Add("Value", radioItem.Value);
+                    break;
                 }
-                else if (control is MultilistEx)
-                {
-                    var multilist = control as MultilistEx;
-                    var strIds = multilist.GetValue();
-                    var ids = strIds.Split('|');
-                    var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
-                    result.Add("Value", items);
-                }
-                else if (control is LookupEx)
-                {
-                    var lookup = control as LookupEx;
-                    result.Add("Value",
-                        !string.IsNullOrEmpty(lookup.Value)
-                            ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
-                            : null);
-                }
-                else if (control is Border && ((Border) control).Class == "checkListWrapper")
-                {
-                    var checkboxBorder = control as Border;
-                    var checkList = checkboxBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
-                    var values =
-                        checkList?.Controls.Cast<Control>()
-                            .Where(item => item is ChecklistItem)
-                            .Cast<ChecklistItem>()
-                            .Where(checkItem => checkItem.Checked)
-                            .Select(checkItem => checkItem.Value)
-                            .ToArray();
-                    result.Add("Value", values);
-                }
-                else if (control is Groupbox && control.Class.Contains("scRadioGroup"))
-                {
-                    foreach (
-                        var radioItem in
-                        control.Controls.OfType<Radiobutton>()
-                            .Select(item => item)
-                            .Where(radioItem => radioItem.Checked))
-                    {
-                        result.Add("Value", radioItem.Value);
-                        break;
-                    }
-                }
-                else if (control is Edit || control is Memo)
-                {
-                    var value = control.Value;
-                    var typeName = GetClrTypeName(control.Class);
-                    result.Add("Value", TryParse(value, typeName));
-                }
-                else if (control is UserPicker)
-                {
-                    result.Add("Value", control.Value.Split('|'));
-                }
+            }
+            else if (control is Edit || control is Memo)
+            {
+                var value = control.Value;
+                var typeName = GetClrTypeName(control.Class);
+                result.Add("Value", TryParse(value, typeName));
+            }
+            else if (control is UserPicker)
+            {
+                result.Add("Value", control.Value.Split('|'));
             }
             return result;
         }
@@ -1045,11 +1044,7 @@ namespace Cognifide.PowerShell.Client.Applications
             try
             {
                 var targetType = Type.GetType(typeName);
-                if (typeof(IConvertible).IsAssignableFrom(targetType))
-                {
-                    return Convert.ChangeType(inputValue, Type.GetType(typeName));
-                }
-                return inputValue;
+                return typeof(IConvertible).IsAssignableFrom(targetType) ? Convert.ChangeType(inputValue, Type.GetType(typeName)) : inputValue;
             }
             catch
             {
@@ -1062,10 +1057,11 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.CloseWindow();
         }
 
-        protected void EditConditionClick(string id)
+        protected void EditConditionClick(string id, string showActions)
         {
             Assert.ArgumentNotNull(id, "id");
-            var parameters = new NameValueCollection {["id"] = id};
+            var parameters = new NameValueCollection {["id"] = id, ["showActions"] = showActions};
+ 
             Sitecore.Context.ClientPage.Start(this, "EditCondition", parameters);
         }
 
@@ -1087,13 +1083,15 @@ namespace Cognifide.PowerShell.Client.Applications
                         rule = "<ruleset />";
                     }
 
+                    var hideActions = !MainUtil.GetBool(args.Parameters["showActions"], false);
+
                     var options = new RulesEditorOptions
                     {
                         IncludeCommon = true,
                         RulesPath = "/sitecore/system/Settings/Rules/PowerShell",
                         AllowMultiple = false,
                         Value = rule,
-                        HideActions = true,
+                        HideActions = hideActions,
                     };
 
                     SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), "580px", "712px", string.Empty, true);
@@ -1102,19 +1100,20 @@ namespace Cognifide.PowerShell.Client.Applications
                 else if (args.HasResult)
                 {
                     var content = args.Result;
+                    var hideActions = !MainUtil.GetBool(args.Parameters["showActions"], false);
                     Sitecore.Context.ClientPage.ServerProperties[id] = content;
-                    SheerResponse.SetInnerHtml(id + "_renderer", GetRuleConditionsHtml(content));
+                    SheerResponse.SetInnerHtml(id + "_renderer", GetRuleConditionsHtml(content, !hideActions));
                 }
             }
         }
 
-        private static string GetRuleConditionsHtml(string rule)
+        private static string GetRuleConditionsHtml(string rule, bool showActions = false)
         {
             Assert.ArgumentNotNull(rule, "rule");
             var output = new HtmlTextWriter(new StringWriter());
             var renderer2 = new RulesRenderer(rule)
             {
-                SkipActions = true,
+                SkipActions = !showActions,
                 AllowMultiple = false
             };
             renderer2.Render(output);
