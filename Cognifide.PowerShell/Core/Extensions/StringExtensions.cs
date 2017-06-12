@@ -35,7 +35,6 @@ namespace Cognifide.PowerShell.Core.Extensions
         public static bool IsWildcard(this string @string) =>
             !string.IsNullOrEmpty(@string) && (@string.Contains("*") || @string.Contains("?"));
 
-
         public static string IfNullOrEmpty(this string value, string useIfEmpty) =>
             string.IsNullOrEmpty(value) ? useIfEmpty : value;
 
@@ -74,6 +73,11 @@ namespace Cognifide.PowerShell.Core.Extensions
         public static string RemoveHtmlTags(this string value)
         {
             return !String.IsNullOrEmpty(value) ? Regex.Replace(value, "<.*?>", String.Empty) : value;
+        }
+
+        public static bool HasWord(this string value, params string[] words)
+        {
+            return words.Any(word => value.IndexOf(word, StringComparison.OrdinalIgnoreCase) > -1);
         }
     }
 }
