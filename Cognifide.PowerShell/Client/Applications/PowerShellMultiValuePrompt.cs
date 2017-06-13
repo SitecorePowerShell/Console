@@ -993,22 +993,20 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 result.Add("Value", DateUtil.IsoDateToDateTime(controlValue));
             }
-            else if (control is TreePicker)
+            else if (control is TreePicker picker)
             {
-                var picker = (TreePicker)control;
                 var contextId = picker.DataContext;
                 var context = (DataContext)DataContextPanel.FindControl(contextId);
                 result.Add("Value", string.IsNullOrEmpty(picker.Value) ? null : context.CurrentItem);
             }
-            else if (control is Border && ((Border)control).Class == "checkBoxWrapper")
+            else if (control is Border checkboxBorder && checkboxBorder.Class == "checkBoxWrapper")
             {
-                var checkboxBorder = (Border)control;
                 foreach (var boolValue in checkboxBorder.Controls.OfType<Checkbox>().Select(ctl => ctl.Checked))
                 {
                     result.Add("Value", boolValue);
                 }
             }
-            else if (control is Border && ((Border)control).Class == "rulesWrapper")
+            else if (control is Border rulesWrapper && rulesWrapper.Class == "rulesWrapper")
             {
                 result.Add("Value", Sitecore.Context.ClientPage.ServerProperties[control.ID]);
             }
@@ -1017,35 +1015,31 @@ namespace Cognifide.PowerShell.Client.Applications
                 var boolValue = ((Combobox)control).Value;
                 result.Add("Value", boolValue);
             }
-            else if (control is TreeList)
+            else if (control is TreeList treeList)
             {
-                var treeList = (TreeList)control;
                 var strIds = treeList.GetValue();
                 var ids = strIds.Split('|');
                 var db = Database.GetDatabase(treeList.DatabaseName);
                 var items = ids.Select(p => db.GetItem(p)).ToList();
                 result.Add("Value", items);
             }
-            else if (control is MultilistEx)
+            else if (control is MultilistEx multilist)
             {
-                var multilist = (MultilistEx)control;
                 var strIds = multilist.GetValue();
                 var ids = strIds.Split('|');
                 var items = ids.Select(p => Sitecore.Context.ContentDatabase.GetItem(p)).ToList();
                 result.Add("Value", items);
             }
-            else if (control is LookupEx)
+            else if (control is LookupEx lookup)
             {
-                var lookup = (LookupEx)control;
                 result.Add("Value",
                     !string.IsNullOrEmpty(lookup.Value)
                         ? Sitecore.Context.ContentDatabase.GetItem(lookup.Value)
                         : null);
             }
-            else if (control is Border && ((Border)control).Class == "checkListWrapper")
+            else if (control is Border checkListBorder && checkListBorder.Class == "checkListWrapper")
             {
-                var checkboxBorder = (Border)control;
-                var checkList = checkboxBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
+                var checkList = checkListBorder.Controls.OfType<PSCheckList>().FirstOrDefault();
                 var values =
                     checkList?.Controls.Cast<Control>()
                         .Where(item => item is ChecklistItem)
@@ -1141,7 +1135,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         HideActions = hideActions,
                     };
 
-                    SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), "580px", "712px", string.Empty, true);
+                    SheerResponse.ShowModalDialog(options.ToUrlString().ToString(), hideActions ? "580px" : "1000px", "712px", string.Empty, true);
                     args.WaitForPostBack();
                 }
                 else if (args.HasResult)
