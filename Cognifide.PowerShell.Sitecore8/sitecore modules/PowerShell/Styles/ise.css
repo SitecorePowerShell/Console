@@ -356,6 +356,11 @@ a.ps-link {
 
 .iseRibbonContextPanel.disabled { color: #d6d6d6 }
 
+#globalHeader~table .scRibbonNavigatorButtonsGroupButtons>a {
+    float: left;
+    padding-top: 37px;
+}
+
 #PleaseWait {
     position: fixed;
     bottom: 28px;

@@ -47,6 +47,24 @@
             return result;
         };
 
+
+        function registerEventListenersForRibbonButtons() {
+            console.log('initialize');
+            [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
+                div.addEventListener("click", function () {
+                    clearTimeout(typingTimer);
+                })
+            });
+
+            [].forEach.call(document.querySelectorAll('.scRibbonNavigatorButtonsGroupButtons > a'), function (div) {
+                div.addEventListener("click", function () {
+                    cognifide.powershell.updateRibbon();
+                })
+            });
+        }
+
+        registerEventListenersForRibbonButtons();
+
         codeeditor.session.on("change", function () {
             editor.val(codeeditor.session.getValue());
 
@@ -69,25 +87,30 @@
 			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
 			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 		}
-      
+
 		if(getQueryStringValue("sc_bw") === "1"){
 			$("#RibbonPanel").css("padding-top","50px");
 			$("#Wrapper").css("padding-top","0px");
 		}
         setTimeout(setFocusOnConsole, 1000);
         });
-	
+
         var typingTimer;
 
         cognifide.powershell.updateRibbon = function () {
             if (!codeeditor.getReadOnly()) {
                 scForm.postRequest("", "", "", "ise:scriptchanged(modified=" + !codeeditor.session.getUndoManager().isClean() + ")");
+                registerEventListenersForRibbonButtons();
             }
         };
 
         cognifide.powershell.updateRibbonNeeded = function () {
             clearTimeout(typingTimer);
-            typingTimer = setTimeout(cognifide.powershell.updateRibbon, 2000);
+            var timeout = 2000;
+            if (document.querySelector('.scGalleryFrame') != null) {
+                var timeout = 20;
+            }
+            typingTimer = setTimeout(cognifide.powershell.updateRibbon, timeout);
         };
 
         var posx = $("#PosX");
@@ -172,7 +195,7 @@
                     var line = codeeditor.session.getTextRange(range);
 
                     if (line) {
-                            
+
                         if (!$.tabCompletions || !$.lastPrefix || $.lastPrefix.length === 0 || prefix.indexOf($.lastPrefix) !== 0) {
                             $.lastPrefix = prefix;
                             _getTabCompletions(line);
@@ -319,7 +342,7 @@
             $("#Result").css({ "background-color": setting });
         };
 
-        cognifide.powershell.changeSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion) {            
+        cognifide.powershell.changeSettings = function(fontFamily, fontSize, backgroundColor, bottomOffset, liveAutocompletion) {
             cognifide.powershell.changeBackgroundColor(backgroundColor);
             cognifide.powershell.changeFontFamily(fontFamily);
             cognifide.powershell.changeFontSize(fontSize);
@@ -357,7 +380,7 @@
             if (set) {
                 codeeditor.session.setBreakpoint(row);
             } else {
-                codeeditor.session.clearBreakpoint(row);                
+                codeeditor.session.clearBreakpoint(row);
             }
             scForm.postRequest("", "", "", "ise:togglebreakpoint(line=" + row + ",state=" + set + ")");
         }
@@ -612,7 +635,7 @@
 
 	$(window).on('resize', function(){
 	    cognifide.powershell.resizeEditor();
-        }).trigger('resize'); 
+        }).trigger('resize');
 
     });
 }(jQuery, window, window.cognifide = window.cognifide || {}, window.ace = window.ace || {}));
