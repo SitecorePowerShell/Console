@@ -18,16 +18,14 @@ using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Host
 {
-    public class ScriptingHost : PSHost, IHostSupportsInteractiveSession
+    public class ScriptingHost : PSHost
     {
         private readonly ScriptingHostPrivateData privateData;
-        private readonly Stack<Runspace> pushedRunspaces;
         private readonly ScriptingHostUserInterface ui;
         private readonly InitialSessionState sessionState;
+        private Runspace runspace;
         public int NestedLevel { get; private set; }
         public int UiNestedLevel { get; private set; }
-
-        public System.Management.Automation.PowerShell PowerShell { get; private set; }
 
         /// <summary>
         ///     Initializes a new instance of the MyHost class. Keep
@@ -37,7 +35,6 @@ namespace Cognifide.PowerShell.Core.Host
         public ScriptingHost(ApplicationSettings settings, InitialSessionState initialState)
         {
             ui = new ScriptingHostUserInterface(settings, this);
-            pushedRunspaces = new Stack<Runspace>();
             privateData = new ScriptingHostPrivateData(this);
             sessionState = initialState;
             CloseRunner = false;
@@ -111,40 +108,11 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override PSObject PrivateData => new PSObject(privateData);
 
-        public void PushRunspace(Runspace runspace)
-        {
-            pushedRunspaces.Push(runspace);
-        }
-
-        public void PopRunspace()
-        {
-            pushedRunspaces.Pop();
-        }
-
-        /// <summary>
-        ///     Gets a value indicating whether a request
-        ///     to open a PSSession has been made.
-        /// </summary>
-        public bool IsRunspacePushed => 0 < pushedRunspaces.Count;
 
         /// <summary>
         ///     Gets or sets the runspace used by the PSSession.
         /// </summary>
-        public Runspace Runspace
-        {
-            get
-            {
-                
-                if (null == PowerShell)
-                {
-                    PowerShell = System.Management.Automation.PowerShell.Create(sessionState);
-                    PowerShell.Runspace = RunspaceFactory.CreateRunspace(this, sessionState);
-                }
-
-                var stack = pushedRunspaces;
-                return 0 == stack.Count ? PowerShell.Runspace : stack.Peek();
-            }
-        }
+        public Runspace Runspace => runspace ?? (runspace = RunspaceFactory.CreateRunspace(this, sessionState));
 
         public void EndNestedPromptSuspension()
         {
