@@ -11,7 +11,7 @@
         Find-Item -Index sitecore_master_index -First 10
 
     .PARAMETER Criteria
-        simple search criteria in the following example form:
+        Simple search criteria in the following example form:
         
         @{
             Filter = "Equals";
@@ -30,10 +30,13 @@
 
         Where "Filter" is one of the following values:
         - Equals
-        - StartsWith,
-        - Contains,
+        - StartsWith
+        - Contains
         - EndsWith
         - DescendantOf
+        - Fuzzy
+        - InclusiveRange
+        - ExclusiveRange
         
         Fields by which you can filter can be discovered using the following script:
 
@@ -121,4 +124,16 @@
                 -Index sitecore_master_index `
                 -Criteria @{Filter = "Equals"; Field = "_templatename"; Value = "Template Field"},
                           @{Filter = "Equals"; Field = "_language"; Value = "en"}
+
+    .EXAMPLE
+        # Find items under Home that have an empty title field.
+        $parameters = @{
+            Index = "sitecore_master_index"
+            Criteria = @(
+                @{Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/content/home" },
+                @{Filter = "Contains"; Field = "Title"; Value = ""; Invert=$true}
+            )
+        }
+
+        Find-Item @parameters
 #>
