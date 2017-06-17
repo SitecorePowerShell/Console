@@ -38,7 +38,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 {
                     return;
                 }
-                script = Item[FieldIDs.Script];
+                script = Item[Templates.Script.Fields.ScriptBody];
             }
             else if (Path != null)
             {
@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 {
                     return;
                 }
-                script = scriptItem[FieldIDs.Script];
+                script = scriptItem[Templates.Script.Fields.ScriptBody];
             }
 
             if (!ShouldProcess(scriptItem.GetProviderPath(), "Invoke script")) return;

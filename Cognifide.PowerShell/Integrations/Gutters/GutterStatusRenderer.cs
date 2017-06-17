@@ -39,10 +39,10 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                 try
                 {
                     // Create a new session for running the script.
-                    var session = ScriptSessionManager.GetSession(scriptItem[FieldIDs.PersistentSessionId],
+                    var session = ScriptSessionManager.GetSession(scriptItem[Templates.Script.Fields.PersistentSessionId],
                         IntegrationPoints.ContentEditorGuttersFeature);
 
-                    var script = scriptItem.Fields[FieldIDs.Script].Value ?? string.Empty;
+                    var script = scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value ?? string.Empty;
 
                     // We will need the item variable in the script.
                     session.SetItemLocationContext(item);

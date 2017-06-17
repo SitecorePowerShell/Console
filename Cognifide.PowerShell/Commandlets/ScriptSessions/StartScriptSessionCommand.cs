@@ -20,7 +20,6 @@ using Sitecore.Jobs;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 using JobManager = Sitecore.Jobs.JobManager;
-using TemplateIDs = Cognifide.PowerShell.TemplateIDs;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -158,7 +157,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                 {
                     return;
                 }
-                script = Item[FieldIDs.Script];
+                script = Item[Templates.Script.Fields.ScriptBody];
             }
             else if (Path != null)
             {
@@ -178,7 +177,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     return;
                 }
 
-                script = scriptItem[FieldIDs.Script];
+                script = scriptItem[Templates.Script.Fields.ScriptBody];
             }
             
             if (!ShouldProcess(scriptItem?.GetProviderPath() ?? string.Empty, "Start new script session")) return;

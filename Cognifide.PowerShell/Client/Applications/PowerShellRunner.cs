@@ -220,9 +220,9 @@ namespace Cognifide.PowerShell.Client.Applications
                     scriptItem.Fields.ReadAll();
                     Icon.Src = scriptItem.Appearance.Icon;
 
-                    PersistentId = WebUtil.GetQueryString("sessionKey").IfNullOrEmpty(scriptItem[FieldIDs.PersistentSessionId]);
+                    PersistentId = WebUtil.GetQueryString("sessionKey").IfNullOrEmpty(scriptItem[Templates.Script.Fields.PersistentSessionId]);
 
-                    ScriptContent = scriptItem[FieldIDs.Script];
+                    ScriptContent = scriptItem[Templates.Script.Fields.ScriptBody];
                     DialogHeader.Text = scriptItem.DisplayName;
                 }
                 else

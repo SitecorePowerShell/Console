@@ -44,8 +44,8 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             {
                 var template = TemplateManager.GetTemplate(itemCreatingEventArgs.TemplateId,
                     itemCreatingEventArgs.Parent.Database);
-                if (template == null || (!template.InheritsFrom(TemplateIDs.ScriptTemplate) &&
-                                         !template.InheritsFrom(TemplateIDs.ScriptLibraryTemplate)))
+                if (template == null || (!template.InheritsFrom(Templates.Script.Id) &&
+                                         !template.InheritsFrom(Templates.ScriptLibrary.Id)))
                 {
                     // not creating Script or Library
                     return;
@@ -85,7 +85,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                     $" Script/Library saved '{item?.Parent.Paths.Path}' by user '{Context.User?.Name}'");
                 if (item.IsPowerShellScript())
                 {
-                    PowerShellLog.Debug(item[FieldIDs.Script]);
+                    PowerShellLog.Debug(item[Templates.Script.Fields.ScriptBody]);
                 }
             }
         }

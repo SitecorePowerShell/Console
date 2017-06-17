@@ -179,7 +179,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 Stream = new MemoryStream();
                 StreamWriter memWriter = new StreamWriter(Stream);
-                memWriter.Write(Item[FieldIDs.Script]);
+                memWriter.Write(Item[Templates.Script.Fields.ScriptBody]);
                 memWriter.Flush();
                 Stream.Position = 0;
             }

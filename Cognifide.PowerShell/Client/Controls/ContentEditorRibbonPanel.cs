@@ -41,14 +41,14 @@ namespace Cognifide.PowerShell.Client.Controls
                 var scriptItem = Factory.GetDatabase(scriptDb).GetItem(scriptId);
 
                 if (!scriptItem.IsPowerShellScript() ||
-                    !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], context.Items[0]))
+                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.ShowRule], context.Items[0]))
                 {
                     continue;
                 }
 
                 RenderButton(output, psButton.TemplateID, ribbon, Control.GetUniqueID("script"),
                     Translate.Text(psButton.DisplayName), scriptItem["__Icon"], scriptItem[TemplateFieldIDs.ToolTip],
-                    command, RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.Items[0]), context,
+                    command, RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], context.Items[0]), context,
                     psButton.Paths.Path);
             }
         }

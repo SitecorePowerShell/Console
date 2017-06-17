@@ -452,7 +452,7 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 return;
             }
-            var sessionId = ListViewer.Data.SessionId.IfNullOrEmpty(scriptItem[FieldIDs.PersistentSessionId]);
+            var sessionId = ListViewer.Data.SessionId.IfNullOrEmpty(scriptItem[Templates.Script.Fields.PersistentSessionId]);
             var scriptSession = ScriptSessionManager.GetSession(sessionId);
             ExecuteScriptJob(scriptItem, scriptSession, message, string.IsNullOrEmpty(sessionId));
         }
@@ -465,7 +465,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
-            var script = scriptItem[FieldIDs.Script] ?? string.Empty;
+            var script = scriptItem[Templates.Script.Fields.ScriptBody] ?? string.Empty;
             SetVariables(scriptSession, message);
             scriptSession.SetExecutedScript(scriptItem);
             scriptSession.Interactive = true;

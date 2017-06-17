@@ -17,7 +17,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 {
                     if (item.IsPowerShellScript())
                     {
-                        var script = item[FieldIDs.Script];
+                        var script = item[Templates.Script.Fields.ScriptBody];
                         if (!String.IsNullOrEmpty(script))
                         {
                             session.SetExecutedScript(item);

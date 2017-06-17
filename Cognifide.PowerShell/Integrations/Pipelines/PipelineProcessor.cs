@@ -31,7 +31,7 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                     }
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {
-                        var script = scriptItem.Fields[FieldIDs.Script].Value ?? string.Empty;
+                        var script = scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value ?? string.Empty;
                         session.SetVariable("pipelineArgs", args);
 
                         try

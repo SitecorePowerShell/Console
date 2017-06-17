@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                         }
                         session.SetExecutedScript(scriptItem);
                         session.SetVariable("eventArgs", args);
-                        var script = scriptItem[FieldIDs.Script];
+                        var script = scriptItem[Templates.Script.Fields.ScriptBody];
                         if (!String.IsNullOrEmpty(script))
                         {
                             session.ExecuteScriptPart(script);

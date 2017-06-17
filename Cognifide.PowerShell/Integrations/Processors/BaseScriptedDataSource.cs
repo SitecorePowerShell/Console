@@ -50,7 +50,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             }
             using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
-                var script = scriptItem[FieldIDs.Script] ?? string.Empty;
+                var script = scriptItem[Templates.Script.Fields.ScriptBody] ?? string.Empty;
                 script = $"{ScriptSession.GetDataContextSwitch(item)}\n{script}";
                 return session.ExecuteScriptPart(script, false).Where(i => i is Item).Cast<Item>();
             }

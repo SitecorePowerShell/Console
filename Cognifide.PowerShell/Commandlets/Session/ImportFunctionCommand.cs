@@ -109,8 +109,8 @@ namespace Cognifide.PowerShell.Commandlets.Session
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
                 var query = string.IsNullOrEmpty(Library)
-                    ? $"{path}//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\" and @@Key=\"{name}\"]"
-                    : $"{path}/#{Library}#//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\" and @@Key=\"{name}\"]";
+                    ? $"{path}//*[@@TemplateId=\"{Templates.Script.Id}\" and @@Key=\"{name}\"]"
+                    : $"{path}/#{Library}#//*[@@TemplateId=\"{Templates.Script.Id}\" and @@Key=\"{name}\"]";
                 var scriptItems = root.Database.SelectItems(query);
                 if (scriptItems?.Length > 0)
                 {
@@ -139,7 +139,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
                 return;
             }
 
-            var script = functionItems[0][FieldIDs.Script];
+            var script = functionItems[0][Templates.Script.Fields.ScriptBody];
 
             if (ShouldProcess(functionItems[0].GetProviderPath(), "Import functions"))
             {
@@ -172,7 +172,7 @@ namespace Cognifide.PowerShell.Commandlets.Session
             foreach (var root in roots)
             {
                 var path = PathUtilities.PreparePathForQuery(root.Paths.Path);
-                var query = $"{path}//*[@@TemplateId=\"{TemplateIDs.ScriptTemplate}\"]";
+                var query = $"{path}//*[@@TemplateId=\"{Templates.Script.Id}\"]";
                 try
                 {
                     var results = root.Database.SelectItems(query);

@@ -26,12 +26,12 @@ namespace Cognifide.PowerShell.Integrations.Workflows
 
             var dataItem = args.DataItem;
 
-            if (string.IsNullOrEmpty(actionItem[FieldIDs.Script]))
+            if (string.IsNullOrEmpty(actionItem[Templates.ScriptWorkflowAction.Fields.ScriptBody]))
             {
                 return;
             }
 
-            var scriptItem = actionItem.Database.GetItem(new ID(actionItem[FieldIDs.WorkflowActionScript]));
+            var scriptItem = actionItem.Database.GetItem(new ID(actionItem[Templates.ScriptWorkflowAction.Fields.ScriptBody]));
 
             if (!scriptItem.IsPowerShellScript())
             {
@@ -39,20 +39,19 @@ namespace Cognifide.PowerShell.Integrations.Workflows
                 return;
             }
 
-            if (RulesUtils.EvaluateRules(actionItem[FieldNames.EnableRule], dataItem) &&
-                RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], dataItem))
-            {
-                var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
-                str.Append("id", dataItem.ID.ToString());
-                str.Append("db", dataItem.Database.Name);
-                str.Append("lang", dataItem.Language.Name);
-                str.Append("ver", dataItem.Version.Number.ToString(CultureInfo.InvariantCulture));
-                str.Append("scriptId", scriptItem.ID.ToString());
-                str.Append("scriptDb", scriptItem.Database.Name);
-                Context.ClientPage.ClientResponse.Broadcast(
-                    SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
-                    "Shell");
-            }
+            if (!RulesUtils.EvaluateRules(actionItem[Templates.ScriptWorkflowAction.Fields.EnableRule], dataItem) ||
+                !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.ShowRule], dataItem)) return;
+
+            var str = new UrlString(UIUtil.GetUri("control:PowerShellRunner"));
+            str.Append("id", dataItem.ID.ToString());
+            str.Append("db", dataItem.Database.Name);
+            str.Append("lang", dataItem.Language.Name);
+            str.Append("ver", dataItem.Version.Number.ToString(CultureInfo.InvariantCulture));
+            str.Append("scriptId", scriptItem.ID.ToString());
+            str.Append("scriptDb", scriptItem.Database.Name);
+            Context.ClientPage.ClientResponse.Broadcast(
+                SheerResponse.ShowModalDialog(str.ToString(), "400", "220", "PowerShell Script Results", false),
+                "Shell");
         }
     }
 }

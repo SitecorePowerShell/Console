@@ -396,8 +396,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
                 var path = args.Result.Split(':');
                 var db = Factory.GetDatabase(path[0]);
-                var itemTemplate = db.GetTemplate(TemplateIDs.ScriptTemplate);
-                var libraryTemplate = db.GetTemplate(TemplateIDs.ScriptLibraryTemplate);
+                var itemTemplate = db.GetTemplate(Templates.Script.Id);
+                var libraryTemplate = db.GetTemplate(Templates.ScriptLibrary.Id);
                 var scriptItem = db.CreateItemPath(path[1], libraryTemplate, itemTemplate);
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
@@ -450,7 +450,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (scriptItem == null)
                     return;
                 scriptItem.Edit(
-                    editArgs => { scriptItem.Fields[FieldIDs.Script].Value = Editor.Value; });
+                    editArgs => { scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value = Editor.Value; });
                 SheerResponse.Eval("cognifide.powershell.updateModificationFlag(true);");
             }
         }
@@ -473,9 +473,9 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
-            if (scriptItem[FieldIDs.Script] != null)
+            if (scriptItem[Templates.Script.Fields.ScriptBody] != null)
             {
-                Editor.Value = scriptItem[FieldIDs.Script];
+                Editor.Value = scriptItem[Templates.Script.Fields.ScriptBody];
                 SheerResponse.Eval("cognifide.powershell.updateEditor();");
                 ScriptItemId = scriptItem.ID.ToString();
                 ScriptItemDb = scriptItem.Database.Name;
@@ -569,7 +569,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (string.Equals(sessionName, StringTokens.PersistentSessionId, StringComparison.OrdinalIgnoreCase))
             {
                 var script = ScriptItem;
-                sessionName = script != null ? script[FieldIDs.PersistentSessionId] : string.Empty;
+                sessionName = script != null ? script[Templates.Script.Fields.PersistentSessionId] : string.Empty;
             }
 
             var autoDispose = string.IsNullOrEmpty(sessionName);
@@ -670,7 +670,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 scriptSession.SetVariable("selectionText", SelectionText.Value.Trim());
                 scriptSession.SetVariable("scriptItem", ScriptItem);
                 scriptSession.Interactive = true;
-                JobExecuteScript(args, script[FieldIDs.Script], scriptSession, true, false);
+                JobExecuteScript(args, script[Templates.Script.Fields.ScriptBody], scriptSession, true, false);
             }
         }
 
@@ -851,8 +851,8 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 var name =
                     item != null &&
-                    !item[FieldIDs.PersistentSessionId].IsNullOrEmpty()
-                        ? item[FieldIDs.PersistentSessionId]
+                    !item[Templates.Script.Fields.PersistentSessionId].IsNullOrEmpty()
+                        ? item[Templates.Script.Fields.PersistentSessionId]
                         : null;
                 sessionName = string.Format(Texts.PowerShellIse_UpdateRibbon_Script_defined___0_,
                     name ?? Texts.PowerShellIse_UpdateRibbon_Single_execution);

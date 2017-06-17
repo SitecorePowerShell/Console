@@ -457,12 +457,10 @@
     <Compile Include="Core\Settings\ApplicationNames.cs" />
     <Compile Include="Core\Settings\ApplicationSettings.cs" />
     <Compile Include="Core\VersionDecoupling\Interfaces\IUrlHandleWrapper.cs" />
-    <Compile Include="FieldIds.cs" />
     <Compile Include="Core\Settings\FieldNames.cs" />
     <Compile Include="Core\Settings\StringTokens.cs" />
     <Compile Include="Integrations\Install\AttributesContainer.cs" />
     <Compile Include="Integrations\Install\ScriptPostStep.cs" />
-    <Compile Include="TemplateIDs.cs" />
     <Compile Include="Core\Settings\TypeAccelerators.cs" />
     <Compile Include="Core\Settings\Authorization\WebServiceSettings.cs" />
     <Compile Include="Core\Extensions\FieldExtensions.cs" />
@@ -510,6 +508,7 @@
     </Compile>
     <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates.cs" />
     <Compile Include="Texts.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>

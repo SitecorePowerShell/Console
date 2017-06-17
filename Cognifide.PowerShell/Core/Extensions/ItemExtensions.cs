@@ -16,22 +16,22 @@ namespace Cognifide.PowerShell.Core.Extensions
 
         public static bool IsPowerShellScript(this Item item)
         {
-            return item.InheritsFrom(TemplateIDs.ScriptTemplate);
+            return item.InheritsFrom(Templates.Script.Id);
         }
 
         public static bool IsPowerShellModule(this Item item)
         {
-            return item.InheritsFrom(TemplateIDs.ScriptModuleTemplate);
+            return item.InheritsFrom(Templates.ScriptModule.Id);
         }
 
         public static bool IsPowerShellModuleFolder(this Item item)
         {
-            return item.InheritsFrom(TemplateIDs.ScriptModuleFolderTemplate);
+            return item.InheritsFrom(Templates.ScriptModuleFolder.Id);
         }
 
         public static bool IsPowerShellLibrary(this Item item)
         {
-            return item.InheritsFrom(TemplateIDs.ScriptLibraryTemplate);
+            return item.InheritsFrom(Templates.ScriptLibrary.Id);
         }
 
         public static void Edit(this Item item, Action<ItemEditArgs> action)

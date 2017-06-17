@@ -16,7 +16,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         {
             Assert.ArgumentNotNull(args, "args");
 
-            if (!args.Item.InheritsFrom(TemplateIDs.ScriptTemplate) && !args.Item.InheritsFrom(TemplateIDs.ScriptLibraryTemplate) && !args.Item.InheritsFrom(TemplateIDs.ScriptModuleTemplate))
+            if (!args.Item.IsPowerShellScript() && !args.Item.IsPowerShellLibrary() && !args.Item.InheritsFrom(Templates.ScriptModule.Id))
             {
                 return;
             }
