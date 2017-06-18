@@ -57,38 +57,38 @@ namespace Cognifide.PowerShell.Client.Applications
 
         public string PersistentId
         {
-            get { return StringUtil.GetString(ServerProperties["PersistentId"]); }
-            set { ServerProperties["PersistentId"] = value; }
+            get => StringUtil.GetString(ServerProperties["PersistentId"]);
+            set => ServerProperties["PersistentId"] = value;
         }
 
         public string ScriptContent
         {
-            get { return StringUtil.GetString(ServerProperties["ScriptContent"]); }
-            set { ServerProperties["ScriptContent"] = value; }
+            get => StringUtil.GetString(ServerProperties["ScriptContent"]);
+            set => ServerProperties["ScriptContent"] = value;
         }
 
         public string ItemDb
         {
-            get { return StringUtil.GetString(ServerProperties["ItemDb"]); }
-            set { ServerProperties["ItemDb"] = value; }
+            get => StringUtil.GetString(ServerProperties["ItemDb"]);
+            set => ServerProperties["ItemDb"] = value;
         }
 
         public string ItemId
         {
-            get { return StringUtil.GetString(ServerProperties["ItemId"]); }
-            set { ServerProperties["ItemId"] = value; }
+            get => StringUtil.GetString(ServerProperties["ItemId"]);
+            set => ServerProperties["ItemId"] = value;
         }
 
         public string ItemLang
         {
-            get { return StringUtil.GetString(ServerProperties["ItemLang"]); }
-            set { ServerProperties["ItemLang"] = value; }
+            get => StringUtil.GetString(ServerProperties["ItemLang"]);
+            set => ServerProperties["ItemLang"] = value;
         }
 
         public string ItemVer
         {
-            get { return StringUtil.GetString(ServerProperties["ItemVer"]); }
-            set { ServerProperties["ItemVer"] = value; }
+            get => StringUtil.GetString(ServerProperties["ItemVer"]);
+            set => ServerProperties["ItemVer"] = value;
         }
 
         public string PageId
