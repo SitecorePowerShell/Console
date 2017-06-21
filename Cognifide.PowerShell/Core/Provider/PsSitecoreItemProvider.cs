@@ -732,8 +732,8 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     case TemplateItemType.Template:
                         createdItem = forcedId != ID.Null
-                            ? ItemManager.CreateItem(name, parentItem, templateItem.ID, forcedId, SecurityCheck.Enable)
-                            : ItemManager.CreateItem(name, parentItem, templateItem.ID);
+                            ? ItemManager.AddFromTemplate(name, templateItem.ID, parentItem, forcedId)
+                            : ItemManager.AddFromTemplate(name, templateItem.ID, parentItem);
                         break;
                     case TemplateItemType.Branch:
                         createdItem = parentItem.Add(name, (BranchItem)templateItem);
