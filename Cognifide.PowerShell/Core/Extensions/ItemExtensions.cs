@@ -3,6 +3,7 @@ using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
+using Sitecore.Data.Templates;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {
@@ -10,8 +11,8 @@ namespace Cognifide.PowerShell.Core.Extensions
     {
         public static bool InheritsFrom(this Item item, ID templateID)
         {
-            return item != null &&
-                   TemplateManager.GetTemplate(item).InheritsFrom(templateID);
+            return item != null && TemplateManager.GetTemplate(item) is Template template &&
+                   template.InheritsFrom(templateID);
         }
 
         public static bool IsPowerShellScript(this Item item)
