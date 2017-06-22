@@ -56,6 +56,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Literal TabOffsetValue;
         protected Tabstrip Tabstrip;
         protected Scrollbox ValuePanel;
+        protected Border NoDataWarning;
 
         public static string MandatoryVariables
         {
@@ -100,6 +101,14 @@ namespace Cognifide.PowerShell.Client.Applications
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
             var message = (ShowMultiValuePromptMessage)HttpContext.Current.Cache[sid];
+
+            if (message == null)
+            {
+                DialogDescription.Text = "&nbsp;";
+                return;
+            }
+            NoDataWarning.Visible = false;
+
             var variables = message.Parameters;
             HttpContext.Current.Cache.Remove(sid);
 

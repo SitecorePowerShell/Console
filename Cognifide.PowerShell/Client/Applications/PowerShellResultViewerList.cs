@@ -167,6 +167,13 @@ namespace Cognifide.PowerShell.Client.Applications
 
             var sid = WebUtil.GetQueryString("sid");
             ListViewer.ContextId = sid;
+
+            if (ListViewer.Data == null)
+            {
+                UpdateInfoPanel(string.Empty, string.Empty, string.Empty, Texts.PowerShellResultViewerList_datamissing, string.Empty);
+                return;
+            }
+
             ListViewer.Refresh();
             UpdatePage(ListViewer.CurrentPage);
             ListViewer.View = "Details";
@@ -177,9 +184,7 @@ namespace Cognifide.PowerShell.Client.Applications
             var missingDataMessage = ListViewer.Data.MissingDataMessage;
             var missingDataIcon = ListViewer.Data.MissingDataIcon;
             var icon = ListViewer.Data.Icon;
-
             UpdateInfoPanel(infoTitle, infoDescription, icon, missingDataMessage, missingDataIcon);
-
             ParentFrameName = WebUtil.GetQueryString("pfn");
             UpdateRibbon();
         }
@@ -218,7 +223,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
             }
 
-            if (ListViewer.Data.Data.Count == 0)
+            if (ListViewer.Data?.Data == null || ListViewer.Data.Data.Count == 0)
             {
                 ListViewer.Visible = false;
                 EmptyPanel.Visible = true;
@@ -330,6 +335,11 @@ namespace Cognifide.PowerShell.Client.Applications
             var key = $"allDataInternal|{sessionId}";
             if (HttpRuntime.Cache.Remove(key) is UpdateListViewCommand.UpdateListViewData updateData)
             {
+                if (ListViewer.Data == null)
+                {
+                    SheerResponse.Alert(Texts.PowerShellResultViewerList_datamissing);
+                    return;
+                }
                 ListViewer.Data.Data = updateData?.CumulativeData?.BaseList<BaseListViewCommand.DataObject>();
                 UpdatePage(1);
                 ListViewer.Refresh();
