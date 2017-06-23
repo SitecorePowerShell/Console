@@ -1,7 +1,7 @@
 # This is where your git-hub repository is located
 $projectPath = "C:\Projects\sitecorepowershell\Trunk"
 if(-not (Test-Path -Path $projectPath)) {
-    $projectPath = "C:\Websites\spe.dev.local"
+    $projectPath = "C:\Projects\Cognifide.PowerShell"
 
     if(-not(Test-Path -Path $projectPath)) {
         Write-Error "The project path defined does not exist."
@@ -20,7 +20,7 @@ $sites = @{Path = "C:\inetpub\wwwroot\sxa"; Version="8"},
          @{Path = "C:\inetpub\wwwroot\Sitecore71"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore72"; Version="7"},
          @{Path = "C:\inetpub\wwwroot\Sitecore75"; Version="7"},
-         @{Path = "C:\Websites\spe.dev.local"; Version="8"};
+         @{Path = "C:\Websites\dev.spe"; Version="8"};
 
 #Set the below to true to remove junction points only and not set them back
 $removeOnly = $false
@@ -65,7 +65,7 @@ function Create-ProjectJunctions{
     Write-Host "$project\$version --> $path"
     Write-Host "--------------------------------------------------------------------------------------------"
 
-    Create-Junction "$path\Data\serialization" "$projectPath\Cognifide.PowerShell\Data\serialization"
+    #Create-Junction "$path\Data\serialization" "$projectPath\Cognifide.PowerShell\Data\serialization"
     Create-Junction "$path\Data\Translations" "$projectPath\Cognifide.PowerShell\Data\Translations"
 
     if(Test-Path "$path\Website\sitecore modules\PowerShell"){
