@@ -8,14 +8,15 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $item = get-item master:\content\Home
-    $items = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
-    $items2 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
-    $items3 = get-Childitem 'master:\templates\Modules\PowerShell Console\PowerShell Script*'
-    $parent = get-item . |% { $_.Parent } 
+    $item = Get-Item -Path "master:\content\Home"
+    $items = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
+    $items2 = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
+    $items3 = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
+    $parent = Get-Item -Path . | Select-Object -Expand Parent 
     $checklistItems =  @(4,16)
     $radioListItems = 3
-    $rule = (Get-Item "master:\system\Modules\PowerShell\Script Library\Task Management\Content Editor\Context Menu\Run Task Schedule").ShowRule
+    # Task Management Context Menu option for Run Scheduled Tasks.
+    $rule = Get-Item -Path "master:" -ID "{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" | Select-Object -Expand ShowRule
     
     $options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
     $selection = [ordered]@{One=1;Two=2;"Three (selected)"=3;Four=4};
@@ -23,10 +24,10 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple" },
         @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
-        @{ Name = "someText"; Value="Some Text"; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
+        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
         @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"}, 
-        @{ Name = "number"; Value=110; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
-        @{ Name = "fraction"; Value=1.1; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
+        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
+        @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
         @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"}, 
         @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
         @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
@@ -38,7 +39,7 @@ SharedFields:
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="treelist"; Tab="Items"}, 
         @{ Name = "items2"; Title="Bunch of Templates"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="multilist"; Tab="More Items"; Height="300px"}, 
         @{ Name = "items3"; Title="Pick One Template"; 
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
@@ -47,9 +48,10 @@ SharedFields:
         @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"}, 
         @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"}, `
         @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights" }, `
-        @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"} `
-        -Description "This Dialog shows all available editors in some configurations, the properties are groupped into tabs" `
-        -Title "Initialise various variable types (with tabs)" -Width 650 -Height 680 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+        @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"}, `
+        @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"} `
+        -Description "The dialog demonstrates the use of all available controls grouped into tabs." `
+        -Title "Kitchen Sink Demo" -Width 650 -Height 700 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
     if($result -ne "ok")
     {
         Exit
@@ -61,8 +63,8 @@ SharedFields:
         @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
         @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
         @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
-        -Description "This Dialog shows less editors, it doesn't need tabs as there is less of the edited variables" `
-        -Title "Initialise various variable types (without tabs)" -Width 500 -Height 480 -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -Description "The dialog demonstrates the use of some available controls without tabs." `
+        -Title "Kitchen Sink Demo" -Width 500 -Height 480 -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     "Variables from dialog:"
     '$from:      ' + $from
@@ -82,6 +84,8 @@ SharedFields:
     '$fraction:  ' + $fraction
     '$rule:  '
     $rule
+    '$rulewithaction:  '
+    $rulewithaction
     '$items: '
     $items
     '$items2: '
