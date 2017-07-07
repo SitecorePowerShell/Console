@@ -11,10 +11,10 @@
         Specifies the variables that value should be provided by the user. Each variable definition can have the following structure:
         - Name - the name of the PowerShell variable - without the $ sign
         - Value - the initial value of the variable - if the variable have not been created prior to launching the dialog - this will be its value unless the user changes it. if Value is not specified - the existing variable name will be used.
-	- Title - The title for the variable shown above the variable editor.
+	    - Title - The title for the variable shown above the variable editor.
         - Tooltip - The hint describing the parameter further - if the -ShowHints parameter is provided this value will show between the Variable Title and the variable editor.
-	- Editor - If the default editor selected does not provide the functionality expected - you can specify this value to customize it (see examples)
-	- Tab - if this parameter is specified on any Variable the multi-tab dialog will be used instead of a simple one. Provide the tab name on which the variable editor should appear.
+	    - Editor - If the default editor selected does not provide the functionality expected - you can specify this value to customize it (see examples)
+	    - Tab - if this parameter is specified on any Variable the multi-tab dialog will be used instead of a simple one. Provide the tab name on which the variable editor should appear.
 	
         Variable type specific:
         - Root - for some Item selecting editors you can provide this to limit the selection to only part of the tree
