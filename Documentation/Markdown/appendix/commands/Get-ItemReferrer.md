@@ -21,7 +21,7 @@ Get-ItemReferrer -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;St
  
 The Get-ItemReferrer command returns all items referring to the specified item. If -ItemLink parameter is used the command will return links rather than items. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -288,4 +288,4 @@ TargetPath         : /sitecore/content/Home
  
 ## Related Topics 
  
-* [Get-ItemReference](/appendix/commands/Get-ItemReference.md)* Update-ItemReferrer* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+* [Get-ItemReference](/appendix/commands/Get-ItemReference.md)* [Update-ItemReferrer](/appendix/commands/Update-ItemReferrer.md)* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

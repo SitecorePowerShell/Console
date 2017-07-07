@@ -15,7 +15,7 @@ Lock-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-Force] [-PassThru] [-I
  
 The Lock-Item command unlocks the item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

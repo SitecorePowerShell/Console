@@ -4,7 +4,7 @@ Prompts user to provide values for variables required by the script to perform i
  
 ## Syntax 
  
-Read-Variable [-Parameters &lt;Object[]&gt;] [-Description &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-ShowHints] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Read-Variable [-Parameters &lt;Object[]&gt;] [-Description &lt;String&gt;] [-CancelButtonName &lt;String&gt;] [-OkButtonName &lt;String&gt;] [-ShowHints] [-Validator &lt;ScriptBlock&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
@@ -13,7 +13,7 @@ Prompts user to provide values for variables required by the script to perform i
 If user selects the "OK" button the command will return 'ok' as its value.
 If user selects the "Cancel" button or closes the window with the "x" button at the top-right corner of the dialog the command will return 'cancel' as its value. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -168,6 +168,40 @@ Text shown on the OK button.
 ### -ShowHints&nbsp; &lt;SwitchParameter&gt; 
  
 Specifies whether the variable hints should be displayed. Hints are shown below each the variable title but above the variable editing control. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Validator&nbsp; &lt;ScriptBlock&gt; 
+ 
+ 
  
 <table>
     <thead></thead>

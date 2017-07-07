@@ -16,7 +16,7 @@ Get-ScriptSession -Session &lt;ScriptSession[]&gt; [-SessionType &lt;String[]&gt
 The Get-ScriptSession command returns the list of PowerShell Extensions script sessions running in the system.
 To find all script sessions, running in the system type "Get-ScriptSession" without parameters. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

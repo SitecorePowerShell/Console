@@ -4,18 +4,18 @@ Retrieves item fields as either names or fields or template fields.
  
 ## Syntax 
  
-Get-ItemField [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Get-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField [-Path] &lt;String&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Get-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] 
+Get-ItemField -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-ReturnType &lt;Name | Field | TemplateField&gt;] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Retrieves item fields as either names or fields or template fields. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -304,7 +304,9 @@ The input type is the type of the objects that you can pipe to the cmdlet.
  
 The output type is the type of the objects that the cmdlet emits. 
  
-* Sitecore.Data.Items.Item* Sitecore.Data.Templates.TemplateField* Sitecore.Data.Fields.Field 
+* Sitecore.Data.Items.Item
+Sitecore.Data.Templates.TemplateField
+Sitecore.Data.Fields.Field 
  
 ## Notes 
  

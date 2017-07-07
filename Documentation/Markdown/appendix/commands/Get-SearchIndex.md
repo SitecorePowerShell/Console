@@ -13,7 +13,7 @@ Get-SearchIndex [-Name &lt;String&gt;]
  
 The Get-SearchIndex command returns the available Sitecore indexes. These are the same as those found in the Control Panel. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

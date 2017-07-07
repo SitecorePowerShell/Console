@@ -4,18 +4,18 @@ Adds a rendering to a chosen device for the presentation of an item.
  
 ## Syntax 
  
-Add-Rendering [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Add-Rendering [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Add-Rendering [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Add-Rendering [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Add-Rendering [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Add-Rendering -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] -PlaceHolder &lt;String&gt; [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Adds a rendering to a chosen device for the presentation of an item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

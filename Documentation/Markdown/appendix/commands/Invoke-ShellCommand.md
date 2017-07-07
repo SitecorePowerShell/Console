@@ -5,18 +5,18 @@ This command used to be named Execute-ShellCommand - a matching alias added for 
  
 ## Syntax 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Name] &lt;String&gt; 
+Invoke-ShellCommand [-Item] &lt;Item&gt; [-Name] &lt;String&gt; [-Language &lt;String[]&gt;] 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Name] &lt;String&gt; 
+Invoke-ShellCommand [-Path] &lt;String&gt; [-Name] &lt;String&gt; [-Language &lt;String[]&gt;] 
  
-Invoke-ShellCommand [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Name] &lt;String&gt; 
+Invoke-ShellCommand -Id &lt;String&gt; [-Database &lt;String&gt;] [-Name] &lt;String&gt; [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Executes Sitecore Shell command for an item. e.g. opening dialogs or performing commands that you can find in the Content Editor ribbon or context menu. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-ShellCommand 
  

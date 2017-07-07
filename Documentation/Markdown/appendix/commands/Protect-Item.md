@@ -15,7 +15,7 @@ Protect-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-PassThru]
  
 The Protect-Item command protects the item by making it read-only. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

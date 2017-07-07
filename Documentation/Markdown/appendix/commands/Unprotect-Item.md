@@ -15,7 +15,7 @@ Unprotect-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-PassThru]
  
 The Unprotect-Item command removes protection from the item provided to it. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

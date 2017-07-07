@@ -4,7 +4,7 @@ Sends output to an interactive table in a separate window.
  
 ## Syntax 
  
-Show-ListView [-PageSize &lt;Int32&gt;] [-Icon &lt;String&gt;] [-InfoTitle &lt;String&gt;] [-InfoDescription &lt;String&gt;] [-Modal] [-ActionData &lt;Object&gt;] [-ViewName &lt;String&gt;] [-MissingDataMessage &lt;String&gt;] [-ActionsInSession] [-Show &lt;None | SharedExport | Filter | PagingAlways | SharedActions | StatusBar | All&gt;] -Data &lt;Object&gt; [-Property &lt;Object[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
+Show-ListView [-PageSize &lt;Int32&gt;] [-Modal] [-ActionData &lt;Object&gt;] [-ViewName &lt;String&gt;] [-ActionsInSession] [-Show &lt;None | SharedExport | Filter | PagingAlways | SharedActions | StatusBar | All&gt;] [-InfoTitle &lt;String&gt;] [-InfoDescription &lt;String&gt;] [-MissingDataMessage &lt;String&gt;] [-Icon &lt;String&gt;] -Data &lt;Object&gt; [-Property &lt;Object[]&gt;] [-Title &lt;String&gt;] [-Width &lt;Int32&gt;] [-Height &lt;Int32&gt;] 
  
  
 ## Detailed Description 
@@ -17,115 +17,13 @@ You can use the following features of the table to examine your data:
 -- Execute actions on selected items. To execute action on the data from Show-ListView, Ctrl+click the items you want to be included in the action and press the desired action in the "Actions" chunk in the ribbon.
 -- Export contents of the view in XML, CSV, Json, HTML or Excel file and download that onto the user's computer. The downloaded results will take into account current filter and order of the items. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
 ### -PageSize&nbsp; &lt;Int32&gt; 
  
 Number of results shown per page. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -Icon&nbsp; &lt;String&gt; 
- 
-Icon of the result window. (Shows in the top/left corner and on the Sitecore taskbar). 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -InfoTitle&nbsp; &lt;String&gt; 
- 
-Title on the panel that appears below the ribbon in the results window. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -InfoDescription&nbsp; &lt;String&gt; 
- 
-Description that appears on the panel below the ribbon in the results window. 
  
 <table>
     <thead></thead>
@@ -259,40 +157,6 @@ View signature name - this can be used by action commands to determine whether t
     </tbody>
 </table> 
  
-### -MissingDataMessage&nbsp; &lt;String&gt; 
- 
-If no Items were provided for -Data parameter the message provided in this parameter will be shown in the middle of the List View dialog to notify users of the lack of items to display. 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
 ### -ActionsInSession&nbsp; &lt;SwitchParameter&gt; 
  
 If this parameter is specified actions will be executed in the same session as the one in which the command is executed. 
@@ -336,6 +200,142 @@ Shows UI elements selectively in the results dialog
 -- PagingAlways - shows paging when list is shorter than the page specified
 -- SharedActions - shows actions that are not specific to this very `-ViewName report (right-most ribbon panel)
 -- StatusBar - shows status bar. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -InfoTitle&nbsp; &lt;String&gt; 
+ 
+Title on the panel that appears below the ribbon in the results window. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -InfoDescription&nbsp; &lt;String&gt; 
+ 
+Description that appears on the panel below the ribbon in the results window. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -MissingDataMessage&nbsp; &lt;String&gt; 
+ 
+If no Items were provided for -Data parameter the message provided in this parameter will be shown in the middle of the List View dialog to notify users of the lack of items to display. 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Icon&nbsp; &lt;String&gt; 
+ 
+Icon of the result window. (Shows in the top/left corner and on the Sitecore taskbar). 
  
 <table>
     <thead></thead>

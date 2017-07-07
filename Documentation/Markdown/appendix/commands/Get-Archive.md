@@ -11,7 +11,7 @@ Get-Archive [[-Database] &lt;Database&gt;] [[-Name] &lt;String&gt;]
  
 The Get-Archive command returns Sitecore archives in context of the specified database. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

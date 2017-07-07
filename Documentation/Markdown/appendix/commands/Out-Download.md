@@ -12,7 +12,7 @@ Out-Download -InputObject &lt;Object&gt; [-ContentType &lt;String&gt;] [-Name &l
 The cmdlet allows to send content of an object (FileInfo, Stream, String, String[] or Byte[]) to the client. This is used for example by report scripts to send the report in HTML, Json or Excel without saving the content of the object to the disk drive.
 You can specify an object type and file name to make sure the downloaded file is interpreted properly by the browser. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

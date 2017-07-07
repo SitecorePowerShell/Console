@@ -13,7 +13,7 @@ The Add-RoleMember command assigns Sitecore users as members of the specified ro
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

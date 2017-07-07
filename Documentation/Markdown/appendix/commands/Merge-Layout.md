@@ -1,14 +1,14 @@
-# Remove-SearchIndexItem 
+# Merge-Layout 
  
  
  
 ## Syntax 
  
-Remove-SearchIndexItem -Item &lt;Item&gt; [-Name &lt;String&gt;] [-AsJob] 
+Merge-Layout [-Item] &lt;Item&gt; [-Language &lt;String[]&gt;] 
  
-Remove-SearchIndexItem -Item &lt;Item&gt; [-Name &lt;String&gt;] [-AsJob] 
+Merge-Layout [-Path] &lt;String&gt; [-Language &lt;String[]&gt;] 
  
-Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob] 
+Merge-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -18,6 +18,40 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
 © 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+### -Language&nbsp; &lt;String[]&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Item&nbsp; &lt;Item&gt; 
  
@@ -36,7 +70,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
         </tr>
         <tr>
             <td>Position?</td>
-            <td>named</td>
+            <td>1</td>
         </tr>
         <tr>
             <td>Default Value</td>
@@ -44,7 +78,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>true (ByValue, ByPropertyName)</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -53,7 +87,41 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
     </tbody>
 </table> 
  
-### -SearchResultItem&nbsp; &lt;SearchResultItem&gt; 
+### -Path&nbsp; &lt;String&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Id&nbsp; &lt;String&gt; 
  
  
  
@@ -78,40 +146,6 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
-        </tr>
-        <tr>
-            <td>Accept Wildcard Characters?</td>
-            <td>false</td>
-        </tr>
-    </tbody>
-</table> 
- 
-### -AsJob&nbsp; &lt;SwitchParameter&gt; 
- 
- 
- 
-<table>
-    <thead></thead>
-    <tbody>
-        <tr>
-            <td>Aliases</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Required?</td>
-            <td>false</td>
-        </tr>
-        <tr>
-            <td>Position?</td>
-            <td>named</td>
-        </tr>
-        <tr>
-            <td>Default Value</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Accept Pipeline Input?</td>
             <td>false</td>
         </tr>
         <tr>
@@ -121,7 +155,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
     </tbody>
 </table> 
  
-### -Name&nbsp; &lt;String&gt; 
+### -Database&nbsp; &lt;String&gt; 
  
  
  

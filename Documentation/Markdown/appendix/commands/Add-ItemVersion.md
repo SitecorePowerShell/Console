@@ -4,11 +4,11 @@ Creates a version of the item in a new language based on an existing language ve
  
 ## Syntax 
  
-Add-ItemVersion [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemVersion [-Item] &lt;Item&gt; [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Add-ItemVersion [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemVersion [-Path] &lt;String&gt; [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Add-ItemVersion [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] 
+Add-ItemVersion -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-IfExist &lt;Append | Skip | OverwriteLatest&gt;] [-TargetLanguage &lt;String[]&gt;] [-DoNotCopyFields] [-IgnoredFields &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -16,7 +16,7 @@ Add-ItemVersion [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-I
 Creates a new version of the item in a specified language based on an existing language/version.
 Based on parameters you can make the command bahave differently when a version in the target language already exists and define which fields if any should be copied over from the original language. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Add-ItemLanguage 
  

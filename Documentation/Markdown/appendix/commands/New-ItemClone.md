@@ -4,18 +4,18 @@ Creates a new item clone based on the item provided.
  
 ## Syntax 
  
-New-ItemClone [-Item] &lt;Item&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+New-ItemClone [-Item] &lt;Item&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recurse] 
  
-New-ItemClone [-Path] &lt;String&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+New-ItemClone [-Path] &lt;String&gt; -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recurse] 
  
-New-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recursive] 
+New-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] -Destination &lt;Item&gt; [-Name &lt;String&gt;] [-Recurse] 
  
  
 ## Detailed Description 
  
 Creates a new item clone based on the item provided. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -87,7 +87,7 @@ Name of the item clone.
     </tbody>
 </table> 
  
-### -Recursive&nbsp; &lt;SwitchParameter&gt; 
+### -Recurse&nbsp; &lt;SwitchParameter&gt; 
  
 Add the parameter to clone thw whole branch rather than a single item. 
  

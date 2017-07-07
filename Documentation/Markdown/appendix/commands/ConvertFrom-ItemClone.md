@@ -4,20 +4,88 @@ Converts an item from a clone to a fully independent item.
  
 ## Syntax 
  
-ConvertFrom-ItemClone [-Item] &lt;Item&gt; 
+ConvertFrom-ItemClone [-Item] &lt;Item&gt; [-Recurse] [-PassThru] 
  
-ConvertFrom-ItemClone [-Path] &lt;String&gt; 
+ConvertFrom-ItemClone [-Path] &lt;String&gt; [-Recurse] [-PassThru] 
  
-ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] 
+ConvertFrom-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-PassThru] 
  
  
 ## Detailed Description 
  
 Converts an item from a clone to a fully independent item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
+ 
+### -Recurse&nbsp; &lt;SwitchParameter&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -PassThru&nbsp; &lt;SwitchParameter&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
  
 ### -Item&nbsp; &lt;Item&gt; 
  

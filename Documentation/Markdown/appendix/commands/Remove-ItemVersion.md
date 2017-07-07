@@ -16,7 +16,7 @@ Remove-ItemVersion [-Language &lt;String[]&gt;] [-Version &lt;String[]&gt;] [-Ex
 Removes Language/Version from a an Item either sent from pipeline or defined with Path or ID. A single language or a list of languages can be defined using the Language parameter. 
 Language  parameter supports globbing so you can delete whole language groups using wildcards. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Remove-ItemLanguage 
  

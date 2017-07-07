@@ -4,18 +4,18 @@ Resets the layout for the specified item.
  
 ## Syntax 
  
-Reset-Layout [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-FinalLayout] 
+Reset-Layout [-Item] &lt;Item&gt; [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Reset-Layout [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-FinalLayout] 
+Reset-Layout [-Path] &lt;String&gt; [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Reset-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-FinalLayout] 
+Reset-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 The Reset-Layout command resets the layout for the specified item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

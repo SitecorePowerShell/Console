@@ -11,7 +11,7 @@ New-ItemAcl [-Identity] &lt;AccountIdentity&gt; [-AccessRight] &lt;String&gt; [-
  
 Creates a new access rule for use with Set-ItemAcl and Add-ItemAcl cmdlets. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

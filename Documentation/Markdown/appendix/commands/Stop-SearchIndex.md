@@ -15,7 +15,7 @@ Stop-SearchIndex [-Name &lt;String&gt;]
  
 The Stop-SearchIndex command stops the Sitecore index. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -13,7 +13,7 @@ Shows a user a confirmation request message box.
 Returns "yes" or "no" based on user's response.
 The buttons that are shown to the user are "OK" and "Cancel". 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

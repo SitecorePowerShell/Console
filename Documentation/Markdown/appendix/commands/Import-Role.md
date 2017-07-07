@@ -17,7 +17,7 @@ Import-Role -Path &lt;String&gt;
  
 The Import-Role command imports (deserializes) Sitecore roles from the Sitecore server filesystem. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

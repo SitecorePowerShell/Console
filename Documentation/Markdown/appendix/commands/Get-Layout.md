@@ -4,18 +4,18 @@ Returns the layout for the specified item.
  
 ## Syntax 
  
-Get-Layout [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Layout [-Item] &lt;Item&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Layout [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Layout [-Path] &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 The Get-Layout command returns the layout for the specified item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

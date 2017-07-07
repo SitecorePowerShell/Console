@@ -11,7 +11,7 @@ Install-Package [[-Path] &lt;String&gt;] [-InstallMode &lt;Undefined | Overwrite
  
 Installs Sitecore package with the ability to provide default responses for merge and overwrite actions. The alias for the command is Import-Package. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Import-Package 
  
@@ -165,7 +165,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Install-Package -Path SitecorePowerShellConsole.zip - InstallMode Merge -MergeMode Merge 
+PS master:\> Install-Package -Path SitecorePowerShellConsole.zip -InstallMode Merge -MergeMode Merge 
  
 ``` 
  

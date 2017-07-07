@@ -1,14 +1,22 @@
-# Remove-SearchIndexItem 
+# Test-BaseTemplate 
  
  
  
 ## Syntax 
  
-Remove-SearchIndexItem -Item &lt;Item&gt; [-Name &lt;String&gt;] [-AsJob] 
+Test-BaseTemplate -Item &lt;Item&gt; -TemplateItem &lt;TemplateItem[]&gt; 
  
-Remove-SearchIndexItem -Item &lt;Item&gt; [-Name &lt;String&gt;] [-AsJob] 
+Test-BaseTemplate -Item &lt;Item&gt; -Template &lt;String[]&gt; 
  
-Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob] 
+Test-BaseTemplate -Path &lt;String&gt; -TemplateItem &lt;TemplateItem[]&gt; 
+ 
+Test-BaseTemplate -Path &lt;String&gt; -Template &lt;String[]&gt; 
+ 
+Test-BaseTemplate -Id &lt;String&gt; -TemplateItem &lt;TemplateItem[]&gt; 
+ 
+Test-BaseTemplate -Id &lt;String&gt; -Template &lt;String[]&gt; 
+ 
+Test-BaseTemplate [-Database &lt;String&gt;] 
  
  
 ## Detailed Description 
@@ -53,7 +61,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
     </tbody>
 </table> 
  
-### -SearchResultItem&nbsp; &lt;SearchResultItem&gt; 
+### -Path&nbsp; &lt;String&gt; 
  
  
  
@@ -78,7 +86,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
         </tr>
         <tr>
             <td>Accept Pipeline Input?</td>
-            <td>true (ByValue)</td>
+            <td>false</td>
         </tr>
         <tr>
             <td>Accept Wildcard Characters?</td>
@@ -87,7 +95,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
     </tbody>
 </table> 
  
-### -AsJob&nbsp; &lt;SwitchParameter&gt; 
+### -Id&nbsp; &lt;String&gt; 
  
  
  
@@ -100,7 +108,7 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
         </tr>
         <tr>
             <td>Required?</td>
-            <td>false</td>
+            <td>true</td>
         </tr>
         <tr>
             <td>Position?</td>
@@ -121,7 +129,75 @@ Remove-SearchIndexItem -SearchResultItem &lt;SearchResultItem&gt; [-AsJob]
     </tbody>
 </table> 
  
-### -Name&nbsp; &lt;String&gt; 
+### -TemplateItem&nbsp; &lt;TemplateItem[]&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Template&nbsp; &lt;String[]&gt; 
+ 
+ 
+ 
+<table>
+    <thead></thead>
+    <tbody>
+        <tr>
+            <td>Aliases</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Required?</td>
+            <td>true</td>
+        </tr>
+        <tr>
+            <td>Position?</td>
+            <td>named</td>
+        </tr>
+        <tr>
+            <td>Default Value</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Accept Pipeline Input?</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>Accept Wildcard Characters?</td>
+            <td>false</td>
+        </tr>
+    </tbody>
+</table> 
+ 
+### -Database&nbsp; &lt;String&gt; 
  
  
  

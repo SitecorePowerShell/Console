@@ -15,7 +15,7 @@ Resume-SearchIndex [-Name &lt;String&gt;]
  
 The Resume-SearchIndex command resumes the suspended (paused) Sitecore index. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

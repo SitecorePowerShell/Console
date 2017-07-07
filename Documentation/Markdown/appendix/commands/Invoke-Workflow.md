@@ -5,18 +5,18 @@ This command used to be named Execute-Workflow - a matching alias added for comp
  
 ## Syntax 
  
-Invoke-Workflow [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
+Invoke-Workflow [-Item] &lt;Item&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-Invoke-Workflow [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
+Invoke-Workflow [-Path] &lt;String&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-Invoke-Workflow [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] 
+Invoke-Workflow -Id &lt;String&gt; [-Database &lt;String&gt;] [-CommandName &lt;String&gt;] [-Comments &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Executes Workflow action for an item. If the workflow action could not be performed for any reason - an appropriate error will be raised. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions## Aliases
 The following abbreviations are aliases for this cmdlet:  
 * Execute-Workflow 
  

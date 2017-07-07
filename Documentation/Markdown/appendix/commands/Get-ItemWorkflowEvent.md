@@ -4,18 +4,18 @@ Returns entries from the history store notifying of workflow state change for th
  
 ## Syntax 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent [-Path] &lt;String&gt; [-Identity &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-Get-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Identity &lt;String&gt;] 
+Get-ItemWorkflowEvent -Id &lt;String&gt; [-Database &lt;String&gt;] [-Identity &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 The Get-ItemWorkflowEvent command returns entries from the history store notifying of workflow state change for the specified item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

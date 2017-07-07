@@ -18,7 +18,7 @@ You can also specify role object variable, such as $&lt;role&gt;.
 
 To search for and retrieve more than one role, use the Filter parameter. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -130,7 +130,7 @@ Help Author: Adam Najmanowicz, Michael West
  
 ```powershell   
  
-PS master:\> Get-Role -Identity developer
+PS master:\> Get-Role -Identity sitecore\developer
 
 Name                                     Domain       IsEveryone
 ----                                     ------       ----------
@@ -144,7 +144,7 @@ sitecore\developer                       sitecore     False
  
 ```powershell   
  
-PS master:\> "developer","author" | Get-Role
+PS master:\> "sitecore\developer","sitecore\author" | Get-Role
 
 Name                                     Domain       IsEveryone
 ----                                     ------       ----------
@@ -165,6 +165,24 @@ Name                                     Domain       IsEveryone
 ----                                     ------       ----------
 sitecore\Designer                        sitecore     False
 sitecore\Developer                       sitecore     False 
+ 
+``` 
+ 
+### EXAMPLE 4 
+ 
+Expand the MemberOf property to see a list of roles that the specified role is a member. 
+ 
+```powershell   
+ 
+PS master:\> Get-Role -Identity sitecore\developer | Select-Object -ExpandProperty MemberOf
+
+Name                                     Domain       IsEveryone
+----                                     ------       ----------
+sitecore\Sitecore Client Configuring     sitecore     False
+sitecore\Sitecore Client Developing      sitecore     False
+sitecore\Designer                        sitecore     False
+sitecore\Author                          sitecore     False
+sitecore\Sitecore Client Maintaining     sitecore     False 
  
 ``` 
  

@@ -4,18 +4,18 @@ Sets item layout for a device.
  
 ## Syntax 
  
-Set-Layout [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
+Set-Layout [-Item] &lt;Item&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Set-Layout [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
+Set-Layout [-Path] &lt;String&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Set-Layout [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] 
+Set-Layout -Id &lt;String&gt; [-Database &lt;String&gt;] -Device &lt;DeviceItem&gt; [-Layout &lt;Item&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Sets item layout for a specific device provided 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -4,18 +4,18 @@ Creates new entry in the history store notifying of workflow state change.
  
 ## Syntax 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent [-Path] &lt;String&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
-New-ItemWorkflowEvent [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] 
+New-ItemWorkflowEvent -Id &lt;String&gt; [-Database &lt;String&gt;] [-OldState &lt;String&gt;] [-NewState &lt;String&gt;] [-Text &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Creates new entry in the history store notifying of workflow state change. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -11,7 +11,7 @@ Show-Input [-Prompt] &lt;String&gt; [-DefaultValue &lt;String&gt;] [-Validation 
  
 Shows prompt message box asking user to provide a text string. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

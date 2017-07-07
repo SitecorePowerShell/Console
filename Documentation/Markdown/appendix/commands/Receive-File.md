@@ -17,7 +17,7 @@ Executing this command with file path on the server (provided as -Path parameter
 Executing it for an Item located in Sitecore Media library (provided as -ParentItem) allows the user to upload the file as a child to that item.
 If the file has been uploaded the dialog returns path to the file (in case of file system storage) or Item that has been created if the file was uplaoded to media library. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -490,7 +490,7 @@ A new file is created with a non-conflicting name and the path to it is returned
  
 ```powershell   
  
-PS master:\> Receive-File -Folder "C:\temp\upload"
+PS master:\> Receive-File -Path "C:\temp\upload"
 C:\temp\upload\text_029.txt 
  
 ``` 

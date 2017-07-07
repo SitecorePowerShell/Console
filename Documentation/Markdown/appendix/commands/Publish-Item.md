@@ -4,18 +4,18 @@ Publishes a Sitecore item.
  
 ## Syntax 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] 
+Publish-Item [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] [-Language &lt;String[]&gt;] 
  
-Publish-Item [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] 
+Publish-Item [-Path] &lt;String&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] [-Language &lt;String[]&gt;] 
  
-Publish-Item [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] 
+Publish-Item -Id &lt;String&gt; [-Database &lt;String&gt;] [-Recurse] [-Target &lt;String[]&gt;] [-PublishMode &lt;Unknown | Full | Incremental | SingleItem | Smart&gt;] [-PublishRelatedItems] [-RepublishAll] [-CompareRevisions] [-FromDate &lt;DateTime&gt;] [-AsJob] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 The Publish-Item command publishes the Sitecore item and optionally subitems. Allowing for granular control over languages and modes of publishing. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

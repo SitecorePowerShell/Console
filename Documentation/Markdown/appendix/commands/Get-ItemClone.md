@@ -15,7 +15,7 @@ Get-ItemClone -Id &lt;String&gt; [-Database &lt;String&gt;]
  
 The Get-ItemClone command returns all the clones for the specified item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

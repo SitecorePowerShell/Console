@@ -4,11 +4,11 @@ Expands tokens in fields for items.
  
 ## Syntax 
  
-Expand-Token [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; 
+Expand-Token [-Item] &lt;Item&gt; [-Language &lt;String[]&gt;] 
  
-Expand-Token [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] 
+Expand-Token [-Path] &lt;String&gt; [-Language &lt;String[]&gt;] 
  
-Expand-Token [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; 
+Expand-Token -Id &lt;String&gt; [-Database &lt;String&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
@@ -19,7 +19,7 @@ Some example of tokens include:
 - $name
 - $time 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

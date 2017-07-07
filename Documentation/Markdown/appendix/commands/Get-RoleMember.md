@@ -4,11 +4,11 @@ Returns the Sitecore users in the specified role.
  
 ## Syntax 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-Recursive] 
+Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-Recurse] 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-UsersOnly] [-Recursive] 
+Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-UsersOnly] [-Recurse] 
  
-Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recursive] 
+Get-RoleMember [-Identity] &lt;AccountIdentity&gt; [-RolesOnly] [-Recurse] 
  
  
 ## Detailed Description 
@@ -17,7 +17,7 @@ The Get-RoleMember command returns the Sitecore users in the specified role.
 
 The Identity parameter specifies the Sitecore role to get. You can specify a role by its local name or fully qualified name. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

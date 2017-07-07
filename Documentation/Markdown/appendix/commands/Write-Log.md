@@ -11,7 +11,7 @@ Write-Log [[-Object] &lt;Object&gt;] [-Separator &lt;Object&gt;] [-Log &lt;Debug
  
 The Write-Log command writes text to the Sitecore event log with the specified logging level. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

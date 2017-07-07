@@ -4,18 +4,18 @@ Updates rendering with new values.
  
 ## Syntax 
  
-Set-Rendering [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
+Set-Rendering [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Set-Rendering [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
+Set-Rendering [-Path] &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Set-Rendering [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] 
+Set-Rendering -Id &lt;String&gt; [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Parameter &lt;Hashtable&gt;] [-PlaceHolder &lt;String&gt;] [-DataSource &lt;String&gt;] [-Index &lt;Int32&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Updates rendering instance with new values. The instance should be earlier obtained using Get-Rendering. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

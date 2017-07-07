@@ -20,7 +20,7 @@ You can also specify user object variable, such as $&lt;user&gt;.
 
 To search for and retrieve more than one user, use the Filter parameter. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -290,6 +290,21 @@ PS master:\> Get-User -Filter "michaellwest@*.com"
 Name                     Domain       IsAdministrator IsAuthenticated
 ----                     ------       --------------- ---------------
 sitecore\michael         sitecore     False           False 
+ 
+``` 
+ 
+### EXAMPLE 5 
+ 
+Expand the MemberOf property to see a list of roles that the specified user is a member. 
+ 
+```powershell   
+ 
+PS master:\> Get-User -Identity sitecore\michael | Select-Object -ExpandProperty MemberOf
+
+Name                                     Domain       IsEveryone
+----                                     ------       ----------
+sitecore\PowerShell Extensions Remoting  sitecore     False
+sitecore\Developer                       sitecore     False 
  
 ``` 
  

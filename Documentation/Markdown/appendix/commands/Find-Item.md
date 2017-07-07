@@ -11,7 +11,7 @@ Find-Item [-Index] &lt;String&gt; [-Criteria &lt;SearchCriteria[]&gt;] [-Where &
  
 The Find-Item command searches for items using the Sitecore Content Search API. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

@@ -4,18 +4,18 @@ Resets item fields, specified as either names, fields or template fields.
  
 ## Syntax 
  
-Reset-ItemField [-Language &lt;String[]&gt;] [-Path] &lt;String&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
+Reset-ItemField [-Item] &lt;Item&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Reset-ItemField [-Language &lt;String[]&gt;] -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
+Reset-ItemField [-Path] &lt;String&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
-Reset-ItemField [-Language &lt;String[]&gt;] [-Item] &lt;Item&gt; [-IncludeStandardFields] [-Name &lt;String[]&gt;] 
+Reset-ItemField -Id &lt;String&gt; [-Database &lt;String&gt;] [-IncludeStandardFields] [-Name &lt;String[]&gt;] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 Resets item fields, specified as either names, fields or template fields. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

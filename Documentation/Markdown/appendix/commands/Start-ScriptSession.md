@@ -28,7 +28,7 @@ Start-ScriptSession -ScriptBlock &lt;ScriptBlock&gt; [-JobName &lt;String&gt;] [
 Starts a new Script Session and executes a script provided in it. 
 The session can be a background session or if the caller session is interactive providint the -Interactive switch can open a Windowd for the new sessio 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

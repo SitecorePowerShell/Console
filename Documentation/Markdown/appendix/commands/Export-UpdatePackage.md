@@ -11,7 +11,7 @@ Export-UpdatePackage [-CommandList] &lt;List`1&gt; [[-Name] &lt;String&gt;] [[-P
  
 The Export-UpdatePackage command generates a Sitecore update package containing a serialization diff list. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

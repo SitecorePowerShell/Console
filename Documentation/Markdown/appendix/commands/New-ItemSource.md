@@ -11,7 +11,7 @@ New-ItemSource [-Item &lt;Item&gt;] [-Name] &lt;String&gt; [[-SkipVersions]] [[-
  
 Creates new Item source that can be added to a Sitecore package. Item provided to it is added as well as its subitems. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

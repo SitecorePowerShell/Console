@@ -14,7 +14,7 @@ Stop-ScriptSession -Session &lt;ScriptSession[]&gt;
 Aborts the pipeline of a session that is executing. This will stop the session immediately in its next PowerShell command.
 Caution! If your script is running a long operation in the .net code rather than in PowerShell - the session will abort after the code has finished and the control was returned to the script. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

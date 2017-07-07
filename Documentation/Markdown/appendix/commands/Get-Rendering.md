@@ -4,36 +4,30 @@ Returns a RenderingDefinition for an item using the filtering parameters.
  
 ## Syntax 
  
-Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Item &lt;Item&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Item &lt;Item&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Item &lt;Item&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Path &lt;String&gt; [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Path &lt;String&gt; -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering -Path &lt;String&gt; -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] [-DataSource &lt;String&gt;] [-Rendering &lt;Item&gt;] [-Index &lt;Int32&gt;] [-PlaceHolder &lt;String&gt;] [-Parameter &lt;Hashtable&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -Instance &lt;RenderingDefinition&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
-Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
- 
-Get-Rendering [-Language &lt;String[]&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
- 
-Get-Rendering [-Language &lt;String[]&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
- 
-Get-Rendering [-Language &lt;String[]&gt;] [-Device &lt;DeviceItem&gt;] [-FinalLayout] 
+Get-Rendering [-Id &lt;String&gt;] [-Database &lt;String&gt;] -UniqueId &lt;String&gt; [-Device &lt;DeviceItem&gt;] [-FinalLayout] [-Language &lt;String[]&gt;] 
  
  
 ## Detailed Description 
  
 The Get-Rendering command returns a RenderingDefinition for an item using the filtering parameters. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  

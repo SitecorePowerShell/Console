@@ -6,15 +6,15 @@ Add one or more base templates to a template item.
  
 Add-BaseTemplate -Item &lt;Item&gt; -TemplateItem &lt;TemplateItem[]&gt; 
  
-Add-BaseTemplate -Item &lt;Item&gt; -Template &lt;String&gt; 
+Add-BaseTemplate -Item &lt;Item&gt; -Template &lt;String[]&gt; 
  
 Add-BaseTemplate -Path &lt;String&gt; -TemplateItem &lt;TemplateItem[]&gt; 
  
-Add-BaseTemplate -Path &lt;String&gt; -Template &lt;String&gt; 
+Add-BaseTemplate -Path &lt;String&gt; -Template &lt;String[]&gt; 
  
 Add-BaseTemplate -Id &lt;String&gt; -TemplateItem &lt;TemplateItem[]&gt; 
  
-Add-BaseTemplate -Id &lt;String&gt; -Template &lt;String&gt; 
+Add-BaseTemplate -Id &lt;String&gt; -Template &lt;String[]&gt; 
  
 Add-BaseTemplate [-Database &lt;String&gt;] 
  
@@ -23,7 +23,7 @@ Add-BaseTemplate [-Database &lt;String&gt;]
  
 The Add-BaseTemplate command adds one or more base templates to a template item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
@@ -163,7 +163,7 @@ Sitecore item or list of items of base templates to add.
     </tbody>
 </table> 
  
-### -Template&nbsp; &lt;String&gt; 
+### -Template&nbsp; &lt;String[]&gt; 
  
 Path representing the template item to add as a base template. This must be of the same database as the item to be altered.
 Note that this parameter only supports a single template. 

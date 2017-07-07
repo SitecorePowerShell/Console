@@ -15,7 +15,7 @@ Get-TaskSchedule [[-Database] &lt;Database&gt;] [[-Name] &lt;String&gt;]
  
 The Get-TaskSchedule command returns one or more task schedule items, based on name/database filter, path or simply converting a Sitecore item. 
  
-© 2010-2016 Adam Najmanowicz - Cognifide Limited, Michael West. All rights reserved. Sitecore PowerShell Extensions 
+© 2010-2017 Adam Najmanowicz, Michael West. All rights reserved. Sitecore PowerShell Extensions 
  
 ## Parameters 
  
