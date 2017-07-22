@@ -31,6 +31,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
         [Parameter(ParameterSetName = "Receive Media Item")]
         [Parameter(ParameterSetName = "Receive File")]
+        public override string Icon { get; set; }
+
+        [Parameter(ParameterSetName = "Receive Media Item")]
+        [Parameter(ParameterSetName = "Receive File")]
         public string CancelButtonName { get; set; }
 
         [Parameter(ParameterSetName = "Receive Media Item")]
@@ -62,9 +66,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                 AssertDefaultSize(500, AdvancedDialog ? 650 : 300);
 
-                var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description,
+                var message = new ShowUploadFileMessage(WidthString, HeightString, Title, Description, Icon,
                     OkButtonName ?? "OK", CancelButtonName ?? "Cancel",
-                    ParentItem != null ? (ParentItem.ID.ToString()) : Path,
+                    ParentItem?.ID.ToString() ?? Path,
                     Versioned, Language, Overwrite, Unpack, AdvancedDialog);
 
                 PutMessage(message);

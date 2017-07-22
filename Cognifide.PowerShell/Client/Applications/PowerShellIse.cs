@@ -339,10 +339,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     openedScript["Message"] = $"ise:mruopen(id={id},db={db})";
                     openedScript["Icon"] = icon;
-                    openedScript[Sitecore.FieldIDs.Icon] = icon;
+                    openedScript[FieldIDs.Icon] = icon;
                     openedScript["Display name"] = name;
-                    openedScript[Sitecore.FieldIDs.DisplayName] = name;
-                    openedScript[Sitecore.FieldIDs.Sortorder] = "0";
+                    openedScript[FieldIDs.DisplayName] = name;
+                    openedScript[FieldIDs.Sortorder] = "0";
                     openedScript.Publishing.NeverPublish = true;
                 });
 

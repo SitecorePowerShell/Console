@@ -1,7 +1,5 @@
 ﻿using System;
 using Sitecore;
-using Sitecore.Jobs;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
@@ -12,13 +10,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
     public class ShowUploadFileMessage : BasePipelineMessageWithResult
     {
 
-        public ShowUploadFileMessage(string width, string height, string title, string description, string okButtonName,
+        public ShowUploadFileMessage(string width, string height, string title, string description, string icon, string okButtonName,
             string cancelButtonName, string path, bool versioned, string language, bool overwrite, bool unpack,
             bool advancedDialog)
         {
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             Title = title ?? string.Empty;
+            Icon = icon ?? string.Empty;
             OkButtonName = okButtonName ?? string.Empty;
             CancelButtonName = cancelButtonName ?? string.Empty;
             Description = description ?? string.Empty;
@@ -34,6 +33,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string Width { get; private set; }
         public string Height { get; private set; }
         public string Title { get; private set; }
+        public string Icon { get; private set; }
         public string Description { get; private set; }
         public string CancelButtonName { get; private set; }
         public string OkButtonName { get; private set; }
@@ -62,7 +62,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
                 var handle = new UrlHandle();
                 handle["te"] = Title ?? string.Empty;
                 handle["ds"] = Description ?? string.Empty;
-                handle["ic"] = "powershell/32x32/powershell8.png";
+                handle["ic"] = Icon ?? string.Empty;
                 handle["ok"] = OkButtonName ?? string.Empty;
                 handle["cancel"] = CancelButtonName ?? string.Empty;
                 handle["path"] = Path;

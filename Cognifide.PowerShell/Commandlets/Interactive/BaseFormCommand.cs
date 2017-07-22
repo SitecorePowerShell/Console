@@ -18,28 +18,25 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         public virtual string Title { get; set; }
 
         [Parameter]
+        public virtual string Icon { get; set; }
+
+        [Parameter]
         public virtual int Width
         {
-            get { return width; }
-            set { width = value; }
+            get => width;
+            set => width = value;
         }
 
         [Parameter]
         public virtual int Height
         {
-            get { return height; }
-            set { height = value; }
+            get => height;
+            set => height = value;
         }
 
-        protected string WidthString
-        {
-            get { return Width.ToString(CultureInfo.InvariantCulture); }
-        }
+        protected string WidthString => Width.ToString(CultureInfo.InvariantCulture);
 
-        protected string HeightString
-        {
-            get { return Height.ToString(CultureInfo.InvariantCulture); }
-        }
+        protected string HeightString => Height.ToString(CultureInfo.InvariantCulture);
 
         protected void AssertDefaultSize(int defaultWidth, int defaultHeight)
         {

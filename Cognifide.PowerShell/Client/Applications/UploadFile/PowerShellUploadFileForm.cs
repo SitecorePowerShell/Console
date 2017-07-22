@@ -18,6 +18,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
         protected XmlControl Dialog;
         protected Literal DialogDescription;
         protected Literal DialogHeader;
+        protected Image DialogIcon;
         protected GenericControl ItemUri;
         protected GenericControl LanguageName;
         protected Button OKButton;
@@ -61,6 +62,13 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 if (!string.IsNullOrEmpty(title))
                 {
                     DialogHeader.Text = WebUtil.SafeEncode(title);
+                }
+
+                var icon = handle["ic"];
+                if (!string.IsNullOrEmpty(icon))
+                {
+                    DialogIcon.Src = WebUtil.SafeEncode(icon);
+                    DialogIcon.Visible = true;
                 }
 
                 var message = handle["ds"];

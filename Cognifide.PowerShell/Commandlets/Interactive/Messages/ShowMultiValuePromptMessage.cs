@@ -2,12 +2,9 @@
 using System.Collections;
 using System.Management.Automation;
 using System.Web;
-using Cognifide.PowerShell.Client.Applications;
 using Sitecore;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
-using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {
@@ -17,13 +14,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         [NonSerialized] private readonly object[] parameters;
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
-            string description, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator,
+            string description, string icon, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator,
             Hashtable validatorParameters) : base()
         {
             this.parameters = parameters;
             Width = width ?? string.Empty;
             Height = height ?? string.Empty;
             Title = title ?? string.Empty;
+            Icon = icon ?? string.Empty;
             OkButtonName = okButtonName ?? string.Empty;
             CancelButtonName = cancelButtonName ?? string.Empty;
             Description = description ?? string.Empty;
@@ -37,6 +35,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string Width { get; }
         public string Height { get; }
         public string Title { get; }
+        public string Icon { get; }
         public string Description { get; }
         public string CancelButtonName { get; }
         public string OkButtonName { get; }

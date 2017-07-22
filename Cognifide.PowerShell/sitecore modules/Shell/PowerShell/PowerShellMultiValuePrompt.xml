@@ -62,6 +62,7 @@
           <ThemedImage Src="powershell/32x32/powershell.png" class="psVarPromptHeaderIcon" Visible="false" />
           <Border>
             <Border Class="DialogHeader">
+              <ThemedImage ID="DialogIcon" Src="powershell/32x32/powershell8.png" style="vertical-align: middle; margin-right: 2px;" Visible="false" />
               <Literal Text="Script parameters" ID="DialogHeader" />
             </Border>
             <Border Class="DialogHeaderDescription">

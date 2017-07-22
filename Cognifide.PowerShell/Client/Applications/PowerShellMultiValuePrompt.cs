@@ -49,6 +49,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border DataContextPanel;
         protected Literal DialogDescription;
         protected Literal DialogHeader;
+        protected ThemedImage DialogIcon;
         protected Literal CustomStyles;
         protected Button OKButton;
         protected Literal Result;
@@ -118,6 +119,13 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!string.IsNullOrEmpty(title))
             {
                 DialogHeader.Text = title;
+            }
+
+            var icon = message.Icon;
+            if (!string.IsNullOrEmpty(icon))
+            {
+                DialogIcon.Src = icon;
+                DialogIcon.Visible = true;
             }
 
             var description = message.Description;

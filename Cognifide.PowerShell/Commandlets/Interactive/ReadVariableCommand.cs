@@ -45,7 +45,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
                 AssertDefaultSize(500, 300);
                 var message = new ShowMultiValuePromptMessage(Parameters, WidthString, HeightString, Title, Description,
-                    OkButtonName, CancelButtonName, ShowHints, Validator, ValidatorParameters);
+                    Icon, OkButtonName, CancelButtonName, ShowHints, Validator, ValidatorParameters);
                 
 
                 foreach (Hashtable result in Parameters)
