@@ -645,6 +645,36 @@ namespace Cognifide.PowerShell.Client.Applications
             return checkBorder;
         }
 
+        private static Control GetComboboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
+        {
+            var edit = new Combobox();
+            var placeholder = variable["Placeholder"];
+            if (placeholder is string)
+            {
+                var option = new ListItem
+                {
+                    Header = placeholder.ToString(),
+                    Value = "",
+                    Selected = true
+                };
+                edit.Controls.Add(option);
+            }
+
+            foreach (var option in options.Keys)
+            {
+                var optionName = option.ToString();
+                var optionValue = options[optionName].ToString();
+                var item = new ListItem
+                {
+                    Header = optionName,
+                    Value = optionValue
+                };
+                edit.Controls.Add(item);
+            }
+
+            return edit;
+        }
+
         private Control GetVariableEditor(IDictionary variable)
         {
             var value = variable["Value"].BaseObject();
@@ -742,30 +772,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                 }
 
-                edit = new Combobox();
-                var placeholder = variable["Placeholder"];
-                if (placeholder is string)
-                {
-                    var option = new ListItem
-                    {
-                        Header = placeholder.ToString(),
-                        Value = "",
-                        Selected = true
-                    };
-                    edit.Controls.Add(option);
-                }
-
-                foreach (var option in options.Keys)
-                {
-                    var optionName = option.ToString();
-                    var optionValue = options[optionName].ToString();
-                    var item = new ListItem
-                    {
-                        Header = optionName,
-                        Value = optionValue
-                    };
-                    edit.Controls.Add(item);
-                }
+                edit = (Combobox)GetComboboxControl(variable, name, value, editor, options);
             }
             else
             {
@@ -803,6 +810,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
                 }
             }
+
             var tip = variable["Tooltip"] as string;
             if (!string.IsNullOrEmpty(tip))
             {
