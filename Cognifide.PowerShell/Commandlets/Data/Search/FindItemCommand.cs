@@ -83,7 +83,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 }
                                 if (ID.IsID(criteria.Value.ToString()))
                                 {
-                                    ancestorId = ((ID) criteria.Value).ToShortID().ToString();
+                                    ancestorId = ((ID) criteria.Value).ToShortID().ToString().ToLower();
                                 }
                                 if (string.IsNullOrEmpty(ancestorId))
                                 {
