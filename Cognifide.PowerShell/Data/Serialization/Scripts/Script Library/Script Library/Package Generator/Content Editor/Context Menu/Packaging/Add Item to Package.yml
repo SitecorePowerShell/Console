@@ -20,28 +20,35 @@ SharedFields:
   Value: |
     Import-Function Resolve-Error
     
+    $defaultProps = @{
+        "Title" = "Installation options"
+        "Icon" = "Apps/32x32/Installpackage.png"
+        "ShowHints" = $true
+    }
+    
     $installModeOptions = [ordered]@{
-        "Merge" = "Merge";
-        "Skip" = "Skip";
+        "Merge" = "Merge"
+        "Skip" = "Skip"
         "Side By Side" = "SideBySide"
-    };
+    }
     
     $mergeModeOptions = [ordered]@{
         "Merge" = "Merge"
-        "Clear" = "Clear";
-        "Append" = "Append";
-    };
+        "Clear" = "Clear"
+        "Append" = "Append"
+    }
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
-        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"}, `
-        @{ Name = "info"; Title="Click OK to add item to your package or Cancel to abort."; Value="Item: '$((Get-Item .).ProviderPath)'" ; Editor="info"} `
-        -Description "Set installation options for this package source." `
-        -Title "Installation options" -ShowHints
+    $parameters = @(
+        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"},
+        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"},
+        @{ Name = "includeAllReferences"; Title = "Include All References"; Value = $false;},
+        @{ Name = "info"; Title="Click OK to add item to your package or Cancel to abort."; Value="Item: '$((Get-Item .).ProviderPath)'" ; Editor="info"}
+    )
+    
+    $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
     
     Resolve-Error
-    if($result -ne "ok")
-    {
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
@@ -49,9 +56,22 @@ SharedFields:
     # Add Single Item 
     $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
     
-    $path = Get-Item . | ForEach-Object { $_.ProviderPath } 
-    $source = Get-Item . | New-ExplicitItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
-    $package.Sources.Add($source);
+    $currentItem = Get-Item -Path .
+    if(!$itemsAddedToPackage.Contains($currentItem.ID)) {
+        $itemsAddedToPackage.Add($currentItem.ID) | Out-Null
+        $path = $currentItem | ForEach-Object { $_.ProviderPath } 
+        $source = $currentItem | New-ExplicitItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+        $package.Sources.Add($source)
+    }
+    
+    if($includeAllReferences) {
+        ProcessItem -Item $currentItem -Items $source -IncludeReferences $true
+    }
+    
+    #$itemsAddedToPackage | Get-Item
+    #$itemsProcessedWithLinks | Get-Item
+    #$itemsProcessed | Get-Item
+    
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
