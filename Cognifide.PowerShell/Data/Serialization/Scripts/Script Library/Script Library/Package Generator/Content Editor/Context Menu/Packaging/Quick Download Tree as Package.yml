@@ -47,6 +47,10 @@ SharedFields:
         @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"}
     )
     
+    $defaultProps = @{
+        "Icon" = "Apps/32x32/Installpackage.png"
+        "ShowHints" = $true
+    }
     $props = @{} + $defaultProps
     $props["Title"] = "Download Tree as Package"
     $props["Description"] = "This Tool allows you to download the item tree as a package quickly."
@@ -58,7 +62,7 @@ SharedFields:
     
     Resolve-Error
     if($result -ne "ok") {
-        Close-Window
+        #Close-Window
         Exit
     }
     
