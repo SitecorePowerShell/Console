@@ -35,7 +35,7 @@ SharedFields:
     
     $defaultProps = @{
         "Title" = "Installation options"
-        "Icon" = "Apps/32x32/Installpackage.png"
+    #    "Icon" = "Apps/32x32/Installpackage.png"
         "ShowHints" = $true
     }
     
@@ -100,7 +100,7 @@ SharedFields:
         $templateItem = New-Object Sitecore.Data.Items.TemplateItem $item
         $isSystemItem = IsSystemItem -Item $item
         
-        if($isSystemItem) {
+        if(!$isSystemItem) {
             ProcessFieldTemplateItem -Item $item -Items $items
             AddItems -Item $item -Items $items
             $standardValues = $templateItem.StandardValues
