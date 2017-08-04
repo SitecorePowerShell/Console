@@ -18,6 +18,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    
     $package = New-Package -Name "Content Package";
     $package.Sources.Clear();
     
@@ -30,6 +31,11 @@ SharedFields:
     $itemsProcessedWithLinks = New-Object System.Collections.ArrayList
     $itemsProcessed = New-Object System.Collections.ArrayList
     
+    $defaultProps = @{
+        "Title" = "Installation options"
+        "Icon" = "Apps/32x32/Installpackage.png"
+        "ShowHints" = $true
+    }
     
     function AddItems {
         param(
@@ -131,9 +137,25 @@ SharedFields:
                     ProcessTemplateItem -Item $item -Items $items
                 } else {
                     # At the moment, assume this is not a file.
-                    AddItems -Item $item -Items $items
+                    if(!$item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/")) {
+                        AddItems -Item $item -Items $items
+                    }
                 }
             }
+        }
+    }
+    
+    function ProcessItemWithDescendants {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items,
+            [bool]$IncludeReferences
+        )
+    
+        ProcessItem -Item $Item -Items $Items -IncludeReferences $IncludeReferences    
+        
+        foreach($child in $item.Children) {
+            ProcessItemWithDescendants -Item $child -Items $Items -IncludeReferences $IncludeReferences
         }
     }
     

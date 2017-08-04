@@ -20,76 +20,95 @@ SharedFields:
   Value: |
     Import-Function Resolve-Error
     
-    Function Add-ItemToPackage {
-        param (
-            $Package, 
-            $Item,
-            $IncludeDescendants
-        )
-        
-        $path = $Item.ProviderPath
-        
-        if ($IncludeDescendants) {
-            $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
-        } else {
-            $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
-        }
-        
-        $Package.Sources.Add($source);
-        
-        return $Package
-    }
-    
     $rootOptions = [ordered]@{
         "Root and descendants" = "RootAndDescendants";
         "Root and children" = "RootAndChildren";
         "Descendants only" = "DescendantsOnly";
         "Children only" = "ChildrenOnly";
-    };
+    }
     
     $installModeOptions = [ordered]@{
-        "Merge" = "Merge";
-        "Skip" = "Skip";
+        "Merge" = "Merge"
+        "Skip" = "Skip"
         "Side By Side" = "SideBySide"
-    };
+    }
     
     $mergeModeOptions = [ordered]@{
         "Merge" = "Merge"
-        "Clear" = "Clear";
-        "Append" = "Append";
-    };
+        "Clear" = "Clear"
+        "Append" = "Append"
+    }
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "IncludeItems"; Title="Items to include in package"; Options=$rootOptions; Value="RootAndDescendants"; Editor="radio" }, `
-        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"}, `
-        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"}, `
-        @{ Name = "info"; Title="Click OK to add branch to your package or Cancel to abort."; Value="Root: '$((Get-Item .).ProviderPath)'" ; Editor="info"} `
-        -Description "Set installation options for this package source." `
-        -Title "Installation options" -ShowHints
+    $parameters = @(
+        @{ Name = "IncludeItems"; Title="Items to include in package"; Options=$rootOptions; Value="RootAndDescendants"; Editor="radio" },
+        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"},
+        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"},
+        @{ Name = "includeAllReferences"; Title = "Include All References"; Value = $false;},
+        @{ Name = "info"; Title="Click OK to add branch to your package or Cancel to abort."; Value="Root: '$((Get-Item .).ProviderPath)'" ; Editor="info"}
+    )
+    
+    $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
     
     Resolve-Error
-    if($result -ne "ok")
-    {
+    
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
     
     $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
     
+    function Add-ItemToPackage {
+        param (
+            $Package, 
+            [item]$Item,
+            [bool]$IncludeReferences,
+            [bool]$IncludeDescendants
+        )
+        
+        if($itemsAddedToPackage.Contains($Item.ID)) { return $package }
+        $itemsAddedToPackage.Add($Item.ID) | Out-Null
+        
+        $path = $Item.ProviderPath
+        $source = $null
+        $sourceDescendants = $null
+        
+        if ($IncludeDescendants) {
+            $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+            
+            if($IncludeReferences) {
+                $sourceDescendants = New-ExplicitItemSource -Item $Item -Name "$path children" -InstallMode $InstallMode -MergeMode $MergeMode
+                ProcessItemWithDescendants -Item $Item -Items $sourceDescendants -IncludeReferences $true
+            }
+        } else {
+            $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+            
+            if($IncludeReferences) {
+                ProcessItem -Item $Item -Items $source -IncludeReferences $true
+            }
+        }
+        
+        if($source) {
+            $package.Sources.Add($source)
+            
+            if($sourceDescendants) {
+                $package.Sources.Add($sourceDescendants)
+            }
+        }
+        
+        return $package
+    }
     
     if ($IncludeItems -eq "RootAndDescendants") {
-        
-        $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $True
-    }
-    else
-    {
+        $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeReferences $includeAllReferences -IncludeDescendants $true
+    } else {
         if ($IncludeItems -eq "RootAndChildren") {
-            $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeDescendants $False
+            $package = Add-ItemToPackage -Package $package -Item (Get-Item .) -IncludeReferences $includeAllReferences -IncludeDescendants $false
         }
         
         # Iterate over the children and either add to include descendants or just themselves
-        Get-ChildItem . | % {
-            $package = Add-ItemToPackage -Package $package -Item $_ -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
+        Get-ChildItem -Path . | ForEach-Object {
+            $package = Add-ItemToPackage -Package $package -Item $_ -IncludeReferences $includeAllReferences -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
         }
     }
     

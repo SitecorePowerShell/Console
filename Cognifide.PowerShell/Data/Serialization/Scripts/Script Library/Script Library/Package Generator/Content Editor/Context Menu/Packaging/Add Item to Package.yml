@@ -48,6 +48,7 @@ SharedFields:
     $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
     
     Resolve-Error
+    
     if($result -ne "ok") {
         Close-Window
         Exit

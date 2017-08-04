@@ -20,59 +20,70 @@ SharedFields:
     $timestamp = Get-Date -Format "yyyyMMdd.HHss"
     $item = Get-Item .
     $path = $item.ProviderPath
-    $packageName = "$timestamp.$($item.Name)"
+    $examplePackageName = "$($timestamp).$($item.Name)"
     $version = $item.Version
     $Author = [Sitecore.Context]::User.Profile.FullName;
     $Publisher = [Sitecore.SecurityModel.License.License]::Licensee
     
     $installModeOptions = [ordered]@{
-        "Merge" = "Merge";
-        "Skip" = "Skip";
+        "Merge" = "Merge"
+        "Skip" = "Skip"
         "Side By Side" = "SideBySide"
-    };
+    }
     
     $mergeModeOptions = [ordered]@{
         "Merge" = "Merge"
-        "Clear" = "Clear";
-        "Append" = "Append";
-    };
+        "Clear" = "Clear"
+        "Append" = "Append"
+    }
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "packageName"; Title="Package Name"; Tab="Package Metadata"}, `
-        @{ Name = "Author"; Tab="Package Metadata"}, `
-        @{ Name = "Publisher"; Tab="Package Metadata"}, `
-        @{ Name = "Version"; Tab="Package Metadata"}, `
-        @{ Name = "Readme"; Title="Read me"; Lines=10; Tab="Package Metadata"}, `
-        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"; Tab="Installation Options"}, `
-        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"} `
-        -Description "This Tool allows you to download the item tree as a package quickly." `
-        -Title "Download Tree as package" -Width 600 -Height 700 -ShowHints
+    $parameters = @(
+        @{ Name = "packageName"; Title="Package Name"; Placeholder = $examplePackageName; Tab="Package Metadata"},
+        @{ Name = "Author"; Tab="Package Metadata"},
+        @{ Name = "Publisher"; Tab="Package Metadata"},
+        @{ Name = "Version"; Tab="Package Metadata"},
+        @{ Name = "Readme"; Title="Read me"; Lines=10; Tab="Package Metadata"},
+        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"; Tab="Installation Options"},
+        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"}
+    )
+    
+    $props = @{} + $defaultProps
+    $props["Title"] = "Download Tree as Package"
+    $props["Description"] = "This Tool allows you to download the item tree as a package quickly."
+    $props["Parameters"] = $parameters
+    $props["Width"] = 600
+    $props["Height"] = 700
+    
+    $result = Read-Variable @props
     
     Resolve-Error
-    if($result -ne "ok")
-    {
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
     
-    $package = new-package $packageName
-    $package.Sources.Clear();
-    $package.Metadata.Author = $Author;
-    $package.Metadata.Publisher = $Publisher;
-    $package.Metadata.Version = $Version;
-    $package.Metadata.Readme = $Readme;
+    if([string]::IsNullOrEmpty($packageName)) {
+        $packageName = $examplePackageName
+    }
+    
+    $package = New-Package $packageName
+    $package.Sources.Clear()
+    $package.Metadata.Author = $Author
+    $package.Metadata.Publisher = $Publisher
+    $package.Metadata.Version = $Version
+    $package.Metadata.Readme = $Readme
     
     $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
     
     $source = Get-Item . | New-ItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
     $package.Sources.Add($source);
     
-    [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-');
-    $packageFileName = "$packageName.zip";
+    [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-')
+    $packageFileName = "$($packageName).zip"
     
-    Export-Package -Project $package -Path "$packageFileName" -Zip
-    Download-File "$SitecorePackageFolder\$packageFileName"
-    Remove-Item "$SitecorePackageFolder\$packageFileName"
+    Export-Package -Project $package -Path $packageFileName -Zip
+    Download-File "$($SitecorePackageFolder)\$($packageFileName)"
+    Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
     Close-Window
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule

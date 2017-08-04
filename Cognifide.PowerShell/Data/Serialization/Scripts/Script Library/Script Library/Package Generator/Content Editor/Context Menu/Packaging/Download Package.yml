@@ -18,42 +18,54 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    if($Author -eq $null)
-    {
+    if(!$Author) {
         $Author = [Sitecore.Context]::User.Profile.FullName;
     }
-    if($Publisher -eq $null)
-    {
+    
+    if(!$Publisher) {
         $Publisher = [Sitecore.SecurityModel.License.License]::Licensee;
     }
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "packageName"; Title="Package Name"}, `
-        @{ Name = "Author"; Title="Author"}, `
-        @{ Name = "Publisher"; Title="Publisher"}, `
-        @{ Name = "Version"; Title="Version"}, `
-        @{ Name = "Readme"; Title="ReadMe"} `
-        -Description "This tool allows you to download the package built in the current session." `
-        -Title "Download package" -Width 600 -Height 400 `
+    $timestamp = Get-Date -Format "yyyyMMdd.HHss"
+    $examplePackageName = "$($timestamp).Content"
     
-    if($result -ne "ok")
-    {
+    $parameters = @(
+        @{ Name = "packageName"; Title="Package Name"; Placeholder = $examplePackageName },
+        @{ Name = "Author"; Title="Author"},
+        @{ Name = "Publisher"; Title="Publisher"},
+        @{ Name = "Version"; Title="Version"},
+        @{ Name = "Readme"; Title="ReadMe"}
+    )
+    
+    $props = @{} + $defaultProps
+    $props["Title"] = "Download Package"
+    $props["Description"] = "This tool allows you to download the package built in the current session."
+    $props["Parameters"] = $parameters
+    
+    $result = Read-Variable @props
+    
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
     
-    $package.Name = $packageName;
-    $package.Metadata.PackageName = $packageName;
-    $package.Metadata.Author = $Author;
-    $package.Metadata.Publisher = $Publisher;
-    $package.Metadata.Version = $Version;
-    $package.Metadata.Readme = $Readme;
-    [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-');
-    $packageFileName = "$packageName.zip";
+    if([string]::IsNullOrEmpty($packageName)) {
+        $packageName = $examplePackageName
+    }
     
-    Export-Package -Project $package -Path "$packageFileName" -Zip
-    Download-File "$SitecorePackageFolder\$packageFileName"
-    Remove-Item "$SitecorePackageFolder\$packageFileName"
+    $package.Name = $packageName
+    $package.Metadata.PackageName = $packageName
+    $package.Metadata.Author = $Author
+    $package.Metadata.Publisher = $Publisher
+    $package.Metadata.Version = $Version
+    $package.Metadata.Readme = $Readme
+    
+    [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-')
+    $packageFileName = "$($packageName).zip"
+    
+    Export-Package -Project $package -Path $packageFileName -Zip
+    Download-File "$($SitecorePackageFolder)\$($packageFileName)"
+    Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
     Close-Window
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
