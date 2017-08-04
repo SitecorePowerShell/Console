@@ -27,6 +27,8 @@ SharedFields:
     $package.Metadata.Version = "";
     $package.Metadata.Readme = "";
     
+    $packageName = $null
+    
     $itemsAddedToPackage = New-Object System.Collections.ArrayList
     $itemsProcessedWithLinks = New-Object System.Collections.ArrayList
     $itemsProcessed = New-Object System.Collections.ArrayList
