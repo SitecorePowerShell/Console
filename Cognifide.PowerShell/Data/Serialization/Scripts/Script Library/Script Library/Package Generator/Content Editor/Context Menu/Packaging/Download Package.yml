@@ -34,7 +34,7 @@ SharedFields:
         @{ Name = "Author"; Title="Author"},
         @{ Name = "Publisher"; Title="Publisher"},
         @{ Name = "Version"; Title="Version"},
-        @{ Name = "Readme"; Title="ReadMe"}
+        @{ Name = "Readme"; Title="Readme"; Lines=10;}
     )
     
     $props = @{} + $defaultProps

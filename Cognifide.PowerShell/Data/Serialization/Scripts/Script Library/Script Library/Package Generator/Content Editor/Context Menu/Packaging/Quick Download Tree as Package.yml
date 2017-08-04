@@ -42,7 +42,7 @@ SharedFields:
         @{ Name = "Author"; Tab="Package Metadata"},
         @{ Name = "Publisher"; Tab="Package Metadata"},
         @{ Name = "Version"; Tab="Package Metadata"},
-        @{ Name = "Readme"; Title="Read me"; Lines=10; Tab="Package Metadata"},
+        @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
         @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"; Tab="Installation Options"},
         @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"}
     )
