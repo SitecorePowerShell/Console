@@ -29,7 +29,7 @@ SharedFields:
         @{ Name = "Version"; Value = $selectedItem.Version; Tab="Package Metadata"},
         @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
         @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Root : '$($selectedItem.ProviderPath)'"; Editor="combo"; Tab="Installation Options" },
-        @{ Name = "InstallOptions"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"},
+        @{ Name = "Mode"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"},
         @{ Name = "IncludeLinkedItems"; Value = 0; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox"; Tab = "Linked Options"; }
     
     )
@@ -45,12 +45,13 @@ SharedFields:
     
     Resolve-Error
     if($result -ne "ok") {
+        Close-Window
         Exit
     }
     
     $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
     $MergeMode = [Sitecore.Install.Utils.MergeMode]::Undefined
-    switch ($InstallOption) {
+    switch ($Mode) {
         "Overwrite" {
             $InstallMode = [Sitecore.Install.Utils.InstallMode]::Overwrite
         }
