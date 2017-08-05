@@ -554,7 +554,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return picker;
         }
 
-        private static Control GetRadioControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
+        private static Control GetRadioControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
         {
             var radioList = new Groupbox
             {
@@ -575,6 +575,13 @@ namespace Cognifide.PowerShell.Client.Applications
                     Name = radioList.ID,
                     Checked = optionValue == value.ToString()
                 };
+
+                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
+                {
+                    var optionTitle = optionTooltips[optionValue].ToString();
+                    item.ToolTip = optionTitle;
+                }
+
                 radioList.Controls.Add(item);
                 radioList.Controls.Add(new Literal("<br/>"));
             }
@@ -582,7 +589,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return radioList;
         }
 
-        private static Control GetCheckboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
+        private static Control GetCheckboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
         {
             var checkBorder = new Border
             {
@@ -636,6 +643,12 @@ namespace Cognifide.PowerShell.Client.Applications
                     Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
                 })
             {
+                var optionValue = item.Value;
+                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
+                {
+                    var optionTitle = optionTooltips[optionValue].ToString();
+                    item.ToolTip = optionTitle;
+                }
                 checkList.Controls.Add(item);
             }
 
@@ -645,7 +658,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return checkBorder;
         }
 
-        private static Control GetComboboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
+        private static Control GetComboboxControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options, OrderedDictionary optionTooltips)
         {
             var edit = new Combobox();
             var placeholder = variable["Placeholder"];
@@ -669,6 +682,12 @@ namespace Cognifide.PowerShell.Client.Applications
                     Header = optionName,
                     Value = optionValue
                 };
+
+                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
+                {
+                    var optionTitle = optionTooltips[optionValue].ToString();
+                    item.ToolTip = optionTitle;
+                }
                 edit.Controls.Add(item);
             }
 
@@ -759,20 +778,39 @@ namespace Cognifide.PowerShell.Client.Applications
                     throw new Exception("Checklist options format unrecognized.");
                 }
 
+                var optionTooltips = new OrderedDictionary();
+                if (variable["OptionTooltips"] != null)
+                {
+                    var psOptionTooltips = variable["OptionTooltips"].BaseObject();
+                    
+                    if (psOptionTooltips is OrderedDictionary)
+                    {
+                        optionTooltips = psOptionTooltips as OrderedDictionary;
+                    }
+                    else if (psOptionTooltips is Hashtable)
+                    {
+                        var hashOptions = variable["OptionTooltips"] as Hashtable;
+                        foreach (var key in hashOptions.Keys)
+                        {
+                            optionTooltips.Add(key, hashOptions[key]);
+                        }
+                    }
+                }
+
                 if (isEditorSpecified)
                 {
                     if (editor.HasWord("radio"))
                     {
-                        return GetRadioControl(variable, name, value, editor, options);
+                        return GetRadioControl(variable, name, value, editor, options, optionTooltips);
                     }
 
                     if (editor.HasWord("check"))
                     {
-                        return GetCheckboxControl(variable, name, value, editor, options);
+                        return GetCheckboxControl(variable, name, value, editor, options, optionTooltips);
                     }
                 }
 
-                edit = (Combobox)GetComboboxControl(variable, name, value, editor, options);
+                edit = (Combobox)GetComboboxControl(variable, name, value, editor, options, optionTooltips);
             }
             else
             {

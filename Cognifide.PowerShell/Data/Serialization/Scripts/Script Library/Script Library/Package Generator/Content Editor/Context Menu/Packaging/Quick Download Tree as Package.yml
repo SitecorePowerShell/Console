@@ -15,42 +15,25 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Import-Function Resolve-Error
+    Import-Function -Name Setup-PackageGenerator
     
     $timestamp = Get-Date -Format "yyyyMMdd.HHss"
-    $item = Get-Item .
+    $selectedItem = Get-Item -Path .
     $path = $item.ProviderPath
-    $examplePackageName = "$($timestamp).$($item.Name)"
-    $version = $item.Version
-    $Author = [Sitecore.Context]::User.Profile.FullName;
-    $Publisher = [Sitecore.SecurityModel.License.License]::Licensee
-    
-    $installModeOptions = [ordered]@{
-        "Merge" = "Merge"
-        "Skip" = "Skip"
-        "Side By Side" = "SideBySide"
-    }
-    
-    $mergeModeOptions = [ordered]@{
-        "Merge" = "Merge"
-        "Clear" = "Clear"
-        "Append" = "Append"
-    }
+    $examplePackageName = "$($timestamp).$($selectedItem.Name)"
     
     $parameters = @(
         @{ Name = "packageName"; Title="Package Name"; Placeholder = $examplePackageName; Tab="Package Metadata"},
-        @{ Name = "Author"; Tab="Package Metadata"},
-        @{ Name = "Publisher"; Tab="Package Metadata"},
-        @{ Name = "Version"; Tab="Package Metadata"},
+        @{ Name = "Author"; Value = [Sitecore.Context]::User.Profile.FullName; Tab="Package Metadata"},
+        @{ Name = "Publisher"; Value = [Sitecore.SecurityModel.License.License]::Licensee; Tab="Package Metadata"},
+        @{ Name = "Version"; Value = $selectedItem.Version; Tab="Package Metadata"},
         @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
-        @{ Name = "InstallMode"; Title="Installation Behaviour"; Options = $installModeOptions ; Hint = "How should the installer behave if the package contains items that already exist"; Placeholder = "Overwrite"; Tab="Installation Options"},
-        @{ Name = "MergeMode"; Title="Merge Behaviour"; Options = $mergeModeOptions ; Hint = "This only applies if install behaviour is Merge"; Tab="Installation Options"}
+        @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Root : '$($selectedItem.ProviderPath)'"; Editor="combo"; Tab="Installation Options" },
+        @{ Name = "InstallOptions"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"},
+        @{ Name = "IncludeLinkedItems"; Value = 0; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox"; Tab = "Linked Options"; }
+    
     )
     
-    $defaultProps = @{
-        "Icon" = "Apps/32x32/Installpackage.png"
-        "ShowHints" = $true
-    }
     $props = @{} + $defaultProps
     $props["Title"] = "Download Tree as Package"
     $props["Description"] = "This Tool allows you to download the item tree as a package quickly."
@@ -62,25 +45,67 @@ SharedFields:
     
     Resolve-Error
     if($result -ne "ok") {
-        #Close-Window
         Exit
+    }
+    
+    $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+    $MergeMode = [Sitecore.Install.Utils.MergeMode]::Undefined
+    switch ($InstallOption) {
+        "Overwrite" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Overwrite
+        }
+        
+        "Merge-Merge" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Merge
+        }
+        
+        "Merge-Clear" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Clear
+        }
+        
+        "Merge-Append" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Append
+        }
+        
+        "Skip" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Skip
+        }
+        
+        "SideBySide" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::SideBySide
+        }
+        
+        "AskUser" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+        }
+    }
+    
+    $LinkedOptions = ($IncludeLinkedItems | Measure-Object -Sum) | Select-Object -ExpandProperty Sum
+    
+    if ($IncludeItems -eq "RootAndDescendants") {
+        $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $true
+    } else {
+        if ($IncludeItems -eq "RootAndChildren") {
+            $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $false
+        }
+        
+        # Iterate over the children and either add to include descendants or just themselves
+        Get-ChildItem -Path . | ForEach-Object {
+            $package = Add-ItemToPackage -Package $package -Item $_ -LinkedOptions $LinkedOptions -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
+        }
     }
     
     if([string]::IsNullOrEmpty($packageName)) {
         $packageName = $examplePackageName
     }
     
-    $package = New-Package $packageName
-    $package.Sources.Clear()
     $package.Metadata.Author = $Author
     $package.Metadata.Publisher = $Publisher
     $package.Metadata.Version = $Version
     $package.Metadata.Readme = $Readme
-    
-    $InstallMode = if ($InstallMode) { $InstallMode } else { "Overwrite" }
-    
-    $source = Get-Item . | New-ItemSource -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
-    $package.Sources.Add($source);
     
     [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-')
     $packageFileName = "$($packageName).zip"
