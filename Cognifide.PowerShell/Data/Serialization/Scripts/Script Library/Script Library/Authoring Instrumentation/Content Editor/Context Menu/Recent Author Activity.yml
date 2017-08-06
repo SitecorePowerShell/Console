@@ -37,6 +37,7 @@ SharedFields:
             }
         )
         Title = "Analyse author activilty"
+        Icon = "Business/32x32/businessman_edit.png"
         Description = "This report will analyse the branch you select and will tell you which of the pages have been changed since your selected date/time"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"

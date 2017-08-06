@@ -28,6 +28,7 @@ SharedFields:
             @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned."; Columns=9}
         )
         Title = "Items With Aliases Report"
+        Icon = "Network/32x32/spy.png"
         Description = "Choose the criteria for the report."
         Width = 550
         Height = 300

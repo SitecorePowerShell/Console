@@ -37,6 +37,7 @@ SharedFields:
             @{Name="linksToCheck"; Title="Link types to check"; Options=$linkTypes; Tooltip="which link types you want to check"; Editor="checklist"} 
         )
         Title = "Broken Links Report"
+        Icon = "Network/32x32/link_delete.png"
         Description = "Choose the criteria for the report."
         Width = 550
         Height = 300

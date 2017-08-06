@@ -25,6 +25,7 @@ SharedFields:
     
     $props = @{
         Title = "Items Locked"
+        Icon = "Applications/32x32/document_lock.png"
         Description = "This report will analyse the branch and will tell you which items havehave beenn locked. If user is selected only items locked by the user will be shown."
         Width = 600
         Height = 300

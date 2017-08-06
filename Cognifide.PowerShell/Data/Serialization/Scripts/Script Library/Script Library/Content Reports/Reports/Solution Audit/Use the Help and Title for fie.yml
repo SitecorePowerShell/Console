@@ -31,7 +31,7 @@ SharedFields:
         -Description "<b>How many of my template fields define Help and Title?</b>
                       Use the Help option in the individual field definition items to provide extra information to users about fields. 
                       Also consider using the Title field of the definition item to present a different name for the field to the user." `
-        -Title "Sitecore Recommendations:" -Width 500 -Height 280 `
+        -Title "Sitecore Recommendations:" -Icon "Applications/32x32/about.png" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok")

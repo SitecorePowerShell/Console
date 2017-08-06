@@ -25,7 +25,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
         -Description "This report will analyse the template branch and will tell you which templates do not have any icon assigned." `
-        -Title "Find templates without an icon" -Width 500 -Height 280 `
+        -Title "Find templates without an icon" -Icon "People/32x32/palette_preferences.png" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {

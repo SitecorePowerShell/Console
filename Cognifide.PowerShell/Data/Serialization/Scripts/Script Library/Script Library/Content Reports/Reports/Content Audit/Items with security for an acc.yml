@@ -22,7 +22,7 @@ SharedFields:
         @{ Name = "item"; Title="Start Item"; Tooltip="Branch you want to analyse."}, `
         @{ Name = "user"; Title="Select User"; Tooltip="Tooltip for user"; Editor="user"} `
         -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
-        -Title "Security for a user" -Width 600 -Height 280 `
+        -Title "Security for a user" -Icon "Applications/32x32/document_forbidden.png" -Width 600 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {

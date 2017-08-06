@@ -34,7 +34,7 @@ SharedFields:
             $result = Read-Variable -Parameters `
                 @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
                 -Description "Pick a module that you need your $($integrationPoint.Name) libraries in. When you press OK the libraries required for '$($integrationPoint.Name)' will be created in that module. You can clean up empty ones after by right clicking one a module and selecting 'Purge Empty libraries' from the 'Script' submenu." `
-                -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+                -Title "Pick a module to populate" -Icon "Software/32x32/jar_bean.png" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
             if($result -ne "ok") {
                 Exit
             }

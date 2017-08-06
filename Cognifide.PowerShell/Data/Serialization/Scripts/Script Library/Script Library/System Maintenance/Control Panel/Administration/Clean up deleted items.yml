@@ -9,7 +9,8 @@ SharedFields:
   Hint: Script
   Value: |
     $parameters = @{
-        Title = "Starting Parameters"
+        Title = "Clean up deleted items"
+        Icon = "Applications/32x32/garbage_make_empty.png"
         Description = "This script will remove items from recycle bins that are older than the date of your choice"
         Width = 400
         Height = 200

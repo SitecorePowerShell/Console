@@ -22,7 +22,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
         -Description "This report will analyse the template branch and will tell you which field types are used in which quantities." `
-        -Title "Count field types used by templates. " -Width 500 -Height 280 `
+        -Title "Count field types used by templates." -Icon "Control/32x32/multi_controls_b.png" -Width 600 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {

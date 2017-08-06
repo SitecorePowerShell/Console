@@ -22,13 +22,13 @@ SharedFields:
     $itemTemplate = gi "master:/templates/Sample/Sample Item"
     
     $result = Read-Variable -Parameters `
-        @{ Name = "sitemapUrl"; Value="http://www.cognifide.com/sitemap"; Title="Item to create the site under"; Root="/sitecore/content/"},
+        @{ Name = "sitemapUrl"; Value="http://www.example.com/sitemap.xml"; Title="Sitemap URL"},
         @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"},
         @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"},
-        @{ Name = "prefix"; Value="http://www.cognifide.com/"; Title="Prefix to chop off URLs"; },
+        @{ Name = "prefix"; Value="http://www.example.com/"; Title="Prefix to chop off URLs"; },
         @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";} `
-        -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
-        -Title "Find items with security set for a user instead of role" -Width 600 -Height 400 `
+        -Description "Downloads an XML Sitemap from a given URL and creates items for each of the pages, using a given template and item root." `
+        -Title "Re-create site from sitemap" -Icon "Network/32x32/web.png" -Width 600 -Height 400 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok")

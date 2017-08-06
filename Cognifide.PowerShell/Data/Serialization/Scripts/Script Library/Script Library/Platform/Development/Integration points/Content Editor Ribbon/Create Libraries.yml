@@ -20,7 +20,7 @@ SharedFields:
         $result = Read-Variable -Parameters `
             @{ Name = "module"; Title="Module to add Script Libraries to"; Root="/sitecore/system/Modules/PowerShell/Script Library" } `
             -Description "Pick a module that you will be creating your Content Editor ribbon chunk libraries in. When you press OK all supported Content Editor ribbon chunk script libraries will be created in that module. You can clean up empty ones after with the other script in the library you run the script from." `
-            -Title "Pick a module to populate" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+            -Title "Pick a module to populate" -Icon "Software/32x32/jar_bean.png" -Width 500 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
         if($result -ne "ok")
         {
             Exit

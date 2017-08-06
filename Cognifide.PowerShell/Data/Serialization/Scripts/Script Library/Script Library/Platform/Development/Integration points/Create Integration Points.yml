@@ -27,7 +27,7 @@ SharedFields:
             @{ Name = "moduleEnabled"; Title="Enable module" },
             @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."; Height="330px"} `
             -Description "Pick the settings for the module that you will be creating and the integration points to include in it." `
-            -Title "Create a new module" -Width 500 -Height 630 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+            -Title "Create a new module" -Icon "Software/32x32/jar_bean.png" -Width 500 -Height 630 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
     
         if($result -ne "ok")
         {
@@ -48,7 +48,7 @@ SharedFields:
         $result = Read-Variable -Parameters `
             @{ Name = "pointsToCreate"; Title="Integration points to create"; Options=$options; Editor="checklist"; Tip="Select the integration points for which the Script Libraries should be created."} `
             -Description "Pick the integration points you want to create Script libraries for. When you press OK all required script libraries for selected integration points will be created." `
-            -Title "Pick a module to populate" -Width 500 -Height 600 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+            -Title "Pick a module to populate" -Icon "Software/32x32/jar_edit.png" -Width 500 -Height 600 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
         if($result -ne "ok")
         {
             Exit

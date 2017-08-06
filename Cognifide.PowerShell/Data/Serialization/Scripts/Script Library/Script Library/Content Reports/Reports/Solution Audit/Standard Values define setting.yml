@@ -35,8 +35,9 @@ SharedFields:
             Tooltip = "Branch you want to analyse."
             Root = "/sitecore/templates"
         }
-        Description = "Sitecore <i>__Standard Values</i> recommendation"
-        Title = "How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?"
+        Title = "Sitecore Standard Values recommendation"
+        Description = "How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?"
+        Icon = "Network/32x32/fingerprint.png"
         Height = 280
         Width = 500
         OkButtonName = "Proceed"

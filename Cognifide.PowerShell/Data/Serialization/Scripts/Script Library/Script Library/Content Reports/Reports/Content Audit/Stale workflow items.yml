@@ -50,6 +50,7 @@ SharedFields:
     
     $settings = @{
         Title = "Report Filter"
+        Icon = "Applications/32x32/history.png"
         Width = "350"
         Height = "450"
         OkButtonName = "Proceed"

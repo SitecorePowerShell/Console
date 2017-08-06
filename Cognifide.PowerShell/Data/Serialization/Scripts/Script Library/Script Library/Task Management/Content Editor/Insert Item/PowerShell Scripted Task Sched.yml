@@ -35,7 +35,7 @@ SharedFields:
             Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script"; 
             editor="treelist"; Height="300px"} `
         -Description "Creates a new schedule for a task that will execute a script from your PowerShell Script Library" `
-        -Title "Create new scripted Schedule" -Width 700 -Height 500 -OkButtonName "Create" -ShowHints
+        -Title "Create new scripted Schedule" -Icon "People/32x32/clock.png" -Width 700 -Height 500 -OkButtonName "Create" -ShowHints
     
     if($result -ne "ok") {
         Close-Window

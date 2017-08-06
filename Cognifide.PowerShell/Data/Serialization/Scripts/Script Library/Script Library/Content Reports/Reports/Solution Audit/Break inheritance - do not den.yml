@@ -35,7 +35,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
         -Description "This report will analyse the branch and will tell you which items restrict rights to fields or themselves." `
-        -Title "Find items with security set for a user instead of role" -Width 500 -Height 280 `
+        -Title "Find items with security set for a user instead of role" -Icon "Applications/32x32/document_forbidden.png" -Width 600 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
