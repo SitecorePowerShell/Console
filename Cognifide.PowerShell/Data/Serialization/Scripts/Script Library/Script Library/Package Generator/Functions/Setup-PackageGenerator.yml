@@ -39,23 +39,23 @@ SharedFields:
         [System.Flags]
         public enum LinkedItemOptions
         {
-            None = 0,
-            Media = 1,
-            Templates = 2,
-            Workflows = 4
+            None = 1,
+            Media = 2,
+            Templates = 4,
+            Workflows = 8
         }
     "@
     
     $linkedItemOptions = [ordered]@{
-        "Include Media" = 1
-        "Include Templates" = 2
-        "Include Workflows" = 4
+        "Include Media" = 2
+        "Include Templates" = 4
+        "Include Workflows" = 8
     }
     
     $linkedItemOptionTooltips = [ordered]@{
-        "1" = "Include all associated content found in the media library."
-        "2" = "Include all associated custom templates."
-        "4" = "Include all associated workflows."
+        "2" = "Include all associated content found in the media library."
+        "4" = "Include all associated custom templates."
+        "8" = "Include all associated workflows."
     }
     
     $rootOptions = [ordered]@{
@@ -100,15 +100,16 @@ SharedFields:
         if($item -and !$itemsAddedToPackage.Contains($item.ID)) {
             Write-Host "[A] $($item.ProviderPath)" -ForegroundColor Green
             $itemsAddedToPackage.Add($item.ID) | Out-Null
-            $items.Entries.Add((New-Object Sitecore.Install.Items.ItemReference $item.Uri, $false).ToString())
+            if($items) {
+                $items.Entries.Add((New-Object Sitecore.Install.Items.ItemReference $item.Uri, $false).ToString())
+            }
         }
     }
     
     function ProcessItemWithLinks {
         param(
             [item]$Item,
-            [Sitecore.Install.Items.ExplicitItemSource]$Items,
-            [LinkedItemOptions]$LinkedOptions
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
         )
         
         AddItems -Item $item -Items $items
@@ -117,7 +118,7 @@ SharedFields:
         foreach($link in $links) {
             $linkItem = $link.GetTargetItem()
             if($linkItem) {
-                ProcessItem -Item $linkItem -Items $items -LinkedOptions $LinkedOptions -SkipLinks
+                ProcessItem -Item $linkItem -Items $items -SkipLinks
             }
         }
     }
@@ -151,8 +152,7 @@ SharedFields:
     function ProcessTemplateItem {
         param(
             [item]$Item,
-            [Sitecore.Install.Items.ExplicitItemSource]$Items,
-            [LinkedItemOptions]$LinkedOptions
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
         )
         
         $templateItem = New-Object Sitecore.Data.Items.TemplateItem $item
@@ -164,7 +164,7 @@ SharedFields:
             ProcessFieldTemplateItem -Item $item -Items $items
             $standardValues = $templateItem.StandardValues
             if($standardValues) {
-                ProcessItem -Item $standardValues -Items $items -LinkedOptions $LinkedOptions
+                ProcessItem -Item $standardValues -Items $items
             }
         }
         
@@ -172,8 +172,20 @@ SharedFields:
             $isSystemTemplateBaseItem = IsSystemTemplateItem -Item $baseTemplate
             if(!$isSystemTemplateBaseItem) {
                 Write-Host "Processing base template $($baseTemplate.ProviderPath)"
-                ProcessItem -Item $baseTemplate -Items $items -LinkedOptions $LinkedOptions -SkipLinks
+                ProcessItem -Item $baseTemplate -Items $items -SkipLinks
             }
+        }
+    }
+    
+    function ProcessWorkflowItem {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
+        )
+        
+        AddItems -Item $item -Items $items
+        foreach($child in $item.Children) {
+            ProcessWorkflowItem -Item $child -Items $items
         }
     }
     
@@ -187,10 +199,24 @@ SharedFields:
         
         if(!$item) { return }
         
-        if(!$SkipLinks -and $LinkedOptions) {
+        if(!$SkipLinks) {
             if(!$itemsProcessedWithLinks.Contains($item.ID)) {
                 $itemsProcessedWithLinks.Add($item.ID) | Out-Null
-                ProcessItemWithLinks -Item $item -Items $items -LinkedOptions $LinkedOptions
+                
+                if($LinkedOptions) {
+                    if($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Media)) {
+                        Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
+                        return
+                    } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/templates/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Templates)) {
+                        Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
+                        return
+                    } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Workflows)) {
+                        Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
+                        return
+                    }
+                }
+            
+                ProcessItemWithLinks -Item $item -Items $items
             } else {
                 Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
             }
@@ -198,18 +224,32 @@ SharedFields:
             if(!$itemsProcessed.Contains($item.ID)) {
                 $itemsProcessed.Add($item.ID) | Out-Null
                 
-                if($item.TemplateID -eq [Sitecore.TemplateIDs]::Template -and $LinkedOptions.HasFlag([LinkedItemOptions]::Templates)) {
-                    ProcessTemplateItem -Item $item -Items $items -LinkedOptions $LinkedOptions
-                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/") -and $LinkedOptions.HasFlag([LinkedItemOptions]::Media)) {
+                if($item.TemplateID -eq [Sitecore.TemplateIDs]::Template) {
+                    ProcessTemplateItem -Item $item -Items $items
+                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/")) {
                     Write-Host "Processing media $($item.ProviderPath)"
                     AddItems -Item $item -Items $items
-                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/") -and $LinkedOptions.HasFlag([LinkedItemOptions]::Workflows)) {
+                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/")) {
                     Write-Host "Processing workflow $($item.ProviderPath)"
-                    AddItems -Item $item -Items $items
+                    $workflowRoot = [Sitecore.ItemIDs]::WorkflowRoot
+                    if($item.Parent.ID -eq $workflowRoot) {
+                        AddItems -Item $item -Items $items
+                    } elseif($item.Parent.Parent.ID -eq $workflowRoot) {
+                        ProcessWorkflowItem -Item $item.Parent -Items $items
+                    } elseif($item.Parent.Parent.Parent.ID -eq $workflowRoot) {w
+                        ProcessWorkflowItem -Item $item.Parent.Parent -Items $items
+                    } else {
+                        if($item.Parent.Parent.Parent.Parent -and $item.Parent.Parent.Parent.Parent -eq $workflowRoot) {
+                            ProcessWorkflowItem -Item $item.Parent.Parent.Parent.Parent -Items $items
+                        }
+                    }
                 } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/content/")) {
-                    Write-Host "Processing item for $($item.ProviderPath)"
                     AddItems -Item $item -Items $items
+                } else {
+                    Write-Host "[S] $($item.ProviderPath) skipped." -ForegroundColor Yellow
                 }
+            } else {
+                Write-Host "[S] $($item.ProviderPath) already processed." -ForegroundColor Yellow
             }
         }
     }
@@ -244,16 +284,19 @@ SharedFields:
         if ($IncludeDescendants) {
             $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
             
+            Write-Host "Processing item $($item.ProviderPath)"
+            ProcessItem -Item $Item -SkipLinks
             if($LinkedOptions) {
                 $sourceDescendants = New-ExplicitItemSource -Item $Item -Name "$path children" -InstallMode $InstallMode -MergeMode $MergeMode
                 ProcessItemWithDescendants -Item $Item -Items $sourceDescendants -LinkedOptions $LinkedOptions
             }
         } else {
             $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
-            
+            Write-Host "Processing item $($item.ProviderPath)"
             if($LinkedOptions) {
-                Write-Host "Processing item $($item.ProviderPath)"
                 ProcessItem -Item $Item -Items $source -LinkedOptions $LinkedOptions
+            } else {
+                ProcessItem -Item $Item -Items $source -SkipLinks
             }
         }
         
