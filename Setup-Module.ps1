@@ -1,40 +1,20 @@
-﻿$projectPath = "C:\Projects\sitecorepowershell\Trunk"
-if(-not (Test-Path -Path $projectPath)) {
-    $projectPath = "C:\Websites\spe.dev.local"
+﻿
+# Adds the SPE Modules path to the PSModulePath Environment Variable, for use with SPE Remoting.
 
-    if(-not(Test-Path -Path $projectPath)) {
-        Write-Error "The project path defined does not exist."
-        exit
-    }
+$speModulePath = Join-Path $PSScriptRoot "Modules"
+
+$envModulePath = [Environment]::GetEnvironmentVariable("PSModulePath", "Machine")
+
+if($envModulePath -notlike "*$($speModulePath)*") {
+    
+    [Environment]::SetEnvironmentVariable("PSModulePath", $envModulePath.TrimEnd(";") + ";$($speModulePath)", "Machine")
+
+    $env:PSModulePath = $env:PSModulePath.TrimEnd(";") + ";$($speModulePath)"
+
+    Write-Host "PSModulePath environment variable updated with $speModulePath"
 }
-
-$modulePath = [Environment]::GetEnvironmentVariable("PSModulePath", "Machine")
-if($modulePath -notlike "*$($projectPath)*") {
-    [Environment]::SetEnvironmentVariable("PSModulePath", $modulePath + ";$($projectPath)\Modules", "Machine")
-    $env:PSModulePath = $env:PSModulePath + ";$($projectPath)\Modules"
+else
+{
+    Write-Host "PSModulePath environment variable already contains $speModulePath"
 }
-
-Import-Module -Name SPE
-
-$props = @{
-    Username = "admin"
-    Password = "b"
-    ConnectionUri = @("http://console")
-}
-
-$session = New-ScriptSession @props
-
-$arguments = @{
-    ProjectPath = $projectPath
-}
-
-Invoke-RemoteScript -Session $session -ScriptBlock {
-    $root = "$($params.ProjectPath)\data\serialization\"
-
-    Start-ScriptSession -ScriptBlock {
-        Import-Item -Path "$($params.ProjectPath)\data\serialization\core\sitecore" -Root $root -Recurse
-        Import-Item -Path "$($params.ProjectPath)\data\serialization\master\sitecore" -Root $root -Recurse
-    }
-} -Arguments $arguments
-
 

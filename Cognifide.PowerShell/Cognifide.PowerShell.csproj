@@ -11,6 +11,9 @@
   </PropertyGroup>
   <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
   <PropertyGroup>
+    <ProjectDeployPath>$(TempDeployPath)\Cognifide.PowerShell</ProjectDeployPath>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -542,8 +545,9 @@
     <Content Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />
-    <Content Include="App_Config\Include\Cognifide.PowerShell.Serialization.config" />
-    <Content Include="App_Config\Include\Cognifide.PowerShell.Serialization.User.config" />
+    <Content Include="App_Config\Include\Cognifide.PowerShell.Serialization.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Config\Include\Rainbow.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.zSharedSecret.config.example" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.UI.config" />
@@ -674,11 +678,8 @@
     <Content Include="App_Config\Include\Cognifide.PowerShell.Events.config.disabled" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <CallTarget Targets="DeployToWeb" Condition="$(SitecorePath) != ''" />
-  </Target>
   <Target Name="DeployToWeb">
-    <MSBuild Projects="Cognifide.PowerShell.csproj" Targets="ResolveReferences;_CopyWebApplication" Properties="WebProjectOutputDir=$(SitecorePath);OutDir=$(SitecorePath)\bin\" />
+    <MSBuild Projects="Cognifide.PowerShell.csproj" Targets="ResolveReferences;_CopyWebApplication" Properties="WebProjectOutputDir=$(ProjectDeployPath);OutDir=$(ProjectDeployPath)\bin\" />
   </Target>
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
@@ -691,47 +692,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <PropertyGroup>
-    <PostBuildEvent>echo "Copy build for Adam"
 
-IF %25USERDOMAIN%25==DUNE (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\SXA\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82u1\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\SXA\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore8\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore81\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore82u1\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore75\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore72\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore71\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\inetpub\wwwroot\Sitecore70\Website\App_Config\Include\*.* /s /e /c /y
-
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\SXA\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore8\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore81\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore82u1\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore75\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore72\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore71\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\inetpub\wwwroot\Sitecore70\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-)
-
-echo "Copy build for Mikey"
-IF EXIST C:\Websites\dev.spe (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\Websites\dev.spe\Website\bin\*.* /s /e /c /y
-    xcopy $(ProjectDir)App_Config\Include\*.* C:\Websites\dev.spe\Website\App_Config\Include\*.* /s /e /c /y
-    xcopy $(ProjectDir)sitecore\shell\Themes\Standard\*.* C:\Websites\dev.spe\Website\sitecore\shell\Themes\Standard\*.* /s /e /c /y
-)</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -739,4 +700,11 @@ IF EXIST C:\Websites\dev.spe (
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <CallTarget Targets="DeployToWeb" Condition="$(TempDeployPath) != ''" />
+    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
+  </Target>
 </Project>

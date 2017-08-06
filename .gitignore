@@ -214,7 +214,6 @@ pip-log.txt
 !/Libraries/PowerShell.MamlGenerator.dll
 
 # Sitecore
-deploy.targets
 /Website/
 /Database/
 /Databases/
@@ -237,4 +236,12 @@ Cognifide.PowerShell.Sitecore8/obj/
 Data/serialization/
 .vs/config/applicationhost.config
 
+# Temporary build folder
+_Deploy
+
 packages/
+
+# User files
+deploy.user.json
+!deploy.user.json.sample
+UserConfiguration/**/*.config

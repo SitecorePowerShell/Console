@@ -14,6 +14,9 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
+  <PropertyGroup>
+    <ProjectDeployPath>$(TempDeployPath)\Cognifide.PowerShell.Sitecore7</ProjectDeployPath>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -37,33 +40,33 @@
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Analytics">
-      <HintPath>$(SitecorePath)\bin\Sitecore.Analytics.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Client">
-      <HintPath>$(SitecorePath)\bin\Sitecore.Client.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.Client.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.ContentSearch.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.ContentSearch.Linq">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Kernel">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SitecorePath)\bin\Sitecore.Kernel.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.Kernel.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Logging">
-      <HintPath>$(LibrariesPath)\Sitecore.Logging.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.NVelocity">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SitecorePath)\bin\Sitecore.NVelocity.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.NVelocity.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Update">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(LibrariesPath)\Sitecore.Update.dll</HintPath>
+      <HintPath>$(Sitecore7LibsPath)\Sitecore.Update.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -125,15 +128,7 @@
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>IF %25USERDOMAIN%25==DUNE (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
-)
-</PostBuildEvent>
-  </PropertyGroup>
+
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -141,4 +136,20 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*" >
+      <Visible>false</Visible>
+    </AssemblyFiles>
+    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*" >
+      <Visible>false</Visible>
+    </SitecoreModuleFiles>
+  </ItemGroup>  
+  <PropertyGroup>
+    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
+  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(AssemblyFiles)" DestinationFolder="$(ProjectDeployPath)\bin" ContinueOnError="true" />
+    <Copy SourceFiles="@(SitecoreModuleFiles)" DestinationFolder="$(ProjectDeployPath)\sitecore modules\%(RecursiveDir)" ContinueOnError="true" />
+    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
+  </Target>
 </Project>

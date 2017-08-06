@@ -14,6 +14,9 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <Import Project="..\deploy.targets" Condition="Exists('..\deploy.targets')" />
+  <PropertyGroup>
+    <ProjectDeployPath>$(TempDeployPath)\Cognifide.PowerShell.Package</ProjectDeployPath>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -55,25 +58,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>echo "Copy build for Adam"
-IF %25USERDOMAIN%25==DUNE (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\SXA\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore8\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore81\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore82u1\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore75\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore72\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore71\Website\bin\*.* /s /e /c /y
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\inetpub\wwwroot\Sitecore70\Website\bin\*.* /s /e /c /y
-)
-
-echo "Copy build for Mikey"
-IF EXIST C:\Websites\dev.spe (
-    xcopy $(TargetDir)Cognifide.PowerShell*.* C:\Websites\dev.spe\Website\bin\*.* /s /e /c /y
-)</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -81,4 +65,19 @@ IF EXIST C:\Websites\dev.spe (
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*" >
+      <Visible>false</Visible>
+    </AssemblyFiles>
+    <ProjectDeployPathFiles Include="$(ProjectDeployPath)\**\*.*">
+      <Visible>false</Visible>
+    </ProjectDeployPathFiles>
+  </ItemGroup> 
+  <PropertyGroup>
+    <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
+  </PropertyGroup> 
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="@(AssemblyFiles)" DestinationFolder="$(ProjectDeployPath)\bin" ContinueOnError="true" />
+    <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
+  </Target>
 </Project>

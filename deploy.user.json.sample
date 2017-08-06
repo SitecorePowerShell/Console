@@ -1,0 +1,12 @@
+{ 
+    "sites": [
+        {
+            "path": "C:\\inetput\\wwwroot\\SitecoreSPE_8",
+            "version": 8
+        },
+        {
+            "path": "C:\\inetput\\wwwroot\\SitecoreSPE_7",
+            "version": 7
+        }
+    ]
+}
