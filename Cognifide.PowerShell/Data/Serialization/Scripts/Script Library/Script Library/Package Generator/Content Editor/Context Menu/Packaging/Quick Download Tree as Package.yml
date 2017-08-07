@@ -28,6 +28,7 @@ SharedFields:
         @{ Name = "Publisher"; Value = [Sitecore.SecurityModel.License.License]::Licensee; Tab="Package Metadata"},
         @{ Name = "Version"; Value = $selectedItem.Version; Tab="Package Metadata"},
         @{ Name = "Readme"; Title="Readme"; Lines=10; Tab="Package Metadata"},
+        @{ Name = "AsXml"; Title="Download Package as XML"; Value=[bool]$False; Editor="bool"; Tab="Package Metadata" },
         @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Root : '$($selectedItem.ProviderPath)'"; Editor="combo"; Tab="Installation Options" },
         @{ Name = "Mode"; Title="Installation Options"; Value = "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"; Tab="Installation Options"},
         @{ Name = "IncludeLinkedItems"; Value = 0; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox"; Tab = "Linked Options"; }
@@ -39,7 +40,7 @@ SharedFields:
     $props["Description"] = "This Tool allows you to download the item tree as a package quickly."
     $props["Parameters"] = $parameters
     $props["Width"] = 600
-    $props["Height"] = 700
+    $props["Height"] = 750
     
     $result = Read-Variable @props
     
@@ -109,9 +110,16 @@ SharedFields:
     $package.Metadata.Readme = $Readme
     
     [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-')
-    $packageFileName = "$($packageName).zip"
     
-    Export-Package -Project $package -Path $packageFileName -Zip
+    if ($AsXml) {
+        $packageFileName = "$($packageName).xml"
+    }
+    else {
+        $packageFileName = "$($packageName).zip"
+    }
+    
+    
+    Export-Package -Project $package -Path $packageFileName -Zip:$(!$AsXml)
     Download-File "$($SitecorePackageFolder)\$($packageFileName)"
     Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
     Close-Window

@@ -34,11 +34,13 @@ SharedFields:
         @{ Name = "Author"; Title="Author"},
         @{ Name = "Publisher"; Title="Publisher"},
         @{ Name = "Version"; Title="Version"},
-        @{ Name = "Readme"; Title="Readme"; Lines=10;}
+        @{ Name = "Readme"; Title="Readme"; Lines=10;},
+        @{ Name = "AsXml"; Title="Download Package as XML"; Value=[bool]$False; Editor="bool" }
     )
     
     $props = @{} + $defaultProps
     $props["Title"] = "Download Package"
+    $props["ShowHints"] = $False
     $props["Description"] = "This tool allows you to download the package built in the current session."
     $props["Parameters"] = $parameters
     
@@ -61,9 +63,15 @@ SharedFields:
     $package.Metadata.Readme = $Readme
     
     [string]$packageName = "$($package.Name)-$($package.Metadata.Version)".Trim('-')
-    $packageFileName = "$($packageName).zip"
     
-    Export-Package -Project $package -Path $packageFileName -Zip
+    if ($AsXml) {
+        $packageFileName = "$($packageName).xml"
+    }
+    else {
+        $packageFileName = "$($packageName).zip"
+    }
+    
+    Export-Package -Project $package -Path $packageFileName -Zip:$(!$AsXml)
     Download-File "$($SitecorePackageFolder)\$($packageFileName)"
     Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
     Close-Window
