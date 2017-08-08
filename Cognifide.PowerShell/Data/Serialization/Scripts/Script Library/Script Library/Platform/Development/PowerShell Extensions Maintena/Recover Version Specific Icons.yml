@@ -59,6 +59,13 @@ SharedFields:
     'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'office/32x32/data.png';
     'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Office/32x32/rebuild_all_indexes.png';
     'master:\system\Modules\PowerShell\Script Library\Platform\Toolbox\Rebuild script integration points' = 'Office/32x32/arrow_mix.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging' = 'Apps/32x32/Book 2.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Start New Package' = 'Office/32x32/new_package.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Add Item to Package' = 'Office/32x32/element.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Add Tree to Package' = 'Office/32x32/elements_branch.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Preview Package Items' = 'Office/32x32/preview_package.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Download Package' = 'Office/32x32/box_into.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Quick Download Tree as Package' = 'Office/32x32/box_closed.png';
     }
     
     $icons7 = @{
@@ -112,6 +119,13 @@ SharedFields:
     'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Clean up link databases' = 'Business/32x32/data_refresh.png';
     'master:/system/Modules/PowerShell/Script Library/System Maintenance/Tasks/Rebuild content search indexes' = 'Database/32x32/db_sql_execute_h.png';
     'master:\system\Modules\PowerShell\Script Library\Platform\Toolbox\Rebuild script integration points' = 'Applications/32x32/exchange.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging' = 'People/16x16/box.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Start New Package' = 'People/16x16/box_new.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Add Item to Package' = 'Software/16x16/element_add.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Add Tree to Package' = 'Software/16x16/branch_add.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Preview Package Items' = 'People/32x32/box_view.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Download Package' = 'People/16x16/box_next.png';
+    'master:\system\Modules\PowerShell\Script Library\Package Generator\Content Editor\Context Menu\Packaging\Quick Download Tree as Package' = 'Software/16x16/compress.png';
     }
     
     

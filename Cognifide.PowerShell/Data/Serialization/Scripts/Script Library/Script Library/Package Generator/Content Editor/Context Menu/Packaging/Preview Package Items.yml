@@ -7,14 +7,14 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: People/32x32/box_view.png
+  Value: Office/32x32/preview_package.png
 - ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
   Hint: PersistentSessionId
   Value: packageBuilder
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $items = Get-PackageItems -Project $package -SkipDuplicates
+    $items = Get-PackageItem -Project $package -SkipDuplicates
     
     if($items.Count -eq 0) {
         
