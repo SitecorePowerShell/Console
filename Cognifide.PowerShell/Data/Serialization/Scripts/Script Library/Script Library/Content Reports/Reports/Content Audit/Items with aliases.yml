@@ -25,13 +25,10 @@ SharedFields:
     
     $props = @{
         Parameters = @(
-            @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned."; Columns=9}
+            @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned.";}
         )
         Title = "Items With Aliases Report"
-        Icon = "Network/32x32/spy.png"
         Description = "Choose the criteria for the report."
-        Width = 550
-        Height = 300
         ShowHints = $true
     }
     
@@ -60,7 +57,7 @@ SharedFields:
         }
     }
     
-    $items = Get-ChildItem -Path $root.ProviderPath -Recurse | WithAliases
+    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | WithAliases
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which have aliases."

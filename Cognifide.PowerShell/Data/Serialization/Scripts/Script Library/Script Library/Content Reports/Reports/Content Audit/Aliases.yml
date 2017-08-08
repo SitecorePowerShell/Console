@@ -45,6 +45,7 @@ SharedFields:
         Show-Alert "There are no aliases."
     } else {
         $props = @{
+            Title = "Alias Report"
             InfoTitle = "Aliases"
             InfoDescription = "Lists all aliases and their linked items."
             PageSize = 25

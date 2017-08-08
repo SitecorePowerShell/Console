@@ -79,8 +79,27 @@ SharedFields:
         $item
     }
     
+    $database = "master"
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    $props = @{
+        Parameters = @(
+            @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned.";}
+        )
+        Title = "Report Filter"
+        Description = "Choose the criteria for the report."
+        Width = 550
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -eq "cancel"){
+        exit
+    }
+    
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
-    $items = [Sitecore.Context]::ContentDatabase.SelectItems("fast:/sitecore//*") | 
+    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | 
         Filter-UnpublishedItem -TargetDatabase $targets |
         Sort-Object -Property Name
     $watch.Stop()

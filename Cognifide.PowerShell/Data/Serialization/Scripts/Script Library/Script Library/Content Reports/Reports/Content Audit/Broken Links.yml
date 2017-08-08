@@ -37,7 +37,6 @@ SharedFields:
             @{Name="linksToCheck"; Title="Link types to check"; Options=$linkTypes; Tooltip="which link types you want to check"; Editor="checklist"} 
         )
         Title = "Broken Links Report"
-        Icon = "Network/32x32/link_delete.png"
         Description = "Choose the criteria for the report."
         Width = 550
         Height = 300
@@ -116,7 +115,7 @@ SharedFields:
         Show-Alert "There are no items found which have broken links in the current language."
     } else {
         $props = @{
-            Title = "Broken links report"
+            Title = "Broken Links Report"
             InfoTitle = "$($items.Count) items with broken links found!"
             InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
             MissingDataMessage = "There are no items found which have broken links in the current language."

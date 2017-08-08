@@ -24,18 +24,14 @@ SharedFields:
     
     $settings = @{
         Title = "Report Filter"
-        Icon = "applications/32x32/history.png"
-        Width = "350"
-        Height = "250"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
-        Description = "Filter the results for items updated on or before the specified date"
+        Description = "Filter the results for items updated on or before the specified date."
         Parameters = @(
             @{
                 Name="root"; 
                 Title="Choose the report root"; 
-                Tooltip="Only items from this root will be returned."; 
-                Columns=9
+                Tooltip="Only items from this root will be returned.";
             },
             @{ 
                 Name = "before"
@@ -65,13 +61,13 @@ SharedFields:
         }
     }
     
-    $items = Get-ChildItem -Path $root.ProviderPath -Recurse | Where-LastUpdated -Before $before
+    $items =  @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | Where-LastUpdated -Before $before
     
     if($items.Count -eq 0) {
         Show-Alert "There are no items updated on or before the specified date"
     } else {
         $props = @{
-            Title = "Items Last Update Report"
+            Title = "Items Last Updated Report"
             InfoTitle = "Items last updated before date"
             InfoDescription = "Lists all items last updated earlier than the date selected."
             PageSize = 25

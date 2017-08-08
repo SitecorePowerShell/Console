@@ -24,9 +24,6 @@ SharedFields:
     
     $settings = @{
         Title = "Report Filter"
-        Icon = "applications/32x32/history.png"
-        Width = "350"
-        Height = "250"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         Description = "Filter the results for items updated on or after the specified date"
@@ -34,8 +31,7 @@ SharedFields:
             @{
                 Name="root"; 
                 Title="Choose the report root"; 
-                Tooltip="Only items from this root will be returned."; 
-                Columns=9
+                Tooltip="Only items from this root will be returned.";
             },
             @{ 
                 Name = "after"
@@ -65,7 +61,7 @@ SharedFields:
         }
     }
     
-    $items = Get-ChildItem -Path $root.ProviderPath -Recurse | Where-LastUpdated -After $after
+    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | Where-LastUpdated -After $after
     
     if($items.Count -eq 0) {
         Show-Alert "There are no items updated on or after the specified date"
