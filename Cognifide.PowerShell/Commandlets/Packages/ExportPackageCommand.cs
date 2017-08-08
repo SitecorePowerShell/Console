@@ -101,6 +101,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                             using (var writer = new PackageWriter(fileName))
                             {
                                 writer.Initialize(Installer.CreateInstallationContext());
+
                                 PackageGenerator.GeneratePackage(Project, writer);
                             }
                         }

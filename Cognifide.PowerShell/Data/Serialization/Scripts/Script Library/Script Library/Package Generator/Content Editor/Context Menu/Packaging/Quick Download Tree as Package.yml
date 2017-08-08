@@ -126,6 +126,9 @@ SharedFields:
     Download-File "$($SitecorePackageFolder)\$($packageFileName)"
     Remove-Item "$($SitecorePackageFolder)\$($packageFileName)"
     Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 500
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules

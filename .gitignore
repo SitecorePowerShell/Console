@@ -239,7 +239,9 @@ Data/serialization/
 # Temporary build folder
 _Deploy
 
-packages/
+# Ignore top-level packages folder, but not others.
+packages
+!*/**/packages
 
 # User files
 deploy.user.json
