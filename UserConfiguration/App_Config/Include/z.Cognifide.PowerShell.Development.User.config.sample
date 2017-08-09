@@ -5,12 +5,12 @@
 
     <powershell>
      <userAccountControl>
-        <!-- In development, remove default elevationAction -->
+        <!-- In development, remove default elevationActions -->
         <tokens>
-          <token name="Default" elevationAction="Allow"/>
-          <token name="Console" elevationAction="Allow"/>
-          <token name="ISE" elevationAction="Allow"/>
-          <token name="ItemSave" elevationAction="Allow"/>          
+          <token patch:instead="*[@name='Default']" name="Default" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='Console']" name="Console" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='ISE']" name="ISE" elevationAction="Allow" expiration="00:00:00"/>
+          <token patch:instead="*[@name='ItemSave']" name="ItemSave" elevationAction="Allow" expiration="00:00:00"/>          
         </tokens>
       </userAccountControl>
     </powershell>
