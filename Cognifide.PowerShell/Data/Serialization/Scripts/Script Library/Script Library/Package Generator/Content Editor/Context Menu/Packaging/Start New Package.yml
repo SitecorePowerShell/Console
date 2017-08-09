@@ -21,8 +21,12 @@ SharedFields:
     Import-Function -Name Setup-PackageGenerator
     
     $activity = "Add one or more items through the context menu. <br/ > Download as a package or project when complete."
-    Write-Progress -Activity $activity -Status "New packaging session started." -Completed
-    Start-Sleep -Seconds 3
+    Write-Progress -Activity $activity -Status "New packaging session started." -PercentComplete 25
+    Start-Sleep -Seconds 1
+    Write-Progress -Activity $activity -Status "New packaging session started." -PercentComplete 50
+    Start-Sleep -Seconds 1
+    Write-Progress -Activity $activity -Status "New packaging session started." -PercentComplete 95
+    Start-Sleep -Seconds 1
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
