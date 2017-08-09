@@ -20,7 +20,9 @@ SharedFields:
   Value: |
     Import-Function -Name Setup-PackageGenerator
     
-    Show-Alert "New packaging session started.`n`n You can add items and branches to it from Content Editor context menu now.`n`nWhen you are done with adding content, use the `"Download Package`" in the context menu to download your content as Sitecore package."
+    $activity = "Add one or more items through the context menu. <br/ > Download as a package or project when complete."
+    Write-Progress -Activity $activity -Status "New packaging session started." -Completed
+    Start-Sleep -Seconds 3
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
