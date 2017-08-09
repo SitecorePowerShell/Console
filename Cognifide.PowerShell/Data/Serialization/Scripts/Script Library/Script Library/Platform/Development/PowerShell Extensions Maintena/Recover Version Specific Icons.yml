@@ -129,23 +129,6 @@ SharedFields:
     }
     
     
-    <#Write-Host "`$icons7 = @{"
-    foreach($path in ($icons8.Keys |sort)){
-        if($icons7[$path] -ne $null){
-            Write-Host "'$path' = '$($icons7[$path])';"
-        }
-    }
-    Write-Host "}"
-    exit#>
-    
-    if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
-      $icons = $icons8
-      (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowHeaderlessChrome"
-    } else {
-      $icons = $icons7
-      (Get-Item "core:\content\Applications\PowerShell\PowerShell Runner").Chrome = "WindowChrome"    
-    }
-    
     foreach($path in $icons.Keys){
         $item = $null
         $item = $(Get-Item $path -ErrorAction SilentlyContinue)
