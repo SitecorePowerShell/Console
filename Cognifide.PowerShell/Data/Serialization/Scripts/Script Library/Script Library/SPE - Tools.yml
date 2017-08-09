@@ -1,0 +1,18 @@
+﻿---
+ID: "486437b1-8a1d-4184-bc07-5c394f7ea13c"
+Parent: "a3572733-5062-43e9-a447-54698bc1c637"
+Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170809T014113Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
