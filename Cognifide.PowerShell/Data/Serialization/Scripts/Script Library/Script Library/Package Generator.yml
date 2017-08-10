@@ -18,9 +18,10 @@ SharedFields:
     Provides the following Context Menu items:
     - Start a new package
     - Add the selected item to a package
-    - Add a branch to the package
+    - Add a tree of items to the package
+    - Preview the contents of the package
     - Download the package
-    - Download the branch as a package
+    - Quick download of the selected item tree to a package
 - ID: "9911a28e-2120-4ab0-9113-5bae386769c1"
   Hint: Module Version
   Value: 1.0
