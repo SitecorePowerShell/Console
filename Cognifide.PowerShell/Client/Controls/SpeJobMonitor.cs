@@ -85,7 +85,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 return;
             
             var jobHandle = JobHandle;
-            if (jobHandle.Equals(Handle.Null))
+            if (jobHandle.Equals((object)Handle.Null))
                 return;
 
             if (!jobHandle.IsLocal)
