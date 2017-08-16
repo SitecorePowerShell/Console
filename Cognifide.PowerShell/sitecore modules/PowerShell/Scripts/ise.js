@@ -38,6 +38,9 @@
         codeeditor.session.setMode("ace/mode/powershell");
         codeeditor.setShowPrintMargin(false);
         codeeditor.session.setValue(editor.val());
+        codeeditor.session.on("change", function () {
+            editor.val(codeeditor.session.getValue());
+        });
         codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
 
         var proxied = codeeditor.onPaste;
@@ -46,8 +49,7 @@
             cognifide.powershell.updateRibbon();
             return result;
         };
-
-
+		
         function registerEventListenersForRibbonButtons() {
             console.log('initialize');
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
@@ -64,10 +66,7 @@
         }
 
         registerEventListenersForRibbonButtons();
-
-        codeeditor.session.on("change", function () {
-            editor.val(codeeditor.session.getValue());
-
+		
         window.parent.focus();
         window.focus();
 
@@ -77,23 +76,22 @@
             ("WebForm_AutoFocus" in this) && WebForm_AutoFocus && WebForm_AutoFocus("CodeEditor");
         }
 
-        window.addEventListener("focus",
-            function(event) {
-                setFocusOnConsole();
-            }, false);
+        window.addEventListener("focus", function(event) {
+            setFocusOnConsole();
+        }, false);
 
-		function getQueryStringValue(key) {
-			key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
-			var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
-			return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-		}
+        function getQueryStringValue(key) {
+            key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&");
+            var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+            return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+        }
 
-		if(getQueryStringValue("sc_bw") === "1"){
-			$("#RibbonPanel").css("padding-top","50px");
-			$("#Wrapper").css("padding-top","0px");
-		}
-        setTimeout(setFocusOnConsole, 1000);
-        });
+        if(getQueryStringValue("sc_bw") === "1"){
+            $("#RibbonPanel").css("padding-top","50px");
+            $("#Wrapper").css("padding-top","0px");
+        }
+
+        setTimeout(setFocusOnConsole, 1000);        
 
         var typingTimer;
 
