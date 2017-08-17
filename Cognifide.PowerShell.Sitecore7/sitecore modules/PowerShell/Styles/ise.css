@@ -34,12 +34,27 @@
 .status-bar-text {
     height: 14px;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .status-bar-right {
     float: right;
     margin-left: 2px;
     width: 50px;
+    height: 14px;
+}
+
+.status-bar-right-icon {
+    float: right;
+    margin-left: 2px;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.status-bar-right-icon:active {
+    -ms-opacity: 0.6;
+    opacity: 0.6;
 }
 
 .status-bar-script {

@@ -18,7 +18,7 @@
             "You can search for keywords using the <strong>Ctrl+F</strong> hotkey.",
             "You can toggle a comment block using the <strong>Ctrl+Shift+/</strong> hotkey.",
             "You can toggle a comment using the <strong>Ctrl+/</strong> hotkey.",
-            "You can find more documentation in the Sitecore PowerShell Extensions <a href='http://doc.sitecorepowershell.com/' target='_blank'>book</a>."
+			"You can find more documentation in the Sitecore PowerShell Extensions <a href='http://doc.sitecorepowershell.com/' target='_blank'>book</a>."
         ];
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;
@@ -123,6 +123,10 @@
         $("#CodeEditor").on("keyup mouseup", function() {
             var range = codeeditor.getSelectionRange();
             $("#SelectionText")[0].value = codeeditor.session.getTextRange(range);
+		});
+
+        $("#CopyResultsToClipboard").on("click", function() {
+			clipboard.copy(cognifide.powershell.getOutput());
 		});
 
         ace.config.loadModule("ace/ext/emmet", function() {
@@ -309,7 +313,11 @@
             }
         ];
 
-        codeeditor.commands.addCommands(codeeeditorcommands);
+		codeeditor.commands.addCommands(codeeeditorcommands);
+
+        cognifide.powershell.getOutput = function() {
+            return $("#ScriptResultCode")[0].innerText;
+        };
 
         cognifide.powershell.changeFontSize = function(setting) {
             setting = parseInt(setting) || 12;

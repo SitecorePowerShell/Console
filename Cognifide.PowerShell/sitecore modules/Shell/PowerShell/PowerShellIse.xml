@@ -20,6 +20,8 @@
       <!--Script src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script-->
       <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
+      <!--for clipboard access-->
+      <Script src="/sitecore modules/PowerShell/Scripts/clipboard.min.js"></Script>
       <!--for autocomplete and overlay-->
       <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/ace/ace.js"></Script>
@@ -121,6 +123,10 @@
           </Border>
           <Border class="status-bar-panel status-bar-right">
             Ln: <Literal ID="PosY" Text="" />
+          </Border>
+          <Border class="status-bar-panel status-bar-right-icon">
+            <Image ID="CopyResultsToClipboard" src="/sitecore modules/PowerShell/Assets/copy.png"
+                   Alt="Copy results to clipboard" Title="Copy results to clipboard" />
           </Border>
           <Border class="status-bar-panel status-bar-text">
             <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"

@@ -567,6 +567,7 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Roles.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
+    <Content Include="sitecore modules\PowerShell\Assets\copy.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
     <Content Include="sitecore modules\PowerShell\Assets\error.png" />
     <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
@@ -606,6 +607,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets-powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\clipboard.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\flexie.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ise.js" />
