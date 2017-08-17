@@ -4,7 +4,7 @@ _Please describe the expected behavior._
 
 ### Actual Behavior
 
-_Please desribe the actual behavior._
+_Please describe the actual behavior._
 
 ### Steps to Reproduce the Problem
 
