@@ -606,6 +606,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\ace\mode-powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets-powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\text.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\clipboard.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
