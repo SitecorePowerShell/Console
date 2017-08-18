@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     foreach (var closeMessage in args.Result.Split('\n'))
                     {
-                        Context.ClientPage.SendMessage(this, closeMessage);
+                        Context.ClientPage.ClientResponse.Timer(closeMessage, 2);
                     }
                 }
             }
