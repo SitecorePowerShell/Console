@@ -14,16 +14,9 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessRecord()
         {
-            try
+            using (InputObject)
             {
-                using (InputObject)
-                {
-                    WriteObject(ScriptBlock.Invoke());
-                }
-            }
-            finally
-            {
-                InputObject?.Dispose();
+                WriteObject(ScriptBlock.Invoke());
             }
         }
     }
