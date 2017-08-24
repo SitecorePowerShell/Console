@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Modules;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Events;
@@ -226,7 +227,7 @@ namespace Cognifide.PowerShell.Core.Extensions
         {
             Assert.ArgumentNotNull(args, "args");
             var item = Event.ExtractParameter(args, 0) as Item;
-            if (item != null && item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
+            if (item != null && item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
             {
                 allPropertySets.Clear();
             }
@@ -237,7 +238,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             Assert.ArgumentNotNull(args, "args");
             var isreErgs = args as ItemSavedRemoteEventArgs;
             if (isreErgs?.Item != null &&
-                isreErgs.Item.Paths.Path.StartsWith("/sitecore/templates/", StringComparison.OrdinalIgnoreCase))
+                isreErgs.Item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
             {
                 allPropertySets.Clear();
             }

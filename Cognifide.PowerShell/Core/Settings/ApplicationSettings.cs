@@ -21,15 +21,15 @@ namespace Cognifide.PowerShell.Core.Settings
 {
     public class ApplicationSettings
     {
-        public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
         public const string IseSettingsItemAllUsers = "All Users";
-        public const string FolderTemplatePath = "/sitecore/templates/Common/Folder";
+
+        public const string SettingsItemPath = "/sitecore/system/Modules/PowerShell/Settings/";
         public const string ScriptLibraryPath = "/sitecore/system/Modules/PowerShell/Script Library/";
-        public const string MediaLibraryPath = "/sitecore/media library/";
         public const string FontNamesPath = "/sitecore/system/Modules/PowerShell/Fonts/";
-        private static string rulesDb;
-        private static string settingsDb;
-        private static string scriptLibraryDb;
+
+        public const string MediaLibraryPath = "/sitecore/media library/";
+        public const string TemplatesPath = "/sitecore/templates/";
+
         private const string LastScriptSettingFieldName = "LastScript";
         private const string SaveLastScriptSettingFieldName = "SaveLastScript";
         private const string LiveAutocompletionSettingFieldName = "LiveAutocompletion";
@@ -38,6 +38,10 @@ namespace Cognifide.PowerShell.Core.Settings
         private const string BackgroundColorSettingFieldName = "BackgroundColor";
         private const string FontSizeSettingFieldName = "FontSize";
         private const string FontFamilySettingFieldName = "FontFamily";
+
+        private static string rulesDb;
+        private static string settingsDb;
+        private static string scriptLibraryDb;
 
         private static readonly Dictionary<string, ApplicationSettings> instances =
             new Dictionary<string, ApplicationSettings>();
@@ -194,7 +198,7 @@ namespace Cognifide.PowerShell.Core.Settings
                     {
                         return null;
                     }
-                    var folderTemplateItem = db.GetItem(FolderTemplatePath);
+                    var folderTemplateItem = db.GetItem(TemplateIDs.Folder);
                     var currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
                         folderTemplateItem);
                     var defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
@@ -208,7 +212,7 @@ namespace Cognifide.PowerShell.Core.Settings
         {
             var currentUserItem = GetInstance(ApplicationNames.ISE).GetSettingsDtoForSave();
             var mruItem = currentUserItem.Children["MRU"] ??
-                          currentUserItem.Add("MRU", new TemplateID(Sitecore.TemplateIDs.Folder));
+                          currentUserItem.Add("MRU", new TemplateID(TemplateIDs.Folder));
             if (!mruItem.Publishing.NeverPublish)
             {
                 mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
