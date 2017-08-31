@@ -89,14 +89,15 @@ namespace Cognifide.PowerShell.Commandlets.Data
                     {
                         WriteItem(latestVersion);
                     }
-                    if (Recurse)
-                    {
-                        foreach (Item childItem in item.Children)
-                        {
-                            childItem.Versions.GetLatestVersion(item.Language);
-                            ProcessItem(childItem);
-                        }
-                    }
+                }
+            }
+
+            if (Recurse)
+            {
+                foreach (Item childItem in item.Children)
+                {
+                    childItem.Versions.GetLatestVersion(item.Language);
+                    ProcessItem(childItem);
                 }
             }
         }
