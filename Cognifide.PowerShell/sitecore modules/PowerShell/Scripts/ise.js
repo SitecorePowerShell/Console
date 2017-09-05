@@ -22,7 +22,7 @@
         ];
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;
-        var guid = "ISE Editing Session";
+        var guid = "ISE_Editing_Session";
         var debugLine = 0;
         var debugSessionId = "";
         var debugMarkers = [];
