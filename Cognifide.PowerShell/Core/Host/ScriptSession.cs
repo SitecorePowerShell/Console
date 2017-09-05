@@ -345,7 +345,7 @@ namespace Cognifide.PowerShell.Core.Host
             {
                 if (
                     ((ScriptingHostUserInterface) host.UI).CheckSessionCanDoInteractiveAction(
-                        nameof(DebuggerOnDebuggerStop)))
+                        nameof(DebuggerOnDebuggerStop),false))
                 {
 
                     var output = new PSDataCollection<PSObject>();

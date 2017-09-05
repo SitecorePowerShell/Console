@@ -8,6 +8,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
@@ -142,7 +143,7 @@ namespace Cognifide.PowerShell.Core.Host
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            if (!CheckSessionCanDoInteractiveAction(nameof(WriteProgress))) return;
+            if (!CheckSessionCanDoInteractiveAction($"{nameof(WriteProgress)}:{record.Activity}/{record.CurrentOperation} ({record.PercentComplete}%)", false)) return;
             var message = Message.Parse(this, "ise:updateprogress");
             message.Arguments.Add("Activity", record.Activity);
             message.Arguments.Add("ActivityId", record.ActivityId.ToString(CultureInfo.InvariantCulture));
@@ -287,15 +288,19 @@ namespace Cognifide.PowerShell.Core.Host
             return results;
         }
 
-        public virtual bool CheckSessionCanDoInteractiveAction(string operation)
+        public virtual bool CheckSessionCanDoInteractiveAction(string operation, bool throwException = true)
         {
             if (!host.Interactive)
             {
                 string message = string.IsNullOrEmpty(operation)
                     ? "Non interactive session cannot perform an interactive operation."
                     : $"Non interactive session cannot perform an interactive '{operation}' operation.";
-                
-                throw new InvalidOperationException(message);
+
+                if (throwException)
+                {
+                    throw new InvalidOperationException(message);
+                }
+                PowerShellLog.Info(message);
             }
             return true;
         }
