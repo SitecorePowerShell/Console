@@ -125,7 +125,6 @@ namespace Cognifide.PowerShell.Commandlets.Data
                             }
                         }
                         targetItem.Editing.EndEdit();
-                        targetItem.Editing.AcceptChanges();
                     }
                     WriteItem(targetItem);
                 }
