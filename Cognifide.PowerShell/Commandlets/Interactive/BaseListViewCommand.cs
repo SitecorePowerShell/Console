@@ -23,9 +23,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public string MissingDataIcon { get; set; }
 
-        [Parameter]
-        public string Icon { get; set; }
-
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Data { get; set; }
 

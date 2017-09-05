@@ -14,9 +14,6 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         public Hashtable Parameter { get; set; }
 
         [Parameter]
-        public string Icon { get; set; }
-
-        [Parameter]
         public SwitchParameter Modal { get; set; }
 
         protected override void ProcessRecord()
