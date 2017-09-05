@@ -43,6 +43,15 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public static ScriptSession GetSessionIfExists(string persistentId)
+        {
+            if (SessionExists(persistentId))
+            {
+                return GetSession(persistentId);
+            }
+            return null;
+        }
+
         public static bool SessionExistsForAnyUserSession(string persistentId)
         {
             var wildcard = new WildcardPattern("*|"+persistentId, WildcardOptions.IgnoreCase);

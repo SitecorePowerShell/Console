@@ -18,9 +18,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
         protected override object ProcessResult(bool hasResult, string result)
         {
-            if (ScriptSessionManager.SessionExists(SessionKey))
+            if (ScriptSessionManager.GetSessionIfExists(SessionKey) is ScriptSession session)
             {
-                ScriptSessionManager.GetSession(SessionKey).Host.EndNestedPromptSuspension();
+                session.Host.EndNestedPromptSuspension();
             }
             return base.ProcessResult(hasResult, result);
         }

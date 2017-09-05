@@ -149,9 +149,8 @@ namespace Cognifide.PowerShell.Console.Services
 
             PowerShellLog.Info($"Session '{sessionId}' disposed by user: '{Sitecore.Context.User?.Name}'");
 
-            if (ScriptSessionManager.SessionExists(sessionId))
+            if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession session)
             {
-                var session = ScriptSessionManager.GetSession(sessionId, ApplicationNames.RemoteAutomation, false);
                 ScriptSessionManager.RemoveSession(session);
                 return "removed";
             }

@@ -342,13 +342,10 @@ namespace Cognifide.PowerShell.Client.Applications
         protected virtual void OkClick()
         {
             var sessionId = PersistentId;
-            if (ScriptSessionManager.SessionExists(sessionId))
+            if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession currentSession &&
+                currentSession.AutoDispose)
             {
-                var currentSession = ScriptSessionManager.GetSession(sessionId);
-                if (currentSession.AutoDispose)
-                {
-                    currentSession.Dispose();
-                }
+                currentSession.Dispose();
             }
 
             SheerResponse.CloseWindow();
@@ -369,8 +366,10 @@ namespace Cognifide.PowerShell.Client.Applications
         protected virtual void AbortClick()
         {
             var sessionId = Monitor.SessionID;
-            var currentSession = ScriptSessionManager.GetSession(sessionId);
-            if (currentSession != null) currentSession.Abort();
+            if (ScriptSessionManager.GetSessionIfExists(sessionId) is ScriptSession currentSession)
+            {
+                currentSession.Abort();
+            }
         }
 
         protected virtual void ViewResults()
@@ -407,10 +406,8 @@ namespace Cognifide.PowerShell.Client.Applications
             else
             {
                 Subtitle.Text = showStatus
-                ? string.Format("<span class='status'>"+
-                Texts.PowerShellRunner_UpdateProgress_Status_+
-                " {0}</span>", status)
-                : "<span class='status'> </span>";
+                ? $"<span class=\'status\'>{Texts.PowerShellRunner_UpdateProgress_Status_} {status}</span>"
+                    : "<span class='status'> </span>";
             }
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {

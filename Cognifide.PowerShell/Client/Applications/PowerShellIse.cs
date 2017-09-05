@@ -689,9 +689,8 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("pstaskmonitor:check", true)]
         protected void PrintOutput(ClientPipelineArgs args)
         {
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
             {
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 var result = session.Output.GetHtmlUpdate();
                 PrintSessionUpdate(result);
             }
@@ -702,7 +701,7 @@ namespace Cognifide.PowerShell.Client.Applications
             if (!string.IsNullOrEmpty(result))
             {
                 result = HttpUtility.HtmlEncode(result.Replace("\r", "").Replace("\n", "<br/>")).Replace("\\", "&#92;");
-                SheerResponse.Eval(string.Format("cognifide.powershell.appendOutput(\"{0}\");", result));
+                SheerResponse.Eval($"cognifide.powershell.appendOutput(\"{result}\");");
             }
         }
 
@@ -732,10 +731,8 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:abort", true)]
         protected virtual void JobAbort(ClientPipelineArgs args)
         {
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession currentSession)
             {
-                var currentSession = ScriptSessionManager.GetSession(Monitor.SessionID);
-
                 currentSession.Abort();
 
                 if (currentSession.AutoDispose)
@@ -754,7 +751,7 @@ namespace Cognifide.PowerShell.Client.Applications
         private void MonitorOnJobFinished(object sender, EventArgs eventArgs)
         {
             var args = eventArgs as SessionCompleteEventArgs;
-            var result = args.RunnerOutput;
+            var result = args?.RunnerOutput;
             if (result != null)
             {
                 PrintSessionUpdate(result.Output);
@@ -1013,9 +1010,8 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             var line = Int32.Parse(args.Parameters["Line"]) + 1;
             var state = args.Parameters["State"] == "true";
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
             {
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 var bPointScript = state
                     ? $"Set-PSBreakpoint -Script {session.DebugFile} -Line {line}"
                     : $"Get-PSBreakpoint -Script {session.DebugFile} | ? {{ $_.Line -eq {line}}} | Remove-PSBreakpoint";
@@ -1055,9 +1051,8 @@ namespace Cognifide.PowerShell.Client.Applications
         [HandleMessage("ise:debugaction", true)]
         protected virtual void BreakpointAction(ClientPipelineArgs args)
         {
-            if (ScriptSessionManager.SessionExists(Monitor.SessionID))
+            if (ScriptSessionManager.GetSessionIfExists(Monitor.SessionID) is ScriptSession session)
             {
-                var session = ScriptSessionManager.GetSession(Monitor.SessionID);
                 session.TryInvokeInRunningSession(args.Parameters["action"]);
                 SheerResponse.Eval("$ise(function() { cognifide.powershell.breakpointHandled(); });");
                 InBreakpoint = false;
