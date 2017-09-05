@@ -247,3 +247,4 @@ packages
 deploy.user.json
 !deploy.user.json.sample
 UserConfiguration/**/*.config
+.vs/
