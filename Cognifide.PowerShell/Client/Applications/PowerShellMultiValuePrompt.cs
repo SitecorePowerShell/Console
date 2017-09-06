@@ -987,12 +987,10 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
-            //HttpContext.Current.Cache.Remove(sid);
             if (ScriptSessionManager.GetSessionIfExists(sid) is ScriptSession scriptSession  &&
                 scriptSession.DialogStack.Any() &&
                 scriptSession.DialogStack.Peek() is ShowMultiValuePromptMessage)
             {
-                //HttpContext.Current.Cache[sid] = scriptVariables;
                 scriptSession.DialogResults = scriptVariables;
             }
 
