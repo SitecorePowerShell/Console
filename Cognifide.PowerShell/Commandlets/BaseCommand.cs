@@ -48,8 +48,9 @@ namespace Cognifide.PowerShell.Commandlets
 
         protected ScriptingHostPrivateData HostData => (Host.PrivateData.BaseObject as ScriptingHostPrivateData);
         protected bool InteractiveSession => HostData.Interactive;
-
         protected string CurrentPath => SessionState.Drive.Current.CurrentLocation;
+        protected string CurrentSessionId => HostData == null ? string.Empty : HostData.SessionId;
+        protected string CurrentSessionKey => HostData == null ? string.Empty : HostData.ScriptingHost.SessionKey;
 
         protected ClientPage ClientPage => (GetVariableValue("ClientPage") as ClientPage);
 

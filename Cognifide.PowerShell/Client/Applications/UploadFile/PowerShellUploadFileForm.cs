@@ -1,5 +1,7 @@
 using System;
 using System.Web;
+using Cognifide.PowerShell.Core.VersionDecoupling;
+using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
@@ -88,6 +90,7 @@ namespace Cognifide.PowerShell.Client.Applications.UploadFile
                 {
                     CancelButton.Header = WebUtil.SafeEncode(cancel);
                 }
+                TypeResolver.Resolve<IUrlHandleWrapper>().DisposeHandle(handle);
             }
         }
 

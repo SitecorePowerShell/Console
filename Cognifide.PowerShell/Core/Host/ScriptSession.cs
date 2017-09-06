@@ -69,6 +69,9 @@ namespace Cognifide.PowerShell.Core.Host
         public List<object> JobResultsStore { get; set; }
         internal ScriptingHost Host => host;
 
+        internal Stack<IMessage> DialogStack { get; } = new Stack<IMessage>(); 
+        internal Hashtable[] DialogResults { get; set; }
+
         public ScriptingHostPrivateData PrivateData
         {
             get { return privateData ?? (privateData = host.PrivateData.BaseObject as ScriptingHostPrivateData); }

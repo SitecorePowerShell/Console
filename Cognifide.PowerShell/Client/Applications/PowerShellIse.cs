@@ -745,6 +745,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 ScriptRunning = false;
                 UpdateRibbon();
             }
+            Monitor.SessionID = string.Empty;
             ScriptRunning = false;
         }
 
@@ -765,6 +766,7 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.SetInnerHtml("PleaseWait", "");
             ProgressOverlay.Visible = false;
             ScriptRunning = false;
+            Monitor.SessionID = string.Empty;
             UpdateRibbon();
             SheerResponse.Eval("cognifide.powershell.scriptExecutionEnded()");
         }

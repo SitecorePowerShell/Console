@@ -65,6 +65,5 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
             }
         }
 
-        protected string CurrentSessionId => HostData == null ? string.Empty : HostData.SessionId;
     }
 }

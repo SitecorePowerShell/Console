@@ -59,19 +59,21 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             else
             {
                 var urlString = new UrlString("/sitecore modules/Shell/PowerShell/UploadFile/PowerShellUploadFile.aspx");
-                var handle = new UrlHandle();
-                handle["te"] = Title ?? string.Empty;
-                handle["ds"] = Description ?? string.Empty;
-                handle["ic"] = Icon ?? string.Empty;
-                handle["ok"] = OkButtonName ?? string.Empty;
-                handle["cancel"] = CancelButtonName ?? string.Empty;
-                handle["path"] = Path;
-                handle["mask"] = "*.*";
-                handle["de"] = "txt";
-                handle["versioned"] = Versioned ? "1" : string.Empty;
-                handle["language"] = Language ?? string.Empty;
-                handle["overwrite"] = Overwrite ? "1" : string.Empty;
-                handle["unpack"] = Unpack ? "1" : string.Empty;
+                var handle = new UrlHandle
+                {
+                    ["te"] = Title ?? string.Empty,
+                    ["ds"] = Description ?? string.Empty,
+                    ["ic"] = Icon ?? string.Empty,
+                    ["ok"] = OkButtonName ?? string.Empty,
+                    ["cancel"] = CancelButtonName ?? string.Empty,
+                    ["path"] = Path,
+                    ["mask"] = "*.*",
+                    ["de"] = "txt",
+                    ["versioned"] = Versioned ? "1" : string.Empty,
+                    ["language"] = Language ?? string.Empty,
+                    ["overwrite"] = Overwrite ? "1" : string.Empty,
+                    ["unpack"] = Unpack ? "1" : string.Empty
+                };
 
                 handle.Add(urlString);
                 SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);

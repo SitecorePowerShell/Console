@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Management.Automation;
 using System.Web;
+using Cognifide.PowerShell.Core.Host;
 using Sitecore;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
@@ -15,7 +16,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
         public ShowMultiValuePromptMessage(object[] parameters, string width, string height, string title,
             string description, string icon, string okButtonName, string cancelButtonName, bool showHints, ScriptBlock validator,
-            Hashtable validatorParameters) : base()
+            Hashtable validatorParameters, string sessionKey) : base()
         {
             this.parameters = parameters;
             Width = width ?? string.Empty;
@@ -28,6 +29,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             ShowHints = showHints;
             Validator = validator;
             ValidatorParameters = validatorParameters;
+            SessionKey = sessionKey;
         }
 
         public object[] Parameters => parameters;
@@ -42,25 +44,28 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public bool ShowHints { get; }
         public ScriptBlock Validator { get; }
         public Hashtable ValidatorParameters { get; }
+        public string SessionKey { get; }
 
         /// <summary>
         ///     Shows a confirmation dialog.
         /// </summary>
         protected override void ShowUI()
         {
-            var resultSig = Guid.NewGuid().ToString();
-            HttpContext.Current.Cache[resultSig] = this;
+            var session = ScriptSessionManager.GetSession(SessionKey);
+            session.DialogStack.Push(this);
             var urlString = new UrlString(UIUtil.GetUri("control:PowerShellMultiValuePrompt"));
-            urlString.Add("sid", resultSig);
+            urlString.Add("sid", SessionKey);
             SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height, "", true);
         }
 
         protected override object ProcessResult(bool hasResult, string sig)
         {
+            var session = ScriptSessionManager.GetSession(SessionKey);
+            session.DialogStack.Pop();
             if (hasResult)
             {
-                var result = HttpContext.Current.Cache[sig];
-                HttpContext.Current.Cache.Remove(sig);
+                var result = session.DialogResults;
+                session.DialogResults = null;
                 return result;
             }
             return null;

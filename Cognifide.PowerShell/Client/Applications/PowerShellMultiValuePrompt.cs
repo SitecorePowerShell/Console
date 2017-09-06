@@ -101,18 +101,18 @@ namespace Cognifide.PowerShell.Client.Applications
 
             HttpContext.Current.Response.AddHeader("X-UA-Compatible", "IE=edge");
             var sid = WebUtil.GetQueryString("sid");
-            var message = (ShowMultiValuePromptMessage)HttpContext.Current.Cache[sid];
 
-            if (message == null)
+            if (!(ScriptSessionManager.GetSessionIfExists(sid) is ScriptSession scriptSession) ||
+                !scriptSession.DialogStack.Any() ||
+                !(scriptSession.DialogStack.Peek() is ShowMultiValuePromptMessage message))
             {
                 DialogDescription.Text = "&nbsp;";
                 return;
             }
+
             NoDataWarning.Visible = false;
 
             var variables = message.Parameters;
-            HttpContext.Current.Cache.Remove(sid);
-
             var title = message.Title;
             ShowHints = message.ShowHints;
 
@@ -956,7 +956,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         if ((value as string[]).Length > 0) continue;
                         break;
                     case "DateTime":
-                        if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue) continue;
+                        if ((DateTime) value != DateTime.MinValue && (DateTime) value != DateTime.MaxValue) continue;
                         break;
                     case "null":
                         break;
@@ -987,8 +987,15 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
-            HttpContext.Current.Cache.Remove(sid);
-            HttpContext.Current.Cache[sid] = scriptVariables;
+            //HttpContext.Current.Cache.Remove(sid);
+            if (ScriptSessionManager.GetSessionIfExists(sid) is ScriptSession scriptSession  &&
+                scriptSession.DialogStack.Any() &&
+                scriptSession.DialogStack.Peek() is ShowMultiValuePromptMessage)
+            {
+                //HttpContext.Current.Cache[sid] = scriptVariables;
+                scriptSession.DialogResults = scriptVariables;
+            }
+
             SheerResponse.SetDialogValue(sid);
             SheerResponse.CloseWindow();
         }

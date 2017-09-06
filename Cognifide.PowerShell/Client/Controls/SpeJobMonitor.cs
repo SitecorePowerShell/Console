@@ -35,19 +35,12 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             get
             {
-                var sessionId = HttpContext.Current.Session[JobHandle.ToString()];
-                return sessionId?.ToString() ?? string.Empty;
+                var viewStateString = GetViewStateString("taskMonitorSessionId");
+                return viewStateString;
             }
             set
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    HttpContext.Current.Session.Remove(JobHandle.ToString());
-                }
-                else
-                {
-                    HttpContext.Current.Session[JobHandle.ToString()] = value;
-                }
+                SetViewStateString("taskMonitorSessionId", value);
             }
         }
 
