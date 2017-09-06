@@ -121,11 +121,10 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         {
                             if (ShouldProcessField(field, itemWasCreated))
                             {
-                                targetItem.Fields[field.Name].SetValue(field.Value, true);
+                                targetItem.Fields[field.Name].Value = field.GetValue(true, true);
                             }
                         }
                         targetItem.Editing.EndEdit();
-                        targetItem.Editing.AcceptChanges();
                     }
                     WriteItem(targetItem);
                 }
