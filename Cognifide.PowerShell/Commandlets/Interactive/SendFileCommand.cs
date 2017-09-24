@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
-using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Web;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {

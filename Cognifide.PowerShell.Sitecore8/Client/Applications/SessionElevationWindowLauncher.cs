@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
+﻿using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;
 

@@ -1,11 +1,9 @@
 ﻿using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Links;

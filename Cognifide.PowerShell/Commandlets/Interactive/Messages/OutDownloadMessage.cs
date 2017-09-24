@@ -1,10 +1,6 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using Sitecore;
 using Sitecore.Data;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.StringExtensions;

@@ -2,14 +2,12 @@
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore.Configuration;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;
 using Sitecore.Rules;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
-using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
 using Control = Sitecore.Web.UI.HtmlControls.Control;
 

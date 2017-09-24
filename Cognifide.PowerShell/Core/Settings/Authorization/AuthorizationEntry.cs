@@ -4,7 +4,6 @@ using System.Xml;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore.ContentSearch.Linq;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
 

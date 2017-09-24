@@ -5,7 +5,6 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 

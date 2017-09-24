@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Web;
+﻿using System.Management.Automation;
 using Sitecore.Data.Clones;
-using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Clones
 {

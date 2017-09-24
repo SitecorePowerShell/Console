@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
-using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Events;
 using Sitecore.Data.Fields;
@@ -12,7 +10,6 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Resources.Media;
-using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {

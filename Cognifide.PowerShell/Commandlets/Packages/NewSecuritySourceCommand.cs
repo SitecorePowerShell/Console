@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Security;
 using Sitecore;

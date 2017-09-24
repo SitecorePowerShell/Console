@@ -8,13 +8,9 @@ using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
-using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Commandlets.Session
 {

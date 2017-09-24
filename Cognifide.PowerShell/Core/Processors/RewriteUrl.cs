@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Utility;
-using Sitecore.Configuration;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.PreprocessRequest;
 using Sitecore.Text;

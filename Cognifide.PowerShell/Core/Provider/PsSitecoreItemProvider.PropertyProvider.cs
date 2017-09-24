@@ -5,9 +5,7 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Provider
 {

@@ -1,8 +1,6 @@
 ﻿using System.Data;
 using System.Linq;
 using System.Management.Automation;
-using Sitecore;
-using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;

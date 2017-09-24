@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
-using System.Management.Automation;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
-using Sitecore.Globalization;
-using Sitecore.IO;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
 using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
-using Version = Sitecore.Data.Version;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {

@@ -1,10 +1,6 @@
 ﻿using System;
-using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Shell.Framework.Commands;
-using Sitecore.Text;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
 {

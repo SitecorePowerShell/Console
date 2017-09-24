@@ -4,7 +4,6 @@ using System.IO;
 using System.Management.Automation.Provider;
 using System.Text;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Data.Items;
 

@@ -14,7 +14,6 @@ using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;
@@ -23,7 +22,6 @@ using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 using Sitecore.Web.UI.WebControls.Ribbons;
-using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Client.Applications
 {

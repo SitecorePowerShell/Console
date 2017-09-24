@@ -1,8 +1,6 @@
 ﻿using System;
 using Cognifide.PowerShell.Client.Applications;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data.Items;

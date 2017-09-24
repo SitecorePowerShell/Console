@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Sitecore.Web.UI.HtmlControls;
+﻿using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization

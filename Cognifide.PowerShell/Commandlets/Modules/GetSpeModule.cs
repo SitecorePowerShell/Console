@@ -2,7 +2,6 @@
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Validation;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Modules

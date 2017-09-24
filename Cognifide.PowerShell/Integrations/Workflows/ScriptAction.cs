@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;

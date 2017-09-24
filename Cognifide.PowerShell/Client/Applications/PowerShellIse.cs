@@ -610,11 +610,6 @@ namespace Cognifide.PowerShell.Client.Applications
             PowerShellLog.Info($"Arbitrary script execution in ISE by user: '{Context.User?.Name}'");
 
             scriptSession.SetExecutedScript(ScriptItem);
-            var parameters = new object[]
-            {
-                scriptSession,
-                scriptToExecute
-            };
 
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, scriptToExecute, autoDispose);
 

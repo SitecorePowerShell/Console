@@ -1,12 +1,10 @@
 using System;
 using System.Web;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Managers;
-using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 using Sitecore.Pipelines.Upload;
 using Sitecore.Shell.Web.UI;

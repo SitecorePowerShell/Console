@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Sitecore;
 using Sitecore.Diagnostics;
 using Sitecore.Security.Accounts;
-using Sitecore.StringExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Security
 {

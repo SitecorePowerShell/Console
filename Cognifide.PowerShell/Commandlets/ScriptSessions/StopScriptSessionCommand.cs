@@ -1,5 +1,4 @@
-﻿using System;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Host;
 

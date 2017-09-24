@@ -1,5 +1,4 @@
 ﻿using System;
-using Cognifide.PowerShell.Commandlets.Interactive;
 using Sitecore.Shell.Framework.Commands;
 
 namespace Cognifide.PowerShell.Client.Commands

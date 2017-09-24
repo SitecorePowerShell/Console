@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Configuration;

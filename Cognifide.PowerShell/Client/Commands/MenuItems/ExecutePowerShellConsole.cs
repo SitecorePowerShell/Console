@@ -3,7 +3,6 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Security.Accounts;
-using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 

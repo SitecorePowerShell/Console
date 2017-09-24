@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Cognifide.PowerShell.Commandlets;
-using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;

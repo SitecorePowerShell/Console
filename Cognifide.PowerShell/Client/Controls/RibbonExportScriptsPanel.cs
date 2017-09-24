@@ -20,7 +20,6 @@ namespace Cognifide.PowerShell.Client.Controls
     {
         public override void Render(HtmlTextWriter output, Ribbon ribbon, Item button, CommandContext context)
         {
-            var typeName = context.Parameters["type"];
             var viewName = context.Parameters["viewName"];
             var ruleContext = new RuleContext
             {

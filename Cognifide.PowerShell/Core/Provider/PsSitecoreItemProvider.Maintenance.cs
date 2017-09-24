@@ -2,11 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Provider
 {
@@ -20,7 +17,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 providerInfo.Description = "Sitecore Content Provider";
                 this.providerInfo = providerInfo;
-                PowerShellLog.Info($"Executing {GetType().Name}.Start(providerInfo='{providerInfo?.Name ?? "null"}')");
+                PowerShellLog.Info($"Executing {GetType().Name}.Start(providerInfo='{providerInfo.Name ?? "null"}')");
                 return providerInfo;
             }
             catch (Exception ex)

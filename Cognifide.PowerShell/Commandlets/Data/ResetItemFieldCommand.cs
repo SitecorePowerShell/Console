@@ -5,7 +5,6 @@ using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Data.Templates;
 using Cognifide.PowerShell.Core.Utility;
 
 namespace Cognifide.PowerShell.Commandlets.Data

@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Install;
 using Sitecore.Install.Files;
 using Sitecore.Install.Framework;

@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.Web.UI;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
-using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
@@ -17,7 +16,6 @@ using Sitecore.Shell.Applications.ContentEditor.Galleries;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;
 using Sitecore.Text;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.WebControls.Ribbons;
 
 namespace Cognifide.PowerShell.Client.Controls

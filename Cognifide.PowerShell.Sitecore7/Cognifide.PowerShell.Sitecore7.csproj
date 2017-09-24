@@ -39,34 +39,37 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Analytics">
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.Analytics.dll</HintPath>
+    <Reference Include="Sitecore.Analytics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Analytics.NoReferences.7.2.160123\lib\NET45\Sitecore.Analytics.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Client">
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.Client.dll</HintPath>
+    <Reference Include="Sitecore.Client, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Client.NoReferences.7.2.160123\lib\NET45\Sitecore.Client.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.ContentSearch.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.NoReferences.7.2.160123\lib\NET45\Sitecore.ContentSearch.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.ContentSearch.Linq">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.ContentSearch.Linq.dll</HintPath>
+    <Reference Include="Sitecore.ContentSearch.Linq, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.ContentSearch.Linq.NoReferences.7.2.160123\lib\NET45\Sitecore.ContentSearch.Linq.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Kernel">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.Kernel.dll</HintPath>
+    <Reference Include="Sitecore.Kernel, Version=7.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Kernel.NoReferences.7.2.160123\lib\NET45\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Logging">
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.Logging.dll</HintPath>
+    <Reference Include="Sitecore.Logging, Version=1.2.0.30715, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Logging.NoReferences.7.2.160123\lib\NET45\Sitecore.Logging.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.NVelocity">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.NVelocity.dll</HintPath>
+    <Reference Include="Sitecore.NVelocity, Version=0.4.2.8580, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.NVelocity.NoReferences.7.2.160123\lib\NET45\Sitecore.NVelocity.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Sitecore.Update">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(Sitecore7LibsPath)\Sitecore.Update.dll</HintPath>
+    <Reference Include="Sitecore.Update, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Update.NoReferences.7.2.160123\lib\NET45\Sitecore.Update.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -128,7 +131,6 @@
     <Content Include="sitecore modules\PowerShell\Styles\VariablePrompt.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -137,13 +139,16 @@
   </Target>
   -->
   <ItemGroup>
-    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*" >
+    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*">
       <Visible>false</Visible>
     </AssemblyFiles>
-    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*" >
+    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*">
       <Visible>false</Visible>
     </SitecoreModuleFiles>
-  </ItemGroup>  
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <PropertyGroup>
     <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
   </PropertyGroup>

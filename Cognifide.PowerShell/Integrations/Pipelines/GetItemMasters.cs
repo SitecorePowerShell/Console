@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Cognifide.PowerShell.Client.Commands.MenuItems;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
@@ -13,7 +10,6 @@ using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetMasters;
-using Sitecore.Web.UI.HtmlControls;
 
 namespace Cognifide.PowerShell.Integrations.Pipelines
 {

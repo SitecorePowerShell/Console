@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
-using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -31,7 +28,6 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
                 // a bit of a hacky way to determine the caller so we can have page context
                 var parameters = new UrlString("?" + Context.Items["SC_FORM"]);
                 var itemId = ID.Parse(parameters.Parameters["itemid"], args.Item.ID);
-                var x = parameters.Parameters["xxx"];
                 var language = string.IsNullOrWhiteSpace(parameters.Parameters["language"])
                     ? args.Item.Language
                     : LanguageManager.GetLanguage(parameters.Parameters["language"]);

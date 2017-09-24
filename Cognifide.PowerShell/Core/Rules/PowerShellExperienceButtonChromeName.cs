@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Cognifide.PowerShell.Core.Host;
 using Sitecore.Diagnostics;
 using Sitecore.Rules;
 using Sitecore.Rules.Conditions;

@@ -4,7 +4,6 @@ using System.Web;
 using System.Xml;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Security.AccessControl;
@@ -130,7 +129,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
             }
         }
 
-        private static System.String GetAuthorizationCacheKey(System.String serviceName, System.String userName)
+        private static String GetAuthorizationCacheKey(String serviceName, String userName)
         {
             return userName + "@" + serviceName;
         }

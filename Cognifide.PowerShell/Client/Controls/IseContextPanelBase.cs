@@ -2,15 +2,12 @@
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web.UI;
-using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
-using Sitecore.Globalization;
 using Sitecore.Shell.Applications.ContentEditor.Galleries;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Shell.Web.UI.WebControls;

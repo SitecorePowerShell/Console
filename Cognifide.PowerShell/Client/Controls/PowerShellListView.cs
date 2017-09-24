@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Sitecore;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data.Items;
 using Sitecore.StringExtensions;
 using Sitecore.Web.UI.HtmlControls;

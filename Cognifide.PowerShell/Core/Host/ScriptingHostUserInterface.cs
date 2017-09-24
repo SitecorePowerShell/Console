@@ -9,7 +9,6 @@ using System.Management.Automation.Host;
 using System.Security;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Configuration;
@@ -279,7 +278,7 @@ namespace Cognifide.PowerShell.Core.Host
         public Collection<int> PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices)
         {
             Collection<int> results = new Collection<int>();
-            var choice = -1;
+            int choice;
             do
             {
                 choice = PromptForChoice(caption, message, choices, defaultChoices.FirstOrDefault());

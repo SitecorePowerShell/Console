@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Microsoft.PowerShell.Commands;
-using Sitecore.Diagnostics;
 
 namespace Cognifide.PowerShell.Core.Utility
 {

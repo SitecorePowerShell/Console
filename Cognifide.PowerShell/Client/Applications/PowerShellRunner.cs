@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
@@ -273,7 +272,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 jobName = $"SPE - \"{scriptItem?.Name}\"";
                 scriptSession.SetExecutedScript(scriptItem);
             }
-            if (scriptSession?.JobOptions != null)
+            if (scriptSession.JobOptions != null)
             {
                 jobName = scriptSession.JobOptions?.JobName;
             }

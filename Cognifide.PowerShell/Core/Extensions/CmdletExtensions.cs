@@ -3,15 +3,10 @@ using System.Data;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Commandlets.Security;
-using Cognifide.PowerShell.Core.VersionDecoupling;
-using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.Exceptions;
 using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
-using Sitecore.Security.Domains;
-using Sitecore.SecurityModel;
-using Sitecore.Shell.Applications.Security.RoleManager;
 
 namespace Cognifide.PowerShell.Core.Extensions
 {

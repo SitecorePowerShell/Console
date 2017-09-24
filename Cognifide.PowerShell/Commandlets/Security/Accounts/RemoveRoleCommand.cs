@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Extensions;
@@ -39,7 +38,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             if (!role.IsEveryone)
             {
                 var usersInRoles = Roles.GetUsersInRole(name);
-                if (usersInRoles != null && usersInRoles.Any())
+                if (usersInRoles.Any())
                 {
                     Roles.RemoveUsersFromRole(usersInRoles, name);
                 }

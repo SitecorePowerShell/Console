@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.UI;
-using System.Web.UI.WebControls.Adapters;
 using Cognifide.PowerShell.Commandlets.Interactive;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;

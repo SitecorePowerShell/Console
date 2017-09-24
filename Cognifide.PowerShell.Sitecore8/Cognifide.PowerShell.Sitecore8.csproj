@@ -40,13 +40,16 @@
       <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.PowerShell.Commands.Utility\1.0.0.0__31bf3856ad364e35\Microsoft.PowerShell.Commands.Utility.dll</HintPath>
     </Reference>
     <Reference Include="Sitecore.Client, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Client.NoReferences.8.2.161221\lib\NET452\Sitecore.Client.dll</HintPath>
+      <HintPath>..\packages\Sitecore.Client.NoReferences.8.2.170728\lib\NET452\Sitecore.Client.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.ExperienceEditor, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.ExperienceEditor.NoReferences.8.2.161221\lib\NET452\Sitecore.ExperienceEditor.dll</HintPath>
+      <HintPath>..\packages\Sitecore.ExperienceEditor.NoReferences.8.2.170728\lib\NET452\Sitecore.ExperienceEditor.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Sitecore.Kernel, Version=10.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.161221\lib\NET452\Sitecore.Kernel.dll</HintPath>
+      <HintPath>..\packages\Sitecore.Kernel.NoReferences.8.2.170728\lib\NET452\Sitecore.Kernel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -118,13 +121,13 @@
   </Target>
   -->
   <ItemGroup>
-    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*" >
+    <AssemblyFiles Include="$(TargetDir)Cognifide.PowerShell*.*">
       <Visible>false</Visible>
     </AssemblyFiles>
-    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*" >
+    <SitecoreModuleFiles Include="$(ProjectDir)sitecore modules\**\*.*">
       <Visible>false</Visible>
     </SitecoreModuleFiles>
-  </ItemGroup>  
+  </ItemGroup>
   <PropertyGroup>
     <ScriptLocation Condition=" '$(ScriptLocation)'=='' ">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\Post_Build.ps1'))</ScriptLocation>
   </PropertyGroup>
@@ -133,5 +136,4 @@
     <Copy SourceFiles="@(SitecoreModuleFiles)" DestinationFolder="$(ProjectDeployPath)\sitecore modules\%(RecursiveDir)" ContinueOnError="true" />
     <Exec Command="PowerShell -NonInteractive -ExecutionPolicy Unrestricted -File &quot;$(ScriptLocation)&quot; -ProjectFilter &quot;$(MSBuildProjectName)&quot;" />
   </Target>
-
 </Project>

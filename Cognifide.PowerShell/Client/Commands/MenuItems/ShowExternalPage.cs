@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Web;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
-using Sitecore.Configuration;
-using Sitecore.Data;
-using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 using Sitecore.Web.UI.Sheer;

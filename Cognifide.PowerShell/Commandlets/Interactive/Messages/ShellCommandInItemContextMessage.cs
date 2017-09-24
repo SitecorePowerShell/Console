@@ -1,9 +1,7 @@
 ﻿using System;
-using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Web.UI.Sheer;
 

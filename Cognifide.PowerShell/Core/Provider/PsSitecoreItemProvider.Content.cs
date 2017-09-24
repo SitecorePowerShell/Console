@@ -20,11 +20,6 @@ namespace Cognifide.PowerShell.Core.Provider
             }
             FileSystemCmdletProviderEncoding encoding;
             TryGetDynamicParam(EncodingParam, out encoding);
-            string delimiter;
-            if (!TryGetDynamicParam(DelimiterParam, out delimiter))
-            {
-                delimiter = "\n";
-            }
             return new ItemContentReader(this, item, encoding, IsDynamicParamSet(RawParam));
         }
 
@@ -73,7 +68,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
             if (language.Length != 1)
             {
-                var exception = new IOException($"Cannot Write content to more than 1 language at a time.");
+                var exception = new IOException("Cannot Write content to more than 1 language at a time.");
                 WriteError(new ErrorRecord(exception, ErrorIds.InvalidOperation.ToString(), ErrorCategory.InvalidArgument,
                     path));
             }
