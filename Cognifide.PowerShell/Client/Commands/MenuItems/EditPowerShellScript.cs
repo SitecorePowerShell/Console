@@ -2,7 +2,6 @@
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Configuration;
 using Sitecore.Data;
-using Sitecore.Shell.Framework;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.Text;
 

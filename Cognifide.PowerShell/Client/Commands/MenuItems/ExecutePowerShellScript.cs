@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Sitecore;
-using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Shell.Framework.Commands;
 using Sitecore.StringExtensions;

@@ -3,7 +3,6 @@ using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Links;
 

@@ -6,7 +6,6 @@ using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Text;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.Utility;
 using Microsoft.PowerShell.Commands;
 using Sitecore.Configuration;

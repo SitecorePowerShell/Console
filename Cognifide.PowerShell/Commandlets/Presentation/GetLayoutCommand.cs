@@ -2,7 +2,6 @@
 using System.Data;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
-using Sitecore;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Layouts;

@@ -1,11 +1,9 @@
 ﻿using System;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
 using Sitecore;
 using Sitecore.Collections;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Managers;
 using Sitecore.Diagnostics;
 using Sitecore.Globalization;

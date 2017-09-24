@@ -8,7 +8,6 @@ using System.Web.Caching;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings;
-using Sitecore.ContentSearch.Linq;
 
 namespace Cognifide.PowerShell.Core.Host
 {

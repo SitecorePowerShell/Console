@@ -66,7 +66,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
-                if (ShouldProcess(role.Name, string.Format("Serializing role")))
+                if (ShouldProcess(role.Name, "Serializing role"))
                 {
                     var logMessage = string.Format("Serializing role '{0}'", role.Name);
                     WriteVerbose(logMessage);

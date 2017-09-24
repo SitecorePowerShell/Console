@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Web;
 using System.Web.Caching;
-using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;
 

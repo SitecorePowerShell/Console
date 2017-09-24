@@ -213,7 +213,7 @@ namespace Cognifide.PowerShell.Core.Debugging
 
         private static string InsertDimensionSize(string value, int dimensionSize)
         {
-            string result = value;
+            string result;
 
             int indexLastRBracket = value.LastIndexOf("]");
             if (indexLastRBracket > 0)

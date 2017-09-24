@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Management.Automation;
 using System.Web.Security;
 using Cognifide.PowerShell.Core.Validation;

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Utility;
-using Sitecore.CodeDom.Scripts;
 using Sitecore.Diagnostics;
 using Sitecore.Rules;
 using Sitecore.Rules.Conditions;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Management.Automation;
-using System.Web;
 using Cognifide.PowerShell.Core.Host;
 using Sitecore;
 using Sitecore.Text;

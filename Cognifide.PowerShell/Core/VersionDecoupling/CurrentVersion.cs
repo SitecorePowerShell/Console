@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Web;
 using Cognifide.PowerShell.Commandlets;
-using Sitecore.Configuration;
 
 namespace Cognifide.PowerShell.Core.VersionDecoupling
 {

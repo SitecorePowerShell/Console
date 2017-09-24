@@ -8,7 +8,6 @@ using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Shell.Applications.ContentEditor.Gutters;
 
 namespace Cognifide.PowerShell.Integrations.Gutters

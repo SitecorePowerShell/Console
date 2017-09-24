@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
-using Sitecore.Jobs.AsyncUI;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {

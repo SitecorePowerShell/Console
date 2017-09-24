@@ -1,9 +1,7 @@
-using System;
 using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
-using Sitecore;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data

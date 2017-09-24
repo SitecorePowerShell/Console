@@ -1,6 +1,5 @@
 ﻿using Sitecore.Globalization;
 using Sitecore.Shell.Applications.ContentEditor;
-using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Client.Controls

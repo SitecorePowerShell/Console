@@ -73,7 +73,7 @@ namespace Cognifide.PowerShell.VersionSpecific.Client.Applications
         {
             var path = args.Parameters[PathParameter];
             var currentItem = Database.GetItem(ItemUri.Parse(args.Parameters[UriParameter]));
-            currentItem = string.IsNullOrEmpty(path) ? currentItem : global::Sitecore.Client.ContentDatabase.GetItem(path);
+            currentItem = string.IsNullOrEmpty(path) ? currentItem : Sitecore.Client.ContentDatabase.GetItem(path);
             Assert.IsNotNull(currentItem, CurrentItemIsNull);
             CurrentItem = currentItem;
             IncludeStandardFields = args.Parameters[IncludeStandardFieldsParameter] == "1";

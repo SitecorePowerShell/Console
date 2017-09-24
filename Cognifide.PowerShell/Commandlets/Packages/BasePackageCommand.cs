@@ -5,7 +5,6 @@ using Sitecore;
 using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Data.Engines;
-using Sitecore.Data.Proxies;
 using Sitecore.Exceptions;
 using Sitecore.Globalization;
 using Sitecore.Install.Serialization;

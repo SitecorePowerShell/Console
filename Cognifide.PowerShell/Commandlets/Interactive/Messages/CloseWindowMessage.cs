@@ -2,7 +2,6 @@
 using Cognifide.PowerShell.Client.Applications;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Shell.Framework;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 {

@@ -5,8 +5,6 @@ using System.Web;
 using System.Xml;
 using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.Security.Accounts;
-using Sitecore.Visual;
 using Cognifide.PowerShell.Core.Extensions;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
@@ -35,7 +33,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
         
         static WebServiceSettings()
         {
-            var servicesNodes = Factory.GetConfigNode($"powershell/services").ChildNodes;
+            var servicesNodes = Factory.GetConfigNode("powershell/services").ChildNodes;
             foreach (XmlElement xmlDefinition in servicesNodes)
             {
                 if (services.ContainsKey(xmlDefinition.Name))

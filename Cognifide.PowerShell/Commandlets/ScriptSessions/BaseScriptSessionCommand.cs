@@ -3,7 +3,6 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive;
 using Cognifide.PowerShell.Core.Host;
-using Sitecore.ContentSearch.Utilities;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {

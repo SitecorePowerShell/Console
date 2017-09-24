@@ -6,20 +6,14 @@ using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
 using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
-using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Jobs;
-using Sitecore.Text;
-using Sitecore.Web.UI.Sheer;
-using JobManager = Sitecore.Jobs.JobManager;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {

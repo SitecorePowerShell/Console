@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Management.Automation;
 using System.Web;
 using Sitecore.Data;
 using Sitecore.Jobs.AsyncUI;
-using Sitecore.Pipelines.SaveLayout;
-using Sitecore.Shell.Framework;
 using Sitecore.Text;
-using Sitecore.Web;
 using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive.Messages

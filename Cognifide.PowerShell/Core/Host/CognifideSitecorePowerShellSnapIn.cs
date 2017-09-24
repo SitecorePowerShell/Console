@@ -10,11 +10,8 @@ using System.Reflection;
 using System.Xml;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Provider;
-using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch.Utilities;
-using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 using Pipeline = Sitecore.Pipelines.Pipeline;
 

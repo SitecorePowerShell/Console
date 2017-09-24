@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -25,9 +24,7 @@ using Sitecore.Globalization;
 using Sitecore.StringExtensions;
 using Version = Sitecore.Data.Version;
 using System.Threading.Tasks;
-using Sitecore.Collections;
 using Sitecore.Data.Fields;
-using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Core.Provider
 {

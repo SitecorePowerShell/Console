@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.VersionDecoupling;
@@ -7,7 +6,6 @@ using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Maintenance;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data.Items;
-using static Cognifide.PowerShell.Core.Extensions.CmdletExtensions;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {

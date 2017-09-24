@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
-using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 
 namespace Cognifide.PowerShell.Core.Provider

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Data;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;

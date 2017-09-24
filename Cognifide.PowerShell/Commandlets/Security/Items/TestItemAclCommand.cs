@@ -1,7 +1,6 @@
 ﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Security.AccessControl;
 using AuthorizationManager = Sitecore.Security.AccessControl.AuthorizationManager;

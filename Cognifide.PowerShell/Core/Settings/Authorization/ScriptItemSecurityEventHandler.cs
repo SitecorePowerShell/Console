@@ -2,8 +2,6 @@
 using System.Web;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.VersionDecoupling;
-using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Events;
@@ -11,8 +9,6 @@ using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
 using Sitecore.Events;
 using Sitecore.SecurityModel;
-using Sitecore.Text;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Settings.Authorization
 {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Web;
-using Cognifide.PowerShell.Core.Diagnostics;
-using Cognifide.PowerShell.Core.Extensions;
-using Cognifide.PowerShell.Core.Host;
-using Cognifide.PowerShell.Core.Modules;
+﻿using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetContentEditorWarnings;
 

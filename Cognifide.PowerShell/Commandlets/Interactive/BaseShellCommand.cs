@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Settings.Authorization;
 using Sitecore;

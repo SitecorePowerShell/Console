@@ -10,7 +10,6 @@ using Sitecore.Configuration;
 using Sitecore.Data;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
-using Sitecore.Jobs.AsyncUI;
 using Sitecore.Resources.Media;
 using Sitecore.Shell.Framework;
 using Sitecore.Web;

@@ -78,7 +78,7 @@ namespace Cognifide.PowerShell.Commandlets.Serialization
         {
             if (string.IsNullOrEmpty(Root) && string.IsNullOrEmpty(Path))
             {
-                if (ShouldProcess(user.Name, string.Format("Serializing user")))
+                if (ShouldProcess(user.Name, "Serializing user"))
                 {
                     var logMessage = string.Format("Serializing user '{0}'", user.Name);
                     WriteVerbose(logMessage);

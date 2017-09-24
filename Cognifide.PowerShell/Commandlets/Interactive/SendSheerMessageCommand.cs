@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Web.UI.Sheer;

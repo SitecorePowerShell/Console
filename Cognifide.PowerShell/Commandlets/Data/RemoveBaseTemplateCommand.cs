@@ -1,13 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
-using System.Web;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
-using Sitecore.Exceptions;
-using Sitecore.Pipelines.Save;
 
 namespace Cognifide.PowerShell.Commandlets.Data
 {

@@ -1,11 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Management.Automation;
 using Sitecore.Install;
 using Sitecore.Install.Serialization;
 using Sitecore.Install.Zip;
 using Sitecore.IO;
-using Sitecore.Shell.Applications.ContentEditor;
 
 namespace Cognifide.PowerShell.Commandlets.Packages
 {
@@ -52,7 +50,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                         fileName = fileName + Constants.SolutionExtension;
                     }
 
-                    if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
+                    if (NoClobber.IsPresent && File.Exists(fileName))
                     {
                         WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
                             ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);
@@ -90,7 +88,7 @@ namespace Cognifide.PowerShell.Commandlets.Packages
                             fileName = fileName + Constants.PackageExtension;
                         }
 
-                        if (NoClobber.IsPresent && System.IO.File.Exists(fileName))
+                        if (NoClobber.IsPresent && File.Exists(fileName))
                         {
                             WriteError(typeof(IOException), $"The file '{fileName}' already exists.", 
                                 ErrorIds.FileAlreadyExists, ErrorCategory.ResourceExists, fileName);

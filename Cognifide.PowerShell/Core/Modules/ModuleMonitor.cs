@@ -1,6 +1,5 @@
 ﻿using System;
 using Cognifide.PowerShell.Core.Settings;
-using Sitecore;
 using Sitecore.Data;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;

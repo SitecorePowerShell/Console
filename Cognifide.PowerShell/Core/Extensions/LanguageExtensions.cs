@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Cognifide.PowerShell.Core.Settings;
+﻿using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.Configuration;
 using Sitecore.Globalization;

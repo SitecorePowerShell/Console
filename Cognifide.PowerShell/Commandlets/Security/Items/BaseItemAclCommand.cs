@@ -3,7 +3,6 @@ using System.Management.Automation;
 using System.Xml;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Configuration;
-using Sitecore.Data;
 using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Items

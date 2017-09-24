@@ -10,11 +10,9 @@ using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Settings;
 using Cognifide.PowerShell.Core.VersionDecoupling;
-using Microsoft.PowerShell.Commands;
 using Sitecore;
 using Sitecore.Jobs.AsyncUI;
 using Sitecore.Text;
-using Sitecore.Web.UI.Sheer;
 
 namespace Cognifide.PowerShell.Core.Host
 {

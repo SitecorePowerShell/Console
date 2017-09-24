@@ -1,12 +1,8 @@
-﻿using System;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
-using Sitecore.Layouts;
-using Cognifide.PowerShell.Commandlets.Security.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
