@@ -179,6 +179,7 @@
     <Compile Include="Commandlets\Interactive\InvokeJavaScriptCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowSuspendDialogMessage.cs" />
     <Compile Include="Commandlets\Packages\GetPackageItemCommand.cs" />
+    <Compile Include="Commandlets\Presentation\AddPlaceholderSettingCommand.cs" />
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
