@@ -23,11 +23,11 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         public string MetaDataItemId { get; set; }
 
         [Parameter]
-        public int Index
-        {
-            get { return index; }
-            set { index = value; }
-        }
+        public string UniqueId { get; set; }
+
+        [Parameter]
+        public string Key { get; set; }
+
 
         protected override void ProcessLayout(Item item, LayoutDefinition layout, DeviceDefinition device)
         {
@@ -36,30 +36,36 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 return;
             }
             var placeholder = new PlaceholderDefinition
-            {
-                DynamicProperties = Instance.DynamicProperties,
-                Key = Instance.Key,
+            {                
+                Key = Key ?? Instance.Key,
                 MetaDataItemId= MetaDataItemId ??Instance.MetaDataItemId,
-                UniqueId = Instance.UniqueId
+                UniqueId = UniqueId?? Instance.UniqueId
             };
-
-            
-
-            //todo: add support for conditions
-            //renderingDefinition.Conditions
-            //todo: add support for multivariate tests
-            //rendering.MultiVariateTest
-
-            if (Index == -1)
-            {
+            if(!DoesPlaceHolderSettingAlreadyExists(device,placeholder))
                 device.AddPlaceholder(placeholder);
-            }            
+            
+                        
 
             item.Edit(p =>
             {
                 var outputXml = layout.ToXml();
                 LayoutField.SetFieldValue(item.Fields[LayoutFieldId], outputXml);
             });
+        }
+
+        private bool DoesPlaceHolderSettingAlreadyExists(DeviceDefinition device, PlaceholderDefinition ph)
+        {
+            bool result = false;
+            for (int i = 0; i < device.Placeholders.Count; i++)
+            {
+                PlaceholderDefinition p = (PlaceholderDefinition)device.Placeholders[i];
+                if(p.Key.Equals(ph.Key) && p.MetaDataItemId.Equals(ph.MetaDataItemId))
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }
