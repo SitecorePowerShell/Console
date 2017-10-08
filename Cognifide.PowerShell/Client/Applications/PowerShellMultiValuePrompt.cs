@@ -17,6 +17,7 @@ using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Cognifide.PowerShell.Core.VersionDecoupling.Interfaces;
 using Sitecore;
+using Sitecore.Buckets.FieldTypes;
 using Sitecore.Controls;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -398,6 +399,21 @@ namespace Cognifide.PowerShell.Client.Applications
             var dbName = item == null ? Sitecore.Context.ContentDatabase.Name : item.Database.Name;
             if (editor.HasWord("multilist"))
             {
+                if (editor.HasWord("search"))
+                {
+                    var bucketlist = new BucketListExtended
+                    {
+                        ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
+                        Value = strValue,
+                        Database = dbName,
+                        ItemID = ItemIDs.RootID.ToString(),
+                        Source = variable["Source"] as string ?? "/sitecore",
+                    };
+
+                    bucketlist.Class += "  treePicker";
+                    return bucketlist;
+                }
+
                 var multiList = new MultilistExtended
                 {
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -455,6 +471,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 tree.Class += " textEdit";
                 return tree;
             }
+
             var treeList = new TreeList
             {
                 ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_"),
@@ -632,16 +649,16 @@ namespace Cognifide.PowerShell.Client.Applications
                 values = new[] { value.ToString() };
             }
             foreach (var item in from object option in options.Keys
-                select option.ToString()
+                                 select option.ToString()
                 into optionName
-                let optionValue = options[optionName].ToString()
-                select new ChecklistItem
-                {
-                    ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(checkList.ID),
-                    Header = optionName,
-                    Value = optionValue,
-                    Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
-                })
+                                 let optionValue = options[optionName].ToString()
+                                 select new ChecklistItem
+                                 {
+                                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(checkList.ID),
+                                     Header = optionName,
+                                     Value = optionValue,
+                                     Checked = values.Contains(optionValue, StringComparer.OrdinalIgnoreCase)
+                                 })
             {
                 var optionValue = item.Value;
                 if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
@@ -782,7 +799,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 if (variable["OptionTooltips"] != null)
                 {
                     var psOptionTooltips = variable["OptionTooltips"].BaseObject();
-                    
+
                     if (psOptionTooltips is OrderedDictionary)
                     {
                         optionTooltips = psOptionTooltips as OrderedDictionary;
@@ -956,7 +973,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         if ((value as string[]).Length > 0) continue;
                         break;
                     case "DateTime":
-                        if ((DateTime) value != DateTime.MinValue && (DateTime) value != DateTime.MaxValue) continue;
+                        if ((DateTime)value != DateTime.MinValue && (DateTime)value != DateTime.MaxValue) continue;
                         break;
                     case "null":
                         break;
@@ -987,7 +1004,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 return;
             }
 
-            if (ScriptSessionManager.GetSessionIfExists(sid) is ScriptSession scriptSession  &&
+            if (ScriptSessionManager.GetSessionIfExists(sid) is ScriptSession scriptSession &&
                 scriptSession.DialogStack.Any() &&
                 scriptSession.DialogStack.Peek() is ShowMultiValuePromptMessage)
             {

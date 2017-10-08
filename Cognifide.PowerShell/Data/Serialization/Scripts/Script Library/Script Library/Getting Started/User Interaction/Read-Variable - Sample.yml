@@ -40,7 +40,10 @@ SharedFields:
             editor="treelist"; Tab="Items"}, 
         @{ Name = "items2"; Title="Bunch of Templates"; 
             Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="multilist"; Tab="More Items"; Height="300px"}, 
+            editor="multilist"; Tab="More Items"; Height="300px"},
+        @{ Name = "items4"; Title="Bunch of Templates with Search"; 
+            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+            editor="multilist search"; Tab="More Items"; Height="300px"},
         @{ Name = "items3"; Title="Pick One Template"; 
             Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
             editor="droplist"; Tab="More Items"}, 
@@ -92,6 +95,8 @@ SharedFields:
     $items2
     '$items3: '
     $items3
+    '$items4: '
+    $items4
     '$checklistItems:'
     $checklistItems
     
