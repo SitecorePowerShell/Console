@@ -186,6 +186,7 @@
     <Compile Include="Commandlets\Interactive\Messages\InvokeJavaScriptMessage.cs" />
     <Compile Include="Commandlets\Interactive\InvokeJavaScriptCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\ShowSuspendDialogMessage.cs" />
+    <Compile Include="Commandlets\Jobs\GetJobsCommand.cs" />
     <Compile Include="Commandlets\Packages\GetPackageItemCommand.cs" />
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
