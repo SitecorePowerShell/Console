@@ -14,6 +14,8 @@ SharedFields:
     foreach($session in $selectedData){
         [Sitecore.Web.Authentication.DomainAccessGuard]::Kick($session.SessionID);
     }
+    
+    Get-Session | Update-ListView
 Languages:
 - Language: en
   Versions:
