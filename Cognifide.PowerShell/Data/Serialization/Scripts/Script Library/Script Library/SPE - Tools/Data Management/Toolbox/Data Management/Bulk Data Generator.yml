@@ -108,7 +108,7 @@ SharedFields:
     }
     
     if($dataTypeName -eq "Item") {
-        $rootItemPath = $selectedrootItem.FullPath
+        $rootItemPath = $selectedrootItem.ProviderPath
         $childCount = $selectedrootItem.Children.Count + 1
         for($index = $childCount; $index -lt $childCount + $inputCount; $index++) {
             New-Item -Path $rootItemPath -Name "$($itemNamePrefix)$($index)" -Type $selectedItemTemplate.Paths.Path
@@ -137,6 +137,7 @@ SharedFields:
         }    
     }
     
+    Show-Result -Text
     Close-Window
 Languages:
 - Language: en
