@@ -17,13 +17,15 @@ SharedFields:
          
         .NOTES
             Mike Reynolds
+            Michael West
     #>
      
     function Get-ImageItemNoAltText {    
-        $items = Get-ChildItem -Path "master:\sitecore\media library\images" -Recurse | Where-Object { $_.Fields["Alt"] -ne $null }
+        $mediaItemContainer = Get-Item "master:/media library"
+        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder -and $_.Fields["Alt"] -ne $null } | Initialize-Item
          
         foreach($item in $items) {
-            if($item."Alt" -eq '') {
+            if(-not($item."Alt")) {
                 $item
             }
         }

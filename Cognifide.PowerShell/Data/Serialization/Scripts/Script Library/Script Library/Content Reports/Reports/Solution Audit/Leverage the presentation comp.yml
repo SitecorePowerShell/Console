@@ -32,7 +32,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Layouts branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/layout"} `
         -Description "The report will show you the numer of all sublayouts and list all sublayouts that do not define rendering parameters." `
-        -Title "Leverage the Presentation component parameters" -Icon "Software/32x32/layout_horizontal.png" -Width 600 -Height 280 `
+        -Title "Leverage the Presentation component parameters" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
@@ -47,7 +47,7 @@ SharedFields:
     $no_rp_sublayouts = $sublayouts | Where-Object { $_."Has Rendering Parameters" -eq $False };
     
     Write-Host -ForegroundColor Yellow "Your solution has $($sublayouts.Count) sublayouts. $($no_rp_sublayouts.Count) of those do not use rendering parameters."
-    Get-ChildItem -Path $item.ProviderPath -Recurse |
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
         Where-Object { $_.TemplateName -eq "Sublayout" -and $_."Parameters Template" -eq "" } |
         Show-ListView -Property Name, `
             @{Name="Path"; Expression={$_.ItemPath}} `

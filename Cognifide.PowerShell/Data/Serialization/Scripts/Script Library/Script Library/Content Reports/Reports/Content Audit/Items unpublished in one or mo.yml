@@ -99,7 +99,7 @@ SharedFields:
     }
     
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
-    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | 
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | 
         Filter-UnpublishedItem -TargetDatabase $targets |
         Sort-Object -Property Name
     $watch.Stop()

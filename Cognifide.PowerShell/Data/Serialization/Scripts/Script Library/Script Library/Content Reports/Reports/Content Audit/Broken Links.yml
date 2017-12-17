@@ -109,7 +109,7 @@ SharedFields:
         }
     }
     
-    $items = Get-ChildItem -Path $root.ProviderPath -Recurse | HasBrokenLink -IncludeAllVersions (!$searchVersion)
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | HasBrokenLink -IncludeAllVersions (!$searchVersion)
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which have broken links in the current language."

@@ -31,7 +31,6 @@ SharedFields:
         @{ Name="item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"}, `
         @{ Name="showAll"; Value=$false; Title="Include items even if they define their source"; Tooltip="Include items with Source defined.";} `
         -Title "Sitecore recommendation:" `
-        -Icon "Business/32x32/funnel.png" `
         -Description "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx 
                 to make sure users can only select the appropriate items, or Sitecore query in the other selection fields." -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
@@ -41,7 +40,7 @@ SharedFields:
         Exit
     }
     
-    Get-ChildItem -Path $item.ProviderPath -Recurse |
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
       Where-Object { $_.TemplateName -eq "Template Field" } |
       Where-Object { $_.Type -match "Drop" -or $_.Type -match "Tree" -or $_.Type -match "list"  } |
       Where-Object { $_._Source -eq "" -or $showAll } |

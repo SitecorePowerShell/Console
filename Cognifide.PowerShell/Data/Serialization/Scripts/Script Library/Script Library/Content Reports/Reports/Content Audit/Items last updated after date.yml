@@ -61,7 +61,7 @@ SharedFields:
         }
     }
     
-    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | Where-LastUpdated -After $after
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-LastUpdated -After $after
     
     if($items.Count -eq 0) {
         Show-Alert "There are no items updated on or after the specified date"

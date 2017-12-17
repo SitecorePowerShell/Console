@@ -18,7 +18,7 @@ SharedFields:
         .NOTES
             Michael West
     #>
-    function HasError {
+    function Get-ValidationWarning {
         param(
             $Item
         )
@@ -26,14 +26,17 @@ SharedFields:
         $mediaItem = New-Object Sitecore.Data.Items.MediaItem $Item
         $res = $mediaItem.ValidateMedia()
              
-        $res.Warnings.Count -gt 0
+        $res.Warnings
     }
     
     function Get-MediaItemWithError {
-        $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
+        $mediaItemContainer = Get-Item "master:/media library"
+        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
         
         foreach($item in $items) {
-            if(HasError($item)) {
+            $warnings = Get-ValidationWarning -Item $item
+            if($warnings) {
+                $item | Add-Member -MemberType NoteProperty -Name "Warnings" -Value $warnings
                 $item
             }
         }
@@ -53,6 +56,7 @@ SharedFields:
         
         $items |
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Warnings"; Expression={$_.Warnings}},
                 @{Label="Updated"; Expression={$_.__Updated} },
                 @{Label="Updated by"; Expression={$_."__Updated by"} },
                 @{Label="Created"; Expression={$_.__Created} },

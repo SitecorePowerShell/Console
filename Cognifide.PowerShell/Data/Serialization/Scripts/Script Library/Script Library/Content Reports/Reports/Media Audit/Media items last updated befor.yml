@@ -21,7 +21,6 @@ SharedFields:
     
     $settings = @{
         Title = "Report Filter"
-        Icon = "Applications/32x32/history.png"
         Width = "350"
         Height = "250"
         OkButtonName = "Proceed"
@@ -46,7 +45,8 @@ SharedFields:
             [datetime]$Before=([datetime]::Today)
         )
         
-        $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder }
+        $mediaItemContainer = Get-Item "master:/media library"
+        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
         
         foreach($item in $items) {
             if($item."__Updated" -le $Before) {

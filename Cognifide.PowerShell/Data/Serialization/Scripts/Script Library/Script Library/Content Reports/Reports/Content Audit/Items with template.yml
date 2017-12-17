@@ -29,7 +29,6 @@ SharedFields:
             @{ Name = "baseTemplate"; Title="Start Item"; Tooltip="Select the item to use as a base template for the report"; Root="/sitecore/templates/"}
         )
         Title = "Items With Template Report"
-        Icon = "Applications/32x32/form_blue.png"
         Description = "Choose the criteria for the report."
         Width = 550
         Height = 300
@@ -57,7 +56,7 @@ SharedFields:
         }
     }
     
-    $items = Get-ChildItem -Path $root.ProviderPath -Recurse | Where-InheritsTemplate
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-InheritsTemplate
     
     if($items.Count -eq 0) {
         Show-Alert "There are no content items that inherit from this template"

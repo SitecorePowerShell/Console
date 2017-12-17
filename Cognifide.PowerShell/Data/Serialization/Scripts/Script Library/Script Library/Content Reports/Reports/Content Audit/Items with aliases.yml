@@ -57,7 +57,7 @@ SharedFields:
         }
     }
     
-    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | WithAliases
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | WithAliases
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which have aliases."

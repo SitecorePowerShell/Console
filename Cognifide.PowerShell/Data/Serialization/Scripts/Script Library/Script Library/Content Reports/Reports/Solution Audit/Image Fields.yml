@@ -30,7 +30,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates/"} `
         -Description "What Image fields do I have and in which template? Do they have Source defined? The report will show all fields of type 'Image' and a path to a template it's defined in." `
-        -Title "Report Filter" -Icon "Imaging/32x32/shapes.png" -Width 500 -Height 280 `
+        -Title "Report Filter" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
@@ -38,7 +38,7 @@ SharedFields:
         Exit
     }
     
-    Get-ChildItem -Path $item.ProviderPath -Recurse |
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
       Where-Object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Image" } |
       Show-ListView -Property `
         @{Name="Field Name"; Expression={$_.Name }}, `
@@ -46,7 +46,7 @@ SharedFields:
         @{Name="Source"; Expression={$_._Source }},
         @{Name="__Icon"; Expression={ if($_._Source -eq "") { "Imaging/32x32/shapes_d.png" } else { "Imaging/32x32/shapes.png" }  }} `
         -Title "Templates with Image fields" `
-        -InfoTitle "The report will show all fields of type Image and a path ot a template it's defined in." `
+        -InfoTitle "The report will show all fields of type Image and a path to a template it's defined in." `
         -InfoDescription "Just because field does not define Source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide." `
         -PageSize 100
     Close-Window

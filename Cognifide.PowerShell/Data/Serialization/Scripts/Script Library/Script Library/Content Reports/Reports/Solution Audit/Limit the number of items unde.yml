@@ -30,7 +30,7 @@ SharedFields:
         @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
         @{ Name = "maxCount"; Value=50; Title="Children number threshhold"; Tooltip="List items with more than this number of children.";} `
         -Description "Which of my items have most children? Are there too many? The report will show you all the nodes that have more than your selected number of direct descendants to allow you to address any potential issues arising. " `
-        -Title "Report Filter" -Icon "WordProcessing/32x32/sort_descending.png" -Width 500 -Height 280 `
+        -Title "Report Filter" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
@@ -38,7 +38,7 @@ SharedFields:
         Exit
     }
     
-    Get-ChildItem -Path $item.ProviderPath -Recurse | Where-Object { $_.Children.Count -gt $maxCount } | 
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.Children.Count -gt $maxCount } | 
         Sort-Object -Property @{Expression={$_.Children.Count}; Descending=$true} |
         Show-ListView -Property Name, `
             @{Name="Children"; Expression={$_.Children.Count}}, `

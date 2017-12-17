@@ -26,7 +26,7 @@ SharedFields:
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
         -Description "Sitecore recommendation: Use TreelistEx instead of Treelist when showing very big trees — like the Home node and its descendants" `
-        -Title "Which of my templates use TreeList fields?" -Icon "People/32x32/tree.png" -Width 500 -Height 280 `
+        -Title "Which of my templates use TreeList fields?" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
@@ -34,7 +34,7 @@ SharedFields:
         Exit
     }
     
-    Get-ChildItem -Path $item.ProviderPath -Recurse |
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
       Where-Object { $_.TemplateName -eq "Template Field" -and $_.Type -eq "Treelist" } |  `
         Show-ListView -Property Name, @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
             @{Name="Source"; Expression={$_._Source }} `

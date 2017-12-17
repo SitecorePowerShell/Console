@@ -26,8 +26,8 @@ SharedFields:
     $item = Get-Item -Path "master:\templates"
     $result = Read-Variable -Parameters `
         @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
-        -Description "Sitecore recommendeds making good use of template inheritance. This script analyses which of your templates inherit directly from <i>Standard Item</i> template." `
-        -Title "Template inheritance." -Icon "core2/32x32/flow_chart.png" -Width 500 -Height 280 `
+        -Description "This script analyses which of your templates inherit directly from <i>Standard Item</i> template?." `
+        -Title "Sitecore recommendation: Make good use of inheritance" -Width 500 -Height 280 `
         -OkButtonName "Proceed" -CancelButtonName "Abort" 
     
     if($result -ne "ok") {
@@ -36,7 +36,7 @@ SharedFields:
     }
     
     
-    Get-ChildItem -Path $item.ProviderPath -Recurse |
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
       Where-Object { $_.TemplateName -eq "Template" -and $_."__base template" -eq "{1930BBEB-7805-471A-A3BE-4858AC7CF696}" } | `
         Show-ListView -Property DisplayName, @{Name="Path"; Expression={$_.ItemPath}} `
             -Title "Templates inheriting directly from Standard Item template" `

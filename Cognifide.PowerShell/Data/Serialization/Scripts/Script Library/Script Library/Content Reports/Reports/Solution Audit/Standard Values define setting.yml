@@ -35,9 +35,8 @@ SharedFields:
             Tooltip = "Branch you want to analyse."
             Root = "/sitecore/templates"
         }
-        Title = "Sitecore Standard Values recommendation"
+        Title = "Sitecore __Standard Values recommendation"
         Description = "How many of my templates define standard values? Which of those SVs define the desired properties from the Sitecore recommendation?"
-        Icon = "Network/32x32/fingerprint.png"
         Height = 280
         Width = 500
         OkButtonName = "Proceed"
@@ -52,7 +51,7 @@ SharedFields:
         Exit
     }
     
-    $templates = Get-ChildItem -Path $item.ProviderPath -Recurse | Where-Object { $_.TemplateName -eq "Template" }
+    $templates = @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.TemplateName -eq "Template" }
     
     $template_sv = $templates |
         Select-Object @{Name="Template"; Expression={ $_.ItemPath -replace "/Sitecore/templates/", "" }}, 
@@ -63,15 +62,15 @@ SharedFields:
     Write-Host -f Yellow "Found $($has_sv.Count + $has_no_sv.Count) templates. $($has_no_sv.Count) of those have no Standard Values defined."
     
     $props = @{
-        Property = "Name", @{n="Standard Values";  e={$_.Children["__Standard Values"] -ne $null}},
-            @{n="Default Workflow"; e={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}},
-            @{n="Insert Options";   e={$_.Children["__Standard Values"]["__masters"] -ne ""}},
-            @{n="Insert Rules";     e={$_.Children["__Standard Values"]["__Insert Rules"] -ne ""}},
-            @{n="Has Renderings";   e={$_.Children["__Standard Values"]["__Renderings"] -ne "" }},
-            @{n="Path";             e={ $_.Paths.Path -replace "/Sitecore/templates/", ""}}
+        Property = "Name", @{Name="Standard Values"; Expression={$_.Children["__Standard Values"] -ne $null}},
+            @{Name="Default Workflow"; Expression={$_.Children["__Standard Values"]["__Default Workflow"] -ne ""}},
+            @{Name="Insert Options";   Expression={$_.Children["__Standard Values"]["__masters"] -ne ""}},
+            @{Name="Insert Rules";     Expression={$_.Children["__Standard Values"]["__Insert Rules"] -ne ""}},
+            @{Name="Has Renderings";   Expression={$_.Children["__Standard Values"]["__Renderings"] -ne "" }},
+            @{Name="Path";             Expression={ $_.Paths.Path -replace "/Sitecore/templates/", ""}}
         Title = "Standard values recommendations compliance."
         InfoTitle = "Sitecore recommendation:"
-        InfoDescription = "<i>__Standard Values</i> — Define layout details, initial workflow, and insert options to a template. This reduces administration and centrally manages system settings, rather than setting them on individual items.<br/><br/>
+        InfoDescription = "<i>__Standard Values</i> - Define layout details, initial workflow, and insert options to a template. This reduces administration and centrally manages system settings, rather than setting them on individual items.<br/><br/>
                               Found <b>$($template_sv.Count)</b> templates. <b>$($has_no_sv.Count)</b> of those have no <i>__Standard Values</i> defined, while the remaining <b>$($has_sv.Count)</b> do.<br/>
                               Templates that do not define <i>__Standard Values</i> cannot even begin to adhere to this practice as the required settings are set on <i>__Standard Values</i>.<br/>
                               For the templates that have standard values defined you can see  whether those SV's define renderings, Insert Options, Insert Rules or have renderings defined.<br/>

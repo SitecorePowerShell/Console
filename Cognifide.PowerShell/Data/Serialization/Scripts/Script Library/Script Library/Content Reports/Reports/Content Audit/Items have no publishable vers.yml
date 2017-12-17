@@ -53,13 +53,13 @@ SharedFields:
         exit
     }
     
-    $items = @(Get-Item -Path $root.ProviderPath) + @((Get-ChildItem -Path $root.ProviderPath -Recurse)) | NoPublishableVersions
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | NoPublishableVersions
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which are non-publishable."
     } else {
         $props = @{
-            Title = "Non-Publishable Items Report"
+            Title = "Items with No Publishable Version Report"
             InfoTitle = "Non-publishable items"
             InfoDescription = "Lists the items with no publishable version."
             PageSize = 25

@@ -46,18 +46,17 @@ SharedFields:
         }
     }
     
-    $rootnode = Get-Item -Path "master:\sitecore\content"
+    $root = Get-Item -Path "master:\sitecore\content"
     
     $settings = @{
         Title = "Report Filter"
-        Icon = "Applications/32x32/history.png"
         Width = "350"
         Height = "450"
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         Description = "Filter the results for items using the specified tree path."
         Parameters = @{ 
-            Variable = (Get-Variable "rootnode")
+            Variable = (Get-Variable "root")
             Title = "Search Path"
         }, @{
             Name = "age"
@@ -71,7 +70,7 @@ SharedFields:
         Exit
     }
     
-    $items = Get-ChildItem -Path "master:$($rootnode.Paths.Path)" -Recurse | HasStaleWorkflow -Age $age
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | HasStaleWorkflow -Age $age
     
     if($items.Count -eq 0){
         Show-Alert "There are no items found which have a stale workflow."
