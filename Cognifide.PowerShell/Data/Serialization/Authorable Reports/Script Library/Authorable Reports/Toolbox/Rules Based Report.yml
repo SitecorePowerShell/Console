@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Database/32x32/view.png
+  Value: Database/32x32/view_d.png
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
@@ -23,7 +23,6 @@ SharedFields:
     $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
     
     $dialogTitle = "Rules Based Report"
-    $dialogIcon = "Core2/32x32/properties_h.png"
     $reportRoots = [Cognifide.PowerShell.Core.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.Core.Modules.IntegrationPoints]::StartMenuReportsFeature)
     $ruleItems = @()
     $powershellRuleLibaryTemplateId = "{BC29CC43-FC82-4A6C-B325-FB261DA5931B}"
@@ -46,7 +45,7 @@ SharedFields:
         @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
         @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
         -Description "Choose the starting location and filtering criteria for the report." `
-        -Title $dialogTitle -Icon $dialogIcon -Width 600 -Height 600 -ShowHints
+        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon "Database/32x32/view_d.png"
     
     if($result -eq "cancel"){
         Close-Window
@@ -116,7 +115,7 @@ SharedFields:
         @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
         @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
         -Description "Choose the fields to include in the report." `
-        -Title $dialogTitle -Icon $dialogIcon -Width 600 -Height 740
+        -Title $dialogTitle -Width 600 -Height 740 -Icon "Database/32x32/view_d.png"
     
     if($result -eq "cancel"){
         Close-Window
@@ -152,4 +151,4 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20150510T215034
+      Value: 20150511T025034Z

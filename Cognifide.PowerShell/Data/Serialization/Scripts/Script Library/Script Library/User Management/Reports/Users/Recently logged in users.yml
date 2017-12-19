@@ -20,10 +20,11 @@ SharedFields:
             Adapted from Stack Overflow answer by Derek Hunziker.
             [http://stackoverflow.com/questions/38340617/sitecore-powershell-find-users-last-login]
     #>
+    
     $props = @{
-            Title = "Recently logged in users"
-            PageSize = 25
-        }
+        Title = "Recently logged in users"
+        PageSize = 25
+    }
     
     [System.Web.Security.Membership]::GetAllUsers() | Sort-Object -Property LastActivityDate -Descending |
         Show-ListView @props -Property `
@@ -40,6 +41,8 @@ SharedFields:
             @{Label="Creation Date"; Expression={ $_.CreationDate} },
             @{Label="Last Login Date"; Expression={ $_.LastLoginDate} },
             @{Label="Last Activity Date"; Expression={ $_.LastActivityDate } }
+            
+    Close-Window
     
 Languages:
 - Language: en
