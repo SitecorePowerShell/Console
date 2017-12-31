@@ -1,0 +1,63 @@
+﻿---
+ID: "99839b36-9947-4cd9-b6ea-f4e59ea972a0"
+Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
+Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Reports/Rules/Media item with empty Alt field"
+DB: master
+SharedFields:
+- ID: "072645b6-c332-446f-9f2c-255467af5bc9"
+  Hint: RootItem
+  Value: "{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}"
+- ID: "37d9ed28-c31b-4686-8564-a0f181721640"
+  Hint: FilterRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{8C2614D3-633D-40BF-9A9B-8DA4E49A1A0B}">
+        <conditions>
+          <and
+            uid="E9A2212E833242059DCE6D083C5BB328">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="D16BD993E6FC49B2B9443428435CA125"
+              templateid="{F1828A2C-7E5D-4BBD-98CA-320474871548}" />
+            <condition
+              id="{DA0D1AEA-0144-4A40-9AF0-3123526C9163}"
+              uid="611AA9B5775E434C97D86051451E9C5C"
+              fieldname="Alt" />
+          </and>
+        </conditions>
+      </rule>
+      <rule
+        uid="{722637B1-EDB0-4B0A-B650-9B217970CE64}">
+        <conditions>
+          <and
+            uid="9AA9604C97C94F9FA57661FC8FABAAB9">
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="F3CCD158EC2B45E8BB25A6CB83EFE2CC"
+              templateid="{C97BA923-8009-4858-BDD5-D8BE5FCCECF7}" />
+            <condition
+              id="{DA0D1AEA-0144-4A40-9AF0-3123526C9163}"
+              uid="EB39A859482E4161AB505817D54D64F7"
+              fieldname="Alt" />
+          </and>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
+  Hint: DefaultFields
+  Value: DisplayName|TemplateName
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160704T175054
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

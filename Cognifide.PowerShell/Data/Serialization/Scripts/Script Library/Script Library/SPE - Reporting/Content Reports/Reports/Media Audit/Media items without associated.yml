@@ -1,0 +1,78 @@
+﻿---
+ID: "6192b98a-e907-440b-9e46-15e09759dad9"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Media Audit/Media items without associated files"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/16x16/harddisk_error.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all file system based media items which associated files on the file system no longer exists.
+        
+        .NOTES
+            Michael West
+    #>
+    function IsFileBasedLost {
+        param(
+            $Item
+        )
+        
+        $mediaItem = New-Object Sitecore.Data.Items.MediaItem $item
+        if($mediaItem.FileBased) {
+            !(Test-Path -Path ([Sitecore.IO.FileUtil]::MapPath($mediaItem.FilePath)))
+        } else {
+            $false
+        }
+    }
+    
+    function Get-MediaItemFileBasedLost {
+        
+        if(Test-Path -Path $SitecoreDataFolder) {
+            $mediaItemContainer = Get-Item "master:/media library"
+            $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
+            
+            foreach($item in $items) {
+                if(IsFileBasedLost($item)) {
+                    $item
+                }
+            }
+        }
+    }
+    
+    $items = Get-MediaItemFileBasedLost
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no media items without associated files."
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "Media items without associated files"
+            InfoDescription = "Lists all file system based media items which associated files on the file system no longer exists."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} },
+                @{Label="File Path"; Expression={$_."File Path"} }
+    }        
+    Close-Window
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140407T192549

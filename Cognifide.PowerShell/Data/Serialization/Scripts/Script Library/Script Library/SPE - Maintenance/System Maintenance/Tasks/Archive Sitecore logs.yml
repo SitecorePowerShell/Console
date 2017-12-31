@@ -1,0 +1,65 @@
+﻿---
+ID: "b6fb54c1-5890-4898-8f7f-582fc793a2e0"
+Parent: "e96411fe-97f1-47ac-80e3-9315593e7feb"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/System Maintenance/Tasks/Archive Sitecore logs"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/folder_into.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Archives old log files into zip format to a separate archive directory.
+        
+        .NOTES
+            Michael West
+    #>
+    
+    <#
+        Load the function Compress-Archive. The Get-Item command supports a dynamic parameter
+        called ID whenever the Path parameter is specified. This basically runs the script first
+        before continuing.
+    #>
+    Import-Function -Name "Compress-Archive"
+    
+    # The archive filename will closely resemble the format of the default logfile names.
+    $archiveName = "logs.$([datetime]::Now.ToString("yyyy-MM-dd.HHmmss"))"
+    $archiveDirectory = "$($SitecoreDataFolder)\archived\"
+    $logDirectory = "$SitecoreLogFolder\"
+    
+    # The filter includes log files older than 14 days based on LastWriteTime.
+    $filter = {
+        $dtme = [datetime]::Today.AddDays(-14)
+        $_.LastWriteTime -lt $dtme
+    }
+    
+    # Get all the log files that match the filter criteria, archive them, then cleanup.
+    $logs = Get-ChildItem -Path $logDirectory -Recurse | Where-Object -Filter $filter
+    if($logs) {
+        $logs | Compress-Archive -DestinationPath (Join-Path -Path $archiveDirectory -ChildPath $archiveName)
+        $logs | Remove-Item
+    }
+    
+    # The filter includes archive files older than 30 days based on LastWriteTime.
+    $filter = {
+        $dtme = [datetime]::Today.AddDays(-30)
+        $_.LastWriteTime -lt $dtme
+    }
+    
+    # Get all the archived files that match the filter criteria. Remove the old archives.
+    $archives = Get-ChildItem -Path $archiveDirectory | Where-Object -Filter $filter
+    if($archives) {
+        $archives | Remove-Item
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150201T214548

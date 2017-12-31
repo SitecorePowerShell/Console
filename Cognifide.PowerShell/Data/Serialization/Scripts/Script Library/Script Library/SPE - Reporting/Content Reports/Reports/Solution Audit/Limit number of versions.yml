@@ -1,0 +1,66 @@
+﻿---
+ID: "410774b5-4162-43a1-8a0c-53ceffb81638"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Solution Audit/Limit number of versions"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Software/32x32/branch.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+      Which of my items have most children? Are there too many?
+     
+      Sitecore recommendation:
+         Limit the number of versions of any item to the fewest possible. 
+         Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number. 
+         There is a shared source module, Version Manager, available at: 
+         http://marketplace.sitecore.net/en/Modules/Version_Manager.aspx to help manage versions.
+     
+      Before executing this script point the "Context Item" to your site e.g. "Sitecore/content/My Site"
+     
+      How to read this report?
+      ------------------------
+      The report will show you all the nodes that have more than 10 versions. 
+      If the list is empty (no results shown) it means your solution is not violating the recommendation and you can give yourself a pat on the back.
+    #>
+    
+    $item = Get-Item -Path "master:\content"
+    $result = Read-Variable -Parameters `
+        @{ Name = "item"; Title="Branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/"}, `
+        @{ Name = "count"; Value=10; Title="Show if over this number of versions"; Tooltip="Show if over this number of versions."} `
+        -Description "Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number." `
+        -Title "Limit the number of versions of any item to the fewest possible." -Width 500 -Height 280 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.Versions.Count -gt $count } | Sort-Object -Property @{Expression={$_.Versions.Count}; Descending=$true} |
+        Show-ListView -Property DisplayName, `
+            @{Name="Versions"; Expression={$_.Versions.Count}}, `
+            @{Name="Path"; Expression={$_.ItemPath}} `
+            -Title "Which of my items have the most versions?" `
+            -InfoTitle "Sitecore recommendation: Limit the number of versions of any item to the fewest possible." `
+            -InfoDescription "The report shows all items that have more than <b>$count versions</b> to allow you to address any potential issues arising. <br>
+                              Sitecore recommends keeping 10 or fewer versions on any item, but policy may dictate this to be a higher number.  <br> <br>
+                              There is a shared source module, <a href='https://marketplace.sitecore.net/en/Modules/Version_Manager.aspx' style='text-decoration:underline' target='_blank'>Version Manager - available at Sitecore Marketplace</a> to help manage versions."
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Limit the number of versions of any item to the fewest possible
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130206T173118

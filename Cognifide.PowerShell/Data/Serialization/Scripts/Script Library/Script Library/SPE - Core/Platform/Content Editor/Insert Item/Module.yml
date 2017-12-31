@@ -1,0 +1,46 @@
+﻿---
+ID: "41bf54cd-bc65-40b7-a3cf-7a1940b4cef7"
+Parent: "685709c4-d6d9-46a6-8a9d-df689292daa9"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Content Editor/Insert Item/Module"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Software/32x32/jar_bean_new.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{22B9C290-7895-41D6-B175-38066F5067FF}">
+        <conditions>
+          <or
+            uid="DC1F7BE30B864847BF5F536DED14ADBD">
+            <condition
+              id="{4F5389E9-79B7-4FE1-A43A-EEA4ECD19C94}"
+              uid="80248DCFDFC6401DA4FA21129D7AC4A7"
+              operatorid="{10537C58-1684-4CAB-B4C0-40C10907CE31}"
+              value="{A3572733-5062-43E9-A447-54698BC1C637}" />
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="7E77D7F89E414D5D90A149E52DAD4EC5"
+              templateid="{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $createScriptItem = Get-Item -Path "master:" -ID "{785CB68F-0999-4543-A5E1-AFED0C152A17}" # Create Integration Points
+    Invoke-Script -Item $createScriptItem
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150210T160936

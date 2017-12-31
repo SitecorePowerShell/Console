@@ -1,0 +1,142 @@
+﻿---
+ID: "49c76cd6-5d9f-45b3-8799-84b9d0e59c1c"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Content Audit/Broken Links"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Network/32x32/link_delete.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists the items with broken links searching all or the latest version in the current language.
+            
+        .NOTES
+            Adam Najmanowicz, Michael West, Daniel Scherrer
+            Adapted from the Advanced System Reporter module & Daniel Scherrer's external links checker: 
+            https://gist.github.com/daniiiol/143db3e2004afe9a55c1dd3e33048940
+    #>
+    
+    $database = "master"
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    $linksToCheck =  @("internal","external")
+    $linkTypes = [ordered]@{"Internal Links"="internal";"External Links"="external"};
+    
+    $versionOptions = [ordered]@{
+        "Latest"="1"
+    }
+    
+    $props = @{
+        Parameters = @(
+            @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."; Columns=9},
+            @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3"; Placeholder="All"},
+            @{Name="linksToCheck"; Title="Link types to check"; Options=$linkTypes; Tooltip="which link types you want to check"; Editor="checklist"} 
+        )
+        Title = "Broken Links Report"
+        Description = "Choose the criteria for the report."
+        Width = 550
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -eq "cancel"){
+        exit
+    }
+    
+    filter HasBrokenLink {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$Item,
+            
+            [Parameter()]
+            [bool]$IncludeAllVersions
+        )
+        
+        if($Item) {
+            if($linksToCheck.Contains("internal")){
+                $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
+                if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
+                    foreach($brokenLink in $brokenLinks) {
+                        $brokenItem = $brokenLink.GetSourceItem() | Initialize-Item
+                        Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ((Get-Item . -Database ($root.Database) -ID $brokenLink.SourceFieldID).Name)
+                        Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $brokenLink.TargetPath
+                        Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue "Missing Target Item"
+                        $brokenItem
+                    }
+                }
+            }
+            
+            if($linksToCheck.Contains("external")){
+                if($IncludeAllVersions){
+                    $allItems = Get-Item "$($item.Database.Name):" -Version * -Language * -Id $item.Id
+                } else {
+                    $allItems = @(Get-Item "$($item.Database.Name):" -Language * -Id $item.Id)
+                }
+                foreach($checkedItem in $allItems){
+                    foreach($field in $checkedItem.Fields) {
+                        if ($field.Type -eq 'General Link' -and $field.Value -like '*linktype="external"*') { 
+                            $found = $field.Value -match '.*url="(.*?)".*'
+                            if($found) {
+                                $url = $matches[1]
+                            }
+                            
+                            try{ 
+                                $response = Invoke-WebRequest $url -UseBasicParsing -method head
+                            } 
+                            catch {
+                                $statuscode = $_.Exception.Response.StatusCode.Value__
+                                
+                                if(!$statuscode) {
+                                    $statuscode = "Not reachable"
+                                }
+                                
+                                $brokenItem = Get-Item "$($item.Database.Name):" -Version $checkedItem.Version -Language $checkedItem.Language -Id $checkedItem.Id
+                                Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ($field.Name)
+                                Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $url
+                                Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue $statuscode
+                                $brokenItem
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | HasBrokenLink -IncludeAllVersions (!$searchVersion)
+    
+    if($items.Count -eq 0){
+        Show-Alert "There are no items found which have broken links in the current language."
+    } else {
+        $props = @{
+            Title = "Broken Links Report"
+            InfoTitle = "$($items.Count) items with broken links found!"
+            InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
+            MissingDataMessage = "There are no items found which have broken links in the current language."
+            PageSize = 25
+        }
+            
+        $items |
+            Show-ListView @props -Property "Status Code", "Broken Link Field","Target Url",
+                @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Path"; Expression={$_.ItemPath} },
+                "Version",
+                "Language",
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} }
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140410T212339

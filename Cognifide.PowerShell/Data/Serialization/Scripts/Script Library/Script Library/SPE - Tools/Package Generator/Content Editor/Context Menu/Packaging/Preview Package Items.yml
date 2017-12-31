@@ -1,0 +1,61 @@
+﻿---
+ID: "6b51cbc9-c706-4155-b365-684c33f4af8a"
+Parent: "c83cc1ee-a860-4e64-9715-e9c3bbb885f0"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Package Generator/Content Editor/Context Menu/Packaging/Preview Package Items"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/preview_package.png
+- ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
+  Hint: PersistentSessionId
+  Value: packageBuilder
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $items = Get-PackageItem -Project $package -SkipDuplicates
+    
+    if($items.Count -eq 0) {
+        
+        Show-Alert "There are no items currently added to the package."
+        
+    } else {
+    
+        $items | Show-ListView -Property Name, DisplayName, Language, Version, ID, TemplateName, ItemPath `
+                               -Title "Preview Package Items" `
+                               -InfoTitle "Preview Package Items" `
+                               -InfoDescription "A preview of items currently added into the package generator for this session."
+    }
+    
+    Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 250
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{66973F7C-7FE1-4FD3-A3E5-0D54C6A38233}">
+        <conditions>
+          <condition
+            id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}"
+            uid="05927678A11C44F3BD2079A376E8CFA1"
+            persistentsessionid="packageBuilder" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170808T223632Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

@@ -1,0 +1,354 @@
+﻿---
+ID: "5db6132a-4d65-41a6-ac92-699dc9bd2903"
+Parent: "3b2143e2-2dcf-46b4-a883-06dc33777e99"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Package Generator/Functions/Setup-PackageGenerator"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function Resolve-Error
+    $Error.Clear()
+    
+    $package = New-Package -Name "Content Package";
+    $package.Sources.Clear();
+    
+    $package.Metadata.Author = "$me";
+    $package.Metadata.Publisher = "";
+    $package.Metadata.Version = "";
+    $package.Metadata.Readme = "";
+    
+    $packageName = $null
+    
+    $itemsAddedToPackage = New-Object System.Collections.ArrayList
+    $itemsProcessedWithLinks = New-Object System.Collections.ArrayList
+    $itemsProcessed = New-Object System.Collections.ArrayList
+    
+    #$itemsAddedToPackage | Get-Item
+    #$itemsProcessedWithLinks | Get-Item
+    #$itemsProcessed | Get-Item
+    
+    $defaultProps = @{
+        "Title" = "Installation options"
+        "Icon" = "Apps/32x32/Installpackage.png"
+        "ShowHints" = $true
+    }
+    
+    Add-Type -TypeDefinition @"
+        [System.Flags]
+        public enum LinkedItemOptions
+        {
+            None = 1,
+            Media = 2,
+            Layouts = 4,
+            Templates = 8,
+            Workflows = 16
+        }
+    "@
+    
+    $linkedItemOptions = [ordered]@{
+        "Include Media" = 2
+        "Include Layouts" = 4
+        "Include Templates" = 8
+        "Include Workflows" = 16
+    }
+    
+    $linkedItemOptionTooltips = [ordered]@{
+        "2" = "Include all associated content found in the media library."
+        "4" = "Include all associated layouts and renderings."
+        "8" = "Include all associated custom templates."
+        "16" = "Include all associated workflows."
+    }
+    
+    $rootOptions = [ordered]@{
+        "Root and descendants" = "RootAndDescendants"
+        "Root and children" = "RootAndChildren"
+        "Descendants only" = "DescendantsOnly"
+        "Children only" = "ChildrenOnly"
+    }
+    
+    $rootOptionTooltips = [ordered]@{
+        "RootAndDescendants" = "The selected item and everything beneath it will be added."
+        "RootAndChildren" = "The selected item and immediate children will be added."
+        "DescendantsOnly" = "Everything beneath the selected item will be added."
+        "ChildrenOnly" = "Immediate children beneath the selected item will be added."
+    }
+    
+    $installOptions = [ordered]@{
+        "Overwrite" = "Overwrite"
+        "Merge - Merge" = "Merge-Merge"
+        "Merge - Clear" = "Merge-Clear"
+        "Merge - Append" = "Merge-Append"
+        "Skip" = "Skip"
+        "Side By Side" = "SideBySide"
+        "Ask User" = "AskUser"
+    }
+    
+    $installOptionsTooltips = [ordered]@{
+        "Overwrite" = "Item and descendants with a matching ID will be removed and replaced by items from the package."
+        "Merge-Merge" = "Items with a matching ID and version number will be overwritten, otherwise the specific version will be added."
+        "Merge-Clear" = "Items with a matching ID will have all versions removed for a language and versions from the package will be added."
+        "Merge-Append" = "Items with a matching ID from the package will have versions incrementally added 'on-top' of the existing versions."
+        "Skip" = "Items with a matching ID will remain unchanged; the items from the package will be skipped."
+        "Askuser" = "Prompts the user to make a decision."
+    }
+    
+    function Test-LinkedOption {
+        param(
+            [item]$Item,
+            [LinkedItemOptions]$LinkedOptions
+        )
+    
+        Write-Host "Entering Test-LinkedOption for $($item.ProviderPath)" -ForegroundColor Gray
+        $isItemAllowed = $true
+        
+        if($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Media)) {
+            $isItemAllowed = $false
+        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/layout/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Layouts)) {
+            $isItemAllowed = $false
+        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/templates/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Templates)) {
+            $isItemAllowed = $false
+        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Workflows)) {
+            $isItemAllowed = $false
+        }
+        
+        $isItemAllowed
+    }
+    
+    function AddItems {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
+        )
+        
+        Write-Host "Entering AddItems for $($item.ProviderPath)" -ForegroundColor Gray
+        if($item -and !$itemsAddedToPackage.Contains($item.ID)) {
+            Write-Host "[A] $($item.ProviderPath)" -ForegroundColor Green
+            $itemsAddedToPackage.Add($item.ID) | Out-Null
+            if($items) {
+                $items.Entries.Add((New-Object Sitecore.Install.Items.ItemReference $item.Uri, $false).ToString())
+            }
+        } else {
+            Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
+        }
+    }
+    
+    function ProcessItemWithLinks {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items,
+            [LinkedItemOptions]$LinkedOptions
+        )
+        
+        Write-Host "Entering ProcessItemWithLinks for $($item.ProviderPath)" -ForegroundColor Gray
+        AddItems -Item $item -Items $items
+        Write-Host "Processing links for $($item.ProviderPath)"
+        $links = $item.Links.GetAllLinks($true)
+        foreach($link in $links) {
+            $linkItem = $link.GetTargetItem()
+            if($linkItem -and (Test-LinkedOption -Item $linkItem -LinkedOptions $linkedOptions)) {
+                ProcessItem -Item $linkItem -Items $items -SkipLinks
+            } else {
+                Write-Host "[S] $($linkItem.ProviderPath) linked item skipped." -ForegroundColor Yellow
+            }
+        }
+    }
+    
+    function IsSystemTemplateItem {
+        param(
+            [item]$Item
+        )
+        
+        $item.Paths.FullPath.StartsWith("/sitecore/templates/System", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $item.Paths.FullPath.StartsWith("/sitecore/templates/branches/System", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $item.Paths.FullPath.StartsWith("/sitecore/templates/common", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $item.Paths.FullPath.StartsWith("/sitecore/templates/sample", [System.StringComparison]::OrdinalIgnoreCase)
+    }
+    
+    function ProcessFieldTemplateItem {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
+        )
+        
+        $children = $item.GetChildren()
+        if($children) {
+            foreach($child in $children) {
+                AddItems -Item $child -Items $items
+                ProcessFieldTemplateItem -Item $child -Items $items
+            }
+        }
+    }
+    
+    function ProcessTemplateItem {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
+        )
+        
+        Write-Host "Entering ProcessTemplateItem for $($item.ProviderPath)" -ForegroundColor Gray
+        
+        $templateItem = New-Object Sitecore.Data.Items.TemplateItem $item
+        $isSystemItem = IsSystemTemplateItem -Item $item
+        
+        if(!$isSystemItem) {
+            Write-Host "Processing template $($item.ProviderPath)"
+            AddItems -Item $item -Items $items
+            ProcessFieldTemplateItem -Item $item -Items $items
+            $standardValues = $templateItem.StandardValues
+            if($standardValues) {
+                ProcessItem -Item $standardValues -Items $items -SkipLinks
+            }
+        }
+        
+        foreach($baseTemplate in $templateItem.BaseTemplates) {
+            $isSystemTemplateBaseItem = IsSystemTemplateItem -Item $baseTemplate
+            if(!$isSystemTemplateBaseItem) {
+                Write-Host "Processing base template $($baseTemplate.ProviderPath)"
+                ProcessItem -Item $baseTemplate -Items $items -SkipLinks
+            }
+        }
+    }
+    
+    function ProcessWorkflowItem {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items
+        )
+        
+        AddItems -Item $item -Items $items
+        foreach($child in $item.Children) {
+            ProcessWorkflowItem -Item $child -Items $items
+        }
+    }
+    
+    function ProcessItem {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items,
+            [LinkedItemOptions]$LinkedOptions,
+            [switch]$SkipLinks
+        )
+        
+        Write-Host "Entering ProcessItem for $($item.ProviderPath)" -ForegroundColor Gray
+        
+        if(!$item) { return }
+        
+        if(!$SkipLinks) {
+            if(!$itemsProcessedWithLinks.Contains($item.ID)) {
+                $itemsProcessedWithLinks.Add($item.ID) | Out-Null
+                
+                if($LinkedOptions) {
+                    if(!(Test-LinkedOption -Item $item -LinkedOptions $linkedOptions)) {
+                        Write-Host "[S] $($item.ProviderPath)" -ForegroundColor Yellow
+                        return
+                    }
+                }
+            
+                ProcessItemWithLinks -Item $item -Items $items -LinkedOptions $linkedOptions
+            } else {
+                Write-Host "[S] $($item.ProviderPath) links already processed." -ForegroundColor Yellow
+            }
+        } else {
+            if(!$itemsProcessed.Contains($item.ID)) {
+                $itemsProcessed.Add($item.ID) | Out-Null
+                
+                if($item.TemplateID -eq [Sitecore.TemplateIDs]::Template) {
+                    ProcessTemplateItem -Item $item -Items $items
+                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/")) {
+                    Write-Host "Processing media $($item.ProviderPath)"
+                    AddItems -Item $item -Items $items
+                } elseif ($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/")) {
+                    Write-Host "Processing workflow $($item.ProviderPath)"
+                    $workflowRoot = [Sitecore.ItemIDs]::WorkflowRoot
+                    if($item.Parent.ID -eq $workflowRoot) {
+                        AddItems -Item $item -Items $items
+                    } elseif($item.Parent.Parent.ID -eq $workflowRoot) {
+                        ProcessWorkflowItem -Item $item.Parent -Items $items
+                    } elseif($item.Parent.Parent.Parent.ID -eq $workflowRoot) {w
+                        ProcessWorkflowItem -Item $item.Parent.Parent -Items $items
+                    } else {
+                        if($item.Parent.Parent.Parent.Parent -and $item.Parent.Parent.Parent.Parent -eq $workflowRoot) {
+                            ProcessWorkflowItem -Item $item.Parent.Parent.Parent.Parent -Items $items
+                        }
+                    }
+                } else {
+                    AddItems -Item $item -Items $items
+                }
+            } else {
+                Write-Host "[S] $($item.ProviderPath) already processed." -ForegroundColor Yellow
+            }
+        }
+    }
+    
+    function ProcessItemWithDescendants {
+        param(
+            [item]$Item,
+            [Sitecore.Install.Items.ExplicitItemSource]$Items,
+            [LinkedItemOptions]$LinkedOptions
+        )
+    
+        Write-Host "Entering ProcessItemWithDescendants for $($item.ProviderPath)" -ForegroundColor Gray
+    
+        Write-Host "Processing item $($item.ProviderPath)"
+        ProcessItem -Item $Item -Items $Items -LinkedOptions $LinkedOptions    
+        
+        foreach($child in $item.Children) {
+            ProcessItemWithDescendants -Item $child -Items $Items -LinkedOptions $LinkedOptions
+        }
+    }
+    
+    function Add-ItemToPackage {
+        param (
+            $Package, 
+            [item]$Item,
+            [LinkedItemOptions]$LinkedOptions,
+            [bool]$IncludeDescendants
+        )
+        
+        $path = $Item.ProviderPath
+        $source = $null
+        $sourceDescendants = $null
+        
+        if ($IncludeDescendants) {
+            $source = New-ItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+            
+            Write-Host "Processing item $($item.ProviderPath)"
+            ProcessItem -Item $Item -LinkedOptions $LinkedOptions
+            if($LinkedOptions) {
+                $sourceDescendants = New-ExplicitItemSource -Item $Item -Name "$path children" -InstallMode $InstallMode -MergeMode $MergeMode
+                ProcessItemWithDescendants -Item $Item -Items $sourceDescendants -LinkedOptions $LinkedOptions
+            }
+        } else {
+            $source = New-ExplicitItemSource -Item $Item -Name "$path" -InstallMode $InstallMode -MergeMode $MergeMode
+            Write-Host "Processing item $($item.ProviderPath)"
+            if($LinkedOptions) {
+                ProcessItem -Item $Item -Items $source -LinkedOptions $LinkedOptions
+            } else {
+                ProcessItem -Item $Item -Items $source -SkipLinks
+            }
+        }
+        
+        if($source) {
+            $package.Sources.Add($source)
+            
+            if($sourceDescendants) {
+                $package.Sources.Add($sourceDescendants)
+            }
+        }
+        
+        return $package
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20170805T032545Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

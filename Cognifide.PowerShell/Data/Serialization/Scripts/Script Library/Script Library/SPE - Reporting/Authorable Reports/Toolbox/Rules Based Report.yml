@@ -1,0 +1,154 @@
+﻿---
+ID: "96341fc3-da36-4490-9396-ee338378bfd5"
+Parent: "b85e2336-26ab-47a7-b2bf-91cde1a7e3ba"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Toolbox/Rules Based Report"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Database/32x32/view_d.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Render-ReportField
+    Import-Function -Name Get-ReportRule
+    # Set defaults
+    
+    $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
+        "__Controller Action", "__Insert Rules", "__Preview", "__Originator", "__Quick Action Bar Validation Rules", "__Validate Button Validation Rules",
+        "__Validator Bar Validation Rules", "__Skin", "__Icon", "__Enabled Views", "__Default View", "__Context Menu", "__Revision", "__Quick Actions",
+        "__Display Name"
+        
+    $standardFields = [Sitecore.Data.Managers.TemplateManager]::GetTemplate([Sitecore.Configuration.Settings]::DefaultBaseTemplate, (Get-Database -Name "master")).GetFields() | ForEach-Object { $_.Name }
+    
+    $dialogTitle = "Rules Based Report"
+    $reportRoots = [Cognifide.PowerShell.Core.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.Core.Modules.IntegrationPoints]::StartMenuReportsFeature)
+    $ruleItems = @()
+    $powershellRuleLibaryTemplateId = "{BC29CC43-FC82-4A6C-B325-FB261DA5931B}"
+    foreach($reportRoot in $reportRoots) {
+        $ruleItems += Get-ChildItem -Path "$($reportRoot.Database):$($reportRoot.Paths.Path)" -Recurse | 
+            Where-Object { $_.TemplateId -eq $powershellRuleLibaryTemplateId }
+    }
+    $ruleOptions = [ordered]@{}
+    for($i = 0; $i -lt $ruleItems.Count; $i++) {
+        $ruleItem = $ruleItems[$i]
+        $ruleOptions[$ruleItem.Name] = $i
+    }
+    $ruleIndex = 0
+    $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
+    $include = @("Recurse", "Root")
+    
+    $rootOverride = ""
+    $result = Read-Variable -Parameters `
+        @{Name="ruleIndex"; Title="Filter rules"; Options=$ruleOptions; Tooltip="Only items conforming to this rule will be returned."}, `
+        @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
+        @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
+        -Description "Choose the starting location and filtering criteria for the report." `
+        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon "Database/32x32/view_d.png"
+    
+    if($result -eq "cancel"){
+        Close-Window
+        exit
+    }
+    
+    $rootItemId = @{$true=$ruleItems[$ruleIndex].RootItem; $false=[Sitecore.ItemIDs]::ContentRoot}[(Test-Path -Path "master:\$($ruleItems[$ruleIndex].RootItem)")]
+    $root = Get-Item -Path "master:" -ID $rootItemId
+    if($rootOverride) {
+        $root = $rootOverride
+    }
+    $rule = Get-ReportRule -ID ($ruleItems[$ruleIndex].ID) 
+    $rawValues = $include.Contains("Raw")
+    
+    # Lookup all fields for the content used.
+    
+    $templateFields = Find-Item -Criteria @{
+            Filter = "DescendantOf"; Value = $root
+        } -Index sitecore_master_index | Initialize-Item |
+        Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
+        Select-Object -ExpandProperty TemplateId -Unique |  
+        ForEach-Object { New-Object Sitecore.Data.Items.TemplateItem (Get-Item -Path "master:" -ID "$_") } | 
+        ForEach-Object { $_.Fields } | 
+        Where-Object { $ignoredFields -notcontains $_.Name } | 
+        Select-Object Name, Title, Type -Unique | Sort-Object Name
+    
+    if($templateFields.Count -eq 0){
+        Show-Alert "No Items matching your rule!"
+        Close-Window
+        exit
+    } 
+    
+    $stdOptions = [ordered]@{
+        "Name" = "Name"
+        "Display Name" = "DisplayName"
+        "PowerShell Path" = "ProviderPath"
+        "Template" = "TemplateName"
+    }
+    
+    $customOptions = [ordered]@{}
+    
+    $stdFields = $ruleItems[$ruleIndex].DefaultFields.Split("|")
+    $customFields = $stdFields
+    
+    foreach($field in $templateFields){
+        $title = @{$true=$field.Name; $false=$field.Title}[[string]::IsNullOrEmpty($field.Title)]
+        $title = "$title [$($field.Type)]"
+        if($standardFields -contains $field.Name){
+            $stdOptions[$title] = $field.Name
+        } else {
+            $customOptions[$title] = $field.Name
+        }
+    }
+    
+    $titles = [ordered]@{}
+    
+    foreach($field in $stdOptions.Keys){
+        $titles[$stdOptions[$field]] = $field
+    }
+    foreach($field in $customOptions.Keys){
+        $titles[$customOptions[$field]] = $field
+    }
+    
+    $saveSettings = $false
+    $result = Read-Variable -Parameters `
+        @{ Name="customFields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
+        @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
+        @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
+        -Description "Choose the fields to include in the report." `
+        -Title $dialogTitle -Width 600 -Height 740 -Icon "Database/32x32/view_d.png"
+    
+    if($result -eq "cancel"){
+        Close-Window
+        exit
+    }
+    
+    $properties = @()
+    $fields = $stdFields + $customFields
+    
+    foreach($field in $fields){
+        $scr = [scriptblock]::Create('Render-ItemField $_ "' + $field + '"')
+        $properties += @{Label=$titles[$field]; Expression=$scr}
+    }
+    
+    $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule };
+    $items = Get-ChildItem $root.ProviderPath -Recurse:$include.Contains("Recurse")
+    if($include.Contains("Root")){
+        $items = @($root) + $items
+    }
+    $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
+    
+    $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Filter Path: $($root.ProviderPath)"
+    
+    if($saveSettings) {
+        $ruleItem = Get-Item -Path "master:" -ID ($ruleItems[$ruleIndex].ID)
+        $ruleItem.DefaultFields = $fields -join "|"
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150511T025034Z

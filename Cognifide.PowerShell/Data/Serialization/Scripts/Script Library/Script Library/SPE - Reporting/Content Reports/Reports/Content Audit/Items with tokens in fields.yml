@@ -1,0 +1,88 @@
+﻿---
+ID: "0c97ac4b-647f-4012-a11d-608a4bc39045"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Content Audit/Items with tokens in fields"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/document_warning.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all content items that contain one of the following tokens in at least one field - $name, $date, $parentname, $time, $now, $id, $parentid
+            
+        .NOTES
+            Alex Washtell
+    #>
+    filter Where-TokenInFields {
+        param(
+            [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+            [Sitecore.Data.Items.Item]$item
+        )
+        
+        foreach ($field in $item.Fields)
+        {
+            if ($field.Value -match '\$(name|date|parentname|time|now|id|parentid)')
+            {
+                # Return custom object so we can include both the item and the field in the report
+                @{Item = $item; Field = $field}
+                break
+            }
+        }
+    }
+    
+    $database = "master"
+    $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
+    $props = @{
+        Parameters = @(
+            @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned.";}
+        )
+        Title = "Report Filter"
+        Description = "Choose the criteria for the report."
+        Width = 550
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -eq "cancel"){
+        exit
+    }
+    
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-TokenInFields
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no content items that have tokens in fields"
+    } else {
+        $props = @{
+            Title = "Item Field Token Report"
+            InfoTitle = "Content items with tokens in fields"
+            InfoDescription = 'Lists all content items that contain one of the following tokens in at least one field - $name, $date, $parentname, $time, $now, $id, $parentid.'
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Icon"; Expression={$_.Item.__Icon} },
+                @{Label="Name"; Expression={$_.Item.DisplayName} },
+                @{Label="Field Name"; Expression={$_.Field.Name} },
+                @{Label="Updated"; Expression={$_.Item.__Updated} },
+                @{Label="Updated by"; Expression={$_.Item."__Updated by"} },
+                @{Label="Created"; Expression={$_.Item.__Created} },
+                @{Label="Created by"; Expression={$_.Item."__Created by"} },
+                @{Label="Path"; Expression={$_.Item.ItemPath} }
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160405T225137

@@ -1,0 +1,33 @@
+﻿---
+ID: "65900675-db8c-4bb5-8e39-e9485da8c477"
+Parent: "e96411fe-97f1-47ac-80e3-9315593e7feb"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/System Maintenance/Tasks/Clean up deleted items older than 30 days"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/garbage_make_empty.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Clears the recycle bin for items older than thirty days.
+        
+        .NOTES
+            Michael West
+    #>
+    
+    Write-Log "Cleaning up deleted items older than 30 days"
+    
+    Import-Function -Name "Clear-Archive"
+    Clear-Archive -Days 30
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150201T214845

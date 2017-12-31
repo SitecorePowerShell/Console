@@ -1,0 +1,85 @@
+﻿---
+ID: "9052b33d-52dd-4c99-be20-5d0ed2135ecf"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Media Audit/Media items not used by content items"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Network/16x16/link_delete.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all media items that are not linked to content items.
+            
+        .NOTES
+            Michael West
+    #>
+    function HasContentReference {
+        param(
+            $Item
+        )
+        
+        $linkDb = [Sitecore.Globals]::LinkDatabase
+        $links = $linkDb.GetReferrers($Item)
+        
+        $result = $false
+        
+        foreach($link in $links) {
+            $linkItem = $link.GetSourceItem()
+            if ($linkItem) {
+                $path = New-Object Sitecore.Data.ItemPath ($linkItem)
+                if($path.IsContentItem) {
+                    $result = $true
+                    break
+                }
+            }
+        }
+        
+        $result
+    }
+    
+    function Get-MediaItemWithNoReference {
+        $mediaItemContainer = Get-Item "master:/media library"
+        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
+        
+        foreach($item in $items) {
+            if(!(HasContentReference($item))) {
+                $item
+            }
+        }
+    }
+    
+    $items = Get-MediaItemWithNoReference 
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no media items not used by content items"
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "Media items not used by content items"
+            InfoDescription = "Lists all media items that are not linked to content items."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+    }
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140405T001346

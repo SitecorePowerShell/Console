@@ -1,0 +1,14 @@
+﻿---
+ID: "f77ca396-7463-4b75-aa2c-2df61a3d6ec5"
+Parent: "3662ff32-82ab-488d-a73e-463e71f914a2"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Samples/Example Event Handlers/Event Handlers/Item"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130526T004958

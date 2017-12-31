@@ -1,0 +1,29 @@
+﻿---
+ID: "e760c50a-9555-40d3-a547-d7e78cf555dd"
+Parent: "64668dde-2255-4d6b-bf9c-fbbdeb0f129a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Internal/List View/Export/JSON"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Software/32x32/text_code_javascript.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    
+    $format = & ([scriptblock]::Create($exportProperty))        
+    [psCustomObject]$exportData | 
+        Select-Object -Property $format | 
+        ConvertTo-Json | 
+        Out-Download -Name "report-$datetime.json"
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130911T153154
