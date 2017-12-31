@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: People/32x32/users1.png
+  Value: office/32x32/users3.png
 - ID: "6209f0c2-e2b0-4f0c-95e3-037061cb866c"
   Hint: SaveLastScript
   Type: Checkbox

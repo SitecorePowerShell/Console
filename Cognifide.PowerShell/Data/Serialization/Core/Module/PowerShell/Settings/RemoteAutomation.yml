@@ -5,6 +5,9 @@ Template: "a87a00b1-e6db-45ab-8b54-636fec3b5523"
 Path: /sitecore/system/Modules/PowerShell/Settings/RemoteAutomation
 DB: master
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/folder.png
 - ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
   Hint: __Security
   Value: |

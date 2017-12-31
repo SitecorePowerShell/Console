@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Control/32x32/message_box.png
+  Value: Office/32x32/window_gear.png
 - ID: "e2e2b75d-a2f7-4075-bde2-d13306e9e350"
   Hint: Collapsed by Default
   Type: checkbox

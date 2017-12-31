@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: wordprocessing/32x32/style_formatting_b.png
+  Value: office/32x32/font.png
 - ID: "da69b6b3-d7bf-40d0-8609-e9b7b7be01ba"
   Hint: Key
   Value: Courier New

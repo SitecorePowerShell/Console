@@ -4,6 +4,10 @@ Parent: "e6904c9a-3ace-4b53-b465-4c05c6b1f1cc"
 Template: "a87a00b1-e6db-45ab-8b54-636fec3b5523"
 Path: /sitecore/templates/Modules/PowerShell Console
 DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/folder.png
 Languages:
 - Language: en
   Versions:
