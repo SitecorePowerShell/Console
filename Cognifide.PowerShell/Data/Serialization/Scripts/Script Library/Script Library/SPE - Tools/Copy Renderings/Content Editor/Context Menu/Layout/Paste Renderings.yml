@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Applications/32x32/paste.png
+  Value: Office/32x32/clipboard_paste.png
 - ID: "1c76313e-3c8c-4807-a826-135d10c39299"
   Hint: ShowRule
   Type: Rules
