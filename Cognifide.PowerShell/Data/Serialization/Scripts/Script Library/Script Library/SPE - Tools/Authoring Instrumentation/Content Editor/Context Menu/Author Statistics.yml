@@ -16,14 +16,24 @@ SharedFields:
     Set-HostProperty -HostWidth 60
     
     if($runScript -eq "yes"){
-        get-childitem -recurse | `
-        Group-Object "__Updated By" | `
-            Sort count -descending | `
-            Show-ListView -property Name, `
-            @{Label="Items Updated"; Expression={$_.count}}, `
-            @{Label="Icon"; Expression={ [Sitecore.Security.Accounts.User]::FromName("$($_.name)", $false).Profile.Portrait } } `
-            -Modal -Width 690 -Height 600
-    #    Show-Result -Text
+        $props = @{
+            Property = @(
+                "Name",
+                @{Label="Items Updated"; Expression={$_.count}},
+                @{Label="Icon"; Expression={ [Sitecore.Security.Accounts.User]::FromName("$($_.name)", $false).Profile.Portrait } }
+            )
+            Modal = $true
+            Width = 790
+            Height = 600
+            Title = "Author Statistics"
+        }
+        
+        $root = Get-Item -Path "."
+        
+        $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item))  | 
+            Group-Object -Property "__Updated By" |
+            Sort-Object -Property count -Descending |
+            Show-ListView @props
         Close-Window
     } else {
       Close-Window

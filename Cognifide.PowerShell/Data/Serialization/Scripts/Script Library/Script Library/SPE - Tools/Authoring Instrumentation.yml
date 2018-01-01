@@ -7,11 +7,11 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/jar.png
+  Value: Office/32x32/jar_coffee_bean.png
 - ID: "218ca464-cb77-4c97-b141-34871ecae00b"
   Hint: Enabled
   Type: Checkbox
-  Value: 0
+  Value: 1
 - ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
   Hint: Description
   Value: |
