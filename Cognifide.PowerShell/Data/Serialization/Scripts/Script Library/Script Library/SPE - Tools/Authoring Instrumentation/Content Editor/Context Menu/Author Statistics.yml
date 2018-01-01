@@ -29,8 +29,7 @@ SharedFields:
         }
         
         $root = Get-Item -Path "."
-        
-        $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item))  | 
+        @($root) + @(($root.Axes.GetDescendants() | Initialize-Item))  | 
             Group-Object -Property "__Updated By" |
             Sort-Object -Property count -Descending |
             Show-ListView @props

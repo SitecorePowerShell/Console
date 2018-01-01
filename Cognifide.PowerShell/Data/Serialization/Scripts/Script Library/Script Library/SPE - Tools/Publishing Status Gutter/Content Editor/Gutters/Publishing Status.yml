@@ -51,11 +51,11 @@ SharedFields:
     # Return descriptor with tooltip and icon
     if ($existsInOne) {
         $tooltip = [Sitecore.Globalization.Translate]::Text("This item has been published to at least one target")
-        $icon = "People/16x16/flag_yellow.png"
+        $icon = "Office/16x16/information.png"
         Write-Log "Exists in one"
     } else {
         $tooltip = [Sitecore.Globalization.Translate]::Text("This item has not yet been published")
-        $icon = "People/16x16/flag_red.png"    
+        $icon = "Office/16x16/question.png"    
     }
      
     $gutter = New-Object Sitecore.Shell.Applications.ContentEditor.Gutters.GutterIconDescriptor

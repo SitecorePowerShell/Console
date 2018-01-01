@@ -50,10 +50,10 @@ SharedFields:
         Exit
     }
     
-    $item = Wrap-Item -Item $item
-    $item, (Get-ChildItem $item.ProviderPath -Recurse) |
+    $root = Get-Item -Path "."
+    @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) |
         Where-Object { $from.CompareTo($_.__Updated.ToLocalTime()) -lt 0 -and $to.CompareTo($_.__Updated.ToLocalTime()) -gt 0 } |
-        Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated.ToLocalTime() } }
+        Show-ListView -Property Name, @{Label="Updated by"; Expression={$_."__Updated By"} }, @{Label="Modified"; Expression={ $_.__Updated.ToLocalTime() } } -Title "Recent Author Activity"
     
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
