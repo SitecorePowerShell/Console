@@ -11,8 +11,9 @@ SharedFields:
     # Clear test items:
     # Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' -recurse | Where-Object {  ($_.Name -match '\(test\)') } | Remove-Item
     
-    Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\Development\PowerShell Extensions Maintenance\Set up Runner Window Chrome"
-    Invoke-Script -Path "master:\system\Modules\PowerShell\Script Library\Platform\Development\PowerShell Extensions Maintenance\Recover Version Specific Icons"
+    # Setup Chrome
+    Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
+    Get-Item -Path "master:{41605861-08CB-4365-BB6B-5CB20ED97C98}" | Invoke-Script
     
     if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
       $sitecore7Warning = "" 
@@ -137,15 +138,15 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Settings
-    $source = @(Get-Item -Path master:\system\Modules\PowerShell\Settings) + (Get-ChildItem -Path master:\system\Modules\PowerShell\Settings) + (Get-ChildItem "All Users" -Path master:\system\Modules\PowerShell\Settings -recurse) | New-ExplicitItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
+    $source = @(Get-Item -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem "All Users" -Path "master:\system\Modules\PowerShell\Settings" -Recurse) | New-ExplicitItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
     
     # Applications
-    $source = Get-Item core:\content\Applications\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
+    $source = Get-Item "core:\content\Applications\PowerShell" | New-ItemSource -Name "Applications" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # PowerShell Dictionary - translation strings
-    $source = Get-Item core:\system\Dictionary\PowerShell | New-ItemSource -Name "Applications" -InstallMode Overwrite
+    $source = Get-Item "core:\system\Dictionary\PowerShell" | New-ItemSource -Name "Applications" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # Application Layouts
