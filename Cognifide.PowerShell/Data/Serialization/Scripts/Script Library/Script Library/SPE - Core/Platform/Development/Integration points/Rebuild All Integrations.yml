@@ -8,7 +8,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $integrations = gci "master:\system\Modules\PowerShell\Script Library\Platform\Internal\Integrations" # |% { "$($_.Message)" }
+    $integrations = Get-ChildItem -Path "master:{9BE73650-A188-4802-A68E-E720DB54C5E9}s" # |% { "$($_.Message)" }
     
     $i = 0;
     foreach($integration in $integrations){
