@@ -45,7 +45,7 @@ SharedFields:
         @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
         @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
         -Description "Choose the starting location and filtering criteria for the report." `
-        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon "Database/32x32/view_d.png"
+        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon "Office/32x32/data_scroll.png"
     
     if($result -eq "cancel"){
         Close-Window
@@ -115,7 +115,7 @@ SharedFields:
         @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
         @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
         -Description "Choose the fields to include in the report." `
-        -Title $dialogTitle -Width 600 -Height 740 -Icon "Database/32x32/view_d.png"
+        -Title $dialogTitle -Width 600 -Height 740 -Icon "Office/32x32/data_scroll.png"
     
     if($result -eq "cancel"){
         Close-Window
@@ -130,11 +130,15 @@ SharedFields:
         $properties += @{Label=$titles[$field]; Expression=$scr}
     }
     
-    $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule };
-    $items = Get-ChildItem $root.ProviderPath -Recurse:$include.Contains("Recurse")
+    $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule }
+    $items = @()
     if($include.Contains("Root")){
         $items = @($root) + $items
     }
+    if($include.Contains("Recurse")) {
+        $items = $items + ($root.Axes.GetDescendants() | Initialize-Item)
+    }
+    
     $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
     
     $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Filter Path: $($root.ProviderPath)"

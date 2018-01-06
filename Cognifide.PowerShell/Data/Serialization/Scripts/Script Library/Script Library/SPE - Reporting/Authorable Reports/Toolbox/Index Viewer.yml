@@ -135,7 +135,7 @@ SharedFields:
         $details += ", Showing the top $($topCount)"
     }
     
-    $script = Get-Item master:\ -ID "{EE75FFCF-7B3A-46CD-86AB-6536AD8675AA}"
+    $script = Get-Item -Path "master:" -ID "{EE75FFCF-7B3A-46CD-86AB-6536AD8675AA}"
     
     Find-Item @data | 
         Show-ListView -Property Name, Language, Version, Url, Path,  

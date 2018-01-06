@@ -16,14 +16,14 @@ SharedFields:
             [Parameter(Mandatory=$true, Position=1)]
             [string]$Uri
             )
+            
             process {
                 Find-Item -Index $index -Criteria @{Filter = "Equals"; Field = "_uniqueid"; Value = "$Uri"}
             }
     }
     
-    if($itemId -eq $null)
-    {
-        $itemId = (gi master:\content).Uri
+    if($itemId -eq $null) {
+        $itemId = (Get-Item -Path "master:\content").Uri
         $index = "sitecore_master_index" 
     }
     
@@ -38,17 +38,13 @@ SharedFields:
         "<h1>Fields:</h1>"#>
         
     $keys = $item.Fields.Keys;
-    if($keys -eq $null)
-    {
+    if($keys -eq $null) {
         $keys = $item | Get-Member -MemberType Property | %{ $_.Name}
-        foreach($fieldKey in ($keys | sort)){
+        foreach($fieldKey in ($keys | sort)) {
           $info += "<b>$($fieldKey): </b> $($item.$fieldKey)<br/>"
         }
-    }
-    else
-    {
-        foreach($fieldKey in ($item.Fields.Keys | sort))
-        {
+    } else {
+        foreach($fieldKey in ($item.Fields.Keys | Sort-Object)) {
             $info += "<b>$($fieldKey): </b> $($item.Fields[$fieldKey])<br/>"
         }
     }
@@ -58,7 +54,7 @@ SharedFields:
             @{Name="info"; Title=""; editor="info"}
         )
         Title = "'$($item.Name)' Fields Viewer"
-        Description = "Details fo the index item at $($item.DatabaseName):$($item.Path)."
+        Description = "Details for the index item at $($item.DatabaseName):$($item.Path)."
         Width = 900
         Height = 800
     }
