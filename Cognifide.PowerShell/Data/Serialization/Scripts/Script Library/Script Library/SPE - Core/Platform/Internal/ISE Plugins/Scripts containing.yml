@@ -15,13 +15,25 @@ SharedFields:
         Show-Alert "No text selected. To find scripts containing a phrase please select a block of text in ISE and press the button again."
         exit
     }
-    $scripts = Find-Item `
-       -Index sitecore_master_index `
-       -Criteria @{ Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/system/modules/PowerShell/" },
-        @{ Filter = "Equals"; Field = "_templatename"; Value = "PowerShell Script" },
-        @{ Filter = "Contains"; Field = "script"; Value = "$selectionText"; CaseSensitive = $true } | Initialize-Item
     
-    $scripts | Show-ListView -Property ProviderPath
+    $searchProps = @{
+        Index = "sitecore_master_index"
+        Criteria = @(
+            @{ Filter = "StartsWith"; Field = "_fullpath"; Value = "/sitecore/system/modules/PowerShell/" },
+            @{ Filter = "Equals"; Field = "_templatename"; Value = "PowerShell Script" },
+            @{ Filter = "Contains"; Field = "script"; Value = "$selectionText"; CaseSensitive = $true }
+        )
+    }
+    
+    $reportProps = @{
+        Title = "Scripts Containing Text Report"
+        InfoTitle = "Scripts containing the selected text"
+        InfoDescription = "The items below represent PowerShell Scripts containing the text '$($selectionText)'."
+        Property = "ProviderPath"
+    }
+    $scripts = Find-Item @searchProps | Initialize-Item
+    
+    $scripts | Show-ListView @reportProps
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
