@@ -429,8 +429,14 @@
 
         scForm.postRequest("", "", "", "ise:updatesettings");
 
-        cognifide.powershell.updateEditor = function() {
+        cognifide.powershell.updateEditor = function () {
             codeeditor.getSession().setValue(editor.val());
+            cognifide.powershell.clearBreakpoints();
+        };
+
+        cognifide.powershell.insertEditorContent = function (text) {
+            var position = codeeditor.getCursorPosition();
+            codeeditor.getSession().insert(position, text);
             cognifide.powershell.clearBreakpoints();
         };
 

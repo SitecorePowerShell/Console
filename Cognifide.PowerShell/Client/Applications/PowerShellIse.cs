@@ -678,7 +678,19 @@ namespace Cognifide.PowerShell.Client.Applications
             {
                 Editor.Value = script;
             }
+
             SheerResponse.Eval("cognifide.powershell.updateEditor();");
+        }
+
+        [HandleMessage("ise:plugininsert", true)]
+        protected void ConsumePluginResultInsert(ClientPipelineArgs args)
+        {
+            var script = args.Parameters["script"];
+            if (!string.IsNullOrEmpty(script))
+            {
+                script = HttpUtility.JavaScriptStringEncode(script);
+                SheerResponse.Eval($"cognifide.powershell.insertEditorContent(\"{script}\");");
+            }
         }
 
         [HandleMessage("pstaskmonitor:check", true)]

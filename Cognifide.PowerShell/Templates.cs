@@ -53,5 +53,16 @@ namespace Cognifide.PowerShell
         {
             public static readonly ID Id = new ID("{69316117-03A6-4679-A34A-21E8CE8701D5}");
         }
+
+        public struct SnippetDefinition
+        {
+            public static readonly ID Id = new ID("{B8BC40A8-1560-42C6-AA05-911C9C140AFE}");
+
+            public struct Fields
+            {
+                public static readonly ID Alias = new ID("{526F4C8C-0A0D-462E-A4ED-D7635DFEDB41}");
+                public static readonly ID Text = new ID("{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}");
+            }
+        }
     }
 }
