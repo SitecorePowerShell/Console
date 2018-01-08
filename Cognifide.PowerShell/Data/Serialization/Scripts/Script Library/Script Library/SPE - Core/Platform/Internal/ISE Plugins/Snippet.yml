@@ -29,7 +29,7 @@ SharedFields:
             @{Name="selectedSnippetId"; Title="Choose the snippet to insert"; Options=$snippetOptions; }
         )
         Title = "Snippet Selector"
-        Icon = "Office/32x32/index2.png"
+        Icon = "Office/32x32/piece2.png"
         Description = "Choose the snippet to insert."
         Width = 450
         Height = 300

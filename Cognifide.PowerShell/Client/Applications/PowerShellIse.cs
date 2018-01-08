@@ -686,11 +686,10 @@ namespace Cognifide.PowerShell.Client.Applications
         protected void ConsumePluginResultInsert(ClientPipelineArgs args)
         {
             var script = args.Parameters["script"];
-            if (!string.IsNullOrEmpty(script))
-            {
-                script = HttpUtility.JavaScriptStringEncode(script);
-                SheerResponse.Eval($"cognifide.powershell.insertEditorContent(\"{script}\");");
-            }
+            if (string.IsNullOrEmpty(script)) return;
+
+            script = HttpUtility.JavaScriptStringEncode(script);
+            SheerResponse.Eval($"cognifide.powershell.insertEditorContent(\"{script}\");");
         }
 
         [HandleMessage("pstaskmonitor:check", true)]
