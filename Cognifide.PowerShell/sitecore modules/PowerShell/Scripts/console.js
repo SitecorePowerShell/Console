@@ -245,7 +245,8 @@
 
     var guid = getSessionId();
     var terminal;
-
+    var currentYear = (new Date()).getFullYear();
+    var greetings = "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
     $(function() {
         terminal =
             $("#terminal").terminal(function(command, term) {
@@ -268,7 +269,7 @@
                     callPowerShellHost(term, guid, command);
                 }
             }, {
-                greetings: "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
+                greetings: greetings,
                 name: "mainConsole",
                 tabcompletion: true,
                 onTabCompletionInit: tabCompletionInit,

@@ -18,10 +18,13 @@ jQuery(document).ready(function($) {
         });
         $("#progressbar").VistaProgressBar("start");
     }
-    $("#Copyright").each(function() { // Notice the .each() loop, discussed below
+    $("#Copyright").each(function () { // Notice the .each() loop, discussed below
+        var currentYear = (new Date()).getFullYear();
+        var greetings = "Copyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
+
         $(this).qtip({
             content: {
-                text: "Copyright &copy; 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
+                text: greetings,
                 title: "Sitecore PowerShell Extensions"
             },
             position: {
