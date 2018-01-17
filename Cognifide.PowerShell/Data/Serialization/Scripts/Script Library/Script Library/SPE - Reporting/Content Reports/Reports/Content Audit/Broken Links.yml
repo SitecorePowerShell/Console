@@ -24,7 +24,7 @@ SharedFields:
     $database = "master"
     $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
     $linksToCheck =  @("internal","external")
-    $linkTypes = [ordered]@{"Internal Links"="internal";"External Links"="external"};
+    $linkTypes = [ordered]@{"Internal Links"="internal";"External Links (General Link only)"="external"};
     
     $versionOptions = [ordered]@{
         "Latest"="1"
