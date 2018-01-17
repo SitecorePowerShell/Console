@@ -41,6 +41,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "bb865e67-0be3-49d8-b8bd-1db4b34ab2e3"
+      Hint: Tool tip
+      Value: Tool for writing PowerShell scripts.
     - ID: "c032db76-cc34-4f8f-be2d-d2fb35237aab"
       Hint: Display name
       Value: PowerShell ISE

@@ -65,7 +65,7 @@ Languages:
     Fields:
     - ID: "14dca483-aac7-4d87-ae27-3163d21798b7"
       Hint: Tool tip
-      Value: Create PowerShell Scripts
+      Value: Interface for writing PowerShell scripts.
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20121128T121700
