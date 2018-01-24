@@ -2602,7 +2602,6 @@
     var color_hex_re = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
     var url_re = /(\bhttps?:\/\/(?:(?:(?!&[^;]+;)|(?=&amp;))[^\s"'<>\][)])+\b)/gi;
     var url_nf_re = /\b(https?:\/\/(?:(?:(?!&[^;]+;)|(?=&amp;))[^\s"'<>\][)])+)\b(?![^[\]]*])/gi;
-    var email_re = /((([^<>('")[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))/g;
     var command_re = /((?:"[^"\\]*(?:\\[\S\s][^"\\]*)*"|'[^'\\]*(?:\\[\S\s][^'\\]*)*'|\/[^\/\\]*(?:\\[\S\s][^\/\\]*)*\/[gimy]*(?=\s|$)|(?:\\\s|\S))+)(?=\s|$)/gi;
     var format_begin_re = /(\[\[[!gbiuso]*;[^;]*;[^\]]*\])/i;
     var format_start_re = /^(\[\[[!gbiuso]*;[^;]*;[^\]]*\])/i;
@@ -2611,12 +2610,16 @@
     var float_re = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
     var re_re = /^\/((?:\\\/|[^/]|\[[^\]]*\/[^\]]*\])+)\/([gimy]*)$/;
     var unclosed_strings_re = /^(?=((?:[^"']+|"[^"\\]*(?:\\[^][^"\\]*)*"|'[^'\\]*(?:\\[^][^'\\]*)*')*))\1./;
+    // Adam Najmanowicz
+    var guid_re = /(\{{1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{1})/g;
+    var email_re = /((([^<>('")[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))/g;
+
     /* eslint-enable */
     // -------------------------------------------------------------------------
     // :: TOOLS
     // -------------------------------------------------------------------------
     // taken from https://hacks.mozilla.org/2011/09/detecting-and-generating-
-    // css-animations-in-javascript/
+    // css-animatemaiions-in-javascript/
     var support_animations = (function() {
         var animation = false,
             domPrefixes = 'Webkit Moz O ms Khtml'.split(' '),
@@ -3351,6 +3354,7 @@
                                     data.replace(/"/g, '&quote;') + '">' +
                                     text + '</span>';
                             }
+                            
                             return result;
                         });
                     } else {
@@ -3366,7 +3370,21 @@
                         return '<span' + style + '>' + text + '</span>';
                     }
                 }).join('');
-                return str.replace(/<span><br\s*\/?><\/span>/gi, '<br/>');
+                //return str.replace(/<span><br\s*\/?><\/span>/gi, '<br/>');
+                // Adam Najmanowicz
+                return $.map(str.split(/(<\/?span[^>]*>)/g), function (string) {
+                    if (!string.match(/span/)) {
+                        return string.replace(url_re, function (link) {
+                            var comma = link.match(/\.$/);
+                            link = link.replace(/\.$/, "");
+                            return "<a target=\"_blank\" href=\"" + link + "\">" + link + "</a>" +
+                                (comma ? "." : "");
+                        }).replace(email_re, "<a href=\"mailto:$1\">$1</a>")
+                            .replace(guid_re, "<a onclick=\"javascript:return scForm.postEvent(this,event,'item:load(id=$1)')\" href=\"#\">$1</a>");
+                    } else {
+                        return string;
+                    }
+                }).join("").replace(/<span><br\/?><\/span>/g, "<br/>");
             } else {
                 return '';
             }
@@ -3915,7 +3933,11 @@
             notAString: '%s function: argument is not a string',
             redrawError: 'Internal error, wrong position in cmd redraw',
             invalidStrings: 'Command %s have unclosed strings'
-        }
+        },
+        onTabCompletionInit: $.noop, // Adam Najmanowicz
+        onTabCompletion: $.noop, // Adam Najmanowicz
+        onTabCompletionEnd: $.noop, // Adam Najmanowicz
+        onTabCompletionNoHints: $.noop
     };
     // -------------------------------------------------------------------------
     // :: All terminal globals
@@ -4526,7 +4548,7 @@
                     var array = $.terminal.split_equal(string, num_chars, words);
                     for (i = 0, len = array.length; i < len; ++i) {
                         if (array[i] === '' || array[i] === '\r') {
-                            output_buffer.push('<span></span>');
+                            output_buffer.push('<span>&nbsp;</span>'); // Adam Najamowicz
                         } else {
                             output_buffer.push($.terminal.format(array[i], {
                                 linksNoReferrer: settings.linksNoReferrer
@@ -5296,7 +5318,10 @@
                         return result;
                     }
                     if (e.which !== 9) { // not a TAB
-                        tab_count = 0;
+                        if (tab_count > -1) {
+                            tab_count = -1;
+                            settings.onTabCompletionEnd(); // Adam Najmanowicz
+                        }
                     }
                     self.attr({scrollTop: self.attr('scrollHeight')});
                 } else {
@@ -5333,6 +5358,51 @@
                             requests = [];
                         }
                         self.resume();
+                    } else if (settings.tabcompletion && e.which === 9) { // TAB
+                        // TODO: move this to cmd plugin
+                        //       add tabcompletion = array | function
+                        var command = command_line.get().substring(0, command_line.position());
+                        if (tab_count === -1) { // Adam Najmanowicz
+                            tab_max = settings.onTabCompletionInit(command); // Adam Najmanowicz
+                            if (tab_max === 0) {
+                                settings.onTabCompletionNoHints();
+                            }
+                            tab_count = 0; // Adam Najmanowicz
+                        } // Adam Najmanowicz
+                        settings.onTabCompletion(self, tab_count); // Adam Najmanowicz
+                        ++tab_count;
+                        if (tab_count >= tab_max) { // Adam Najmanowicz
+                            tab_count = 0; // Adam Najmanowicz
+                        } // Adam Najmanowicz
+                        return false;
+                    } else if ((e.which === 189 || e.which === 109 || e.which === 173) && e.ctrlKey && e.shiftKey && e.altKey) {
+                        // Decrease the font size
+                        var fontSize = parseInt($("#terminal").css("font-size"));
+                        fontSize = Math.max(fontSize -= 1, 12);
+                        $("#terminal").css({ "font-size": fontSize + "px" });
+                        e.preventDefault();
+                    } else if ((e.which === 187 || e.which === 107 || e.which === 61) && e.ctrlKey && e.shiftKey && e.altKey) {
+                        // Increase the font size
+                        var fontSize = parseInt($("#terminal").css("font-size"));
+                        fontSize = Math.min(fontSize += 1, 25);
+                        $("#terminal").css({ "font-size": fontSize + "px" });
+                        e.preventDefault();
+                    } else if (e.which === 86 && e.ctrlKey) { // CTRL+V
+                        self.oneTime(1, function () {
+                            scroll_to_bottom();
+                        });
+                        return;
+                    } else if (e.which === 9 && e.ctrlKey) { // CTRL+TAB
+                        if (terminals.length() > 1) {
+                            self.focus(false);
+                            return false;
+                        }
+                    } else if (e.which === 34) { // PAGE DOWN
+                        self.scroll(self.height());
+                    } else if (e.which === 33) { // PAGE UP
+                        self.scroll(-self.height());
+                    } else {
+                        self.attr({ scrollTop: self.attr("scrollHeight") });
                     }
                     return false;
                 }
