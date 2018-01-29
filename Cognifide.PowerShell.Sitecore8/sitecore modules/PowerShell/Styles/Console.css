@@ -27,6 +27,8 @@ html {
 
 #terminal * {
     font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: normal;
 }
 
 .middleArea pre, .resultsArea pre { margin: 4px; }
@@ -46,6 +48,11 @@ html {
 .pre {
     font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
     white-space: pre-wrap;
+}
+
+.terminal-wrapper > .cmd {
+    color: inherit;
+    background-color: inherit;
 }
 
 #Result {
