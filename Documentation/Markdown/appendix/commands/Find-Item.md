@@ -357,10 +357,8 @@ Find all children of a specific item including that item - return Sitecore items
  
 ```powershell   
  
-$root = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
-Find-Item -Index sitecore_master_index `
-          -Criteria @{Filter = "DescendantOf"; Field = $root } |
-    Initialize-Item 
+$root = Get-Item -Path "master:/system/Modules/PowerShell/Script Library/"
+Find-Item -Index sitecore_master_index -Criteria @{Filter = "DescendantOf"; Value = $root.ID } | Initialize-Item
  
 ``` 
  
@@ -392,4 +390,10 @@ Find-Item `
  
 ## Related Topics 
  
-* [Initialize-Item](/appendix/commands/Initialize-Item.md)* Get-Item* Get-ChildItem* <a href='https://gist.github.com/AdamNaj/273458beb3f2b179a0b6' target='_blank'>https://gist.github.com/AdamNaj/273458beb3f2b179a0b6</a><br/>* <a href='http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library' target='_blank'>http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library</a><br/>* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
+* [Initialize-Item](/appendix/commands/Initialize-Item.md)
+* Get-Item
+* Get-ChildItem
+* <a href='https://gist.github.com/AdamNaj/273458beb3f2b179a0b6' target='_blank'>https://gist.github.com/AdamNaj/273458beb3f2b179a0b6</a><br/>
+* <a href='http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library' target='_blank'>http://weblogs.asp.net/scottgu/dynamic-linq-part-1-using-the-linq-dynamic-query-library</a><br/>
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
