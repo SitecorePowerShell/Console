@@ -106,10 +106,8 @@
 
     .EXAMPLE
         # Find all children of a specific item including that item - return Sitecore items
-        $root = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
-        Find-Item -Index sitecore_master_index `
-                  -Criteria @{Filter = "DescendantOf"; Field = $root } |
-            Initialize-Item
+        $root = Get-Item -Path "master:/system/Modules/PowerShell/Script Library/"
+        Find-Item -Index sitecore_master_index -Criteria @{Filter = "DescendantOf"; Value = $root.ID } | Initialize-Item
 
     .EXAMPLE
         # Find all Template Fields using Dynamic LINQ syntax 
