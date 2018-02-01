@@ -386,8 +386,21 @@ Find-Item `
         -Criteria @{Filter = "Equals"; Field = "_templatename"; Value = "Template Field"},
                   @{Filter = "Equals"; Field = "_language"; Value = "en"} 
  
-``` 
- 
+```
+
+### EXAMPLE 5
+
+Find the first 10 items in the master database Media Library with a non-empty "Alt" value.
+
+```powershell
+$root = Get-Item -Path "master:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}"
+$criteria = @(
+    @{ Filter = "DescendantOf"; Value = $root.ID }
+    @{ Filter="Equals"; Value=""; Field="Alt"; Invert=$true }
+)
+Find-Item -Index sitecore_master_index -Criteria $criteria -First 10 
+```
+
 ## Related Topics 
  
 
