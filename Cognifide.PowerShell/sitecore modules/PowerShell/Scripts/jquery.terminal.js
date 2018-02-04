@@ -1373,7 +1373,15 @@
             'END': end,
             'CTRL+E': end,
             'HOME': home,
-            'CTRL+A': home,
+            'CTRL+A': function () {
+                var selection = window.getSelection();
+                var range = document.createRange();
+                range = document.createRange();
+                range.selectNodeContents(self.find('.cursor-line span')[0]);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                return false;
+            },
             'SHIFT+INSERT': paste_event,
             'CTRL+SHIFT+T': return_true, // open closed tab
             'CTRL+W': function() {
