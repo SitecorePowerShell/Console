@@ -27,6 +27,8 @@ html {
 
 #terminal * {
     font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: normal;
 }
 
 .middleArea pre, .resultsArea pre { margin: 4px; }
@@ -46,6 +48,59 @@ html {
 .pre {
     font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
     white-space: pre-wrap;
+}
+
+.terminal-wrapper > .cmd {
+    color: inherit;
+    background-color: inherit;
+}
+
+@-webkit-keyframes spe-blink {
+  0%, 100% {
+      background-color: #012456;
+      color: #aaa;
+  }
+  50% {
+      background-color: #bbb;
+      color: #012456;
+  }
+}
+
+@-ms-keyframes spe-blink {
+  0%, 100% {
+      background-color: #012456;
+      color: #aaa;
+  }
+  50% {
+      background-color: #bbb;
+      color: #012456;
+  }
+}
+
+@-moz-keyframes spe-blink {
+  0%, 100% {
+      background-color: #012456;
+      color: #aaa;
+  }
+  50% {
+      background-color: #bbb;
+      color: #012456;
+  }
+}
+@keyframes spe-blink {
+  0%, 100% {
+      background-color: #012456;
+      color: #aaa;
+  }
+  50% {
+      background-color: #bbb; /* not #aaa because it's seems there is Google Chrome bug */
+      color: #012456;
+  }
+}
+
+#terminal .cmd .cursor.blink {
+    animation-name: spe-blink;
+    background-color: var(--background, #012456);
 }
 
 #Result {
