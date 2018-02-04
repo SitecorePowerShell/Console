@@ -181,11 +181,21 @@
 
     function completion(command, tab_count, callback) {
         if (tab_count < 0 || !tabCompletions) {
-            tabCompletionInit(command);
-        }
+            tabCompletionInit(command, function () {
+                if (tabCompletions) {
+                    callback(tabCompletions[0]);
 
-        if (tabCompletions) {
+                    if (tabCompletions.length === 0) {
+                        tabCompletionNoHints();
+                    }
+                }
+            });
+        } else if (tabCompletions) {
             callback(tabCompletions[tab_count]);
+
+            if (tabCompletions.length === 0) { 
+                tabCompletionNoHints();
+            }
         }
     }
 
@@ -193,9 +203,6 @@
         getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
             function (json) {
                 var data = JSON.parse(json.d);
-                if (!!console) {
-                    console.log("setting tabCompletions to: " + data.toString());
-                }
                 sigHint = "";
                 tabCompletions = data.filter(function (hint) {
                     var isSignature = hint.indexOf("Signature|") === 0;
@@ -210,18 +217,18 @@
                         return "[" + hintParts[3];
                     }                    
                     return hint;
-                });
+                    });
+                if (callback) {
+                    callback();
+                }
+                if (!!console) {
+                    console.log("[spe] setting tabCompletions to: ", tabCompletions);
+                }
             });
         if (!!console) {
-            console.log("initializing tab completion");
+            console.log("[spe] initializing tab completion");
         }
         return (tabCompletions) ? tabCompletions.length : 0;
-    }
-
-    function tabCompletionEnd() {
-        if (!!console) {
-            console.log("ending tab completion");
-        }
     }
 
     function tabCompletionNoHints() {

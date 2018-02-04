@@ -5308,7 +5308,7 @@
                                 display_exception(error, 'USER');
                                 return false;
                             }
-
+                            
                             completion.call(self, string, tab_count, function(command) {
                                 self.set_command(command);
                             });
@@ -5359,6 +5359,12 @@
                     result = user_key_down(e);
                     if (result !== undefined) {
                         return result;
+                    }
+
+                    if (e.which !== 9) { // not a TAB
+                        if (tab_count > -1) {
+                            tab_count = -1;
+                        }
                     }
 
                     self.attr({scrollTop: self.attr('scrollHeight')});
@@ -5433,7 +5439,6 @@
         var scroll_object;
         var prev_command; // used for name on the terminal if not defined
         var tab_count = 0; // for tab completion
-        var tab_max = 0;
         // array of line objects:
         // - function (called whenever necessary, result is printed)
         // - array (expected form: [line, settings])
