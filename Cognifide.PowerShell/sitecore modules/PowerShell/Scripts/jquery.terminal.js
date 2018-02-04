@@ -1382,6 +1382,10 @@
                 selection.addRange(range);
                 return false;
             },
+            'CTRL+SHIFT+ALT+=': increase_font,
+            'CTRL+SHIFT+ALT++': increase_font,
+            'CTRL+SHIFT+ALT+-': decrease_font,
+            'CTRL+SHIFT+ALT+_': decrease_font,
             'SHIFT+INSERT': paste_event,
             'CTRL+SHIFT+T': return_true, // open closed tab
             'CTRL+W': function() {
@@ -1432,6 +1436,18 @@
             'META+R': return_true, // CMD+R page reload in Chrome Mac
             'META+L': return_true  // CLD+L jump into Ominbox on Chrome Mac
         };
+        function increase_font() {
+            // Increase the font size
+            var fontSize = parseInt($("#terminal").css("font-size"));
+            fontSize = Math.min(fontSize += 1, 25);
+            $("#terminal").css({ "font-size": fontSize + "px" });
+        }
+        function decrease_font() {
+            // Decrease the font size
+            var fontSize = parseInt($("#terminal").css("font-size"));
+            fontSize = Math.max(fontSize -= 1, 12);
+            $("#terminal").css({ "font-size": fontSize + "px" });
+        }
         function return_true() {
             return true;
         }
