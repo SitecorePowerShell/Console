@@ -1264,6 +1264,7 @@
                     draw_prompt();
                 }
                 clip.val('');
+                tab_count = 0;
                 return false;
             },
             'SHIFT+ENTER': function() {
@@ -1283,6 +1284,9 @@
                 self.oneTime(1, function() {
                     no_keydown = true;
                 });
+            },
+            'ESCAPE': function () {
+                self.set(''); 
             },
             'TAB': function() {
                 self.insert('\t');
@@ -3933,11 +3937,7 @@
             notAString: '%s function: argument is not a string',
             redrawError: 'Internal error, wrong position in cmd redraw',
             invalidStrings: 'Command %s have unclosed strings'
-        },
-        onTabCompletionInit: $.noop, // Adam Najmanowicz
-        onTabCompletion: $.noop, // Adam Najmanowicz
-        onTabCompletionEnd: $.noop, // Adam Najmanowicz
-        onTabCompletionNoHints: $.noop
+        }
     };
     // -------------------------------------------------------------------------
     // :: All terminal globals
@@ -4958,7 +4958,7 @@
                         self.pop();
                     }
                     after_exec();
-                } else if (settings.clear && command.match(/^\s*clear\s*$/) &&
+                } else if (settings.clear && command.match(/^\s*clear|cls|clear-host\s*$/) &&
                            !in_login) {
                     self.clear();
                     after_exec();
@@ -5233,6 +5233,44 @@
             'CTRL+L': function() {
                 self.clear();
             },
+            'SHIFT+TAB': function (e, orignal) {
+                tab_count = Math.max(tab_count - 2, 0);
+                var top = interpreters.top(), completion, caseSensitive;
+                if (typeof top.caseSensitiveAutocomplete !== 'undefined') {
+                    caseSensitive = top.caseSensitiveAutocomplete;
+                } else {
+                    caseSensitive = settings.caseSensitiveAutocomplete;
+                }
+                if (settings.completion &&
+                    $.type(settings.completion) !== 'boolean' &&
+                    top.completion === undefined) {
+                    completion = settings.completion;
+                } else {
+                    completion = top.completion;
+                }
+                if (completion === 'settings') {
+                    completion = settings.completion;
+                }
+                if (completion) {
+                    switch ($.type(completion)) {
+                        case 'function':
+                            var string = self.before_cursor(settings.wordAutocomplete);
+                            if (completion.length === 4) {
+                                var error = new Error(strings().comletionParameters);
+                                display_exception(error, 'USER');
+                                return false;
+                            }
+
+                            completion.call(self, string, tab_count, function (command) {
+                                self.set_command(command);
+                            });
+                            tab_count++;
+                    }
+                } else {
+                    orignal();
+                }
+                return false;
+            },
             'TAB': function(e, orignal) {
                 // TODO: move this to cmd plugin
                 //       add completion = array | function
@@ -5257,19 +5295,16 @@
                     switch ($.type(completion)) {
                         case 'function':
                             var string = self.before_cursor(settings.wordAutocomplete);
-                            if (completion.length === 3) {
+                            if (completion.length === 4) {
                                 var error = new Error(strings().comletionParameters);
                                 display_exception(error, 'USER');
                                 return false;
                             }
-                            completion.call(self, string, function(commands) {
-                                self.complete(commands, {
-                                    echo: true,
-                                    word: settings.wordAutocomplete,
-                                    escape: settings.completionEscape,
-                                    caseSensitive: caseSensitive
-                                });
+
+                            completion.call(self, string, tab_count, function(command) {
+                                self.set_command(command);
                             });
+                            tab_count++;
                             break;
                         case 'array':
                             self.complete(completion, {
@@ -5317,12 +5352,7 @@
                     if (result !== undefined) {
                         return result;
                     }
-                    if (e.which !== 9) { // not a TAB
-                        if (tab_count > -1) {
-                            tab_count = -1;
-                            settings.onTabCompletionEnd(); // Adam Najmanowicz
-                        }
-                    }
+
                     self.attr({scrollTop: self.attr('scrollHeight')});
                 } else {
                     if (!settings.pauseEvents) {
@@ -5358,51 +5388,6 @@
                             requests = [];
                         }
                         self.resume();
-                    } else if (settings.tabcompletion && e.which === 9) { // TAB
-                        // TODO: move this to cmd plugin
-                        //       add tabcompletion = array | function
-                        var command = command_line.get().substring(0, command_line.position());
-                        if (tab_count === -1) { // Adam Najmanowicz
-                            tab_max = settings.onTabCompletionInit(command); // Adam Najmanowicz
-                            if (tab_max === 0) {
-                                settings.onTabCompletionNoHints();
-                            }
-                            tab_count = 0; // Adam Najmanowicz
-                        } // Adam Najmanowicz
-                        settings.onTabCompletion(self, tab_count); // Adam Najmanowicz
-                        ++tab_count;
-                        if (tab_count >= tab_max) { // Adam Najmanowicz
-                            tab_count = 0; // Adam Najmanowicz
-                        } // Adam Najmanowicz
-                        return false;
-                    } else if ((e.which === 189 || e.which === 109 || e.which === 173) && e.ctrlKey && e.shiftKey && e.altKey) {
-                        // Decrease the font size
-                        var fontSize = parseInt($("#terminal").css("font-size"));
-                        fontSize = Math.max(fontSize -= 1, 12);
-                        $("#terminal").css({ "font-size": fontSize + "px" });
-                        e.preventDefault();
-                    } else if ((e.which === 187 || e.which === 107 || e.which === 61) && e.ctrlKey && e.shiftKey && e.altKey) {
-                        // Increase the font size
-                        var fontSize = parseInt($("#terminal").css("font-size"));
-                        fontSize = Math.min(fontSize += 1, 25);
-                        $("#terminal").css({ "font-size": fontSize + "px" });
-                        e.preventDefault();
-                    } else if (e.which === 86 && e.ctrlKey) { // CTRL+V
-                        self.oneTime(1, function () {
-                            scroll_to_bottom();
-                        });
-                        return;
-                    } else if (e.which === 9 && e.ctrlKey) { // CTRL+TAB
-                        if (terminals.length() > 1) {
-                            self.focus(false);
-                            return false;
-                        }
-                    } else if (e.which === 34) { // PAGE DOWN
-                        self.scroll(self.height());
-                    } else if (e.which === 33) { // PAGE UP
-                        self.scroll(-self.height());
-                    } else {
-                        self.attr({ scrollTop: self.attr("scrollHeight") });
                     }
                     return false;
                 }
@@ -5440,6 +5425,7 @@
         var scroll_object;
         var prev_command; // used for name on the terminal if not defined
         var tab_count = 0; // for tab completion
+        var tab_max = 0;
         // array of line objects:
         // - function (called whenever necessary, result is printed)
         // - array (expected form: [line, settings])
@@ -5781,7 +5767,7 @@
                 }
                 // local copy
                 commands = commands.slice();
-                if (settings.clear && $.inArray('clear', commands) === -1) {
+                if (settings.clear && $.inArray('clear', commands) === -1 && $.inArray('cls', commands) === -1 && $.inArray('clear-host', commands) === -1) {
                     commands.push('clear');
                 }
                 if (settings.exit && $.inArray('exit', commands) === -1) {

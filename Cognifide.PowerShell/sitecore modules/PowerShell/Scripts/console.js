@@ -179,7 +179,17 @@
 
     var sigHint = "";
 
-    function tabCompletionInit(command) {
+    function completion(command, tab_count, callback) {
+        if (tab_count < 0 || !tabCompletions) {
+            tabCompletionInit(command);
+        }
+
+        if (tabCompletions) {
+            callback(tabCompletions[tab_count]);
+        }
+    }
+
+    function tabCompletionInit(command, callback) {
         getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
             function (json) {
                 var data = JSON.parse(json.d);
@@ -206,12 +216,6 @@
             console.log("initializing tab completion");
         }
         return (tabCompletions) ? tabCompletions.length : 0;
-    }
-
-    function tabCompletion(term, tabCount) {
-        if (tabCompletions) {
-            term.set_command(tabCompletions[tabCount]);
-        }
     }
 
     function tabCompletionEnd() {
@@ -271,11 +275,8 @@
             }, {
                 greetings: greetings,
                 name: "mainConsole",
-                tabcompletion: true,
-                onTabCompletionInit: tabCompletionInit,
-                onTabCompletion: tabCompletion,
-                onTabCompletionEnd: tabCompletionEnd,
-                onTabCompletionNoHints: tabCompletionNoHints
+                completion: completion,
+                caseSensitiveAutocomplete: false
             });
         cognifide.powershell.bootstrap(false);
     });
