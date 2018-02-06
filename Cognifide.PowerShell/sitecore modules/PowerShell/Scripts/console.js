@@ -287,14 +287,12 @@
                 });
         $.terminal.defaults.formatters.push(function (string) {
             return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {
-                if (/[a-zA-Z]{1,}[\-][a-zA-Z]*\b/g.test(string)) {
+                if (/^[a-zA-Z]{1,}[\-][a-zA-Z]*\b$/g.test(string)) {
                     return '[[;yellow;]' + string + ']';
-                } else if (/([\-])([a-zA-Z]{1,})\b/g.test(string)) {
+                } else if (/^([\-])([a-zA-Z]{1,})\b$/g.test(string)) {
                     return '[[;magenta;]' + string + ']';
-                } else if (/[$][a-zA-Z_][a-zA-Z0-9_]*\b/g.test(string)) {
+                } else if (/^[$][a-zA-Z_][a-zA-Z0-9_]*\b/g.test(string)) {
                     return '[[;lightgreen;]' + string + ']';
-                } else if (/([\[])([a-zA-Z0-9\-\.\+]*)([\]])/g.test(string)) {
-                    return '[[;gray;]' + string + ']';
                 } else {
                     return string;
                 }
