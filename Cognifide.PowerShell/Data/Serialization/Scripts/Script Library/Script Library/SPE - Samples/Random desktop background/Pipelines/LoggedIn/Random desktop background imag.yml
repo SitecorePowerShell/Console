@@ -27,8 +27,8 @@ SharedFields:
         return
     }
     
-    $args = Get-Variable -Name args -ValueOnly
-    $username = $args.UserName
+    $pipelineArgs = Get-Variable -Name pipelineArgs -ValueOnly
+    $username = $pipelineArgs.UserName
     Write-Log "Changing background for $($username)"
     $user = Get-User -Identity $username -Authenticated
     $which = (New-Object System.Random).Next($files.Length - 1)
