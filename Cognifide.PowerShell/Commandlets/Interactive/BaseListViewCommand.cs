@@ -95,12 +95,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             if (Property == null && SessionState.PSVariable.Get("ScPsSlvProperties") == null)
             {
+                var hasCustomObjects = false;
                 var propScript =
                     InvokeCommand.NewScriptBlock(
                         "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayProperty } | Select-Object -First 1");
                 var propDefault = InvokeCommand.InvokeScript(SessionState, propScript).FirstOrDefault();
                 if (propDefault == null)
                 {
+                    hasCustomObjects = true;
                     // May be PSCustomObject
                     propScript =
                         InvokeCommand.NewScriptBlock(
@@ -109,9 +111,19 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 if (propDefault != null)
                 {
-                    propScript =
-                        InvokeCommand.NewScriptBlock(
-                            "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+                    if (hasCustomObjects)
+                    {
+                        propScript =
+                            InvokeCommand.NewScriptBlock(
+                                "$ScPsSlvPipelineObject | Foreach-Object { $_.PSObject.Properties.Name }");
+                    }
+                    else
+                    {
+                        propScript =
+                            InvokeCommand.NewScriptBlock(
+                                "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+                    }
+
                     var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
                     var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
                     if (propResult.Any())
