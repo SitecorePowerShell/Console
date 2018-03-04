@@ -29,15 +29,15 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public object[] Property { get; set; }
 
-        private Hashtable[] processedProperty;
+        private Hashtable[] _processedProperty;
 
         protected Hashtable[] ProcessedProperty
         {
             get
             {
-                if (processedProperty == null && Property != null)
+                if (_processedProperty == null && Property != null)
                 {
-                    processedProperty = Property.Select(p =>
+                    _processedProperty = Property.Select(p =>
                     {
                         string label;
                         ScriptBlock expression;
@@ -67,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         return result;
                     }).ToArray();
                 }
-                return processedProperty;
+                return _processedProperty;
             }
         }
 
@@ -111,18 +111,9 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 }
                 if (propDefault != null)
                 {
-                    if (hasCustomObjects)
-                    {
-                        propScript =
-                            InvokeCommand.NewScriptBlock(
-                                "$ScPsSlvPipelineObject | Foreach-Object { $_.PSObject.Properties.Name }");
-                    }
-                    else
-                    {
-                        propScript =
-                            InvokeCommand.NewScriptBlock(
-                                "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
-                    }
+                    propScript = InvokeCommand.NewScriptBlock(hasCustomObjects 
+                        ? "$ScPsSlvPipelineObject | Foreach-Object { $_.PSObject.Properties.Name }" 
+                        : "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
 
                     var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
                     var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
