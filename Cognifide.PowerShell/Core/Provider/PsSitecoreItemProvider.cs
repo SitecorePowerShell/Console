@@ -100,6 +100,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 GetVersionAndLanguageParams(out int version, out string[] language);
 
+                string id = null;
                 if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
                     path = path.Replace("\\", "/");
@@ -108,7 +109,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
                     }
 
-                    item = TryGetDynamicParam(IdParam, out string id) ? GetItemById(path, id) : GetItemForPath(path);
+                    item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
 
                 if (IsDynamicParamSet(WithParentParam))
@@ -118,7 +119,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (item == null)
                 {
-                    WriteInvalidPathError(VirtualPathUtility.AppendTrailingSlash(item.GetProviderPath()));
+                    WriteInvalidPathError(path, id);
                 }
                 else
                 {
@@ -309,14 +310,14 @@ namespace Cognifide.PowerShell.Core.Provider
             }
         }
 
-        /// <summary>
-        ///     Throws an argument exception stating that the specified path does
-        ///     not exist.
-        /// </summary>
-        /// <param name="path">path which is invalid</param>
-        private void WriteInvalidPathError(string path)
+        private void WriteInvalidPathError(string path, string id = null)
         {
-            var exception = new IOException($"Cannot find path '{path}' because it does not exist.");
+            var message = $"Cannot find path '{path}' because it does not exist.";
+            if (!id.IsNullOrEmpty())
+            {
+                message = $"Cannot find path '{path}' and id {id} because it does not exist.";
+            }
+            var exception = new IOException(message);
             WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
         }
 
