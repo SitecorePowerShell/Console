@@ -17,10 +17,12 @@ namespace Cognifide.PowerShell.Integrations.Processors
     {
         protected static bool IsScripted(string dataSource)
         {
+            const string patternId = @"^script:{[a-zA-Z0-9]{8}-([a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12}}$";
+
             return dataSource != null &&
                    (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) == 0 &&
                     (dataSource.IndexOf(ApplicationSettings.ScriptLibraryPath, StringComparison.OrdinalIgnoreCase) > -1) ||
-                    Regex.IsMatch(dataSource, @"^script:{[a-zA-Z0-9]{8}-([a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12}}$", RegexOptions.Compiled));
+                    Regex.IsMatch(dataSource, patternId, RegexOptions.Compiled));
         }
 
         protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
