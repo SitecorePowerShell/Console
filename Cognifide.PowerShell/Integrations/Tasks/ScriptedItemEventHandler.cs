@@ -4,6 +4,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Events;
@@ -50,6 +51,12 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                         {
                             continue;
                         }
+
+                        if (!RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item))
+                        {
+                            continue;
+                        }
+
                         if (item != null)
                         {
                             session.SetItemLocationContext(item);
