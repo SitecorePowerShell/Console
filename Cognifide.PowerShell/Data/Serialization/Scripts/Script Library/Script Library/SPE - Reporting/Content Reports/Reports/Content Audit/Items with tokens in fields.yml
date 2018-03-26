@@ -18,28 +18,42 @@ SharedFields:
         .NOTES
             Alex Washtell
     #>
+    # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
+    $standardTemplate = Get-Item -Path "master:" -ID "{1930BBEB-7805-471A-A3BE-4858AC7CF696}"
+    $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
+    $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
+    
     filter Where-TokenInFields {
         param(
             [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
-            [Sitecore.Data.Items.Item]$item
+            [Sitecore.Data.Items.Item]$item,
+            
+            [string[]]$ExcludedFieldNames,
+            
+            [bool]$ReadAllFields
         )
         
-        foreach ($field in $item.Fields)
+        if($ReadAllFields) {
+            $item.Fields.ReadAll()
+        }
+        
+        foreach ($field in $item.Fields | Where-Object { !$ExcludedFieldNames -or $ExcludedFieldNames -notcontains $_.Name })
         {
             if ($field.Value -match '\$(name|date|parentname|time|now|id|parentid)')
             {
                 # Return custom object so we can include both the item and the field in the report
                 @{Item = $item; Field = $field}
-                break
             }
         }
     }
     
+    $options = [ordered]@{"Include blank and Standard Value fields"=1;"Include Standard Template fields"=2;}
     $database = "master"
     $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
     $props = @{
         Parameters = @(
             @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned.";}
+            @{Name="selectedOptions"; Value=1; Title="Additional Options"; Tooltip="Use these to apply additional filtering. May run faster."; Options=$options; Editor="checklist";}
         )
         Title = "Report Filter"
         Description = "Choose the criteria for the report."
@@ -54,7 +68,15 @@ SharedFields:
         exit
     }
     
-    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-TokenInFields
+    $tokenOptions = @{}
+    if($selectedOptions -contains 1) {
+        $tokenOptions["ReadAllFields"] = $true
+    }
+    if($selectedOptions -contains 2) {
+        $tokenOptions["ExcludedFieldNames"] = $standardFields
+    }
+    
+    $items = @($root) + @(($root.Axes.GetDescendants() | Initialize-Item)) | Where-TokenInFields @tokenOptions
     
     if($items.Count -eq 0) {
         Show-Alert "There are no content items that have tokens in fields"
