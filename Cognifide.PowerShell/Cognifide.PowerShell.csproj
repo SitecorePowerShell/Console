@@ -123,6 +123,9 @@
       <HintPath>..\packages\Sitecore.Logging.NoReferences.8.2.170728\lib\NET452\Sitecore.Logging.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Sitecore.Mvc, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Mvc.NoReferences.8.2.170728\lib\NET452\Sitecore.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="Sitecore.Update, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Sitecore.Update.NoReferences.8.2.170728\lib\NET452\Sitecore.Update.dll</HintPath>
       <Private>False</Private>
@@ -504,6 +507,7 @@
     <Compile Include="Integrations\Processors\ScriptedDataSource.cs" />
     <Compile Include="Integrations\Processors\ScriptedRenderingDataSourceResolve.cs" />
     <Compile Include="Integrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
+    <Compile Include="Integrations\Processors\ScriptedRenderRendering.cs" />
     <Compile Include="Integrations\Processors\SkipPowerShellScriptItems.cs" />
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
