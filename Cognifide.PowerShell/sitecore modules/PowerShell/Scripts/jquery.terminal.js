@@ -5318,7 +5318,8 @@
                 if (completion) {
                     switch ($.type(completion)) {
                         case 'function':
-                            var string = self.before_cursor(settings.wordAutocomplete);
+                            //var string = self.before_cursor(settings.wordAutocomplete);
+                            var string = command_line.get().substring(0, command_line.position());
                             if (completion.length === 4) {
                                 var error = new Error(strings().comletionParameters);
                                 display_exception(error, 'USER');
