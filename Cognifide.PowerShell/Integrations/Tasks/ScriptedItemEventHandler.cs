@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
@@ -43,31 +44,28 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                     return;
                 }
 
+                var applicableScriptItems = libraryItem.Children?.ToArray()?.Where(si => si.IsPowerShellScript()
+                                                                                    && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
+                                                                                    && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], item));
+                if (applicableScriptItems == null || !applicableScriptItems.Any())
+                {
+                    return;
+                }
+
                 using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                 {
-                    foreach (Item scriptItem in libraryItem.Children)
+                    session.SetVariable("eventArgs", args);
+
+                    if (item != null)
                     {
-                        if (!scriptItem.IsPowerShellScript())
-                        {
-                            continue;
-                        }
-
-                        if (!RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item))
-                        {
-                            continue;
-                        }
-
-                        if (item != null)
-                        {
-                            session.SetItemLocationContext(item);
-                        }
+                        session.SetItemLocationContext(item);
+                    }
+                    
+                    foreach (Item scriptItem in applicableScriptItems)
+                    {
                         session.SetExecutedScript(scriptItem);
-                        session.SetVariable("eventArgs", args);
                         var script = scriptItem[Templates.Script.Fields.ScriptBody];
-                        if (!String.IsNullOrEmpty(script))
-                        {
-                            session.ExecuteScriptPart(script);
-                        }
+                        session.ExecuteScriptPart(script);
                     }
                 }
             }
