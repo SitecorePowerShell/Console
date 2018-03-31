@@ -35,7 +35,7 @@ SharedFields:
             @{ Name = "user"; Title="Locking User"; Tooltip="Tooltip for user"; Editor="user"},
             @{ Name = "since"; Title="Locked Since (leave empty is to ignore)"; Tooltip="Locked since"; Editor="date time"}
         )
-        Icon = $PSScript.Appearance.Icon
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     }
     
     $result = Read-Variable @props

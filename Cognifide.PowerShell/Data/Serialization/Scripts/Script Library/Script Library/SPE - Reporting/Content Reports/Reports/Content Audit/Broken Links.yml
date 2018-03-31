@@ -41,7 +41,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
-        Icon = "Office/32x32/link_broken.png"
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     }
     
     $result = Read-Variable @props

@@ -23,7 +23,7 @@ SharedFields:
         @{ Name = "user"; Title="Select User"; Tooltip="Tooltip for user"; Editor="user"} `
         -Description "This report will analyse the branch and will tell you which of the pages have security set for a specific user." `
         -Title "Security for a user" -Width 600 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort"  -Icon $PSScript.Appearance.Icon
+        -OkButtonName "Proceed" -CancelButtonName "Abort"  -Icon $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     
     if($result -ne "ok") {
         Close-Window

@@ -33,7 +33,7 @@ SharedFields:
             Tooltip = "Filter the results for items updated on or after the specified date"
             Editor = "date time"
         }
-        Icon = $PSScript.Appearance.Icon
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     }
     
     $result = Read-Variable @settings

@@ -63,7 +63,7 @@ SharedFields:
                 Tooltip="Only items from this root will be returned.";
             }
         )
-        Icon = $PSScript.Appearance.Icon
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     }
     
     $result = Read-Variable @settings

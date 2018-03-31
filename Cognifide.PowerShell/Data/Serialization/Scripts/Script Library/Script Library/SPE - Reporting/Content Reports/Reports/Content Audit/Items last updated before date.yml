@@ -41,7 +41,7 @@ SharedFields:
                 Editor = "date time"
             }
         )
-        Icon = $PSScript.Appearance.Icon    
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")    
     }
     
     $result = Read-Variable @settings

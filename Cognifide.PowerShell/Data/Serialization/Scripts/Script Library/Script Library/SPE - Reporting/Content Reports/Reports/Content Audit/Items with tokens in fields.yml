@@ -19,7 +19,7 @@ SharedFields:
             Alex Washtell
     #>
     # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
-    $standardTemplate = Get-Item -Path "master:" -ID "{1930BBEB-7805-471A-A3BE-4858AC7CF696}"
+    $standardTemplate = Get-Item -Path "master:" -ID ([Sitecore.TemplateIDs]::StandardTemplate.ToString())
     $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
     $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
     
@@ -37,12 +37,14 @@ SharedFields:
             $item.Fields.ReadAll()
         }
         
+        $tokenPatterns = [regex]'\$name|\$date|\$parentname|\$time|\$now|\$id|\$parentid'
         foreach ($field in $item.Fields | Where-Object { !$ExcludedFieldNames -or $ExcludedFieldNames -notcontains $_.Name })
         {
-            if ($field.Value -match '\$(name|date|parentname|time|now|id|parentid)')
-            {
+            $foundMatches = $tokenPatterns.Matches($field.Value)
+            if ($foundMatches -and $foundMatches.Count -gt 0) {
                 # Return custom object so we can include both the item and the field in the report
-                @{Item = $item; Field = $field}
+                $foundTokens = $foundMatches.Value -join ','
+                @{Item = $item; Field = $field; Token = $foundTokens}
             }
         }
     }
@@ -60,7 +62,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
-        Icon = $PSScript.Appearance.Icon
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
     }
     
     $result = Read-Variable @props
@@ -73,7 +75,7 @@ SharedFields:
     if($selectedOptions -contains 1) {
         $tokenOptions["ReadAllFields"] = $true
     }
-    if($selectedOptions -contains 2) {
+    if($selectedOptions -notcontains 2) {
         $tokenOptions["ExcludedFieldNames"] = $standardFields
     }
     
@@ -93,6 +95,7 @@ SharedFields:
             Show-ListView @props -Property @{Label="Icon"; Expression={$_.Item.__Icon} },
                 @{Label="Name"; Expression={$_.Item.DisplayName} },
                 @{Label="Field Name"; Expression={$_.Field.Name} },
+                @{Label="Tokens"; Expression={$_.Token} },
                 @{Label="Updated"; Expression={$_.Item.__Updated} },
                 @{Label="Updated by"; Expression={$_.Item."__Updated by"} },
                 @{Label="Created"; Expression={$_.Item.__Created} },
