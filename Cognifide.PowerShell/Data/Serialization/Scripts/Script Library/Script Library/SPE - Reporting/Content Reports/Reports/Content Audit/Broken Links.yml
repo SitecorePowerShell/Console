@@ -41,6 +41,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
+        Icon = "Office/32x32/link_broken.png"
     }
     
     $result = Read-Variable @props

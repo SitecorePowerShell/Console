@@ -30,6 +30,7 @@ SharedFields:
         Title = "Items With Aliases Report"
         Description = "Choose the criteria for the report."
         ShowHints = $true
+        Icon = $PSScript.Appearance.Icon
     }
     
     $result = Read-Variable @props

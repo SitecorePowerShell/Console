@@ -45,6 +45,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
+        Icon = $PSScript.Appearance.Icon
     }
     
     $result = Read-Variable @props

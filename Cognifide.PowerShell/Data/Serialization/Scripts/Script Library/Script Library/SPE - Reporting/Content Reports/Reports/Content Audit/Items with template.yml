@@ -26,13 +26,14 @@ SharedFields:
     $props = @{
         Parameters = @(
             @{Name="root"; Title="Choose the report root"; Tooltip="Only items from this root will be returned."; }
-            @{ Name = "baseTemplate"; Title="Start Item"; Tooltip="Select the item to use as a base template for the report"; Root="/sitecore/templates/"}
+            @{ Name = "baseTemplate"; Title="Base Template"; Tooltip="Select the item to use as a base template for the report"; Root="/sitecore/templates/"}
         )
         Title = "Items With Template Report"
         Description = "Choose the criteria for the report."
         Width = 550
         Height = 300
         ShowHints = $true
+        Icon = $PSScript.Appearance.Icon
     }
     
     $result = Read-Variable @props

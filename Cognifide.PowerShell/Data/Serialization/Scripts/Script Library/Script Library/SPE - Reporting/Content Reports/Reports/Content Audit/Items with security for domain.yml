@@ -24,8 +24,6 @@ SharedFields:
     
     Import-Function -Name Invoke-SqlCommand
     
-    $scriptItem = Get-Item -Path $SitecoreCommandPath
-    $icon = $scriptItem.Appearance.Icon -replace "16x16","32x32"
     $domainOptions = Get-Domain | ForEach-Object { $options = [ordered]@{} } { $options[$_.Name]=$_.Name } { $options }
     $settings = @{
         Title = "Report Filter"
@@ -42,7 +40,7 @@ SharedFields:
                 Tooltip="Only items matching security with this domain will be returned."; 
             }
         )
-        Icon = $icon
+        Icon = $PSScript.Appearance.Icon
     }
     
     $result = Read-Variable @settings
