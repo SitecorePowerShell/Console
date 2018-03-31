@@ -28,7 +28,7 @@ SharedFields:
             @{Name="selectedSize"; Value=0; Title="Minimum file size"; Tooltip="Unused media items larger than this will be returned."; Options=$sizeOptions; }
         )
         Title = "Unused media items"
-        Icon = $PSScript.Appearance.Icon
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
         Description = "Choose an option below if you would like to filter the results."
         Width = 450
         Height = 300
