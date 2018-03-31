@@ -173,7 +173,13 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override string GetChildName(string path)
         {
-            var result = base.GetChildName(path);
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+            path = NormalizePath(path);
+            path = path.TrimEnd('\\');
+            var index = path.LastIndexOf('\\');
+            var result = path.Substring(index + 1);
+            //var result = base.GetChildName(path);
             LogInfo("Executing GetChildName(string path='{0}'); returns '{1}'", path, result);
             return result;
         }
