@@ -35,18 +35,15 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 return;
             }
 
+            Func<Item, bool> filter = si => si.IsPowerShellScript()
+                                            && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
+                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], item);
+
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.EventHandlersFeature))
             {
                 var libraryItem = root.Paths.GetSubItem(eventName);
 
-                if (libraryItem == null)
-                {
-                    return;
-                }
-
-                var applicableScriptItems = libraryItem.Children?.ToArray()?.Where(si => si.IsPowerShellScript()
-                                                                                    && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
-                                                                                    && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], item));
+                var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
                 if (applicableScriptItems == null || !applicableScriptItems.Any())
                 {
                     return;
@@ -61,7 +58,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                         session.SetItemLocationContext(item);
                     }
                     
-                    foreach (Item scriptItem in applicableScriptItems)
+                    foreach (var scriptItem in applicableScriptItems)
                     {
                         session.SetExecutedScript(scriptItem);
                         var script = scriptItem[Templates.Script.Fields.ScriptBody];
@@ -73,16 +70,17 @@ namespace Cognifide.PowerShell.Integrations.Tasks
 
         private static string EventArgToEventName(EventArgs args)
         {
-            var eventName = String.Empty;
+            var eventName = string.Empty;
 
-            if (args is SitecoreEventArgs)
+            switch (args)
             {
-                var scevent = (SitecoreEventArgs)args;
-                eventName = scevent.EventName;
-            }
-            else if(args is IPassNativeEventArgs)
-            {
-                EventTypeMapping.TryGetValue(args.GetType(), out eventName);
+                case SitecoreEventArgs _:
+                    var scevent = (SitecoreEventArgs)args;
+                    eventName = scevent.EventName;
+                    break;
+                case IPassNativeEventArgs _:
+                    EventTypeMapping.TryGetValue(args.GetType(), out eventName);
+                    break;
             }
 
             return eventName?.Replace(':', '/');
