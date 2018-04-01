@@ -17,7 +17,7 @@ SharedFields:
     
     $title = "Your Sitecore license is about to expire!"
     $text = "Your Sitecore license will expire on $($date.ToLongDateString())"
-    $icon = @{$true="Office/32x32/information.png";$false="Applications/16x16/warning.png"}[$SitecoreVersion.Major -gt 7]
+    $icon = "Office/32x32/information.png"
     
     $warning = New-Object -TypeName Sitecore.Pipelines.GetPageEditorNotifications.PageEditorNotification -ArgumentList $text, "Warning"
      
