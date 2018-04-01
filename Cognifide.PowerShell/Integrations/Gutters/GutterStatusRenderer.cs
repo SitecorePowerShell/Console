@@ -33,7 +33,9 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                 var scriptItem = db.GetItem(scriptId);
 
                 // If a script is configured but does not exist or is of a wrong template then do nothing.
-                if (scriptItem == null || !scriptItem.IsPowerShellScript()) return null;
+                if (scriptItem == null || !scriptItem.IsPowerShellScript() ||
+                    string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]) ||
+                    !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item)) return null;
 
                 try
                 {
@@ -41,16 +43,11 @@ namespace Cognifide.PowerShell.Integrations.Gutters
                     var session = ScriptSessionManager.GetSession(scriptItem[Templates.Script.Fields.PersistentSessionId],
                         IntegrationPoints.ContentEditorGuttersFeature);
 
-                    var script = scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value ?? string.Empty;
-
                     // We will need the item variable in the script.
                     session.SetItemLocationContext(item);
 
-                    //let the session know which script is being executed
-                    session.SetExecutedScript(scriptItem);
-
                     // Any objects written to the pipeline in the script will be returned.
-                    var output = session.ExecuteScriptPart(script, false);
+                    var output = session.ExecuteScriptPart(scriptItem, false);
                     foreach (var result in output)
                     {
                         if (result.GetType() == typeof (GutterIconDescriptor))

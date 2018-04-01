@@ -60,9 +60,7 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                     
                     foreach (var scriptItem in applicableScriptItems)
                     {
-                        session.SetExecutedScript(scriptItem);
-                        var script = scriptItem[Templates.Script.Fields.ScriptBody];
-                        session.ExecuteScriptPart(script);
+                        session.ExecuteScriptPart(scriptItem, true);
                     }
                 }
             }

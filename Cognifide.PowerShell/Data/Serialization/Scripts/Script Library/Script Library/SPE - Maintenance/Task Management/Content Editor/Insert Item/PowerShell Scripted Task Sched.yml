@@ -29,13 +29,23 @@ SharedFields:
     $parent = Get-Item -Path .
     $item = Get-Item -Path "master:\system\Modules\PowerShell\Script Library"
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "name"; Value="Schedule"; Title="Name for the task schedule."},
-        @{ Name = "items"; Title="Scripts to Run"; 
-            Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script"; 
-            editor="treelist"; Height="300px"} `
-        -Description "Creates a new schedule for a task that will execute a script from your PowerShell Script Library" `
-        -Title "Create new scripted Schedule" -Width 700 -Height 500 -OkButtonName "Create" -ShowHints
+    $props = @{
+        Title = "Create new scripted Schedule"
+        Description = "Creates a new schedule for a task that will execute a script from your PowerShell Script Library"
+        Width = 700
+        Height = 500
+        OkButtonName = "Create"
+        ShowHints = $true
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Parameters = @(
+            @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"},
+            @{ Name = "items"; Title="Scripts to Run"; 
+                Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script"; 
+                editor="treelist"; Height="300px"}
+        )
+    }
+    
+    $result = Read-Variable @props
     
     if($result -ne "ok") {
         Close-Window

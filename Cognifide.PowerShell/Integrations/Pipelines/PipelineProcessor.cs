@@ -24,19 +24,18 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 
                 foreach (var scriptItem in libraryItem.Children.ToList())
                 {
-                    if (!scriptItem.IsPowerShellScript())
+                    if (!scriptItem.IsPowerShellScript() || string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]))
                     {
                         continue;
                     }
+
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {
-                        var script = scriptItem.Fields[Templates.Script.Fields.ScriptBody].Value ?? string.Empty;
                         session.SetVariable("pipelineArgs", args);
 
                         try
                         {
-                            session.SetExecutedScript(scriptItem);
-                            session.ExecuteScriptPart(script, false);
+                            session.ExecuteScriptPart(scriptItem, false);
                         }
                         catch (Exception ex)
                         {
