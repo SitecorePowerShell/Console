@@ -60,8 +60,8 @@ SharedFields:
     Write-Host "Thanks for installing the Sitecore PowerShell Extensions module! - Team SPE" -BackgroundColor Black -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Below are some helpful links:" -BackgroundColor Black -ForegroundColor Yellow
-    [PSCustomObject]@{"Title"="Github";"Link"="http://git.io/spe"},
-    [PSCustomObject]@{"Title"="Gitbook";"Link"="https://sitecorepowershell.gitbooks.io/sitecore-powershell-extensions/"}
+    [PSCustomObject]@{"Title"="Github";"Link"="https://git.io/spe"},
+    [PSCustomObject]@{"Title"="Gitbook";"Link"="https://doc.sitecorepowershell.com"}
 - ID: "f59378a5-f21d-4e07-b7de-7986dda3a510"
   Hint: HostWidth
   Value: 240
