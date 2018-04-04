@@ -5,9 +5,12 @@ Template: "e037642c-ce8e-437f-8a61-8d32d0ce54e1"
 Path: /sitecore/content/Applications/PowerShell/PowerShellListView/Ribbon/Results/Filter/Filter
 DB: core
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/magnifying_glass.png
 - ID: "11a849ff-e8a4-4335-8143-ce8ea8cee0e3"
   Hint: Icon
-  Value: WordProcessing/32x32/replace_b.png
+  Value: Office/32x32/magnifying_glass.png
 - ID: "b9b2d23e-411c-4af2-b656-400d6ed8fb32"
   Hint: Access Key
   Value: 
