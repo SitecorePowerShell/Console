@@ -5,9 +5,12 @@ Template: "998b965e-6ab8-4568-810f-8101d60d0cc3"
 Path: /sitecore/content/Applications/PowerShell/PowerShellIse/Menus/Save/Save As
 DB: core
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/floppy_disk_window.png
 - ID: "335c6760-6c0e-4c6c-814c-a53d203f553e"
   Hint: Icon
-  Value: Applications/32x32/disk_blue_add.png
+  Value: Office/32x32/floppy_disk_window.png
 - ID: "cab694fc-e37c-44eb-9012-488b775cf638"
   Hint: Message
   Value: "ise:saveas"
