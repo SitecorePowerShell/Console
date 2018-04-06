@@ -1,0 +1,361 @@
+﻿---
+ID: "56da8e7d-6ca5-4576-b1ed-4edcccc5b0b4"
+Parent: "e22d066a-04d0-4799-9dad-edd9eb07c2b2"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Functions/BaseXlsx"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # requires -Version 2
+    # requires .Net Version 3.0
+    
+    [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
+    
+    function New-XlsxWorkbook {
+    	begin {
+    				
+    		# create the Workbook.xml part XML document
+    			
+    		# create empty XML Document
+    		$xl_Workbook_xml = New-Object System.Xml.XmlDocument
+    
+    	    # Obtain a reference to the root node, and then add the XML declaration.
+    	    $xmlDeclaration = $xl_Workbook_xml.CreateXmlDeclaration("1.0", "UTF-8", "yes")
+    	    $xl_Workbook_xml.InsertBefore($xmlDeclaration, $xl_Workbook_xml.DocumentElement) | Out-Null
+    
+    	    # Create and append the workbook node to the document.
+    	    $workbookElement = $xl_Workbook_xml.CreateElement("workbook")
+    		# add the office open xml namespaces to the XML document
+    	    $workbookElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") | Out-Null
+    	    $workbookElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") | Out-Null
+    	    $xl_Workbook_xml.AppendChild($workbookElement) | Out-Null
+    
+    	    # Create and append the sheets node to the workBook node.
+    	    $xl_Workbook_xml.DocumentElement.AppendChild($xl_Workbook_xml.CreateElement("sheets")) | Out-Null
+    
+            $stream = New-Object System.IO.MemoryStream
+    
+    	} # end begin block
+    		
+    	process {			
+    		# create the main package on disk with filemode create
+    		$exPkg = [System.IO.Packaging.Package]::Open($stream, [System.IO.FileMode]::Create)
+    			
+    		# create URI for workbook.xml package part
+    		$uri_xl_workbook_xml = New-Object System.Uri -ArgumentList ("/xl/workbook.xml", [System.UriKind]::Relative)
+    		# create workbook.xml part
+    		$part_xl_workbook_xml = $exPkg.CreatePart($uri_xl_workbook_xml, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml")
+    		# get writeable stream from workbook.xml part 
+    		$dest = $part_xl_workbook_xml.GetStream([System.IO.FileMode]::Create,[System.IO.FileAccess]::Write)
+    		# write workbook.xml XML document to part stream
+    		$xl_workbook_xml.Save($dest)
+    
+    		# create package general main relationships
+    		$exPkg.CreateRelationship($uri_xl_workbook_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", "rId1") | Out-Null
+    			
+    		# close main package
+    		$exPkg.Close()
+    
+    	} # end Process block
+    		
+    	end {
+            $stream
+    	} # end End block
+    }
+    
+    function Add-XlsxWorksheet {
+    	[CmdletBinding()]
+    	param(
+    		[System.IO.Stream]$Workbook,
+            [string]$Name
+    	)
+    
+    	begin {
+    
+    		# create worksheet XML document
+    
+    		# create empty XML Document
+    		$new_Worksheet_xml = New-Object System.Xml.XmlDocument
+    
+    	    # Obtain a reference to the root node, and then add the XML declaration.
+    	    $xmlDeclaration = $New_Worksheet_xml.CreateXmlDeclaration("1.0", "UTF-8", "yes")
+    	    $new_Worksheet_xml.InsertBefore($xmlDeclaration, $new_Worksheet_xml.DocumentElement) | Out-Null
+    
+    	    # Create and append the worksheet node to the document.
+    	    $worksheetElement = $New_Worksheet_xml.CreateElement("worksheet")
+    		# add the Excel related office open xml namespaces to the XML document
+    	    $worksheetElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") | Out-Null
+    	    $worksheetElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") | Out-Null
+    	    $new_Worksheet_xml.AppendChild($worksheetElement) | Out-Null
+    
+    	    # Create and append the sheetData node to the worksheet node.
+    	    $new_Worksheet_xml.DocumentElement.AppendChild($new_Worksheet_xml.CreateElement("sheetData")) | Out-Null
+    
+    	} # end begin block
+    
+        process {
+    		$exPkg = [System.IO.Packaging.Package]::Open($Workbook, [System.IO.FileMode]::Open)
+    
+    		# find /xl/workbook.xml
+    		foreach ($part in $exPkg.GetParts()) {
+    			# remember workbook.xml 
+    			if($part.ContentType -eq "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" -or $part.Uri.OriginalString -eq "/xl/workbook.xml") {
+    				$workbookPart = $part
+    				# found workbook exit foreach loop
+    				break
+    			}
+    		}
+    
+    		if(-not $workbookPart) {
+    			Write-Error "Excel Workbook not found in : $Path"
+    			$exPkg.Close()
+    			return
+    		}
+    			
+    		# get all relationships of Workbook part
+    		$workbookRels = $workbookPart.GetRelationships()
+    			
+    		$workbookRelIds = [System.Collections.ArrayList]@()
+    		$worksheetPartNames = [System.Collections.ArrayList]@()
+    			
+    		foreach($rel in $workbookRels) {
+    				
+    			# collect workbook relationship IDs in a Arraylist
+    			# to easely find a new unique relationship ID
+    			$workBookRelIds.Add($rel.ID) | Out-Null
+    
+    			# collect workbook related worksheet names in an Arraylist
+    			# to easely find a new unique sheet name
+    			if($rel.RelationshipType -like '*worksheet*' ) {
+    				$workSheetName = Split-Path $rel.TargetUri.ToString() -Leaf
+    				$WorkSheetPartNames.Add($workSheetName) | Out-Null
+    			}
+    		}
+    			
+    		# find a new unused relationship ID
+    		# relationship ID have the pattern rID + Number (eg: reID1, rID2, rID3 ...)
+    		$idCounter = 0 # counter for relationship IDs
+    		$newWorkBookRelId = '' # Variable to hold the new found relationship ID
+    		do {
+    			$idCounter++
+    			if(-not ($workbookRelIds -contains "rId$idCounter")){
+    				# $WorkBookRelIds does not contain the rID + Number
+    				# so we have found an unused rID + Number; create it
+    				$newWorkbookRelId = "rId$idCounter"
+    			}
+    		} while($newWorkBookRelId -eq '')
+    
+    		# find new unused worksheet part name
+    		# worksheet in the package have names with the pattern Sheet + number + .xml
+    		$worksheetCounter = 0 # counter for worksheet numbers
+    		$newWorkSheetPartName = '' # Variable to hold the new found worksheet name
+    		do{
+    			$worksheetCounter++
+    			if(-not ($workSheetPartNames -contains "sheet$worksheetCounter.xml")){
+    				# $WorkSheetPartNames does not contain the worksheet name
+    				# so we have found an unused sheet + Number + .xml; create it
+    				$newWorkSheetPartName = "sheet$worksheetCounter.xml"
+    			}
+    		} while($newWorkSheetPartName -eq '')
+    			
+    		# Excel allows only unique WorkSheet names in a workbook
+    		# test if worksheet name already exist in workbook
+    		$workbookWorksheetNames = [System.Collections.ArrayList]@()
+    
+    		# open the workbook.xml
+    		$workbookXmlDoc = New-Object System.Xml.XmlDocument
+    		# load XML document from package part stream
+    		$workbookXmlDoc.Load($workbookPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
+    
+    		# read all Sheet elements from workbook
+    		foreach ($element in $workbookXmlDoc.documentElement.Item("sheets").get_ChildNodes()) {
+    			# collect sheet names in Arraylist
+    			$workbookWorksheetNames.Add($element.Name) | Out-Null
+    		}
+    			
+    		# test if a given worksheet $Name allready exist in workbook
+    		$duplicateName = ''
+    		if(-not [string]::IsNullOrEmpty($Name)){
+    			if($workbookWorksheetNames -Contains $Name) {
+    				# save old given name to show in warning message
+    				$duplicateName = $Name
+    				# empty name to create a new one
+    				$Name = ''
+    			}
+    		} 
+    			
+    		# If the user has not given a worksheet $Name or the name allready exist 
+    		# we try to use the automatic created name with the pattern Table + Number
+    		if([string]::IsNullOrEmpty($Name)){
+    			$workSheetNameCounter = 0
+    			$name = "Sheet$workSheetNameCounter"
+    			# while automatic created Name is used in workbook.xml we create a new name
+    			while($workbookWorksheetNames -contains $Name) {
+    				$workSheetNameCounter++
+    				$Name = "Sheet$workSheetNameCounter"
+    			}
+    			If(-not [string]::IsNullOrEmpty($duplicateName)){
+    				Write-Warning "Worksheetname '$duplicateName' allready exist!`nUsing automatically generated name: $Name"
+    			}
+    		}
+    		
+    		# create URI for worksheet package part
+    		$uri_xl_worksheets_sheet_xml = New-Object System.Uri -ArgumentList ("/xl/worksheets/$newWorkSheetPartName", [System.UriKind]::Relative)
+    		# create worksheet part
+    		$part_xl_worksheets_sheet_xml = $exPkg.CreatePart($uri_xl_worksheets_sheet_xml, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml")
+    		# get writeable stream from part 
+    		$dest = $part_xl_worksheets_sheet_xml.GetStream([System.IO.FileMode]::Create,[System.IO.FileAccess]::Write)
+    		# write $new_Worksheet_xml XML document to part stream
+    		$new_Worksheet_xml.Save($dest)
+    			
+    		# create workbook to worksheet relationship
+    		$workbookPart.CreateRelationship($uri_xl_worksheets_sheet_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", $newWorkBookRelId) | Out-Null
+    				
+    		# edit the xl\workbook.xml
+    			
+    		# create empty XML Document
+    		$workbookXmlDoc = New-Object System.Xml.XmlDocument
+    		# load XML document from package part stream
+    		$workbookXmlDoc.Load($workBookPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
+    					
+    		# create a new XML Node for the sheet 
+    		$workbookXmlSheetNode = $workBookXmlDoc.CreateElement('sheet', $workBookXmlDoc.DocumentElement.NamespaceURI)
+    	    $WorkbookXmlSheetNode.SetAttribute('name',$Name) | Out-Null
+    	    $WorkbookXmlSheetNode.SetAttribute('sheetId',$idCounter) | Out-Null
+    		# try to create the ID Attribute with the r: Namespace (xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships") 
+    		$namespaceR = $workBookXmlDoc.DocumentElement.GetNamespaceOfPrefix("r")
+    		if($namespaceR) {
+    	        $workbookXmlSheetNode.SetAttribute('id',$namespaceR,$newWorkBookRelId) | Out-Null
+    		} else {
+    			$workbookXmlSheetNode.SetAttribute('id',$newWorkBookRelId) | Out-Null
+    		}
+    			
+    		# add the new sheet node to XML document
+    		$workbookXmlDoc.DocumentElement.Item("sheets").AppendChild($workbookXmlSheetNode) | Out-Null
+    		
+    		# Save back the edited XML Document to package part stream
+    		$workbookXmlDoc.Save($workbookPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
+    			
+    		# close main package (flush all changes to disk)
+    		$exPkg.Close()
+    			
+    		# return datas of new created worksheet
+    		New-Object -TypeName PsObject -Property @{
+                Uri = $uri_xl_worksheets_sheet_xml
+    			WorkbookRelationID = $newWorkbookRelId
+    			Name = $Name
+    		}
+    			
+    	}
+    		
+    	end { 
+    	}
+    }
+    
+    function Export-Worksheet {
+    	[CmdletBinding()]
+    	param(
+    		[Parameter(Mandatory=$true)]
+            [System.IO.Stream]$Workbook,
+    		
+    		[Parameter(Mandatory=$true,	Position=1,	ValueFromPipeline=$True, ValueFromPipelinebyPropertyName=$true)]
+    		[System.Uri]$WorksheetUri,
+    		
+    		[Parameter(Mandatory=$true, Position=1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+    	    [System.Management.Automation.PSObject]$InputObject,
+    		
+    		[switch]$NoHeader
+    	)
+    		
+    	begin {
+    
+    		$exPkg = [System.IO.Packaging.Package]::Open($Workbook, [System.IO.FileMode]::Open)
+    
+    		$worksheetPart = $exPkg.GetPart($worksheetUri)
+    			
+    		# open worksheet xml
+    		$worksheetXmlDoc = New-Object System.Xml.XmlDocument
+    		# load XML document from package part stream
+    		$worksheetXmlDoc.Load($worksheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
+    			
+    		$headerWritten = $false
+    		
+    		# create the value property if the InputObject is an value type
+    		# this property creates the column with the name of the value type
+    		if($InputObject.GetType().Name -match 'byte|short|int32|long|sbyte|ushort|uint32|ulong|float|double|decimal|string') {
+    			Add-Member -InputObject $InputObject -MemberType NoteProperty -Name ($InputObject.GetType().Name) -Value $InputObject
+    		}
+    	}
+    
+    	process {
+    
+    		# Create XML Workseet Rows with data type of Text: t="inlineStr"
+    		#<row>
+    		#	<c t="inlineStr">
+    		#		<is>
+    		#			<t>Data is here</t>
+    		#		</is>
+    		#	</c>
+    		#</row>
+            $namespaceUri = $workSheetXmlDoc.DocumentElement.Item("sheetData").NamespaceURI
+            $sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData")
+            
+    		if((-not $headerWritten) -and (-not $NoHeader.IsPresent) ){
+    				
+    			$rowNode = $workSheetXmlDoc.CreateElement('row', $namespaceUri)
+    			
+    			foreach($prop in $InputObject.psobject.Properties) {
+    				$cellNode = $worksheetXmlDoc.CreateElement('c', $namespaceUri)
+    				$cellNode.SetAttribute('t',"inlineStr") | Out-Null
+    				$rowNode.AppendChild($cellNode) | Out-Null
+    					
+    				$cellNodeIs = $worksheetXmlDoc.CreateElement('is', $namespaceUri)
+    				$cellNode.AppendChild($cellNodeIs) | Out-Null
+    					
+    				$cellNodeIsT = $worksheetXmlDoc.CreateElement('t', $namespaceUri)
+    				$cellNodeIsT.InnerText = [string]$prop.Name
+    				$cellNodeIs.AppendChild($cellNodeIsT) | Out-Null
+    					
+    				$sheetData.AppendChild($rowNode) | Out-Null
+    			}
+    				
+    			$headerWritten = $true
+    		}
+    
+    		$rowNode = $worksheetXmlDoc.CreateElement('row', $namespaceUri)
+    
+    		foreach($prop in $InputObject.psobject.Properties) {
+    			$cellNode = $workSheetXmlDoc.CreateElement('c', $namespaceUri)
+    			$cellNode.SetAttribute('t',"inlineStr") | Out-Null
+    			$rowNode.AppendChild($cellNode) | Out-Null
+    				
+    			$cellNodeIs = $worksheetXmlDoc.CreateElement('is', $namespaceUri)
+    			$cellNode.AppendChild($CellNodeIs) | Out-Null
+    				
+    			$cellNodeIsT = $workSheetXmlDoc.CreateElement('t', $namespaceUri)
+    			$cellNodeIsT.InnerText = [string]$prop.Value
+    			$CellNodeIs.AppendChild($cellNodeIsT) | Out-Null
+    				
+    			$sheetData.AppendChild($rowNode) | Out-Null
+    		}
+    	}
+    
+    	End {
+    		$workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
+    		$exPkg.Close()
+    	}
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180405T225125Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
