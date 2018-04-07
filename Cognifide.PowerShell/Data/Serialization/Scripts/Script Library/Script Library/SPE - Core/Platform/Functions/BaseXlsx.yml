@@ -257,11 +257,8 @@ SharedFields:
     function Export-Worksheet {
     	[CmdletBinding()]
     	param(
-    		[Parameter(Mandatory=$true)]
-            [System.IO.Stream]$Workbook,
-    		
-    		[Parameter(Mandatory=$true,	Position=1,	ValueFromPipeline=$True, ValueFromPipelinebyPropertyName=$true)]
-    		[System.Uri]$WorksheetUri,
+    		[Parameter()]
+    		[System.Xml.XmlDocument]$workSheetXmlDoc,
     		
     		[Parameter(Mandatory=$true, Position=1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
     	    [System.Management.Automation.PSObject]$InputObject,
@@ -270,19 +267,10 @@ SharedFields:
     	)
     		
     	begin {
-    
-    		$exPkg = [System.IO.Packaging.Package]::Open($Workbook, [System.IO.FileMode]::Open)
-    
-    		$worksheetPart = $exPkg.GetPart($worksheetUri)
-    			
-    		# open worksheet xml
-    		$worksheetXmlDoc = New-Object System.Xml.XmlDocument
-    		# load XML document from package part stream
-    		$worksheetXmlDoc.Load($worksheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
-    			
+            
     		$headerWritten = $false
     		
-    		# create the value property if the InputObject is an value type
+    	    # create the value property if the InputObject is an value type
     		# this property creates the column with the name of the value type
     		if($InputObject.GetType().Name -match 'byte|short|int32|long|sbyte|ushort|uint32|ulong|float|double|decimal|string') {
     			Add-Member -InputObject $InputObject -MemberType NoteProperty -Name ($InputObject.GetType().Name) -Value $InputObject
@@ -299,52 +287,39 @@ SharedFields:
     		#		</is>
     		#	</c>
     		#</row>
-            $namespaceUri = $workSheetXmlDoc.DocumentElement.Item("sheetData").NamespaceURI
-            $sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData")
-            
+    
+            $sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData")        
+            $namespaceUri = $sheetData.NamespaceURI
     		if((-not $headerWritten) -and (-not $NoHeader.IsPresent) ){
-    				
-    			$rowNode = $workSheetXmlDoc.CreateElement('row', $namespaceUri)
-    			
+    
+    			$fragment = $workSheetXmlDoc.CreateDocumentFragment()
+    			$builder = New-Object System.Text.StringBuilder
+    			$builder.Append("<row>") | Out-Null
     			foreach($prop in $InputObject.psobject.Properties) {
-    				$cellNode = $worksheetXmlDoc.CreateElement('c', $namespaceUri)
-    				$cellNode.SetAttribute('t',"inlineStr") | Out-Null
-    				$rowNode.AppendChild($cellNode) | Out-Null
-    					
-    				$cellNodeIs = $worksheetXmlDoc.CreateElement('is', $namespaceUri)
-    				$cellNode.AppendChild($cellNodeIs) | Out-Null
-    					
-    				$cellNodeIsT = $worksheetXmlDoc.CreateElement('t', $namespaceUri)
-    				$cellNodeIsT.InnerText = [string]$prop.Name
-    				$cellNodeIs.AppendChild($cellNodeIsT) | Out-Null
-    					
-    				$sheetData.AppendChild($rowNode) | Out-Null
+    			    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Name)]]></t></is></c>") | Out-Null
     			}
-    				
+    
+                $builder.Append("</row>") | Out-Null
+    			$fragment.InnerXml = $builder.ToString()
+    			$sheetData.AppendChild($fragment) | Out-Null
+    
     			$headerWritten = $true
     		}
     
-    		$rowNode = $worksheetXmlDoc.CreateElement('row', $namespaceUri)
-    
+    		$fragment = $workSheetXmlDoc.CreateDocumentFragment()
+    		$builder = New-Object System.Text.StringBuilder
+    		$builder.Append("<row>") | Out-Null
     		foreach($prop in $InputObject.psobject.Properties) {
-    			$cellNode = $workSheetXmlDoc.CreateElement('c', $namespaceUri)
-    			$cellNode.SetAttribute('t',"inlineStr") | Out-Null
-    			$rowNode.AppendChild($cellNode) | Out-Null
-    				
-    			$cellNodeIs = $worksheetXmlDoc.CreateElement('is', $namespaceUri)
-    			$cellNode.AppendChild($CellNodeIs) | Out-Null
-    				
-    			$cellNodeIsT = $workSheetXmlDoc.CreateElement('t', $namespaceUri)
-    			$cellNodeIsT.InnerText = [string]$prop.Value
-    			$CellNodeIs.AppendChild($cellNodeIsT) | Out-Null
-    				
-    			$sheetData.AppendChild($rowNode) | Out-Null
+    		    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Value)]]></t></is></c>") | Out-Null
     		}
+    
+            $builder.Append("</row>") | Out-Null
+    		$fragment.InnerXml = $builder.ToString()
+    		$sheetData.AppendChild($fragment) | Out-Null
     	}
     
     	End {
-    		$workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
-    		$exPkg.Close()
+    
     	}
     }
 Languages:

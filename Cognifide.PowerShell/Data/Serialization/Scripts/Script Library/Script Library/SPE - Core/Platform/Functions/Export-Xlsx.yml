@@ -34,19 +34,35 @@ SharedFields:
     	    }
     	    
             $workbook = New-XlsxWorkbook
+    
     	    $worksheet = Add-XlsxWorksheet -Name $worksheetName -Workbook $workbook
+    		
     	    $headerWritten = $False
+    	    
+    	    $exPkg = [System.IO.Packaging.Package]::Open($workbook, [System.IO.FileMode]::Open)
+    			
+    		$worksheetPart = $exPkg.GetPart($worksheet.Uri)
+    			
+    		# open worksheet xml
+    		$worksheetXmlDoc = New-Object System.Xml.XmlDocument
+    		# load XML document from package part stream
+    		$worksheetXmlDoc.Load($worksheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
     	    
     	    $Path = [System.IO.Path]::GetFullPath($Path)
     	    $Path = [System.IO.Path]::ChangeExtension($Path,'xlsx')
         }
     
         process {
-    	    Export-Worksheet -InputObject $InputObject -NoHeader:($NoHeader.IsPresent -or $headerWritten) -Workbook $Workbook -WorksheetUri $worksheet.Uri
+    	    Export-Worksheet -InputObject $InputObject -NoHeader:($NoHeader.IsPresent -or $headerWritten) -WorkSheetXmlDoc $workSheetXmlDoc
     	    $headerWritten = $true
         }
     
-        end { 
+        end {
+            $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace("row xmlns=`"`"", "row")
+            $workSheetXmlDoc.PreserveWhitespace = $true
+            $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
+    		$exPkg.Close()
+    		
             [byte[]]$outobject = $workbook.ToArray()
             [System.IO.File]::WriteAllBytes($Path, $outobject)
         }
