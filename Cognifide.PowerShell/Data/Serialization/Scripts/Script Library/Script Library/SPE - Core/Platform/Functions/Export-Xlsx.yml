@@ -50,14 +50,22 @@ SharedFields:
     	    
     	    $Path = [System.IO.Path]::GetFullPath($Path)
     	    $Path = [System.IO.Path]::ChangeExtension($Path,'xlsx')
+    	    
+    	    $headerWritten = $false
+    	    
+    	    $items = [System.Collections.ArrayList]@()
         }
     
         process {
-    	    Export-Worksheet -InputObject $InputObject -NoHeader:($NoHeader.IsPresent -or $headerWritten) -WorkSheetXmlDoc $workSheetXmlDoc
-    	    $headerWritten = $true
+            if((-not $NoHeader.IsPresent) -and (-not $headerWritten)) {
+                Write-WorksheetHeader -InputObject $InputObject -WorksheetXmlDoc $workSheetXmlDoc
+                $headerWritten = $true
+            }
+            $items.Add($InputObject) | Out-Null
         }
     
         end {
+            $items | Export-Worksheet -WorkSheetXmlDoc $workSheetXmlDoc
             $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace("row xmlns=`"`"", "row")
             $workSheetXmlDoc.PreserveWhitespace = $true
             $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))

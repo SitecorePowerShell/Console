@@ -254,6 +254,31 @@ SharedFields:
     	}
     }
     
+    function Write-WorksheetHeader {
+    	[CmdletBinding()]
+    	param(
+    		[Parameter()]
+    		[System.Xml.XmlDocument]$workSheetXmlDoc,
+    		
+    		[Parameter(Mandatory=$true, Position=1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
+    	    [System.Management.Automation.PSObject]$InputObject
+    	)
+    	
+    	$sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData") 
+        $namespaceUri = $sheetData.NamespaceURI
+    
+    	$fragment = $workSheetXmlDoc.CreateDocumentFragment()
+    	$builder = New-Object System.Text.StringBuilder
+    	$builder.Append("<row>") | Out-Null
+    	foreach($prop in $InputObject.psobject.Properties) {
+    	    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Name)]]></t></is></c>") | Out-Null
+    	}
+    
+        $builder.Append("</row>") | Out-Null
+    	$fragment.InnerXml = $builder.ToString()
+    	$sheetData.AppendChild($fragment) | Out-Null
+    }
+    
     function Export-Worksheet {
     	[CmdletBinding()]
     	param(
@@ -261,20 +286,16 @@ SharedFields:
     		[System.Xml.XmlDocument]$workSheetXmlDoc,
     		
     		[Parameter(Mandatory=$true, Position=1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-    	    [System.Management.Automation.PSObject]$InputObject,
-    		
-    		[switch]$NoHeader
+    	    [System.Management.Automation.PSObject]$InputObject
     	)
     		
     	begin {
             
-    		$headerWritten = $false
-    		
-    	    # create the value property if the InputObject is an value type
-    		# this property creates the column with the name of the value type
-    		if($InputObject.GetType().Name -match 'byte|short|int32|long|sbyte|ushort|uint32|ulong|float|double|decimal|string') {
-    			Add-Member -InputObject $InputObject -MemberType NoteProperty -Name ($InputObject.GetType().Name) -Value $InputObject
-    		}
+    		$sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData")        
+            $namespaceUri = $sheetData.NamespaceURI
+            
+            $fragment = $workSheetXmlDoc.CreateDocumentFragment()
+    		$builder = New-Object System.Text.StringBuilder
     	}
     
     	process {
@@ -287,39 +308,25 @@ SharedFields:
     		#		</is>
     		#	</c>
     		#</row>
-    
-            $sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData")        
-            $namespaceUri = $sheetData.NamespaceURI
-    		if((-not $headerWritten) -and (-not $NoHeader.IsPresent) ){
-    
-    			$fragment = $workSheetXmlDoc.CreateDocumentFragment()
-    			$builder = New-Object System.Text.StringBuilder
-    			$builder.Append("<row>") | Out-Null
-    			foreach($prop in $InputObject.psobject.Properties) {
-    			    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Name)]]></t></is></c>") | Out-Null
-    			}
-    
-                $builder.Append("</row>") | Out-Null
-    			$fragment.InnerXml = $builder.ToString()
-    			$sheetData.AppendChild($fragment) | Out-Null
-    
-    			$headerWritten = $true
+    		
+    	    # create the value property if the InputObject is an value type
+    		# this property creates the column with the name of the value type
+    		if($InputObject.GetType().Name -match 'byte|short|int32|long|sbyte|ushort|uint32|ulong|float|double|decimal|string') {
+    			Add-Member -InputObject $InputObject -MemberType NoteProperty -Name ($InputObject.GetType().Name) -Value $InputObject
     		}
     
-    		$fragment = $workSheetXmlDoc.CreateDocumentFragment()
-    		$builder = New-Object System.Text.StringBuilder
     		$builder.Append("<row>") | Out-Null
     		foreach($prop in $InputObject.psobject.Properties) {
     		    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Value)]]></t></is></c>") | Out-Null
     		}
     
             $builder.Append("</row>") | Out-Null
-    		$fragment.InnerXml = $builder.ToString()
-    		$sheetData.AppendChild($fragment) | Out-Null
+    
     	}
     
     	End {
-    
+    	    $fragment.InnerXml = $builder.ToString()
+    		$sheetData.AppendChild($fragment) | Out-Null
     	}
     }
 Languages:

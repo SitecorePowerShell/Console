@@ -36,14 +36,22 @@ SharedFields:
     		$worksheetXmlDoc = New-Object System.Xml.XmlDocument
     		# load XML document from package part stream
     		$worksheetXmlDoc.Load($worksheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Read))
+    		
+    		$headerWritten = $false
+    	    
+    	    $items = [System.Collections.ArrayList]@()
         }
     
-        process {	
-    	    Export-Worksheet -InputObject $InputObject -NoHeader:($NoHeader.IsPresent -or $headerWritten) -WorkSheetXmlDoc $workSheetXmlDoc
-    	    $headerWritten = $true
+        process {
+            if((-not $NoHeader.IsPresent) -and (-not $headerWritten)) {
+                Write-WorksheetHeader -InputObject $InputObject -WorksheetXmlDoc $workSheetXmlDoc
+                $headerWritten = $true
+            }
+            $items.Add($InputObject) | Out-Null
         }
     
         end {
+            $items | Export-Worksheet -WorkSheetXmlDoc $workSheetXmlDoc
             $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace("row xmlns=`"`"", "row")
             $workSheetXmlDoc.PreserveWhitespace = $true
             $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
