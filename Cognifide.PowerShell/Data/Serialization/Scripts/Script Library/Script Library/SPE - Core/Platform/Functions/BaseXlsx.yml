@@ -11,7 +11,7 @@ SharedFields:
     # requires -Version 2
     # requires .Net Version 3.0
     
-    [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
+    [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
     
     function New-XlsxWorkbook {
     	begin {
@@ -23,17 +23,17 @@ SharedFields:
     
     	    # Obtain a reference to the root node, and then add the XML declaration.
     	    $xmlDeclaration = $xl_Workbook_xml.CreateXmlDeclaration("1.0", "UTF-8", "yes")
-    	    $xl_Workbook_xml.InsertBefore($xmlDeclaration, $xl_Workbook_xml.DocumentElement) | Out-Null
+    	    $xl_Workbook_xml.InsertBefore($xmlDeclaration, $xl_Workbook_xml.DocumentElement) > $null
     
     	    # Create and append the workbook node to the document.
     	    $workbookElement = $xl_Workbook_xml.CreateElement("workbook")
     		# add the office open xml namespaces to the XML document
-    	    $workbookElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") | Out-Null
-    	    $workbookElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") | Out-Null
-    	    $xl_Workbook_xml.AppendChild($workbookElement) | Out-Null
+    	    $workbookElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") > $null
+    	    $workbookElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") > $null
+    	    $xl_Workbook_xml.AppendChild($workbookElement) > $null
     
     	    # Create and append the sheets node to the workBook node.
-    	    $xl_Workbook_xml.DocumentElement.AppendChild($xl_Workbook_xml.CreateElement("sheets")) | Out-Null
+    	    $xl_Workbook_xml.DocumentElement.AppendChild($xl_Workbook_xml.CreateElement("sheets")) > $null
     
             $stream = New-Object System.IO.MemoryStream
     
@@ -53,7 +53,7 @@ SharedFields:
     		$xl_workbook_xml.Save($dest)
     
     		# create package general main relationships
-    		$exPkg.CreateRelationship($uri_xl_workbook_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", "rId1") | Out-Null
+    		$exPkg.CreateRelationship($uri_xl_workbook_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument", "rId1") > $null
     			
     		# close main package
     		$exPkg.Close()
@@ -81,17 +81,17 @@ SharedFields:
     
     	    # Obtain a reference to the root node, and then add the XML declaration.
     	    $xmlDeclaration = $New_Worksheet_xml.CreateXmlDeclaration("1.0", "UTF-8", "yes")
-    	    $new_Worksheet_xml.InsertBefore($xmlDeclaration, $new_Worksheet_xml.DocumentElement) | Out-Null
+    	    $new_Worksheet_xml.InsertBefore($xmlDeclaration, $new_Worksheet_xml.DocumentElement) > $null
     
     	    # Create and append the worksheet node to the document.
     	    $worksheetElement = $New_Worksheet_xml.CreateElement("worksheet")
     		# add the Excel related office open xml namespaces to the XML document
-    	    $worksheetElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") | Out-Null
-    	    $worksheetElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") | Out-Null
-    	    $new_Worksheet_xml.AppendChild($worksheetElement) | Out-Null
+    	    $worksheetElement.SetAttribute("xmlns", "http://schemas.openxmlformats.org/spreadsheetml/2006/main") > $null
+    	    $worksheetElement.SetAttribute("xmlns:r", "http://schemas.openxmlformats.org/officeDocument/2006/relationships") > $null
+    	    $new_Worksheet_xml.AppendChild($worksheetElement) > $null
     
     	    # Create and append the sheetData node to the worksheet node.
-    	    $new_Worksheet_xml.DocumentElement.AppendChild($new_Worksheet_xml.CreateElement("sheetData")) | Out-Null
+    	    $new_Worksheet_xml.DocumentElement.AppendChild($new_Worksheet_xml.CreateElement("sheetData")) > $null
     
     	} # end begin block
     
@@ -124,13 +124,13 @@ SharedFields:
     				
     			# collect workbook relationship IDs in a Arraylist
     			# to easely find a new unique relationship ID
-    			$workBookRelIds.Add($rel.ID) | Out-Null
+    			$workBookRelIds.Add($rel.ID) > $null
     
     			# collect workbook related worksheet names in an Arraylist
     			# to easely find a new unique sheet name
     			if($rel.RelationshipType -like '*worksheet*' ) {
     				$workSheetName = Split-Path $rel.TargetUri.ToString() -Leaf
-    				$WorkSheetPartNames.Add($workSheetName) | Out-Null
+    				$WorkSheetPartNames.Add($workSheetName) > $null
     			}
     		}
     			
@@ -172,7 +172,7 @@ SharedFields:
     		# read all Sheet elements from workbook
     		foreach ($element in $workbookXmlDoc.documentElement.Item("sheets").get_ChildNodes()) {
     			# collect sheet names in Arraylist
-    			$workbookWorksheetNames.Add($element.Name) | Out-Null
+    			$workbookWorksheetNames.Add($element.Name) > $null
     		}
     			
     		# test if a given worksheet $Name allready exist in workbook
@@ -211,7 +211,7 @@ SharedFields:
     		$new_Worksheet_xml.Save($dest)
     			
     		# create workbook to worksheet relationship
-    		$workbookPart.CreateRelationship($uri_xl_worksheets_sheet_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", $newWorkBookRelId) | Out-Null
+    		$workbookPart.CreateRelationship($uri_xl_worksheets_sheet_xml, [System.IO.Packaging.TargetMode]::Internal, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", $newWorkBookRelId) > $null
     				
     		# edit the xl\workbook.xml
     			
@@ -222,18 +222,18 @@ SharedFields:
     					
     		# create a new XML Node for the sheet 
     		$workbookXmlSheetNode = $workBookXmlDoc.CreateElement('sheet', $workBookXmlDoc.DocumentElement.NamespaceURI)
-    	    $WorkbookXmlSheetNode.SetAttribute('name',$Name) | Out-Null
-    	    $WorkbookXmlSheetNode.SetAttribute('sheetId',$idCounter) | Out-Null
+    	    $WorkbookXmlSheetNode.SetAttribute('name',$Name) > $null
+    	    $WorkbookXmlSheetNode.SetAttribute('sheetId',$idCounter) > $null
     		# try to create the ID Attribute with the r: Namespace (xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships") 
     		$namespaceR = $workBookXmlDoc.DocumentElement.GetNamespaceOfPrefix("r")
     		if($namespaceR) {
-    	        $workbookXmlSheetNode.SetAttribute('id',$namespaceR,$newWorkBookRelId) | Out-Null
+    	        $workbookXmlSheetNode.SetAttribute('id',$namespaceR,$newWorkBookRelId) > $null
     		} else {
-    			$workbookXmlSheetNode.SetAttribute('id',$newWorkBookRelId) | Out-Null
+    			$workbookXmlSheetNode.SetAttribute('id',$newWorkBookRelId) > $null
     		}
     			
     		# add the new sheet node to XML document
-    		$workbookXmlDoc.DocumentElement.Item("sheets").AppendChild($workbookXmlSheetNode) | Out-Null
+    		$workbookXmlDoc.DocumentElement.Item("sheets").AppendChild($workbookXmlSheetNode) > $null
     		
     		# Save back the edited XML Document to package part stream
     		$workbookXmlDoc.Save($workbookPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
@@ -269,14 +269,14 @@ SharedFields:
     
     	$fragment = $workSheetXmlDoc.CreateDocumentFragment()
     	$builder = New-Object System.Text.StringBuilder
-    	$builder.Append("<row>") | Out-Null
+    	$builder.Append("<row>") > $null
     	foreach($prop in $InputObject.psobject.Properties) {
-    	    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Name)]]></t></is></c>") | Out-Null
+    	    $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $prop.Name) > $null
     	}
     
-        $builder.Append("</row>") | Out-Null
+        $builder.Append("</row>") > $null
     	$fragment.InnerXml = $builder.ToString()
-    	$sheetData.AppendChild($fragment) | Out-Null
+    	$sheetData.AppendChild($fragment) > $null
     }
     
     function Export-Worksheet {
@@ -296,6 +296,8 @@ SharedFields:
             
             $fragment = $workSheetXmlDoc.CreateDocumentFragment()
     		$builder = New-Object System.Text.StringBuilder
+    		
+    		$cachedProperties = $null
     	}
     
     	process {
@@ -309,24 +311,20 @@ SharedFields:
     		#	</c>
     		#</row>
     		
-    	    # create the value property if the InputObject is an value type
-    		# this property creates the column with the name of the value type
-    		if($InputObject.GetType().Name -match 'byte|short|int32|long|sbyte|ushort|uint32|ulong|float|double|decimal|string') {
-    			Add-Member -InputObject $InputObject -MemberType NoteProperty -Name ($InputObject.GetType().Name) -Value $InputObject
+    		$builder.Append("<row>") > $null
+    		if(!$cachedProperties) {
+    		    $cachedProperties = $InputObject.PSObject.Properties
+    		}
+    		foreach($prop in $cachedProperties) {
+    		    $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $InputObject.($prop.Name)) > $null
     		}
     
-    		$builder.Append("<row>") | Out-Null
-    		foreach($prop in $InputObject.psobject.Properties) {
-    		    $builder.Append("<c t=`"inlineStr`"><is><t><![CDATA[$($prop.Value)]]></t></is></c>") | Out-Null
-    		}
-    
-            $builder.Append("</row>") | Out-Null
-    
+            $builder.Append("</row>") > $null
     	}
     
     	End {
     	    $fragment.InnerXml = $builder.ToString()
-    		$sheetData.AppendChild($fragment) | Out-Null
+    		$sheetData.AppendChild($fragment) > $null
     	}
     }
 Languages:
