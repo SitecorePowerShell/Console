@@ -316,7 +316,11 @@ SharedFields:
     		    $cachedProperties = $InputObject.PSObject.Properties
     		}
     		foreach($prop in $cachedProperties) {
-    		    $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $InputObject.($prop.Name)) > $null
+    	        $value = $InputObject.($prop.Name)
+    	        if(!$value) {
+    	            $value = ""
+    	        }
+    	        $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $value) > $null
     		}
     
             $builder.Append("</row>") > $null
