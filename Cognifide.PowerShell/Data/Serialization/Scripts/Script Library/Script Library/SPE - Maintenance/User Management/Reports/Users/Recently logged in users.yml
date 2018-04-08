@@ -26,18 +26,23 @@ SharedFields:
         PageSize = 25
     }
     
-    [System.Web.Security.Membership]::GetAllUsers() | Sort-Object -Property LastActivityDate -Descending |
+    $users = [System.Web.Security.Membership]::GetAllUsers()
+    foreach($user in $users) {
+        Add-Member -InputObject $user -MemberType NoteProperty -Name "IsAdministrator" -Value (Get-User -Id $user.UserName).IsAdministrator
+    }
+    $users | Sort-Object -Property LastActivityDate -Descending |
         Show-ListView @props -Property `
             @{Label="Icon"; Expression={ 
-                if ($_.IsLockedOut){ "People/32x32/pawn_glass_yellow.png"} 
-                elseif (-not ($_.IsApproved)){ "People/32x32/pawn_glass_red.png"} 
-                elseif($_.IsOnline) { "People/32x32/pawn_glass_green.png" } 
-                else {"People/32x32/pawn_glass_white.png"}}},
+                if ($_.IsLockedOut){ "Office/32x32/lock.png"} 
+                elseif (-not ($_.IsApproved)){ "Office/32x32/dude5.png"}
+                elseif($_.IsOnline -and $_.IsAdministrator) { "Office/32x32/astrologer.png" }
+                elseif($_.IsOnline) { "Office/32x32/businessperson.png" } 
+                else {"Office/32x32/clock.png"}}},
             @{Label="User"; Expression={ $_.UserName} },
             @{Label="Is Online"; Expression={ $_.IsOnline} },
             @{Label="Is Locked Out"; Expression={ $_.IsLockedOut} },
             @{Label="Is Disabled"; Expression={ -not $_.IsApproved} },
-            @{Label="Is Administrator"; Expression={ $user = (Get-User $_.UserName); $user.IsAdministrator } },
+            @{Label="Is Administrator"; Expression={ $_.IsAdministrator } },
             @{Label="Creation Date"; Expression={ $_.CreationDate} },
             @{Label="Last Login Date"; Expression={ $_.LastLoginDate} },
             @{Label="Last Activity Date"; Expression={ $_.LastActivityDate } }
