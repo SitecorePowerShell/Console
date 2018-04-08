@@ -44,7 +44,7 @@ SharedFields:
         @{Name="Field Name"; Expression={$_.Name }}, `
         @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
         @{Name="Source"; Expression={$_._Source }},
-        @{Name="__Icon"; Expression={ if($_._Source -eq "") { "Imaging/32x32/shapes_d.png" } else { "Imaging/32x32/shapes.png" }  }} `
+        @{Name="Icon"; Expression={ if($_._Source -eq "") { "Office/32x32/lightbulb_off.png" } else { "Office/32x32/lightbulb_on.png" }  }} `
         -Title "Templates with Image fields" `
         -InfoTitle "The report will show all fields of type Image and a path to a template it's defined in." `
         -InfoDescription "Just because field does not define Source, doesn't mean it's a problem, but this report allows you to have a view on all of them and decide." `

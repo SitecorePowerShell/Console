@@ -16,7 +16,7 @@ SharedFields:
             @{Label="Logged In"; Expression={ $_.Created } },
             @{Label="Last Activity"; Expression={ $_.LastRequest} },
             @{Label="Session ID"; Expression={ $_.SessionID} },
-            @{Label="Icon"; Expression={ "People/16x16/user1_monitor.png" } }
+            @{Label="Icon"; Expression={ "Office/32x32/businessperson.png" } }
     Close-Window
 Languages:
 - Language: en

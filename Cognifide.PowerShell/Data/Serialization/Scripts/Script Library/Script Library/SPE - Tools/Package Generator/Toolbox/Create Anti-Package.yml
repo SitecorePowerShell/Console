@@ -14,7 +14,7 @@ SharedFields:
     $response = Show-ModalDialog -HandleParameters @{
         "h"="Create an Anti-Package"; 
         "t" = "Select a package that needs an anti-package"; 
-        "ic"="People/16x16/box.png"; 
+        "ic"="Office/32x32/die.png"; 
         "ok"="Pick";
         "ask"="";
         "path"= "packPath:$SitecorePackageFolder";

@@ -7,11 +7,10 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Applications/16x16/preferences.png
+  Value: Office/32x32/clipboard_checks.png
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $scriptLibPath = "master:/sitecore/system/Modules/PowerShell/Script Library/Control Panel/"
     $controlPanelPath = "core:/sitecore/content/Applications/Control Panel/"
     $roots = [Cognifide.PowerShell.Core.Modules.ModuleManager]::GetFeatureRoots([Cognifide.PowerShell.Core.Modules.IntegrationPoints]::ControlPanelFeature);
     

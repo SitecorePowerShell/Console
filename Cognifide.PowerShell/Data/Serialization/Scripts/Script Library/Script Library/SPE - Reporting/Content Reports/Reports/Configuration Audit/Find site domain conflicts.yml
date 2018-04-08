@@ -79,7 +79,7 @@ SharedFields:
     @{ Label = "Virtual Folder"; Expression = { $_.Properties["virtualFolder"] } },
     @{ Label = "State"; Expression = { if ($_.Conflict -ne $null) { "Conflict" } else { "OK" } } },
     @{ Label = "Hidden domains"; Expression = { $_.Conflict } },
-    @{ Label = "Icon"; Expression = { if ($_.Conflict -ne $null) { "Applications/32x32/forbidden.png" } else { "Applications/32x32/check.png" } } };
+    @{ Label = "Icon"; Expression = { if ($_.Conflict -ne $null) { "Office/32x32/sign_forbidden.png" } else { "Office/32x32/check.png" } } };
     
     Close-Window 
 Languages:

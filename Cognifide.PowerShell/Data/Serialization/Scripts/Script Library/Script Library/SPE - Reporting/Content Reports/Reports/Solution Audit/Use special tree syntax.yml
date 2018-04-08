@@ -47,7 +47,7 @@ SharedFields:
         Show-ListView -Property Name, Type, `
             @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", ""}}, `
             @{Name="Source"; Expression={$_._Source}}, `
-            @{Name="Icon"; Expression={if($_._Source -eq "") {"Business/32x32/funnel_delete.png"} else {"Business/32x32/funnel_add.png"} }} `
+            @{Name="Icon"; Expression={if($_._Source -eq "") {"Office/32x32/checkbox_unselected.png"} else {"Office/32x32/checkbox_selected.png"} }} `
             -Title "Use special tree syntax" `
             -InfoTitle "Sitecore recommendation:" `
             -InfoDescription "Use the special syntax to restrict the results on Treelists, DropTrees, and TreelistEx to make sure users can only select the appropriate items, or Sitecore query in the other selection fields. <br/>
