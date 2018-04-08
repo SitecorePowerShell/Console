@@ -47,10 +47,10 @@ SharedFields:
       $ZipPackage.Close()
     }
     
-    20150124ZTime = Get-Date -format "yyyy-MM-d_hhmmss"
+    $time = Get-Date -format "yyyy-MM-dd_hh-mm-ss"
     $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
     $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
-    $myZipFile = "$dataFolder\logs-20150124Ztime.zip"
+    $myZipFile = "$dataFolder\logs-$($time).zip"
     Remove-Item $myZipFile -ErrorAction SilentlyContinue
     ZipFiles $myZipFile $LogsFolder
     Download-File -FullName $myZipFile | Out-Null
