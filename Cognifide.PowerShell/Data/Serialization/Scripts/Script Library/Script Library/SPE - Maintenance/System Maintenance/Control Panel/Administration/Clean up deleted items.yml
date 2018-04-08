@@ -8,6 +8,8 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    Import-Function -Name Clear-Archive
+    
     $parameters = @{
         Title = "Starting Parameters"
         Description = "This script will remove items from recycle bins that are older than the date of your choice"
@@ -31,7 +33,6 @@ SharedFields:
         Exit
     }
     
-    Execute-Script -Path 'master:\system\Modules\PowerShell\Script Library\Platform\Functions\Clear-Archive'
     Clear-Archive -Expired $expired -Verbose
 Languages:
 - Language: en
