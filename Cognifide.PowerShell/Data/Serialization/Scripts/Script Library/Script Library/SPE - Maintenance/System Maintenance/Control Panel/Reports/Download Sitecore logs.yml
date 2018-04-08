@@ -8,51 +8,14 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    ###########################################################################
-    #                                                                         #
-    # The script zips all log4Net files and allows users to download the zip. #
-    # It will show errors for logs currently opened by Sitecore for writing.  #
-    #                                                                         #
-    ###########################################################################
-    
-    #
-    # The ZipFiles function is based on noam's answer
-    # on the following Stack Overflow's page: http://bit.ly/PsZip
-    #
-    function ZipFiles( $zipArchive, $sourcedir )
-    {
-      [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
-        Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
-      $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
-        [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
-      $in = gci $sourceDir | select -expand fullName
-      [array]$files = $in -replace "C:","" -replace "\\","/"
-      $i=0;
-      ForEach ($file In $files) {
-        $i++
-        Write-Progress -Activity "Zipping Log Files " -CurrentOperation "Adding $file" -Status "$i out of $($files.Length)" -PercentComplete ($i *100 / $files.Length)
-        $fileName = [System.IO.Path]::GetFileName($file);
-        $partName=New-Object System.Uri($file, [System.UriKind]::Relative)
-        $part=$ZipPackage.CreatePart("/$fileName", "application/zip", `
-          [System.IO.Packaging.CompressionOption]::Maximum)
-        Try{
-          $bytes=[System.IO.File]::ReadAllBytes($file)
-        }Catch{
-           $_.Exception.ErrorRecord.Exception
-        }
-        $stream=$part.GetStream()
-        $stream.Write($bytes, 0, $bytes.Length)
-        $stream.Close()
-      }
-      $ZipPackage.Close()
-    }
+    Import-Function -Name Compress-Archive
     
     $time = Get-Date -format "yyyy-MM-dd_hh-mm-ss"
     $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
     $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
     $myZipFile = "$dataFolder\logs-$($time).zip"
     Remove-Item $myZipFile -ErrorAction SilentlyContinue
-    ZipFiles $myZipFile $LogsFolder
+    Compress-Archive -Path $LogsFolder –CompressionLevel Fastest -DestinationPath $myZipFile
     Download-File -FullName $myZipFile | Out-Null
     Remove-Item $myZipFile
 Languages:
