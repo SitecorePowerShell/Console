@@ -61,7 +61,7 @@ SharedFields:
                 Write-WorksheetHeader -InputObject $InputObject -WorksheetXmlDoc $workSheetXmlDoc
                 $headerWritten = $true
             }
-            $items.Add($InputObject) | Out-Null
+            $items.Add($InputObject) > $null
         }
     
         end {

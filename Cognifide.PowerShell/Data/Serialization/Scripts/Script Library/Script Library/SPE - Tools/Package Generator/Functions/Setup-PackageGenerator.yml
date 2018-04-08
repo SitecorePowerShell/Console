@@ -125,7 +125,7 @@ SharedFields:
         Write-Host "Entering AddItems for $($item.ProviderPath)" -ForegroundColor Gray
         if($item -and !$itemsAddedToPackage.Contains($item.ID)) {
             Write-Host "[A] $($item.ProviderPath)" -ForegroundColor Green
-            $itemsAddedToPackage.Add($item.ID) | Out-Null
+            $itemsAddedToPackage.Add($item.ID) > $null
             if($items) {
                 $items.Entries.Add((New-Object Sitecore.Install.Items.ItemReference $item.Uri, $false).ToString())
             }
@@ -237,7 +237,7 @@ SharedFields:
         
         if(!$SkipLinks) {
             if(!$itemsProcessedWithLinks.Contains($item.ID)) {
-                $itemsProcessedWithLinks.Add($item.ID) | Out-Null
+                $itemsProcessedWithLinks.Add($item.ID) > $null
                 
                 if($LinkedOptions) {
                     if(!(Test-LinkedOption -Item $item -LinkedOptions $linkedOptions)) {
@@ -252,7 +252,7 @@ SharedFields:
             }
         } else {
             if(!$itemsProcessed.Contains($item.ID)) {
-                $itemsProcessed.Add($item.ID) | Out-Null
+                $itemsProcessed.Add($item.ID) > $null
                 
                 if($item.TemplateID -eq [Sitecore.TemplateIDs]::Template) {
                     ProcessTemplateItem -Item $item -Items $items

@@ -15,7 +15,7 @@ SharedFields:
     $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
     $myZipFile = "$dataFolder\logs-$($time).zip"
     Remove-Item $myZipFile -ErrorAction SilentlyContinue
-    Compress-Archive -Path $LogsFolder –CompressionLevel Fastest -DestinationPath $myZipFile
+    Compress-Archive -Path $LogsFolder –CompressionLevel Optimal -DestinationPath $myZipFile
     Download-File -FullName $myZipFile | Out-Null
     Remove-Item $myZipFile
 Languages:

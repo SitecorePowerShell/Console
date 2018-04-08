@@ -152,9 +152,9 @@ SharedFields:
                 $reader = $command.ExecuteReader()
                 if($reader) {
                     $counter = $reader.FieldCount
-                    $columns = @()
+                    $columns = [System.Collections.ArrayList]@()
                     for ($i = 0; $i -lt $counter; $i++) {
-                        $columns += $reader.GetName($i)
+                        $columns.Add($reader.GetName($i)) > $null
                     }
     
                     if($reader.HasRows) {

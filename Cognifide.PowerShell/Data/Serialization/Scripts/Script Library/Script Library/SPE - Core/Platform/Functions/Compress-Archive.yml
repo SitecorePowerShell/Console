@@ -149,7 +149,7 @@ SharedFields:
             
             if(!(Test-Path -Path $directory)) {
                 Write-Verbose "Creating a new directory at the specified path $($directory)"
-                New-Item -Path $directory -ItemType directory | Out-Null
+                New-Item -Path $directory -ItemType directory > $null
             }
             
             $zipPath = (Join-Path -Path $directory -ChildPath $name)
@@ -170,7 +170,7 @@ SharedFields:
                 Write-Verbose $Path
                 $file = New-Object System.IO.FileInfo (Resolve-Path -Path $Path).ProviderPath
                 Write-Verbose "Adding the file $($file.Name) to the archive."
-                New-EntryFromFile -Archive $Archive -FileName $file.FullName -EntryName $file.Name -CompressionLevel $CompressionLevel | Out-Null
+                New-EntryFromFile -Archive $Archive -FileName $file.FullName -EntryName $file.Name -CompressionLevel $CompressionLevel > $null
             }
             
             function Add-DirectoryEntry {
@@ -182,14 +182,14 @@ SharedFields:
                 
                 $directory = New-Object System.IO.DirectoryInfo (Resolve-Path -Path $Path).ProviderPath
                 Write-Verbose "Adding the directory $($directory.FullName) to the archive."
-                $zipArchive.CreateEntry($directory.Name + '\') | Out-Null
+                $zipArchive.CreateEntry($directory.Name + '\') > $null
                 $items = Get-ChildItem -Path $directory -Recurse -Include $Include
                 $dir = [Uri]($directory.Parent.FullName + '\')
                 foreach($item in $items) {
                     $subdir = [Uri]($item.FullName + (@{$true="\";$false=""}[$item.PSIsContainer]))
                     $p = [Uri]::UnescapeDataString($dir.MakeRelativeUri($subdir).ToString().Replace('/',[System.IO.Path]::DirectorySeparatorChar).TrimStart("..\"))
                     if($item.PSIsContainer) {
-                        $zipArchive.CreateEntry($p) | Out-Null
+                        $zipArchive.CreateEntry($p) > $null
                     } else {
                         if($Update -and $zipArchive.GetEntry($p)) {
                             Write-Verbose "Skipping the file $($item.FullName) because it already exists."
@@ -197,7 +197,7 @@ SharedFields:
                         }
                         
                         Write-Verbose "Adding the file $($item.FullName) to the archive."
-                        New-EntryFromFile -Archive $zipArchive -FileName $item.FullName -EntryName $p -CompressionLevel $CompressionLevel | Out-Null
+                        New-EntryFromFile -Archive $zipArchive -FileName $item.FullName -EntryName $p -CompressionLevel $CompressionLevel > $null
                     }
                 }    
             }

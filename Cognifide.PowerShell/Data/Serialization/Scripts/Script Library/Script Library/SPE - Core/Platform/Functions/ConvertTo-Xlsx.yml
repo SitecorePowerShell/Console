@@ -47,12 +47,12 @@ SharedFields:
                 Write-WorksheetHeader -InputObject $InputObject -WorksheetXmlDoc $workSheetXmlDoc
                 $headerWritten = $true
             }
-            $items.Add($InputObject) | Out-Null
+            $items.Add($InputObject) > $null
         }
     
         end {
             $items | Export-Worksheet -WorkSheetXmlDoc $workSheetXmlDoc
-            $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace("row xmlns=`"`"", "row")
+            $workSheetXmlDoc = [xml]$workSheetXmlDoc.OuterXml.Replace(" xmlns=`"`"", "")
             $workSheetXmlDoc.PreserveWhitespace = $true
             $workSheetXmlDoc.Save($workSheetPart.GetStream([System.IO.FileMode]::Open,[System.IO.FileAccess]::Write))
     		$exPkg.Close()
