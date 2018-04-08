@@ -11,7 +11,8 @@ SharedFields:
     # requires -Version 2
     # requires .Net Version 3.0
     
-    [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
+    #[System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
+    [System.Reflection.Assembly]::Load("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
     
     function New-XlsxWorkbook {
     	begin {
@@ -264,14 +265,61 @@ SharedFields:
     	    [System.Management.Automation.PSObject]$InputObject
     	)
     	
-    	$sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData") 
-        $namespaceUri = $sheetData.NamespaceURI
-    
+    	$cachedProperties = $InputObject.PSObject.Properties
+    	
+    	$columnLengthLookup = [ordered]@{}
+    	foreach($prop in $cachedProperties) {
+    	    $columnLengthLookup[($prop.Name)] = $prop.Name.Length
+    	}
+    	
+    	
+    	$worksheet = $worksheetXmlDoc.DocumentElement
     	$fragment = $workSheetXmlDoc.CreateDocumentFragment()
     	$builder = New-Object System.Text.StringBuilder
-    	$builder.Append("<row>") > $null
-    	foreach($prop in $InputObject.psobject.Properties) {
-    	    $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $prop.Name) > $null
+    	$builder.Append("<cols>") > $null
+    	$columnIndex = 0
+    	$i = 1
+    	foreach($key in $columnLengthLookup.Keys) {
+    	    $width = [math]::Max($columnLengthLookup[$key] + 2, 10)
+    	    $min = $i
+    	    $max = $i
+    	    $builder.AppendFormat("<col min=`"{0}`" max=`"{1}`" width=`"{2}`" customWidth=`"1`"/>", $min, $max, $width) > $null
+    	    $i++
+    	}
+        $builder.Append("</cols>") > $null
+    	$fragment.InnerXml = $builder.ToString()
+    	$worksheet.PrependChild($fragment) > $null 
+    	
+    	$sheetData = $worksheetXmlDoc.DocumentElement.Item("sheetData") 
+    
+    	$row = 1
+    	$fragment = $workSheetXmlDoc.CreateDocumentFragment()
+    	$builder = New-Object System.Text.StringBuilder
+    	$builder.Append("<row r=`"$($row)`">") > $null
+    
+    	$firstLetterIndex = 65
+    	$secondLetterIndex = 65
+    	$columnIndex = 0
+    	foreach($prop in $cachedProperties) {
+            $r = $null
+            if($columnIndex -lt 26) {
+                $r = "$([char]$firstLetterIndex)$($row)"
+                $firstLetterIndex++    
+            } else {
+                if ($secondLetterIndex -gt 90) {
+                    $firstLetterIndex++
+                    $secondLetterIndex = 65
+                }
+                if($firstLetterIndex -gt 90) {
+                    $firstLetterIndex = 65
+                }
+    
+                $r = "$([char]$firstLetterIndex)$([char]$secondLetterIndex)$($row)"
+                $secondLetterIndex++
+            }
+    
+            $builder.AppendFormat("<c r=`"{1}`" t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $prop.Name, $r) > $null
+            $columnIndex++
     	}
     
         $builder.Append("</row>") > $null
@@ -298,6 +346,7 @@ SharedFields:
     		$builder = New-Object System.Text.StringBuilder
     		
     		$cachedProperties = $null
+    		$row = 2
     	}
     
     	process {
@@ -311,19 +360,41 @@ SharedFields:
     		#	</c>
     		#</row>
     		
-    		$builder.Append("<row>") > $null
+    		$builder.Append("<row r=`"$($row)`">") > $null
     		if(!$cachedProperties) {
     		    $cachedProperties = $InputObject.PSObject.Properties
     		}
+    
+        	$firstLetterIndex = 65
+        	$secondLetterIndex = 65
+        	$columnIndex = 0
     		foreach($prop in $cachedProperties) {
     	        $value = $InputObject.($prop.Name)
     	        if(!$value) {
     	            $value = ""
     	        }
-    	        $builder.AppendFormat("<c t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $value) > $null
+    	        $r = $null
+                if($columnIndex -lt 26) {
+                    $r = "$([char]$firstLetterIndex)$($row)"
+                    $firstLetterIndex++    
+                } else {
+                    if ($secondLetterIndex -gt 90) {
+                        $firstLetterIndex++
+                        $secondLetterIndex = 65
+                    }
+                    if($firstLetterIndex -gt 90) {
+                        $firstLetterIndex = 65
+                    }
+        
+                    $r = "$([char]$firstLetterIndex)$([char]$secondLetterIndex)$($row)"
+                    $secondLetterIndex++
+                }
+    	        $builder.AppendFormat("<c r=`"{1}`" t=`"inlineStr`"><is><t><![CDATA[{0}]]></t></is></c>", $value, $r) > $null
+    	        $columnIndex++
     		}
     
             $builder.Append("</row>") > $null
+            $row++
     	}
     
     	End {
