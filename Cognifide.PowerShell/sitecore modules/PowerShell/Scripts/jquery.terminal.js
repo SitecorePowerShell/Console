@@ -1264,7 +1264,7 @@
                     draw_prompt();
                 }
                 clip.val('');
-                tab_count = 0;
+                //tab_count = 0;
                 return false;
             },
             'SHIFT+ENTER': function() {
