@@ -16,6 +16,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
         public string FileName { get; }
         public string ItemDb { get; }
         public string ItemUri { get; }
+        public string ItemId { get; }
         public bool NoDialog { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
@@ -25,6 +26,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
 
         public DownloadMessage(Item item)
         {
+            ItemId = item.ID.ToString();
             ItemUri = item.Uri.ToDataUri().ToString(); 
             ItemDb = item.Database.Name;
         }
@@ -42,7 +44,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             Item item = null;
             if (ItemDb != null)
             {
-                item = Factory.GetDatabase(ItemDb).GetItem(ItemUri);
+                item = Factory.GetDatabase(ItemDb).GetItem(ItemId);
             }
 
             if (NoDialog)
