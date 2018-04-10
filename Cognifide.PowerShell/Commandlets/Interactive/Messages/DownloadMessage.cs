@@ -68,13 +68,15 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             else
             {
                 var urlString = new UrlString("sitecore/shell/default.aspx?xmlcontrol=DownloadFile");
-                var handle = new UrlHandle();
-                handle["te"] = Message ?? string.Empty;
-                handle["fn"] = FileName ?? string.Empty;
-                handle["cp"] = Title ?? string.Empty;
-                handle["fp"] = ShowFullPath.ToString();
-                handle["uri"] = ItemUri ?? string.Empty;
-                handle["db"] = ItemDb ?? string.Empty;
+                var handle = new UrlHandle
+                {
+                    ["te"] = Message ?? string.Empty,
+                    ["fn"] = FileName ?? string.Empty,
+                    ["cp"] = Title ?? string.Empty,
+                    ["fp"] = ShowFullPath.ToString(),
+                    ["uri"] = ItemUri ?? string.Empty,
+                    ["db"] = ItemDb ?? string.Empty
+                };
                 handle.Add(urlString);
 
                 SheerResponse.ShowModalDialog(
