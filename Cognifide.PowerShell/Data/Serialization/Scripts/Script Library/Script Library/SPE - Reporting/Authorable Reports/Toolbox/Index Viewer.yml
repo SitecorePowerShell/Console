@@ -26,7 +26,7 @@ SharedFields:
             @{Name="index"; Title="Choose the report index"; Options=$indexOptions; Tooltip="Only items in this index will be returned."}
         )
         Title = "Index Viewer"
-        Icon = "Office/32x32/index2.png"
+        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
         Description = "Choose the filtering criteria for the report."
         Width = 450
         Height = 300
