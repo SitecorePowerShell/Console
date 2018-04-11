@@ -121,7 +121,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 break;
                             case (FilterType.EndsWith):
                                 var endsWith = criteria.StringValue;
-                                if (ID.IsID(startsWith))
+                                if (ID.IsID(endsWith))
                                 {
                                     endsWith = ID.Parse(endsWith).ToShortID().ToString().ToLower();
                                 }
