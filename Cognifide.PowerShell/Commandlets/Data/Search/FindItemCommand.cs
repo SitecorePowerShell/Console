@@ -120,9 +120,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     : query[0].Where(i => i[criteria.Field].Contains(contains));
                                 break;
                             case (FilterType.EndsWith):
+                                var endsWith = criteria.StringValue;
+                                if (ID.IsID(startsWith))
+                                {
+                                    endsWith = ID.Parse(endsWith).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
-                                    : query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
+                                    ? query[0].Where(i => i[criteria.Field].EndsWith(endsWith, comparer))
+                                    : query[0].Where(i => i[criteria.Field].EndsWith(endsWith, comparer));
                                 break;
                             case (FilterType.Equals):
                                 var equals = criteria.StringValue;
