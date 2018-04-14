@@ -53,7 +53,7 @@ SharedFields:
     
     # Re-creating buttons
     Write-Host "Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
-    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts"
+    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts" -PercentComplete 50
     
     foreach ($root in $roots) {
     	$scriptLibPath = "$($root.Database.Name):$($root.Paths.Path)"
@@ -162,6 +162,8 @@ SharedFields:
     		}
     	}
     }
+    
+    Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Finishing up" -PercentComplete 100
     
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule

@@ -54,11 +54,12 @@ SharedFields:
     
     #Remove non existing scripts from Control Panel
     Write-Host "Purging Control Panel entries for non existing scripts and disabled modules" -ForegroundColor Cyan
-    Get-Childitem $controlPanelPath | ForEach-Object {
-        Write-Progress -Activity "Control Panel Sync" -CurrentOperation "Removing entries for deleted scripts"
-        $cpSection = $_;
-        Get-Childitem $_.ProviderPath | ForEach-Object {
-            $cpEntry = $_
+    $controlPanelItems = Get-Childitem -Path $controlPanelPath
+    $i = 1
+    foreach($cpSection in $controlPanelItems) {
+        Write-Progress -Activity "Control Panel Sync" -CurrentOperation "Removing entries for deleted scripts" -PercentComplete ($i*100/$controlPanelItems.Length)
+        $i++
+        foreach($cpEntry in Get-ChildItem -Path $cpSection.ProviderPath) {
             if($cpEntry.Click -match "item:executescript"){
                 $message = [Sitecore.Web.UI.Sheer.Message]::Parse($null,$cpEntry.Click)
                 $scriptDb = $message.Arguments["scriptDb"]
@@ -75,7 +76,7 @@ SharedFields:
                         #Write-Host "Keeping script '$($cpSection.Name)/$($cpEntry.Name)'" -ForegroundColor Yellow
                     }
                 }
-            }
+            }        
         }
     }
     #Close-Window
