@@ -65,7 +65,8 @@ SharedFields:
                 if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
                     foreach($brokenLink in $brokenLinks) {
                         $brokenItem = $brokenLink.GetSourceItem() | Initialize-Item
-                        Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ((Get-Item . -Database ($root.Database) -ID $brokenLink.SourceFieldID).Name)
+                        $fieldItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenLink.SourceFieldID
+                        Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue $fieldItem.Name
                         Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $brokenLink.TargetPath
                         Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue "Missing Target Item"
                         $brokenItem
