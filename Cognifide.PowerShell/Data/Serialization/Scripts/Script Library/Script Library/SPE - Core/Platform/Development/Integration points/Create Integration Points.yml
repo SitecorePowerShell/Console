@@ -55,9 +55,14 @@ SharedFields:
         }
     }
     
-    cd "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):\"
+    $db = "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):\"
     foreach($pointToCreate in $pointsToCreate){
-        Execute-Script -Path $integrationPoints[$pointToCreate].CreationScript
+        $scriptPath = $integrationPoints[$pointToCreate].CreationScript
+        if([Sitecore.Data.ID]::IsID($scriptPath)) {
+            Get-Item -Path $db -ID $scriptPath | Invoke-Script
+        } else {
+            Get-Item -Path "$($db)$($scriptPath)" | Invoke-Script
+        }
     }
 Languages:
 - Language: en
