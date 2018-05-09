@@ -87,7 +87,7 @@
         }
 
         if(getQueryStringValue("sc_bw") === "1"){
-            $("#RibbonPanel").css("padding-top","50px");
+            //$("#RibbonPanel").css("padding-top","50px");
             $("#Wrapper").css("padding-top","0px");
         }
 
