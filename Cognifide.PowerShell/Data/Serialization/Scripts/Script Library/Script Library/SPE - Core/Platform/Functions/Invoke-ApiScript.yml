@@ -96,9 +96,10 @@ SharedFields:
         $error = $null
         
         $fields = "*"
-        $offset = 0
-        $limit = 0
-        $compress = $false
+        [int]$offset = 0
+        [int]$limit = 0
+        [bool]$compress = $false
+        [int]$depth = 2
         
         if($Arguments) {
             if($Arguments["fields"]) {
@@ -106,15 +107,19 @@ SharedFields:
             }
             
             if($Arguments["offset"]) {
-                [int]::TryParse($Arguments["offset"], [ref]$offset) | Out-Null
+                [int]::TryParse($Arguments["offset"], [ref]$offset) > $null
             }
             
             if($Arguments["limit"]) {
-                [int]::TryParse($Arguments["limit"], [ref]$limit) | Out-Null
+                [int]::TryParse($Arguments["limit"], [ref]$limit) > $null
             }
             
             if($Arguments["compress"]) {
-                [bool]::TryParse($Arguments["compress"], [ref]$compress) | Out-Null
+                [bool]::TryParse($Arguments["compress"], [ref]$compress) > $null
+            }
+            
+            if($Arguments["depth"]) {
+                [int]::TryParse($Arguments["depth"], [ref]$depth) > $null
             }
         }
         
@@ -143,6 +148,10 @@ SharedFields:
             $items = $items | Select-Object -First $limit
         }
         
+        if($depth -lt 1) {
+            $depth = 2
+        }
+        
         [ordered]@{
             Status = $status
             Message = $message
@@ -150,7 +159,7 @@ SharedFields:
             Timestamp = [datetime]::UtcNow.ToString("yyyy-MM-ddTHH\:mm\:ss.fffffffzzz")
             Results = $items
             Error = $error
-        } | ConvertTo-Json -Compress:$compress
+        } | ConvertTo-Json -Compress:$compress -Depth $depth
     }
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
