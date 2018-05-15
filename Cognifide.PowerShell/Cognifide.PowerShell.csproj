@@ -164,6 +164,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Applications\PowerShellReports.cs" />
     <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
     <Compile Include="Client\Commands\MenuItems\AddMaster.cs" />
     <Compile Include="Client\Commands\SelectUser.cs" />
@@ -549,9 +550,6 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_left.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_middle.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
     <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
     <Content Include="packages.config" />
@@ -582,11 +580,6 @@
     <Content Include="sitecore modules\PowerShell\Assets\copy.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
     <Content Include="sitecore modules\PowerShell\Assets\error.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_middle.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_right.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\highlight.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\ind-highlight.png" />
     <Content Include="sitecore modules\PowerShell\Assets\info.png" />
     <Content Include="sitecore modules\PowerShell\Assets\question.png" />
     <Content Include="sitecore modules\PowerShell\Assets\refresh.png" />
@@ -620,8 +613,10 @@
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\text.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\c3.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\clipboard.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\d3.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\flexie.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ise.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery-1.10.2.min.js" />
@@ -633,10 +628,10 @@
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.terminal.js" />
-    <Content Include="sitecore modules\PowerShell\Scripts\jquery.VistaProgressBar-0.6.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\json2.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\reports.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
@@ -672,11 +667,16 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellMultiValuePrompt.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellReports.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerList.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerText.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellSessionElevation.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PsHSplitter.xml" />
