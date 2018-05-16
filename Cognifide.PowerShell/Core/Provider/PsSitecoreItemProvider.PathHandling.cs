@@ -101,6 +101,10 @@ namespace Cognifide.PowerShell.Core.Provider
             var name = PathUtilities.GetLeafFromPath(path);
             //try get literal path
             var literalName = $"/sitecore{parent}/{name}";
+            if (parent.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            {
+                literalName = $"{parent}/{name}";
+            }
             var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem(literalName);
             if (literalItem != null && literalName.Is(literalItem.Paths.Path))
             {
