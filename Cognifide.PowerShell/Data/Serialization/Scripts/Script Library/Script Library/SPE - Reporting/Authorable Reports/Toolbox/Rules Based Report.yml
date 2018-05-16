@@ -45,7 +45,7 @@ SharedFields:
         @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
         @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
         -Description "Choose the starting location and filtering criteria for the report." `
-        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     
     if($result -eq "cancel"){
         Close-Window
@@ -115,7 +115,7 @@ SharedFields:
         @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
         @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
         -Description "Choose the fields to include in the report." `
-        -Title $dialogTitle -Width 600 -Height 740 -Icon $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        -Title $dialogTitle -Width 600 -Height 740 -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     
     if($result -eq "cancel"){
         Close-Window

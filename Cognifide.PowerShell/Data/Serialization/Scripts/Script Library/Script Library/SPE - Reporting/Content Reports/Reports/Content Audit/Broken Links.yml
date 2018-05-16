@@ -41,7 +41,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @props
@@ -61,6 +61,7 @@ SharedFields:
         
         if($Item) {
             if($linksToCheck.Contains("internal")){
+    
                 $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
                 if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
                     foreach($brokenLink in $brokenLinks) {
@@ -123,7 +124,7 @@ SharedFields:
             MissingDataMessage = "There are no items found which have broken links in the current language."
             PageSize = 25
         }
-            
+        
         $items |
             Show-ListView @props -Property "Status Code", "Broken Link Field","Target Url",
                 @{Label="Name"; Expression={$_.DisplayName} },

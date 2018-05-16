@@ -29,7 +29,7 @@ SharedFields:
     
     $settings = @{
         Title = "Report Filter"
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Width = "350"
         Height = "250"
         OkButtonName = "Proceed"

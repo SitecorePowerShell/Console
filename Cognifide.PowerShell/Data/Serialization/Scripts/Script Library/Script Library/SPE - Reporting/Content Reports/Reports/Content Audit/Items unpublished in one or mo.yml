@@ -90,7 +90,7 @@ SharedFields:
         Width = 550
         Height = 300
         ShowHints = $true
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @props

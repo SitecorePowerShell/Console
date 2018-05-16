@@ -36,7 +36,7 @@ SharedFields:
         Height = 500
         OkButtonName = "Create"
         ShowHints = $true
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Parameters = @(
             @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"},
             @{ Name = "items"; Title="Scripts to Run"; 

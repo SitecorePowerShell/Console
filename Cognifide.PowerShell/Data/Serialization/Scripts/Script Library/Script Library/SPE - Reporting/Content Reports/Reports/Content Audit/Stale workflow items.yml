@@ -63,7 +63,7 @@ SharedFields:
             Options = "1|1|3|3|7|7|14|14|30|30"
             Title = "Age"
         }
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @settings

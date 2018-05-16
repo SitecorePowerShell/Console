@@ -30,7 +30,7 @@ SharedFields:
         Title = "Items With Aliases Report"
         Description = "Choose the criteria for the report."
         ShowHints = $true
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @props

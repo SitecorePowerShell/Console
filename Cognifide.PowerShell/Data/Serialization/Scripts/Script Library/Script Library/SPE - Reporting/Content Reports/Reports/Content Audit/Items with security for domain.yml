@@ -40,7 +40,7 @@ SharedFields:
                 Tooltip="Only items matching security with this domain will be returned."; 
             }
         )
-        Icon = $PSScript.Appearance.Icon.Replace("Office","OfficeWhite")
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
     }
     
     $result = Read-Variable @settings
