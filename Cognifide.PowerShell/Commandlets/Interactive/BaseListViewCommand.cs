@@ -139,7 +139,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 if (result.Any())
                 {
                     var varValue = Data.BaseObject();
-                    if (Data is PSObject)
+                    if (varValue is PSCustomObject)
                     {
                         varValue = Data;
                     }
