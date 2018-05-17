@@ -64,13 +64,27 @@ SharedFields:
     
                 $brokenLinks = $item.Links.GetBrokenLinks($IncludeAllVersions)
                 if($brokenlinks -ne $null -and $brokenlinks.Length -gt 0) {
+                    
                     foreach($brokenLink in $brokenLinks) {
-                        $brokenItem = $brokenLink.GetSourceItem() | Initialize-Item
                         $fieldItem = Get-Item -Path "$($Item.Database.Name):\" -ID $brokenLink.SourceFieldID
-                        Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue $fieldItem.Name
-                        Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $brokenLink.TargetPath
-                        Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue "Missing Target Item"
+                        $brokenItem = [pscustomobject]@{
+                            "ID"=$Item.ID
+                            "Icon"=$Item.Icon
+                            "DisplayName"=$Item.DisplayName
+                            "ItemPath"=$Item.ItemPath
+                            "Version"=$Item.Version
+                            "Language"=$Item.Language
+                            "__Updated"=$Item.__Updated
+                            "__Updated by"=$Item."__Updated by"
+                            "Broken Link Field"=$fieldItem.Name
+                            "Target Url"=$brokenLink.TargetPath
+                            "Status Code"="Missing Target Item"
+                            "BrokenLink"=$brokenLink
+                            "Link Type" = "Internal"
+                        }
+    
                         $brokenItem
+                        
                     }
                 }
             }
@@ -90,7 +104,7 @@ SharedFields:
                             }
                             
                             try{ 
-                                $response = Invoke-WebRequest $url -UseBasicParsing -method head
+                                $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method head
                             } 
                             catch {
                                 $statuscode = $_.Exception.Response.StatusCode.Value__
@@ -99,10 +113,21 @@ SharedFields:
                                     $statuscode = "Not reachable"
                                 }
                                 
-                                $brokenItem = Get-Item "$($item.Database.Name):" -Version $checkedItem.Version -Language $checkedItem.Language -Id $checkedItem.Id
-                                Add-Member -InputObject $brokenItem -NotePropertyName "Broken Link Field" -NotePropertyValue ($field.Name)
-                                Add-Member -InputObject $brokenItem -NotePropertyName "Target Url" -NotePropertyValue $url
-                                Add-Member -InputObject $brokenItem -NotePropertyName "Status Code" -NotePropertyValue $statuscode
+                                $brokenItem = [pscustomobject]@{
+                                    "ID"=$checkedItem.ID
+                                    "Icon"=$checkedItem.Icon
+                                    "DisplayName"=$checkedItem.DisplayName
+                                    "ItemPath"=$checkedItem.ItemPath
+                                    "Version"=$checkedItem.Version
+                                    "Language"=$checkedItem.Language
+                                    "__Updated"=$checkedItem.__Updated
+                                    "__Updated by"=$checkedItem."__Updated by"
+                                    "Broken Link Field"=$field.Name
+                                    "Target Url"=$url
+                                    "Status Code"=$statuscode
+                                    "Link Type"="External"
+                                }
+            
                                 $brokenItem
                             }
                         }
@@ -123,10 +148,11 @@ SharedFields:
             InfoDescription = "The report checked for $($linksToCheck -join ' & ') links in $(@('all versions','latest versions')[[byte]($searchVersion='1')]) of items."
             MissingDataMessage = "There are no items found which have broken links in the current language."
             PageSize = 25
+            ViewName = "BrokenLinks"
         }
         
         $items |
-            Show-ListView @props -Property "Status Code", "Broken Link Field","Target Url",
+            Show-ListView @props -Property "Icon","Status Code", "Broken Link Field","Target Url", "Link Type",
                 @{Label="Name"; Expression={$_.DisplayName} },
                 @{Label="Path"; Expression={$_.ItemPath} },
                 "Version",
