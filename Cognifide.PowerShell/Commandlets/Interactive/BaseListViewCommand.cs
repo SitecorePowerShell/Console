@@ -139,6 +139,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 if (result.Any())
                 {
                     var varValue = Data.BaseObject();
+                    if (Data is PSObject)
+                    {
+                        varValue = Data;
+                    }
 
                     var slvDataObject = new DataObject
                     {
