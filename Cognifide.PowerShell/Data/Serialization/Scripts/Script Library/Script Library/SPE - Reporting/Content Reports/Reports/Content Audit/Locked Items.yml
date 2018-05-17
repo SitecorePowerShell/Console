@@ -64,6 +64,7 @@ SharedFields:
             InfoTitle = "Items Locked"
             InfoDescription = 'Lists all the items locked by the specified user.'
             PageSize = 25
+            ViewName = "LockedItems"
         }
     
         $items |
