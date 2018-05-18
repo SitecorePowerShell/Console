@@ -64,8 +64,8 @@ function New-ScriptSession {
         [System.Management.Automation.PSCredential]
         $Credential,
 
-        [Parameter(Mandatory = $false, ParameterSetName = "DefaultCredential")]
-        [switch]$UseDefaultCredential
+        [Parameter(Mandatory = $false, ParameterSetName = "DefaultCredentials")]
+        [switch]$UseDefaultCredentials
     )
     
     begin {
@@ -82,10 +82,6 @@ function New-ScriptSession {
     process {
 
         foreach($uri in $ConnectionUri) {
-
-            $script = {
-                Get-ScriptSession -Current
-            }
 
             $baseUri = $uri
 
@@ -109,18 +105,25 @@ function New-ScriptSession {
             $lazyProxy = {
                 $result = & {
 
-                    $proxy = New-WebServiceProxy @proxyProps
-                    if($Credential) {
-                        $proxy.Credentials = $Credential
-                    } elseif ($UseDefaultCredential.IsPresent) {
-                        $proxy.UseDefaultCredentials = $true
+                    $serviceProxy = New-WebServiceProxy @proxyProps
+                    
+                    if ($Credential) {
+                        $serviceProxy.Credentials = $Credential
+                    }
+                    elseif ($UseDefaultCredentials.IsPresent) {
+                        $serviceProxy.UseDefaultCredentials = $true
                     }
 
-                    if($Timeout -gt 0) {
-                        $proxy.Timeout = $Timeout * 1000
+                    if ($Timeout -gt 0) {
+                        $serviceProxy.Timeout = $Timeout * 1000
                     }
 
-                    $proxy
+                    if (!$serviceProxy.Url.StartsWith($uri.Scheme + "://")) {
+                        Write-Verbose "Changing proxy URL scheme to: $($uri.Scheme)"
+                        $serviceProxy.Url = $serviceProxy.Url -replace "^https?", $uri.Scheme
+                    }
+
+                    $serviceProxy
                 }
 
                 Add-Member -InputObject $this -MemberType NoteProperty -Name "Proxy" -Value $result -Force
