@@ -15,29 +15,25 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    # Script configuration
-    # --------------------
-    
-    $createAt = gi "master:/content/Home/"
-    $itemTemplate = gi "master:/templates/Sample/Sample Item"
+    $createAt = Get-Item -Path "master:/content/Home/"
+    $itemTemplate = Get-Item -Path "master:/templates/Sample/Sample Item"
     
     $result = Read-Variable -Parameters `
-        @{ Name = "sitemapUrl"; Value="http://www.cognifide.com/sitemap"; Title="Item to create the site under"; Root="/sitecore/content/"},
+        @{ Name = "sitemapUrl"; Value=""; Placeholder = "https://www.sitecore.net/sitemap"; Title="Source Sitemap"; Root="/sitecore/content/"},
         @{ Name = "createAt"; Title="Item to create the site under"; Root="/sitecore/content/"},
         @{ Name = "itemTemplate"; Title="Template to use for pages"; Root="/sitecore/templates/"},
-        @{ Name = "prefix"; Value="http://www.cognifide.com/"; Title="Prefix to chop off URLs"; },
+        @{ Name = "prefix"; Value=""; Placeholder = "https://www.sitecore.net/"; Title="Prefix to chop off URLs"; },
         @{ Name = "postfix"; Value=".aspx$"; Title="Postfix regex to chop off URLs";} `
-        -Description "This report will analyse the branch and will tell you which items have security set at a user level rather than role level." `
-        -Title "Find items with security set for a user instead of role" -Width 600 -Height 400 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+        -Description "Create pages using the sitemap of an existing site." `
+        -Title "Create Site From Sitemap" -Width 600 -Height 400 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     
-    if($result -ne "ok")
-    {
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
     
-    cd $createAt.ProviderPath
+    Set-Location -Path $createAt.ProviderPath
     
     $createAt = $createAt.Paths.Path
     $itemTemplate = $itemTemplate.Paths.Path
