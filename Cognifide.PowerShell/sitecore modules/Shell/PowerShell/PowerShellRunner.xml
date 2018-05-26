@@ -58,7 +58,7 @@
         </Scrollbox>
 
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
                  Title="Show copyright..." />
           <a href="#" id="ViewButton" onclick="javascript:return scForm.postEvent(this,event,'ViewResults')"
              onkeydown="javascript:scForm.handleKey(this, event, 'ViewResults', '32')">

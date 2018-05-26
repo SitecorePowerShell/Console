@@ -550,7 +550,6 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
-    <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
     <Content Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
@@ -578,14 +577,9 @@
     <Content Include="App_Config\Include\z.Cognifide.PowerShell.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
     <Content Include="sitecore modules\PowerShell\Assets\copy.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\error.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\info.png" />
     <Content Include="sitecore modules\PowerShell\Assets\question.png" />
     <Content Include="sitecore modules\PowerShell\Assets\refresh.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\warning.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />

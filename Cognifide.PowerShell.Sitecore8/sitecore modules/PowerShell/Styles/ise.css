@@ -17,59 +17,6 @@
     min-width: 100px;
 }
 
-#StatusBar {
-    height: 20px;
-    margin: 2px 5px 0 8px;
-    overflow: hidden;
-    padding: 0 0 3px 0;
-}
-
-.status-bar-panel {
-    background-color: white;
-    border: solid 1px silver;
-    padding: 2px 2px;
-}
-
-.status-bar-text {
-    height: 14px;
-    overflow: hidden;
-    cursor: pointer;
-}
-
-.status-bar-right {
-    float: right;
-    margin-left: 2px;
-    width: 50px;
-    height: 14px;
-}
-
-.status-bar-right-icon {
-    float: right;
-    margin-left: 2px;
-    text-align: center;
-    width: 16px;
-    height: 14px;
-    cursor: pointer;
-}
-
-.status-bar-right-icon:active {
-    -ms-opacity: 0.6;
-    opacity: 0.6;
-}
-
-.status-bar-script {
-    float: right;
-    margin-left: 2px;
-    width: 500px;
-}
-
-.status-bar-left {
-    float: left;
-    margin-right: 2px;
-    padding-left: 3px;
-    width: 80px;
-}
-
 .ui-dialog { z-index: 1; }
 
 #ajax-dialog {
@@ -186,12 +133,6 @@ a.ps-link {
 }
 
 .tip-title { margin: 1px 0 8px 0; }
-
-#RefreshHint {
-    float: right;
-    margin-right: 1px;
-    margin-top: 1px;
-}
 
 .ui-tooltip {
     border-radius: 20px;
@@ -335,24 +276,15 @@ a.ps-link {
     font-weight: normal/*{fwDefault}*/;
 }
 
-#Filter { margin-top: 8px; }
-
-#Input_Filter {
-    padding-left: 3px;
-    width: 300px;
-}
-
 /* List view Page*/
 
 .checked {
-    background-image: url("/sitecore modules/PowerShell/Assets/checked.png");
     height: 13px;
     margin: auto;
     width: 13px;
 }
 
 .unchecked {
-    background-image: url("/sitecore modules/PowerShell/Assets/unchecked.png");
     height: 13px;
     margin: auto;
     width: 13px;
@@ -486,51 +418,4 @@ a.ps-link {
 
 #CodeEditor * {
     font-family: inherit !important;
-}
-
-.scEditorWarning {
-    background-color: #FCE99C;
-    color: #897B2F;
-    padding: 5px;
-    min-height: 33px;
-}
-
-.scEditorWarning td {
-    padding: 7px;
-}
-
-.scEditorWarningHelp {
-    float: left;
-    width: 100%;
-}
-
-.scEditorWarningIcon { margin: 0 16px 0 8px; }
-
-.scEditorWarningTitle {
-    float: left;
-    width: 100%;
-    font-weight: bold;
-}
-
-.spe-secured-app .scEditorWarning {
-    background-color: #FCE99C;
-}
-
-.spe-secured-app .scEditorWarningTitle {
-    color: #897B2F;
-}
-
-.spe-secured-app .scEditorWarningHelp {
-    color: #897B2F;
-}
-
-.spe-secured-app .scEditorWarningOption {
-    color: black;
-    font-weight: bold;
-}
-
-.spe-secured-app .scDialogHeader {
-    background-color: #FCE99C;
-    color: #897B2F;
-    padding-top: 15px;
 }

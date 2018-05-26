@@ -214,10 +214,12 @@ namespace Cognifide.PowerShell.Client.Controls
                     switch (val)
                     {
                         case ("False"):
-                            val = "<div class='unchecked'></div>";
+                            var uncheckedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/delete.png");
+                            val = $"<div class='unchecked'><img src='{uncheckedSource}'/></div>";
                             break;
                         case ("True"):
-                            val = "<div class='checked'></div>";
+                            var checkedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/check.png");
+                            val = $"<div class='checked'><img src='{checkedSource}'/></div>";
                             break;
                     }
                     lvi.ColumnValues.Add(column, val);
