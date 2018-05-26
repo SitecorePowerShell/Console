@@ -12,7 +12,7 @@ SharedFields:
   Hint: Script
   Value: |
     Close-Window
-    Invoke-ShellCommand -Path master:\ -Name "ise:iframe(spe_url=http://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
+    Invoke-ShellCommand -Path master:\ -Name "ise:iframe(spe_url=https://spe.najmanowicz.com/,spe_w=840,spe_h=460,spe_t=About Sitecore PowerShell Extensions...,spe={spe},ps={ps},sc={sc})"
     
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
