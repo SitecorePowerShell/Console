@@ -144,6 +144,9 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 }
                 menuItems.Add(menuItem);
             }
+
+            menuItems.Sort((x, y) =>
+                string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase);
         }
 
         public override string GetClick(CommandContext context, string click)
