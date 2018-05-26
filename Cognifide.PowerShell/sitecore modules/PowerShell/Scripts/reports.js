@@ -18,7 +18,7 @@
                     });
                 });
         }).fail(function () {
-            $("#chart").append('<div class="no-data">No report data available.</div>');
+            $("#chart").append('<div class="no-data"><span>No report data available.</span><ul><li>Is the remoting service enabled?</li><li>Are the reporting modules installed and enabled?</li></ul></div>');
         });
     });
 }(jQuery, window, window.cognifide = window.cognifide || {}, c3));
