@@ -105,6 +105,10 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 GetLibraryMenuItems(context.Items[0], menuItems, root);
             }
 
+            menuItems.Sort((x, y) =>
+                string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
+
+
             return menuItems.ToArray();
         }
 
@@ -148,9 +152,6 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 }
                 menuItems.Add(menuItem);
             }
-
-            menuItems.Sort((x, y) =>
-                string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase);
         }
 
         public override string GetClick(CommandContext context, string click)
