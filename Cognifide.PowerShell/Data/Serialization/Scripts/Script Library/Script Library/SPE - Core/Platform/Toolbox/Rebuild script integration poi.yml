@@ -18,9 +18,13 @@ SharedFields:
     ar|sitecore\Developer|pe|+item:read|pd|+item:read|ar|sitecore\Sitecore Client Users|pe|-item:read|pd|-item:read|
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Rebuild items generated for the ribbon, gutter and ...
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20170305T202233
+      Value: 20170306T022233Z

@@ -48,6 +48,10 @@ SharedFields:
     Send-SheerMessage -Name "ise:plugininsert" -Parameters @{ "script" = $content }
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Insert a snippet of common code.
   Versions:
   - Version: 1
     Fields:

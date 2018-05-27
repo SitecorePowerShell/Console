@@ -35,9 +35,13 @@ SharedFields:
   Value: <ruleset />
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Managed scheduled tasks.
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130916T143800
+      Value: 20130916T193800Z

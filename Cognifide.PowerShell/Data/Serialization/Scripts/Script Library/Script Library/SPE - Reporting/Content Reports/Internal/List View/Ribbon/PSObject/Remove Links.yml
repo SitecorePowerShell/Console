@@ -11,18 +11,7 @@ SharedFields:
 - ID: "1c76313e-3c8c-4807-a826-135d10c39299"
   Hint: ShowRule
   Type: Rules
-  Value: |
-    <ruleset>
-      <rule
-        uid="{FF426F4D-F107-45DC-AA1E-5874B06EEC66}">
-        <conditions>
-          <condition
-            id="{1B499603-87C9-4440-969F-D9568CE1E926}"
-            uid="197DB945BB37496FB110AD9B470F37D9"
-            ValidViewName="BrokenLinks" />
-        </conditions>
-      </rule>
-    </ruleset>
+  Value: <ruleset />
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
@@ -61,6 +50,10 @@ SharedFields:
     #>
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Remove the broken link from the associated fields.
   Versions:
   - Version: 1
     Fields:

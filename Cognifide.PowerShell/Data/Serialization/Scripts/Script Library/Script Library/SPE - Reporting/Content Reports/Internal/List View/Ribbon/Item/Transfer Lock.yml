@@ -57,6 +57,10 @@ SharedFields:
     $allData | Update-ListView
 Languages:
 - Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Transfer the locked item from one user to another.
   Versions:
   - Version: 1
     Fields:
