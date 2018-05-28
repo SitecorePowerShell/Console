@@ -35,6 +35,7 @@ using Checkbox = Sitecore.Web.UI.HtmlControls.Checkbox;
 using Control = System.Web.UI.Control;
 using Convert = System.Convert;
 using DateTime = System.DateTime;
+using Label = Sitecore.Web.UI.HtmlControls.Label;
 using ListItem = Sitecore.Web.UI.HtmlControls.ListItem;
 using Literal = Sitecore.Web.UI.HtmlControls.Literal;
 using Memo = Sitecore.Web.UI.HtmlControls.Memo;
@@ -186,7 +187,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var clearfix = false;
                 var floatRight = false;
                 var height = variable["Height"] as string;
-                var validator = variable["Validator"] as ScriptBlock;
+                var validator   = variable["Validator"] as ScriptBlock;
 
                 if (fieldNames.Contains(name))
                 {
@@ -247,12 +248,16 @@ namespace Cognifide.PowerShell.Client.Applications
                 // add variable title and tooltip if it's not a checkbox
                 if (variableValue == null || variableValue.GetType() != typeof(bool))
                 {
-                    var label = new Literal { Text = title, Class = "varTitle" };
-                    variableWrapper.Controls.Add(label);
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        var fieldLabel = new Label {Header = title, Class = "varTitle", For = name};
+                        variableWrapper.Controls.Add(fieldLabel);
+                    }
+
                     if (ShowHints && !string.IsNullOrEmpty(hint))
                     {
-                        label = new Literal { Text = hint, Class = "varHint" };
-                        variableWrapper.Controls.Add(label);
+                        var hintLabel = new Label { Header = hint, Class = "varHint" };
+                        variableWrapper.Controls.Add(hintLabel);
                     }
                 }
 
@@ -288,7 +293,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Class = "validator"
                 };
                 variableWrapper.Controls.Add(variableValidator);
-
+                    
                 // add wrapper to the container
                 container.Controls.Add(variableWrapper);
             }
@@ -546,6 +551,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 Checked = (bool)value,
                 Class = "varCheckbox"
             };
+            if (variable.Contains("GroupId"))
+            {
+                checkBox.Attributes.Add("data-group-id", variable["GroupId"].ToString());
+            }
+
             checkboxBorder.Controls.Add(checkBox);
             return checkboxBorder;
         }
@@ -754,6 +764,11 @@ namespace Cognifide.PowerShell.Client.Applications
                 return new Literal { Text = value.ToString(), Class = "varHint" };
             }
 
+            if (isEditorSpecified && editor.HasWord("marquee"))
+            {
+                return new Marquee { InnerHtml = value.ToString(), Name = name };
+            }
+
             Sitecore.Web.UI.HtmlControls.Control edit;
             if (variable["lines"] != null && ((int)variable["lines"] > 1))
             {
@@ -875,6 +890,16 @@ namespace Cognifide.PowerShell.Client.Applications
             edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
             edit.Class += " scContentControl textEdit clr" + value.GetType().FullName.Replace(".", "-");
             edit.Value = value.ToString();
+            edit.Name = name;
+
+            if (variable.Contains("ParentGroupId"))
+            {
+                edit.Attributes.Add("data-parent-group-id", variable["ParentGroupId"].ToString());
+                if (variable.Contains("Enabled") && !MainUtil.GetBool(variable["Enabled"], true))
+                {
+                    edit.Disabled = true;
+                }
+            }
 
             return edit;
         }

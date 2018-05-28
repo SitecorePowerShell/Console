@@ -171,6 +171,7 @@
     <Compile Include="Client\Commands\Selectlanguage.cs" />
     <Compile Include="Client\Controls\LanguageHistory.cs" />
     <Compile Include="Client\Controls\BucketlistExtended.cs" />
+    <Compile Include="Client\Controls\Marquee.cs" />
     <Compile Include="Client\Controls\SessionCompleteEventArgs.cs" />
     <Compile Include="Client\Controls\UserGallery.cs" />
     <Compile Include="Client\Controls\LanguageGallery.cs" />

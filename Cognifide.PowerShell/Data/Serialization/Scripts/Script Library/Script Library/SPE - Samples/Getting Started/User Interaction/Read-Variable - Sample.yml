@@ -22,12 +22,15 @@ SharedFields:
     $selection = [ordered]@{One=1;Two=2;"Three (selected)"=3;Four=4};
     
     $result = Read-Variable -Parameters `
-        @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple" },
-        @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"}, 
-        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"}, 
-        @{ Name = "multiText"; Value="Multiline Text"; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"}, 
-        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6;}, 
+        @{ Name="marquee"; Title=""; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; },
+        @{ Name="Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; },
+        @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"; Columns = 6; },
+        @{ Name = "toggleVisible"; Value=$true; Title="Toggle Enabled State"; Tooltip="Checking or unchecking will change enabled state"; Tab="Simple"; Columns = 6; GroupId=1;}, 
+        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; Enabled=$false; }, 
+        @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; Enabled=$false; }, 
+        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; Enabled=$false; }, 
         @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6;}, 
+        @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Placeholder="You see this when text box is empty"; }, 
         @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"}, 
         @{ Name = "anOption"; Value="3"; Title="An Option"; Options=$selection; Tooltip="Tooltip for dropdown"; Tab="Options"}, 
         @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"}, 
@@ -54,7 +57,7 @@ SharedFields:
         @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"}, `
         @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"} `
         -Description "The dialog demonstrates the use of all available controls grouped into tabs." `
-        -Title "Kitchen Sink Demo" -Width 650 -Height 700 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints
+        -Title "Kitchen Sink Demo" -Width 650 -Height 700 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints -Icon "officewhite/32x32/knife_fork_spoon.png"
     if($result -ne "ok")
     {
         Exit

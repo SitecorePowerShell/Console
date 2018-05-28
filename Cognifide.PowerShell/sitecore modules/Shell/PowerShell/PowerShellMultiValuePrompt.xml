@@ -19,6 +19,8 @@
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
 
