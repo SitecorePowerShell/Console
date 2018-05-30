@@ -34,13 +34,27 @@
 
     $.each(controlElements, function (index, element) {
         $(element).on("change", function () {
+            let controlValue;
+            if (element.type === "checkbox") {
+                controlValue = this.checked ? "1" : "0";
+            } else if (element.type === "select-one") {
+                controlValue = $(this).find(":selected").val();
+            }
             const groupId = element.getAttribute("data-group-id");
             for (let i = 0; i < stateControlElements.length; i++) {
                 const e = stateControlElements[i];
                 if (e.hasAttribute("data-parent-group-id") && e.getAttribute("data-parent-group-id") === groupId) {
-                    $(e).prop("disabled", function(j, v) { return !v; });
+                    const hideOnValue = e.getAttribute("data-hide-on-value");
+                    if (controlValue === hideOnValue) {
+                        $(e).hide();
+                    } else {
+                        $(e).show();
+                    }
+                    //$(e).prop("disabled", function(j, v) { return !v; });
                 }
             }
         });
+
+        $(element).trigger("change");
     });
 });
