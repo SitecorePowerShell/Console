@@ -115,7 +115,7 @@ function New-ScriptSession {
                     }
 
                     if ($Timeout -gt 0) {
-                        $serviceProxy.Timeout = $Timeout * 1000
+                        $serviceProxy.Timeout = [math]::Min($Timeout * 1000, [int]::MaxValue)
                     }
 
                     if (!$serviceProxy.Url.StartsWith($uri.Scheme + "://")) {
