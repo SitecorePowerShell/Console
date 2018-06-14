@@ -34,7 +34,7 @@ SharedFields:
                 $variable.Error = "Please provide a description."
             }}} `
         -Description "This Dialog shows how to provide a validator for values" `
-        -Title "Password entry" -Width 450 -Height 410 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints `
+        -Title "Password entry" -Width 450 -Height 450 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints `
         -Validator { 
             $pass = $variables.password.Value;
             if($pass.Length -ge $minPassLength)

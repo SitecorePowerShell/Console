@@ -119,11 +119,11 @@
             Ln: <Literal ID="PosY" Text="" />
           </Border>
           <Border class="status-bar-panel status-bar-right-icon">
-            <Image ID="CopyResultsToClipboard" src="/sitecore modules/PowerShell/Assets/copy.png"
+            <Image ID="CopyResultsToClipboard" src="/~/icon/office/16x16/element_copy.png"
                    Alt="Copy results to clipboard" Title="Copy results to clipboard" />
           </Border>
           <Border class="status-bar-panel status-bar-text">
-            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"
+            <Image ID="RefreshHint" src="/~/icon/office/16x16/nav_refresh.png"
                    Alt="Show next usability hint..." Title="Show next usability hint..." />
             <Literal ID="StatusTip">
             </Literal>

@@ -27,8 +27,8 @@
         var debugSessionId = "";
         var debugMarkers = [];
         var resultsBottomOffset = 10;
-
-
+        var typingTimer;
+        
         var editor = $($("#Editor")[0]);
         editor.hide();
 
@@ -53,9 +53,10 @@
         function registerEventListenersForRibbonButtons() {
             console.log('initialize');
             [].forEach.call(document.querySelectorAll('.scRibbonToolbarSmallGalleryButton, .scRibbonToolbarLargeComboButtonBottom'), function (div) {
-                div.addEventListener("click", function () {
-                    clearTimeout(typingTimer);
-                })
+                div.addEventListener("click",
+                    function() {
+                        clearTimeout(typingTimer);
+                    });
             });
 
             [].forEach.call(document.querySelectorAll('.scRibbonNavigatorButtonsGroupButtons > a'), function (div) {
@@ -92,8 +93,6 @@
         }
 
         setTimeout(setFocusOnConsole, 1000);        
-
-        var typingTimer;
 
         cognifide.powershell.updateRibbon = function () {
             if (!codeeditor.getReadOnly()) {
@@ -477,11 +476,11 @@
 
         cognifide.powershell.resizeEditor = function() {
             codeeditor.resize();
-            var resultsHeight =$ise(window).height() -$ise("#ResultsSplitter").offset().top - $ise("#ResultsSplitter").height() - $ise("#StatusBar").height() - resultsBottomOffset - 10;
-	        $ise("#Result").height(resultsHeight);
-	        $ise("#Result").width($ise(window).width()-$ise("#Result").offset().left*2)
-            $ise("#ProgressOverlay").css("top",($ise("#Result").offset().top+4)+"px");
-            $ise("#ResultsClose").css("top", ($ise("#Result").offset().top + 4) + "px");
+            var resultsHeight =$(window).height() -$("#ResultsSplitter").offset().top - $("#ResultsSplitter").height() - $("#StatusBar").height() - resultsBottomOffset - 10;
+	        $("#Result").height(resultsHeight);
+            $("#Result").width($(window).width() - $("#Result").offset().left * 2);
+            $("#ProgressOverlay").css("top",($("#Result").offset().top+4)+"px");
+            $("#ResultsClose").css("top", ($("#Result").offset().top + 4) + "px");
         };
 
         function isEmpty(val) {
@@ -490,9 +489,9 @@
 
         cognifide.powershell.showInfoPanel = function(showPanel, updateFromMessage) {
             if (showPanel) {
-                $ise("#InfoPanel").css("display", "block");
+                $("#InfoPanel").css("display", "block");
             } else {
-                $ise("#InfoPanel").css("display", "none");
+                $("#InfoPanel").css("display", "none");
             }
             cognifide.powershell.resizeEditor();
             if (!isEmpty(updateFromMessage)) {

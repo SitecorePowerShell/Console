@@ -75,7 +75,7 @@ textarea[disabled] {
 }
 
 #StatusBar {
-    height: 20px;
+    height: 22px;
     margin: 2px 5px 0 8px;
     overflow: hidden;
     padding: 0 0 3px 0;
@@ -88,7 +88,7 @@ textarea[disabled] {
     }
 
     #StatusBar .status-bar-text {
-        height: 14px;
+        height: 16px;
         overflow: hidden;
         cursor: pointer;
     }
@@ -97,7 +97,7 @@ textarea[disabled] {
         float: right;
         margin-left: 2px;
         width: 50px;
-        height: 14px;
+        height: 16px;
     }
 
     #StatusBar .status-bar-right-icon {
@@ -105,7 +105,7 @@ textarea[disabled] {
         margin-left: 2px;
         text-align: center;
         width: 16px;
-        height: 14px;
+        height: 16px;
         cursor: pointer;
     }
 
@@ -129,6 +129,4 @@ textarea[disabled] {
 
     #StatusBar #RefreshHint {
         float: right;
-        margin-right: 1px;
-        margin-top: 1px;
     }

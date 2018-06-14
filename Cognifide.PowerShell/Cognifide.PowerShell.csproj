@@ -577,8 +577,6 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <Content Include="App_Config\Include\z.Cognifide.PowerShell.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
-    <Content Include="sitecore modules\PowerShell\Assets\copy.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\refresh.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
