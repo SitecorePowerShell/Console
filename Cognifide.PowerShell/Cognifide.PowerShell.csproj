@@ -182,6 +182,11 @@
     <Compile Include="Commandlets\Data\Clones\NotificationAction.cs" />
     <Compile Include="Commandlets\Data\Clones\NotificationType.cs" />
     <Compile Include="Commandlets\Data\Clones\ReceiveItemCloneNotificationCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\FilterType.cs" />
+    <Compile Include="Commandlets\Data\Search\NewSearchPredicateCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\SearchCriteria.cs" />
+    <Compile Include="Commandlets\Data\Search\BaseSearchCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\SearchOperation.cs" />
     <Compile Include="Commandlets\Data\TestBaseTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\BasePipelineMessageWithResult.cs" />
@@ -193,6 +198,7 @@
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
+    <Compile Include="Core\Extensions\ExpressionExtensions.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Extensions\TypeExtensions.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider5.cs" />
