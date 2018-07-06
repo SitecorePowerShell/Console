@@ -7,6 +7,7 @@ using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
+using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
@@ -109,6 +110,26 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     ? query[0].Where(i => !i[criteria.Field].Contains(criteria.StringValue))
                                     : query[0].Where(i => i[criteria.Field].Contains(criteria.StringValue));
                                 break;
+                            case (FilterType.ContainsAny):
+                                if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                                {
+                                    WriteWarning(
+                                        "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                                }
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))))
+                                    : query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))));
+                                break;
+                            case (FilterType.ContainsAll):
+                                if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                                {
+                                    WriteWarning(
+                                        "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                                }
+                                query[0] = criteria.Invert
+                                    ? query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))))
+                                    : query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))));
+                                break;
                             case (FilterType.EndsWith):
                                 query[0] = criteria.Invert
                                     ? query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
@@ -199,7 +220,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         DescendantOf,
         Fuzzy,
         InclusiveRange,
-        ExclusiveRange
+        ExclusiveRange,
+        ContainsAny,
+        ContainsAll
     }
 
     public class SearchCriteria
