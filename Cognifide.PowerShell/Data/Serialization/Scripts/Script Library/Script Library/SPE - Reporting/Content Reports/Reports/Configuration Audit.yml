@@ -1,0 +1,22 @@
+﻿---
+ID: "0acbfea0-c6b1-4263-993f-5bcb231a1fff"
+Parent: "c34e89d5-7f6c-4977-967b-2e5c886c27e0"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Configuration Audit"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/clipboard_checks.png
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Review general details about the Sitecore solution.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140413T182959Z

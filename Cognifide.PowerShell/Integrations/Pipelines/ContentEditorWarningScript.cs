@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Cognifide.PowerShell.Core.Diagnostics;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
+using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines.GetContentEditorWarnings;
 
@@ -20,11 +23,19 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
         {
             Assert.ArgumentNotNull(args, "args");
 
+            Func<Item, bool> filter = si => si.IsPowerShellScript()
+                                            && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
+                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], args.Item);
+
             foreach (var libraryItem in ModuleManager.GetFeatureRoots(IntegrationPoint))
             {
-                if (!libraryItem.HasChildren) return;
+                var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
+                if (applicableScriptItems == null || !applicableScriptItems.Any())
+                {
+                    return;
+                }
 
-                foreach (var scriptItem in libraryItem.Children.ToList())
+                foreach (var scriptItem in applicableScriptItems)
                 {
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {

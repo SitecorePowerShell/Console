@@ -159,7 +159,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
             profile.Save();
 
-            if (!Enabled.IsPresent) return;
+            if (!MyInvocation.BoundParameters.ContainsKey("Enabled")) return;
 
             var member = Membership.GetUser(name);
             if (member == null) return;

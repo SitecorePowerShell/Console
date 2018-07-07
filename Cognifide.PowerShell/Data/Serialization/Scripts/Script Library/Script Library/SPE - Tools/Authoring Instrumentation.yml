@@ -1,0 +1,32 @@
+﻿---
+ID: "82788a2d-ad00-4e7e-ad76-724d66e68c27"
+Parent: "486437b1-8a1d-4184-bc07-5c394f7ea13c"
+Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Authoring Instrumentation"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar_coffee_bean.png
+- ID: "218ca464-cb77-4c97-b141-34871ecae00b"
+  Hint: Enabled
+  Type: Checkbox
+  Value: 1
+- ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
+  Hint: Description
+  Value: |
+    Provides the following Context Menu items:
+    - Recent Author Activity for the selected and child items
+    - Statistics about how many times authors updated each item
+    - Publish items updated by the current user
+- ID: "9911a28e-2120-4ab0-9113-5bae386769c1"
+  Hint: Module Version
+  Value: 1.0
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141129T162513

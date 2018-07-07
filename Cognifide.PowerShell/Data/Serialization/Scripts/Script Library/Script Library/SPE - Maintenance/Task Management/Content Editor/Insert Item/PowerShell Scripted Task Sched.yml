@@ -1,0 +1,77 @@
+﻿---
+ID: "38c2f540-8609-4050-a60a-d7a914f5798c"
+Parent: "d77dbed0-43a0-4405-a6b0-bf29618d6cb4"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/Task Management/Content Editor/Insert Item/PowerShell Scripted Task Schedule"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/stopwatch.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{66068B45-2029-46F9-B768-B1D522FF7444}">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="5F73B473FDE74C5C990E7CB2A6DFBB1E"
+            itemid="{A705D262-5714-4880-9962-051E25F1416D}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $parent = Get-Item -Path .
+    $item = Get-Item -Path "master:\system\Modules\PowerShell\Script Library"
+    
+    $props = @{
+        Title = "Create new scripted Schedule"
+        Description = "Creates a new schedule for a task that will execute a script from your PowerShell Script Library"
+        Width = 700
+        Height = 500
+        OkButtonName = "Create"
+        ShowHints = $true
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        Parameters = @(
+            @{ Name = "name"; Title="Name for the task schedule."; Placeholder = "Schedule Name"},
+            @{ Name = "items"; Title="Scripts to Run"; 
+                Source="DataSource=/sitecore/system/Modules/PowerShell/Script Library&DatabaseName=master&IncludeTemplatesForSelection=PowerShell Script"; 
+                editor="treelist"; Height="300px"}
+        )
+    }
+    
+    $result = Read-Variable @props
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    if($name -and $items -and $items.Count -gt 0) {
+      $schedule = New-Item -Path "$($parent.ProviderPath)" -Name $name -ItemType "System/Tasks/Schedule"
+      $command = Get-Item -Path master:\system\Tasks\Commands\PowerShellScriptCommand
+      $schedule.Command = $command
+      $schedule.Schedule = '20140101|99990101|127|1.00:00'
+      $schedule.Items = ($items | Select-Object -Expand ItemPath) -join "|"
+      Import-Function -Name Edit-TaskSchedule
+      Edit-TaskSchedule $schedule
+      Close-Window
+    }
+    
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Create a new scheduled task using PowerShell.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150212T213048Z

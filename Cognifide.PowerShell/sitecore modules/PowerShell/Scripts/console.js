@@ -179,13 +179,30 @@
 
     var sigHint = "";
 
-    function tabCompletionInit(command) {
+    function completion(command, tab_count, callback) {
+        if (tab_count < 0 || !tabCompletions) {
+            tabCompletionInit(command, function () {
+                if (tabCompletions) {
+                    callback(tabCompletions[0]);
+
+                    if (tabCompletions.length === 0) {
+                        tabCompletionNoHints();
+                    }
+                }
+            });
+        } else if (tabCompletions) {
+            callback(tabCompletions[tab_count]);
+
+            if (tabCompletions.length === 0) { 
+                tabCompletionNoHints();
+            }
+        }
+    }
+
+    function tabCompletionInit(command, callback) {
         getPowerShellResponse({ "guid": guid, "command": command }, "CompleteCommand",
             function (json) {
                 var data = JSON.parse(json.d);
-                if (!!console) {
-                    console.log("setting tabCompletions to: " + data.toString());
-                }
                 sigHint = "";
                 tabCompletions = data.filter(function (hint) {
                     var isSignature = hint.indexOf("Signature|") === 0;
@@ -200,24 +217,18 @@
                         return "[" + hintParts[3];
                     }                    
                     return hint;
-                });
+                    });
+                if (callback) {
+                    callback();
+                }
+                if (!!console) {
+                    console.log("[spe] setting tabCompletions to: ", tabCompletions);
+                }
             });
         if (!!console) {
-            console.log("initializing tab completion");
+            console.log("[spe] initializing tab completion");
         }
         return (tabCompletions) ? tabCompletions.length : 0;
-    }
-
-    function tabCompletion(term, tabCount) {
-        if (tabCompletions) {
-            term.set_command(tabCompletions[tabCount]);
-        }
-    }
-
-    function tabCompletionEnd() {
-        if (!!console) {
-            console.log("ending tab completion");
-        }
     }
 
     function tabCompletionNoHints() {
@@ -245,7 +256,8 @@
 
     var guid = getSessionId();
     var terminal;
-
+    var currentYear = (new Date()).getFullYear();
+    var greetings = "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.\r\n";
     $(function() {
         terminal =
             $("#terminal").terminal(function(command, term) {
@@ -268,14 +280,24 @@
                     callPowerShellHost(term, guid, command);
                 }
             }, {
-                greetings: "Sitecore PowerShell Extensions\r\nCopyright &copy; 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.\r\n",
+                greetings: greetings,
                 name: "mainConsole",
-                tabcompletion: true,
-                onTabCompletionInit: tabCompletionInit,
-                onTabCompletion: tabCompletion,
-                onTabCompletionEnd: tabCompletionEnd,
-                onTabCompletionNoHints: tabCompletionNoHints
-            });
+                completion: completion,
+                caseSensitiveAutocomplete: false
+                });
+        $.terminal.defaults.formatters.push(function (string) {
+            return string.split(/((?:\s|&nbsp;)+)/).map(function (string) {
+                if (/^[a-zA-Z]{1,}[\-][a-zA-Z]*\b$/g.test(string)) {
+                    return '[[;yellow;]' + string + ']';
+                } else if (/^([\-])([a-zA-Z]{1,})\b$/g.test(string)) {
+                    return '[[;magenta;]' + string + ']';
+                } else if (/^[$][a-zA-Z_][a-zA-Z0-9_]*\b/g.test(string)) {
+                    return '[[;lightgreen;]' + string + ']';
+                } else {
+                    return string;
+                }
+            }).join('');
+        });
         cognifide.powershell.bootstrap(false);
     });
 

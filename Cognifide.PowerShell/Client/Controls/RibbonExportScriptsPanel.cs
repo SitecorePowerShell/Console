@@ -39,7 +39,7 @@ namespace Cognifide.PowerShell.Client.Controls
             {
                 RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                     Translate.Text(scriptItem.DisplayName),
-                    scriptItem[Sitecore.FieldIDs.Icon], string.Empty,
+                    scriptItem[Sitecore.FieldIDs.Icon], scriptItem.Appearance.ShortDescription,
                     string.Format("export:results(scriptDb={0},scriptID={1})", scriptItem.Database.Name,
                         scriptItem.ID),
                     RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], context.CustomData as Item) &&

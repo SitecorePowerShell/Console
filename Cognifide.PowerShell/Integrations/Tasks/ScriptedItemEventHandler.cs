@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Data.Events;
 using Sitecore.Data.Items;
 using Sitecore.Events;
@@ -33,34 +35,32 @@ namespace Cognifide.PowerShell.Integrations.Tasks
                 return;
             }
 
+            Func<Item, bool> filter = si => si.IsPowerShellScript()
+                                            && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])
+                                            && RulesUtils.EvaluateRules(si[Templates.Script.Fields.EnableRule], item);
+
             foreach (var root in ModuleManager.GetFeatureRoots(IntegrationPoints.EventHandlersFeature))
             {
                 var libraryItem = root.Paths.GetSubItem(eventName);
 
-                if (libraryItem == null)
+                var applicableScriptItems = libraryItem?.Children?.Where(filter).ToArray();
+                if (applicableScriptItems == null || !applicableScriptItems.Any())
                 {
                     return;
                 }
 
                 using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                 {
-                    foreach (Item scriptItem in libraryItem.Children)
+                    session.SetVariable("eventArgs", args);
+
+                    if (item != null)
                     {
-                        if (!scriptItem.IsPowerShellScript())
-                        {
-                            continue;
-                        }
-                        if (item != null)
-                        {
-                            session.SetItemLocationContext(item);
-                        }
-                        session.SetExecutedScript(scriptItem);
-                        session.SetVariable("eventArgs", args);
-                        var script = scriptItem[Templates.Script.Fields.ScriptBody];
-                        if (!String.IsNullOrEmpty(script))
-                        {
-                            session.ExecuteScriptPart(script);
-                        }
+                        session.SetItemLocationContext(item);
+                    }
+                    
+                    foreach (var scriptItem in applicableScriptItems)
+                    {
+                        session.ExecuteScriptPart(scriptItem, true);
                     }
                 }
             }
@@ -68,16 +68,17 @@ namespace Cognifide.PowerShell.Integrations.Tasks
 
         private static string EventArgToEventName(EventArgs args)
         {
-            var eventName = String.Empty;
+            var eventName = string.Empty;
 
-            if (args is SitecoreEventArgs)
+            switch (args)
             {
-                var scevent = (SitecoreEventArgs)args;
-                eventName = scevent.EventName;
-            }
-            else if(args is IPassNativeEventArgs)
-            {
-                EventTypeMapping.TryGetValue(args.GetType(), out eventName);
+                case SitecoreEventArgs _:
+                    var scevent = (SitecoreEventArgs)args;
+                    eventName = scevent.EventName;
+                    break;
+                case IPassNativeEventArgs _:
+                    EventTypeMapping.TryGetValue(args.GetType(), out eventName);
+                    break;
             }
 
             return eventName?.Replace(':', '/');

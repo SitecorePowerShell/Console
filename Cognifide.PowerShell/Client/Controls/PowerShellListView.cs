@@ -15,7 +15,7 @@ namespace Cognifide.PowerShell.Client.Controls
 {
     public class PowerShellListView : Listview
     {
-        private List<BaseListViewCommand.DataObject> filteredItems;
+        private List<BaseListViewCommand.DataObject> _filteredItems;
 
         public int CurrentPage
         {
@@ -48,7 +48,7 @@ namespace Cognifide.PowerShell.Client.Controls
             set
             {
                 SetViewStateString("Filter", value);
-                filteredItems = null;
+                _filteredItems = null;
             }
         }
 
@@ -70,7 +70,7 @@ namespace Cognifide.PowerShell.Client.Controls
         {
             get
             {
-                if (filteredItems == null)
+                if (_filteredItems == null)
                 {
                     var filterComplete = Filter;
                     var filters = filterComplete.Split().ToList();
@@ -103,12 +103,12 @@ namespace Cognifide.PowerShell.Client.Controls
                     }
 
                     filters.AddRange(phrases);
-                    filteredItems = string.IsNullOrEmpty(filterComplete)
+                    _filteredItems = string.IsNullOrEmpty(filterComplete)
                         ? Data.Data
                         : Data.Data.FindAll(p => filters.All(filter => p.Display.Values.Any(
                             value => value.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) > -1)));
                 }
-                return filteredItems;
+                return _filteredItems;
             }
         }
 
@@ -205,7 +205,7 @@ namespace Cognifide.PowerShell.Client.Controls
                         ? result.Display["Icon"]
                         : (result.Original is Item)
                             ? ((Item) result.Original).Appearance.Icon
-                            : "Software/32x32/graph_node.png";
+                            : "Office/32x32/graph_node.png";
                 lvi.Value = result.Id.ToString(CultureInfo.InvariantCulture);
                 foreach (var column in result.Display.Keys)
                 {
@@ -214,10 +214,12 @@ namespace Cognifide.PowerShell.Client.Controls
                     switch (val)
                     {
                         case ("False"):
-                            val = "<div class='unchecked'></div>";
+                            var uncheckedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/delete.png");
+                            val = $"<div class='unchecked'><img src='{uncheckedSource}'/></div>";
                             break;
                         case ("True"):
-                            val = "<div class='checked'></div>";
+                            var checkedSource = Sitecore.Resources.Images.GetThemedImageSource("Office/16x16/check.png");
+                            val = $"<div class='checked'><img src='{checkedSource}'/></div>";
                             break;
                     }
                     lvi.ColumnValues.Add(column, val);

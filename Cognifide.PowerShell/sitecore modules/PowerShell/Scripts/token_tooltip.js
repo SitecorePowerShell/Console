@@ -85,13 +85,13 @@ oop.inherits(TokenTooltip, Tooltip);
                 state: session.bgTokenizer.getState(0)
             };
         }
-        if (!token || !token.value || !token.value.startsWith("$")) {
+        if (!token || !token.value || (!token.value.startsWith("$") && !token.value.startsWith("@"))) {
             session.removeMarker(this.marker);
             this.hide();
             return;
         }
 
-        var tokenText = cognifide.powershell.variableValue(token.value);
+        var tokenText = cognifide.powershell.variableValue(token.value.replace(/^@/, '$'));
 
         if (this.tokenText !== tokenText) {
             this.setText(tokenText);

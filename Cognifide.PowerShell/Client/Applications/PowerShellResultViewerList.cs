@@ -258,6 +258,15 @@ namespace Cognifide.PowerShell.Client.Applications
             if (firstDataItem != null)
             {
                 var originalData = firstDataItem.Original;
+                if (originalData is PSObject customItem)
+                {
+                    var id = customItem.Properties["ID"]?.Value?.ToString();
+                    if (!string.IsNullOrEmpty(id) && ID.IsID(id))
+                    {
+                        originalData = Sitecore.Client.ContentDatabase.GetItem(id);
+                    }
+                }
+
                 if (originalData is Item item)
                 {
                     var urlParams = new UrlString();

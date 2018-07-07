@@ -45,7 +45,7 @@ namespace Cognifide.PowerShell.Client.Controls
                 {
                     RenderSmallButton(output, ribbon, Control.GetUniqueID("export"),
                         Translate.Text(scriptItem.DisplayName),
-                        scriptItem["__Icon"], string.Empty,
+                        scriptItem["__Icon"], scriptItem.Appearance.ShortDescription,
                         $"listview:action(scriptDb={scriptItem.Database.Name},scriptID={scriptItem.ID})",
                         RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], ruleContext) &&
                         context.Parameters["ScriptRunning"] == "0",

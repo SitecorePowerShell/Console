@@ -12,7 +12,7 @@ namespace Cognifide.PowerShell.Core.Provider
 {
     public partial class PsSitecoreItemProvider
     {
-        private static readonly char[] delimiters = {'\\', '/', '`'};
+        private static readonly char[] Delimiters = {'\\', '/', '`'};
 
         private Item GetItemForPath(string path)
         {
@@ -35,6 +35,9 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             try
             {
+                if (string.IsNullOrEmpty(path))
+                    return false;
+
                 LogInfo("Executing IsValidPath(string path='{0}')", path);
                 return GetItemForPath(path) != null;
             }
@@ -62,15 +65,16 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override bool IsItemContainer(string path)
         {
-            var result = GetItemForPath(path) != null;
-            return result;
+            //var result = GetItemForPath(path) != null;
+            //return result;
+            return true;
         }
 
         protected override bool ConvertPath(string path, string filter, ref string updatedPath, ref string updatedFilter)
         {
             try
             {
-                if (!String.IsNullOrEmpty(filter) || path.IndexOfAny(delimiters) > 0)
+                if (!String.IsNullOrEmpty(filter) || path.IndexOfAny(Delimiters) > 0)
                 {
                     return false;
                 }
@@ -97,6 +101,10 @@ namespace Cognifide.PowerShell.Core.Provider
             var name = PathUtilities.GetLeafFromPath(path);
             //try get literal path
             var literalName = $"/sitecore{parent}/{name}";
+            if (parent.StartsWith("/sitecore", StringComparison.OrdinalIgnoreCase))
+            {
+                literalName = $"{parent}/{name}";
+            }
             var literalItem = Factory.GetDatabase(PSDriveInfo.Name).GetItem(literalName);
             if (literalItem != null && literalName.Is(literalItem.Paths.Path))
             {

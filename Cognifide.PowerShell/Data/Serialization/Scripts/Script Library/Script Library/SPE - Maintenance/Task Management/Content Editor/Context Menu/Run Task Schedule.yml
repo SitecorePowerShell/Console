@@ -1,0 +1,45 @@
+﻿---
+ID: "d00bd134-eb15-41a7-bef1-e6455c6bc9ac"
+Parent: "e472779c-c39a-4c80-8f51-d28e64e6ad07"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/Task Management/Content Editor/Context Menu/Run Task Schedule"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/submit.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{9CF02118-F189-49C4-9F2B-6698D64ACF23}">
+        <conditions>
+          <condition
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="6C620AC228E84465BF237924D9023D77"
+            templateid="{70244923-FA84-477C-8CBD-62F39642C42B}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $item = Get-Item -Path .
+    if($item) {
+      $schedule = Get-TaskSchedule -Item $item
+      Start-TaskSchedule -Schedule $schedule
+    }
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Trigger the scheduled task to run now.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150214T232252Z

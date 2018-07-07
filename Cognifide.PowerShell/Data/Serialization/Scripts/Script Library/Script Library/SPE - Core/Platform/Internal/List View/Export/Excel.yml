@@ -1,0 +1,39 @@
+﻿---
+ID: "5035e6e4-53d3-4778-a0f5-6246bae6f76d"
+Parent: "64668dde-2255-4d6b-bf9c-fbbdeb0f129a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Internal/List View/Export/Excel"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: WordProcessing/32x32/imp_exp_excel.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name ConvertTo-Xlsx
+    
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    if(!$title){
+        $title = "Undefined"
+    }
+    
+    $format = & ([scriptblock]::Create($exportProperty))
+    
+    [byte[]]$outobject = [psCustomObject]$exportData | 
+        Select-Object -Property $format | 
+        ConvertTo-Xlsx 
+    
+    Out-Download -Name "report-$datetime.xlsx" -InputObject $outobject
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Export the report results in the xlsx format.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130911T203030Z

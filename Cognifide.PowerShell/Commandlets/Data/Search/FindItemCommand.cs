@@ -27,7 +27,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         [AutocompleteSet(nameof(Indexes))]
         [Parameter(Mandatory = true, Position = 0)]
         public string Index { get; set; }
-        
+
         [Parameter]
         public SearchCriteria[] Criteria { get; set; }
 
@@ -56,7 +56,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             using (var context = ContentSearchManager.GetIndex(index).CreateSearchContext())
             {
                 // get all items in medialibrary
-                IQueryable<SearchResultItem>[] query = {context.GetQueryable<SearchResultItem>()};
+                IQueryable<SearchResultItem>[] query = { context.GetQueryable<SearchResultItem>() };
 
                 if (!string.IsNullOrEmpty(Where))
                 {
@@ -69,7 +69,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     foreach (var filter in Criteria)
                     {
                         var criteria = filter;
-                        if(criteria.Value == null) continue;
+                        if (criteria.Value == null) continue;
 
                         var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
                             ? StringComparison.Ordinal
@@ -80,11 +80,11 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 var ancestorId = string.Empty;
                                 if (criteria.Value is Item)
                                 {
-                                    ancestorId = ((Item) criteria.Value).ID.ToShortID().ToString();
+                                    ancestorId = ((Item)criteria.Value).ID.ToShortID().ToString();
                                 }
-                                if (ID.IsID(criteria.Value.ToString()))
+                                else if (ID.IsID(criteria.Value.ToString()))
                                 {
-                                    ancestorId = ((ID) criteria.Value).ToShortID().ToString().ToLower();
+                                    ancestorId = ((ID)criteria.Value).ToShortID().ToString().ToLower();
                                 }
                                 if (string.IsNullOrEmpty(ancestorId))
                                 {
@@ -96,9 +96,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     : query[0].Where(i => i["_path"].Contains(ancestorId));
                                 break;
                             case (FilterType.StartsWith):
+                                var startsWith = criteria.StringValue;
+                                if (ID.IsID(startsWith))
+                                {
+                                    startsWith = ID.Parse(startsWith).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => !i[criteria.Field].StartsWith(criteria.StringValue, comparer))
-                                    : query[0].Where(i => i[criteria.Field].StartsWith(criteria.StringValue, comparer));
+                                    ? query[0].Where(i => !i[criteria.Field].StartsWith(startsWith, comparer))
+                                    : query[0].Where(i => i[criteria.Field].StartsWith(startsWith, comparer));
                                 break;
                             case (FilterType.Contains):
                                 if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
@@ -106,9 +111,14 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     WriteWarning(
                                         "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
+                                var contains = criteria.StringValue;
+                                if (ID.IsID(contains))
+                                {
+                                    contains = ID.Parse(contains).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => !i[criteria.Field].Contains(criteria.StringValue))
-                                    : query[0].Where(i => i[criteria.Field].Contains(criteria.StringValue));
+                                    ? query[0].Where(i => !i[criteria.Field].Contains(contains))
+                                    : query[0].Where(i => i[criteria.Field].Contains(contains));
                                 break;
                             case (FilterType.ContainsAny):
                                 if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
@@ -131,19 +141,34 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     : query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))));
                                 break;
                             case (FilterType.EndsWith):
+                                var endsWith = criteria.StringValue;
+                                if (ID.IsID(endsWith))
+                                {
+                                    endsWith = ID.Parse(endsWith).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer))
-                                    : query[0].Where(i => i[criteria.Field].EndsWith(criteria.StringValue, comparer));
+                                    ? query[0].Where(i => i[criteria.Field].EndsWith(endsWith, comparer))
+                                    : query[0].Where(i => i[criteria.Field].EndsWith(endsWith, comparer));
                                 break;
                             case (FilterType.Equals):
+                                var equals = criteria.StringValue;
+                                if (ID.IsID(equals))
+                                {
+                                    equals = ID.Parse(equals).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => !i[criteria.Field].Equals(criteria.StringValue, comparer))
-                                    : query[0].Where(i => i[criteria.Field].Equals(criteria.StringValue, comparer));
+                                    ? query[0].Where(i => !i[criteria.Field].Equals(equals, comparer))
+                                    : query[0].Where(i => i[criteria.Field].Equals(equals, comparer));
                                 break;
                             case (FilterType.Fuzzy):
+                                var fuzzy = criteria.StringValue;
+                                if (ID.IsID(fuzzy))
+                                {
+                                    fuzzy = ID.Parse(fuzzy).ToShortID().ToString().ToLower();
+                                }
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(i => !i[criteria.Field].Like(criteria.StringValue))
-                                    : query[0].Where(i => i[criteria.Field].Like(criteria.StringValue));
+                                    ? query[0].Where(i => !i[criteria.Field].Like(fuzzy))
+                                    : query[0].Where(i => i[criteria.Field].Like(fuzzy));
                                 break;
                             case (FilterType.InclusiveRange):
                             case (FilterType.ExclusiveRange):
@@ -152,8 +177,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 var inclusion = (criteria.Filter == FilterType.InclusiveRange) ? Inclusion.Both : Inclusion.None;
 
                                 var pair = (object[])criteria.Value;
-                                var left = (pair[0] is DateTime) ? ((DateTime)pair[0]).ToString("yyyyMMdd") : pair[0].ToString();
-                                var right = (pair[1] is DateTime) ? ((DateTime)pair[1]).ToString("yyyyMMdd") : pair[1].ToString();
+                                var left = (pair[0] as DateTime?)?.ToString("yyyyMMdd") ?? pair[0].ToString();
+                                var right = (pair[1] as DateTime?)?.ToString("yyyyMMdd") ?? pair[1].ToString();
                                 query[0] = criteria.Invert
                                     ? query[0].Where(i => !i[criteria.Field].Between(left, right, inclusion))
                                     : query[0].Where(i => i[criteria.Field].Between(left, right, inclusion));

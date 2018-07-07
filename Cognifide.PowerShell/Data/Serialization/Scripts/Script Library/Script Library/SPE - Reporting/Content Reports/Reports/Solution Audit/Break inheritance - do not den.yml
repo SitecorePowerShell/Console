@@ -1,0 +1,65 @@
+﻿---
+ID: "8ecc55a1-b9d9-418f-9ecc-0d25bc59121f"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Solution Audit/Break inheritance - do not deny"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/elements_tree.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <# 
+      Do my items restrict access rights?
+     
+      Sitecore recommendation:
+         Break inheritance rather than explicitly deny access rights — 
+           It is a recommended practice to break inheritance in cases where the access right should be denied 
+           instead of explicitly denying it for a security account. If you deny an access right explicitly to a security account, 
+           the only way to override this denial of access is to do it directly on a user account. 
+           This creates an overhead in security management when you would like a user to inherit this role and some other role 
+           that should allow the same right access.
+     
+      Before executing this script point the "Context Item" to where you store your solution templates e.g. "/sitecore/content/My Site"
+     
+      How to read this report?
+      ------------------------
+      The report will show you all items that restrict rights rather than break inheritance, potentially breaking this recommendation.
+      It does not necessarily mean that the approach is wrong, but you should consider restructuring your security setting 
+      according to the Sitecore best practice.
+    #>
+    
+    $item = Get-Item -Path "master:\"
+    $result = Read-Variable -Parameters `
+        @{ Name = "item"; Title="Analyse subitems of"; Tooltip="Branch you want to analyse."} `
+        -Description "This report will analyse the branch and will tell you which items restrict rights to fields or themselves." `
+        -Title "Find items with security set for a user instead of role" -Width 525 -Height 280 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | `
+      Where-Object { $_.__Security -match "-item"  -or $_.__Security -match "-field" } |  `
+        Show-ListView -Property `
+            @{Name="Item restricting right"; Expression={$_.ItemPath}}, `
+            @{Name="Security setting"; Expression={$_.__Security}} `
+            -Title "Items that restrict rights"
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Break inheritance rather than explicitly deny access rights
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130207T145908

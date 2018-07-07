@@ -581,9 +581,7 @@ namespace Cognifide.PowerShell.Core.Host
         public static string GetDataContextSwitch(Item item)
         {
             return item != null
-                ? string.Format(
-                    "cd \"{0}:{1}\"\n", item.Database.Name,
-                    item.Paths.Path.Replace("/", "\\").Substring(9))
+                ? $"Set-Location -Path \"{item.Database.Name}:{item.Paths.Path.Replace("/", "\\").Substring(9)}\"\n"
                 : string.Empty;
         }
 

@@ -1,33 +1,7 @@
-#################
-## Eclipse
-#################
-
-*.pydevproject
-.project
-.metadata
 bin/
 tmp/
 *.tmp
 *.bak
-*.swp
-*~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
-
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
-*.launch
-
-# CDT-specific
-.cproject
-
-# PDT-specific
-.buildpath
-
 
 #################
 ## Visual Studio
@@ -76,22 +50,6 @@ build/
 *.pidb
 *.scc
 
-# Visual C++ cache files
-ipch/
-*.aps
-*.ncb
-*.opensdf
-*.sdf
-*.cachefile
-
-# Visual Studio profiler
-*.psess
-*.vsp
-*.vspx
-
-# Guidance Automation Toolkit
-*.gpState
-
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
@@ -105,19 +63,6 @@ _TeamCity*
 # NCrunch
 *.ncrunch*
 .*crunch*.local.xml
-
-# Installshield output folder
-[Ee]xpress/
-
-# DocProject is a documentation generator add-in
-DocProject/buildhelp/
-DocProject/Help/*.HxT
-DocProject/Help/*.HxC
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/Html2
-DocProject/Help/html
 
 # Click-Once directory
 publish/

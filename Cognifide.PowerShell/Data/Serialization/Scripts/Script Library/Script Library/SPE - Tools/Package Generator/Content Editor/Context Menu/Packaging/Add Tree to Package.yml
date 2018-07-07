@@ -1,0 +1,122 @@
+﻿---
+ID: "e6b36111-8411-414b-a7e9-58e75b365ea7"
+Parent: "c83cc1ee-a860-4e64-9715-e9c3bbb885f0"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Package Generator/Content Editor/Context Menu/Packaging/Add Tree to Package"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/elements_branch.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: <ruleset />
+- ID: "7fa141b7-7473-44a9-9bd9-2739c51ff8da"
+  Hint: PersistentSessionId
+  Value: packageBuilder
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $selectedItem = Get-Item -Path .
+    $includeLinkedItems = 0
+    
+    $parameters = @(
+        @{ Name = "IncludeItems"; Title="Items to include in package"; Value="RootAndDescendants"; Options=$rootOptions; OptionTooltips = $rootOptionTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "The package will dynamically include the items based on your selection below. <br /><br />Item Root : '$($selectedItem.ProviderPath)'"; Editor="combo" },
+        @{ Name = "Mode"; Title="Installation Options";  Value= "Overwrite"; Options = $installOptions; OptionTooltips = $installOptionsTooltips; Tooltip = "Hover over each option to view a short description."; Hint = "How should the installer behave if the package contains items that already exist?"; Editor="combo"}
+    )
+    
+    if($selectedItem.ItemPath.StartsWith("/sitecore/content")) {
+        $parameters += @{ Name = "IncludeLinkedItems"; Title = "Include Linked Items"; Hint = "Choose one or more options below to include items linked. This relies on the Link Database to determine references."; Options = $linkedItemOptions; OptionTooltips = $linkedItemOptionTooltips; Editor = "checkbox" }
+    }
+    
+    $result = Read-Variable @defaultProps -Parameters $parameters -Description "Set installation options for this package source."
+    
+    Resolve-Error
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+    $MergeMode = [Sitecore.Install.Utils.MergeMode]::Undefined
+    switch ($Mode) {
+        "Overwrite" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Overwrite
+        }
+        
+        "Merge-Merge" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Merge
+        }
+        
+        "Merge-Clear" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Clear
+        }
+        
+        "Merge-Append" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Merge
+            $MergeMode = [Sitecore.Install.Utils.MergeMode]::Append
+        }
+        
+        "Skip" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Skip
+        }
+        
+        "SideBySide" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::SideBySide
+        }
+        
+        "AskUser" {
+            $InstallMode = [Sitecore.Install.Utils.InstallMode]::Undefined
+        }
+    }
+    
+    $LinkedOptions = ($IncludeLinkedItems | Measure-Object -Sum) | Select-Object -ExpandProperty Sum
+    
+    if ($IncludeItems -eq "RootAndDescendants") {
+        $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $true
+    } else {
+        if ($IncludeItems -eq "RootAndChildren") {
+            $package = Add-ItemToPackage -Package $package -Item $selectedItem -LinkedOptions $LinkedOptions -IncludeDescendants $false
+        }
+        
+        # Iterate over the children and either add to include descendants or just themselves
+        Get-ChildItem -Path . | ForEach-Object {
+            $package = Add-ItemToPackage -Package $package -Item $_ -LinkedOptions $LinkedOptions -IncludeDescendants ($IncludeItems -eq "DescendantsOnly")
+        }
+    }
+    
+    Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{53E0EE5B-77EB-4FE5-AFC3-C676DE31736E}">
+        <conditions>
+          <condition
+            id="{3578FABA-08EF-4FDE-BEEC-1EC8F5F47530}"
+            uid="5E3F148A40024D15A7E2F6E789A78A08"
+            persistentsessionid="packageBuilder" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Add the selected tree to the package.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130919T174500Z

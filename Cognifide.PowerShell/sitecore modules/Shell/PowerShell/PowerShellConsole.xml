@@ -4,10 +4,10 @@
   <PowerShellConsole>
     <FormPage>
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellConsole,Cognifide.PowerShell" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/ise.css" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.terminal.css" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" runat="server" />
+
       <Script type="text/javascript" src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"> </Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.terminal.js"> </Script>
@@ -17,13 +17,9 @@
       <Script src="/sitecore/shell/controls/SitecoreKeyboard.js"></Script>
       <Script src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
-      <!--for autocomplete and overlay-->
-      <!--[if lt IE 9]>
-            <script type="text/javascript" language="javascript" src="/sitecore modules/PowerShell/Scripts/json2.js"> </script>
-        <![endif]-->
       <Script src="/sitecore modules/PowerShell/Scripts/console.js"> </Script>
+
       <Literal ID="Options" />
       <a href="#" class="tip_no_hints">No hints found</a>
       <Border Id="ProgressOverlay" Visible="false">
@@ -46,7 +42,7 @@
               <Border class="scEditorWarningHelp">
                 <Literal ID="Description" Text="A security dialog will prompt you for your credentials upon first execution. For more information, refer to " />
                 <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
-                    <Literal Text="Documentation."/>
+                  <Literal Text="Documentation."/>
                 </a>
               </Border>
             </Border>
@@ -56,12 +52,12 @@
             <Border GridPanel.Width="100%">
               <Border class="scEditorWarningHelp">
                 <Literal ID="InfoTitle2" Text="You have temporarily enabled script execution. " />
-                  <a href="#" class="scEditorWarningOption" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
-                    <Literal Text="Drop elevated session state"/>
-                  </a>
+                <a href="#" class="scEditorWarningOption" onclick="javascript:scForm.postRequest('', '', '', 'DropElevationButtonClick');return false">
+                  <Literal Text="Drop elevated session state"/>
+                </a>
                 <Literal ID="InfoTitle3" Text=" if you no longer require it. For more information, refer to " />
                 <a href="https://sitecorepowershell.com/session-state-elevation/" class="scEditorWarningOption" target="_blank">
-                    <Literal Text="Documentation."/>
+                  <Literal Text="Documentation."/>
                 </a>
                 <Border class="scEditorWarningHelp">
                 </Border>

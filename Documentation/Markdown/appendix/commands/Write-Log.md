@@ -122,7 +122,6 @@ Specifies the Sitecore logging level.
 The input type is the type of the objects that you can pipe to the cmdlet. 
  
 * System.String
-Represents the identity of a role. 
  
 ## Outputs 
  
@@ -148,4 +147,5 @@ PS master:\> Write-Log "Information."
  
 ## Related Topics 
  
-* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>
+
+* <a href='https://github.com/SitecorePowerShell/Console/' target='_blank'>https://github.com/SitecorePowerShell/Console/</a><br/>

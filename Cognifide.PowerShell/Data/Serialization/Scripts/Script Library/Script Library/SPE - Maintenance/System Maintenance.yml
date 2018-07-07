@@ -1,0 +1,41 @@
+﻿---
+ID: "49280d23-d313-4ab9-ab1c-cf245d41e44a"
+Parent: "5e1f1b3b-ef89-4d00-82e2-36629da4f3ad"
+Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/System Maintenance"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar_coffee_bean.png
+- ID: "218ca464-cb77-4c97-b141-34871ecae00b"
+  Hint: Enabled
+  Type: Checkbox
+  Value: 1
+- ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
+  Hint: Description
+  Value: |
+    Provides the following Control Panel function:
+    - Clean up deleted items
+    
+    Provides the following report:
+    - Download Sitecore logs
+    
+    Provides the following scripts available for scheduled tasks:
+    - Archive Sitecore logs
+    - Clean up databases
+    - Clean up deleted items older than 30 days
+    - Clean up link databases
+    - Rebuild content search indexes
+    - Rebuild search indexes
+- ID: "9911a28e-2120-4ab0-9113-5bae386769c1"
+  Hint: Module Version
+  Value: 1.0
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141126T112658

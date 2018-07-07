@@ -8,7 +8,6 @@
 
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js" runat="server" x:placeholder="Scripts"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery.qtip.min.js"></Script>
@@ -17,7 +16,7 @@
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server" x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server" x:placeholder="Stylesheets" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/ise.css" runat="server" x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" x:placeholder="Stylesheets" />
 
       <script>
         function OnTabSelect() {
@@ -75,7 +74,7 @@
         <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
             <Border class="scWizardWarning" def:content="Notifications">
-              <ThemedImage src="/sitecore modules/PowerShell/Assets/info.png" />
+              <ThemedImage src="/sitecore/shell/themes/standard/Images/warning.png" />
               <Border style="display:flex;">
                 <Literal class="scEditorWarningText" Text="If you were sent to this page from a link obtained from an untrusted source please proceed with caution or validate the link source before continuing." ID="Warning" />
               </Border>
@@ -92,7 +91,7 @@
           </Scrollbox>
         </Scrollbox>
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
                  Title="Show copyright..." />
           <div class="footerOkCancel">
             <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK" />

@@ -1,0 +1,37 @@
+﻿---
+ID: "09df6eb1-4e1c-4f40-8c12-6eb223093ac4"
+Parent: "472e8f36-aff5-4078-82bd-95246f7b36fe"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/User Session Management/Tasks/Remove idle user sessions"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/stopwatch2.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Removes inactive user sessions after a specified amount of time.
+        
+        .NOTES
+            Michael West
+    #>
+    
+    $idleLimit = New-TimeSpan -Minutes 30
+    foreach($session in Get-Session) {
+        $span = ([datetime]::Now - $session.LastRequest)
+        if($span -gt $idleLimit){
+            Write-Log "Removing session for user $($session.UserName) after exceeding the idle time of $([math]::($idleLimit.TotalMinutes)) minutes. Current idle time is $([math]::Round($span.TotalMinutes)) minutes."
+            $session | Remove-Session
+        }
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150201T215154

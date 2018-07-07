@@ -1,0 +1,39 @@
+﻿---
+ID: "a84c5676-0e2b-401e-9c65-24df7b55e6c1"
+Parent: "5e1f1b3b-ef89-4d00-82e2-36629da4f3ad"
+Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/Task Management"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar_coffee_bean.png
+- ID: "218ca464-cb77-4c97-b141-34871ecae00b"
+  Hint: Enabled
+  Type: Checkbox
+  Value: 1
+- ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
+  Hint: Description
+  Value: |
+    Provides the following Context Menu items:
+    - Create a scheduled task
+    - Edit a scheduled task
+    - Run a scheduled task
+    
+    Provides the following tasks:
+    - Archive item versions
+    - Delete unused media items
+    
+    Provides the following Toolbox report:
+    - Task Manager
+- ID: "9911a28e-2120-4ab0-9113-5bae386769c1"
+  Hint: Module Version
+  Value: 1.0
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141126T025100

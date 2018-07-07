@@ -1,0 +1,51 @@
+﻿---
+ID: "4cf65bef-c2d9-426d-b117-c16e5bab8245"
+Parent: "c86f2d40-b80e-425b-9721-ad7162982a69"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Samples/Getting Started/Web API/ChildrenAsXml"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Provides an XML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
+        http://hostname/-/script/v2/master/ChildrenAsXml?user=admin&password=b&item=content
+        
+        If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
+        http://hostname/-/script/v2/master/ChildrenAsXml?item=content
+    #>
+    
+    #if the location is not Sitecore tree, switch to root of Master Database
+    $HttpContext = [System.Web.HttpContext]::Current;
+    
+    if((Get-Location).Provider.Name -ne "CmsItemProvider"){
+        Set-Location master:\
+    }
+    
+    if(!$item){
+        $item = "/"
+    }
+    
+    Set-Location $item
+    
+    if ($HttpContext -ne $null){
+        $HttpContext.Response.ContentType = "text/xml";
+    }
+    
+    Set-HostProperty -HostWidth ([System.Int32]::MaxValue)
+    
+    #return some of the children's properties as XML
+    Get-ChildItem -Path . | 
+        Select-Object Name, DisplayName, TemplateName, Language, Version, @{Name="Path"; Expression={ $_.Paths.Path}} | 
+        ConvertTo-Xml | 
+        Select-Object -ExpandProperty OuterXml
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130913T041828

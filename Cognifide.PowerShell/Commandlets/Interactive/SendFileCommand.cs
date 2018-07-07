@@ -2,9 +2,12 @@
 using System.IO;
 using System.Management.Automation;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
+using Cognifide.PowerShell.Core.Extensions;
+using Sitecore;
 using Sitecore.Data.Items;
 using Sitecore.IO;
 using Sitecore.Jobs.AsyncUI;
+using Sitecore.Resources.Media;
 
 namespace Cognifide.PowerShell.Commandlets.Interactive
 {
@@ -41,6 +44,17 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 DownloadMessage message = null;
                 if (Item != null)
                 {
+                    if (!Item.Paths.IsMediaItem)
+                    {
+                        WriteVerbose($"Skipping item {Item.ID} because it is not a media item.");
+                        return;
+                    }
+                    if (Item.InheritsFrom(TemplateIDs.MediaFolder))
+                    {
+                        WriteVerbose($"Skipping item {Item.ID} because it inherits from Media Folder.");
+                        return;
+                    }
+
                    message = new DownloadMessage(Item);
                 }               
                 else if (!string.IsNullOrEmpty(Path))
@@ -50,7 +64,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                     if (!File.Exists(file))
                     {
                         PutMessage(
-                            new AlertMessage("You cannot download:\n" + Path + "\n\n The file could not be found."));
+                            new AlertMessage($"You cannot download:\n{Path}\n\n The file could not be found."));
                         return;
                     }
 

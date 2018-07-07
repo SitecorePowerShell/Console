@@ -1,0 +1,107 @@
+﻿---
+ID: "27cb796a-a23c-4789-a2fc-7d04a876b8dc"
+Parent: "e22d066a-04d0-4799-9dad-edd9eb07c2b2"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Functions/Get-LockedChildItem"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Gets the locked item at the specified location.
+            
+        .PARAMETER Path
+            Specifies a path to search for locked items. The default location is the current directory (.).
+            
+        .PARAMETER LockedBy
+            Specifies the the owner account locked on the item.
+            
+        .PARAMETER Unlock
+            Indicates the locked items should be unlocked.
+            
+        .PARAMETER Recurse
+            Specifies all the child items at the specified path should be included in the search.
+            
+        .EXAMPLE
+            PS master:\> Get-LockedChildItem
+            
+            Returns all locked child items at the current path.
+            
+        .EXAMPLE
+            PS master:\> Get-LockedChildItem -LockedBy 'sitecore\admin'
+            
+            Returns all locked child items at the current path for the specified user.
+            
+        .EXAMPLE
+            PS master:\> Get-LockedChildItem -LockedBy $me -Unlock -Recurse
+            
+            Returns all locked child items at the current path and below for the specified user. The items are also unlocked.
+    #>
+    
+    function Get-LockedChildItem {
+    	[CmdletBinding()]
+    	param(
+    		[ValidateNotNullOrEmpty()]
+    		[string]$Path = ".",
+    
+    		[string]$LockedBy,
+    
+    		[timespan]$IdleTime = [timespan]::Zero,
+    
+    		[switch]$Unlock,
+    
+    		[switch]$Recurse
+    	)
+    
+    	filter Locked {
+    
+    		$skip = $false
+    
+    		if ($_.Locking -and $_.Locking.IsLocked()) {
+    			$lockField = [Sitecore.Data.Fields.LockField]$_.Fields[[Sitecore.FieldIDs]::Lock]
+    			if ($lockField) {
+    				$owner = $lockField.Owner
+    				if ($LockedBy) {
+    					if ($owner -ne $LockedBy) {
+    						Write-Verbose "Skipping locked item $($_.Paths.Path) with different owner."
+    						$skip = $true
+    					}
+    				}
+    
+    				if ($IdleTime -gt [timespan]::Zero) {
+    					$matched = [Sitecore.Web.Authentication.DomainAccessGuard]::Sessions | Where-Object { $_.UserName -eq $owner }
+    					if ($matched -and $matched.LastRequest.Add($IdleTime) -gt [datetime]::Now) {
+    						$user = [Sitecore.Security.Accounts.User]::FromName($owner,$false)
+    						if ($user -and $user.IsAdministrator) {
+    							Write-Verbose "Skipping locked item $($_.Paths.Path) owned by administrator."
+    							$skip = $true
+    						}
+    					}
+    				}
+    
+    				if (!$skip) {
+    					if ($Unlock) {
+    						Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
+    						$_.Editing.BeginEdit() | Out-Null
+    						$_.Locking.Unlock() | Out-Null
+    						$_.Editing.EndEdit() | Out-Null
+    					}
+    
+    					$_
+    				}
+    			}
+    		}
+    	}
+    
+    	Get-ChildItem -Path $Path -Recurse:$Recurse | Locked -Verbose:$Verbose
+    } 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20131118T015922

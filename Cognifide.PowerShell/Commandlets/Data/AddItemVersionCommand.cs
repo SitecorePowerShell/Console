@@ -121,7 +121,7 @@ namespace Cognifide.PowerShell.Commandlets.Data
                         {
                             if (ShouldProcessField(field, itemWasCreated))
                             {
-                                targetItem.Fields[field.Name].Value = field.GetValue(true, true);
+                                targetItem.Fields[field.ID].Value = field.GetValue(true, true);
                             }
                         }
                         targetItem.Editing.EndEdit();

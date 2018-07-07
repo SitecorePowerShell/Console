@@ -100,7 +100,14 @@ namespace Cognifide.PowerShell.Commandlets.Interactive.Messages
             {
                 var urlString = new UrlString(UIUtil.GetUri("control:PowerShellResultViewerList"));
                 urlString.Add("sid", resultSig);
-                SheerResponse.ShowModalDialog(urlString.ToString(), Width, Height);
+
+                var options = new ModalDialogOptions(urlString.ToString())
+                {
+                    Width = Width,
+                    Height = Height,
+                    Header = Title
+                };
+                SheerResponse.ShowModalDialog(options);
             }
         }
     }

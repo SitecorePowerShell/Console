@@ -1,0 +1,43 @@
+﻿#chart > div {
+    float: left;
+    margin: .5rem;
+    border: .1rem solid #f0f0f0;
+    padding: 1rem;
+}
+
+#chart .no-data {
+    margin: 10px;
+    font-size: 1rem;
+    border: .1rem solid #efefef;
+    padding: 15px;
+}
+
+#chart h2.title {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.sc-applicationHeader {
+    position: relative;
+    color: #121212;
+    width: 100%;
+    background-color: #ca241c;
+    padding-top: 50px;
+}
+
+.sc-applicationHeader-row1 {
+    height: 90px;
+    background-color: #ca241c;
+    background: url(/sitecore/shell/client/Speak/Assets/img/Speak/Layouts/breadcrumb_red_bg.png);
+    background-repeat: no-repeat;
+}
+
+.sc-applicationHeader-content {
+    padding: 10px 15px;
+}
+
+.sc-applicationHeader .sc-applicationHeader-title {
+    font-size: 2em;
+    color: #ffffff;
+    float: left;
+}

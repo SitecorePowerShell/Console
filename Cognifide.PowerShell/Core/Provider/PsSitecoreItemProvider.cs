@@ -30,10 +30,10 @@ namespace Cognifide.PowerShell.Core.Provider
 {
     [CmdletProvider("PsSitecoreItemProvider",
         ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.ExpandWildcards)]
-    [OutputType(typeof (Item), ProviderCmdlet = "Get-ChildItem")]
-    [OutputType(typeof (Item), ProviderCmdlet = "Get-Item")]
-    [OutputType(typeof (Item), ProviderCmdlet = "New-Item")]
-    [OutputType(typeof (Item), ProviderCmdlet = "Copy-Item")]
+    [OutputType(typeof(Item), ProviderCmdlet = "Get-ChildItem")]
+    [OutputType(typeof(Item), ProviderCmdlet = "Get-Item")]
+    [OutputType(typeof(Item), ProviderCmdlet = "New-Item")]
+    [OutputType(typeof(Item), ProviderCmdlet = "Copy-Item")]
     public partial class PsSitecoreItemProvider : NavigationCmdletProvider, IPropertyCmdletProvider
     {
 
@@ -51,7 +51,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 {
                     item = GetItemForPath(path);
                 }
-                
+
                 if (item == null) return;
 
                 CheckOperationAllowed("remove", item.Access.CanDelete(), item.Uri.ToString());
@@ -100,6 +100,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 GetVersionAndLanguageParams(out int version, out string[] language);
 
+                string id = null;
                 if (!TryGetDynamicParam(ItemParam, out Item item))
                 {
                     path = path.Replace("\\", "/");
@@ -108,7 +109,7 @@ namespace Cognifide.PowerShell.Core.Provider
                         path = path.Substring(path.LastIndexOf("../", StringComparison.Ordinal) + 2);
                     }
 
-                    item = TryGetDynamicParam(IdParam, out string id) ? GetItemById(path, id) : GetItemForPath(path);
+                    item = TryGetDynamicParam(IdParam, out id) ? GetItemById(path, id) : GetItemForPath(path);
                 }
 
                 if (IsDynamicParamSet(WithParentParam))
@@ -118,7 +119,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (item == null)
                 {
-                    WriteInvalidPathError(VirtualPathUtility.AppendTrailingSlash(item.GetProviderPath()));
+                    WriteInvalidPathError(path, id);
                 }
                 else
                 {
@@ -172,7 +173,13 @@ namespace Cognifide.PowerShell.Core.Provider
 
         protected override string GetChildName(string path)
         {
-            var result = base.GetChildName(path);
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+            path = NormalizePath(path);
+            path = path.TrimEnd('\\');
+            var index = path.LastIndexOf('\\');
+            var result = path.Substring(index + 1);
+            //var result = base.GetChildName(path);
             LogInfo("Executing GetChildName(string path='{0}'); returns '{1}'", path, result);
             return result;
         }
@@ -277,7 +284,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 Database database;
                 if (dic.ContainsKey(DatabaseParam) && dic[DatabaseParam].IsSet)
                 {
-                    database = Factory.GetDatabase((string) dic[DatabaseParam].Value);
+                    database = Factory.GetDatabase((string)dic[DatabaseParam].Value);
                 }
                 else
                 {
@@ -303,26 +310,26 @@ namespace Cognifide.PowerShell.Core.Provider
                     yield return resultItem;
                 }
             }
-            else if(errorIfNotFound)
-            {                
+            else if (errorIfNotFound)
+            {
                 WriteInvalidPathError(path);
             }
         }
 
-        /// <summary>
-        ///     Throws an argument exception stating that the specified path does
-        ///     not exist.
-        /// </summary>
-        /// <param name="path">path which is invalid</param>
-        private void WriteInvalidPathError(string path)
+        private void WriteInvalidPathError(string path, string id = null)
         {
-            var exception = new IOException($"Cannot find path '{path}' because it does not exist.");
+            var message = $"Cannot find path '{path}' because it does not exist.";
+            if (!id.IsNullOrEmpty())
+            {
+                message = $"Cannot find path '{path}' and id {id} because it does not exist.";
+            }
+            var exception = new IOException(message);
             WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
         }
 
         private IEnumerable<Item> GetMatchingItem(string[] language, int version, Item item)
         {
-            if (DynamicParameters is RuntimeDefinedParameterDictionary dic && 
+            if (DynamicParameters is RuntimeDefinedParameterDictionary dic &&
                 dic.ContainsKey(AmbiguousPathsParam) &&
                 dic[AmbiguousPathsParam].IsSet)
             {
@@ -463,60 +470,56 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private Item TransferItem(Item sourceItem, Item destinationItem, string leafName, bool recurse)
         {
-            //Proxies are deprecated since Sitecore 6.5 - support removed
-            //using (new ProxyDisabler())
+            if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
             {
-                if (destinationItem.Database.GetTemplate(sourceItem.TemplateID) == null)
-                {
-                    WriteError(new ErrorRecord(new TemplateNotFoundException(
-                        $"The data contains a reference to a template \"{sourceItem.Template.FullName}\" that does not exist in the destination database.\nYou must transfer the template first."), ErrorIds.TemplateNotFound.ToString(), ErrorCategory.InvalidData, sourceItem));
-                    return null;
-                }
-
-                var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
-                var transferOptions = TransferOptions.ChangeId;
-                if (dic != null && dic[TransferOptionsParam].IsSet)
-                {
-                    transferOptions = (TransferOptions) dic[TransferOptionsParam].Value;
-                }
-
-                var outerXml = string.Empty;
-                SitecoreVersion.V72.OrNewer(() =>
-                {
-                    var options = ItemSerializerOptions.GetDefaultOptions();
-                    options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
-                    options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
-                    options.ProcessChildren = recurse;
-                    outerXml = sourceItem.GetOuterXml(options);
-                }).Else(() =>
-                {
-                    outerXml = sourceItem.GetOuterXml(recurse);
-                });
-
-                var transferedItem = destinationItem.PasteItem(outerXml,
-                    transferOptions.HasFlag(TransferOptions.ChangeId),
-                    Force ? PasteMode.Overwrite : PasteMode.Undefined);
-                if (sourceItem.Paths.IsMediaItem)
-                {
-                    if (sourceItem.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
-                    {
-                        TransferVersionedMediaItemBlob(sourceItem, destinationItem, recurse);
-                    }
-                    else
-                    {
-                        TransferMediaItemBlob(sourceItem, destinationItem, recurse);
-                    }
-                }
-                Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
-                PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
-                    AuditFormatter.FormatItem(destinationItem));
-                if (transferedItem.Name != leafName)
-                {
-                    transferedItem.Edit(args => transferedItem.Name = leafName);
-                }
-
-                return transferedItem;
+                WriteError(new ErrorRecord(new TemplateNotFoundException(
+                    $"The data contains a reference to a template \"{sourceItem.Template.FullName}\" that does not exist in the destination database.\nYou must transfer the template first."), ErrorIds.TemplateNotFound.ToString(), ErrorCategory.InvalidData, sourceItem));
+                return null;
             }
+
+            var dic = DynamicParameters as RuntimeDefinedParameterDictionary;
+            var transferOptions = TransferOptions.ChangeId;
+            if (dic != null && dic[TransferOptionsParam].IsSet)
+            {
+                transferOptions = (TransferOptions)dic[TransferOptionsParam].Value;
+            }
+
+            var outerXml = string.Empty;
+            SitecoreVersion.V72.OrNewer(() =>
+            {
+                var options = ItemSerializerOptions.GetDefaultOptions();
+                options.AllowDefaultValues = transferOptions.HasFlag(TransferOptions.AllowDefaultValues);
+                options.AllowStandardValues = transferOptions.HasFlag(TransferOptions.AllowStandardValues);
+                options.ProcessChildren = recurse;
+                outerXml = sourceItem.GetOuterXml(options);
+            }).Else(() =>
+            {
+                outerXml = sourceItem.GetOuterXml(recurse);
+            });
+
+            var transferedItem = destinationItem.PasteItem(outerXml,
+                transferOptions.HasFlag(TransferOptions.ChangeId),
+                Force ? PasteMode.Overwrite : PasteMode.Undefined);
+            if (sourceItem.Paths.IsMediaItem)
+            {
+                if (sourceItem.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
+                {
+                    TransferVersionedMediaItemBlob(sourceItem, destinationItem, recurse);
+                }
+                else
+                {
+                    TransferMediaItemBlob(sourceItem, destinationItem, recurse);
+                }
+            }
+            Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
+            PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
+                AuditFormatter.FormatItem(destinationItem));
+            if (transferedItem.Name != leafName)
+            {
+                transferedItem.Edit(args => transferedItem.Name = leafName);
+            }
+
+            return transferedItem;
         }
 
         private void TransferVersionedMediaItemBlob(Item source, Item destination, bool processChildren)
@@ -556,12 +559,12 @@ namespace Cognifide.PowerShell.Core.Provider
                     var guid = MainUtil.GetGuid(str, Guid.Empty);
                     if (!(guid == Guid.Empty))
                     {
-                        var blobStream = ItemManager.GetBlobStream(guid, ProxyManager.GetRealDatabase(source));
+                        var blobStream = ItemManager.GetBlobStream(guid, source.Database);
                         if (blobStream != null)
                         {
                             using (blobStream)
                             {
-                                ItemManager.SetBlobStream(blobStream, guid, ProxyManager.GetRealDatabase(destination));
+                                ItemManager.SetBlobStream(blobStream, guid, destination.Database);
                             }
                         }
                     }
@@ -569,6 +572,7 @@ namespace Cognifide.PowerShell.Core.Provider
             }
 
             if (!processChildren) { return; }
+
             foreach (Item child in source.Children)
             {
                 if (child != null)
@@ -591,7 +595,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing MoveItem(string path='{0}', string destination='{1}')",
                     path, destination);
-                
+
                 if (!TryGetDynamicParam(ItemParam, out Item sourceItem))
                 {
                     sourceItem = GetItemForPath(path);

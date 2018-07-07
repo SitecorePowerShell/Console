@@ -16,7 +16,6 @@
 
     .INPUTS
         System.String
-        Represents the identity of a role.
     
     .OUTPUTS
         None.

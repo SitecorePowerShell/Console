@@ -1,0 +1,22 @@
+﻿---
+ID: "7337304d-5ff4-41b9-abb2-2ff1875ba110"
+Parent: "a46515d1-6f87-4b60-acad-a6c432782717"
+Template: "1163da83-b2ef-4381-bf09-b2ff714b1b3f"
+Path: /sitecore/layout/Layouts/Applications/PowerShell/PowerShell Reports
+DB: core
+SharedFields:
+- ID: "5851d498-15f9-4b1a-bb02-0b736c13afe3"
+  Hint: Control
+  Value: PowerShellReports
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121128T124800
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

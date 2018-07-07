@@ -4,9 +4,14 @@
   <PowerShellIse>
     <FormPage Application="PowerShell/PowerShellIse">
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellIse,Cognifide.PowerShell" />
+      
+      <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="Ribbon.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/ise.css" DeviceDependant="true" />
 
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
       <Script>$ise = jQuery.noConflict();</Script>
       <script type="text/javascript">if (!window.$sc) $sc = jQuery.noConflict();</script>
       <Script src="/sitecore/shell/controls/SitecoreObjects.js"></Script>
@@ -14,11 +19,6 @@
       <Script src="/sitecore/shell/controls/SitecoreWindow.js"></Script>
       <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
       <Script src="/sitecore/shell/controls/TreeviewEx/TreeviewEx.js"></Script>
-      <!--Script src="/sitecore/shell/Controls/Lib/Scriptaculous/Scriptaculous.js"></Script>
-      <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/Effects.js"></Script>
-      <Script src="/sitecore/shell/Controls/Lib/Scriptaculous/DragDrop.js"></Script-->
-      <!--Script src="/sitecore/shell/Controls/Lib/jQuery/jquery-splitter/jquery-splitter.js"></Script-->
-      <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
       <!--for clipboard access-->
       <Script src="/sitecore modules/PowerShell/Scripts/clipboard.min.js"></Script>
@@ -28,12 +28,6 @@
       <Script src="/sitecore modules/PowerShell/Scripts/token_tooltip.js"></Script>
       <Script src="/sitecore modules/PowerShell/Scripts/ace/ext-language_tools.js"></Script>      
       <Script src="/sitecore modules/PowerShell/Scripts/ise.js"></Script>
-
-      <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="Ribbon.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" />
-      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/ise.css" DeviceDependant="true" />
 
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
       <Memo ID="SelectionText" Style="display:none;"/>
@@ -125,11 +119,11 @@
             Ln: <Literal ID="PosY" Text="" />
           </Border>
           <Border class="status-bar-panel status-bar-right-icon">
-            <Image ID="CopyResultsToClipboard" src="/sitecore modules/PowerShell/Assets/copy.png"
+            <Image ID="CopyResultsToClipboard" src="/~/icon/office/16x16/element_copy.png"
                    Alt="Copy results to clipboard" Title="Copy results to clipboard" />
           </Border>
           <Border class="status-bar-panel status-bar-text">
-            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"
+            <Image ID="RefreshHint" src="/~/icon/office/16x16/nav_refresh.png"
                    Alt="Show next usability hint..." Title="Show next usability hint..." />
             <Literal ID="StatusTip">
             </Literal>

@@ -103,7 +103,7 @@ namespace Cognifide.PowerShell.Core.Utility
             {
                 return String.Empty;
             }
-            var psPath = String.Format("{0}:{1}", item.Database.Name, item.Paths.Path.Substring(9).Replace('/', '\\'));
+            var psPath = $"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}";
             return psPath;
         }
 

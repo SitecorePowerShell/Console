@@ -1,0 +1,14 @@
+﻿---
+ID: "2990210e-8e4f-4874-91e8-565017dc55de"
+Parent: "644cbcb3-839c-4ccf-b08e-5c849775a467"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Package Generator/Content Editor/Context Menu"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141129T162723
