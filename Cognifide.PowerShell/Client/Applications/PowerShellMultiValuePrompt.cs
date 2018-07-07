@@ -882,6 +882,7 @@ namespace Cognifide.PowerShell.Client.Applications
                         ((PasswordExtended)edit).PlaceholderText = placeholder.ToString();
                     }
                     edit.Attributes["type"] = "password";
+                    edit.Name = name;
                 }
                 else
                 {
@@ -905,6 +906,7 @@ namespace Cognifide.PowerShell.Client.Applications
                             edit.Attributes["type"] = "text";
                         }
                     }
+                    edit.Name = name;
                 }
             }
 
@@ -917,7 +919,6 @@ namespace Cognifide.PowerShell.Client.Applications
             edit.ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
             edit.Class += " scContentControl textEdit clr" + value.GetType().FullName.Replace(".", "-");
             edit.Value = value.ToString();
-            edit.Name = name;
 
             return edit;
         }
