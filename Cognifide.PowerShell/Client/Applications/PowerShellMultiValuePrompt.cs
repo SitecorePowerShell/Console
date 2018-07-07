@@ -1072,7 +1072,7 @@ namespace Cognifide.PowerShell.Client.Applications
         private Hashtable[] GetVariableValues()
         {
             var results = new List<Hashtable>();
-            foreach (Control control in ValuePanel.Controls)
+            foreach (Sitecore.Web.UI.HtmlControls.Control control in ValuePanel.Controls)
             {
                 if (control is Tabstrip)
                     foreach (WebControl tab in control.Controls)
@@ -1091,7 +1091,7 @@ namespace Cognifide.PowerShell.Client.Applications
             return results.ToArray();
         }
 
-        private void GetEditorValue(Control parent, ICollection<Hashtable> results)
+        private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control parent, ICollection<Hashtable> results)
         {
             var controlId = parent.ID;
             if (controlId != null && controlId.StartsWith("variable_"))
