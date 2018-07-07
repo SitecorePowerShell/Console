@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
-using System.Web;
 using Cognifide.PowerShell.Core.Extensions;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
@@ -119,22 +116,55 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             break;
                         case (FilterType.InclusiveRange):
                         case (FilterType.ExclusiveRange):
-                            if (!(criteria.Value is string[])) break;
-
-                            var inclusion = (criteria.Filter == FilterType.InclusiveRange)
-                                ? Inclusion.Both
-                                : Inclusion.None;
-
-                            var pair = (object[])criteria.Value;
-                            var left = (pair[0] as DateTime?)?.ToString("yyyyMMdd") ?? pair[0].ToString();
-                            var right = (pair[1] as DateTime?)?.ToString("yyyyMMdd") ?? pair[1].ToString();
-
-                            predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Between(left, right, inclusion), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].Between(left, right, inclusion), shouldOr);
+                            predicate = GetRangeExpression(predicate, criteria, shouldOr);
                             break;
                     }
                 }
+            }
+
+            return predicate;
+        }
+
+        private static Expression<Func<SearchResultItem, bool>> GetRangeExpression(Expression<Func<SearchResultItem, bool>> predicate, SearchCriteria criteria, bool shouldOr)
+        {
+            var inclusion = (criteria.Filter == FilterType.InclusiveRange)
+                ? Inclusion.Both
+                : Inclusion.None;
+
+            switch (criteria.Value)
+            {
+                case string[] _:
+                    var pairString = (string[])criteria.Value;
+                    var leftString = pairString[0];
+                    var rightString = pairString[1];
+                    predicate = criteria.Invert
+                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftString, rightString, inclusion), shouldOr)
+                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftString, rightString, inclusion), shouldOr);
+                    break;
+                case DateTime[] _:
+                    var pairDateTime = (DateTime[]) criteria.Value;
+                    var leftDateTime = pairDateTime[0].ToString("yyyyMMdd");
+                    var rightDateTime = pairDateTime[1].ToString("yyyyMMdd");
+                    predicate = criteria.Invert
+                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion), shouldOr)
+                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion), shouldOr);
+                    break;
+                case double[] _:
+                    var pairDouble = (double[]) criteria.Value;
+                    var leftDouble = pairDouble[0];
+                    var rightDouble = pairDouble[1];
+                    predicate = criteria.Invert
+                        ? predicate.AddPredicate(i => !((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion), shouldOr)
+                        : predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion), shouldOr);
+                    break;
+                case int[] _:
+                    var pairInt = (int[])criteria.Value;
+                    var leftInt = pairInt[0];
+                    var rightInt = pairInt[1];
+                    predicate = criteria.Invert
+                        ? predicate.AddPredicate(i => !((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion), shouldOr)
+                        : predicate.AddPredicate(i => ((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion), shouldOr);
+                    break;
             }
 
             return predicate;

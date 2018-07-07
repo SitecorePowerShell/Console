@@ -7,16 +7,12 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
-using Sitecore.ContentSearch.Linq;
-using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
-using Sitecore.Data;
-using Sitecore.Data.Items;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
-    [Cmdlet(VerbsCommon.Find, "Item")]
+    [Cmdlet(VerbsCommon.Find, "Item", DefaultParameterSetName = "Criteria")]
     [OutputType(typeof(SearchResultItem))]
     public class FindItemCommand : BaseSearchCommand
     {
