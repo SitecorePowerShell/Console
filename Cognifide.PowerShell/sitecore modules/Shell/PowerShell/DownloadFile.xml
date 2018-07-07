@@ -19,10 +19,10 @@
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" />
 
       <GridPanel class="scConfirmationContainer" Columns="2" Width="100%">
-        <ThemedImage Id="DownloadImage" class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Download.png" Width="64"
-                     Height="64" Margin="8px 0px 8px 16px" />
-        <ThemedImage Id="ErrorImage" class="scConfirmationIcon" Src="/sitecore modules/PowerShell/Assets/Error.png" Width="64"
-                     Height="64" Margin="8px 0px 8px 16px" Visible="false" />
+        <ThemedImage Id="DownloadImage" class="scConfirmationIcon" Src="/~/icon/office/48x48/cloud_download.png" Width="48"
+                     Height="48" Margin="8px 0px 8px 16px" />
+        <ThemedImage Id="ErrorImage" class="scConfirmationIcon" Src="/~/icon/office/48x48/close.png" Width="48"
+                     Height="48" Margin="8px 0px 8px 16px" Visible="false" />
         <Border Padding="8px 16px 8px 8px" GridPanel.Width="100%">
           <Literal ID="Text" />
           <GridPanel Columns="2" Width="100%" GridPanel.Height="100%" GridPanel.Valign="top">

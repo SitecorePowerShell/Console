@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Collections;
+using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.Text;
@@ -15,9 +18,12 @@ namespace Cognifide.PowerShell.Integrations.Processors
     {
         protected static bool IsScripted(string dataSource)
         {
+            const string patternId = @"^script:{[a-zA-Z0-9]{8}-([a-zA-Z0-9]{4}-){3}[a-zA-Z0-9]{12}}$";
+
             return dataSource != null &&
                    (dataSource.IndexOf("script:", StringComparison.OrdinalIgnoreCase) == 0 &&
-                    dataSource.IndexOf(ApplicationSettings.ScriptLibraryPath, StringComparison.OrdinalIgnoreCase) > -1);
+                    (dataSource.IndexOf(ApplicationSettings.ScriptLibraryPath, StringComparison.OrdinalIgnoreCase) > -1) ||
+                    Regex.IsMatch(dataSource, patternId, RegexOptions.Compiled));
         }
 
         protected static string GetScriptedQueries(string sources, Item contextItem, ItemList items)
@@ -27,8 +33,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             {
                 if (IsScripted(location))
                 {
-                    var scriptLocation = location.Replace("script:", "").Trim();
-                    items.AddRange(RunEnumeration(scriptLocation, contextItem));
+                    items.AddRange(RunEnumeration(location, contextItem));
                 }
                 else
                 {
@@ -41,18 +46,25 @@ namespace Cognifide.PowerShell.Integrations.Processors
         protected static IEnumerable<Item> RunEnumeration(string scriptSource, Item item)
         {
             Assert.ArgumentNotNull(scriptSource, "scriptSource");
+
             scriptSource = scriptSource.Replace("script:", "").Trim();
             var database = item?.Database ?? Sitecore.Context.ContentDatabase ?? Sitecore.Context.Database;
-            var scriptItem = database.GetItem(scriptSource);
-            if (!scriptItem.IsPowerShellScript())
+            var scriptItem = ID.IsID(scriptSource) ? database.GetItem(ID.Parse(scriptSource)) : database.GetItem(scriptSource);
+            if (scriptItem == null || !scriptItem.IsPowerShellScript() 
+                || string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody])
+                && !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], item))
             {
-                return new[] {scriptItem ?? item};
+                return new[] { scriptItem ?? item };
             }
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
+
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, false))
             {
-                var script = scriptItem[Templates.Script.Fields.ScriptBody] ?? string.Empty;
-                script = $"{ScriptSession.GetDataContextSwitch(item)}\n{script}";
-                return session.ExecuteScriptPart(script, false).Where(i => i is Item).Cast<Item>();
+                if (item != null)
+                {
+                    session.SetItemLocationContext(item);
+                }
+                    
+                return session.ExecuteScriptPart(scriptItem, false).Where(i => i is Item).Cast<Item>();
             }
         }
     }

@@ -1,0 +1,14 @@
+﻿---
+ID: "0bb59259-7b32-47b9-a75d-1d8b57811d59"
+Parent: "b3b06d9c-8097-45d3-a718-69ff21bdfffc"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/X-UnitTests/Platform/Functions"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160516T034450

@@ -157,7 +157,7 @@ Languages:
       Value: 
     - ID: "e7d3348b-8323-42ba-bc9c-48e1f4e994dc"
       Hint: Tool tip
-      Value: PowerShell Solutions
+      Value: Custom tools built with PowerShell scripts.
 - Language: "ja-JP"
   Versions:
   - Version: 1

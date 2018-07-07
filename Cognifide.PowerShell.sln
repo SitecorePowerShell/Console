@@ -1,15 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell", "Cognifide.PowerShell\Cognifide.PowerShell.csproj", "{FAC57610-989C-4D7E-8D58-CCC914688096}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell.Sitecore8", "Cognifide.PowerShell.Sitecore8\Cognifide.PowerShell.Sitecore8.csproj", "{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell.Sitecore7", "Cognifide.PowerShell.Sitecore7\Cognifide.PowerShell.Sitecore7.csproj", "{68AF3135-7687-423B-A767-F0AA479008EF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cognifide.PowerShell.Package", "Cognifide.PowerShell.Package\Cognifide.PowerShell.Package.csproj", "{DB7E4D87-B450-4EC4-BB77-61E39E0450A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{91D50538-0272-4DD1-9065-50CBB9A45827}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet.config = NuGet.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +28,6 @@ Global
 		{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA6039EE-CA90-44DE-BD64-CA5DCF101EF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68AF3135-7687-423B-A767-F0AA479008EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68AF3135-7687-423B-A767-F0AA479008EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68AF3135-7687-423B-A767-F0AA479008EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68AF3135-7687-423B-A767-F0AA479008EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB7E4D87-B450-4EC4-BB77-61E39E0450A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB7E4D87-B450-4EC4-BB77-61E39E0450A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB7E4D87-B450-4EC4-BB77-61E39E0450A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D9006B7-5580-4615-8AFA-138112DA7023}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,30 @@
+﻿---
+ID: "f8573830-393a-45b1-8856-dcce48eb5e92"
+Parent: "47ba2b5b-36cb-4061-9dc0-bee85700780e"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Authoring Instrumentation/Content Editor/Context Menu/Publish My Items"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/earth_location.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    get-item -path . | where-object {$_.UpdatedBy –eq $me} | publish-item -verbose
+    get-childitem -recurse | where-object {$_.UpdatedBy –eq $me} | publish-item -verbose
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 500
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Publish all items last updated by me.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121129T194705Z

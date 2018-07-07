@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Web;
 using System.Xml;
@@ -14,10 +15,11 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
     public static class ServiceAuthorizationManager
     {
 
-        private static Dictionary<string, List<AuthorizationEntry>> authorizationEntries =
-            new Dictionary<string, List<AuthorizationEntry>>();
+        private static readonly ConcurrentDictionary<string, List<AuthorizationEntry>> _authorizationEntries =
+            new ConcurrentDictionary<string, List<AuthorizationEntry>>();
 
-        private static Dictionary<string, AuthCacheEntry> authorizationCache = new Dictionary<string, AuthCacheEntry>();
+        private static readonly ConcurrentDictionary<string, AuthCacheEntry> _authorizationCache = 
+            new ConcurrentDictionary<string, AuthCacheEntry>();
 
         public static bool IsUserAuthorized(string serviceName, string userName = null)
         {
@@ -34,9 +36,9 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
             if (ExistsInCache(cacheKey))
             {
-                lock (authorizationCache)
+                lock (_authorizationCache)
                 {
-                    return authorizationCache[cacheKey].Authorized;
+                    return _authorizationCache[cacheKey].Authorized;
                 }
             }
 
@@ -80,7 +82,7 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 }
             }
 
-            bool allowed = false;
+            var allowed = false;
             if (allowedByName.HasValue)
             {
                 allowed = allowedByName.Value;
@@ -90,9 +92,9 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
                 allowed = allowedByRole.Value;
             }
 
-            lock (authorizationCache)
+            lock (_authorizationCache)
             {
-                authorizationCache[cacheKey] = new AuthCacheEntry()
+                _authorizationCache[cacheKey] = new AuthCacheEntry()
                 {
                     Authorized = allowed,
                     ExpirationDate = DateTime.Now.AddSeconds(WebServiceSettings.AuthorizationCacheExpirationSecs)
@@ -104,68 +106,67 @@ namespace Cognifide.PowerShell.Core.Settings.Authorization
 
         public static bool TerminateUnauthorizedRequest(string serviceName, string userName = null)
         {
-            if(!IsUserAuthorized(serviceName,userName))
+            if (IsUserAuthorized(serviceName, userName)) return false;
+
+            if (HttpContext.Current != null && Context.Site != null)
             {
-                if (HttpContext.Current != null && Context.Site != null)
-                {
-                    HttpContext.Current.Response.Redirect(Context.Site.LoginPage, true);
-                }
-                return true;
+                HttpContext.Current.Response.Redirect(Context.Site.LoginPage, true);
             }
-            return false;
+            return true;
         }
 
         private static bool ExistsInCache(string cacheKey)
         {
             // cache health check
-            lock (authorizationCache)
+            lock (_authorizationCache)
             {
-                if (authorizationCache.Keys.Count > 1000)
+                if (_authorizationCache.Keys.Count > 1000)
                 {
-                    authorizationCache.Clear();
+                    _authorizationCache.Clear();
                 }
-                return authorizationCache.ContainsKey(cacheKey) &&
-                       authorizationCache[cacheKey].ExpirationDate > DateTime.Now;
+                return _authorizationCache.ContainsKey(cacheKey) &&
+                       _authorizationCache[cacheKey].ExpirationDate > DateTime.Now;
             }
         }
 
-        private static String GetAuthorizationCacheKey(String serviceName, String userName)
+        private static string GetAuthorizationCacheKey(string serviceName, string userName)
         {
             return userName + "@" + serviceName;
         }
 
         private static List<AuthorizationEntry> GetServiceAuthorizationInfo(string serviceName)
         {
-            if (authorizationEntries.ContainsKey(serviceName))
+            if (_authorizationEntries.ContainsKey(serviceName))
             {
-                return authorizationEntries[serviceName];
+                return _authorizationEntries[serviceName];
             }
 
             var authEntryList = new List<AuthorizationEntry>();
-            authorizationEntries.Add(serviceName, authEntryList);
 
             var servicesNode =
                 Factory.GetConfigNode($"powershell/services/{serviceName}/authorization");
 
-            if (servicesNode != null)
+            if (servicesNode == null) return authEntryList;
+
+            foreach (XmlNode node in servicesNode.ChildNodes)
             {
-                foreach (XmlNode node in servicesNode.ChildNodes)
+                AuthorizationEntry entry;
+                if (node.Name.Is("#comment"))
                 {
-                    AuthorizationEntry entry;
-                    if (node.Name.Is("#comment"))
-                    {
-                        continue;
-                    }
-                    if (AuthorizationEntry.TryParse(node, out entry))
-                    {
-                        authEntryList.Add(entry);
-                    }
-                    else
-                    {
-                        PowerShellLog.Error($"Invalid permission entry for service '{serviceName}'");
-                    }
+                    continue;
+                }
+                if (AuthorizationEntry.TryParse(node, out entry))
+                {
+                    authEntryList.Add(entry);
+                }
+                else
+                {
+                    PowerShellLog.Error($"Invalid permission entry for service '{serviceName}'");
                 }
             }
+
+            _authorizationEntries.TryAdd(serviceName, authEntryList);
+
             return authEntryList;
         }
 

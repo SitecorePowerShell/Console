@@ -9,9 +9,11 @@
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" runat="server" />
-        <Stylesheet>
-          pre { margin: 2px;}
-        </Stylesheet>
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script>$viewer = jQuery.noConflict();</Script>
+      <Stylesheet>
+        pre { margin: 2px;}
+      </Stylesheet>
 
       <Border class="scFlexColumnContainer scStretch">
         <Border class="scDialogHeader">
@@ -32,8 +34,7 @@
           <Scrollbox ID="All" Class="scStretchAbsolute scDialogContentContainer consoleWrapper console pre">
             <Scrollbox ID="Promo" class="promoArea console pre">
               <Border Align="Right" Foreground="#999999">
-                <Literal
-                  Text="Sitecore PowerShell Extensions (c) 2010-2017 &lt;a href='http://blog.najmanowicz.com/' target='_blank'&gt;Adam Najmanowicz&lt;/a&gt;, &lt;a href='http://michaellwest.blogspot.com/' target='_blank'&gt;Michael West&lt;/a&gt;." />
+                <Literal Class="credits" />
               </Border>
             </Scrollbox>
             <pre>
@@ -42,6 +43,17 @@
           </Scrollbox>
         </Scrollbox>
       </Border>
+      <Script>
+        (function($) {
+          $(function() {
+            var currentYear = (new Date()).getFullYear();
+            var greetings = "Copyright &amp;copy; 2010-" + currentYear + " Adam Najmanowicz, Michael West. All rights Reserved.";
+            console.log(greetings);
+            console.log($('.credits'));
+            $('.credits').html(greetings);
+          });
+        }($viewer));
+      </Script>
     </FormPage>
   </PowerShellResultViewerText>
 </control>

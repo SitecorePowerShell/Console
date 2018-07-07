@@ -106,10 +106,8 @@
 
     .EXAMPLE
         # Find all children of a specific item including that item - return Sitecore items
-        $root = (Get-Item "master:/system/Modules/PowerShell/Script Library/")
-        Find-Item -Index sitecore_master_index `
-                  -Criteria @{Filter = "DescendantOf"; Field = $root } |
-            Initialize-Item
+        $root = Get-Item -Path "master:/system/Modules/PowerShell/Script Library/"
+        Find-Item -Index sitecore_master_index -Criteria @{Filter = "DescendantOf"; Value = $root.ID } | Initialize-Item
 
     .EXAMPLE
         # Find all Template Fields using Dynamic LINQ syntax 
@@ -136,4 +134,13 @@
         }
 
         Find-Item @parameters
+        
+    .EXAMPLE
+        #  Find the first 10 items in the master database Media Library with a non-empty "Alt" value.
+        $root = Get-Item -Path "master:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}"
+        $criteria = @(
+            @{ Filter = "DescendantOf"; Value = $root.ID }
+            @{ Filter="Equals"; Value=""; Field="Alt"; Invert=$true }
+        )
+        Find-Item -Index sitecore_master_index -Criteria $criteria -First 10 
 #>

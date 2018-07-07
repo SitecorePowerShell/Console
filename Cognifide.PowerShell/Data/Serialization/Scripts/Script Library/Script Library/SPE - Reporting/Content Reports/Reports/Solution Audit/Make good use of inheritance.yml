@@ -1,0 +1,56 @@
+﻿---
+ID: "2cb400d1-aee0-437d-8ed7-590b33990f5c"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Solution Audit/Make good use of inheritance"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/elements_hierarchy.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+      Which of my Templates inherit from Standard Item template?
+     
+      Sitecore recommendation:
+         Make good use of inheritance — Place commonly used sections and fields in their own template, 
+         so that more specific templates can inherit them. For example, the Title and Text fields in the Page Title 
+         and Text section are used in multiple different content templates. Rather than duplicate these fields 
+         in each content template, simply inherit the Page Title and Text template.
+     
+      Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+    #>
+    
+    $item = Get-Item -Path "master:\templates"
+    $result = Read-Variable -Parameters `
+        @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
+        -Description "This script analyses which of your templates inherit directly from <i>Standard Item</i> template?." `
+        -Title "Sitecore recommendation: Make good use of inheritance" -Width 500 -Height 280 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+    if($result -ne "ok") {
+        Close-Window
+        Exit
+    }
+    
+    
+    @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) |
+      Where-Object { $_.TemplateName -eq "Template" -and $_."__base template" -eq "{1930BBEB-7805-471A-A3BE-4858AC7CF696}" } | `
+        Show-ListView -Property DisplayName, @{Name="Path"; Expression={$_.ItemPath}} `
+            -Title "Templates inheriting directly from Standard Item template" `
+            -InfoTitle "Sitecore recommendation: Make good use of inheritance" `
+            -InfoDescription "Place commonly used sections and fields in their own template, so that more specific templates can inherit them. <br/>
+                              For example, the Title and Text fields in the Page Title and Text section are used in multiple different content templates. <br/>
+                              Rather than duplicate these fields in each content template, simply inherit the Page Title and Text template. <br/><br/>
+                              Listed below are templates inheriting directly from <i>Standard Item</i> template"
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130130T224800

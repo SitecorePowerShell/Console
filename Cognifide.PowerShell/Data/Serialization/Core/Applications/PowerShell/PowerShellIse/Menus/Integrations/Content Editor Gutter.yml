@@ -7,10 +7,10 @@ DB: core
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Apps/32x32/Pencil.png
+  Value: Office/32x32/pencil.png
 - ID: "335c6760-6c0e-4c6c-814c-a53d203f553e"
   Hint: Icon
-  Value: Apps/32x32/Pencil.png
+  Value: Office/32x32/pencil.png
 - ID: "cab694fc-e37c-44eb-9012-488b775cf638"
   Hint: Message
   Value: "item:executescript(script={784B270D-91CF-4DC4-890C-D0C1B18C1189},scriptDb=master)"

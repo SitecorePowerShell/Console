@@ -1,0 +1,97 @@
+﻿---
+ID: "045a4653-131c-445c-8341-b8b9c448ad46"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Content Reports/Reports/Media Audit/Media items by size and type"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/chart_column.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $sizeOptions = [ordered]@{
+        "100 KB" = 100000
+        "250 KB" = 250000
+        "500 KB" = 500000
+        "1 MB" = 1000000
+        "5 MB" = 5000000
+    }
+    
+    $typeOptions = [ordered]@{
+        "gif" = 1
+        "jpg, jpeg" = 2
+        "pdf" = 3
+        "png" = 4
+        "svg" = 5
+    }
+    
+    $settings = @{
+        Title = "Report Filter"
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        Width = "350"
+        Height = "250"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter the results based on the media size and type"
+        Parameters = @{ 
+            Name = "selectedSize"
+            Value = 250000
+            Options=$sizeOptions
+            Title = "Larger Than"
+            Tooltip = "Filter the results for items larger than the specified size"
+            Editor = "combo"
+        }, @{
+            Name = "selectedTypeValues"
+            Value = 2,4
+            Options = $typeOptions
+            Title = "Media Extension"
+            Tooltip = "Filter the results for items with the specified extension"
+            Editor = "checklist"
+            Validation = { $_.Value -ne $null }
+        }
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        exit
+    }
+    
+    $selectedType = @()
+    foreach($val in $selectedTypeValues) {
+        switch($val) {
+            1 { $selectedType += "gif" }
+            2 { $selectedType += "jpg","jpeg"}
+            3 { $selectedType += "pdf" }
+            4 { $selectedType += "png" }
+            5 { $selectedType += "svg" }
+        }
+    }
+    
+    $mediaItemContainer = Get-Item -Path "master:\media library"
+    $items = $mediaItemContainer.Axes.GetDescendants() | 
+        Where-Object { $selectedType -contains $_.Fields["Extension"].Value -and [int]$_.Fields["Size"].Value -gt $selectedSize } | 
+        Initialize-Item | Sort-Object -Property Size
+    
+    $reportProps = @{
+        Title = "Media by size"
+        InfoTitle = "Media filtered by size"
+        InfoDescription = "Media found larger than $($selectedSize) bytes."
+        Property = @("Name","TemplateName","Size","ItemPath")
+    }
+    $items | Show-ListView @reportProps
+    
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180515T224525Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

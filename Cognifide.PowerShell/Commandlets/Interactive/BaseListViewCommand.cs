@@ -29,22 +29,21 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
         [Parameter]
         public object[] Property { get; set; }
 
-        private Hashtable[] processedProperty;
+        private Hashtable[] _processedProperty;
 
         protected Hashtable[] ProcessedProperty
         {
             get
             {
-                if (processedProperty == null && Property != null)
+                if (_processedProperty == null && Property != null)
                 {
-                    processedProperty = Property.Select(p =>
+                    _processedProperty = Property.Select(p =>
                     {
                         string label;
                         ScriptBlock expression;
 
-                        if (p is Hashtable)
+                        if (p is Hashtable h)
                         {
-                            var h = p as Hashtable;
                             if (h.ContainsKey("Name"))
                             {
                                 if (!h.ContainsKey("Label"))
@@ -68,7 +67,7 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                         return result;
                     }).ToArray();
                 }
-                return processedProperty;
+                return _processedProperty;
             }
         }
 
@@ -82,12 +81,13 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 SessionState.PSVariable.Set("ScPsSlvProperties", ProcessedProperty);
             }
+            
             base.BeginProcessing();
         }
 
         protected override void ProcessRecord()
         {
-            while ((Data is PSObject) && (Data as PSObject).ImmediateBaseObject is PSObject)
+            while ((Data as PSObject)?.ImmediateBaseObject is PSObject)
             {
                 Data = (Data as PSObject).ImmediateBaseObject;
             }
@@ -95,15 +95,26 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
 
             if (Property == null && SessionState.PSVariable.Get("ScPsSlvProperties") == null)
             {
+                var hasCustomObjects = false;
                 var propScript =
                     InvokeCommand.NewScriptBlock(
-                        "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayProperty }");
-                var propDefault = InvokeCommand.InvokeScript(SessionState, propScript).First();
-                if (propDefault != null)
+                        "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayProperty } | Select-Object -First 1");
+                var propDefault = InvokeCommand.InvokeScript(SessionState, propScript).FirstOrDefault();
+                if (propDefault == null)
                 {
+                    hasCustomObjects = true;
+                    // May be PSCustomObject
                     propScript =
                         InvokeCommand.NewScriptBlock(
-                            "$ScPsSlvPipelineObject | foreach-object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+                            "$ScPsSlvPipelineObject | Foreach-Object { $_.PSObject.Properties.Name } | Select-Object -First 1");
+                    propDefault = InvokeCommand.InvokeScript(SessionState, propScript).FirstOrDefault();
+                }
+                if (propDefault != null)
+                {
+                    propScript = InvokeCommand.NewScriptBlock(hasCustomObjects 
+                        ? "$ScPsSlvPipelineObject | Foreach-Object { $_.PSObject.Properties.Name }" 
+                        : "$ScPsSlvPipelineObject | Foreach-Object { $_.PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames }");
+
                     var propResult = InvokeCommand.InvokeScript(SessionState, propScript);
                     var properties = new List<object>(propResult.Count + 1) {propDefault.ToString()};
                     if (propResult.Any())
@@ -119,8 +130,8 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
             {
                 var formatProperty = SessionState.PSVariable.Get("ScPsSlvProperties")?.Value;
                 var script = (formatProperty is string)
-                    ? "$ScPsSlvPipelineObject | select-object -Property " + formatProperty
-                    : "$ScPsSlvPipelineObject | select-object -Property $ScPsSlvProperties";
+                    ? "$ScPsSlvPipelineObject | Select-Object -Property " + formatProperty
+                    : "$ScPsSlvPipelineObject | Select-Object -Property $ScPsSlvProperties";
 
                 var scriptBlock = InvokeCommand.NewScriptBlock(script);
                 var result = InvokeCommand.InvokeScript(SessionState, scriptBlock);
@@ -128,6 +139,10 @@ namespace Cognifide.PowerShell.Commandlets.Interactive
                 if (result.Any())
                 {
                     var varValue = Data.BaseObject();
+                    if (varValue is PSCustomObject)
+                    {
+                        varValue = Data;
+                    }
 
                     var slvDataObject = new DataObject
                     {

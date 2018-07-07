@@ -89,8 +89,8 @@ namespace Cognifide.PowerShell.Core.Modules
                 if (item.TemplateID == ModuleTemplateId)
                 {
                     item[Sitecore.FieldIDs.Icon] = item["Enabled"] == "1"
-                        ? "Software/32x32/jar_bean.png"
-                        : "Software/32x32/jar_delete.png";
+                        ? "Office/32x32/jar_coffee_bean.png"
+                        : "Office/32x32/jar.png";
                 }
             }
         }

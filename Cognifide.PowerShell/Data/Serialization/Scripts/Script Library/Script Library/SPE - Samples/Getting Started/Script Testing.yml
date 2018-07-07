@@ -1,0 +1,14 @@
+﻿---
+ID: "a43850a2-6a27-404e-b4b8-543156a0e59a"
+Parent: "ed2cf34e-1a59-444d-806e-51db1e560093"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Samples/Getting Started/Script Testing"
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150128T165922

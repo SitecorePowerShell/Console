@@ -43,7 +43,7 @@ namespace Cognifide.PowerShell.Client.Controls
 
                     RenderLargeButton(output, ribbon, Control.GetUniqueID("script"),
                         Translate.Text(psButton.DisplayName),
-                        psButton[Sitecore.FieldIDs.Icon], string.Empty,
+                        psButton[Sitecore.FieldIDs.Icon], psButton.Appearance.ShortDescription,
                         $"ise:runplugin(scriptDb={psButton.Database.Name},scriptId={psButton.ID})",
                         context.Parameters["ScriptRunning"] == "0" && RulesUtils.EvaluateRules(psButton[FieldNames.EnableRule], ruleContext),
                         false, context);

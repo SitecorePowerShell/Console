@@ -25,6 +25,7 @@ namespace Cognifide.PowerShell.Core.Settings
 
         public const string MediaLibraryPath = "/sitecore/media library/";
         public const string TemplatesPath = "/sitecore/templates/";
+        private const string FolderIcon = "Office/32x32/folder.png";
 
         private const string LastScriptSettingFieldName = "LastScript";
         private const string SaveLastScriptSettingFieldName = "SaveLastScript";
@@ -197,6 +198,7 @@ namespace Cognifide.PowerShell.Core.Settings
                     var folderTemplateItem = db.GetItem(TemplateIDs.Folder);
                     var currentDomainItem = db.CreateItemPath(appSettingsPath + CurrentDomain, folderTemplateItem,
                         folderTemplateItem);
+                    currentDomainItem.Edit(args => currentDomainItem.Appearance.Icon = FolderIcon);
                     var defaultItem = db.GetItem(appSettingsPath + IseSettingsItemAllUsers);
                     currentUserItem = defaultItem.CopyTo(currentDomainItem, CurrentUserName);
                 }
@@ -213,6 +215,9 @@ namespace Cognifide.PowerShell.Core.Settings
             {
                 mruItem.Edit(args => mruItem.Publishing.NeverPublish = true);
             }
+
+            mruItem.Edit(args => mruItem.Appearance.Icon = FolderIcon);
+
             return mruItem;
         }
 

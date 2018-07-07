@@ -7,13 +7,13 @@ DB: core
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Applications/32x32/navigate_down2.png
+  Value: Office/32x32/navigate_up2.png
 - ID: "4c2dedb4-40fb-4166-8221-c4dd3e914478"
   Hint: Click
   Value: "pslvnav:last"
 - ID: "8e40ab40-8c83-4ff7-9d33-38ed9458de1e"
   Hint: Icon
-  Value: Applications/32x32/navigate_down2.png
+  Value: Office/32x32/navigate_up2.png
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 150

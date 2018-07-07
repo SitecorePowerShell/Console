@@ -1,13 +1,4 @@
-﻿.done {
-    -webkit-animation-duration: 3s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-name: greenPulse;
-    animation-duration: 3s;
-    animation-iteration-count: infinite;
-    animation-name: greenPulse;
-}
-
-.status {
+﻿.status {
     display: block;
     margin-bottom: 6px;
 }
@@ -82,71 +73,19 @@ a#ViewErrorsButton {
     width: 200px;
 }
 
-@keyframes greenPulse {
-    from { box-shadow: 0 0 19px #fff; }
-
-    50% { box-shadow: 0 0 18px #06B025; }
-
-    to { box-shadow: 0 0 19px #fff; }
+#ValuePanel #Progress {
+    padding-top: 5px;
 }
 
-@-webkit-keyframes greenPulse {
-    from { -webkit-box-shadow: 0 0 19px #fff; }
-
-    50% { -webkit-box-shadow: 0 0 19px #06B025; }
-
-    to { -webkit-box-shadow: 0 0 19px #fff; }
+.ui-progressbar {
+    background-color: #e3e3e3;
+    border: 1px solid #c6c3da;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #d2c6c6;
+    height: 22px;
 }
 
-.progressbar_bg_middle {
-    background-image: url(../Assets/bg_middle.gif);
-    background-repeat: repeat-x;
-    overflow: hidden;
-}
-
-.progressbar_bg_right {
-    background-image: url(../Assets/bg_right.gif);
-    background-position: right;
-    background-repeat: no-repeat;
-}
-
-.progressbar_bg_left {
-    background-image: url(../Assets/bg_left.gif);
-    background-position: left;
-    background-repeat: no-repeat;
-    padding: 1px;
-}
-
-.progressbar_fg {
-    background-image: url(../Assets/fg_middle.gif);
-    background-repeat: repeat-x;
-    overflow: hidden;
-    width: 0;
-}
-
-.progressbar_fg_right {
-    background-image: url(../Assets/fg_right.gif);
-    background-position: right;
-    background-repeat: no-repeat;
-}
-
-.progressbar_fg_left {
-    background-image: url(../Assets/fg_left.gif);
-    background-position: left;
-    background-repeat: no-repeat;
-    height: 14px;
-}
-
-.progressbar_highlight {
-    background-image: url(../Assets/highlight.png);
-    height: 14px;
-    margin-left: -120px;
-    width: 120px;
-}
-
-.progressbar_highlight_ind {
-    background-image: url(../Assets/ind-highlight.png);
-    height: 14px;
-    margin-left: -120px;
-    width: 120px;
+.ui-progressbar-value {
+    background-color: green;
+    height: 100%;
 }

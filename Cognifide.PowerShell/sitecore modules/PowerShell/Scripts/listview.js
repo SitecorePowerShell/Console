@@ -9,11 +9,11 @@
     $(function () {
         window.parent.focus();
         window.focus();
-
+        $("#Input_Filter").removeAttr('onchange').removeAttr('onkeydown');
         $("#Input_Filter").keypress(function(event) {
             if (event.which === 13) {
                 event.preventDefault();
-                window.scForm.postRequest("", "", "", "pslv:filter");
+                window.scForm.postEvent(this, event, "pslv:filter");
             };
         });
     });

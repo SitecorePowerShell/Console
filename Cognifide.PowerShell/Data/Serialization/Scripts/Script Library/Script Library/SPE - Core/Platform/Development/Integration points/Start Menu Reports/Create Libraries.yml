@@ -1,0 +1,21 @@
+﻿---
+ID: "f1d2d408-3d8d-4caa-9dde-8675f24abbf6"
+Parent: "fa94f98b-4405-4219-82e4-07ddc2c09f1d"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Core/Platform/Development/Integration points/Start Menu Reports/Create Libraries"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $integrationPoint = [Cognifide.PowerShell.Core.Modules.IntegrationPoints]::StartMenuReportsFeature;
+    Import-Function -Name Create-IntegrationPoint
+    CreateIntegrationPoint($integrationPoint)
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T012146

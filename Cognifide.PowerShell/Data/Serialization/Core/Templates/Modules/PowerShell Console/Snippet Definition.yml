@@ -1,0 +1,21 @@
+﻿---
+ID: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Parent: "5fb5eb9f-41c5-43dd-b9f7-70a482b21093"
+Template: "ab86861a-6030-46c5-b394-e8f99e8b87db"
+Path: /sitecore/templates/Modules/PowerShell Console/Snippet Definition
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/piece2.png
+- ID: "f7d48a55-2158-4f02-9356-756654404f73"
+  Hint: __Standard values
+  Value: "{BB6E883C-B7CD-4BC8-8A9C-AE01F477AA0A}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180107T015805Z

@@ -1,0 +1,28 @@
+﻿---
+ID: "66fb1e5c-7e32-4c5b-8648-7b30fadae2be"
+Parent: "4655f9c8-16be-4343-a101-1473823eb017"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance/System Maintenance/Control Panel/Reports/Download Sitecore logs"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Compress-Archive
+    
+    $time = Get-Date -format "yyyy-MM-dd_hh-mm-ss"
+    $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
+    $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
+    $myZipFile = "$dataFolder\logs-$($time).zip"
+    Remove-Item $myZipFile -ErrorAction SilentlyContinue
+    Compress-Archive -Path $LogsFolder –CompressionLevel Optimal -DestinationPath $myZipFile
+    Download-File -FullName $myZipFile | Out-Null
+    Remove-Item $myZipFile
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130628T222441

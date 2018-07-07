@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -73,6 +74,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 }
             }
 
+
             foreach (var item in menuItems)
             {
                 var menuItem = item as MenuItem;
@@ -82,6 +84,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     menuItem.Click,
                     menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                 subItem.Disabled = menuItem.Disabled;
+                subItem.ToolTip = menuItem.ToolTip;
             }
             SheerResponse.EnableOutput();
             subMenu.Visible = true;
@@ -101,6 +104,10 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
             {
                 GetLibraryMenuItems(context.Items[0], menuItems, root);
             }
+
+            menuItems.Sort((x, y) =>
+                string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
+
 
             return menuItems.ToArray();
         }
@@ -130,7 +137,8 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     Header = scriptItem.DisplayName,
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
-                    Disabled = !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], contextItem)
+                    Disabled = !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], contextItem),
+                    ToolTip = scriptItem.Appearance.ShortDescription
                 };
 
                 if (scriptItem.IsPowerShellScript())
