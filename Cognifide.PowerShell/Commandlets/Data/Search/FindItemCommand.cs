@@ -126,9 +126,29 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                     WriteWarning(
                                         "Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                                 }
+                                List<string> values = new List<string>();
+                                if(criteria.Value is Item[])
+                                {
+                                    Item[] items = (Item[])criteria.Value;
+                                    values = items.Select(x => x.ID.ToShortID().ToString().ToLowerInvariant()).ToList();
+                                }else if(criteria.Value is string)
+                                {
+                                    string str = (string)criteria.Value;
+                                    values = str.Split('|').ToList();
+                                }
+                                else if (criteria.Value is List<string>)
+                                {
+                                    values = (List<string>)criteria.Value;
+                                }
+                                else if (criteria.Value is PSObject[])
+                                {
+                                    PSObject[] items = (PSObject[])criteria.Value;
+                                    values = items.Select(x => ((Item)x.BaseObject).ID.ToShortID().ToString().ToLowerInvariant()).ToList();
+                                }
+
                                 query[0] = criteria.Invert
-                                    ? query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))))
-                                    : query[0].Where(((List<string>)criteria.Value).Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))));
+                                    ? query[0].Where(values.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))))
+                                    : query[0].Where(values.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Equals(keyword))));
                                 break;
                             case (FilterType.ContainsAll):
                                 if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
