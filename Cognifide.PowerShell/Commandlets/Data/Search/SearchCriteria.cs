@@ -8,5 +8,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         public bool? CaseSensitive { get; set; }
         internal string StringValue { get { return Value.ToString(); } }
         public bool Invert { get; set; }
+        public float Boost { get; set; } = 1;
     }
 }

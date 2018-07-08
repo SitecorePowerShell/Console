@@ -7,6 +7,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
+using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 

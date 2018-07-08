@@ -14,18 +14,16 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     {
         public Expression<Func<SearchResultItem, bool>> ProcessCriteria(SearchCriteria[] criterias, SearchOperation operation)
         {
-            var shouldOr = operation == SearchOperation.Or;
-            var predicate = shouldOr
+            var predicate = operation == SearchOperation.Or
                 ? PredicateBuilder.False<SearchResultItem>()
                 : PredicateBuilder.True<SearchResultItem>();
 
             if (criterias != null)
             {
-                foreach (var filter in criterias)
+                foreach (var criteria in criterias)
                 {
-                    var criteria = filter;
                     if (criteria.Value == null) continue;
-
+                    var boost = criteria.Boost;
                     var comparer = criteria.CaseSensitive.HasValue && criteria.CaseSensitive.Value
                         ? StringComparison.Ordinal
                         : StringComparison.OrdinalIgnoreCase;
@@ -51,8 +49,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i["_path"].Contains(ancestorId), shouldOr)
-                                : predicate.AddPredicate(i => i["_path"].Contains(ancestorId), shouldOr);
+                                ? predicate.AddPredicate(i => !i["_path"].Contains(ancestorId).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i["_path"].Contains(ancestorId).Boost(boost), operation);
                             break;
                         case (FilterType.StartsWith):
                             var startsWith = criteria.StringValue;
@@ -62,8 +60,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].StartsWith(startsWith, comparer), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].StartsWith(startsWith, comparer), shouldOr);
+                                ? predicate.AddPredicate(i => !i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation);
                             break;
                         case (FilterType.Contains):
                             if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
@@ -78,8 +76,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].Contains(contains), shouldOr);
+                                ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].Contains(contains).Boost(boost), operation);
                             break;
                         case (FilterType.EndsWith):
                             var endsWith = criteria.StringValue;
@@ -89,8 +87,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].EndsWith(endsWith, comparer), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].EndsWith(endsWith, comparer), shouldOr);
+                                ? predicate.AddPredicate(i => !i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation);
                             break;
                         case (FilterType.Equals):
                             var equals = criteria.StringValue;
@@ -100,8 +98,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Equals(equals, comparer), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].Equals(equals, comparer), shouldOr);
+                                ? predicate.AddPredicate(i => !i[criteria.Field].Equals(equals, comparer).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].Equals(equals, comparer).Boost(boost), operation);
                             break;
                         case (FilterType.Fuzzy):
                             var fuzzy = criteria.StringValue;
@@ -111,12 +109,12 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i[criteria.Field].Like(fuzzy), shouldOr)
-                                : predicate.AddPredicate(i => i[criteria.Field].Like(fuzzy), shouldOr);
+                                ? predicate.AddPredicate(i => !i[criteria.Field].Like(fuzzy).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].Like(fuzzy).Boost(boost), operation);
                             break;
                         case (FilterType.InclusiveRange):
                         case (FilterType.ExclusiveRange):
-                            predicate = GetRangeExpression(predicate, criteria, shouldOr);
+                            predicate = GetRangeExpression(predicate, criteria, operation);
                             break;
                     }
                 }
@@ -125,11 +123,13 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             return predicate;
         }
 
-        private static Expression<Func<SearchResultItem, bool>> GetRangeExpression(Expression<Func<SearchResultItem, bool>> predicate, SearchCriteria criteria, bool shouldOr)
+        private static Expression<Func<SearchResultItem, bool>> GetRangeExpression(Expression<Func<SearchResultItem, bool>> predicate, SearchCriteria criteria, SearchOperation operation)
         {
             var inclusion = (criteria.Filter == FilterType.InclusiveRange)
                 ? Inclusion.Both
                 : Inclusion.None;
+
+            var boost = criteria.Boost;
 
             switch (criteria.Value)
             {
@@ -138,32 +138,32 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     var leftString = pairString[0];
                     var rightString = pairString[1];
                     predicate = criteria.Invert
-                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftString, rightString, inclusion), shouldOr)
-                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftString, rightString, inclusion), shouldOr);
+                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftString, rightString, inclusion).Boost(boost), operation)
+                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftString, rightString, inclusion).Boost(boost), operation);
                     break;
                 case DateTime[] _:
                     var pairDateTime = (DateTime[]) criteria.Value;
                     var leftDateTime = pairDateTime[0].ToString("yyyyMMdd");
                     var rightDateTime = pairDateTime[1].ToString("yyyyMMdd");
                     predicate = criteria.Invert
-                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion), shouldOr)
-                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion), shouldOr);
+                        ? predicate.AddPredicate(i => !i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation)
+                        : predicate.AddPredicate(i => i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation);
                     break;
                 case double[] _:
                     var pairDouble = (double[]) criteria.Value;
                     var leftDouble = pairDouble[0];
                     var rightDouble = pairDouble[1];
                     predicate = criteria.Invert
-                        ? predicate.AddPredicate(i => !((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion), shouldOr)
-                        : predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion), shouldOr);
+                        ? predicate.AddPredicate(i => !((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion).Boost(boost), operation);
                     break;
                 case int[] _:
                     var pairInt = (int[])criteria.Value;
                     var leftInt = pairInt[0];
                     var rightInt = pairInt[1];
                     predicate = criteria.Invert
-                        ? predicate.AddPredicate(i => !((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion), shouldOr)
-                        : predicate.AddPredicate(i => ((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion), shouldOr);
+                        ? predicate.AddPredicate(i => !((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion).Boost(boost), operation)
+                        : predicate.AddPredicate(i => ((int)i[(ObjectIndexerKey)criteria.Field]).Between(leftInt, rightInt, inclusion).Boost(boost), operation);
                     break;
             }
 
