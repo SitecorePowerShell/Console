@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
@@ -7,6 +10,7 @@ using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Mvc.Extensions;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
@@ -79,6 +83,46 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i[criteria.Field].Contains(contains).Boost(boost), operation);
                             break;
+                        case FilterType.ContainsAny:
+                            if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                            {
+                                WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                            }
+
+                            var valuesAny = ObjectToStringArray(criteria.Value);
+                            for (var i = 0; i < valuesAny.Length; i++)
+                            {
+                                if (!ID.IsID(valuesAny[i])) continue;
+
+                                var item = valuesAny[i];
+                                item = ID.Parse(item).ToShortID().ToString().ToLower();
+                                valuesAny[i] = item;
+                            }
+
+                            predicate = criteria.Invert
+                                ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                                : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                            break;
+                        case FilterType.ContainsAll:
+                            if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
+                            {
+                                WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
+                            }
+
+                            var valuesAll = ObjectToStringArray(criteria.Value);
+                            for (var i = 0; i < valuesAll.Length; i++)
+                            {
+                                if (!ID.IsID(valuesAll[i])) continue;
+
+                                var item = valuesAll[i];
+                                item = ID.Parse(item).ToShortID().ToString().ToLower();
+                                valuesAll[i] = item;
+                            }
+
+                            predicate = criteria.Invert
+                                ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
+                                : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
+                            break;
                         case (FilterType.EndsWith):
                             var endsWith = criteria.StringValue;
                             if (ID.IsID(endsWith))
@@ -130,11 +174,30 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 : Inclusion.None;
 
             var boost = criteria.Boost;
+            var value = criteria.Value;
+            if (value is object[])
+            {
+                switch (value)
+                {
+                    case string[] _:
+                        value = (string[])value;
+                        break;
+                    case DateTime[] _:
+                        value = (DateTime[])value;
+                        break;
+                    case double[] _:
+                        value = (double[])value;
+                        break;
+                    case int[] _:
+                        value = (int[])value;
+                        break;
+                }
+            }
 
-            switch (criteria.Value)
+            switch (value)
             {
                 case string[] _:
-                    var pairString = (string[])criteria.Value;
+                    var pairString = (string[])value;
                     var leftString = pairString[0];
                     var rightString = pairString[1];
                     predicate = criteria.Invert
@@ -142,7 +205,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         : predicate.AddPredicate(i => i[criteria.Field].Between(leftString, rightString, inclusion).Boost(boost), operation);
                     break;
                 case DateTime[] _:
-                    var pairDateTime = (DateTime[]) criteria.Value;
+                    var pairDateTime = (DateTime[])value;
                     var leftDateTime = pairDateTime[0].ToString("yyyyMMdd");
                     var rightDateTime = pairDateTime[1].ToString("yyyyMMdd");
                     predicate = criteria.Invert
@@ -150,7 +213,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         : predicate.AddPredicate(i => i[criteria.Field].Between(leftDateTime, rightDateTime, inclusion).Boost(boost), operation);
                     break;
                 case double[] _:
-                    var pairDouble = (double[]) criteria.Value;
+                    var pairDouble = (double[])value;
                     var leftDouble = pairDouble[0];
                     var rightDouble = pairDouble[1];
                     predicate = criteria.Invert
@@ -158,7 +221,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         : predicate.AddPredicate(i => ((double)i[(ObjectIndexerKey)criteria.Field]).Between(leftDouble, rightDouble, inclusion).Boost(boost), operation);
                     break;
                 case int[] _:
-                    var pairInt = (int[])criteria.Value;
+                    var pairInt = (int[])value;
                     var leftInt = pairInt[0];
                     var rightInt = pairInt[1];
                     predicate = criteria.Invert
@@ -168,6 +231,23 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             }
 
             return predicate;
+        }
+
+        private static string[] ObjectToStringArray(object value)
+        {
+            switch (value)
+            {
+                case string[] _:
+                    return (string[])value;
+                case object[] _:
+                    return Array.ConvertAll((object[])value, x => x.ToString());
+                case ArrayList _:
+                    return Array.ConvertAll(((ArrayList)value).ToArray(), x => x.ToString());
+                case List<string> _:
+                    return ((List<string>)value).ToArray();
+                default:
+                    return null;
+            }
         }
     }
 }
