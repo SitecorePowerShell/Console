@@ -7,6 +7,7 @@
       
       <Stylesheet runat="server" Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="Ribbon.css" DeviceDependant="true" />
+      <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/Console.css" DeviceDependant="true" />
       <Stylesheet runat="server" Src="/sitecore modules/PowerShell/Styles/ise.css" DeviceDependant="true" />
