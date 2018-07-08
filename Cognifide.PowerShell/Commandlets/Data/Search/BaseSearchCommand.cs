@@ -10,7 +10,6 @@ using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data;
 using Sitecore.Data.Items;
-using Sitecore.Mvc.Extensions;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
@@ -35,9 +34,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     {
                         case (FilterType.DescendantOf):
                             var ancestorId = string.Empty;
-                            if (criteria.Value is Item)
+                            if (criteria.Value is Item item)
                             {
-                                ancestorId = ((Item)criteria.Value).ID.ToShortID().ToString();
+                                ancestorId = item.ID.ToShortID().ToString();
                             }
                             else if (ID.IsID(criteria.Value.ToString()))
                             {
@@ -90,15 +89,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             var valuesAny = ObjectToStringArray(criteria.Value);
-                            for (var i = 0; i < valuesAny.Length; i++)
-                            {
-                                if (!ID.IsID(valuesAny[i])) continue;
-
-                                var item = valuesAny[i];
-                                item = ID.Parse(item).ToShortID().ToString().ToLower();
-                                valuesAny[i] = item;
-                            }
-
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
                                 : predicate.AddPredicate(valuesAny.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.Or(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
@@ -110,15 +100,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                             }
 
                             var valuesAll = ObjectToStringArray(criteria.Value);
-                            for (var i = 0; i < valuesAll.Length; i++)
-                            {
-                                if (!ID.IsID(valuesAll[i])) continue;
-
-                                var item = valuesAll[i];
-                                item = ID.Parse(item).ToShortID().ToString().ToLower();
-                                valuesAll[i] = item;
-                            }
-
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
                                 : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
@@ -179,17 +160,17 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             {
                 switch (value)
                 {
-                    case string[] _:
-                        value = (string[])value;
+                    case string[] s:
+                        value = s;
                         break;
-                    case DateTime[] _:
-                        value = (DateTime[])value;
+                    case DateTime[] datetime:
+                        value = datetime;
                         break;
-                    case double[] _:
-                        value = (double[])value;
+                    case double[] d:
+                        value = d;
                         break;
-                    case int[] _:
-                        value = (int[])value;
+                    case int[] i:
+                        value = i;
                         break;
                 }
             }
@@ -233,21 +214,47 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             return predicate;
         }
 
-        private static string[] ObjectToStringArray(object value)
+        private static IEnumerable<string> ObjectToStringArray(object value)
         {
+            string[] values = null;
             switch (value)
             {
                 case string[] _:
                     return (string[])value;
+                case Item[] _:
+                    values = ((Item[])value).Select(x => x.ID.ToString()).ToArray();
+                    break;
                 case object[] _:
-                    return Array.ConvertAll((object[])value, x => x.ToString());
+                    if (value is PSObject[] items)
+                    {
+                        values = items.Select(x => ((Item)x.BaseObject).ID.ToString()).ToArray();
+                    }
+                    else
+                    {
+                        values = Array.ConvertAll((object[])value, x => x.ToString());
+                    }
+
+                    break;
                 case ArrayList _:
-                    return Array.ConvertAll(((ArrayList)value).ToArray(), x => x.ToString());
+                    values = Array.ConvertAll(((ArrayList)value).ToArray(), x => x.ToString());
+                    break;
                 case List<string> _:
-                    return ((List<string>)value).ToArray();
-                default:
-                    return null;
+                    values = ((List<string>)value).ToArray();
+                    break;
             }
+
+            if (values != null)
+            {
+                for (var i = 0; i < values.Length; i++)
+                {
+                    if (!ID.IsID(values[i])) continue;
+
+                    var id = values[i];
+                    values[i] = ID.Parse(id).ToShortID().ToString().ToLower();
+                }
+            }
+
+            return values;
         }
     }
 }
