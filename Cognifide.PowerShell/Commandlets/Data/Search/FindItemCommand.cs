@@ -59,7 +59,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 // get all items in medialibrary
                 IQueryable<SearchResultItem> query = context.GetQueryable<SearchResultItem>();
 
-                
+
 
                 if (!string.IsNullOrEmpty(Where))
                 {
@@ -87,7 +87,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     }
                     query = query.Where(expression);
                 }
-                
+
                 if (!string.IsNullOrEmpty(OrderBy))
                 {
                     SitecoreVersion.V75.OrNewer(() =>
@@ -100,7 +100,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             }
         }
 
-        private Expression<Func<SearchResultItem,bool>> BuildExpresion(SearchCriteria filter)
+        private Expression<Func<SearchResultItem, bool>> BuildExpresion(SearchCriteria filter)
         {
             var criteria = filter;
             Expression<Func<SearchResultItem, bool>> expression = PredicateBuilder.True<SearchResultItem>();
@@ -114,24 +114,39 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 {
                     case (FilterType.DescendantOf):
                         var ancestorId = string.Empty;
+                        bool useid = true;
                         if (criteria.Value is Item)
                         {
                             ancestorId = ((Item)criteria.Value).ID.ToShortID().ToString();
                         }
                         else if (ID.IsID(criteria.Value.ToString()))
-                        {                            
+                        {
                             ancestorId = ID.Parse(criteria.Value).ToShortID().ToString().ToLower();
+                        }
+                        else if (criteria.Value is string)
+                        {
+                            ancestorId = (string)criteria.Value;
+                            useid = false;
+                            WriteWarning("For better performance, it's recommended to us an Item or an ID when using the filter 'DescendatOf'");
                         }
                         if (string.IsNullOrEmpty(ancestorId))
                         {
-                            WriteError(typeof(ArgumentException), "The root for DescendantOf criteria has to be an Item or an ID.", ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
+                            WriteError(typeof(ArgumentException), "The root for DescendantOf criteria has to be an Item, an ID or a string with the path.", ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
                             break;
                         }
 
-
-                        expression = criteria.Invert
-                   ? PredicateBuilder.Create<SearchResultItem>(i => !i["_path"].Contains(ancestorId))
-                   : PredicateBuilder.Create<SearchResultItem>(i => i["_path"].Contains(ancestorId));
+                        if (useid)
+                        {
+                            expression = criteria.Invert
+                       ? PredicateBuilder.Create<SearchResultItem>(i => !i["_path"].Equals(ancestorId))
+                       : PredicateBuilder.Create<SearchResultItem>(i => i["_path"].Equals(ancestorId));
+                        }
+                        else
+                        {
+                            expression = criteria.Invert
+                      ? PredicateBuilder.Create<SearchResultItem>(i => !i.Path.Contains(ancestorId))
+                      : PredicateBuilder.Create<SearchResultItem>(i => i.Path.Contains(ancestorId));
+                        }
 
                         break;
 
