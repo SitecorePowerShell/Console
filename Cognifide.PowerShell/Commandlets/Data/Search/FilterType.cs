@@ -12,6 +12,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         DescendantOf,
         Fuzzy,
         InclusiveRange,
-        ExclusiveRange
+        ExclusiveRange,
+        MatchesRegex,
+        MatchesWildcard
     }
 }

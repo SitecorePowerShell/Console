@@ -141,6 +141,20 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         case (FilterType.ExclusiveRange):
                             predicate = GetRangeExpression(predicate, criteria, operation);
                             break;
+                        case FilterType.MatchesRegex:
+                            var regex = criteria.StringValue;
+
+                            predicate = criteria.Invert
+                                ? predicate.AddPredicate(i => !i[criteria.Field].Matches(regex).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].Matches(regex).Boost(boost), operation);
+                            break;
+                        case FilterType.MatchesWildcard:
+                            var wildcard = criteria.StringValue;
+
+                            predicate = criteria.Invert
+                                ? predicate.AddPredicate(i => !i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i[criteria.Field].MatchWildcard(wildcard).Boost(boost), operation);
+                            break;
                     }
                 }
             }
