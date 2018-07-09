@@ -186,7 +186,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 var clearfix = false;
                 var floatRight = false;
                 var height = variable["Height"] as string;
-                var validator   = variable["Validator"] as ScriptBlock;
+                var validator = variable["Validator"] as ScriptBlock;
 
                 if (fieldNames.Contains(name))
                 {
@@ -249,7 +249,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 {
                     if (!string.IsNullOrEmpty(title))
                     {
-                        var fieldLabel = new Label {Header = title, Class = "varTitle", For = name};
+                        var fieldLabel = new Label { Header = title, Class = "varTitle", For = name };
                         variableWrapper.Controls.Add(fieldLabel);
                     }
 
@@ -294,7 +294,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 variableWrapper.Controls.Add(variableValidator);
 
                 AddRelatedAttributes(variable, variableWrapper);
-                    
+
                 // add wrapper to the container
                 container.Controls.Add(variableWrapper);
             }
@@ -660,7 +660,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     break;
                 case IEnumerable _:
                     values =
-                        ((IEnumerable) value).Cast<object>()
+                        ((IEnumerable)value).Cast<object>()
                         .Select(s => s?.ToString() ?? "")
                         .ToArray();
                     break;
@@ -710,6 +710,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 combo.Controls.Add(option);
             }
 
+            var useTooltips = optionTooltips.Count > 0;
             foreach (var option in options.Keys)
             {
                 var optionName = option.ToString();
@@ -720,11 +721,15 @@ namespace Cognifide.PowerShell.Client.Applications
                     Value = optionValue
                 };
 
-                if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
+                if (useTooltips)
                 {
-                    var optionTitle = optionTooltips[optionValue].ToString();
-                    item.ToolTip = optionTitle;
+                    if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
+                    {
+                        var optionTitle = optionTooltips[optionValue].ToString();
+                        item.ToolTip = optionTitle;
+                    }
                 }
+
                 combo.Controls.Add(item);
             }
 
