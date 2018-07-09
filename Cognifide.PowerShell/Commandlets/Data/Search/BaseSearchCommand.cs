@@ -32,51 +32,35 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                         : StringComparison.OrdinalIgnoreCase;
                     switch (criteria.Filter)
                     {
-                        case (FilterType.DescendantOf):
-                            var ancestorId = string.Empty;
-                            if (criteria.Value is Item item)
-                            {
-                                ancestorId = item.ID.ToShortID().ToString();
-                            }
-                            else if (ID.IsID(criteria.Value.ToString()))
-                            {
-                                ancestorId = ((ID)criteria.Value).ToShortID().ToString().ToLower();
-                            }
+                        case FilterType.DescendantOf:
+                            var root = ObjectToString(criteria.Value);
 
-                            if (string.IsNullOrEmpty(ancestorId))
+                            if (string.IsNullOrEmpty(root) || !ShortID.IsShortID(root))
                             {
                                 WriteError(typeof(ArgumentException),
-                                    "The root for DescendantOf criteria has to be an Item or an ID.",
+                                    "The value for DescendantOf criteria must be an Item or ID.",
                                     ErrorIds.InvalidOperation, ErrorCategory.InvalidArgument, criteria.Value);
                                 return null;
                             }
 
                             predicate = criteria.Invert
-                                ? predicate.AddPredicate(i => !i["_path"].Contains(ancestorId).Boost(boost), operation)
-                                : predicate.AddPredicate(i => i["_path"].Contains(ancestorId).Boost(boost), operation);
+                                ? predicate.AddPredicate(i => !i["_path"].Contains(root).Boost(boost), operation)
+                                : predicate.AddPredicate(i => i["_path"].Contains(root).Boost(boost), operation);
                             break;
-                        case (FilterType.StartsWith):
-                            var startsWith = criteria.StringValue;
-                            if (ID.IsID(startsWith))
-                            {
-                                startsWith = ID.Parse(startsWith).ToShortID().ToString().ToLower();
-                            }
+                        case FilterType.StartsWith:
+                            var startsWith = ObjectToString(criteria.Value);
 
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(i => !i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i[criteria.Field].StartsWith(startsWith, comparer).Boost(boost), operation);
                             break;
-                        case (FilterType.Contains):
+                        case FilterType.Contains:
                             if (comparer == StringComparison.OrdinalIgnoreCase && criteria.CaseSensitive.HasValue)
                             {
                                 WriteWarning("Case insensitiveness is not supported on Contains criteria due to platform limitations.");
                             }
 
-                            var contains = criteria.StringValue;
-                            if (ID.IsID(contains))
-                            {
-                                contains = ID.Parse(contains).ToShortID().ToString().ToLower();
-                            }
+                            var contains = ObjectToString(criteria.Value);
 
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(i => !i[criteria.Field].Contains(contains).Boost(boost), operation)
@@ -104,41 +88,29 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                                 ? predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => !((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))))
                                 : predicate.AddPredicate(valuesAll.Aggregate(PredicateBuilder.True<SearchResultItem>(), (current, keyword) => current.And(c => ((string)c[(ObjectIndexerKey)criteria.Field]).Contains(keyword))));
                             break;
-                        case (FilterType.EndsWith):
-                            var endsWith = criteria.StringValue;
-                            if (ID.IsID(endsWith))
-                            {
-                                endsWith = ID.Parse(endsWith).ToShortID().ToString().ToLower();
-                            }
+                        case FilterType.EndsWith:
+                            var endsWith = ObjectToString(criteria.Value);
 
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(i => !i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i[criteria.Field].EndsWith(endsWith, comparer).Boost(boost), operation);
                             break;
-                        case (FilterType.Equals):
-                            var equals = criteria.StringValue;
-                            if (ID.IsID(equals))
-                            {
-                                equals = ID.Parse(equals).ToShortID().ToString().ToLower();
-                            }
+                        case FilterType.Equals:
+                            var equals = ObjectToString(criteria.Value);
 
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(i => !i[criteria.Field].Equals(equals, comparer).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i[criteria.Field].Equals(equals, comparer).Boost(boost), operation);
                             break;
-                        case (FilterType.Fuzzy):
-                            var fuzzy = criteria.StringValue;
-                            if (ID.IsID(fuzzy))
-                            {
-                                fuzzy = ID.Parse(fuzzy).ToShortID().ToString().ToLower();
-                            }
+                        case FilterType.Fuzzy:
+                            var fuzzy = ObjectToString(criteria.Value);
 
                             predicate = criteria.Invert
                                 ? predicate.AddPredicate(i => !i[criteria.Field].Like(fuzzy).Boost(boost), operation)
                                 : predicate.AddPredicate(i => i[criteria.Field].Like(fuzzy).Boost(boost), operation);
                             break;
-                        case (FilterType.InclusiveRange):
-                        case (FilterType.ExclusiveRange):
+                        case FilterType.InclusiveRange:
+                        case FilterType.ExclusiveRange:
                             predicate = GetRangeExpression(predicate, criteria, operation);
                             break;
                         case FilterType.MatchesRegex:
@@ -228,6 +200,28 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             return predicate;
         }
 
+        private static string ObjectToString(object value)
+        {
+            string convertedValue;
+
+            switch (value)
+            {
+                case Item item:
+                    convertedValue = item.ID.ToString();
+                    break;
+                default:
+                    convertedValue = value.ToString();
+                    break;
+            }
+
+            if (ID.IsID(convertedValue))
+            {
+                convertedValue = ID.Parse(convertedValue).ToShortID().ToString().ToLower();
+            }
+
+            return convertedValue;
+        }
+
         private static IEnumerable<string> ObjectToStringArray(object value)
         {
             string[] values = null;
@@ -247,7 +241,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     {
                         values = Array.ConvertAll((object[])value, x => x.ToString());
                     }
-
                     break;
                 case ArrayList _:
                     values = Array.ConvertAll(((ArrayList)value).ToArray(), x => x.ToString());
