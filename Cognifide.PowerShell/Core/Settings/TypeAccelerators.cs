@@ -18,6 +18,7 @@ namespace Cognifide.PowerShell.Core.Settings
         public static Dictionary<string, Type> SitecoreAccelerators = new Dictionary<string, Type>
         {
             {"Item", typeof(Item)},
+            {"ID", typeof(ID)},
             {"AccountIdentity", typeof(AccountIdentity)},
             {"SearchResultItem", typeof(SearchResultItem)},
             {"Database", typeof(Database)},
@@ -25,8 +26,8 @@ namespace Cognifide.PowerShell.Core.Settings
             {"User", typeof(User)},
             {"Role", typeof(Role)},
             {"AccessRule", typeof(AccessRule)},
-            {"SitecoreVersion", typeof(Cognifide.PowerShell.Core.VersionDecoupling.SitecoreVersion)},
-            {"CurrentSitecoreVersion", typeof(Cognifide.PowerShell.Core.VersionDecoupling.CurrentVersion)},
+            {"SitecoreVersion", typeof(VersionDecoupling.SitecoreVersion)},
+            {"CurrentSitecoreVersion", typeof(VersionDecoupling.CurrentVersion)},
         };
 
         public static Dictionary<string,Type> AllAccelerators {
