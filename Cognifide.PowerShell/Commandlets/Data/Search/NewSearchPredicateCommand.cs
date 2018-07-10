@@ -14,7 +14,6 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
     [OutputType(typeof(SearchResultItem))]
     public class NewSearchPredicateCommand : BaseSearchCommand
     {
-
         [Parameter(ParameterSetName = "Criteria", Mandatory = true)]
         public SearchCriteria[] Criteria { get; set; }
 

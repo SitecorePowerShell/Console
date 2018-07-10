@@ -26,6 +26,7 @@ using Sitecore.Shell.Applications.ContentEditor;
 using Sitecore.Shell.Applications.Dialogs.RulesEditor;
 using Sitecore.Shell.Applications.Rules;
 using Sitecore.StringExtensions;
+using Sitecore.Text;
 using Sitecore.Web;
 using Sitecore.Web.UI.HtmlControls;
 using Sitecore.Web.UI.Sheer;
@@ -366,11 +367,20 @@ namespace Cognifide.PowerShell.Client.Applications
             };
 
             var showActions = editor.IndexOf("action", StringComparison.OrdinalIgnoreCase) > -1;
+            var source = variable["Source"] as string;
+            var rulesPath = string.Empty;
+            if (!string.IsNullOrEmpty(source) && source.ToLowerInvariant().Contains("rulespath"))
+            {
+                var urlString = new UrlString(source);
+                rulesPath = urlString["rulespath"];
+                var hideActions = urlString["hideactions"];
+                showActions = !MainUtil.GetBool(hideActions, !showActions);
+            }
             var rulesEditButton = new Button
             {
                 Header = Texts.PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule,
                 Class = "scButton edit-button rules-edit-button",
-                Click = $"EditConditionClick(\"{editorId}\",\"{showActions}\")"
+                Click = $"EditConditionClick(\"{editorId}\",\"{showActions}\", \"{rulesPath}\")"
             };
 
             rulesBorder.Controls.Add(rulesEditButton);
@@ -1232,10 +1242,10 @@ namespace Cognifide.PowerShell.Client.Applications
             SheerResponse.CloseWindow();
         }
 
-        protected void EditConditionClick(string id, string showActions)
+        protected void EditConditionClick(string id, string showActions, string rulespath)
         {
             Assert.ArgumentNotNull(id, "id");
-            var parameters = new NameValueCollection { ["id"] = id, ["showActions"] = showActions };
+            var parameters = new NameValueCollection { ["id"] = id, ["showActions"] = showActions, ["rulespath"] = rulespath };
 
             Sitecore.Context.ClientPage.Start(this, "EditCondition", parameters);
         }
@@ -1259,11 +1269,13 @@ namespace Cognifide.PowerShell.Client.Applications
                     }
 
                     var hideActions = !MainUtil.GetBool(args.Parameters["showActions"], false);
-
+                    var rulesPath = !string.IsNullOrEmpty(args.Parameters["rulespath"])
+                        ? args.Parameters["rulespath"]
+                        : "/sitecore/system/Settings/Rules/PowerShell";
                     var options = new RulesEditorOptions
                     {
                         IncludeCommon = true,
-                        RulesPath = "/sitecore/system/Settings/Rules/PowerShell",
+                        RulesPath = rulesPath,
                         AllowMultiple = false,
                         Value = rule,
                         HideActions = hideActions

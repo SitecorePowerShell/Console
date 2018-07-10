@@ -5,11 +5,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using Cognifide.PowerShell.Core.Extensions;
+using Sitecore.Configuration;
+using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Rules;
 
 namespace Cognifide.PowerShell.Commandlets.Data.Search
 {
@@ -262,6 +265,37 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             }
 
             return values;
+        }
+
+        public static Expression<Func<SearchResultItem, bool>> ProcessQueryRules(IProviderSearchContext context, string queryFilter, SearchOperation operation)
+        {
+            var predicate = operation == SearchOperation.Or
+                ? PredicateBuilder.False<SearchResultItem>()
+                : PredicateBuilder.True<SearchResultItem>();
+
+            var crawler = context.Index.Crawlers.FirstOrDefault(c => c is SitecoreItemCrawler);
+            if (crawler == null) return predicate;
+            
+            var database = ((SitecoreItemCrawler)crawler).Database;
+            if (string.IsNullOrEmpty(database)) return predicate;
+
+            var ruleFactory = new Sitecore.ContentSearch.Rules.QueryableRuleFactory();
+            var rules = ruleFactory.ParseRules<Sitecore.ContentSearch.Rules.QueryableRuleContext<SearchResultItem>>(Factory.GetDatabase(database), queryFilter);
+            foreach (var rule in rules.Rules)
+            {
+                if (rule.Condition == null) continue;
+
+                var ruleContext = new Sitecore.ContentSearch.Rules.QueryableRuleContext<SearchResultItem>(context);
+                var stack = new RuleStack();
+                rule.Condition.Evaluate(ruleContext, stack);
+                rule.Execute(ruleContext);
+                if (stack.Any())
+                {
+                    predicate = ruleContext.Where;
+                }
+            }
+
+            return predicate;
         }
     }
 }

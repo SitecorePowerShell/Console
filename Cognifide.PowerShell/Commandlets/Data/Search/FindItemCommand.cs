@@ -7,7 +7,6 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Validation;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore.ContentSearch;
-using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.SearchTypes;
 using Sitecore.ContentSearch.Utilities;
 
@@ -37,6 +36,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
         [Parameter(ParameterSetName = "Predicate")]
         public Expression<Func<SearchResultItem, bool>> Predicate { get; set; }
+
+        [Parameter(ParameterSetName = "RulePredicate")]
+        public string RulePredicate { get; set; }
 
         [Parameter]
         public string OrderBy { get; set; }
@@ -78,6 +80,13 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                 if (Predicate != null)
                 {
                     query = query.Where(Predicate);
+                }
+
+                if (RulePredicate != null)
+                {
+                    var predicate = ProcessQueryRules(context, RulePredicate, SearchOperation.And);
+
+                    query = query.Where(predicate);
                 }
 
                 if (!string.IsNullOrEmpty(OrderBy))
