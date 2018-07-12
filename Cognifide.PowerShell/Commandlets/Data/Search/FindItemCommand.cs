@@ -37,8 +37,8 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
         [Parameter(ParameterSetName = "Predicate")]
         public Expression<Func<SearchResultItem, bool>> Predicate { get; set; }
 
-        [Parameter(ParameterSetName = "RulePredicate")]
-        public string RulePredicate { get; set; }
+        [Parameter(ParameterSetName = "ScopeQuery")]
+        public string ScopeQuery { get; set; }
 
         [Parameter]
         public string OrderBy { get; set; }
@@ -82,11 +82,9 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
                     query = query.Where(Predicate);
                 }
 
-                if (RulePredicate != null)
+                if (ScopeQuery != null)
                 {
-                    var predicate = ProcessQueryRules(context, RulePredicate, SearchOperation.And);
-
-                    query = query.Where(predicate);
+                    query = ProcessScopeQuery(context, ScopeQuery);
                 }
 
                 if (!string.IsNullOrEmpty(OrderBy))

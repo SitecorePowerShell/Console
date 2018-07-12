@@ -1,13 +1,13 @@
 ﻿---
-ID: "2da764e0-8294-4f9f-972d-3f79b0afd223"
+ID: "1968b9ad-09ff-41ea-9440-1bc806a5d163"
 Parent: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
 Template: "e269fbb5-3750-427a-9149-7aa950b49301"
-Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Report
+Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Search
 DB: master
 SharedFields:
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 300
+  Value: 100
 Languages:
 - Language: en
   Versions:
@@ -15,8 +15,4 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20160709T154843
-    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
-      Hint: __Created by
-      Value: |
-        sitecore\admin
+      Value: 20180710T222315Z

@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"
   Hint: RootItem
-  Value: "{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}"
+  Value: 
 - ID: "37d9ed28-c31b-4686-8564-a0f181721640"
   Hint: FilterRule
   Type: Rules
@@ -63,3 +63,6 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+      Hint: Query
+      Value: "+location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};template:{f1828a2c-7e5d-4bbd-98ca-320474871548};template:{c97ba923-8009-4858-bdd5-d8be5fccecf7};template:{daf085e8-602e-43a6-8299-038ff171349f};template:{eb3fb96c-d56b-4ac9-97f8-f07b24bb9bf7}"

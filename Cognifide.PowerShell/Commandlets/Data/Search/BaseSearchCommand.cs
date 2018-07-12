@@ -10,6 +10,7 @@ using Sitecore.ContentSearch;
 using Sitecore.ContentSearch.Linq;
 using Sitecore.ContentSearch.Linq.Utilities;
 using Sitecore.ContentSearch.SearchTypes;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Rules;
@@ -275,7 +276,7 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
 
             var crawler = context.Index.Crawlers.FirstOrDefault(c => c is SitecoreItemCrawler);
             if (crawler == null) return predicate;
-            
+
             var database = ((SitecoreItemCrawler)crawler).Database;
             if (string.IsNullOrEmpty(database)) return predicate;
 
@@ -296,6 +297,26 @@ namespace Cognifide.PowerShell.Commandlets.Data.Search
             }
 
             return predicate;
+        }
+
+        public static IQueryable<SearchResultItem> ProcessScopeQuery(IProviderSearchContext context, string scope)
+        {
+            var searchStringModel = SearchStringModel.ParseDatasourceString(scope).ToList();
+            var query = LinqHelper.CreateQuery<SearchResultItem>(context, searchStringModel);
+            query = AddSorting(query, searchStringModel);
+            return query;
+        }
+
+
+        private static IQueryable<SearchResultItem> AddSorting(IQueryable<SearchResultItem> query, IEnumerable<SearchStringModel> model)
+        {
+            foreach (var searchStringModel in model.Where(m => m.Type == "sort"))
+            {
+                var isDesc = searchStringModel.Value.EndsWith("[desc]", StringComparison.OrdinalIgnoreCase);
+                var key = isDesc ? searchStringModel.Value.Substring(0, searchStringModel.Value.Length - "[desc]".Length).Trim() : searchStringModel.Value.Trim();
+                query = query.OrderBy(key);
+            }
+            return query;
         }
     }
 }

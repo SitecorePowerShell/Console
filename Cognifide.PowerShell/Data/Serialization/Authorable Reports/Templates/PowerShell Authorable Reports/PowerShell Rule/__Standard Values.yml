@@ -4,6 +4,10 @@ Parent: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
 Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/__Standard Values
 DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
 Languages:
 - Language: en
   Versions:

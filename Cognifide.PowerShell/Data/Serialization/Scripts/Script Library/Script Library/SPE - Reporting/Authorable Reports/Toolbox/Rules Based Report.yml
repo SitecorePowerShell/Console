@@ -13,6 +13,7 @@ SharedFields:
   Value: |
     Import-Function -Name Render-ReportField
     Import-Function -Name Get-ReportRule
+    Import-Function -Name Get-ReportQuery
     # Set defaults
     
     $ignoredFields = "__Standard values", "__Tracking", "__Source", "__Help link", "__Renderings", "__Final Renderings", "__Renderers", "__Controller", 
@@ -36,39 +37,54 @@ SharedFields:
         $ruleOptions[$ruleItem.Name] = $i
     }
     $ruleIndex = 0
-    $includes = [ordered]@{ "Recursively include all children"="Recurse"; "Include Root Item"="Root"; "Show Raw Values"="Raw" }
-    $include = @("Recurse", "Root")
     
-    $rootOverride = ""
-    $result = Read-Variable -Parameters `
-        @{Name="ruleIndex"; Title="Filter rules"; Options=$ruleOptions; Tooltip="Only items conforming to this rule will be returned."}, `
-        @{Name="rootOverride"; Title="Override root"; Tooltip="Overrides the default location. Items under the selected item will be considered for evaluation."; Editor="droptree"}, `
-        @{Name="include"; Title="Additional Options"; Editor="checklist"; Options=$includes} `
-        -Description "Choose the starting location and filtering criteria for the report." `
-        -Title $dialogTitle -Width 600 -Height 600 -ShowHints -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    $reportDialogProps = @{
+        Parameters = @(
+            @{Name="ruleIndex"; Title="Rule Report"; Options=$ruleOptions; Tooltip="Select the preconfigured report rule."}
+        )
+        Title = $dialogTitle
+        Description = "Authorable reports driven by queries and rules."
+        ShowHints = $true
+        Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    }
     
+    $result = Read-Variable @reportDialogProps
     if($result -eq "cancel"){
         Close-Window
         exit
     }
     
     $rootItemId = @{$true=$ruleItems[$ruleIndex].RootItem; $false=[Sitecore.ItemIDs]::ContentRoot}[(Test-Path -Path "master:\$($ruleItems[$ruleIndex].RootItem)")]
-    $root = Get-Item -Path "master:" -ID $rootItemId
-    if($rootOverride) {
-        $root = $rootOverride
+    $root = $null
+    if($rootItemId) {
+        $root = Get-Item -Path "master:" -ID $rootItemId
     }
-    $rule = Get-ReportRule -ID ($ruleItems[$ruleIndex].ID) 
-    $rawValues = $include.Contains("Raw")
+    $reportName = Get-Item -Path "master:" -ID $ruleItems[$ruleIndex].ID | Select-Object -Expand Name
+    $rule = Get-ReportRule -ID ($ruleItems[$ruleIndex].ID)
+    $scopeQuery = Get-ReportQuery -ID ($ruleItems[$ruleIndex].ID)
     
     # Lookup all fields for the content used.
-    
-    $templateFields = Find-Item -Criteria @{
+    $useScopeQuery = $false
+    if($scopeQuery) {
+        $indexedItems = Find-Item -Index sitecore_master_index -ScopeQuery $scopeQuery | 
+            Initialize-Item | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
+        $useScopeQuery = $true
+    } else {
+        $indexedItems = Find-Item -Criteria @{
             Filter = "DescendantOf"; Value = $root
-        } -Index sitecore_master_index | Initialize-Item |
-        Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master} |
+        } -Index sitecore_master_index | Initialize-Item | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
+    }
+    
+    $templateLookup = @{}
+    $indexedItems |
         Select-Object -ExpandProperty TemplateId -Unique |  
-        ForEach-Object { New-Object Sitecore.Data.Items.TemplateItem (Get-Item -Path "master:" -ID "$_") } | 
-        ForEach-Object { $_.Fields } | 
+        ForEach-Object { 
+            if(!$templateLookup[$_]) {
+                $templateLookup[$_] = New-Object Sitecore.Data.Items.TemplateItem (Get-Item -Path "master:" -ID "$_")
+            }
+        }
+    
+    $templateFields = $templateLookup.Values | ForEach-Object { $_.Fields } | 
         Where-Object { $ignoredFields -notcontains $_.Name } | 
         Select-Object Name, Title, Type -Unique | Sort-Object Name
     
@@ -103,10 +119,10 @@ SharedFields:
     $titles = [ordered]@{}
     
     foreach($field in $stdOptions.Keys){
-        $titles[$stdOptions[$field]] = $field
+        $titles[$stdOptions[$field]] = $stdOptions[$field]
     }
     foreach($field in $customOptions.Keys){
-        $titles[$customOptions[$field]] = $field
+        $titles[$customOptions[$field]] = $customOptions[$field]
     }
     
     $saveSettings = $false
@@ -130,18 +146,14 @@ SharedFields:
         $properties += @{Label=$titles[$field]; Expression=$scr}
     }
     
-    $AuthorableData = @{ Properties = $properties; Root = $root.ProviderPath; Recurse = $recurse; Rule = $rule }
     $items = @()
-    if($include.Contains("Root")){
-        $items = @($root) + $items
-    }
-    if($include.Contains("Recurse")) {
-        $items = $items + ($root.Axes.GetDescendants() | Initialize-Item)
+    if($useScopeQuery) {
+        $items = $indexedItems
+    } else {
+        $items = @($root) + ($root.Axes.GetDescendants() | Initialize-Item) | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master }
     }
     
-    $items = $items | Where-Object { Test-Rule -InputObject $_ -Rule $rule -RuleDatabase master}
-    
-    $items | Show-ListView -Property $properties -ViewName AuthorableReport -ActionData $AuthorableData -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Filter Path: $($root.ProviderPath)"
+    $items | Show-ListView -Property $properties -ViewName AuthorableReport -Title $dialogTitle -InfoTitle "Report Details" -InfoDescription "Output based on the $($reportName) report."
     
     if($saveSettings) {
         $ruleItem = Get-Item -Path "master:" -ID ($ruleItems[$ruleIndex].ID)

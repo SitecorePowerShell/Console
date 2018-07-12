@@ -1,24 +1,26 @@
 ﻿---
-ID: "3b93315f-c240-4682-a45f-cdb09d0f2f65"
+ID: "246cf1b3-1f49-42ff-8f51-9f6279397251"
 Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
-Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Reports/Rules/Item has layout"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Reports/Rules/Any item under Content has too many versions"
 DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"
   Hint: RootItem
-  Value: "{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9}"
+  Value: 
 - ID: "37d9ed28-c31b-4686-8564-a0f181721640"
   Hint: FilterRule
   Type: Rules
   Value: |
     <ruleset>
       <rule
-        uid="{2EBF894C-82F8-4105-BEDF-6CDF7926F427}">
+        uid="{9FED5125-45A0-413E-B0C1-88A6B7FE3026}">
         <conditions>
           <condition
-            id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}"
-            uid="C67594BBEF0B47919597A31880D03D12" />
+            id="{105D5494-5EB1-498D-83BB-6AC63A3AA69B}"
+            uid="888023A40BF14344881209E59B145CC7"
+            operatorid="{B88CD556-082E-4385-BB76-E4D1B565F290}"
+            value="10" />
         </conditions>
       </rule>
     </ruleset>
@@ -32,8 +34,11 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20160704T013322
+      Value: 20180106T050856Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |
-        sitecore\admin
+        sitecore\Admin
+    - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+      Hint: Query
+      Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"

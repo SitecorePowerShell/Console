@@ -2,8 +2,12 @@
 ID: "fac6df8b-6987-4ea9-bd09-f5e2997b2739"
 Parent: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
 Template: "e269fbb5-3750-427a-9149-7aa950b49301"
-Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Conditions
+Path: /sitecore/templates/Modules/PowerShell Authorable Reports/PowerShell Rule/Filter
 DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
 Languages:
 - Language: en
   Versions:
