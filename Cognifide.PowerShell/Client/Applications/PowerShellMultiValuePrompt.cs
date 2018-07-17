@@ -897,7 +897,6 @@ namespace Cognifide.PowerShell.Client.Applications
                         ((PasswordExtended)edit).PlaceholderText = placeholder.ToString();
                     }
                     edit.Attributes["type"] = "password";
-                    edit.Name = name;
                 }
                 else
                 {
@@ -921,7 +920,6 @@ namespace Cognifide.PowerShell.Client.Applications
                             edit.Attributes["type"] = "text";
                         }
                     }
-                    edit.Name = name;
                 }
             }
 
