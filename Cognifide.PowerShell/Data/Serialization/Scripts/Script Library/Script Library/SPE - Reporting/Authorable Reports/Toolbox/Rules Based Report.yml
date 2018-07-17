@@ -40,7 +40,8 @@ SharedFields:
     
     $reportDialogProps = @{
         Parameters = @(
-            @{Name="ruleIndex"; Title="Rule Report"; Options=$ruleOptions; Tooltip="Select the preconfigured report rule."}
+            @{Name="ruleIndex"; Title="Rule Report"; Options=$ruleOptions; Tooltip="Select the preconfigured report rule."},
+            @{Name="showFieldSelector"; Title="Show field selector"; Value=$false; }
         )
         Title = $dialogTitle
         Description = "Authorable reports driven by queries and rules."
@@ -125,17 +126,19 @@ SharedFields:
         $titles[$customOptions[$field]] = $customOptions[$field]
     }
     
-    $saveSettings = $false
-    $result = Read-Variable -Parameters `
-        @{ Name="customFields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
-        @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
-        @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
-        -Description "Choose the fields to include in the report." `
-        -Title $dialogTitle -Width 600 -Height 740 -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
-    
-    if($result -eq "cancel"){
-        Close-Window
-        exit
+    if($showFieldSelector) {
+        $saveSettings = $false
+        $result = Read-Variable -Parameters `
+            @{ Name="customFields"; Title="Fields to include"; Options=$customOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Custom Fields"}, `
+            @{ Name="stdFields"; Title="Fields to include"; Options=$stdOptions; Tooltip="Select fields to be shown in the report"; Editor="checklist"; Height="480px"; Tab="Standard Fields"}, `
+            @{ Name="saveSettings"; Title="Save the field selections to the rule."; Tab="Settings"} `
+            -Description "Choose the fields to include in the report." `
+            -Title $dialogTitle -Width 600 -Height 740 -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+        
+        if($result -eq "cancel"){
+            Close-Window
+            exit
+        }
     }
     
     $properties = @()
