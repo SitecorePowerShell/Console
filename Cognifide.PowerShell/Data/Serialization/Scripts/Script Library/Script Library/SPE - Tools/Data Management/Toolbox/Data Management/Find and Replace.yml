@@ -66,28 +66,29 @@ SharedFields:
         )
     }
     
-    $count = 0
-    $modifiedCount = 0
-    $itemsToSearch = @((Find-Item @searchProps | Initialize-Item))
-    $totalCount = $itemsToSearch.Count
-    for($i = 0; $i -lt $totalCount; $i++) {
-        $currentItem = $itemsToSearch[$i]
-    	Write-Host "[Processing $($currentItem.ID) $($i) of $($totalCount)]"
-    	Write-Host " - Item Path: $($currentItem.Paths.Path)"
-    	Write-Host " - Language: $($currentItem.Language), Version: $($currentItem.Version), Item Name: $($currentItem.Name)"
+    $foundItems = @((Find-Item @searchProps | Initialize-Item))
+    
+    $reportItems = [System.Collections.ArrayList]@()
+    foreach($currentItem in $foundItems) {
     	
     	if($shouldReplaceText){
             $newHaystack = $currentItem[$fieldName].Replace($searchText, $replacementText);
             $currentItem.Editing.BeginEdit()
             $currentItem[$fieldName] = $newHaystack
             $currentItem.Editing.EndEdit() > $null
-            $modifiedCount++
     	}
-    	$count++
+    	$reportItems.Add($currentItem) > $null
     }
     
-    Write-Host "`n[Processed $($count)] `n[Modified $($modifiedCount)]"
-    Show-Result -Text
+    $reportProps = @{
+        Property = @(
+            "ID","Name","ItemPath","Language","Version"
+        )
+        Title = "Find and Replace Report"
+        InfoTitle = "Report Details"
+        InfoDescription = "The following report shows items found with the specified criteria."
+    }
+    $reportItems | Show-ListView @reportProps
     Close-Window
 Languages:
 - Language: en
