@@ -163,6 +163,7 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
 .variableWrapperFixedHeight .scRadioGroup { height : 100%; }
 .variableWrapperFixedHeight textArea { height : 100%; }
 .variableWrapper { float: left; width: 100%; box-sizing: border-box; padding-right: 10px; }
+.variableWrapper select { margin-bottom: 0; }
 .rules-edit-button { float: right; margin-left: 8px !important; }
 .varRule { display: flex; border: solid 0 ButtonShadow; border: solid 1px #DDD; padding: 4px 4px 10px 4px; margin-right: 8px; }
 .scRule { display: none; }
