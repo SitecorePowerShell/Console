@@ -1,0 +1,103 @@
+﻿---
+ID: "b15e5729-2e38-43f1-a725-cdd376f9e8c0"
+Parent: "44c09e51-9d3e-42ff-9690-682a97ddf94c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Tools/Data Management/Toolbox/Data Management/Find and Replace"
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/graph_connection_directed.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .LINK
+            https://vandsh.github.io/sitecore/2018/07/13/spe-search-replace-v2.html
+    #>
+    
+    $searchOptions = New-Object System.Collections.Specialized.OrderedDictionary
+    $searchOptions.Add("Value Contains", "Contains")
+    $searchOptions.Add("Exact Match", "Equals")
+    $searchOptions.Add("Close Match", "Fuzzy")
+    
+    $indexOptions = [ordered]@{}
+    foreach($index in Get-SearchIndex | Sort-Object -Property Name) {
+        $indexOptions[$index.Name] = $index.Name
+    }
+    
+    $index="sitecore_master_index";
+    $fieldRequiredValidator = { 
+        if([string]::IsNullOrEmpty($variable.Value)){
+            $variable.Error = "Please provide a value."
+        }
+    }
+    
+    $dialogProps = @{
+        Parameters = @(
+            @{ Name = "searchRoot"; Title="Search Root"; Tooltip="The starting point when performing a search."; Source="Datasource=/sitecore/content/"; editor="droptree"; Columns=7;},
+            @{ Name = "targetIndex"; Value=$index; Title="Target Index"; Tooltip="The index used while performing a search."; Options=$indexOptions; Columns=5;},
+            @{ Name = "fieldName"; Value=""; Title="Field Name"; Tooltip="The field name containing the text."; Placeholder="Title"; Columns=6; Validator=$fieldRequiredValidator;},
+            @{ Name = "searchText"; Value=""; Title="Search Text"; Tooltip="The word or phrase to search."; Placeholder="Sitecore"; Columns=6; Validator=$fieldRequiredValidator;},
+            @{ Name = "searchOption"; Value="Contains"; Title="Search Type"; Tooltip="What type of search do you want to run"; editor="radio"; options=$searchOptions},    
+            @{ Name = "shouldReplaceText"; Value=$false; Title="Check to replace text"; Tooltip="Check when the text should be replaced."; editor="checkbox"; GroupId="ReplaceOption";},
+            @{ Name = "replacementText"; Value=""; Title="Replacement Text"; Tooltip="The keyword or phrase to replace."; Placeholder="Replacement text"; ParentGroupId="ReplaceOption";HideOnValue="0"}
+        )
+        Description = "Find and replace based on the specified text."
+        Title = "Find and Replace"
+        Width = 700
+        Height = 625
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        ShowHint = $true
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    }
+    $result = Read-Variable @dialogProps
+        
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $searchProps = @{
+        Index = $targetIndex
+        Criteria = @(
+            @{Filter = "DescendantOf"; Field = ("master:/" + $searchRoot.Paths.Path) },
+            @{Filter = $searchOption; Field = $fieldName; Value = $searchText}
+        )
+    }
+    
+    $count = 0
+    $modifiedCount = 0
+    $itemsToSearch = @((Find-Item @searchProps | Initialize-Item))
+    $totalCount = $itemsToSearch.Count
+    for($i = 0; $i -lt $totalCount; $i++) {
+        $currentItem = $itemsToSearch[$i]
+    	Write-Host "[Processing $($currentItem.ID) $($i) of $($totalCount)]"
+    	Write-Host " - Item Path: $($currentItem.Paths.Path)"
+    	Write-Host " - Language: $($currentItem.Language), Version: $($currentItem.Version), Item Name: $($currentItem.Name)"
+    	
+    	if($shouldReplaceText){
+            $newHaystack = $currentItem[$fieldName].Replace($searchText, $replacementText);
+            $currentItem.Editing.BeginEdit()
+            $currentItem[$fieldName] = $newHaystack
+            $currentItem.Editing.EndEdit() > $null
+            $modifiedCount++
+    	}
+    	$count++
+    }
+    
+    Write-Host "`n[Processed $($count)] `n[Modified $($modifiedCount)]"
+    Show-Result -Text
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180717T025114Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
