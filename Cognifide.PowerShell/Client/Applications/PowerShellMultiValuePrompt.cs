@@ -571,6 +571,12 @@ namespace Cognifide.PowerShell.Client.Applications
                 Class = "varCheckbox"
             };
 
+            var tip = variable["Tooltip"] as string;
+            if (!string.IsNullOrEmpty(tip))
+            {
+                checkBox.ToolTip = tip.RemoveHtmlTags();
+            }
+
             checkboxBorder.Controls.Add(checkBox);
 
             AddControlAttributes(variable, checkBox);
