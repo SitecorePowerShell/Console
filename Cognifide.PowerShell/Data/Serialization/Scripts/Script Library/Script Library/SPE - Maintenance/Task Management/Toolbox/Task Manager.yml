@@ -17,16 +17,23 @@ SharedFields:
   Value: |
     Import-Function -Name Edit-TaskSchedule
     
-    # Get all the items recursively where the TemplateName equals "Schedule".
-    Get-ChildItem -Path master:\system\Tasks\Schedules -Recurse | Where-Object { $_.TemplateId -eq [Sitecore.TemplateIDs]::Schedule } |
-        Show-ListView -Property @{Label="Name"; Expression={ $_.DisplayName } },
+    $reportProps = @{
+        Title = "Task Manager"
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+        Property = @(
+            @{Label="Name"; Expression={ $_.DisplayName } },
             @{Label="Last Run"; Expression={ (Format-TaskScheduleDate -Date $_."Last Run" -Text "Never") } },
             @{Label="Command"; Expression={ $_.Database.GetItem($_.Command).Name } },
             @{Label="Start Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "from") -Text "Beginning of Time") } },
             @{Label="End Date"; Expression={ (Format-TaskScheduleDate -Date (Parse-TaskSchedule $_ "to") -Text "Forever") } },
             @{Label="Days of the Week"; Expression={ Format-TaskScheduleDay -Days (Parse-TaskSchedule $_ "strWeekdays") -Text "Everyday" } },
-            @{Label="Frequency"; Expression={ Parse-TaskSchedule $_ "interval" } } `
-            -Title "Task Manager"
+            @{Label="Frequency"; Expression={ Parse-TaskSchedule $_ "interval" } }
+        )
+    }
+    # Get all the items recursively where the TemplateName equals "Schedule".
+    Get-ChildItem -Path "master:\system\Tasks\Schedules" -Recurse | 
+        Where-Object { $_.TemplateId -eq [Sitecore.TemplateIDs]::Schedule } |
+        Show-ListView @reportProps
             
     Close-Window
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
