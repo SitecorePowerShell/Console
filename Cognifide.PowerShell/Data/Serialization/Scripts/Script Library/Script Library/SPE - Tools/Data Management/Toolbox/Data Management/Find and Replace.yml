@@ -16,10 +16,11 @@ SharedFields:
             https://vandsh.github.io/sitecore/2018/07/13/spe-search-replace-v2.html
     #>
     
-    $searchOptions = New-Object System.Collections.Specialized.OrderedDictionary
-    $searchOptions.Add("Value Contains", "Contains")
-    $searchOptions.Add("Exact Match", "Equals")
-    $searchOptions.Add("Close Match", "Fuzzy")
+    $searchOptions = [ordered]@{
+        "Value Contains" = "Contains"
+        "Exact Match" = "Equals"
+        "Close Match" = "Fuzzy"
+    }
     
     $indexOptions = [ordered]@{}
     foreach($index in Get-SearchIndex | Sort-Object -Property Name) {
@@ -35,18 +36,18 @@ SharedFields:
     
     $dialogProps = @{
         Parameters = @(
-            @{ Name = "searchRoot"; Title="Search Root"; Tooltip="The starting point when performing a search."; Source="Datasource=/sitecore/content/"; editor="droptree"; Columns=7;},
-            @{ Name = "targetIndex"; Value=$index; Title="Target Index"; Tooltip="The index used while performing a search."; Options=$indexOptions; Columns=5;},
+            @{ Name = "searchRoot"; Title="Search Root"; Tooltip="The starting point when performing a search."; Source="Datasource=/sitecore/content/"; editor="droptree";},
+            @{ Name = "targetIndex"; Value=$index; Title="Target Index"; Tooltip="The index used while performing a search."; Options=$indexOptions; Columns=6;},
+                    @{ Name = "searchOption"; Value="Contains"; Title="Search Type"; Tooltip="What type of search do you want to run"; editor="combo"; options=$searchOptions; Columns=6;}, 
             @{ Name = "fieldName"; Value=""; Title="Field Name"; Tooltip="The field name containing the text."; Placeholder="Title"; Columns=6; Validator=$fieldRequiredValidator;},
-            @{ Name = "searchText"; Value=""; Title="Search Text"; Tooltip="The word or phrase to search."; Placeholder="Sitecore"; Columns=6; Validator=$fieldRequiredValidator;},
-            @{ Name = "searchOption"; Value="Contains"; Title="Search Type"; Tooltip="What type of search do you want to run"; editor="radio"; options=$searchOptions},    
+            @{ Name = "searchText"; Value=""; Title="Search Text"; Tooltip="The word or phrase to search."; Placeholder="SiteCore"; Columns=6; Validator=$fieldRequiredValidator;},
             @{ Name = "shouldReplaceText"; Value=$false; Title="Check to replace text"; Tooltip="Check when the text should be replaced."; editor="checkbox"; GroupId="ReplaceOption";},
-            @{ Name = "replacementText"; Value=""; Title="Replacement Text"; Tooltip="The keyword or phrase to replace."; Placeholder="Replacement text"; ParentGroupId="ReplaceOption";HideOnValue="0"}
+            @{ Name = "replacementText"; Value=""; Title="Replacement Text"; Tooltip="The keyword or phrase to replace."; Placeholder="Sitecore"; ParentGroupId="ReplaceOption";HideOnValue="0"}
         )
         Description = "Find and replace based on the specified text."
         Title = "Find and Replace"
         Width = 700
-        Height = 625
+        Height = 575
         OkButtonName = "Proceed"
         CancelButtonName = "Abort"
         ShowHint = $true
