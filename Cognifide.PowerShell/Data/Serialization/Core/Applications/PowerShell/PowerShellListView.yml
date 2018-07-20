@@ -7,7 +7,7 @@ DB: core
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/chart_donut.png
+  Value: Apps/32x32/Steps.png
 - ID: "094829c2-d7a7-4c38-b025-b99ff2001b56"
   Hint: Disable close
   Type: checkbox
@@ -51,7 +51,7 @@ SharedFields:
   Value: 
 - ID: "fc2b18b3-1631-4c3f-9e47-51df05030026"
   Hint: Icon
-  Value: Office/32x32/chart_donut.png
+  Value: Apps/32x32/Steps.png
 Languages:
 - Language: en
   Versions:
