@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: "apps/32x32/magic-cube.png"
+  Value: Office/32x32/folders2.png
 Languages:
 - Language: en
   Fields:
