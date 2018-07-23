@@ -19,6 +19,8 @@ SharedFields:
     
     $reportProps = @{
         Title = "Task Manager"
+        InfoTitle = "Manage Scheduled Tasks"
+        InfoDescription = "Use the actions to help edit or run scheduled tasks."
         Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
         Property = @(
             @{Label="Name"; Expression={ $_.DisplayName } },
