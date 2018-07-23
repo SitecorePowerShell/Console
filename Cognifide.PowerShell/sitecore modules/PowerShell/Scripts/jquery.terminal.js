@@ -3352,7 +3352,8 @@
                                     .replace(/>/g, '&gt;').replace(/</g, '&lt;');
                             }
                             var result;
-                            if (style.indexOf('!') !== -1) {
+                            // Michael West
+                            if (false && style.indexOf('!') !== -1) {
                                 if (data.match(email_re)) {
                                     result = '<a href="mailto:' + data + '"';
                                 } else {
