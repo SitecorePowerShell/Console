@@ -1,8 +1,8 @@
 ﻿---
 ID: "39dac1c3-c059-471f-867f-9e2b2a56ad42"
-Parent: "3950ec5c-7abc-4b7a-98be-2cdf30ae9fde"
+Parent: "56666c57-4a63-408f-bcbb-3768a6bb6421"
 Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
-Path: "/sitecore/system/Modules/PowerShell/Snippets/Function - Advanced"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Functions/Function - Advanced"
 DB: master
 Languages:
 - Language: en
