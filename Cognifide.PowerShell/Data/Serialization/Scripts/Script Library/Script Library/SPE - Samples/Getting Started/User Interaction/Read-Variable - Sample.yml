@@ -19,7 +19,8 @@ SharedFields:
     $rule = Get-Item -Path "master:" -ID "{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" | Select-Object -Expand ShowRule
     
     $options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
-    $selection = [ordered]@{"None"=1;"Checklist"=2;"Radio Buttons"=3;};
+    $selection = [ordered]@{"None"=1;"Checklist"=2;"Radio Buttons"=3;}
+    $selectionTooltips = [ordered]@{1="No options hidden from the user."}
     
     $result = Read-Variable -Parameters `
         @{ Name = "toggleVisible"; Value=$true; Title="Show Controls"; Tooltip="Checking or unchecking will change hidden state"; Tab="Simple"; Columns = 4; GroupId=1; },
@@ -32,7 +33,7 @@ SharedFields:
         @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
         @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
         @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "anOption"; Value="1"; Title="An Option"; Options=$selection; Tooltip="Choose a control to hide"; Tab="Options"; GroupId = 2; }, 
+        @{ Name = "anOption"; Value="1"; Title="An Option"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Tab="Options"; GroupId = 2; }, 
         @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
         @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }, 
         @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"; ParentGroupId=1; HideOnValue = "0"; }, 
