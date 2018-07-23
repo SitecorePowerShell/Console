@@ -39,6 +39,17 @@ SharedFields:
         </conditions>
       </rule>
     </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $parent = Get-Item -Path "."
+    if($parent) {
+        $name = Show-Input -Prompt "Enter a name for the new item:" -DefaultValue "Rules"
+        if($name) {
+            New-Item -Parent $parent -Name $name -ItemType "{F140551C-B292-4629-8358-817E394C4382}"
+        }
+    }
+    Close-Window
 Languages:
 - Language: en
   Versions:
