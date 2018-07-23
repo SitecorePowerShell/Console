@@ -28,11 +28,11 @@ SharedFields:
     
     $props = @{
         Parameters = @(
-            @{Name="selectedSnippetId"; Title="Choose the snippet to insert"; Options=$snippetOptions; }
+            @{Name="selectedSnippetId"; Title="Choose the snippet to insert"; Tooltip="The selected snippet will be inserted into the editor."; Options=$snippetOptions; }
         )
         Title = "Snippet Selector"
-        Icon = "Office/32x32/piece2.png"
-        Description = "Choose the snippet to insert."
+        Icon = "OfficeWhite/32x32/piece2.png"
+        Description = "Select from a predefined list of code snippets."
         Width = 450
         Height = 300
         ShowHints = $true
