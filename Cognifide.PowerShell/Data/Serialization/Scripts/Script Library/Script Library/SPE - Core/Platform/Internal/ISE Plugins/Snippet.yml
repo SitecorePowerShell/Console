@@ -14,9 +14,11 @@ SharedFields:
     Close-Window
     $snippetTemplateId = [Sitecore.Data.ID]::Parse("{B8BC40A8-1560-42C6-AA05-911C9C140AFE}")
     $snippetFieldId = [Sitecore.Data.ID]::Parse("{C03734C0-EBE6-4BD0-9F5F-1EEE1F862439}")
-    $snippets = Get-ChildItem -Path "master:{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" -Recurse | Where-Object { $_.TemplateID -eq $snippetTemplateId }
+    $snippets = Get-ChildItem -Path "master:{3950EC5C-7ABC-4B7A-98BE-2CDF30AE9FDE}" -Recurse | 
+        Where-Object { $_.TemplateID -eq $snippetTemplateId } |
+        Sort-Object -Property Name
     
-    $snippetOptions = @{}
+    $snippetOptions = [ordered]@{}
     $snippetLookup = @{}
     foreach($snippet in $snippets) {
         $snippetLookup[$snippet.ID.ToString()] = $snippet

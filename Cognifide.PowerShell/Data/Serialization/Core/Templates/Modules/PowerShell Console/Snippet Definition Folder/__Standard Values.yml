@@ -1,0 +1,23 @@
+﻿---
+ID: "b7ac6b4d-3eea-4167-979c-be2bedddb544"
+Parent: "e12f263a-9366-4399-9ddf-eb8f1b7ab3b2"
+Template: "e12f263a-9366-4399-9ddf-eb8f1b7ab3b2"
+Path: /sitecore/templates/Modules/PowerShell Console/Snippet Definition Folder/__Standard Values
+DB: master
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Type: TreelistEx
+  Value: "{B8BC40A8-1560-42C6-AA05-911C9C140AFE}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180723T014141Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
