@@ -617,15 +617,15 @@ namespace Cognifide.PowerShell.Client.Applications
 
             foreach (var option in options.Keys)
             {
-                var optionName = option.ToString();
-                var optionValue = options[optionName].ToString();
+                var optionName = option;
+                var optionValue = options[optionName];
                 var item = new Radiobutton
                 {
-                    Header = optionName,
-                    Value = optionValue,
+                    Header = optionName.ToString(),
+                    Value = optionValue.ToString(),
                     ID = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID(radioList.ID),
                     Name = radioList.ID,
-                    Checked = optionValue == value.ToString()
+                    Checked = optionValue.ToString() == value.ToString()
                 };
 
                 if (optionTooltips.Contains(optionValue) && optionTooltips[optionValue] != null)
@@ -729,12 +729,12 @@ namespace Cognifide.PowerShell.Client.Applications
             var useTooltips = optionTooltips.Count > 0;
             foreach (var option in options.Keys)
             {
-                var optionName = option.ToString();
-                var optionValue = options[optionName].ToString();
+                var optionName = option;
+                var optionValue = options[optionName];
                 var item = new ListItem
                 {
-                    Header = optionName,
-                    Value = optionValue
+                    Header = optionName.ToString(),
+                    Value = optionValue.ToString()
                 };
 
                 if (useTooltips)
