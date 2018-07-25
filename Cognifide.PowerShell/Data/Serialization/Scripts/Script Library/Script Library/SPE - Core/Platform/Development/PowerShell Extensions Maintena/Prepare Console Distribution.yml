@@ -13,18 +13,13 @@ SharedFields:
     
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
-    Get-Item -Path "master:{41605861-08CB-4365-BB6B-5CB20ED97C98}" | Invoke-Script
     
     if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
       $sitecore7Warning = "" 
     } else {
       $sitecore7Warning = @"
     ******************************************************
-    If you are on Sitecore 7.0 - after installing 
-    the package please run the script located under 
-    the following path in your Script Library:
-    
-    'Platform/Development/PowerShell Extensions Maintenance/Restore Rules on Sitecore 7dot0'
+    This version of Sitecore PowerShell Extensions is no longer supported for this version of Sitecore.
     ******************************************************
     "@;
     }
@@ -68,8 +63,8 @@ SharedFields:
     
     Thank you for using Sitecore PowerShell Extensions.
     
-    Copyright (c) 2010-2017 Adam Najmanowicz
-    Copyright (c) 2013-2017 Michael West
+    Copyright (c) 2010-2018 Adam Najmanowicz
+    Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
     http://blog.najmanowicz.com/
@@ -79,13 +74,6 @@ SharedFields:
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
     $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
-    
-    # Rules engine taxonomy templates for Sitecore 7.0 that misses it
-    if([SitecoreVersion]::Current -lt [SitecoreVersion]::V80){
-      $source = Get-Item 'master:\templates\System\Rules\Taxonomy' | New-ItemSource -Name 'Rules Engine Taxonomy' -InstallMode Skip -SkipVersions
-      $package.Sources.Add($source);
-      Write-Host "Adding rules engine taxonomy templates" -ForegroundColor Green
-    }
     
     # Module Root
     $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
@@ -174,7 +162,8 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Files
-    $source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.*" | ? {-not $_.Name.Contains("Serialization") } | New-ExplicitFileSource -Name "Configuration Files"
+    $source = Get-Item "$AppPath\App_Config\Include\*Cognifide.PowerShell*.*" | 
+        Where-Object { -not $_.Name.Contains("Serialization") -and -not $_.Name.Contains("User") } | New-ExplicitFileSource -Name "Configuration Files"
     $package.Sources.Add($source);
     $source = Get-Item "$AppPath\bin\Cognifide.PowerShell*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
     $package.Sources.Add($source);
@@ -186,7 +175,7 @@ SharedFields:
     $package.Sources.Add($source);
     
     #Security Roles
-    $source = Get-Role -Identity "PowerShell Extensions Remoting" | New-SecuritySource -Name "Remoting Role" 
+    $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Remoting Role" 
     $package.Sources.Add($source);
     
     
@@ -234,8 +223,8 @@ SharedFields:
     
     Thank you for using Sitecore PowerShell Extensions.
     
-    Copyright (c) 2010-2016 Adam Najmanowicz
-    Copyright (c) 2013-2016 Michael West
+    Copyright (c) 2010-2018 Adam Najmanowicz
+    Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
     http://blog.najmanowicz.com/
@@ -245,7 +234,8 @@ SharedFields:
     $source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
-    $source = Get-Item 'master:\system\Modules\PowerShell\Script Library\Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+    # Authorable Reports
+    $source = Get-Item -Path "master:" -ID "{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}" | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
     $packageName = "$($package.Name)-$Version";
