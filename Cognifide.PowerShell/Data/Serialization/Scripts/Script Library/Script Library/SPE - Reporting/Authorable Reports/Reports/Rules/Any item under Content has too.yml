@@ -26,7 +26,7 @@ SharedFields:
     </ruleset>
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
-  Value: DisplayName|TemplateName
+  Value: DisplayName|TemplateName|ItemPath|NewsDate|Title
 Languages:
 - Language: en
   Versions:
