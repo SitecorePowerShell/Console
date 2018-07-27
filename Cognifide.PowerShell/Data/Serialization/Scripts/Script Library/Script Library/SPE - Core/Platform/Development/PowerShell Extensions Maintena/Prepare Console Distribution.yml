@@ -19,7 +19,7 @@ SharedFields:
     } else {
       $sitecore7Warning = @"
     ******************************************************
-    This version of Sitecore PowerShell Extensions is no longer supported for this version of Sitecore.
+    This version of Sitecore PowerShell Extensions is not supported for this version of Sitecore.
     ******************************************************
     "@;
     }
@@ -28,7 +28,7 @@ SharedFields:
     
     # Build Standard Package
     
-    $package = new-package "Sitecore PowerShell Extensions";
+    $package = New-Package "Sitecore PowerShell Extensions";
     $package.Sources.Clear();
     
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
@@ -119,9 +119,9 @@ SharedFields:
     $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
     $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | 
-        ? { -not ($_.Name -eq "Authorable Reports") } | # Skip Authorable Reports
-        ? { -not ($_.Name.StartsWith("__")) } | # Skip test libraries
-        %{ Get-ChildItem "$($_.ProviderPath)" -WithParent -Recurse} | 
+        Where-Object { -not ($_.Name.StartsWith("__")) } | # Skip test libraries
+        Where-Object { -not ($_.Name.StartsWith("X-")) } | # Skip test libraries
+        ForEach-Object { Get-ChildItem "$($_.ProviderPath)" -Recurse -WithParent | Where-Object { <#Skip Authorable Reports#> $_.Paths.LongID -notlike "*/{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}*" } } | 
         New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
     $package.Sources.Add($source);
     
@@ -207,7 +207,7 @@ SharedFields:
     
     # Build Standard Package
     
-    $package = new-package "Sitecore PowerShell Extensions - Authorable Reports";
+    $package = New-Package "Sitecore PowerShell Extensions - Authorable Reports";
     $package.Sources.Clear();
     
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
