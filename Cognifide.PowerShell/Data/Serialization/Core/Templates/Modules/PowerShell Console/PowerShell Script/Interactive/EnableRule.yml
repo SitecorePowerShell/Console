@@ -26,7 +26,7 @@ Languages:
     Value: Enable Rule
   - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
     Hint: __Long description
-    Value: Enabled status is evaluated for Content Editor integration points such as those seen in the Context Menu and Ribbon.
+    Value: Enabled status is evaluated for integration points such as those seen in the Context Menu and Ribbon.
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
     Value: Determines enabled status when rule is met or not defined
@@ -35,7 +35,7 @@ Languages:
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20130818T052300
+      Value: 20130818T102300Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

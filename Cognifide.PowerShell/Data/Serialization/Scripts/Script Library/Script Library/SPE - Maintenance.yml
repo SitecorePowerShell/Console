@@ -4,8 +4,16 @@ Parent: "a3572733-5062-43e9-a447-54698bc1c637"
 Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
 Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Maintenance"
 DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Bundle of maintenance scripts that can assist you in keeping your solution running solid.
   Versions:
   - Version: 1
     Fields:
