@@ -13,7 +13,7 @@ Languages:
       Hint: __Created
       Value: 20180107T022511Z
     - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
-      Hint: Text
+      Hint: Script
       Value: |
         switch ($x) {
             'value1' {}

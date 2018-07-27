@@ -13,7 +13,7 @@ Languages:
       Hint: __Created
       Value: 20180107T044421Z
     - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
-      Hint: Text
+      Hint: Script
       Value: |
         $options = @{"OptionA"=1;"OptionB"=2;}
         $optionTooltips = @{1="Something interesting about A";2="Something interesting about B"}
