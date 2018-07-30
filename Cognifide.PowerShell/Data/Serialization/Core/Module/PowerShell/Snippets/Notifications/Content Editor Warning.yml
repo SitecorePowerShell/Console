@@ -15,6 +15,7 @@ Languages:
     - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
       Hint: Script
       Value: |
+        # TODO : Be sure to add an Enabled Rule on this script to ensure the warning only appears for the proper items.
         $title = "Sample Warning"
         $text = "Something important requires your immediate attention!"
         

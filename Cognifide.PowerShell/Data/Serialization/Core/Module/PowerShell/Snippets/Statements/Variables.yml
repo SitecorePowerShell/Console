@@ -1,0 +1,101 @@
+﻿---
+ID: "1e59ac4a-b554-427e-8ae2-4dfb87edda15"
+Parent: "a1f83fbf-c1ce-4365-890e-77ac8f475263"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: /sitecore/system/Modules/PowerShell/Snippets/Statements/Variables
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180730T005849Z
+    - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+      Hint: Script
+      Value: |
+        # Assign data to a new variable 
+        $name = "Michael"
+        
+        # Assign with type checking
+        [int]$number = 1
+        $number = "Busted!"
+        
+        # Perform simple math 
+        $total = 1 + 1 
+        
+        # Create a new object array of strings 
+        $names = @()
+        $names += "Michael" 
+        $names += "Adam"
+        
+        # Cast the object array to string array
+        $names = [string[]]$names
+        
+        # Create a new ArrayList (better performance)
+        $firstnames = [System.Collections.ArrayList]@()
+        $firstnames.Add("Michael") > $null # Redirect output so it doesn't pollute the console
+        $firstnames.Add("Adam") > $null
+        
+        # Create a new list using Generics
+        $lastnames = New-Object "System.Collections.Generic.List[string]"
+        $lastnames.Add("West") > $null
+        $lastnames.Add("Najmanowicz") > $null
+        
+        # Create a new hashtable of data 
+        $table = @{} 
+        $table["Name"] = "Michael" 
+        $table["Age"] = 33
+        
+        # Create custom object from hashtable
+        $person = [PSCustomObject]@{
+            "Name" = "Michael"
+            "Age" = 33
+        }
+        $person.Name
+        
+        # Create a new hashtable and cast to an OrderedDictionary
+        $dictionary = [ordered]@{
+            "A" = "Welcome"
+            2 = "to"
+            'C' = "SPE"
+        }
+        
+        # Check if the string is null or empty using a static method 
+        if([string]::IsNullOrEmpty($name)) {
+            Write-Host "Name is null or empty."
+        } 
+        
+        <# 
+            Create a multi-line comment block 
+        #> 
+        
+        # Loop through a list of strings 
+        foreach($name in $names) {
+            $name
+        }
+        
+        # Loop through the dictionary
+        foreach($key in $table.Keys) {
+            Write-Host "$($key) : $($table[$key])"
+        }
+        
+        # Compare values 
+        $name -eq "Michael" # case-insensitive 
+        $total -le 3 
+        $names.Length -gt 2 –and $name[0] -ne "Adam" 
+        
+        # Negate value 
+        $isTrue = !$false 
+        $isTrue = -not $false 
+        
+        # String interpolation 
+        $message = "Hello, $($name)"
+        
+        # Access static property and method
+        $today = [datetime]::Today 
+        $yesterday = $today.AddDays(-1)
+        
+        # Ternary operation...sorta
+        @{$true="Value1";$false="Value2"}[(10 -lt 11)]
