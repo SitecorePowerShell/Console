@@ -238,6 +238,9 @@ SharedFields:
     $source = Get-Item -Path "master:" -ID "{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}" | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
+    $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
     $packageName = "$($package.Name)-$Version";
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     
