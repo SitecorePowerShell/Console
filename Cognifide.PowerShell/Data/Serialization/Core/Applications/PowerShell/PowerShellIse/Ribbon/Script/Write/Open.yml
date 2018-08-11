@@ -38,6 +38,9 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
+    - ID: "e9f2581a-fbfc-4ac6-90cb-04ca5c02b70d"
+      Hint: Tooltip
+      Value: Open an existing script from the library.
     - ID: "facecac8-c923-4847-834c-c917268f8f6b"
       Hint: Header
       Value: Open

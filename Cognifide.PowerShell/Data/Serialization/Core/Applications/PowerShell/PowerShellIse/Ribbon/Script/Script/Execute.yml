@@ -34,7 +34,7 @@ Languages:
     Value: Execute
   - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
     Hint: Tooltip
-    Value: Execute Script in Job mode.
+    Value: Execute the script as a background job.
   Versions:
   - Version: 1
     Fields:

@@ -43,7 +43,7 @@ Languages:
         sitecore\Admin
     - ID: "a1a31a93-c4a0-4396-b629-67c33001a3cf"
       Hint: Tooltip
-      Value: Continue script execution
+      Value: Continue script execution.
     - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
       Hint: __Valid from
       Value: 20060320T112016
