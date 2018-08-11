@@ -18,16 +18,17 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $targetItem = get-item .
+    $targetItem = Get-Item -Path .
     
     $targetItem.__Renderings = $sourceItem.__Renderings;
     
-    if ($sourceItem.PSObject.Properties.Match("__Final Renderings").Count)
-    {
+    if ($sourceItem.PSObject.Properties.Match("__Final Renderings").Count) {
         $targetItem."__Final Renderings" = $sourceItem."__Final Renderings";
+        $status = "Renderings pasted from '$($sourceItem.ProviderPath)' to '$($targetItem.ProviderPath)'"
+    } else {
+        $status = "No renderings found on '$($sourceItem.ProviderPath)'"
     }
     
-    $status = "Renderings pasted from '$($sourceItem.ProviderPath)' to '$($targetItem.ProviderPath)'"
     Write-Progress -Activity "Paste renderings" -Status " " -CurrentOperation $status
     
 - ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"

@@ -18,11 +18,9 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $sourceItem = get-item .
+    $sourceItem = Get-Item -Path .
     $status = "Renderings copied from: `n$($sourceItem.ProviderPath)" 
     Write-Progress -Activity "Copy renderings" -Status $status -CurrentOperation "Renderings copied. You can paste them in another item now."
-    #write-host "Rendering copy source from $($sourceItem.ProviderPath)"
-    
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
