@@ -24,7 +24,7 @@ SharedFields:
     "@;
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta1"
     
     # Build Standard Package
     
@@ -138,7 +138,9 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Application Layouts
-    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent |
+        Where-Object { $_.ID -ne "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" <# Skip Reporting #> } |
+        New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # Start Menu
@@ -203,8 +205,6 @@ SharedFields:
         Compress-Archive -Path "$($remotingSourcePath)\Modules\SPE\" -DestinationPath $remotingPackageName | Out-Null
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
-    
     # Build Standard Package
     
     $package = New-Package "Sitecore PowerShell Extensions - Authorable Reports";
@@ -214,7 +214,7 @@ SharedFields:
     $package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
     $package.Metadata.Version = $Version;
     $package.Metadata.Readme = '
-    This module provides 2 reports based on 
+    This module provides a reporting dashboard and 2 reports based on 
     Sitecore PowerShell Extensions module available from the 
     SPE Toolbox in the "Start" menu on Desktop.
     The reports are:
@@ -238,12 +238,20 @@ SharedFields:
     $source = Get-Item -Path "master:" -ID "{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}" | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
+    # Application Layouts
+    $source = Get-Item 'core:' -ID "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
+    # Applications
+    $source = Get-Item "core:" -ID "{26FB797C-ED1F-4C34-8EA2-E339686855BC}" | New-ItemSource -Name "Applications" -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
     $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     $packageName = "$($package.Name)-$Version";
     Export-Package -Project $package -Path "$packageName.zip" -Zip
-    
+    Download-File "$SitecorePackageFolder\$packageName.zip"
 Languages:
 - Language: en
   Versions:
