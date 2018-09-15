@@ -16,15 +16,19 @@ Languages:
       Hint: Script
       Value: |
         # TODO : Be sure to add an Enabled Rule on this script to ensure the warning only appears for the proper items.
+        $icon = "Office/16x16/robot.png"
+        $iconUrl = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
         $title = "Sample Warning"
-        $text = "Something important requires your immediate attention!"
+        $text = "<img src='$($iconUrl)' />Something important requires your immediate attention!"
         
         $warning = $pipelineArgs.Add()
         $warning.Title = $title
         $warning.Text = $text
         
+        # Be sure to update this ID to whichever script you want to execute when the link is clicked.
+        $scriptId = "{6EAF681D-5D87-4C43-B279-356A8B9A15CF}"
         $item = Get-Item -Path "."
-        $script = Get-Item -Path "master:" -ID "{6EAF681D-5D87-4C43-B279-356A8B9A15CF}"
+        $script = Get-Item -Path "master:" -ID $scriptId
         $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
         $warning.AddOption("Click Me", $command)
         $warning.HideFields = $false
