@@ -10,14 +10,13 @@ namespace Cognifide.PowerShell.Integrations.Processors
         {
             Assert.IsNotNull(args, "args");
             var sources = args.RenderingItem["Datasource Location"];
-            if (IsScripted(sources))
-            {
-                var items = new ItemList();
-                var contextItem = args.ContentDatabase.GetItem(args.ContextItemPath);
-                GetScriptedQueries(sources, contextItem, items);
+            if (!IsScripted(sources)) return;
 
-                args.DatasourceRoots.AddRange(items);
-            }
+            var items = new ItemList();
+            var contextItem = args.ContentDatabase.GetItem(args.ContextItemPath);
+            GetScriptedQueries(sources, contextItem, items);
+
+            args.DatasourceRoots.AddRange(items);
         }
     }
 }
