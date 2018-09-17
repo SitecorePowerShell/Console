@@ -512,6 +512,7 @@
     <Compile Include="Integrations\Processors\ScriptedRenderingDataSourceRoots.cs" />
     <Compile Include="Integrations\Processors\ScriptedRenderRendering.cs" />
     <Compile Include="Integrations\Processors\SkipPowerShellScriptItems.cs" />
+    <Compile Include="Core\Rules\PowerShellBooleanScriptRule.cs" />
     <Compile Include="Integrations\Tasks\ExecuteScriptTask.cs" />
     <Compile Include="Integrations\Tasks\ScriptedItemEventHandler.cs" />
     <Compile Include="Integrations\Workflows\ScriptAction.cs" />
