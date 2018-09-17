@@ -24,7 +24,7 @@ SharedFields:
     "@;
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta1"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta2"
     
     # Build Standard Package
     
