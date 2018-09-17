@@ -39,7 +39,7 @@ SharedFields:
         for ($i = 0; $i -lt $filteredFiles.Count; $i++) {
             
             # Get the content of the file.
-            $fileContent = Get-Content $filteredFiles[$i].FullName
+            $fileContent = Get-Content -Path $filteredFiles[$i].FullName
             
             # Set the current file
             $file = $filteredFiles[$i]
@@ -95,8 +95,8 @@ SharedFields:
     }
     
     # Define the dialog properties.  We'll need a start date and end date input from the user.
-    $selectedStartDate = [datetime]::Today
-    $selectedEndDate = $selectedStartDate.AddDays(-30)
+    $selectedStartDate = [datetime]::Today.AddDays(1).AddMinutes(-1)
+    $selectedEndDate = [datetime]::Today.AddDays(-30)
     $dialogProps = @{
         Parameters  = @(
             @{Name = "selectedStartDate"; Title = "Start Date"; Editor = "date time"; Tooltip = "This is the most recent date."; Columns = 6; },
