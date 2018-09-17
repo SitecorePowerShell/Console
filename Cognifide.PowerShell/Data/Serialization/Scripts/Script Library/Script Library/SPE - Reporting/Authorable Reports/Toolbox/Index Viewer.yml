@@ -43,12 +43,14 @@ SharedFields:
     $root = Get-Item -Path (@{$true="$($database):\content\home"; $false="$($database):\content"}[(Test-Path -Path "$($database):\content\home")])
     
     $propertyOptions = [ordered]@{}
+    $propertyOptionTooltips = @{}
     $searchResultItem = New-Object Sitecore.ContentSearch.SearchTypes.SearchResultItem
     $properties = $searchResultItem.GetType().GetProperties() | Sort-Object -Property Name
     foreach($property in $properties) {
         $attribute = $property.GetCustomAttributes($false) | Where-Object { $_.IndexFieldName } | Select-Object -First 1
         if($attribute) {
             $propertyOptions[$property.Name] = $attribute.IndexFieldName
+            $propertyOptionTooltips[$attribute.IndexFieldName] = $attribute.IndexFieldName
         }
     }
     
@@ -56,6 +58,8 @@ SharedFields:
     
     $filterOptions = [ordered]@{
         "Contains"="Contains"
+        "ContainsAny"="ContainsAny"
+        "ContainsAll"="ContainsAll"
         "DecendentOf"="DecendentOf"
         "EndsWith"="EndsWith"
         "Equals"="Equals"
@@ -79,7 +83,7 @@ SharedFields:
     $props.Parameters = @(
         @{Name="root"; Title="Choose the report root"; Tooltip="Only items in this branch will be returned."; Columns=7},
         @{Name="topCount"; Value="25"; Title="Choose how much to return"; Options=$topOptions; Tooltip="Only the top results will be returned."; Columns=5; Placeholder="All"},
-        @{Name="searchField"; Value="_content"; Title="Search Field"; Options=$propertyOptions; Tooltip="Choose an indexed field."; Columns="3 first"},
+        @{Name="searchField"; Value="_content"; Title="Search Field"; Options=$propertyOptions; OptionTooltips=$propertyOptionTooltips; Tooltip="Choose an indexed field."; Columns="3 first"},
         @{Name="searchOperator"; Value="Fuzzy"; Title="Search Filter"; Options=$filterOptions; Tooltip="Choose a comparison method."; Columns="3"},
         @{Name="searchText"; Value=""; Title="Search Value"; Tooltip="Enter the text to search."; Columns="6"; Placeholder="Sample Item"},
         @{Name="searchVersion"; Value="1"; Title="Version"; Options=$versionOptions; Tooltip="Choose a version."; Columns="3 first"; Placeholder="All"},

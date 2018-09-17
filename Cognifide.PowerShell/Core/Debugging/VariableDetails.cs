@@ -248,8 +248,8 @@ namespace Cognifide.PowerShell.Core.Debugging
             {
                 PSObject psObject = obj as PSObject;
 
-                if ((psObject != null) && 
-                    (psObject.TypeNames[0] == typeof(PSCustomObject).ToString()))
+                if (psObject != null && 
+                    psObject.TypeNames.Contains(typeof(PSCustomObject).ToString()))
                 {
                     // PowerShell PSCustomObject's properties are completely defined by the ETS type system.
                     childVariables.AddRange(

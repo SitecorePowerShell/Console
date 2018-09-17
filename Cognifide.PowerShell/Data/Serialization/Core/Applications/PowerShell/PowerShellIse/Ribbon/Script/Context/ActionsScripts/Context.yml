@@ -43,7 +43,7 @@ Languages:
       Value: Gallery.ContextGallery
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
-      Value: "Select in-memory session to run your script with."
+      Value: Select the context item to use when running the script.
     - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
       Hint: __Workflow state
       Value: 

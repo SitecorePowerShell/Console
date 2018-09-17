@@ -126,7 +126,7 @@ namespace Cognifide.PowerShell.Core.Host
             UiNestedLevel++;
             var resultSig = Guid.NewGuid().ToString();
 
-            UrlString str = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
+            var str = new UrlString(UIUtil.GetUri("control:PowerShellConsole"));
             str.Add("sid", resultSig);
             str.Add("fc", privateData.ForegroundColor.ToString());
             str.Add("bc", privateData.BackgroundColor.ToString());

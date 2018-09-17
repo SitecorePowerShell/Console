@@ -41,8 +41,8 @@ SharedFields:
         }
     }
     
-    $reportItems |
-      Sort-Object UsageCount -Descending |
+    $reportItems | 
+            Sort-Object UsageCount -Descending |
             Show-ListView -Property Icon,@{Name="Template Name"; Expression={$_.Name}}, @{Name="Number of usages"; Expression={$_.UsageCount}}`
                 -Title "Custom templates report" `
                 -InfoTitle "Usage Data"`

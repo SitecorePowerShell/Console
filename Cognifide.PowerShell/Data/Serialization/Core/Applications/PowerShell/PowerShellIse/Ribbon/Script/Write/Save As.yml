@@ -7,7 +7,7 @@ DB: core
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/floppy_disk_window.png
+  Value: Office/32x32/floppy_disks.png
 - ID: "0cebd9e7-1008-4efa-b87c-2445364e286b"
   Hint: KeyCode
   Value: sc83
@@ -16,7 +16,7 @@ SharedFields:
   Value: "ise:saveas"
 - ID: "8e40ab40-8c83-4ff7-9d33-38ed9458de1e"
   Hint: Icon
-  Value: Office/32x32/floppy_disk_window.png
+  Value: Office/32x32/floppy_disks.png
 - ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
   Hint: __Workflow
   Value: 
@@ -40,7 +40,7 @@ Languages:
         sitecore\Admin
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
-      Value: Save changes to a new script item.
+      Value: Save as a new script.
     - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
       Hint: Header
       Value: Save As...

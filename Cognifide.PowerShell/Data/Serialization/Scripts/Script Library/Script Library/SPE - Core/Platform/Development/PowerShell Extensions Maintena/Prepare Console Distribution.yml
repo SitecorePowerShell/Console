@@ -13,27 +13,22 @@ SharedFields:
     
     # Setup Chrome
     Get-Item -Path "master:{FE669C6E-5CE5-4A7D-B4D3-5039B4C6AE75}" | Invoke-Script
-    Get-Item -Path "master:{41605861-08CB-4365-BB6B-5CB20ED97C98}" | Invoke-Script
     
     if([CurrentSitecoreVersion]::IsAtLeast([SitecoreVersion]::V80)){
       $sitecore7Warning = "" 
     } else {
       $sitecore7Warning = @"
     ******************************************************
-    If you are on Sitecore 7.0 - after installing 
-    the package please run the script located under 
-    the following path in your Script Library:
-    
-    'Platform/Development/PowerShell Extensions Maintenance/Restore Rules on Sitecore 7dot0'
+    This version of Sitecore PowerShell Extensions is not supported for this version of Sitecore.
     ******************************************************
     "@;
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta1"
     
     # Build Standard Package
     
-    $package = new-package "Sitecore PowerShell Extensions";
+    $package = New-Package "Sitecore PowerShell Extensions";
     $package.Sources.Clear();
     
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
@@ -68,8 +63,8 @@ SharedFields:
     
     Thank you for using Sitecore PowerShell Extensions.
     
-    Copyright (c) 2010-2017 Adam Najmanowicz
-    Copyright (c) 2013-2017 Michael West
+    Copyright (c) 2010-2018 Adam Najmanowicz
+    Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
     http://blog.najmanowicz.com/
@@ -79,13 +74,6 @@ SharedFields:
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
     $source = Get-Item 'master:\templates\Modules\PowerShell Console' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
-    
-    # Rules engine taxonomy templates for Sitecore 7.0 that misses it
-    if([SitecoreVersion]::Current -lt [SitecoreVersion]::V80){
-      $source = Get-Item 'master:\templates\System\Rules\Taxonomy' | New-ItemSource -Name 'Rules Engine Taxonomy' -InstallMode Skip -SkipVersions
-      $package.Sources.Add($source);
-      Write-Host "Adding rules engine taxonomy templates" -ForegroundColor Green
-    }
     
     # Module Root
     $source = Get-Item 'master:\system\Modules\PowerShell' | New-ExplicitItemSource -Name "Master Module Root" -InstallMode Merge -MergeMode Merge
@@ -131,9 +119,9 @@ SharedFields:
     $source = Get-Item 'master:\system\Modules\PowerShell\Script Library' | New-ExplicitItemSource -Name "Master Script Library" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
     $source = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | 
-        ? { -not ($_.Name -eq "Authorable Reports") } | # Skip Authorable Reports
-        ? { -not ($_.Name.StartsWith("__")) } | # Skip test libraries
-        %{ Get-ChildItem "$($_.ProviderPath)" -WithParent -Recurse} | 
+        Where-Object { -not ($_.Name.StartsWith("__")) } | # Skip test libraries
+        Where-Object { -not ($_.Name.StartsWith("X-")) } | # Skip test libraries
+        ForEach-Object { Get-ChildItem "$($_.ProviderPath)" -Recurse -WithParent | Where-Object { <#Skip Authorable Reports#> $_.Paths.LongID -notlike "*/{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}*" } } | 
         New-ExplicitItemSource -Name "Master Script Library Content" -InstallMode  Overwrite
     $package.Sources.Add($source);
     
@@ -150,7 +138,9 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Application Layouts
-    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+    $source = Get-ChildItem 'core:\layout\Layouts\Applications\PowerShell' -WithParent |
+        Where-Object { $_.ID -ne "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" <# Skip Reporting #> } |
+        New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     # Start Menu
@@ -174,7 +164,8 @@ SharedFields:
     $package.Sources.Add($source);
     
     # Files
-    $source = Get-Item "$AppPath\App_Config\Include\Cognifide.PowerShell*.*" | ? {-not $_.Name.Contains("Serialization") } | New-ExplicitFileSource -Name "Configuration Files"
+    $source = Get-Item "$AppPath\App_Config\Include\*Cognifide.PowerShell*.*" | 
+        Where-Object { -not $_.Name.Contains("Serialization") -and -not $_.Name.Contains("User") } | New-ExplicitFileSource -Name "Configuration Files"
     $package.Sources.Add($source);
     $source = Get-Item "$AppPath\bin\Cognifide.PowerShell*.dll" | New-ExplicitFileSource -Name "PowerShell Binaries"
     $package.Sources.Add($source);
@@ -186,7 +177,7 @@ SharedFields:
     $package.Sources.Add($source);
     
     #Security Roles
-    $source = Get-Role -Identity "PowerShell Extensions Remoting" | New-SecuritySource -Name "Remoting Role" 
+    $source = Get-Role -Identity "sitecore\PowerShell Extensions Remoting" | New-SecuritySource -Name "Remoting Role" 
     $package.Sources.Add($source);
     
     
@@ -214,18 +205,16 @@ SharedFields:
         Compress-Archive -Path "$($remotingSourcePath)\Modules\SPE\" -DestinationPath $remotingPackageName | Out-Null
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
-    
     # Build Standard Package
     
-    $package = new-package "Sitecore PowerShell Extensions - Authorable Reports";
+    $package = New-Package "Sitecore PowerShell Extensions - Authorable Reports";
     $package.Sources.Clear();
     
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
     $package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
     $package.Metadata.Version = $Version;
     $package.Metadata.Readme = '
-    This module provides 2 reports based on 
+    This module provides a reporting dashboard and 2 reports based on 
     Sitecore PowerShell Extensions module available from the 
     SPE Toolbox in the "Start" menu on Desktop.
     The reports are:
@@ -234,8 +223,8 @@ SharedFields:
     
     Thank you for using Sitecore PowerShell Extensions.
     
-    Copyright (c) 2010-2016 Adam Najmanowicz
-    Copyright (c) 2013-2016 Michael West
+    Copyright (c) 2010-2018 Adam Najmanowicz
+    Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
     http://blog.najmanowicz.com/
@@ -245,12 +234,24 @@ SharedFields:
     $source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
     $package.Sources.Add($source);
     
-    $source = Get-Item 'master:\system\Modules\PowerShell\Script Library\Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+    # Authorable Reports
+    $source = Get-Item -Path "master:" -ID "{1BBD1A29-8A08-413D-8F6E-01D3EC017F4D}" | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
+    # Application Layouts
+    $source = Get-Item 'core:' -ID "{7337304D-5FF4-41B9-ABB2-2FF1875BA110}" | New-ExplicitItemSource "Application Layouts" -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
+    # Applications
+    $source = Get-Item "core:" -ID "{26FB797C-ED1F-4C34-8EA2-E339686855BC}" | New-ItemSource -Name "Applications" -InstallMode Overwrite
+    $package.Sources.Add($source);
+    
+    $source = Get-Item 'core:/sitecore/client/Applications/Launchpad/PageSettings/Buttons/ContentEditing/PowerShell Reports' | New-ItemSource -Name "LaunchPad integration" -InstallMode Overwrite
     $package.Sources.Add($source);
     
     $packageName = "$($package.Name)-$Version";
     Export-Package -Project $package -Path "$packageName.zip" -Zip
-    
+    Download-File "$SitecorePackageFolder\$packageName.zip"
 Languages:
 - Language: en
   Versions:

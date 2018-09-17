@@ -72,8 +72,11 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     GetLibraryMenuItems(contextItem, menuItems, root);
                 }
-            }
 
+                menuItems.Sort((x, y) =>
+                    string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
+
+            }
 
             foreach (var item in menuItems)
             {
@@ -107,7 +110,6 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
             menuItems.Sort((x, y) =>
                 string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
-
 
             return menuItems.ToArray();
         }

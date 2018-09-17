@@ -66,8 +66,7 @@
           <Border class="status-bar-panel status-bar-text">
             <Literal ID="StatusTip">
             </Literal>
-            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"
-                   Alt="Show next usability hint..." Title="Show next usability hint..." />
+            <Image ID="RefreshHint" src="/~/icon/office/16x16/nav_refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..." />
           </Border>
         </Border>
       </div>

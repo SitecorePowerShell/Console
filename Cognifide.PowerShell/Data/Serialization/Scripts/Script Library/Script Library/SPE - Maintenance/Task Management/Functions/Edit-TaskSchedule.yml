@@ -125,14 +125,14 @@ SharedFields:
     	    @{ Name = "to"; Title = "Stops running at"; Editor = "date time"; Tip = "Date the task should end being run."; Columns = 6 },
     	    @{ Name = "weekdays"; Title = "Days to run"; Options = $weekDayOptions; Editor = "checklist"; Tip = "Select the days of the week the task should run." },
     	    @{ Name = "intervalInfo"; Title = "Interval"; Tip = "Specify how often the task should be launched"; Editor = "info" },
-    	    @{ Name = "intDays"; Title = "Days"; Columns = 2 },
-    	    @{ Name = "intHours"; Title = "Hours"; Columns = 2 },
-    	    @{ Name = "intMinutes"; Title = "Minutes"; Columns = 2 },
-    	    @{ Name = "intSeconds"; Title = "Seconds"; Columns = 2 },
-    	    @{ Name = "intMilis"; Title = "Milliseconds"; Columns = 2 } `
+    	    @{ Name = "intDays"; Title = "Days"; Editor = "number"; Columns = 3 },
+    	    @{ Name = "intHours"; Title = "Hours"; Editor = "number"; Columns = 3 },
+    	    @{ Name = "intMinutes"; Title = "Minutes"; Editor = "number"; Columns = 3 },
+    	    @{ Name = "intSeconds"; Title = "Seconds"; Editor = "number"; Columns = 3 } `
      		-Description "Specify schedule for task '$($Item.DisplayName)'. You can edit the date/time task becomes active and when it should stop running, what days it will run on and how often." `
      		-Title "Schedule for task: $($Item.DisplayName)" -Width 600 -Height 570 -OkButtonName "Change" -CancelButtonName "Cancel" -ShowHints -Icon ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase));
     
+        $intMilis = 0
     	$tsInterval = [timespan]"$($intDays).$($intHours):$($intMinutes):$($intSeconds).$($intMilis)";
     	$interval = $tsInterval.ToString();
     

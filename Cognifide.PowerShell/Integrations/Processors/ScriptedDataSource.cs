@@ -9,15 +9,14 @@ namespace Cognifide.PowerShell.Integrations.Processors
         public void Process(GetLookupSourceItemsArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            if (IsScripted(args.Source))
+            if (!IsScripted(args.Source)) return;
+
+            var items = new ItemList();
+            var source = GetScriptedQueries(args.Source, args.Item, items);
+            args.Result.AddRange(items.ToArray());
+            if (string.IsNullOrEmpty(source))
             {
-                var items = new ItemList();
-                var source = GetScriptedQueries(args.Source, args.Item, items);
-                args.Result.AddRange(items.ToArray());
-                if (string.IsNullOrEmpty(source))
-                {
-                    args.AbortPipeline();
-                }
+                args.AbortPipeline();
             }
         }
     }

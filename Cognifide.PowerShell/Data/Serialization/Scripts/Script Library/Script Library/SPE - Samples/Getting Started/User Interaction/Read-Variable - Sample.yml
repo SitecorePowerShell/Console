@@ -10,8 +10,8 @@ SharedFields:
   Value: |
     $item = Get-Item -Path "master:\content\Home"
     $items = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
-    $items2 = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
-    $items3 = Get-ChildItem -Path "master:\templates\Modules\PowerShell Console\PowerShell Script*"
+    $items2 = $items
+    $items3 = $items
     $parent = Get-Item -Path . | Select-Object -Expand Parent 
     $checklistItems =  @(4,16)
     $radioListItems = 3
@@ -19,58 +19,78 @@ SharedFields:
     $rule = Get-Item -Path "master:" -ID "{D00BD134-EB15-41A7-BEF1-E6455C6BC9AC}" | Select-Object -Expand ShowRule
     
     $options = [ordered]@{Monday = 1; Tuesday = 2; "Wednesday (Selected)"= 4; Thursday = 8; "Friday (Selected)" = 16; Saturday = 32; Sunday = 64};
-    $selection = [ordered]@{"None"=1;"Checklist"=2;"Radio Buttons"=3;};
+    $selection = [ordered]@{"None"=1;"Checklist"=2;"Radio Buttons"=3;}
+    $selectionTooltips = [ordered]@{1="No options hidden from the user."}
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "toggleVisible"; Value=$true; Title="Show Controls"; Tooltip="Checking or unchecking will change hidden state"; Tab="Simple"; Columns = 4; GroupId=1; },
-        @{ Name = "marquee"; Title=""; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"; Columns = 4; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "anOption"; Value="1"; Title="An Option"; Options=$selection; Tooltip="Choose a control to hide"; Tab="Options"; GroupId = 2; }, 
-        @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
-        @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }, 
-        @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tab="Items"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "items"; Title="Bunch of Templates"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="treelist"; Tab="Items"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "items2"; Title="Bunch of Templates"; 
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="multilist"; Tab="More Items"; Height="300px"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "items4"; Title="Bunch of Templates with Search"; 
-            Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="multilist search"; Tab="More Items"; Height="300px"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "items3"; Title="Pick One Template"; 
-            Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
-            editor="droplist"; Tab="More Items"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Variable = Get-Variable "Parent"; Tab="More Items"; ParentGroupId=1; HideOnValue = "0"; },
-        @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"; ParentGroupId=1; HideOnValue = "0"; }, 
-        @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"; ParentGroupId=1; HideOnValue = "0"; }, `
-        @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"; ParentGroupId=1; HideOnValue = "0"; }, `
-        @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; ParentGroupId=1; HideOnValue = "0"; }, `
-        @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; ParentGroupId=1; HideOnValue = "0"; } `
-        -Description "The dialog demonstrates the use of all available controls grouped into tabs." `
-        -Title "Kitchen Sink Demo" -Width 650 -Height 700 -OkButtonName "Proceed" -CancelButtonName "Abort" -ShowHints -Icon "officewhite/32x32/knife_fork_spoon.png"
-    if($result -ne "ok")
-    {
+    $dialogProps = @{
+        Title = "Kitchen Sink Demo"
+        Description = "The dialog demonstrates the use of all available controls grouped into tabs."
+        Width = 650 
+        Height = 700
+        OkButtonName = "Continue"
+        CancelButtonName = "Cancel"
+        ShowHints = $true
+        Icon = "Officewhite/32x32/knife_fork_spoon.png"
+        Parameters = @(
+            @{ Name = "toggleVisible"; Value=$true; Title="Show Controls"; Tooltip="Checking or unchecking will change hidden state"; Tab="Simple"; Columns = 4; GroupId=1; },
+            @{ Name = "marquee"; Title=""; Value="Interesting details about the dialogs."; editor="marquee"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
+            @{ Name = "Info"; Title="Information"; Value="Interesting details about the dialogs."; editor="info"; Tab="Simple"; ParentGroupId=1; HideOnValue = "0"; },
+            @{ Name = "silent"; Value=$true; Title="Proceed Silently"; Tooltip="Check this if you don't want to be interrupted"; Tab="Simple"; Columns = 4; ParentGroupId=1; HideOnValue = "0"; },
+            @{ Name = "someText"; Value=""; Title="Text"; Tooltip="Just a single line of Text"; Tab="Simple"; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "multiText"; Value=""; Title="Longer Text"; lines=3; Tooltip="You can put multi line text here"; Tab="Simple"; Mandatory=$false; Placeholder="You see this when text box is empty"; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "number"; Value=110; Editor="number"; Title="Integer"; Tooltip="I need this number too"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "fraction"; Value=1.1; Editor="number"; Title="Float"; Tooltip="I'm just a bit over 1"; Tab="Simple"; Columns=6; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "username"; Value=""; Title="Username"; Tab="Simple"; Tooltip="Enter username here"; Placeholder="You see this when text box is empty"; Columns = 6; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "password"; Value="password"; Title="Password"; Tooltip="Enter password here"; Tab="Simple"; Editor="password"; Placeholder="You see this when text box is empty"; Columns = 6; ParentGroupId=1; HideOnValue = "0"; }, 
+            @{ Name = "anOption"; Value="1"; Title="An Option"; Options=$selection; OptionTooltips=$selectionTooltips; Tooltip="Choose a control to hide"; Tab="Options"; GroupId = 2; }, 
+            @{ Name = "checklistItems"; Title="Multiple options"; Options=$options; Tooltip="Checklist with various options"; Tab="Options"; Editor="checklist"; ParentGroupId = 2; HideOnValue = "2"; }, 
+            @{ Name = "radioListItems"; Title="Radio selection"; Options=$selection; Tab="Options"; Editor="radio"; ParentGroupId = 2; HideOnValue = "3"; }, 
+            @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"; Tab="Time"; }, 
+            @{ Name = "fromDate"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date"; Tab="Time"; }, 
+            @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"; Tab="Items"; }, 
+            @{ Name = "items"; Title="Bunch of Templates"; 
+                Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+                editor="treelist"; Tab="Items"; }, 
+            @{ Name = "items2"; Title="Bunch of Templates"; 
+                Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+                editor="multilist"; Tab="More Items"; Height="300px"; },
+            @{ Name = "items4"; Title="Bunch of Templates with Search"; 
+                Source="DataSource=/sitecore/templates/modules/powershell console&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+                editor="multilist search"; Tab="More Items"; Height="300px"; },
+            @{ Name = "items3"; Title="Pick One Template"; 
+                Source="DataSource=/sitecore/templates&DatabaseName=master&IncludeTemplatesForDisplay=Node,Folder,Template,Template Folder&IncludeTemplatesForSelection=Template"; 
+                editor="droplist"; Tab="More Items"; }, 
+            @{ Variable = Get-Variable "Parent"; Tab="More Items"; },
+            @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"; Tab="Rights"; }, 
+            @{ Name = "role"; Title="Select Role"; Tooltip="Tooltip for role"; Editor="role multiple"; Domain="sitecore"; Tab="Rights"; },
+            @{ Name = "userOrRole"; Title="Select User or Role"; Tooltip="Tooltip for role"; Editor="user role multiple"; Domain="sitecore"; Tab="Rights"; },
+            @{ Name = "rule"; Editor="rule"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; },
+            @{ Name = "rulewithaction"; Editor="rule action"; title="A rule"; Tooltip="A sample rule editor"; Tab="Rules"; }
+        )
+    }
+    
+    $result = Read-Variable @dialogProps
+    
+    if($result -ne "ok") {
         Exit
     }
     
-    $result = Read-Variable -Parameters `
-        @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
-        @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You see this when text box is empty"}, 
-        @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
-        @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
-        @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"} `
-        -Description "The dialog demonstrates the use of some available controls without tabs." `
-        -Title "Kitchen Sink Demo" -Width 500 -Height 480 -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    $dialog2Props = @{
+        Title = "Kitchen Sink Demo"
+        Description = "The dialog demonstrates the use of some available controls without tabs."
+        Width = 500
+        Height = 480
+        OkButtonName = "Finish"
+        CancelButtonName = "Cancel"
+        Parameters = @(
+            @{ Name = "someText"; Value="Some Text"; Title="Single Line Text"; Tooltip="Tooltip for singleline"; Placeholder="You see this when text box is empty"}, 
+            @{ Name = "multiText"; Value="Multiline Text"; Title="Multi Line Text"; lines=3; Tooltip="Tooltip for multiline"; Placeholder="You see this when text box is empty"}, 
+            @{ Name = "from"; Value=[System.DateTime]::Now.AddDays(-5); Title="Start Date"; Tooltip="Date since when you want the report to run"; Editor="date time"}, 
+            @{ Name = "user"; Value=$me; Title="Select User"; Tooltip="Tooltip for user"; Editor="user multiple"},
+            @{ Name = "item"; Title="Start Item"; Root="/sitecore/content/"}
+        )
+    }
+    $result = Read-Variable @dialog2Props
     
     "Variables from dialog:"
     '$from:      ' + $from

@@ -37,7 +37,7 @@ Languages:
       Value: Filter
     - ID: "d0f0a77d-3bac-47e2-bdf4-e284cdad5654"
       Hint: Tooltip
-      Value: Filter the report
+      Value: Filter the report using a keyword.
 - Language: "ja-JP"
   Versions:
   - Version: 1
