@@ -134,6 +134,11 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     continue;
                 }
 
+                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
+                {
+                    continue;
+                }
+
                 var menuItem = new MenuItem
                 {
                     Header = scriptItem.DisplayName,
