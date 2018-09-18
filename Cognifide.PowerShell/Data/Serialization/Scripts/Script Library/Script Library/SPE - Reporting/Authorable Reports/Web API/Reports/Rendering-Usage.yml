@@ -52,6 +52,28 @@ SharedFields:
     }
     
     Invoke-ApiScript -ScriptBlock $script -Arguments $scriptArguments
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{1618D6C5-1CE8-4ECC-8813-FC70BDEA43CD}"
+        name="Only show for certain roles">
+        <conditions>
+          <or
+            uid="DBEE04D45ED84E82B5C1789CC1EEEF7D">
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="C82F180E1AF44D35B94B7BA3CC0E1E36" />
+            <condition
+              id="{B88D5A83-A909-4BC5-90E7-7A8804348CFA}"
+              uid="14E070A4683344F0BA2877979263B262"
+              value="sitecore\Developer" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Versions:

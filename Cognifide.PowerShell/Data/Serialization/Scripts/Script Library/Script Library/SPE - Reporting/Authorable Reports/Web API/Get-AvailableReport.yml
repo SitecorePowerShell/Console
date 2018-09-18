@@ -19,11 +19,17 @@ SharedFields:
             $reportsLibrary = $root.Children["Reports"]
             $isEnabled = [Cognifide.PowerShell.Core.Utility.RulesUtils]::EvaluateRules($reportsLibrary[[Cognifide.PowerShell.Templates+Script+Fields]::EnableRule], $root)
             if($isEnabled -and $reportsLibrary.HasChildren) {
-                $reportNames.AddRange(($reportsLibrary.GetChildren() | Select-Object -ExpandProperty Name | ForEach-Object { "reports/" + $_}))       
+                $reports = $reportsLibrary.GetChildren()
+                foreach($report in $reports) {
+                    $isEnabled = [Cognifide.PowerShell.Core.Utility.RulesUtils]::EvaluateRules($report[[Cognifide.PowerShell.Templates+Script+Fields]::EnableRule], $report)
+                    if($isEnabled) {
+                        $reportNames.Add(("reports/$($report.Name)")) > $null
+                    }
+                }
             }
         }
     
-        $reportNames
+        ,$reportNames
     }
     
     Invoke-ApiScript -ScriptBlock $script -Arguments $scriptArguments
