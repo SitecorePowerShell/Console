@@ -84,7 +84,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 HttpContext.Current.Response.StatusCode = 401;
                 PowerShellLog.Error(
-                    $"Attempt to call the '{serviceMappingKey}' service failed as user '{userName}' was not authorized.");
+                    $"Attempt to call the '{serviceMappingKey}' service failed as user '{authUserName}' was not authorized.");
                 return;
             }
 
