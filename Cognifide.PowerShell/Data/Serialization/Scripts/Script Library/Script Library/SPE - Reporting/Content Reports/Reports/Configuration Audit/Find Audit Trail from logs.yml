@@ -30,7 +30,7 @@ SharedFields:
         }
         
         # Define a variable used to match the term 'Audit' when processing each line.
-        $regex = " audit "
+        $regex = "\d{2}:\d{2}:\d{2} [a-zA-Z]{4,5}\s*AUDIT "
     
         # Define an array to house matching line objects.
         $finalItems = [System.Collections.ArrayList]@()
@@ -55,13 +55,14 @@ SharedFields:
                     $logLine = "$formattedFileDate $line"
                     
                     # Remove double spaces from the line.
-                    $saitizedLogLine = $logLine.Replace("  ", " ")
+                    $sanitizedLogLine = $logLine.Replace("  ", " ")
     
                     # In some cases, the audit line will contain ManagedPoolThread #XX instead of an ID.  This accounts for this scenario
-                    $saitizedLogLine = $saitizedLogLine -Replace "(((ManagedPoolThread)\s\#[^\s]+)\s)", "0 "
+                    $sanitizedLogLine = $sanitizedLogLine -Replace "(((ManagedPoolThread)\s\#[^\s]+)\s)", "0 "
                     
                     # Split the line by spaces and create new objects for each property.
-                    $date, $apid, $time, $loglevel, $logcode, $username, $action = $saitizedLogLine.split(" ")
+                    $parts = $sanitizedLogLine.split(" ")
+                    $date, $apid, $time, $loglevel, $logcode, $username, $action = $parts
                     
                     # Sanitize the username object (removing '{', '}', and ":" characters).
                     $username = $username -Replace "[#?\{\[\(\)\]\}\:]", ""
