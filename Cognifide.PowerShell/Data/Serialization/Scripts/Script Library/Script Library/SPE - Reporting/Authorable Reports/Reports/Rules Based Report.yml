@@ -31,6 +31,8 @@ SharedFields:
         $ruleItems += Get-ChildItem -Path "$($reportRoot.Database):$($reportRoot.Paths.Path)" -Recurse | 
             Where-Object { $_.TemplateId -eq $powershellRuleLibaryTemplateId }
     }
+    
+    $ruleItems = $ruleItems | Sort-Object -Property Name
     $ruleOptions = [ordered]@{}
     for($i = 0; $i -lt $ruleItems.Count; $i++) {
         $ruleItem = $ruleItems[$i]
@@ -177,6 +179,13 @@ SharedFields:
     Close-Window
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Run custom reports built using queries and the rules engine.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Run custom reports built using queries and the rules engine.
   Versions:
   - Version: 1
     Fields:
