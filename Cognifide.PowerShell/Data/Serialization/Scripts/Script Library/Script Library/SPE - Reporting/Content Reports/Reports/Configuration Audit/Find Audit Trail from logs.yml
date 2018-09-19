@@ -21,7 +21,6 @@ SharedFields:
         
         # Confirm the user has provided start and end dates. 
         if ($selectedEndDate -ne "01/01/0001 00:00:00" -and $selectedStartDate.Year -ne "01/01/0001 00:00:00") {
-            
             # Filter the log files further to only those within range.
             $filteredFiles = $files | Where-Object {$_.LastWriteTime -ge $selectedEndDate -and $_.LastWriteTime -le $selectedStartDate  }
         } else {
@@ -118,6 +117,7 @@ SharedFields:
     
     # Define the ListView properties. 
     $tableProps = @{
+        Title = "Audit Trail Report"
         InfoTitle       = "Audit Trail Report"
         InfoDescription = "Audit user logins, logouts, workflow executions, and publishing operations within a specified date range."
         PageSize        = 100
