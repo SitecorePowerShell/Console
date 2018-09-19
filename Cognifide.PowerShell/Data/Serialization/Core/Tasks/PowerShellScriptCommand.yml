@@ -5,6 +5,9 @@ Template: "58119a3e-560e-4da6-97c6-1ace8a5b1219"
 Path: /sitecore/system/Tasks/Commands/PowerShellScriptCommand
 DB: master
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/clock.png
 - ID: "4bc75539-d5c4-487b-af35-ff13d62bd286"
   Hint: Method
   Value: Update
