@@ -18,14 +18,16 @@ SharedFields:
       $sitecore7Warning = "" 
     } else {
       $sitecore7Warning = @"
+      
     ******************************************************
     This version of Sitecore PowerShell Extensions is not supported for this version of Sitecore.
     ******************************************************
+    
     "@;
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta2"
-    
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta3"
+    $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
     $package = New-Package "Sitecore PowerShell Extensions";
@@ -34,41 +36,37 @@ SharedFields:
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
     $package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
     $package.Metadata.Version = $Version;
-    $package.Metadata.Readme = '
-    This module provides 2 immediately usable interfaces 
-    The "PowerShell Console" available from the "Sitecore"
-    menu and the "PowerShell ISE" available from the 
-    "Developer Tools" sub-menu as well as Reports 
-    in the Sitecore -> Reporting Tools menu.
+    $package.Metadata.Readme = @"
+    Welcome to the wonderful world of Sitecore PowerShell Extensions! 
+    This package includes a Console, Integrated Scripting Environment, 
+    and a variety of reports to help you maintain your solution.
     
     --------------------------------------------------------
-    BEFORE UPGRADING THE MODULE from previous version, 
-    please back-up your script library!
+    BEFORE UPGRADING THE MODULE
+    * Backup your script library!
     
-    After you upgrade make sure to clean your browser cache!
+    AFTER UPGRADING THE MODULE
+    * Clean your browser cache!
+    * Test all of your custom scripts!
     --------------------------------------------------------
+    $($sitecore7Warning)
+    This module includes ready-to-use tools and a
+    variety of samples for you to explore.
     
-    ' + 
-    $sitecore7Warning + 
-    '
+    Documentation: https://doc.sitecorepowershell.com
+    Detailed release notes: https://bit.ly/speReleaseNotes
+    Issue tracker: https://bit.ly/ScPsIss
     
-    PowerShell ISE comes with tutorial scripts and
-    Script Library for you to experiment with. Enjoy!
+    Thank you for using Sitecore PowerShell Extensions!
     
-    You can find a fairly detailed release notes here:
-    http://bit.ly/speReleaseNotes
+    Copyright (c) 2010-$($currentYear) Adam Najmanowicz
+    Copyright (c) 2013-$($currentYear) Michael West
     
-    Please report any problems in our issue tracker:
-    http://bit.ly/ScPsIss
-    
-    Thank you for using Sitecore PowerShell Extensions.
-    
-    Copyright (c) 2010-2018 Adam Najmanowicz
-    Copyright (c) 2013-2018 Michael West
-    
+    Additional Resources:
     https://sitecorepowershell.com/
     https://blog.najmanowicz.com/
-    https://michaellwest.blogspot.com/'
+    https://michaellwest.blogspot.com/
+    "@
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
@@ -127,6 +125,10 @@ SharedFields:
     
     # Settings
     $source = @(Get-Item -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem -Path "master:\system\Modules\PowerShell\Settings") + (Get-ChildItem "All Users" -Path "master:\system\Modules\PowerShell\Settings" -Recurse) | New-ExplicitItemSource -Name "Settings" -InstallMode Merge -MergeMode Clear
+    $package.Sources.Add($source);
+    
+    # Snippets
+    $source = @(Get-Item -Path "master:\system\Modules\PowerShell\Snippets") + (Get-ChildItem -Path "master:\system\Modules\PowerShell\Snippets" -Recurse) | New-ExplicitItemSource -Name "Snippets" -InstallMode Merge -MergeMode Clear
     $package.Sources.Add($source);
     
     # Applications
@@ -215,22 +217,22 @@ SharedFields:
     $package.Metadata.Author = "Adam Najmanowicz, Michael West";
     $package.Metadata.Publisher = "Sitecore PowerShell Extensions Team";
     $package.Metadata.Version = $Version;
-    $package.Metadata.Readme = '
-    This module provides a reporting dashboard and 2 reports based on 
-    Sitecore PowerShell Extensions module available from the 
-    SPE Toolbox in the "Start" menu on Desktop.
-    The reports are:
-    - Index Viewer
-    - Rule Based Report
+    $package.Metadata.Readme = @"
+    This module provides a reporting dashboard and additional reports
+    to complement those included with Sitecore PowerShell Extensions. 
+    
+    Documentation: https://doc.sitecorepowershell.com
     
     Thank you for using Sitecore PowerShell Extensions.
     
-    Copyright (c) 2010-2018 Adam Najmanowicz
-    Copyright (c) 2013-2018 Michael West
+    Copyright (c) 2010-$($currentYear) Adam Najmanowicz
+    Copyright (c) 2013-$($currentYear) Michael West
     
+    Additonal Resources:
     https://sitecorepowershell.com/
     https://blog.najmanowicz.com/
-    https://michaellwest.blogspot.com/'
+    https://michaellwest.blogspot.com/
+    "@
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
