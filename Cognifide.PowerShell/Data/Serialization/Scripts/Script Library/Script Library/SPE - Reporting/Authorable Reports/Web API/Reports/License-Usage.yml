@@ -14,18 +14,22 @@ SharedFields:
         $totalLicenseCount = [Sitecore.SecurityModel.License.LicenseManager]::GetEditorUserCount()
         $usedLicenseCount = @(Get-Session).Count
         $columns = [System.Collections.ArrayList]@()
-        $columns.Add(@("Available", ($totalLicenseCount - $usedLicenseCount))) > $null
-        $columns.Add(@("Used", $usedLicenseCount)) > $null
+        #$columns.Add(@("Available", ($totalLicenseCount - $usedLicenseCount))) > $null
+        $columns.Add(@("Licenses in Use", $usedLicenseCount)) > $null
         
         [ordered]@{
             "title" = "License Usage"
             "data" = [ordered]@{
                 "columns" = @($columns)
-                "type" = "donut"
+                "type" = "gauge"
             }
             "size" = @{
                 "height" = 450
-                "width" = 550
+                "width" = 800
+            }
+            "gauge" = @{
+                "min" = 0
+                "max" = $totalLicenseCount
             }
             "donut" = @{
                 "title" = "License Usage"
@@ -34,9 +38,6 @@ SharedFields:
     }
     
     Invoke-ApiScript -ScriptBlock $script -Arguments $scriptArguments 
-    
-    #Get-Session | Select-Object -Property *
-    #[Sitecore.SecurityModel.License.LicenseManager]::GetEditorUserCount()
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules

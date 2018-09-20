@@ -17,13 +17,15 @@ SharedFields:
         $reportNames = [System.Collections.ArrayList]@()
         foreach($root in $roots) {
             $reportsLibrary = $root.Children["Reports"]
+            if($reportsLibrary) {
             $isEnabled = [Cognifide.PowerShell.Core.Utility.RulesUtils]::EvaluateRules($reportsLibrary[[Cognifide.PowerShell.Templates+Script+Fields]::EnableRule], $root)
-            if($isEnabled -and $reportsLibrary.HasChildren) {
-                $reports = $reportsLibrary.GetChildren()
-                foreach($report in $reports) {
-                    $isEnabled = [Cognifide.PowerShell.Core.Utility.RulesUtils]::EvaluateRules($report[[Cognifide.PowerShell.Templates+Script+Fields]::EnableRule], $report)
-                    if($isEnabled) {
-                        $reportNames.Add(("reports/$($report.Name)")) > $null
+                if($isEnabled -and $reportsLibrary.HasChildren) {
+                    $reports = $reportsLibrary.GetChildren()
+                    foreach($report in $reports) {
+                        $isEnabled = [Cognifide.PowerShell.Core.Utility.RulesUtils]::EvaluateRules($report[[Cognifide.PowerShell.Templates+Script+Fields]::EnableRule], $report)
+                        if($isEnabled) {
+                            $reportNames.Add(("reports/$($report.Name)")) > $null
+                        }
                     }
                 }
             }
