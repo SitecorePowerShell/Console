@@ -67,8 +67,8 @@ SharedFields:
     Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
-    http://blog.najmanowicz.com/
-    http://michaellwest.blogspot.com/'
+    https://blog.najmanowicz.com/
+    https://michaellwest.blogspot.com/'
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules' | New-ItemSource -Name 'Master Item Templates Module Node' -InstallMode Merge -MergeMode Merge
@@ -229,8 +229,8 @@ SharedFields:
     Copyright (c) 2013-2018 Michael West
     
     https://sitecorepowershell.com/
-    http://blog.najmanowicz.com/
-    http://michaellwest.blogspot.com/'
+    https://blog.najmanowicz.com/
+    https://michaellwest.blogspot.com/'
     
     # Item templates
     $source = Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | New-ItemSource -Name 'Master Item Templates' -InstallMode Overwrite
