@@ -18,24 +18,38 @@ SharedFields:
         $dbName = $builder.InitialCatalog
         $query = "SELECT [UserName],[Created] FROM [$($dbName)].[dbo].[History] WHERE [Created] >= DATEADD(day,-14,GETDATE())"
         $records = Invoke-SqlCommand -Connection $connection -Query $query
-        $tables = [System.Collections.ArrayList]@()
+        
+        $columns = [System.Collections.ArrayList]@()
         $grouped = $records | Select-Object @{n="Created";e={$_.Created.ToString("yyyy-MM-dd")}} | Group-Object -Prop Created | ForEach-Object { @{$_.Name=$_.Count} }
         
         $xArray = [System.Collections.ArrayList]@()
         $xArray.Add("x") > $null
-        $dataArray = [System.Collections.ArrayList]@()
-        $dataArray.Add("Events") > $null
         
         foreach($key in $grouped.Keys) {
             $xArray.Add($key) > $null
-            $dataArray.Add($grouped.$key) > $null
+        }
+        $columns.Add($xArray) > $null
+        
+        $distinctUsers = $records | Select-Object -ExpandProperty UserName -Unique
+        foreach($user in $distinctUsers) {
+            $grouped = $records | Where-Object { $_.UserName -eq $user } | 
+                Select-Object @{n="Created";e={$_.Created.ToString("yyyy-MM-dd")}} | 
+                Group-Object -Prop Created | ForEach-Object { @{$_.Name=$_.Count} }
+            $dataArray = [System.Collections.ArrayList]@()
+            $dataArray.Add("$($User)") > $null
+            
+            foreach($key in $grouped.Keys) {
+                $dataArray.Add($grouped.$key) > $null
+            }
+            
+            $columns.Add($dataArray) > $null
         }
         
         [ordered]@{
             "title" = "Active Users"
             "data" = [ordered]@{
                 "x" = "x"
-                "columns" = @($xArray,$dataArray)
+                "columns" = $columns
                 "type" = "line"
             }
             "axis" = [ordered]@{
@@ -49,7 +63,7 @@ SharedFields:
             }
             "size" = @{
                 "height" = 450
-                "width" = 550
+                "width" = 800
             }
         }
     }
