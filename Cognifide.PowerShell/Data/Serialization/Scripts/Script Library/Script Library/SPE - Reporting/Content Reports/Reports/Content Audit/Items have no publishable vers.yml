@@ -13,7 +13,7 @@ SharedFields:
   Value: |
     <#
         .SYNOPSIS
-            Lists the items with no publishable version.
+            Lists the items with no publishable version or item is unpublishable.
             
         .NOTES
             Michael West
@@ -27,10 +27,14 @@ SharedFields:
         )
         
         if($Item) {
-            $isValid = $item.Publishing.GetValidVersion([datetime]::Now, $true, $false)
-    	    if($isValid -eq $null) {
-    	        $Item
-    	    }   
+            if(!$item.Publishing.NeverPublish) {
+                $isValid = $item.Publishing.GetValidVersion([datetime]::Now, $true, $false)
+                if($isValid -eq $null) {
+                    $Item
+                }
+            } else {
+                $Item
+            }
         }
     }
     
