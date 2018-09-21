@@ -2,7 +2,7 @@
 ID: "9ab5103c-c40f-4a44-a35e-fa92edee9391"
 Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
 Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
-Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Reports/Rules/Any item is locked"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE - Reporting/Authorable Reports/Reports/Rules/Any item under Content is locked"
 DB: master
 SharedFields:
 - ID: "072645b6-c332-446f-9f2c-255467af5bc9"
@@ -39,4 +39,4 @@ Languages:
         sitecore\admin
     - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
       Hint: Query
-      Value: "location:{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9};custom:_latestversion|1"
+      Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"
