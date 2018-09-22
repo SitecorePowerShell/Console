@@ -18,13 +18,13 @@ SharedFields:
         name="Admin or Maintainer">
         <conditions>
           <or
-            uid="9274EC892FBC41099B6F45CDAB7CFE74">
+            uid="A60295B4E556489BBE3E8F17EF1CD9A9">
             <condition
               id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
               uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
             <condition
-              id="{B88D5A83-A909-4BC5-90E7-7A8804348CFA}"
-              uid="20E40A9633CA418AAFB226E0C642AA1C"
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="70840624A49E48B999437C2B8D85ED4C"
               value="sitecore\Sitecore Client Maintaining" />
           </or>
         </conditions>
