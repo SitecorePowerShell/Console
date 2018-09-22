@@ -35,7 +35,7 @@ SharedFields:
     $warning.Title = $title
     $warning.Text = $text
     
-    $script = Get-Item -Path "master:" -ID "{61BA28B7-645B-4F20-B537-095DB32B6801}"
+    $script = Get-Item -Path "master:" -ID "{BD07C7D1-700D-450C-B79B-8526C6643BF3}"
     $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
     $warning.AddOption("Unlock", $command)
     $warning.HideFields = $false

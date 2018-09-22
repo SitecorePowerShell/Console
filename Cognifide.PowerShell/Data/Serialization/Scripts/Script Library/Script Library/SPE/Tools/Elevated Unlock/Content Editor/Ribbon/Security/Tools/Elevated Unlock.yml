@@ -33,7 +33,7 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    Get-Item -Path "master:" -ID "{61BA28B7-645B-4F20-B537-095DB32B6801}" | Invoke-Script
+    Get-Item -Path "master:" -ID "{BD07C7D1-700D-450C-B79B-8526C6643BF3}" | Invoke-Script
 - ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
   Hint: EnableRule
   Type: Rules
