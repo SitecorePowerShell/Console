@@ -1,0 +1,14 @@
+﻿---
+ID: "5f248b98-6205-424a-8f2c-0784de120c14"
+Parent: "31df585c-2feb-4942-9cf0-9a5cd4968473"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Random desktop background/Pipelines/LoggedIn
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150530T164427

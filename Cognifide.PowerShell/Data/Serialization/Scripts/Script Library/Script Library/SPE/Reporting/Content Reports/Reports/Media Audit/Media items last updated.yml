@@ -1,0 +1,107 @@
+﻿---
+ID: "649aa26d-8532-4caf-94dc-3daa4980811a"
+Parent: "f2e422c9-726e-4a6d-b992-71945bbe2f0a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Media Audit/Media items last updated
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/history.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Lists all media items last updated by the date selected.
+        
+        .NOTES
+            Michael West
+    #>
+    $periodOptions = [ordered]@{Before=1;After=2;}
+    $settings = @{
+        Title = "Report Filter"
+        Width = "350"
+        Height = "250"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter the results for items updated on or before/after the specified date"
+        Parameters = @{ 
+            Name = "selectedDate"
+            Value = [System.DateTime]::Now
+            Title = "Date"
+            Tooltip = "Filter the results for items updated on or before/after the specified date"
+            Editor = "date time"
+        },
+        @{
+            Name = "selectedPeriod"
+            Title = "Period"
+            Value = 1
+            Options = $periodOptions
+            Tooltip = "Pick whether the items should have been last updated before or after the specified date"
+            Editor = "radio"
+        }
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    function Get-MediaItem {
+        param(
+            [datetime]$Date=([datetime]::Today),
+            [switch]$IsBefore
+        )
+        
+        $mediaItemContainer = Get-Item -Path "master:\media library"
+        $items = $mediaItemContainer.Axes.GetDescendants() | Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } | Initialize-Item
+        
+        foreach($item in $items) {
+            if($IsBefore.IsPresent) {
+                if($item."__Updated" -le $Date) {
+                    $item
+                }
+            } else {
+                if($item."__Updated" -ge $Date) {
+                    $item
+                }
+            }
+        }
+    }
+    
+    $items = Get-MediaItem -Date $selectedDate -IsBefore:($selectedPeriod -eq 1)
+    
+    $message = "before"
+    if($selectedPeriod -ne 1) {
+        $message = "after"
+    }
+    
+    if($items.Count -eq 0) {
+        Show-Alert "There are no media items updated on or $($message) the specified date."
+    } else {
+        $props = @{
+            Title = $PSScript.Name
+            InfoTitle = "Media items last updated $($message) date"
+            InfoDescription = "Lists all media items last updated on or $($message) the date selected."
+            PageSize = 25
+        }
+        
+        $items |
+            Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Updated"; Expression={$_.__Updated} },
+                @{Label="Updated by"; Expression={$_."__Updated by"} },
+                @{Label="Created"; Expression={$_.__Created} },
+                @{Label="Created by"; Expression={$_."__Created by"} },
+                @{Label="Path"; Expression={$_.ItemPath} }
+    }
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140408T090203

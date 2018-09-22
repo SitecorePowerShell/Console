@@ -1,0 +1,82 @@
+﻿---
+ID: "2b6a200b-3752-4827-bce9-40f4f5f4c8d4"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/How many times is each rendering used
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/chart_pie.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            How many times is each rendering used in your solution?
+            
+        .NOTES
+            Michael West
+    #>
+    Import-Function Render-ReportField
+    
+    filter IsRendering {
+        # Look for Controller and View renderings
+        $renderingIds = @("{2A3E91A0-7987-44B5-AB34-35C2D9DE83B9}","{99F8905D-4A87-4EB8-9F8B-A9BEBFB3ADD6}")
+        if(($renderingIds -contains $_.TemplateID)) { $_; return }
+    }
+    
+    $database = "master"
+    
+    # Renderings Root
+    $renderingsRootItem = Get-Item -Path "$($database):{32566F0E-7686-45F1-A12F-D7260BD78BC3}"
+    $items = $renderingsRootItem.Axes.GetDescendants() | Initialize-Item | IsRendering
+    
+    $reportItems = @()
+    foreach($item in $items) {
+        $count = 0
+        $referrers = Get-ItemReferrer -Item $item
+        if ($referrers -ne $null) {
+            $count = $referrers.Count
+        }
+    
+        $reportItem = [PSCustomObject]@{
+            "Icon" = $item."__Icon"
+            "Name"=$item.Name
+            "UsageCount"=$count
+            "ItemPath" = $item.ItemPath
+            "TemplateName" = $item.TemplateName
+            "Controller" = $item.Controller
+        }
+        $reportItems += $reportItem
+    }
+    
+    $reportProps = @{
+        Property = @(
+            "Icon",@{Name="Rendering Name"; Expression={$_.Name}}, 
+            @{Name="Number of usages"; Expression={$_.UsageCount}}, "ItemPath",
+            @{Label="Rendering Type"; Expression={$_.TemplateName} },
+            "Controller"
+        )
+        Title = "Custom rendering report"
+        InfoTitle = "Available Renderings"
+        InfoDescription = "Count of references for each rendering. Results include only MVC Controller and View renderings." 
+    }
+    
+    $reportItems | 
+            Sort-Object UsageCount -Descending |
+            Show-ListView @reportProps
+    
+    Close-Window
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: "How many times is each rendering used?"
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121203T180757

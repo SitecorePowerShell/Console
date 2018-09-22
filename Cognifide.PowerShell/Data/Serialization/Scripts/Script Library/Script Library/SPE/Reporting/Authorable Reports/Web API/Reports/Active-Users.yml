@@ -1,0 +1,105 @@
+﻿---
+ID: "2ab8ca8f-d198-4da5-85b5-27dbdccf02a1"
+Parent: "3b9314eb-0a5b-4166-8fac-b032dea1e043"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: "/sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Web API/Reports/Active-Users"
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function -Name Invoke-ApiScript
+    Import-Function -Name Invoke-SqlCommand
+    
+    $script = {
+        $database = Get-Database -Name "master"
+        $connection = [Sitecore.Configuration.Settings]::GetConnectionString($database.Name)
+        $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $connection
+        $dbName = $builder.InitialCatalog
+        $query = "SELECT [UserName],[Created] FROM [$($dbName)].[dbo].[History] WHERE [Created] >= DATEADD(day,-14,GETDATE())"
+        $records = Invoke-SqlCommand -Connection $connection -Query $query
+        
+        $columns = [System.Collections.ArrayList]@()
+        $grouped = $records | Select-Object @{n="Created";e={$_.Created.ToString("yyyy-MM-dd")}} | Group-Object -Prop Created | ForEach-Object { @{$_.Name=$_.Count} }
+        
+        $xArray = [System.Collections.ArrayList]@()
+        $xArray.Add("x") > $null
+        
+        foreach($key in $grouped.Keys) {
+            $xArray.Add($key) > $null
+        }
+        $columns.Add($xArray) > $null
+        
+        $distinctUsers = $records | Select-Object -ExpandProperty UserName -Unique
+        foreach($user in $distinctUsers) {
+            $grouped = $records | Where-Object { $_.UserName -eq $user } | 
+                Select-Object @{n="Created";e={$_.Created.ToString("yyyy-MM-dd")}} | 
+                Group-Object -Prop Created | ForEach-Object { @{$_.Name=$_.Count} }
+            $dataArray = [System.Collections.ArrayList]@()
+            $dataArray.Add("$($User)") > $null
+            
+            foreach($key in $grouped.Keys) {
+                $dataArray.Add($grouped.$key) > $null
+            }
+            
+            $columns.Add($dataArray) > $null
+        }
+        
+        [ordered]@{
+            "title" = "Active Users"
+            "data" = [ordered]@{
+                "x" = "x"
+                "columns" = $columns
+                "type" = "line"
+            }
+            "axis" = [ordered]@{
+                "x" = @{
+                    "label" = "History Table Events"
+                    "type" = "timeseries"
+                    "tick" = [ordered]@{
+                        "format" = "%Y-%m-%d"
+                    }
+                }
+            }
+            "size" = @{
+                "height" = 450
+                "width" = 800
+            }
+        }
+    }
+    
+    Invoke-ApiScript -ScriptBlock $script -Arguments $scriptArguments
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{1618D6C5-1CE8-4ECC-8813-FC70BDEA43CD}"
+        name="Only show for certain roles">
+        <conditions>
+          <or
+            uid="DBEE04D45ED84E82B5C1789CC1EEEF7D">
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="C82F180E1AF44D35B94B7BA3CC0E1E36" />
+            <condition
+              id="{B88D5A83-A909-4BC5-90E7-7A8804348CFA}"
+              uid="14E070A4683344F0BA2877979263B262"
+              value="sitecore\Developer" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180418T115912Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

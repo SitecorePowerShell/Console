@@ -1,0 +1,49 @@
+﻿---
+ID: "50456b81-0fb3-4705-bc61-e6fdd2cf98a3"
+Parent: "f25bf203-f58f-4f3c-b017-3acd2f063479"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Getting Started/Content Maintenance/Change item template en masse
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        Based on Blog by @Techphoria414 - Nick Wesselman
+        http://www.techphoria414.com/Blog/2012/March/Change-Item-Templates-With-Sitecore-PowerShell
+    #>
+    
+    $sourceTemplate = Get-Item 'master:\templates\Sample\Sample Item'
+    $targetTemplate = Get-Item 'master:\templates\Sample\Sample Item'
+    $branch = Get-Item -Path .
+    $result = Read-Variable -Parameters `
+        @{ Name = "branch"; Title="Branch to work on"; Root="/sitecore/"; Tooltip="Items you want to work on."}, `
+        @{ Name = "sourceTemplate"; Title="Current template"; Root="/sitecore/templates/"; Tooltip="Template you want to replace."}, `
+        @{ Name = "targetTemplate"; Title="New template"; Root="/sitecore/templates/"; Tooltip="Template you want to use."} `
+        -Description "This report will replace template on all items in the tree with another template of your choice" `
+        -Title "Branch Template Replace" -Width 500 -Height 400 `
+        -OkButtonName "Replace" -CancelButtonName "Cancel" 
+    
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $path = $branch.ProviderPath;
+    Set-Location -Path $path
+    $targetTemplateItem = New-Object -TypeName "Sitecore.Data.Items.TemplateItem" -ArgumentList $targetTemplate
+    Write-Host "For branch '$($path)' changing templates from '$($sourceTemplate.Name)' to '$($targetTemplate.Name)'"
+    
+    Get-ChildItem $path -recurse | 
+        Where-Object { $_.TemplateID -eq $sourceTemplate.ID } | 
+        ForEach-Object { $_.ChangeTemplate($targetTemplateItem); Write-Host "Changing $($_.ProviderPath)" }
+    
+    Show-Result -Text -Width 800 -Height 700
+    Close-Window
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130902T111843

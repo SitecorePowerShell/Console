@@ -1,0 +1,51 @@
+﻿---
+ID: "f52a5b18-6e32-42c3-9b6f-61b6bd113f13"
+Parent: "5500d03f-9545-4e46-91bc-debafd00d392"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/ISE Plugins/Format
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/text_align_left.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    if([string]::IsNullOrWhiteSpace($scriptText)){
+        Show-Alert "Script is empty - nothing to format."
+        exit
+    }
+    
+    Import-Function -Name Edit-DTWCleanScript
+    $formatted = Edit-DTWCleanScriptInMemory -Source $scriptText
+    Send-SheerMessage -Name "ise:pluginupdate" -Parameters @{ "script" = "$formatted" }
+    
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{9F9D81E1-F8F9-4BD7-9744-ED1E8A83082B}">
+        <conditions>
+          <condition
+            id="{E3325F11-0E77-4F8F-91F2-4615C9CEC8A1}"
+            uid="7B22D50923CD4F7ABED478787FB7D7E0"
+            MeasuredLength="{22BE997D-B182-4C9B-888B-FB543D79E7BE}"
+            operatorid="{B88CD556-082E-4385-BB76-E4D1B565F290}"
+            DesiredLength="3" />
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Format the script text.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150624T041723Z

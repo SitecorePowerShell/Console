@@ -1,0 +1,58 @@
+﻿---
+ID: "81648ea7-09d5-479d-8e78-d540eee29106"
+Parent: "c86f2d40-b80e-425b-9721-ad7162982a69"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Getting Started/Web API/ChildrenAsHtml
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        For the Script API call to work - make sure the module in which the called script is located is enabled!
+        
+        Provides an HTML result for children of a specific item for remote call. e.g. The following returns children of content item from master database for specific credentials:
+        http://hostname/-/script/v2/master/ChildrenAsHtml?user=admin&password=b&item=content
+        
+        If you just want to work with the current database: "web" if anonymous, "master" if logged in - you can skip credentials and database parameters. Only published scripts are available to anonymous users.
+        http://hostname/-/script/v2/master/ChildrenAsHtml?item=content
+    #>
+    
+    #if the location is not Sitecore tree, switch to root of Master Database
+    $head = '<style>'+
+        'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
+        'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
+        'p {width:100%;font-family: "Proxima Nova Regular", "Helvetica Neue", Calibri, "Droid Sans", Helvetica, Arial, sans-serif; font-size: 18px}'+
+        'table {font-size:12px; border-collapse:collapse; border:1px solid #69c; margin:20px;}'+
+        'th{font-weight:normal; font-size:14px; color:#039; border-bottom:1px dashed #69c; padding:12px 17px;}'+
+        'td{color:#668;padding:7px 17px;border-bottom: 1px dashed #d8e8ff;}'+
+        'tbody tr:hover td{color:#339;background:#f0f0ff;}'+
+        '</style>'
+    $body = "<h1>Children of $($item)</h1>"
+    $HttpContext = [System.Web.HttpContext]::Current;
+    
+    if((Get-Location).Provider.Name -ne "CmsItemProvider"){
+        Set-Location master:\
+    }
+    
+    if(!$item){
+        $item = "/"
+    }
+    
+    Set-Location $item
+    
+    if ($HttpContext){
+        $HttpContext.Response.ContentType = "text/html";
+    }
+    
+    Get-ChildItem -Path . | Select-Object Name, DisplayName, TemplateName, Language, Version, ProviderPath | 
+        ConvertTo-Html -Head $head -Body $body |  ForEach-Object { [System.Web.HttpUtility]::HtmlDecode($_) }
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130913T041828

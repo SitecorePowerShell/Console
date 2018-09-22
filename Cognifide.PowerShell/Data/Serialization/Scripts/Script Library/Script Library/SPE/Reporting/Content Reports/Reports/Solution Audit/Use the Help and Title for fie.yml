@@ -1,0 +1,81 @@
+﻿---
+ID: "5e0f7528-c46f-417a-8402-fd0c2c6e482d"
+Parent: "a608590e-6b4d-4bd0-bebe-9753037072cc"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Solution Audit/Use the Help and Title for fields
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/speech_balloon_question.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+      How many of my template fields define Help and Title?
+     
+      Sitecore recommendation:
+         Use the Help option in the individual field definition items to provide extra information to users about fields. 
+         Also consider using the Title field of the definition item to present a different name for the field to the user.
+     
+      Before executing this script point the "Context Item" to where you store your solution templates e.g. "Sitecore/templates/My Site Templates"
+     
+      How to read this report?
+      ------------------------
+      The report will show you all template fields in your solution and whether or not they have User Friendly strings defined.
+    #>
+    
+    $item = gi master:\templates
+    $result = Read-Variable -Parameters `
+        @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
+        -Description "<b>How many of my template fields define Help and Title?</b>
+                      Use the Help option in the individual field definition items to provide extra information to users about fields. 
+                      Also consider using the Title field of the definition item to present a different name for the field to the user." `
+        -Title "Sitecore Recommendations:" -Width 500 -Height 280 `
+        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    
+    if($result -ne "ok")
+    {
+        Close-Window
+        Exit
+    }
+    
+    $fields = 
+      @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | `
+        Where-Object { $_.TemplateName -eq "Template Field"};
+        
+    $checks = $fields | select-object Name, `
+          @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
+          @{Name="Help Defined"; Expression={$_."__Long description" -ne "" -or $_."__Short description" -ne "" -or $_."__Help link" -ne "" }},
+          @{Name="Title Specified"; Expression={$_.Title -ne "" }}
+    
+    $has_no_title = $checks | Group-Object "Title Specified" | Where-Object {$_.Name -eq "False" } | Select-object Count;
+    $has_no_help = $checks | Group-Object "Help Defined" | Where-Object {$_.Name -eq "False" } | Select-object Count;
+    
+    Write-host -f Yellow "Found $($fields.Count) template fields. $($has_no_title.Count) of those have no user friendly Title. $($has_no_help.Count) of those have no Help information defined."
+    
+    $fields |
+      where-object { $_."__Long description" -eq "" -or $_."__Short description" -eq "" -or $_."__Help link" -eq "" -or $_.Title -eq ""} | `
+        Show-ListView -Property DisplayName, 
+            @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
+            Title, `
+            @{Name="Short Description"; Expression={$_."__Long description" }}, `
+            @{Name="Help Link"; Expression={$_."__Long description" }}, `
+            @{Name="Long Description"; Expression={$_."__Long description" }} `
+            -Title "Template fields not providing user friendly information." `
+            -InfoTitle "Sitecore recommendation:" `
+            -InfoDescription "Use the Help option in the individual field definition items to provide extra information to users about fields. <br/>
+                              Also consider using the Title field of the definition item to present a different name for the field to the user. <br/><br/>
+                              Fields below fail to deliver on this recomendation."
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: Use the Help and Title option in the individual field definition
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130205T202005
