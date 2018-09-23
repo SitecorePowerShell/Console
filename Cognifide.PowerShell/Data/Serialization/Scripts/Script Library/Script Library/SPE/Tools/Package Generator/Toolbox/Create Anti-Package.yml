@@ -169,9 +169,9 @@ SharedFields:
                 Write-Verbose "Processing item $($source.Root) from the $($source.Database) database."
                 $itemRoot = & { 
                     if([Sitecore.Data.ID]::IsID($source.Root)) { 
-                        Get-Item -Path "$($source.Database):" -ID $source.Root 
+                        Get-Item -Path "$($source.Database):" -ID $source.Root -ErrorAction SilentlyContinue
                     } else { 
-                        Get-Item -Path "$($source.Database):$($source.Root)"
+                        Get-Item -Path "$($source.Database):$($source.Root)" -ErrorAction SilentlyContinue
                     }
                 }
                 
