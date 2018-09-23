@@ -134,7 +134,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     continue;
                 }
 
-                if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
+                if (contextItem == null && !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
                 {
                     continue;
                 }
