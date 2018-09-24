@@ -22,7 +22,7 @@ SharedFields:
         Description = "Choose what type of data to generate."
         OkButtonName = "Next"
         CancelButtonName = "Quit"
-        Icon = "Office/32x32/clock_back.png"
+        Icon = "OfficeWhite/32x32/clock_back.png"
         Parameters = @(
             @{Name="Info"; Title="Warning"; Value="This tool is not intended for use on production systems."; editor="info";},
             @{Name="selectedDataTypeValue"; Value=1; Options=$dataTypeOptions; Title="What type of data should be generated?"}
@@ -51,7 +51,7 @@ SharedFields:
         Description = "Configure how the $($dataTypeName)s should be generated."
         OkButtonName = "Generate"
         CancelButtonName = "Quit"
-        Icon = "Office/32x32/clock_back.png"
+        Icon = "OfficeWhite/32x32/clock_back.png"
         Width = 550
         Height = 450
         Parameters = @(

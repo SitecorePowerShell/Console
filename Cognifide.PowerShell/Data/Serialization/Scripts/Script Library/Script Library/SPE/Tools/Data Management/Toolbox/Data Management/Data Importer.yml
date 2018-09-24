@@ -7,7 +7,7 @@ DB: master
 SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
-  Value: Office/32x32/update_database.png
+  Value: Office/32x32/server_from_client.png
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
@@ -37,7 +37,7 @@ SharedFields:
     }
     $defaultProps = @{
         "Title" = "Data Import Wizard"
-        "Icon" = "Apps/32x32/UI.png"
+        "Icon" = "OfficeWhite/32x32/server_from_client.png"
         "ShowHints" = $true
     }
     
@@ -241,7 +241,7 @@ Languages:
   Fields:
   - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
     Hint: __Short description
-    Value: Import and update items from file.
+    Value: Import a file to add or updated items in bulk.
   Versions:
   - Version: 1
     Fields:
