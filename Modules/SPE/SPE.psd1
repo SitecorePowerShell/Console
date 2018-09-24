@@ -11,7 +11,7 @@
     RootModule = '.\SPE.psm1'
 
     # Version number of this module.
-    ModuleVersion = '4.7'
+    ModuleVersion = '5.0'
 
     # ID used to uniquely identify this module
     GUID = 'cf8d3b69-b293-4d8b-9974-e1ab80509724'
@@ -23,7 +23,7 @@
     CompanyName = 'Sitecore PowerShell Extensions'
 
     # Copyright statement for this module
-    Copyright = '(c) 2010-2017 Adam Najmanowicz, Michael West. All rights Reserved.'
+    Copyright = '(c) 2010-2018 Adam Najmanowicz, Michael West. All rights Reserved.'
 
     # Description of the functionality provided by this module
     # Description = ''
