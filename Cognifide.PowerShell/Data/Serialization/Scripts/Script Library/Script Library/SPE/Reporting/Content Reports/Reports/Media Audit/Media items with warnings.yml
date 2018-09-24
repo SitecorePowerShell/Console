@@ -56,6 +56,8 @@ SharedFields:
         
         $items |
             Show-ListView @props -Property @{Label="Name"; Expression={$_.DisplayName} },
+                @{Label="Size"; Expression={$_.Size}},
+                @{Label="Extension"; Expression={$_.Extension}},
                 @{Label="Warnings"; Expression={$_.Warnings}},
                 @{Label="Updated"; Expression={$_.__Updated} },
                 @{Label="Updated by"; Expression={$_."__Updated by"} },

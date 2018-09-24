@@ -78,7 +78,7 @@ SharedFields:
         Title = "Media by size"
         InfoTitle = "Media filtered by size"
         InfoDescription = "Media found larger than $($selectedSize) bytes."
-        Property = @("Name","TemplateName","Size","ItemPath")
+        Property = @("Name","TemplateName","Size", "Extension","ItemPath")
     }
     $items | Show-ListView @reportProps
     
