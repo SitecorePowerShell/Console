@@ -25,6 +25,9 @@ SharedFields:
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
   Value: DisplayName|TemplateName|ItemPath
+- ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+  Hint: Query
+  Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"
 Languages:
 - Language: en
   Versions:
@@ -37,6 +40,3 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
-    - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
-      Hint: Query
-      Value: "location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450};custom:_latestversion|1"

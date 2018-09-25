@@ -4,6 +4,48 @@ Parent: "a1f83fbf-c1ce-4365-890e-77ac8f475263"
 Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
 Path: "/sitecore/system/Modules/PowerShell/Snippets/Statements/Function - Advanced"
 DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    <#
+        .Synopsis
+            Short description
+        
+        .DESCRIPTION
+            Long description
+        
+        .Notes
+            Michael West
+        
+        .EXAMPLE
+            Another example of how to use this cmdlet
+    #>
+    function Verb-Noun {
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory=$true)]
+            [Item]$Item,
+            
+            [Parameter()]
+            [string]$Text,
+            
+            [ValidateSet("Option1","Option2")]
+            [string]$Option
+        )
+    
+        begin {
+            # Setup variables and do something once
+        }
+        
+        process {
+            # Handle each object passed through the pipeline
+        }
+        
+        end {
+            # Final processing
+        }
+    }
 Languages:
 - Language: en
   Versions:
@@ -12,44 +54,3 @@ Languages:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20180107T024626Z
-    - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
-      Hint: Script
-      Value: |
-        <#
-            .Synopsis
-                Short description
-            
-            .DESCRIPTION
-                Long description
-            
-            .Notes
-                Michael West
-            
-            .EXAMPLE
-                Another example of how to use this cmdlet
-        #>
-        function Verb-Noun {
-            [CmdletBinding()]
-            param (
-                [Parameter(Mandatory=$true)]
-                [Item]$Item,
-                
-                [Parameter()]
-                [string]$Text,
-                
-                [ValidateSet("Option1","Option2")]
-                [string]$Option
-            )
-        
-            begin {
-                # Setup variables and do something once
-            }
-            
-            process {
-                # Handle each object passed through the pipeline
-            }
-            
-            end {
-                # Final processing
-            }
-        }

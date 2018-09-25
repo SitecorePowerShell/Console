@@ -4,6 +4,26 @@ Parent: "e4d30aed-f42d-4d89-ae95-1a212e02bfb0"
 Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
 Path: "/sitecore/system/Modules/PowerShell/Snippets/Dialogs/Read-Variable with Dropdown"
 DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    $options = @{"OptionA"=1;"OptionB"=2;}
+    $optionTooltips = @{1="Something interesting about A";2="Something interesting about B"}
+    
+    $props = @{
+        Parameters = @(
+            @{Name="selectedOption"; Title="Choose an option"; Tooltip="Additional details about the option"; Options=$options; OptionTooltips=$optionTooltips; }
+        )
+        Title = "Option Selector"
+        Icon = "OfficeWhite/32x32/question.png"
+        Description = "Choose an option."
+        Width = 450
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
 Languages:
 - Language: en
   Versions:
@@ -12,22 +32,3 @@ Languages:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
       Value: 20180107T044421Z
-    - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
-      Hint: Script
-      Value: |
-        $options = @{"OptionA"=1;"OptionB"=2;}
-        $optionTooltips = @{1="Something interesting about A";2="Something interesting about B"}
-        
-        $props = @{
-            Parameters = @(
-                @{Name="selectedOption"; Title="Choose an option"; Tooltip="Additional details about the option"; Options=$options; OptionTooltips=$optionTooltips; }
-            )
-            Title = "Option Selector"
-            Icon = "OfficeWhite/32x32/question.png"
-            Description = "Choose an option."
-            Width = 450
-            Height = 300
-            ShowHints = $true
-        }
-        
-        $result = Read-Variable @props

@@ -33,6 +33,9 @@ SharedFields:
 - ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
   Hint: DefaultFields
   Value: DisplayName|TemplateName|Dimensions|Size
+- ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+  Hint: Query
+  Value: "location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};+custom:_templatename|jpeg"
 Languages:
 - Language: en
   Versions:
@@ -45,6 +48,3 @@ Languages:
       Hint: __Created by
       Value: |
         sitecore\admin
-    - ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
-      Hint: Query
-      Value: "location:{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1};+custom:_templatename|jpeg"
