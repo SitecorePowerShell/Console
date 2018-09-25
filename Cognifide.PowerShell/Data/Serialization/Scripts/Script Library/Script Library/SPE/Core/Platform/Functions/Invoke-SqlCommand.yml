@@ -148,7 +148,7 @@ SharedFields:
             }
     
             $scriptBlock = {
-                $result = @()
+                $result = [System.Collections.ArrayList]@()
                 $reader = $command.ExecuteReader()
                 if($reader) {
                     $counter = $reader.FieldCount
@@ -159,11 +159,11 @@ SharedFields:
     
                     if($reader.HasRows) {
                         while ($reader.Read()) {
-                            $row = @{}
+                            $row = [ordered]@{}
                             for ($i = 0; $i -lt $counter; $i++) {
                                 $row[$columns[$i]] = $reader.GetValue($i)
                             }
-                            $result += [PSCustomObject]$row
+                            $result.Add([PSCustomObject]$row) > $null
                         }
                     }
                 }
