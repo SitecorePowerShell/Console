@@ -14,7 +14,7 @@ SharedFields:
     # Clean up the History, EventQueue, and PublishQueue tables.
     
     $sql = @"
-    USE {0}
+    USE [{0}]
     /* TRUNCATE History TABLE */
     IF OBJECT_ID('History', 'U') IS NOT NULL
     IF((SELECT COUNT(*) FROM [History]) > 1000)
