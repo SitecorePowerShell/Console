@@ -8,77 +8,77 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
+    <#
+        .SYNOPSIS
+            Executes an SQL statement. Executes using Windows Authentication unless the Username and Password are provided.
+    
+        .PARAMETER Server
+            The SQL Server instance name.
+    
+        .PARAMETER Database
+            The SQL Server database name where the query will be executed.
+    
+        .PARAMETER Timeout
+            The connection timeout.
+    
+        .PARAMETER Connection
+            The System.Data.SqlClient.SQLConnection instance used to connect.
+    
+        .PARAMETER Username
+            The SQL Authentication Username.
+    
+        .PARAMETER Password
+            The SQL Authentication Password.
+    
+        .PARAMETER CommandType
+            The System.Data.CommandType value specifying Text or StoredProcedure.
+    
+        .PARAMETER Query
+            The SQL query to execute.
+    
+         .PARAMETER Path
+            The path to an SQL script.
+    
+        .PARAMETER Parameters
+            Hashtable containing the key value pairs used to generate as collection of System.Data.SqlParameter.
+    
+        .PARAMETER As
+            Specifies how to return the result.
+    
+            PSCustomObject
+             - Returns the result set as an array of System.Management.Automation.PSCustomObject objects.
+            DataSet
+             - Returns the result set as an System.Data.DataSet object.
+            DataTable
+             - Returns the result set as an System.Data.DataTable object.
+            DataRow
+             - Returns the result set as an array of System.Data.DataRow objects.
+            Scalar
+             - Returns the first column of the first row in the result set. Should be used when a value with no column name is returned (i.e. SELECT COUNT(*) FROM Test.Sample).
+            NonQuery
+             - Returns the number of rows affected. Should be used for INSERT, UPDATE, and DELETE.
+    
+        .EXAMPLE
+            PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT TOP 1 * FROM Test.Sample"
+    
+            datetime2         : 1/17/2013 8:46:22 AM
+            ID                : 202507
+            uniqueidentifier1 : 1d0cf1c0-9fb1-4e21-9d5a-b8e9365400fc
+            bool1             : False
+            datetime1         : 1/17/2013 12:00:00 AM
+            double1           : 1
+            varchar1          : varchar11
+            decimal1          : 1
+            int1              : 1
+    
+            Returned the first row as a System.Management.Automation.PSCustomObject.
+    
+        .EXAMPLE
+            PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT COUNT(*) FROM Test.Sample" -As Scalar
+    
+            9544            
+    #>
     function Invoke-SqlCommand {
-        <#
-            .SYNOPSIS
-                Executes an SQL statement. Executes using Windows Authentication unless the Username and Password are provided.
-    
-            .PARAMETER Server
-                The SQL Server instance name.
-    
-            .PARAMETER Database
-                The SQL Server database name where the query will be executed.
-    
-            .PARAMETER Timeout
-                The connection timeout.
-    
-            .PARAMETER Connection
-                The System.Data.SqlClient.SQLConnection instance used to connect.
-    
-            .PARAMETER Username
-                The SQL Authentication Username.
-    
-            .PARAMETER Password
-                The SQL Authentication Password.
-    
-            .PARAMETER CommandType
-                The System.Data.CommandType value specifying Text or StoredProcedure.
-    
-            .PARAMETER Query
-                The SQL query to execute.
-    
-             .PARAMETER Path
-                The path to an SQL script.
-    
-            .PARAMETER Parameters
-                Hashtable containing the key value pairs used to generate as collection of System.Data.SqlParameter.
-    
-            .PARAMETER As
-                Specifies how to return the result.
-    
-                PSCustomObject
-                 - Returns the result set as an array of System.Management.Automation.PSCustomObject objects.
-                DataSet
-                 - Returns the result set as an System.Data.DataSet object.
-                DataTable
-                 - Returns the result set as an System.Data.DataTable object.
-                DataRow
-                 - Returns the result set as an array of System.Data.DataRow objects.
-                Scalar
-                 - Returns the first column of the first row in the result set. Should be used when a value with no column name is returned (i.e. SELECT COUNT(*) FROM Test.Sample).
-                NonQuery
-                 - Returns the number of rows affected. Should be used for INSERT, UPDATE, and DELETE.
-    
-            .EXAMPLE
-                PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT TOP 1 * FROM Test.Sample"
-    
-                datetime2         : 1/17/2013 8:46:22 AM
-                ID                : 202507
-                uniqueidentifier1 : 1d0cf1c0-9fb1-4e21-9d5a-b8e9365400fc
-                bool1             : False
-                datetime1         : 1/17/2013 12:00:00 AM
-                double1           : 1
-                varchar1          : varchar11
-                decimal1          : 1
-                int1              : 1
-    
-                Returned the first row as a System.Management.Automation.PSCustomObject.
-    
-            .EXAMPLE
-                PS C:\> Invoke-SqlCommand -Server "DATASERVER" -Database "Web" -Query "SELECT COUNT(*) FROM Test.Sample" -As Scalar
-    
-                9544            
-        #>
         [CmdletBinding(DefaultParameterSetName="Default")]
         param(
             [Parameter(Mandatory=$true, Position=0,ParameterSetName="Server")]
