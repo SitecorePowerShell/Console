@@ -16,7 +16,7 @@ SharedFields:
     $myZipFile = "$dataFolder\logs-$($time).zip"
     Remove-Item $myZipFile -ErrorAction SilentlyContinue
     Compress-Archive -Path $LogsFolder –CompressionLevel Optimal -DestinationPath $myZipFile
-    Download-File -FullName $myZipFile | Out-Null
+    Download-File -FullName $myZipFile > $null
     Remove-Item $myZipFile
 Languages:
 - Language: en

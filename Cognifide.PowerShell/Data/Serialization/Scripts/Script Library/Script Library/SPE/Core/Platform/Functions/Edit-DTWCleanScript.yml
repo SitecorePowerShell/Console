@@ -1380,9 +1380,9 @@ SharedFields:
         } finally {
           #region Flush and close file stream writer
           if ($null -ne $script:DestinationStreamWriter) {
-            $script:DestinationStreamWriter.Flush() | Out-Null
-            $script:DestinationStreamWriter.Close() | Out-Null
-            $script:DestinationStreamWriter.Dispose() | Out-Null
+            $script:DestinationStreamWriter.Flush() > $null
+            $script:DestinationStreamWriter.Close() > $null
+            $script:DestinationStreamWriter.Dispose() > $null
           }
           #endregion
           if (!$Quiet) { Write-Host ("Finished in {0:0.000} seconds.`n" -f ((Get-Date) - $StartTime).TotalSeconds) }

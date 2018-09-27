@@ -34,7 +34,7 @@ SharedFields:
     Set-Location "$($item.Database.Name):\"
     $fields = Get-Item -Path . -Query "fast:$($item.Paths.Path)//*[@@templatename=`"Template Field`"]" | Group-Object Type
     $total = 0 
-    $fields | ForEach-Object { $total += $_.Count } | Out-Null
+    $fields | ForEach-Object { $total += $_.Count } > $null
     $fields | ForEach-Object { Add-Member -InputObject $_ -MemberType NoteProperty -Name Percent -Value ([math]::Round($_.Count * 100 / $total)) }
     
     $fields |

@@ -62,7 +62,7 @@ SharedFields:
             Add-Type -AssemblyName System.IO.Compression.FileSystem
             
             if(!(Test-Path -Path $DestinationPath)) {
-                New-Item -Path $DestinationPath -ItemType directory | Out-Null
+                New-Item -Path $DestinationPath -ItemType directory > $null
             }
             
             $directory = New-Object System.IO.DirectoryInfo $DestinationPath

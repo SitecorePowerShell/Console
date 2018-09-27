@@ -32,7 +32,7 @@ SharedFields:
     $c = get-help $helpFor -full
     
     $alias = "";
-    get-alias | where-object { $_.Definition -eq "$helpFor" } | % { $alias += "<li>$($_.Name)</li>" } | out-null
+    get-alias | where-object { $_.Definition -eq "$helpFor" } | % { $alias += "<li>$($_.Name)</li>" } > $null
     
     "<h1 class='title'>$($c.Name)</h1><div>$($c.synopsis)</div>"
     

@@ -30,7 +30,7 @@ SharedFields:
     {
       Set-Location $sourcedir
       [System.Reflection.Assembly]::Load("WindowsBase,Version=3.0.0.0, `
-          Culture=neutral, PublicKeyToken=31bf3856ad364e35") | Out-Null
+          Culture=neutral, PublicKeyToken=31bf3856ad364e35") > $null
       $ZipPackage=[System.IO.Packaging.ZipPackage]::Open($zipArchive, `
           [System.IO.FileMode]::OpenOrCreate, [System.IO.FileAccess]::ReadWrite)
       $items = @(Get-Item $sourceDir) + (Get-ChildItem -recurse $sourceDir)
@@ -67,7 +67,7 @@ SharedFields:
     $zipPath = "$dataFolder\$zipName-$time.zip"
     
     ZipItems $zipPath $location
-    Download-File -FullName $zipPath | Out-Null
+    Download-File -FullName $zipPath > $null
     Remove-Item $zipPath
     Close-Window
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"

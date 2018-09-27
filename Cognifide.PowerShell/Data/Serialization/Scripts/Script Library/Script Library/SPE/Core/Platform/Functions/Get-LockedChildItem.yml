@@ -84,9 +84,9 @@ SharedFields:
     				if (!$skip) {
     					if ($Unlock) {
     						Write-Log "Unlocking item $($_.Paths.Path) which exceeded the specified idle time - locked by $($owner)"
-    						$_.Editing.BeginEdit() | Out-Null
-    						$_.Locking.Unlock() | Out-Null
-    						$_.Editing.EndEdit() | Out-Null
+    						$_.Editing.BeginEdit() > $null
+    						$_.Locking.Unlock() > $null
+    						$_.Editing.EndEdit() > $null
     					}
     
     					$_

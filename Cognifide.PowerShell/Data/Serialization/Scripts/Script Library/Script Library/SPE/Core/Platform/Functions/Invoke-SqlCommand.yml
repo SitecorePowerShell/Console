@@ -133,8 +133,14 @@ SharedFields:
                     $Connection.Add_InfoMessage([System.Data.SqlClient.SqlInfoMessageEventHandler] { Write-Verbose "$($_)"} )
                 }
             }
-    
-            if(-not ($Connection.State -like "Open")) { try { $Connection.Open() } catch [Exception] { throw $_ } }
+            
+            $closeConnection = $false
+            if(-not ($Connection.State -like "Open")) { 
+                try { 
+                    $Connection.Open()
+                    $closeConnection = $true
+                } catch [Exception] { throw $_ }
+            }
         }
     
         process {
@@ -143,30 +149,33 @@ SharedFields:
             $command.CommandType = $CommandType
             if($Parameters) {
                 foreach ($p in $Parameters.Keys) {
-                    $command.Parameters.AddWithValue($p, $Parameters[$p]) | Out-Null
+                    $command.Parameters.AddWithValue($p, $Parameters[$p]) > $null
                 }
             }
     
             $scriptBlock = {
+                $watch = [System.Diagnostics.StopWatch]::StartNew()
                 $result = [System.Collections.ArrayList]@()
                 $reader = $command.ExecuteReader()
                 if($reader) {
-                    $counter = $reader.FieldCount
+                    $fieldCount = $reader.FieldCount
                     $columns = [System.Collections.ArrayList]@()
-                    for ($i = 0; $i -lt $counter; $i++) {
+                    for ($i = 0; $i -lt $fieldCount; $i++) {
                         $columns.Add($reader.GetName($i)) > $null
                     }
     
                     if($reader.HasRows) {
                         while ($reader.Read()) {
                             $row = [ordered]@{}
-                            for ($i = 0; $i -lt $counter; $i++) {
+                            for ($i = 0; $i -lt $fieldCount; $i++) {
                                 $row[$columns[$i]] = $reader.GetValue($i)
                             }
                             $result.Add([PSCustomObject]$row) > $null
                         }
                     }
                 }
+                $watch.Stop()
+                Write-Verbose "ExecuteReader completed in $([math]::Round($watch.ElapsedMilliseconds / 1000, 3)) seconds"
                 $result
             }
     
@@ -189,7 +198,7 @@ SharedFields:
                             $scriptBlock = {
                                 $ds = New-Object System.Data.DataSet
                                 $da = New-Object System.Data.SqlClient.SqlDataAdapter($command)
-                                $da.Fill($ds) | Out-Null
+                                $da.Fill($ds) > $null
                                 switch($As) {
                                     "DataSet" { $result = $ds }
                                     "DataTable" { $result = $ds.Tables }
@@ -202,13 +211,18 @@ SharedFields:
                 }
             }
     
+            Write-Verbose "Executing database query"
             $result = Invoke-Command -ScriptBlock $ScriptBlock
             $command.Parameters.Clear()
         }
     
         end {
-            if($createConnection) { $Connection.Close() }
+            if($closeConnection) {
+                Write-Verbose "Closing database connection"
+                $Connection.Close()
+            }
     
+            Write-Verbose "Writing results to the host"
             $result
         }
     }

@@ -113,7 +113,7 @@ SharedFields:
     	$weekdays = Parse-TaskSchedule $Item "weekdays";
     	$interval = Parse-TaskSchedule $Item "interval";
     	$tsInterval = [timespan]::Zero;
-    	[timespan]::TryParse($interval,[ref]$tsInterval) | Out-Null;
+    	[timespan]::TryParse($interval,[ref]$tsInterval) > $null
     	$intDays = $tsInterval.Days;
     	$intHours = $tsInterval.Hours;
     	$intMinutes = $tsInterval.Minutes;
