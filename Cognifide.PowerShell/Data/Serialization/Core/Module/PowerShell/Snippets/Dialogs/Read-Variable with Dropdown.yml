@@ -8,8 +8,8 @@ SharedFields:
 - ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
   Hint: Script
   Value: |
-    $options = @{"OptionA"=1;"OptionB"=2;}
-    $optionTooltips = @{1="Something interesting about A";2="Something interesting about B"}
+    $options = [ordered]@{"OptionA"=1;"OptionB"=2;}
+    $optionTooltips = [ordered]@{1="Something interesting about A";2="Something interesting about B"}
     
     $props = @{
         Parameters = @(
