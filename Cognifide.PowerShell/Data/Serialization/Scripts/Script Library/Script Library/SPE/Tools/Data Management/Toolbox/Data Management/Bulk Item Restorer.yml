@@ -1,0 +1,101 @@
+﻿---
+ID: "5b1f4575-5002-4f14-b8e4-6babb54ea742"
+Parent: "44c09e51-9d3e-42ff-9690-682a97ddf94c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Data Management/Toolbox/Data Management/Bulk Item Restorer
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/undo.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Restore items in the recycle bin and show in a report.
+            
+        .LINK
+            https://gist.github.com/technomaz/58890edff903123083c77ad8f1b1b2e2
+            
+        .NOTES
+            Michael West
+            Adapted from Mark Mazelin's script to restore items from the recycle bin.
+    #>
+    
+    $archives = Get-Archive -Name "recyclebin"
+    $options = $archives | ForEach-Object { $o = [ordered]@{} } { $o[$_.Database.Name] = $_.Database.Name } { $o }
+    
+    $selectedDatabaseName = "master"
+    $selectedDate = [datetime]::Today.AddDays(-1)
+    $dryRun = $true
+    $props = @{
+        Parameters = @(
+            @{Name="selectedDatabaseName"; Title="Database"; Tooltip="Each database contains a recyclebin"; Options=$options; }
+            @{Name="selectedDate"; Title="Date"; Tooltip="Restore all items between this date and now"; Editor = "date" }
+            @{Name="dryRun"; Title="Dry Run"; Tooltip="When selected the items will remain in the recyclebin"; }
+        )
+        Title = "Bulk Item Restorer"
+        Icon = "OfficeWhite/32x32/undo.png"
+        Description = "Choose the database and how far back to restore."
+        Width = 450
+        Height = 300
+        ShowHints = $true
+    }
+    
+    $result = Read-Variable @props
+    if($result -ne "ok") {
+        exit
+    }
+    
+    if($dryRun) {
+        Write-Host "Running in dry run mode" -ForegroundColor Yellow
+    }
+    Write-Host "Restoring items recycled after $($selectedDate.ToShortDateString())"
+    
+    $restoredItems = [System.Collections.ArrayList]@()
+    foreach($archive in Get-Archive -Name "recyclebin" | Where-Object { $_.Database.Name -eq $selectedDatabaseName }) {
+        $database = $archive.Database
+        Write-Host "- Found $($archive.GetEntryCount()) entries in the $($database.Name) database"
+        $entries = $archive.GetEntries(0, $archive.GetEntryCount())
+        foreach($entry in $entries) {
+            $itemId = $entry.ItemId
+            if($entry.ArchiveLocalDate -ge $selectedDate) { 
+                Write-Host "- [R] $($entry.ArchiveLocalDate) $($itemId) $($entry.OriginalLocation)" -ForegroundColor Yellow
+                if(!$dryRun) {
+                    $restored = $archive.RestoreItem($entry.ArchivalId)
+                    $item = Get-Item -Path "$($database.Name):" -ID $itemId
+                    if($restored -and $item) {
+                        $restoredItems.Add($item) > $null
+                    }
+                }
+            } else {
+                Write-Host "- [S] $($entry.ArchiveLocalDate) $($itemId) $($entry.OriginalLocation)"
+            }
+        }
+    }
+    
+    if(!$dryRun) {
+        $props = @{
+            Title = "Bulk Item Restorer Report"
+            InfoTitle = "Items restored from the recycle bin"
+            InfoDescription = "Restored items were recycled as far back as $($selectedDate.ToString('yyyy-MM-dd'))."
+            PageSize = 50
+        }
+        $restoredItems | Show-ListView @props
+        Close-Window
+    } else {
+        Show-Result -Text
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180928T004709Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
