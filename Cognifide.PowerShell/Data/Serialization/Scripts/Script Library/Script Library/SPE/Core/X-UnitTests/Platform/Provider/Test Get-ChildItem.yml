@@ -14,12 +14,12 @@ SharedFields:
         Context "Path is provided" {
             It "returns the children of workflows using the specified path" {
                 $actual = Get-ChildItem -Path "master:\system\Workflows" | Select-Object -ExpandProperty FullPath
-                $expected = 0
+                $expected = 8
                 $actual.Length | Should BeGreaterOrEqual $expected 
             }
             It "returns the children of workflows using the specified id" {
                 $actual = Get-ChildItem -Path "master:"-ID "{05592656-56D7-4D85-AACF-30919EE494F9}" | Select-Object -ExpandProperty FullPath
-                $expected = 0
+                $expected = 8
                 $actual.Length | Should BeGreaterOrEqual $expected 
             }
         }
