@@ -160,7 +160,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 var child = childItem;
                 if (wildcard.IsMatch(child.Name))
                 {
-                    GetMatchingItem(language, version, child).ForEach(WriteItem);
+                    GetMatchingItem(language, version, child, false).ForEach(WriteItem);
                 }
 
                 if (recurse && currentDepth < depth)
@@ -327,9 +327,9 @@ namespace Cognifide.PowerShell.Core.Provider
             WriteError(new ErrorRecord(exception, ErrorIds.ItemNotFound.ToString(), ErrorCategory.ObjectNotFound, path));
         }
 
-        private IEnumerable<Item> GetMatchingItem(string[] language, int version, Item item)
+        private IEnumerable<Item> GetMatchingItem(string[] language, int version, Item item, bool checkAmbiguousPath = true)
         {
-            if (DynamicParameters is RuntimeDefinedParameterDictionary dic &&
+            if (checkAmbiguousPath && DynamicParameters is RuntimeDefinedParameterDictionary dic &&
                 dic.ContainsKey(AmbiguousPathsParam) &&
                 dic[AmbiguousPathsParam].IsSet)
             {
