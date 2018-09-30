@@ -14,7 +14,7 @@ SharedFields:
     foreach($integration in $integrations){
       $i++
       $integrationName = "Rebuilding $($integration.Name)"
-      Write-Host "`n" ("-" * ($integrationName.Length+2)) "`n  $integrationName `n" ("-" * ($integrationName.Length+2)) -ForegroundColor Green
+      Write-Host "`n$("-" * ($integrationName.Length+2))`n $integrationName `n$("-" * ($integrationName.Length+2))" -ForegroundColor Green
       Write-Progress -Activity "Rebuilding all integrations" -CurrentOperation "Rebuilding $($integration.Name)" -PercentComplete ($i*100/$integrations.Length)
       Execute-Script -Item $integration
     }

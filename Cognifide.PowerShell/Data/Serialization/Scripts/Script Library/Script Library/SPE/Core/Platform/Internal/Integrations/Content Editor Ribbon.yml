@@ -21,7 +21,7 @@ SharedFields:
     
     
     #Remove non existing scripts from Control Panel
-    Write-Host "Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
+    Write-Host "- Purging Content Editor ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
     Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
     Get-ChildItem $stripsPath | ForEach-Object {
     	$strip = $_;
@@ -40,19 +40,19 @@ SharedFields:
     
     		if ($chunk.Children.Count -eq 0)
     		{
-    			Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+    			Write-Host " - Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
     			$chunk | Remove-Item
     		}
     	}
     	if ($strip.Children.Count -eq 0 -and $strip.Name -ne 'My Toolbar')
     	{
-    		Write-Host "Removing Strip '$($strip.Name)'" -f y
+    		Write-Host " - Removing Strip '$($strip.Name)'" -f y
     		$strip | Remove-Item
     	}
     }
     
     # Re-creating buttons
-    Write-Host "Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
+    Write-Host "- Adding Content Editor ribbon entries for new scripts and modules" -ForegroundColor Cyan
     Write-Progress -Activity "Content Editor Ribbon" -CurrentOperation "Adding buttons for new scripts" -PercentComplete 50
     
     foreach ($root in $roots) {
@@ -63,7 +63,7 @@ SharedFields:
     		$scriptLibrary = $_;
     		$strip = Get-Item "$stripsPath/$($scriptLibrary.Name)" -ErrorAction SilentlyContinue
     		if ($strip -eq $null) {
-    			Write-Host "Adding Strip '$($scriptLibrary.Name)'." -f Green
+    			Write-Host " - Adding Strip '$($scriptLibrary.Name)'." -f Green
     			$strip = New-Item -Path $stripsPath -Name $scriptLibrary.Name -ItemType "System/Ribbon/Strip"
     			$strip.Header = $scriptLibrary.Name
     		}
@@ -73,16 +73,16 @@ SharedFields:
     			$chunkLibrary = $_
     			$chunk = Get-Item "$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)" -ErrorAction SilentlyContinue
     			if ($chunk -eq $null) {
-    				Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+    				Write-Host " - Adding Chunk '$($chunkLibrary.Name)'." -f Green
     				$chunk = New-Item -Path core: -Parent $strip -Name $chunkLibrary.Name -ItemType "System/Ribbon/Chunk"
     				$chunk.Header = $chunkLibrary.Name
     			}
     
     			if ($chunk.TemplateName -eq "Reference") {
     				$chunk = Get-Item "core:/" -Id $chunk.Reference
-    				Write-Verbose "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" #-ForegroundColor Blue
+    				Write-Verbose " - Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" #-ForegroundColor Blue
     			} else {
-    				Write-Verbose "Using chunk directly '$($chunk.ProviderPath)'" #-ForegroundColor Blue
+    				Write-Verbose " - Using chunk directly '$($chunk.ProviderPath)'" #-ForegroundColor Blue
     			}
     
     			$panel = $null;
@@ -122,10 +122,10 @@ SharedFields:
     						$panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
     						$panel.__Sortorder = $script.__Sortorder
     						$smallCount = 0
-    						Write-Host "Adding Panel '$($panel.Name)' to Chunk '$($chunk.Name)'." -f Green
+    						Write-Host " - Adding Panel '$($panel.Name)' to Chunk '$($chunk.Name)'." -f Green
     					}
     					$button = New-Item -Path "core:" -Name $name -Parent $panel -ItemType $buttonTemplate
-    					Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+    					Write-Host " - Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
     
     					$button.__Icon = $script.__Icon;
     					$button.Icon = $script.__Icon;
@@ -144,7 +144,7 @@ SharedFields:
     						Get-ChildItem $script.ProviderPath | % {
     							$itemScript = $_
     							$menuItem = New-Item -Path "core:" -Parent $button -Name $itemScript.Name -ItemType 'System/Menus/Menu item'
-    							Write-Host "Adding Menu Item Script '$($menuItem.Name)' to Dropdown Button '$($button.Name)'." -f Green
+    							Write-Host " - Adding Menu Item Script '$($menuItem.Name)' to Dropdown Button '$($button.Name)'." -f Green
     
     							$menuItem.__Icon = $itemScript.__Icon;
     							$menuItem.Icon = $itemScript.__Icon;

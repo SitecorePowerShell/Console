@@ -19,7 +19,7 @@ SharedFields:
     
     $roots = Get-SpeModuleFeatureRoot "ContentEditorContextualRibbon"
     
-    Write-Host "Purging Content Editor Contextual Ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
+    Write-Host "- Purging Content Editor Contextual Ribbon entries for non existing scripts and disabled modules" -ForegroundColor Cyan
     Write-Progress -Activity "Content Editor Contextual Ribbon" -CurrentOperation "Removing buttons for deleted scripts"
     $toolbars = Get-ChildItem -Path $ribbonRoot | Where-Object { $_.TemplateName -eq "Toolbar" }
     foreach($toolbar in $toolbars) {
@@ -33,25 +33,25 @@ SharedFields:
                 }
                 
                 if ($chunk.Children.Count -eq 0) {
-            		Write-Host "Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
+            		Write-Host " - Removing Chunk '$($chunk.Name)' from strip '$($strip.Name)'" -f y
             		$chunk | Remove-Item
             	}
             }
     		
     	    if ($strip.Children.Count -eq 0) {
-        		Write-Host "Removing Strip '$($strip.Name)'" -f y
+        		Write-Host " - Removing Strip '$($strip.Name)'" -f y
         		$strip | Remove-Item
         	}
         }
         
         if ($toolbar.Children.Count -eq 0) {
-    		Write-Host "Removing Strip '$($toolbar.Name)'" -f y
+    		Write-Host " - Removing Strip '$($toolbar.Name)'" -f y
     		$toolbar | Remove-Item
     	}
     }
     
     # Re-creating buttons
-    Write-Host "Adding Content Editor Contextual Ribbon entries for new scripts and modules" -ForegroundColor Cyan
+    Write-Host "- Adding Content Editor Contextual Ribbon entries for new scripts and modules" -ForegroundColor Cyan
     Write-Progress -Activity "Content Editor Contextual Ribbon" -CurrentOperation "Adding buttons for new scripts" -PercentComplete 50
     
     foreach ($root in $roots) {
@@ -61,7 +61,7 @@ SharedFields:
     	foreach($toolbarLibrary in $toolbarLibraries) {
     	    $toolbar = Get-Item -Path "$($ribbonRoot)/$($toolbarLibrary.Name)" -ErrorAction SilentlyContinue
     	    if ($toolbar -eq $null) {
-    			Write-Host "Adding Toolbar '$($toolbarLibrary.Name)'." -f Green
+    			Write-Host " - Adding Toolbar '$($toolbarLibrary.Name)'." -f Green
     			$toolbar = New-Item -Path $ribbonRoot -Name $toolbarLibrary.Name -ItemType "System/Ribbon/Toolbar"
     			$toolbar."Sticky Chunk" = "{42F1FD88-20E3-42BD-9217-A9468F115928}"
     		}
@@ -70,7 +70,7 @@ SharedFields:
     		foreach($stripLibrary in $stripLibraries) {
     		    $strip = Get-Item -Path "$($ribbonRoot)/$($toolbarLibrary.Name)/$($stripLibrary.Name)" -ErrorAction SilentlyContinue
         		if ($strip -eq $null) {
-        			Write-Host "Adding Strip '$($stripLibrary.Name)'." -f Green
+        			Write-Host " - Adding Strip '$($stripLibrary.Name)'." -f Green
         			$strip = New-Item -Path "core:" -Parent $toolbar -Name $stripLibrary.Name -ItemType "System/Ribbon/Strip"
         			$strip.Header = $stripLibrary.Name
         		}
@@ -79,16 +79,16 @@ SharedFields:
         		foreach($chunkLibrary in $chunkLibraries) {
             		$chunk = Get-Item -Path "$($ribbonRoot)/$($toolbarLibrary.Name)/$($stripLibrary.Name)/$($chunkLibrary.Name)" -ErrorAction SilentlyContinue
         			if ($chunk -eq $null) {
-        				Write-Host "Adding Chunk '$($chunkLibrary.Name)'." -f Green
+        				Write-Host " - Adding Chunk '$($chunkLibrary.Name)'." -f Green
         				$chunk = New-Item -Path "core:" -Parent $strip -Name $chunkLibrary.Name -ItemType "System/Ribbon/Chunk"
         				$chunk.Header = $chunkLibrary.Name
         			}
         			
         			if ($chunk.TemplateName -eq "Reference") {
         				$chunk = Get-Item "core:/" -Id $chunk.Reference
-        				Write-Verbose "Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" #-ForegroundColor Blue
+        				Write-Verbose " - Translating reference '$stripsPath/$($scriptLibrary.Name)/$($chunkLibrary.Name)' -> $($chunk.ProviderPath)" #-ForegroundColor Blue
         			} else {
-        				Write-Verbose "Using chunk directly '$($chunk.ProviderPath)'" #-ForegroundColor Blue
+        				Write-Verbose " - Using chunk directly '$($chunk.ProviderPath)'" #-ForegroundColor Blue
         			}
         
         			$panel = $null;
@@ -128,10 +128,10 @@ SharedFields:
         						$panel.Type = "Cognifide.PowerShell.Client.Controls.ContentEditorRibbonPanel,Cognifide.PowerShell"
         						$panel.__Sortorder = $script.__Sortorder
         						$smallCount = 0
-        						Write-Host "Adding Panel '$($panel.Name)' to Chunk '$($chunk.Name)'." -f Green
+        						Write-Host " - Adding Panel '$($panel.Name)' to Chunk '$($chunk.Name)'." -f Green
         					}
         					$button = New-Item -Path "core:" -Name $name -Parent $panel -ItemType $buttonTemplate
-        					Write-Host "Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
+        					Write-Host " - Adding Script '$($script.Name)' to Chunk '$($chunk.Name)'." -f Green
         
         					$button.__Icon = $script.__Icon;
         					$button.Icon = $script.__Icon;
@@ -150,7 +150,7 @@ SharedFields:
         						Get-ChildItem $script.ProviderPath | % {
         							$itemScript = $_
         							$menuItem = New-Item -Path "core:" -Parent $button -Name $itemScript.Name -ItemType 'System/Menus/Menu item'
-        							Write-Host "Adding Menu Item Script '$($menuItem.Name)' to Dropdown Button '$($button.Name)'." -f Green
+        							Write-Host " - Adding Menu Item Script '$($menuItem.Name)' to Dropdown Button '$($button.Name)'." -f Green
         
         							$menuItem.__Icon = $itemScript.__Icon;
         							$menuItem.Icon = $itemScript.__Icon;
