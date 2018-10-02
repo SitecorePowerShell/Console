@@ -11,7 +11,19 @@ SharedFields:
 - ID: "1c76313e-3c8c-4807-a826-135d10c39299"
   Hint: ShowRule
   Type: Rules
-  Value: <ruleset />
+  Value: |
+    <ruleset>
+      <rule
+        uid="{01F63035-F680-4056-9CD9-96097755B370}"
+        name="Broken Links Report">
+        <conditions>
+          <condition
+            id="{1B499603-87C9-4440-969F-D9568CE1E926}"
+            uid="60D0B70CCC664A22A7CF4243DDB814F1"
+            ValidViewName="BrokenLinks" />
+        </conditions>
+      </rule>
+    </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
@@ -48,6 +60,10 @@ SharedFields:
           this.Results.Controls.Add((System.Web.UI.Control) new LiteralControl("<div>{0}</div>".FormatWith((object) message)));
         }
     #>
+- ID: "f62c67b4-28b6-4a6f-91cb-db78cf054f4e"
+  Hint: EnableRule
+  Type: Rules
+  Value: <ruleset />
 Languages:
 - Language: en
   Fields:
