@@ -11,11 +11,9 @@ SharedFields:
     Import-Function -Name Compress-Archive
     
     $time = Get-Date -format "yyyy-MM-dd_hh-mm-ss"
-    $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
-    $logsFolder = [Sitecore.Configuration.Settings]::LogFolder
-    $myZipFile = "$dataFolder\logs-$($time).zip"
+    $myZipFile = "$($SitecoreDataFolder)\logs-$($time).zip"
     Remove-Item $myZipFile -ErrorAction SilentlyContinue
-    Compress-Archive -Path $LogsFolder –CompressionLevel Optimal -DestinationPath $myZipFile
+    Compress-Archive -Path $SitecoreLogFolder –CompressionLevel Optimal -DestinationPath $myZipFile
     Download-File -FullName $myZipFile > $null
     Remove-Item $myZipFile
 Languages:
