@@ -63,8 +63,7 @@ SharedFields:
     $location = get-location
     $time = Get-Date -format "yyyy-MM-d_hhmmss"
     $zipName = Split-Path -leaf $location | % { $_ -replace " ", ""}
-    $dataFolder = [Sitecore.Configuration.Settings]::DataFolder
-    $zipPath = "$dataFolder\$zipName-$time.zip"
+    $zipPath = "$($SitecoreDataFolder)\$zipName-$time.zip"
     
     ZipItems $zipPath $location
     Download-File -FullName $zipPath > $null
