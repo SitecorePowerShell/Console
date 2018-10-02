@@ -9,8 +9,8 @@ SharedFields:
   Hint: Script
   Value: |
     $criteria = @(
-        @{Filter = "Equals"; Field = "_templatename"; Value = "Template Field"}, 
-        @{Filter = "Equals"; Field = "_language"; Value = "en"}
+        @{Filter = "Equals"; Field = "_templatename"; Value = "Sample Item"}, 
+        @{Filter = "Contains"; Field = "Title"; Value = "Sitecore"}
     )
     $props = @{
         Index = "sitecore_master_index"

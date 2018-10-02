@@ -11,7 +11,7 @@ SharedFields:
     $criteriaTemplate = @{Filter = "Equals"; Field = "_templatename"; Value = "Template Field"; }, @{Filter = "Equals"; Field = "_templatename"; Value = "Sample Item"; Boost=25; }, @{Filter = "Equals"; Field = "_templatename"; Value = "Sample Content"; }
     $predicateTemplate = New-SearchPredicate -Operation Or -Criteria $criteriaTemplate
     
-    $criteriaContent = @{Filter = "Contains"; Field = "Title"; Value = '$name'}
+    $criteriaContent = @{Filter = "Contains"; Field = "Title"; Value = 'Sitecore'}
     $predicateTitle = New-SearchPredicate -Criteria $criteriaContent
     
     $predicateTemplateAndTitle = New-SearchPredicate -First $predicateTemplate -Second $predicateTitle -Operation And
