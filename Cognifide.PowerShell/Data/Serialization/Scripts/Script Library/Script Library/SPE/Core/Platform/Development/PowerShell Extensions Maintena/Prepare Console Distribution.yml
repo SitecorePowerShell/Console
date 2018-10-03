@@ -48,6 +48,7 @@ SharedFields:
     AFTER UPGRADING THE MODULE
     * Clean your browser cache!
     * Test all of your custom scripts!
+    * Rebuild the integration points
     --------------------------------------------------------
     $($sitecore7Warning)
     This module includes ready-to-use tools and a
@@ -189,7 +190,7 @@ SharedFields:
     $package.Sources.Add($source);
     
     
-    $packageName = "$($package.Name)-$Version for Sitecore $($SitecoreVersion.Major)";
+    $packageName = "$($package.Name)-$Version";
     Export-Package -Project $package -Path "$packageName.xml"
     Export-Package -Project $package -Path "$packageName.zip" -Zip
     Download-File "$SitecorePackageFolder\$packageName.zip"
@@ -198,7 +199,7 @@ SharedFields:
     
     # Build Minimal Package
     
-    $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version) for Sitecore $($SitecoreVersion.Major).zip"
+    $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version).zip"
     
     Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled" | Out-Null
     Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update | Out-Null
