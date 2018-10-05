@@ -8,6 +8,28 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/users_crowd.png
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{6E35CAA6-FAAC-4571-A947-7A19C22011F4}"
+        name="Admin or Maintainer">
+        <conditions>
+          <or
+            uid="A60295B4E556489BBE3E8F17EF1CD9A9">
+            <condition
+              id="{33D5F360-CA8F-4193-AA5A-B52BEA2C84B4}"
+              uid="2F780EF5CFBF4D87A7B2FFAC523A4417" />
+            <condition
+              id="{96C04ABA-A209-4BB5-AA37-73B5FDC7565E}"
+              uid="70840624A49E48B999437C2B8D85ED4C"
+              value="sitecore\Sitecore Client Maintaining" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
 Languages:
 - Language: en
   Fields:
