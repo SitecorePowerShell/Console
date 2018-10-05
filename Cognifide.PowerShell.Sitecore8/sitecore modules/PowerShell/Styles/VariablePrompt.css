@@ -36,6 +36,7 @@
     clear: both;
     display: block;
     margin: 2px 0 4px 2px;
+    white-space: pre-wrap;
 }
 
 .scContentControl, .scRadioGroup {

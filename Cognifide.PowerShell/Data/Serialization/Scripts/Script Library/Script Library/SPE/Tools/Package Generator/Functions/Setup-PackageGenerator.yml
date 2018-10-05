@@ -25,13 +25,9 @@ SharedFields:
     $itemsProcessedWithLinks = New-Object System.Collections.ArrayList
     $itemsProcessed = New-Object System.Collections.ArrayList
     
-    #$itemsAddedToPackage | Get-Item
-    #$itemsProcessedWithLinks | Get-Item
-    #$itemsProcessed | Get-Item
-    
     $defaultProps = @{
         "Title" = "Installation options"
-        "Icon" = "Apps/32x32/Installpackage.png"
+        "Icon" = "OfficeWhite/32x32/box_into.png"
         "ShowHints" = $true
     }
     
@@ -102,14 +98,14 @@ SharedFields:
     
         Write-Host "Entering Test-LinkedOption for $($item.ProviderPath)" -ForegroundColor Gray
         $isItemAllowed = $true
-        
-        if($item.Paths.FullPath.ToLower().Contains("/sitecore/media library/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Media)) {
+        $lowerPath = $item.Paths.FullPath.ToLower()
+        if($lowerPath.Contains("/sitecore/media library/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Media)) {
             $isItemAllowed = $false
-        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/layout/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Layouts)) {
+        } elseif($lowerPath.Contains("/sitecore/layout/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Layouts)) {
             $isItemAllowed = $false
-        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/templates/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Templates)) {
+        } elseif($lowerPath.Contains("/sitecore/templates/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Templates)) {
             $isItemAllowed = $false
-        } elseif($item.Paths.FullPath.ToLower().Contains("/sitecore/system/workflows/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Workflows)) {
+        } elseif($lowerPath.Contains("/sitecore/system/workflows/") -and !$LinkedOptions.HasFlag([LinkedItemOptions]::Workflows)) {
             $isItemAllowed = $false
         }
         
@@ -160,10 +156,11 @@ SharedFields:
             [item]$Item
         )
         
-        $item.Paths.FullPath.StartsWith("/sitecore/templates/System", [System.StringComparison]::OrdinalIgnoreCase) -or
-        $item.Paths.FullPath.StartsWith("/sitecore/templates/branches/System", [System.StringComparison]::OrdinalIgnoreCase) -or
-        $item.Paths.FullPath.StartsWith("/sitecore/templates/common", [System.StringComparison]::OrdinalIgnoreCase) -or
-        $item.Paths.FullPath.StartsWith("/sitecore/templates/sample", [System.StringComparison]::OrdinalIgnoreCase)
+        $itemPath = $item.Paths.FullPath
+        $itemPath.StartsWith("/sitecore/templates/System", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $itemPath.StartsWith("/sitecore/templates/branches/System", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $itemPath.StartsWith("/sitecore/templates/common", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $itemPath.StartsWith("/sitecore/templates/sample", [System.StringComparison]::OrdinalIgnoreCase)
     }
     
     function ProcessFieldTemplateItem {
