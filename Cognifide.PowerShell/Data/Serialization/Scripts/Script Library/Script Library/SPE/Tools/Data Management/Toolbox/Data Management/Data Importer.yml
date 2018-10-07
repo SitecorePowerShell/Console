@@ -57,7 +57,7 @@ SharedFields:
         "Parameters" = @(
             @{ Name = "info"; Title = "Getting Started"; Value = "The <b>Data Import Wizard</b> provides two modes of operation to help you avoid manual data entry."; Editor = "info" },
             @{ Name = "wizardMode"; Title = "Wizard Mode"; Value = "2"; Options=$selection; Editor="radio" },
-            @{ Name = "sample"; Title = "Sample File"; Value = "Download a sample import file from the link below."; Options = $options; Editor = "link"; }
+            @{ Name = "sample"; Title = "Sample File"; Value = "The sample file provides the basic format required for the import."; Options = $options; Editor = "link"; }
         )
         "Description" = "Get started with the Data Import Wizard by choosing the mode below."
         "OkButtonName" = "Next"
