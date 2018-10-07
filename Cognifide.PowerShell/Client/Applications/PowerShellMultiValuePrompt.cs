@@ -258,7 +258,12 @@ namespace Cognifide.PowerShell.Client.Applications
 
                     if (ShowHints && !string.IsNullOrEmpty(hint))
                     {
-                        var hintLabel = new Label { Header = hint, Class = "varHint" };
+                        //var hintLabel = new Label { Header = hint, Class = "varHint" };
+                        var hintLabel = new Literal(hint)
+                        {
+                            Class = "varHint"
+                        };
+
                         variableWrapper.Controls.Add(hintLabel);
                     }
                 }
@@ -333,7 +338,8 @@ namespace Cognifide.PowerShell.Client.Applications
 
         private static Control GetLinkControl(IDictionary variable, string name, object value, string editor, OrderedDictionary options)
         {
-            var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+            //var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("variable_" + name + "_");
+            var editorId = Sitecore.Web.UI.HtmlControls.Control.GetUniqueID("novariable_" + name + "_");
             Sitecore.Context.ClientPage.ServerProperties[editorId] = value;
 
             var table = new GridPanel
@@ -1158,16 +1164,17 @@ namespace Cognifide.PowerShell.Client.Applications
         private void GetEditorValue(Sitecore.Web.UI.HtmlControls.Control parent, ICollection<Hashtable> results)
         {
             var controlId = parent.ID;
-            if (controlId != null && controlId.StartsWith("variable_"))
-            {
-                foreach (Sitecore.Web.UI.HtmlControls.Control control in parent.Controls)
-                {
-                    controlId = control.ID;
-                    if (controlId == null || !controlId.StartsWith("variable_")) continue;
+            if (controlId == null || !controlId.StartsWith("variable_")) return;
 
-                    var result = GetVariableValue(control);
-                    results.Add(result);
-                }
+            foreach (var childControl in parent.Controls)
+            {
+                if (!(childControl is Sitecore.Web.UI.HtmlControls.Control control)) continue;
+
+                controlId = control.ID;
+                if (controlId == null || !controlId.StartsWith("variable_")) continue;
+
+                var result = GetVariableValue(control);
+                results.Add(result);
             }
         }
 
