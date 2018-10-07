@@ -43,11 +43,21 @@ SharedFields:
     
     $selection = [ordered]@{
         "<b>Import</b> and update items using a specified Template."=1;
-        "<b>Update</b> existing items based on the item <b>Id</b>, item <b>Name</b>, or field name."=2;}
+        "<b>Update</b> existing items based on the item <b>Id</b>, item <b>Name</b>, or field name."=2;
+    }
+    
+    $scriptId = "{EF72970A-DECC-420C-8DC5-155C673ED3F0}"
+    $item = Get-Item -Path "."
+    $script = Get-Item -Path "master:" -ID $scriptId
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    
+    $options = [ordered]@{"Download Sample"=$command;}
+    
     $props = @{
         "Parameters" = @(
             @{ Name = "info"; Title = "Getting Started"; Value = "The <b>Data Import Wizard</b> provides two modes of operation to help you avoid manual data entry."; Editor = "info" },
-            @{ Name = "wizardMode"; Title = "Wizard Mode"; Value = "2"; Options=$selection; Editor="radio" }
+            @{ Name = "wizardMode"; Title = "Wizard Mode"; Value = "2"; Options=$selection; Editor="radio" },
+            @{ Name = "sample"; Title = "Sample File"; Value = "Download a sample import file from the link below."; Options = $options; Editor = "link"; }
         )
         "Description" = "Get started with the Data Import Wizard by choosing the mode below."
         "OkButtonName" = "Next"
