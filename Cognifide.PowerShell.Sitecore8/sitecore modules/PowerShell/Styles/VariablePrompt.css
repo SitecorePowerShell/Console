@@ -193,5 +193,8 @@ table.scContentControl.treePicker > :first-child > :first-child { height: 20px; 
     width: 100%;
 }
 .checkListActions { padding: 4px 0 4px 2px}
+.scContentButtons {
+    margin: 2px 0px 4px 2px;
+}
 .scContentButton { color:#dc291e }
 .validator { color: red; margin-top:4px; float: left; }
