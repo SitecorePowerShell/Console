@@ -217,8 +217,15 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!missingDataIcon.IsNullOrEmpty())
             {
-                Image image = new Image(missingDataIcon);
-                Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
+                if (EmptyIcon == null)
+                {
+                    Image image = new Image(missingDataIcon);
+                    Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
+                }
+                else
+                {
+                    EmptyIcon.Src = missingDataIcon;
+                }
             }
 
             if (ListViewer.Data?.Data == null || ListViewer.Data.Data.Count == 0)
