@@ -193,3 +193,5 @@ deploy.user.json
 !deploy.user.json.sample
 UserConfiguration/**/*.config
 .vs/
+Cognifide\.PowerShell/Data/Serialization/Scripts/Script Library/Script Library/X-Demo\.yml
+Cognifide\.PowerShell/Data/Serialization/Scripts/Script Library/Script Library/X-Demo/
