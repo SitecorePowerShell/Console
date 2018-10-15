@@ -25,38 +25,36 @@ SharedFields:
       The report will show you all template fields in your solution and whether or not they have User Friendly strings defined.
     #>
     
-    $item = gi master:\templates
-    $result = Read-Variable -Parameters `
-        @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"} `
-        -Description "<b>How many of my template fields define Help and Title?</b>
-                      Use the Help option in the individual field definition items to provide extra information to users about fields. 
-                      Also consider using the Title field of the definition item to present a different name for the field to the user." `
-        -Title "Sitecore Recommendations:" -Width 500 -Height 280 `
-        -OkButtonName "Proceed" -CancelButtonName "Abort" 
+    $item = Get-Item -Path "master:\templates\user defined"
+    $props = @{
+        Title = "Sitecore Recommendations:"
+        Description = "<b>How many of my template fields define Help and Title?</b>Use the Help option in the individual field definition items to provide extra information to users about fields. Also consider using the Title field of the definition item to present a different name for the field to the user."
+        Parameters = @(
+            @{ Name = "item"; Title="Template branch to analyse"; Tooltip="Branch you want to analyse."; Root="/sitecore/templates"}
+        )
+    }
+    $result = Read-Variable @props
     
-    if($result -ne "ok")
-    {
+    if($result -ne "ok") {
         Close-Window
         Exit
     }
     
-    $fields = 
-      @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | `
-        Where-Object { $_.TemplateName -eq "Template Field"};
+    $fields = @($item) + @(($item.Axes.GetDescendants() | Initialize-Item)) | Where-Object { $_.TemplateName -eq "Template Field"};
         
-    $checks = $fields | select-object Name, `
+    $checks = $fields | Select-Object -Property Name, `
           @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
           @{Name="Help Defined"; Expression={$_."__Long description" -ne "" -or $_."__Short description" -ne "" -or $_."__Help link" -ne "" }},
           @{Name="Title Specified"; Expression={$_.Title -ne "" }}
     
-    $has_no_title = $checks | Group-Object "Title Specified" | Where-Object {$_.Name -eq "False" } | Select-object Count;
-    $has_no_help = $checks | Group-Object "Help Defined" | Where-Object {$_.Name -eq "False" } | Select-object Count;
+    $has_no_title = $checks | Group-Object "Title Specified" | Where-Object {$_.Name -eq "False" } | Select-Object -Property Count
+    $has_no_help = $checks | Group-Object "Help Defined" | Where-Object {$_.Name -eq "False" } | Select-Object -Property Count
     
     Write-host -f Yellow "Found $($fields.Count) template fields. $($has_no_title.Count) of those have no user friendly Title. $($has_no_help.Count) of those have no Help information defined."
     
     $fields |
       where-object { $_."__Long description" -eq "" -or $_."__Short description" -eq "" -or $_."__Help link" -eq "" -or $_.Title -eq ""} | `
-        Show-ListView -Property DisplayName, 
+        Show-ListView -ViewName "HelpAndTitle" -Property DisplayName, 
             @{Name="Template"; Expression={$_.Parent.Parent.Paths.Path -replace "/Sitecore/templates/", "" }}, `
             Title, `
             @{Name="Short Description"; Expression={$_."__Long description" }}, `
