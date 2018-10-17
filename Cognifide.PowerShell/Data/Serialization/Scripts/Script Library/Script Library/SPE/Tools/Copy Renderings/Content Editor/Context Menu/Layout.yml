@@ -32,7 +32,19 @@ SharedFields:
 - ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
   Hint: ShowRule
   Type: Rules
-  Value: <ruleset />
+  Value: |
+    <ruleset>
+      <rule
+        uid="{DB726E46-37F3-460A-8D5A-F0E5C198C418}"
+        name="Only show for content">
+        <conditions>
+          <condition
+            id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+            uid="D167CD14EEBA497E8044FC028955A4D3"
+            itemid="{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}" />
+        </conditions>
+      </rule>
+    </ruleset>
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
   Value: 100

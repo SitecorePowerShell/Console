@@ -8,6 +8,29 @@ SharedFields:
 - ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
   Hint: __Icon
   Value: Office/32x32/earth_location.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{A156A143-83C9-4500-B5E2-0545EB854485}"
+        name="Only show for content and media">
+        <conditions>
+          <or
+            uid="2F8EB0BEEA04441D829D441F7AE75A57">
+            <condition
+              id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+              uid="6358849B4EBA4BC1AC436DBC7146B4E2"
+              itemid="{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}" />
+            <condition
+              id="{7D5DA661-BEF9-441C-B1F7-D80DE3E0972F}"
+              uid="339DE449ECF74AE5B045727606D8F817"
+              itemid="{3D6658D8-A0BF-4E75-B3E2-D050FABCF4E1}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
