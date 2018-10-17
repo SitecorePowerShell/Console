@@ -225,6 +225,9 @@ SharedFields:
     # TODO: I think SkipVersions is never set in the UI. Should we still handle it?
     # TODO: Handle security.
     Export-Package -Project $package -Path $packagePath -Zip
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
 Languages:
 - Language: en
   Fields:

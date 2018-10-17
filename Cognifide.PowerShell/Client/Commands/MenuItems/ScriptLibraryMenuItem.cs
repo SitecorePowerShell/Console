@@ -113,12 +113,19 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
         protected virtual void SortMenuItems(List<Control> menuItems)
         {
-            int GetSortOrder(Control x)
+            int GetSortOrder2(MenuItem x, MenuItem y)
             {
-                string rawSortOrder = ((MenuItem)x).Attributes[FieldIDs.Sortorder.ToString()];
-                return MainUtil.GetInt(rawSortOrder, 0);
+                var rawSortOrderX = x.Attributes[FieldIDs.Sortorder.ToString()];
+                var rawSortOrderY = y.Attributes[FieldIDs.Sortorder.ToString()];
+                if (string.IsNullOrEmpty(rawSortOrderX) || string.IsNullOrEmpty(rawSortOrderY) || rawSortOrderX.Is(rawSortOrderY))
+                {
+                    return string.Compare(x.Header, y.Header, StringComparison.OrdinalIgnoreCase);
+                }
+
+                return MainUtil.GetInt(rawSortOrderX, 0).CompareTo(MainUtil.GetInt(rawSortOrderY, 0));
             };
-            menuItems.Sort((x, y) => GetSortOrder(x).CompareTo(GetSortOrder(y)));
+
+            menuItems.Sort((x, y) => GetSortOrder2((MenuItem)x, (MenuItem)y));
         }
 
         internal static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)

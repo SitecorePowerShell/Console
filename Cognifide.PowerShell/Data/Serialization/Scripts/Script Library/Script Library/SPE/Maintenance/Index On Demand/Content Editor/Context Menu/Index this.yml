@@ -16,6 +16,9 @@ SharedFields:
     
     Write-Log "Preparing to run indexing on this item: $($item.Paths.FullPath)"
     $item.Database.Engines.HistoryEngine.RegisterItemSaved($item, $null)
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
 Languages:
 - Language: en
   Fields:
