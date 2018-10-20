@@ -8,7 +8,7 @@ BranchID: "9a72c539-dbf8-4dad-96d3-a298fc04add6"
 SharedFields:
 - ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
   Hint: __Sortorder
-  Value: 1
+  Value: 100
 Languages:
 - Language: en
   Fields:

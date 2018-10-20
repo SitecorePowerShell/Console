@@ -1,0 +1,35 @@
+﻿---
+ID: "542eed7b-4464-418e-aa70-f7342bf3d046"
+Parent: "7b295589-1a67-4d17-9e21-acc9fbe3a705"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/SearchResultItem/Open
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/nav_right.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    foreach($item in $selectedData){
+        $parameters = @{
+            id ="$($item.ItemId)"
+            fo="$($item.ItemId)"
+            la="$($item.Language.Name)"
+            vs="$($item.Version.Number)"
+            sc_content="$($item.Database.Name)"
+        }
+        Show-Application -Application "Content Editor" -Parameter $parameters
+    }
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Open the related content item.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150627T045753Z

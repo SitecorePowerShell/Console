@@ -1,0 +1,19 @@
+﻿---
+ID: "47ba2b5b-36cb-4061-9dc0-bee85700780e"
+Parent: "16111a63-6336-4b17-b38e-84e9eda02709"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Authoring Instrumentation/Content Editor/Context Menu
+DB: master
+SharedFields:
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Type: Rules
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20121129T190609Z

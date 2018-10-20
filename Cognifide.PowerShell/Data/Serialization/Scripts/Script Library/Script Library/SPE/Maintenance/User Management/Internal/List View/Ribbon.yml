@@ -1,0 +1,14 @@
+﻿---
+ID: "107d0bbc-3125-4115-8bbc-42a89c039621"
+Parent: "c0a51580-661d-4bda-94c0-0f38341670cf"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141126T030716

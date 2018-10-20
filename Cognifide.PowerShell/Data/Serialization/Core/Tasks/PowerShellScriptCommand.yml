@@ -5,6 +5,9 @@ Template: "58119a3e-560e-4da6-97c6-1ace8a5b1219"
 Path: /sitecore/system/Tasks/Commands/PowerShellScriptCommand
 DB: master
 SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/clock.png
 - ID: "4bc75539-d5c4-487b-af35-ff13d62bd286"
   Hint: Method
   Value: Update
@@ -13,12 +16,22 @@ SharedFields:
   Value: Cognifide.PowerShell.Integrations.Tasks.ExecuteScriptTask, Cognifide.PowerShell
 Languages:
 - Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: This command is used with scheduled tasks configured for executing PowerShell scripts.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: This command is used with scheduled tasks configured for executing PowerShell scripts.
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: PowerShell Script Command
   Versions:
   - Version: 1
     Fields:
     - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
       Hint: __Created
-      Value: 20111128T102700
+      Value: 20111128T162700Z
     - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
       Hint: __Created by
       Value: |

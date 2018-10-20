@@ -203,6 +203,7 @@
     <Compile Include="Core\Extensions\TypeExtensions.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider5.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProviderFactory.cs" />
+    <Compile Include="Core\Rules\PowerShellUserRoleWithInheritanceCondition.cs" />
     <Compile Include="Core\Settings\Authorization\DropElevatedSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\ElevateSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />
@@ -559,7 +560,7 @@
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
-    <Content Include="packages.config" />
+    <None Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Serialization.config">
@@ -638,6 +639,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
     <Content Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx" />
+    <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Config\Include\Cognifide.PowerShell.config">

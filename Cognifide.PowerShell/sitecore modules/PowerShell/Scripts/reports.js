@@ -8,6 +8,8 @@
                     const url = `/-/script/v2/master/${name}?depth=5&compress=true`;
                     $("#chart").append(`<div id="chart-${index}-container"><img class="spinner" src="/sitecore/shell/Themes/Standard/Images/sc-spinner32.gif" /></div>`);
                     $.getJSON(url, function (chartData) {
+                        if (!chartData && !chartData.Results) return;
+
                         if (chartData.Results.title) {
                             $(`#chart-${index}-container`).append(`<h2 class="title">${chartData.Results.title}</h2>`);
                         }

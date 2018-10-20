@@ -78,13 +78,17 @@
             "damn it! I've lost it again. Searching...",
             "commencing infinite loop (this may take some time)",
             "spinning up the hamster...",
-            "shovelling coal into the server...",
+            "shoveling coal into the server...",
             "programming the flux capacitor",
             "loading humorous message...",
             "yes there really are magic elves with an abacus working frantically in here.",
             "elf down! We're cloning the elf that was supposed to get you the data.",
             "rewinding the tape.",
-            "it's 12:38 and I'm trying to concentrate."
+            "it's 12:38 and I'm trying to concentrate.",
+            "running your script in Powerful Ways!",
+            "you thought that this would be quick &#x1F923;...",
+            "what's the worse that could happen &#x1F937;?",
+            "my &#x1F9D3; runs faster than this script!"
         };
     }
 }

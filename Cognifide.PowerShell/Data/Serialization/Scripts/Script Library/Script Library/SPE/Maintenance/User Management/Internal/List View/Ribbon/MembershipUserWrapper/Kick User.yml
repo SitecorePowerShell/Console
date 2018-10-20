@@ -1,0 +1,29 @@
+﻿---
+ID: "409d08b8-13c6-4425-89d7-54b097194cf6"
+Parent: "87e1b7e9-50c5-4e7a-b7a0-e9e02310ebbb"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/User Management/Internal/List View/Ribbon/MembershipUserWrapper/Kick User
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/edit_user.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    [Sitecore.Web.Authentication.DomainAccessGuard]::Sessions | 
+        Where-Object { $_.UserName -in ($selectedData.UserName); ft -InputObject $_ -Prop * } | 
+        ForEach-Object { Write-Host ($_.SessionID); [Sitecore.Web.Authentication.DomainAccessGuard]::Kick($_.SessionID) }
+    Show-Result -Text
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Remove the selected user sessions.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130919T155122Z

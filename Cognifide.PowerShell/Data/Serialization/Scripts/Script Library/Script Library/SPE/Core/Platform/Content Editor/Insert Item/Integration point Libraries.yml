@@ -1,0 +1,49 @@
+﻿---
+ID: "5945f6dc-a29d-4a8d-a29d-860693f08241"
+Parent: "685709c4-d6d9-46a6-8a9d-df689292daa9"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/Integration Point Libraries
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar_earth.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{89814947-19B4-477A-A25C-4CD908C38A4A}">
+        <conditions>
+          <condition
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="6C8642014A8C446D9988637AA25C5B3F"
+            templateid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $module = Get-Item .
+    if($module.TemplateId -ne "{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" ){
+        $module = Get-Item -Path "$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryDb):$([Cognifide.PowerShell.Core.Settings.ApplicationSettings]::ScriptLibraryPath)"
+    }
+    $createScriptItem = Get-Item -Path "master:" -ID "{785CB68F-0999-4543-A5E1-AFED0C152A17}" # Create Integration Points
+    Invoke-Script -Item $createScriptItem
+Languages:
+- Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Launch a wizard to add more Integration Point Libraries to the module.
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Launch a wizard to add more Integration Point Libraries to the module.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T085232Z

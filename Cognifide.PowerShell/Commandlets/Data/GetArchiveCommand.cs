@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Sitecore.ContentSearch.Linq;
+using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Archiving;
 
@@ -16,19 +19,26 @@ namespace Cognifide.PowerShell.Commandlets.Data
 
         protected override void ProcessRecord(IEnumerable<Database> databases)
         {
-            if (String.IsNullOrEmpty(Name))
+            foreach (var database in databases)
             {
-                foreach (var database in databases)
+                var archives = ArchiveManager.GetArchives(database);
+                var extendedArchives = new List<PSObject>();
+                foreach (var archive in archives)
                 {
-                    WriteObject(ArchiveManager.GetArchives(database), true);
+                    var extendedArchive = new PSObject(archive);
+                    extendedArchive.Properties.Add(new PSNoteProperty("Database", database));
+                    extendedArchives.Add(extendedArchive);
                 }
-            }
-            else
-            {
-                foreach (var database in databases)
+
+                if (string.IsNullOrEmpty(Name))
                 {
-                    WildcardWrite(Name, ArchiveManager.GetArchives(database), archive => archive.Name);
+                    WriteObject(extendedArchives, true);
                 }
+                else
+                {
+                    WildcardWrite(Name, extendedArchives, archive => ((Archive)archive.BaseObject).Name);
+                }
+                
             }
         }
     }

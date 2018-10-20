@@ -1,0 +1,33 @@
+﻿---
+ID: "ee368c71-b105-4b26-b938-60bebc0e47e8"
+Parent: "36657c88-3f10-4b16-a3c7-03e011b0f6c2"
+Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core
+DB: master
+SharedFields:
+- ID: "39c4902e-9960-4469-aeef-e878e9c8218f"
+  Hint: __Hidden
+  Type: Checkbox
+  Value: 0
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+Languages:
+- Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: "No touchy! If you start messing around with the scripts in here the module will break in powerful ways."
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: 
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20171231T222826Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

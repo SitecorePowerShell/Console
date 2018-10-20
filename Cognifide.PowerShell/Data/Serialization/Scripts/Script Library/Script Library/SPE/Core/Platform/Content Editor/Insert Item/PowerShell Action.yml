@@ -1,0 +1,53 @@
+﻿---
+ID: "14f9cc2f-dd44-4ae8-9fb4-cf49ac787bad"
+Parent: "685709c4-d6d9-46a6-8a9d-df689292daa9"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Insert Item/PowerShell Action
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/graph_fork2.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{8598CAB6-1B4F-4423-B7A2-57468C320031}">
+        <conditions>
+          <condition
+            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+            uid="420194C23A844375A2D252F549CC8DF1"
+            templateid="{CB01F9FC-C187-46B3-AB0B-97A8468D8303}" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $item = Get-Item -Path .
+    if($item -and $item.TemplateID -eq [Sitecore.TemplateIDs]::WorkflowCommand) {
+        $name = Show-Input -Prompt "Enter a name for the new workflow action item:"
+        if($name) {
+            $path = "$($item.ItemPath)/$($name)"
+            $template = Get-Item -Path "master:" -ID "{02BD31B0-CED3-46F4-AB42-11BDFD8D967C}"
+            New-Item -ItemType $template.ItemPath -Path $path
+        }
+    }
+    Close-Window
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 150
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: 
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160606T065312Z

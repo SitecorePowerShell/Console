@@ -73,9 +73,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     GetLibraryMenuItems(contextItem, menuItems, root);
                 }
 
-                menuItems.Sort((x, y) =>
-                    string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
-
+                SortMenuItems(menuItems);
             }
 
             foreach (var item in menuItems)
@@ -108,10 +106,26 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 GetLibraryMenuItems(context.Items[0], menuItems, root);
             }
 
-            menuItems.Sort((x, y) =>
-                string.Compare(((MenuItem) x).Header, ((MenuItem) y).Header, StringComparison.OrdinalIgnoreCase));
+            SortMenuItems(menuItems);
 
             return menuItems.ToArray();
+        }
+
+        protected virtual void SortMenuItems(List<Control> menuItems)
+        {
+            int GetSortOrder(MenuItem x, MenuItem y)
+            {
+                var rawSortOrderX = x.Attributes[FieldIDs.Sortorder.ToString()];
+                var rawSortOrderY = y.Attributes[FieldIDs.Sortorder.ToString()];
+                if (string.IsNullOrEmpty(rawSortOrderX) || string.IsNullOrEmpty(rawSortOrderY) || rawSortOrderX.Is(rawSortOrderY))
+                {
+                    return string.Compare(x.Header, y.Header, StringComparison.OrdinalIgnoreCase);
+                }
+
+                return MainUtil.GetInt(rawSortOrderX, 0).CompareTo(MainUtil.GetInt(rawSortOrderY, 0));
+            };
+
+            menuItems.Sort((x, y) => GetSortOrder((MenuItem)x, (MenuItem)y));
         }
 
         internal static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)
@@ -134,6 +148,11 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     continue;
                 }
 
+                if (contextItem == null && !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
+                {
+                    continue;
+                }
+
                 var menuItem = new MenuItem
                 {
                     Header = scriptItem.DisplayName,
@@ -142,6 +161,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     Disabled = !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], contextItem),
                     ToolTip = scriptItem.Appearance.ShortDescription
                 };
+                menuItem.Attributes.Add(FieldIDs.Sortorder.ToString(), scriptItem[FieldIDs.Sortorder]);
 
                 if (scriptItem.IsPowerShellScript())
                 {
