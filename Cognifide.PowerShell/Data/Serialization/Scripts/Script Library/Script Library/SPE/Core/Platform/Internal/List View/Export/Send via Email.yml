@@ -11,11 +11,28 @@ SharedFields:
 - ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
   Hint: Script
   Value: |
-    $result = Read-Variable -Parameters `
-        @{ Name = "toEmail"; Title="Send email to"; Tooltip="The email address you want to share the report with"; Placeholder="to@email.com"; Columns=6},  `
-        @{ Name = "subject"; Value="$title"; Title="Email Subject"; Tooltip="The subject of the email"; Placeholder="Subject"; Columns=6},  `
-        @{ Name = "optionalBody"; Title="Email Body"; Tooltip="The body of the email"; Placeholder="Email Body"; lines=4}  `
-        -Description "Shares the Report via Email as an Attachment:" -Title "Share Export via Email" -Width 500 -Height 480 -OkButtonName "Proceed" -CancelButtonName "Abort"
+    <#
+        .LINK
+            https://vandsh.github.io/powershell/2018/09/12/powershell-send-email.html
+    #>
+    
+    $dialogProps = @{
+        Parameters = @(
+            @{ Name = "toEmail"; Title="Send email to"; Placeholder="to@email.com"; Columns=6},
+            @{ Name = "subject"; Value="$title"; Title="Email subject"; Placeholder="Subject"; Columns=6},
+            @{ Name = "optionalBody"; Title="Email body"; Placeholder="Email Body"; lines=4}
+        )
+        Description = "Shares the Report via Email (as HTML)."
+        Title = "Share Export via Email"
+        Width = 500
+        Height = 300
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        ShowHint = $true
+        Icon = "/~/icon/applicationsv2/32x32/folder3_mail.png"
+    }
+    
+    $result = Read-Variable @dialogProps
     if($result -ne "ok")
     {
         Exit
