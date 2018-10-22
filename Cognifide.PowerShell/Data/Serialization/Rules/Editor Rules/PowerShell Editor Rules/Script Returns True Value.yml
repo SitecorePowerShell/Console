@@ -23,4 +23,4 @@ Languages:
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
       Value: |
-        where [ScriptId,TreeList,root=/sitecore/system/Modules/PowerShell/Script Library,specific script] returns a "true" value
+        where [ScriptId,TreeList,root=/sitecore/system/Modules/PowerShell/Script Library,specific PowerShell script] returns a "true" value
