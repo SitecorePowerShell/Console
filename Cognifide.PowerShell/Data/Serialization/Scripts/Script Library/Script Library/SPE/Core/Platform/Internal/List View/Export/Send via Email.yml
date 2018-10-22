@@ -19,8 +19,8 @@ SharedFields:
     $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $dialogProps = @{
         Parameters = @(
-            @{ Name = "toEmail"; Title="Send email to"; Placeholder="to@email.com"; Columns=6},
-            @{ Name = "subject"; Value="$title - $datetime"; Title="Email subject"; Placeholder="Subject"; Columns=6},
+            @{ Name = "toEmail"; Title="Send email to"; Placeholder="to@email.com"; Columns=5},
+            @{ Name = "subject"; Value="$title - $datetime"; Title="Email subject"; Placeholder="Subject"; Columns=7},
             @{ Name = "optionalBody"; Title="Email body"; Placeholder="Email Body"; lines=4}
         )
         Description = "Shares the Report via Email (as HTML)."
