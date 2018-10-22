@@ -1,0 +1,24 @@
+﻿---
+ID: "72dff32f-e7e1-4830-bb20-68dcbbaf769a"
+Parent: "570f8988-4ce2-44d4-b4ba-11c4427428b5"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Search/Find-Item with Scope Query"
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    $props = @{
+        Index = "sitecore_master_index"
+        ScopeQuery = "location:{110D559F-DEA5-42EA-9C1C-8A5DF7E70EF9};custom:title|Sitecore"
+    }
+    
+    Find-Item @props
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180723T022247Z

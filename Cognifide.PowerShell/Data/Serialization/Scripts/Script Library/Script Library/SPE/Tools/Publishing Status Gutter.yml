@@ -1,0 +1,30 @@
+﻿---
+ID: "d9b152a2-0503-45ef-ace0-aafe117120a7"
+Parent: "486437b1-8a1d-4184-bc07-5c394f7ea13c"
+Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Tools/Publishing Status Gutter
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar.png
+- ID: "218ca464-cb77-4c97-b141-34871ecae00b"
+  Hint: Enabled
+  Type: Checkbox
+  Value: 0
+- ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
+  Hint: Description
+  Value: |
+    Provides the following Gutter:
+    - Publishing Status
+- ID: "9911a28e-2120-4ab0-9113-5bae386769c1"
+  Hint: Module Version
+  Value: 1.0
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141129T155642

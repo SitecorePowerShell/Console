@@ -54,7 +54,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         public User Instance { get; set; }
 
         [Parameter]
-        [ValidatePattern("^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$",
+        [ValidatePattern("^$|^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$",
             Options = RegexOptions.Compiled | RegexOptions.IgnoreCase)]
         public string Email { get; set; }
 
@@ -110,6 +110,11 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
             if (!ID.IsNullOrEmpty(ProfileItemId))
             {
                 profile.ProfileItemId = ProfileItemId.ToString();
+            }
+
+            if (profile.Email != Email)
+            {
+                profile.Email = Email;
             }
 
             if (User.Current.IsAdministrator && IsParameterSpecified("IsAdministrator"))

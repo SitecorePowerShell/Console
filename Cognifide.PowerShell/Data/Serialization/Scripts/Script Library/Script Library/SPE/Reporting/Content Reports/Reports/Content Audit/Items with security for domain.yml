@@ -1,0 +1,86 @@
+﻿---
+ID: "2ca02efb-2bba-43b5-b552-c5bb39d4cb91"
+Parent: "66d85bc1-4dc1-4172-94c0-fd6cd5d8e47a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Content Reports/Reports/Content Audit/Items with security for domain
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/fingerprint_scan.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Find all items referencing the specified domain.
+            
+        .DESCRIPTION
+            This report helps identify all of the items with explicit security set for a given domain.
+            
+        .NOTES
+            Michael West
+    #>
+    
+    Import-Function -Name Invoke-SqlCommand
+    
+    $domainOptions = Get-Domain | ForEach-Object { $options = [ordered]@{} } { $options[$_.Name]=$_.Name } { $options }
+    $settings = @{
+        Title = "Report Filter"
+        Width = "350"
+        Height = "250"
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        Description = "Filter items explicitly referencing the specified domain."
+        Parameters = @(
+            @{
+                Name="selectedDomain";
+                Options=$domainOptions
+                Title="Choose a domain for the report"; 
+                Tooltip="Only items matching security with this domain will be returned."; 
+            }
+        )
+        Icon = [regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    }
+    
+    $result = Read-Variable @settings
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $connection = [Sitecore.Configuration.Settings]::GetConnectionString("master")
+    
+    $securityFieldId = [Sitecore.FieldIDs]::Security
+    
+    # Find all the items which explicitly hae security assigned.
+    $query = @"
+    SELECT [ItemId], [Value]
+      FROM [dbo].[SharedFields]
+      WHERE [FieldId] = '$($securityFieldId.ToString())'
+    	AND [Value] <> ''
+    "@
+    $records = Invoke-SqlCommand -Connection $connection -Query $query
+    
+    $reportProperties = @{
+        Property = @("Name", "Id", "ItemPath", @{Name="Security";Expression={$_."__Security"}})
+        Title = "Items assigned with explicit domain security"
+        InfoTitle = "Items assigned with explicit domain security"
+        InfoDescription = "Items which reference the domain '$($selectedDomain)'."
+    }
+    $records | Where-Object { $_.Value -match $selectedDomain } |
+        ForEach-Object { Get-Item -Path "master:" -ID "$($_.ItemId.ToString())" } |
+        Show-ListView @reportProperties
+    
+    Close-Window    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180103T025519Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

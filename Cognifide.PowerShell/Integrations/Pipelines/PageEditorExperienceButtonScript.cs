@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Settings.Authorization;
 using Cognifide.PowerShell.Core.Utility;
 using Sitecore;
+using Sitecore.Collections;
 using Sitecore.Data;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -21,6 +24,9 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 
         public override void Process(GetChromeDataArgs args)
         {
+            var isAuthorized = ServiceAuthorizationManager.IsUserAuthorized(WebServiceSettings.ServiceExecution, Context.User.Name);
+            if (!isAuthorized) return;
+
             Assert.ArgumentNotNull(args, "args");
             var page = Sitecore.Context.Item;
             if (page == null)
@@ -72,12 +78,17 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
 
                 if (scriptItem.IsPowerShellLibrary())
                 {
-                    AddButton(args,scriptItem,ruleContext,click);
+                    AddButton(args, scriptItem, ruleContext, click);
                     continue;
                 }
 
                 if (scriptItem.IsPowerShellScript())
                 {
+                    if (!RulesUtils.EvaluateRules(scriptItem[FieldNames.EnableRule], ruleContext))
+                    {
+                        click = string.Empty;
+                    }
+
                     AddButtonsToChromeData(new[]
                     {
                         new WebEditButton

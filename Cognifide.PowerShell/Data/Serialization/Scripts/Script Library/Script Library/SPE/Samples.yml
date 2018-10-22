@@ -1,0 +1,26 @@
+﻿---
+ID: "f15b3095-ff78-444b-97ee-5ae9ae7bbb59"
+Parent: "36657c88-3f10-4b16-a3c7-03e011b0f6c2"
+Template: "b6a55ac6-a602-4c09-ac3a-1d2938621d5b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples
+DB: master
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 100
+Languages:
+- Language: en
+  Fields:
+  - ID: "577f1689-7de4-4ad2-a15f-7fdc1759285f"
+    Hint: __Long description
+    Value: Bundle of sample scripts to help you learn more about SPE.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20171231T222920Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

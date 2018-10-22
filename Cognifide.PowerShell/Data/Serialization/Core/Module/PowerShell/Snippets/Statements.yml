@@ -1,0 +1,14 @@
+﻿---
+ID: "a1f83fbf-c1ce-4365-890e-77ac8f475263"
+Parent: "3950ec5c-7abc-4b7a-98be-2cdf30ae9fde"
+Template: "e12f263a-9366-4399-9ddf-eb8f1b7ab3b2"
+Path: /sitecore/system/Modules/PowerShell/Snippets/Statements
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180723T024713Z

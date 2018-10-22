@@ -19,6 +19,8 @@
       <Stylesheet Src="Dialogs.css" DeviceDependant="true" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.qtip.min.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" DeviceDependant="true" runat="server"
+                  x:placeholder="Stylesheets" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/VariablePrompt.css" DeviceDependant="true" runat="server"
                   x:placeholder="Stylesheets" />
 
@@ -76,7 +78,7 @@
         <Scrollbox Class="scFlexContent">
           <Scrollbox ID="ValuePanel" Class="scStretchAbsolute scDialogContentContainer">
             <Border class="scWizardWarning" def:content="Notifications" ID="NoDataWarning">
-              <ThemedImage src="/sitecore modules/PowerShell/Assets/info.png" />
+              <ThemedImage src="/sitecore/shell/themes/standard/Images/warning.png" />
               <Border style="display:flex;">
                 <Literal class="scEditorWarningText" Text="The data for the dialog is not available. Either your server was restarted or the server cache was flushed. If this is a recurring problem, contact your system administrator." ID="Warning" />
               </Border>
@@ -87,7 +89,7 @@
           </Scrollbox>
         </Scrollbox>
         <div Class="scFormDialogFooter">
-          <Image ID="Copyright" src="/sitecore modules/PowerShell/Assets/question.png" Alt="Show copyright..."
+          <Image ID="Copyright" src="/~/icon/office/24x24/question.png" Alt="Show copyright..."
                  Title="Show copyright..." />
           <div class="footerOkCancel">
             <Button ID="OKButton" Class="scButton scButtonPrimary" KeyCode="13" Click="OkClick" Header="OK" />

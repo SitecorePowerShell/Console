@@ -5,6 +5,7 @@ using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
+using Cognifide.PowerShell.Core.Utility;
 using Sitecore.Diagnostics;
 using Sitecore.Pipelines;
 
@@ -22,12 +23,9 @@ namespace Cognifide.PowerShell.Integrations.Pipelines
             {
                 if (!libraryItem.HasChildren) return;
 
-                foreach (var scriptItem in libraryItem.Children.ToList())
+                foreach (var scriptItem in libraryItem.Children.Where(si => si.IsPowerShellScript() && !string.IsNullOrWhiteSpace(si[Templates.Script.Fields.ScriptBody])))
                 {
-                    if (!scriptItem.IsPowerShellScript() || string.IsNullOrWhiteSpace(scriptItem[Templates.Script.Fields.ScriptBody]))
-                    {
-                        continue;
-                    }
+                    if (!RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], scriptItem)) continue;
 
                     using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
                     {

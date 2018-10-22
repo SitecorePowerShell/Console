@@ -1,0 +1,82 @@
+﻿---
+ID: "b00381b5-a50c-445f-a23f-b5d01272fe17"
+Parent: "f02d18c2-2f4c-4845-8d15-8dd03cc20c31"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Internal/List View/Ribbon/Item/Find and Replace
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/graph_connection_directed.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{753E8F8B-BCF0-47A6-A780-B3C8D2093719}">
+        <conditions>
+          <condition
+            id="{1B499603-87C9-4440-969F-D9568CE1E926}"
+            uid="3752A7450CE94BDD9F7EBD6CEC6FD5A2"
+            ValidViewName="AuthorableReport" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $executionOptions = New-Object System.Collections.Specialized.OrderedDictionary
+    $executionOptions.Add("Search Only", 1)
+    $executionOptions.Add("Search and Replace", 2)
+    
+    $dialogProps = @{
+        Parameters = @(
+            @{ Name = "fieldForSearch"; Value=""; Title="Field for Search"; Tooltip="The field you are searching for"; Placeholder="Needle"},
+            @{ Name = "needle"; Value=""; Title="Needle"; Tooltip="The text you are looking for"; Placeholder="Needle"},
+            @{ Name = "newNeedle"; Value=""; Title="Replacement Needle"; Tooltip="The text you are replacing the needle with"; Placeholder="Replacement Needle"},
+            @{ Name = "executeReplace"; Value="1"; Title="Execute Replace"; Tooltip="Radio button to say whether or not you actually want to replace yet"; editor="radio"; options=$executionOptions}
+        )
+        Description = "Search and replace vars"
+        Title = "Search and Replace"
+        Width = 500
+        Height = 480
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+    }
+    
+    $result = Read-Variable @dialogProps
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $count = 0
+    $watch = [system.diagnostics.stopwatch]::StartNew()
+    foreach($record in $alldata) {
+        Write-Host $record.ID
+    }
+    $watch.Stop()
+    Write-Host $watch.Elapsed.TotalSeconds
+    $message = "Found"
+    if($executeReplace -eq 2) {
+        $message = "Updated"
+    }
+    
+    Write-Host "$($message) $($count) values"
+    $watch = [system.diagnostics.stopwatch]::StartNew()
+    $alldata | Update-ListView
+    $watch.Stop()
+    Write-Host $watch.Elapsed.TotalSeconds
+    Show-Result -Text
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180714T013459Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

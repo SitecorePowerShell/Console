@@ -1,0 +1,47 @@
+﻿---
+ID: "86fbee0d-6190-40ba-b045-511969b65745"
+Parent: "b9a75c9f-b578-4833-99fb-c4158bc8768b"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Maintenance/Media Library Maintenance/Tasks/Delete unused media items older than 30 days
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/garbage_half_full.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .SYNOPSIS
+            Moves items to the recycle bin which are more than 30 days old and have no references.
+        
+        .NOTES
+            Michael West
+    #>
+    
+    filter Skip-MissingReference {
+        $linkDb = [Sitecore.Globals]::LinkDatabase
+        if($linkDb.GetReferrerCount($_) -eq 0) {
+            $_
+        }
+    }
+    
+    $lastMonth = [datetime]::Today.AddDays(-30)
+    
+    $items = Get-ChildItem -Path "master:\sitecore\media library" -Recurse | 
+        Where-Object { $_.TemplateID -ne [Sitecore.TemplateIDs]::MediaFolder } |
+        Where-Object { $_.__Owner -ne "sitecore\admin" -and $_.__Updated -lt $lastMonth } |
+        Skip-MissingReference
+    
+    if($items) {
+        Write-Log "Removing $($items.Length) item(s) older than 30 days."
+        $items | Remove-Item
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141017T232308

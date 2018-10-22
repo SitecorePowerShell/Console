@@ -1,0 +1,42 @@
+﻿---
+ID: "3b93315f-c240-4682-a45f-cdb09d0f2f65"
+Parent: "150d9f3e-1782-4439-a0dc-532426428bc5"
+Template: "bc29cc43-fc82-4a6c-b325-fb261da5931b"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Reports/Rules/Any item under Content has layout
+DB: master
+SharedFields:
+- ID: "072645b6-c332-446f-9f2c-255467af5bc9"
+  Hint: RootItem
+  Value: 
+- ID: "37d9ed28-c31b-4686-8564-a0f181721640"
+  Hint: FilterRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{2EBF894C-82F8-4105-BEDF-6CDF7926F427}">
+        <conditions>
+          <condition
+            id="{A45DBBAE-F74F-4EFE-BBD5-24395E0AF945}"
+            uid="C67594BBEF0B47919597A31880D03D12" />
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "52c8f3b7-3110-41d1-abca-979ed691135c"
+  Hint: DefaultFields
+  Value: DisplayName|TemplateName
+- ID: "743b8c3c-ba19-4e24-b324-c01dcd20f465"
+  Hint: Query
+  Value: "+location:{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20160704T013322
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin

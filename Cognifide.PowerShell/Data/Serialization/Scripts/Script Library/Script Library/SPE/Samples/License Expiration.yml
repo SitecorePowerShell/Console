@@ -1,0 +1,30 @@
+﻿---
+ID: "05a448ff-22b3-4449-93a7-9977f94d8941"
+Parent: "f15b3095-ff78-444b-97ee-5ae9ae7bbb59"
+Template: "6d82fcd8-c379-443c-97a9-c6423c71e7d5"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/License Expiration
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/jar.png
+- ID: "218ca464-cb77-4c97-b141-34871ecae00b"
+  Hint: Enabled
+  Type: Checkbox
+  Value: 0
+- ID: "6d22bcce-2799-4324-b0d9-c44df5effaf3"
+  Hint: Description
+  Value: |
+    Provides the following Content Editor Warning:
+    - Licensing expiring in 14 days
+    
+    Provides the following Page Editor Notification:
+    - Licensing expiring in 14 days
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150531T224625

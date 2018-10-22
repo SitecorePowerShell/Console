@@ -40,7 +40,7 @@ Languages:
         sitecore\Admin
     - ID: "a47cd065-c361-4332-b22b-7e2148de06f4"
       Hint: Tooltip
-      Value: Execute selected script text.
+      Value: Execute the selected script text.
     - ID: "c184f18b-b452-44d6-8376-facd6cef8a42"
       Hint: Header
       Value: Selection

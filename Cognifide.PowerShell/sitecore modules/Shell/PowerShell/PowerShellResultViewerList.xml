@@ -5,36 +5,31 @@
     <FormPage Application="PowerShell/PowerShellListView">
       <CodeBeside Type="Cognifide.PowerShell.Client.Applications.PowerShellResultViewerList,Cognifide.PowerShell" />
 
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-migrate-1.2.1.min.js"></Script>
-      <Script>$ise = jQuery.noConflict();</Script>
-      <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
-      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/json2.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/jquery-ui.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
-      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
-
       <Stylesheet Src="Content Manager.css" DeviceDependant="true" />
       <Stylesheet Src="Ribbon.css" DeviceDependant="true" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/flex.css" />
       <Stylesheet Src="/sitecore/shell/themes/standard/default.css" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/jquery.ui.all.css" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Console.css" runat="server" />
-      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Ise.css" runat="server" />
+      <Stylesheet Src="/sitecore modules/PowerShell/Styles/Dialogs.css" runat="server" />
       <Stylesheet Src="/sitecore modules/PowerShell/Styles/ListView.css" runat="server" />
+
+      <Script src="/sitecore modules/PowerShell/Scripts/jquery-1.10.2.min.js"></Script>
+      <Script>$ise = jQuery.noConflict();</Script>
+      <Script Src="/sitecore modules/PowerShell/Scripts/flexie.min.js"></Script>
+      <Script src="/sitecore/shell/Applications/Content Manager/Content Editor.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/SpeShared.js"></Script>
+      <Script src="/sitecore modules/PowerShell/Scripts/listview.js"></Script>
 
       <input type="hidden" id="scActiveRibbonStrip" name="scActiveRibbonStrip" />
       <div class="scFlexColumnContainer scHeight100">
         <Border ID="RibbonPanel" GridPanel.Width="100%" class="scEditorWarningPanelTable" />
-        <Border class="scEditorWarning" ID="InfoPanel">
-          <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorWarningPanelTable" Columns="2">
-            <Image ID="InfoIcon" Src="/sitecore modules/PowerShell/Assets/info.png" Width="24" Height="24" Class="scEditorWarningIcon" />
+        <Border class="scEditorInformation" ID="InfoPanel">
+          <GridPanel border="0" Width="100%" cellpadding="0" cellspacing="0" class="scEditorInformationPanelTable" Columns="2">
+            <Image ID="InfoIcon" Src="/sitecore/shell/themes/standard/Images/information.png" Width="24" Height="24" Class="scEditorWarningIcon" />
             <Border GridPanel.Width="100%">
-              <Border class="scEditorWarningTitle">
+              <Border class="scEditorInformationTitle">
                 <Literal ID="InfoTitle" />
               </Border>
-              <Border class="scEditorWarningHelp">
+              <Border class="scEditorInformationHelp">
                 <Literal ID="Description" />
               </Border>
             </Border>
@@ -54,7 +49,7 @@
                               Multiselect="true" runat="server">
           </PowerShellListView>
           <Border ID="EmptyPanel" border="0" class="emptyResultsPanel" Visible="false">
-            <Image ID="EmptyIcon" Src="/sitecore modules/PowerShell/Assets/error.png" Class="scEditorWarningIcon" Alt="Error icon" />
+            <Image ID="EmptyIcon" Src="/sitecore/shell/themes/standard/Images/error.png" Class="scEditorWarningIcon" Alt="Error icon" />
             <Border class="emptyResultsText" GridPanel.Width="100%" ID="EmptyDataMessage">
               <Literal ID="EmptyDataMessageText" Text="No items available" Visible="false" />
             </Border>
@@ -71,8 +66,7 @@
           <Border class="status-bar-panel status-bar-text">
             <Literal ID="StatusTip">
             </Literal>
-            <Image ID="RefreshHint" src="/sitecore modules/PowerShell/Assets/refresh.png"
-                   Alt="Show next usability hint..." Title="Show next usability hint..." />
+            <Image ID="RefreshHint" src="/~/icon/office/16x16/nav_refresh.png" Alt="Show next usability hint..." Title="Show next usability hint..." />
           </Border>
         </Border>
       </div>

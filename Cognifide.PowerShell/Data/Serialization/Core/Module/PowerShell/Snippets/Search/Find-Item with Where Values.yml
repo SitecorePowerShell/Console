@@ -1,0 +1,25 @@
+﻿---
+ID: "eb3e773a-207d-42d8-b062-36b40db460d9"
+Parent: "570f8988-4ce2-44d4-b4ba-11c4427428b5"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Search/Find-Item with Where Values"
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    $props = @{
+        Index = "sitecore_master_index"
+        Where = 'TemplateName = @0 And Language=@1'
+        WhereValues = "Template Field", "en"
+    }
+    
+    Find-Item @props
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180723T015104Z

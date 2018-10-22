@@ -614,6 +614,8 @@ namespace Cognifide.PowerShell.Client.Applications
             var progressBoxRunner = new ScriptRunner(ExecuteInternal, scriptSession, scriptToExecute, autoDispose);
 
             var rnd = new Random();
+            var randomIndex = rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1);
+            var executionMessage = ExecutionMessages.PleaseWaitMessages[randomIndex];
             Context.ClientPage.ClientResponse.SetInnerHtml(
                 "ScriptResult",
                 string.Format(
@@ -625,9 +627,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     Texts.PowerShellIse_JobExecuteScript_Please_wait___0_+
                     "</div>" +
                     "</div>" +
-                    "<pre ID='ScriptResultCode'></pre>",
-                    ExecutionMessages.PleaseWaitMessages[
-                        rnd.Next(ExecutionMessages.PleaseWaitMessages.Length - 1)]));
+                    "<pre ID='ScriptResultCode'></pre>", executionMessage));
 
             Context.ClientPage.ClientResponse.Eval("if(cognifide.powershell.preventCloseWhenRunning){cognifide.powershell.preventCloseWhenRunning(true);}");
 

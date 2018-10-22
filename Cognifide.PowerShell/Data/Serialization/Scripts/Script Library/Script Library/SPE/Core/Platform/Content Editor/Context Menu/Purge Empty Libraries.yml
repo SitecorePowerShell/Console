@@ -1,0 +1,59 @@
+﻿---
+ID: "6d3d8082-455b-4523-b147-c76b03ea14a4"
+Parent: "149d1017-b71f-4253-9f1c-1c293198ff2c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Content Editor/Context Menu/Purge Empty Libraries
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/jar_earth.png
+- ID: "1c76313e-3c8c-4807-a826-135d10c39299"
+  Hint: ShowRule
+  Type: Rules
+  Value: |
+    <ruleset>
+      <rule
+        uid="{89814947-19B4-477A-A25C-4CD908C38A4A}"
+        name="Selection">
+        <conditions>
+          <or
+            uid="5DC5F886770B4829AD020E02FC3846D2">
+            <or
+              uid="DF05782C7EFF496F85410B18C58CB51C">
+              <condition
+                id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                uid="6C8642014A8C446D9988637AA25C5B3F"
+                templateid="{6D82FCD8-C379-443C-97A9-C6423C71E7D5}" />
+              <condition
+                id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                uid="4186021969C641BDBD062AEF7563126D"
+                templateid="{AB154D3D-1126-4AB4-AC21-8B86E6BD70EA}" />
+            </or>
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="A2D71C06D3794A05A1E3FC9718A7BBA1"
+              templateid="{B6A55AC6-A602-4C09-AC3A-1D2938621D5B}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    Import-Function "Purge-EmptyLibrary"
+    foreach($module in (Get-ChildItem .)){
+        Purge-EmptyLibrary "$($module.ProviderPath)"
+    }
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Remove all empty script libraries.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20141203T085232Z

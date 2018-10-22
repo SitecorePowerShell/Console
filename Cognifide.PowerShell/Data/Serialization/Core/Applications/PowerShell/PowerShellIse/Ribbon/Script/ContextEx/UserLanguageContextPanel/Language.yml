@@ -43,7 +43,7 @@ Languages:
       Value: Gallery.LanguageGallery
     - ID: "37103048-b73c-4621-88eb-77912caca135"
       Hint: Tooltip
-      Value: Select context language in which the script should operate
+      Value: Select context language to use when running the script.
     - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
       Hint: __Workflow state
       Value: 

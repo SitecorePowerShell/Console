@@ -1,0 +1,14 @@
+﻿---
+ID: "e4f9a04e-ac8b-4cbc-8c10-b46ef88a4f17"
+Parent: "ac17255e-75f9-46ac-a45b-2d51dff35671"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Samples/Unlock user items on logout/Pipelines/Logout
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20150530T172652

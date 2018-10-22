@@ -1,0 +1,164 @@
+﻿---
+ID: "f8448ba4-d0e7-482b-bd7b-3cf1aa3ca12d"
+Parent: "2bfaeeca-8bdf-45f3-aa79-ac85d8dfb7a4"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/Context Help/Command Help
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    #Based on http://poshcode.org/1612
+    function FixString {
+      param($in = '')
+      if ($in -eq $null) {
+        $in = ''
+      }
+      return $in.Trim().Trim('\n').Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("`n","<br/>")
+    }
+    
+    function FixExampleString {
+      param($in = '')
+      if ($in -eq $null) {
+        $in = ''
+      }
+      return $in.Trim().Replace('&', '&amp;').Replace('<', '&lt;').Replace('>', '&gt;').Replace("`n","<br/>")
+    }
+    
+    if($helpFor -eq $null){
+        $helpFor = "Get-Item"
+    }
+    
+    $c = get-help $helpFor -full
+    
+    $alias = "";
+    get-alias | where-object { $_.Definition -eq "$helpFor" } | % { $alias += "<li>$($_.Name)</li>" } > $null
+    
+    "<h1 class='title'>$($c.Name)</h1><div>$($c.synopsis)</div>"
+    
+    if ($alias.Length -gt 0) 
+    {
+        "<h2>Aliases</h2>
+        <p>The following abbreviations are aliases for this cmdlet:</p><ul>$alias</ul>"
+    }
+    
+    "<h2>Syntax</h2><div class='codeSnippetContainerCodeContainer'><div class='codeSnippetContainerCode'><code>"
+    foreach($syntax in $c.syntax.syntaxItem)
+    {
+        "<p><i><b>$($syntax.Name)</b></i>"
+        foreach($param in $syntax.parameter){
+            Write-host -NoNewline " "
+            if($param.required -eq "false"){
+                Write-host -NoNewline "["
+            }
+            if($param.position -ne "named"){
+                Write-host -NoNewline "[-$($param.Name)]"
+            } else {
+                Write-host -NoNewline "-$($param.Name)"
+            }
+            if($param.parameterValue -ne $null -and $param.parameterValue -ne "SwitchParameter"){
+                Write-host -NoNewline " &lt;$($param.parameterValue)&gt;"
+            }
+            if($param.required -eq "false"){
+                Write-host -NoNewline "] "
+            }
+        }
+        "</p>"
+    }
+      "</code></div></div>"
+      "<h2> Detailed Description </h2>"
+    
+    foreach($Description in $c.Description){
+        "<p>$(FixString($Description | out-string -width 20000))</p>"
+    }
+     
+    # Parameters
+    "<h2>Parameters</h2>"
+    foreach ($param in $c.parameters.parameter ) 
+    {
+        "<h3>-$($param.Name)&nbsp; &lt;$($param.type.Name)&gt;</h3>"
+        foreach($Description in $param.Description){
+            "<p>$(FixString($Description | out-string -width 2000))</p>"
+        }
+        "<table>
+        <tr><td>Aliases</td><td>$($param.Aliases)</td></tr>
+        <tr><td>Required?</td><td>$($param.Required)</td></tr>
+        <tr><td>Position?</td><td>$($param.Position)</td></tr>
+        <tr><td>Default Value</td><td>$($param.DefaultValue)</td></tr>
+        <tr><td>Accept Pipeline Input?</td><td>$($param.PipelineInput)</td></tr>
+        <tr><td>Accept Wildcard Characters?</td><td>$($param.Globbing)</td></tr>
+        </table>"
+    }
+    
+    # Input Type
+    if (($c.inputTypes | Out-String ).Trim().Length -gt 0) 
+    {
+        "<h2>Inputs</h2>
+        <div>The input type is the type of the objects that you can pipe to the cmdlet.</div>
+        <ul><li><b>$(FixString($c.inputTypes.inputType.type.name  | out-string  -width 2000))</b><br/>
+        $(FixString($c.inputTypes.inputType.description  | out-string  -width 2000))</li></ul>"
+    }
+       
+    # Return Type
+    if (($c.returnValues | Out-String ).Trim().Length -gt 0) 
+    {
+        "<h2>Outputs</h2>
+        <div>The output type is the type of the objects that the cmdlet emits.</div><ul>"
+        foreach($returnValue in $c.returnValues.returnValue){
+            "<li><b>$(FixString($returnValue.type.name  | out-string  -width 2000))</b><br/>
+            $(FixString($returnValue.description.Text  | out-string  -width 2000))</li>"
+        }
+        "</ul>"
+    }
+             
+             
+    # Notes
+    if (($c.alertSet | Out-String).Trim().Length -gt 0) 
+    {
+        "<h2> Notes </h2>"
+        foreach($alert in $c.alertSet.alert){
+            "<p>$(FixString($alert | out-string))</p>"
+        }
+    }
+    
+    # Examples
+    if (($c.examples | Out-String).Trim().Length -gt 0) 
+    {
+        "<h2> Examples </h2>"
+        foreach ($example in $c.examples.example) 
+        {
+            "<h3> $(FixString($example.title.Trim(('-',' '))))</h3>
+            <div class='example-description'>$(FixString($example.remarks | out-string -Width 2000).Trim())</div>
+            <div class='codeSnippetContainerCodeContainer'><div class='codeSnippetContainerCode'>
+            <pre>$(FixExampleString($example.code))</pre></div></div>"
+        }
+    }
+    
+    #Related Topics
+    "<h2>Related Topics</h2><div>"
+    
+    foreach ($relatedLink in $c.relatedLinks.navigationLink) {
+        if($relatedLink.linkText -ne $null -and $relatedLink.linkText.StartsWith('about') -eq $false)
+        {
+            if($relatedLink.uri -eq $null -or $relatedLink.uri -eq ''){
+               if($relatedLink.linkText -match 'http'){
+                 $url = $relatedLink.linkText | select-string -pattern '\b(?:(?:https?|ftp|file)://|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])' | % { $_.Matches } | % { $_.Value } | select -first 1
+                 "* <a href='$url' target='_blank'>$($relatedLink.linkText)</a><br/>"
+               } else {
+                 $internalCommand = '"'+$relatedLink.linkText+'"'
+                 "* <a href='#' onclick='javascript:return cognifide.powershell.showCommandHelp($internalCommand);'>$($relatedLink.linkText)</a><br/>"
+               }
+            } else {
+                "* <a href='$($relatedLink.uri)' target='_blank'>$($relatedLink.linkText) $($relatedLink.uri)</a><br/>"
+            }
+        }
+    }
+    "</div>"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130929T124539

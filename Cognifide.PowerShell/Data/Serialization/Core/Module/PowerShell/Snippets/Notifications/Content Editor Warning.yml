@@ -1,0 +1,35 @@
+﻿---
+ID: "3e31e4a6-f706-4f56-9363-3805e9d541b1"
+Parent: "ad50828b-c328-4cb0-8fb8-cbd17203e992"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: /sitecore/system/Modules/PowerShell/Snippets/Notifications/Content Editor Warning
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    # TODO : Be sure to add an Enabled Rule on this script to ensure the warning only appears for the proper items.
+    $icon = "Office/16x16/robot.png"
+    $iconUrl = [Sitecore.Resources.Images]::GetThemedImageSource($icon)
+    $title = "Sample Warning"
+    $text = "<img src='$($iconUrl)' />Something important requires your immediate attention!"
+    
+    $warning = $pipelineArgs.Add()
+    $warning.Title = $title
+    $warning.Text = $text
+    
+    # Be sure to update this ID to whichever script you want to execute when the link is clicked.
+    $scriptId = "{6EAF681D-5D87-4C43-B279-356A8B9A15CF}"
+    $item = Get-Item -Path "."
+    $script = Get-Item -Path "master:" -ID $scriptId
+    $command = "item:executescript(id=$($item.ID),db=$($item.Database.Name),script=$($script.ID),scriptDb=$($script.Database.Name))"
+    $warning.AddOption("Click Me", $command)
+    $warning.HideFields = $false
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180724T023017Z

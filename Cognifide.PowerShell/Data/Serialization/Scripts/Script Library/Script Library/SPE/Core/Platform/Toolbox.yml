@@ -1,0 +1,14 @@
+﻿---
+ID: "344414ea-dbd4-488a-bdbc-bd9685c66e39"
+Parent: "9f3eea96-cec8-4c7d-b26b-6d15ab654af1"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Toolbox
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130916T104850

@@ -164,12 +164,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Applications\PowerShellReports.cs" />
     <Compile Include="Client\Applications\PowerShellSessionElevation.cs" />
     <Compile Include="Client\Commands\MenuItems\AddMaster.cs" />
     <Compile Include="Client\Commands\SelectUser.cs" />
     <Compile Include="Client\Commands\Selectlanguage.cs" />
     <Compile Include="Client\Controls\LanguageHistory.cs" />
     <Compile Include="Client\Controls\BucketlistExtended.cs" />
+    <Compile Include="Client\Controls\Marquee.cs" />
     <Compile Include="Client\Controls\SessionCompleteEventArgs.cs" />
     <Compile Include="Client\Controls\UserGallery.cs" />
     <Compile Include="Client\Controls\LanguageGallery.cs" />
@@ -180,6 +182,11 @@
     <Compile Include="Commandlets\Data\Clones\NotificationAction.cs" />
     <Compile Include="Commandlets\Data\Clones\NotificationType.cs" />
     <Compile Include="Commandlets\Data\Clones\ReceiveItemCloneNotificationCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\FilterType.cs" />
+    <Compile Include="Commandlets\Data\Search\NewSearchPredicateCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\SearchCriteria.cs" />
+    <Compile Include="Commandlets\Data\Search\BaseSearchCommand.cs" />
+    <Compile Include="Commandlets\Data\Search\SearchOperation.cs" />
     <Compile Include="Commandlets\Data\TestBaseTemplateCommand.cs" />
     <Compile Include="Commandlets\Data\UpdateItemReferrerCommand.cs" />
     <Compile Include="Commandlets\Interactive\Messages\BasePipelineMessageWithResult.cs" />
@@ -191,10 +198,12 @@
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
+    <Compile Include="Core\Extensions\ExpressionExtensions.cs" />
     <Compile Include="Core\Extensions\LanguageExtensions.cs" />
     <Compile Include="Core\Extensions\TypeExtensions.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProvider5.cs" />
     <Compile Include="Core\Provider\PsSitecoreItemProviderFactory.cs" />
+    <Compile Include="Core\Rules\PowerShellUserRoleWithInheritanceCondition.cs" />
     <Compile Include="Core\Settings\Authorization\DropElevatedSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\ElevateSessionState.cs" />
     <Compile Include="Core\Settings\Authorization\AuthCacheEntry.cs" />
@@ -549,12 +558,8 @@
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="Properties\CustomDictionary.xml" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_left.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_middle.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\bg_right.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\checked.png" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Minimal.config.disabled" />
-    <Content Include="packages.config" />
+    <None Include="packages.config" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.DataProvider.config.disabled" />
     <Content Include="App_Config\Include\Unicorn\Unicorn.SharedSecret.config.example" />
     <Content Include="App_Config\Include\Cognifide.PowerShell.Serialization.config">
@@ -579,20 +584,7 @@
     <Content Include="App_Config\Include\Unicorn\Unicorn.Configs.Default.Roles.config.example" />
     <Content Include="App_Config\Include\z.Cognifide.PowerShell.config" />
     <None Include="sitecore modules\PowerShell\Assets\Cognifide.PowerShell.dll-Help.maml" />
-    <Content Include="sitecore modules\PowerShell\Assets\copy.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\Download.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\error.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_left.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_middle.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\fg_right.gif" />
-    <Content Include="sitecore modules\PowerShell\Assets\highlight.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\ind-highlight.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\info.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\question.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\refresh.png" />
     <Content Include="sitecore modules\PowerShell\Assets\Splitter.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\unchecked.png" />
-    <Content Include="sitecore modules\PowerShell\Assets\warning.png" />
     <Content Include="sitecore modules\PowerShell\Assets\working.gif" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\ace.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\emmet-core\emmet.js" />
@@ -620,8 +612,10 @@
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\powershell.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\snippets\text.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ace\theme-powershellise.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\c3.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\clipboard.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\console.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\d3.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\flexie.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\ise.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery-1.10.2.min.js" />
@@ -633,10 +627,10 @@
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.qtip.min.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\jquery.terminal.js" />
-    <Content Include="sitecore modules\PowerShell\Scripts\jquery.VistaProgressBar-0.6.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\json2.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\listview.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\PsHSplitter.js" />
+    <Content Include="sitecore modules\PowerShell\Scripts\reports.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\Runner.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\SpeShared.js" />
     <Content Include="sitecore modules\PowerShell\Scripts\split.js" />
@@ -644,6 +638,7 @@
     <Content Include="sitecore modules\PowerShell\Scripts\VariablePrompt.js" />
     <Content Include="sitecore modules\PowerShell\Services\PowerShellWebService.asmx" />
     <Content Include="sitecore modules\PowerShell\Services\RemoteAutomation.asmx" />
+    <Content Include="sitecore\shell\version\Modules\Sitecore PowerShell Extensions.version" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Config\Include\Cognifide.PowerShell.config">
@@ -672,11 +667,16 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellMultiValuePrompt.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellReports.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerList.xml">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellResultViewerText.xml" />
-    <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml" />
+    <Content Include="sitecore modules\Shell\PowerShell\PowerShellRunner.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellScriptBrowser.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PowerShellSessionElevation.xml" />
     <Content Include="sitecore modules\Shell\PowerShell\PsHSplitter.xml" />

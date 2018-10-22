@@ -1,0 +1,201 @@
+﻿---
+ID: "0f51a4a9-9bf9-4ef4-8b54-2ed954c6931d"
+Parent: "01bb164c-5e8e-4c9b-941f-e5340bdd520c"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Development/PowerShell Extensions Maintenance/Serialize Changes
+DB: master
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $monitoredDateFields = "__Created","__Updated","__Valid from","__Valid to","__Publish","__Unpublish","__Archive date","__Reminder date","__Archive Version date"
+    $dryRun = $false;
+    $officeIcons = @{};
+    $updateItems = $false;
+    $showIcons = $false;
+    
+    function ConvertTo-LegacyDate {
+    	[CmdletBinding()]
+    	param(
+    		[Parameter(Mandatory = $true,Position = 0,ValueFromPipeline = $true)]
+    		[ValidateNotNullOrEmpty()]
+    		[item]$Item,
+    		[switch]$Recurse
+    	)
+    
+    	process {
+    		$needsFixing = $false
+    
+    		#Cleanup languages other than EN
+    		#Get-Item $item.Providerpath -Language * | ? { $_.Language.Name -ne "en"  } | ft Providerpath, Language #| % { Remove-ItemLanguage -Path $_.ProviderPath -Language $_.Language.Name } 
+    
+    		foreach ($field in $monitoredDateFields) {
+    			if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+    			{
+    				$needsFixing = $true;
+    				break;
+    			}
+    		}
+    		if ($needsFixing) {
+    			$item.Editing.BeginEdit();
+    			foreach ($field in $monitoredDateFields) {
+    				if ($item.Fields[$field].HasValue -and $item.Fields[$field].Value.EndsWith("Z"))
+    				{
+    					Write-Host "$($item.ProviderPath), Fixing $field, $($item.Fields[$field].Value) " -f Green
+    					$item.Fields[$field].Value = $item.Fields[$field].Value.TrimEnd('Z');
+    				}
+    			}
+    			$item.Editing.EndEdit($false,$false) | Out-Null
+    		}
+    		if ((-not $dryRun) -and $item.Fields["__Final Renderings"].HasValue) {
+    			$item.Editing.BeginEdit();
+    			$item.Fields["__Final Renderings"].Reset()
+    			$item.Editing.EndEdit($false,$false);
+    		}
+    		if ($item.ProviderPath.StartsWith("core:") -and ($item.__Icon -match "Office/")) {
+    			$officeIcons[$item.ProviderPath] = $item.__Icon;
+    		}
+    		if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Office/")) {
+    			$officeIcons[$item.ProviderPath] = $item.Icon;
+    		}
+    
+    		if ($item.ProviderPath.StartsWith("core:") -and ($item.Icon -match "Apps/")) {
+    			$officeIcons[$item.ProviderPath] = $item.Icon;
+    		}
+    
+    		if ($Recurse) {
+    			Write-Verbose "$($item.ProviderPath), Going deep"
+    			Get-ChildItem $item.ProviderPath -Recurse | ConvertTo-LegacyDate -Recurse
+    		}
+    	}
+    }
+    
+    function Process-Item {
+    	[CmdletBinding()]
+    	param(
+    		[Parameter(Mandatory = $true,ValueFromPipeline = $true)]
+    		[ValidateNotNullOrEmpty()]
+    		[item]$Item,
+    
+    		[Parameter()]
+    		[string]$Activity,
+    
+    		[Parameter()]
+    		[int]$PercentComplete,
+    
+    		[Parameter()]
+    		[switch]$Recurse
+    	)
+    
+    	process {
+    
+    		if ($PercentComplete -ne 0) {
+    
+    			$TheActivity = @{ $true = 'Deserializing '; $false = 'Serializing ' }[$updateItems] + "$Activity"
+    			Write-Verbose "$TheActivity $PercentComplete%"
+    			Write-Progress -Activity $TheActivity -PercentComplete $PercentComplete
+    		}
+    		Write-Verbose "$($item.ProviderPath), $Recurse"
+    
+    		$allLangs = Get-Item -Path $Item.ProviderPath -Language *
+    		foreach($langItem in $allLangs){
+        		ConvertTo-LegacyDate -Item $langItem -Recurse:$Recurse
+    		}
+    
+        	if (-not $dryRun) {
+        		if ($updateItems) {
+        			Import-Item $langItem -Recurse:$Recurse -ForceUpdate
+        		} else {
+        			Export-Item $langItem -Recurse:$Recurse
+        		}
+    		}
+    	}
+    }
+    
+    
+    if (-not $dryRun -and -not $updateItems) {
+    	Write-Progress -Activity "Deleting old serialized item"
+    	Get-ChildItem "$SitecoreSerializationFolder" | Remove-Item -Recurse
+    }
+    
+    #Item templates
+    Get-Item 'master:\templates\Modules' | Process-Item -Activity "Item templates " -PercentComplete 5
+    Get-Item 'master:\templates\Modules\PowerShell Console' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
+    Get-Item 'master:\templates\Modules\PowerShell Authorable Reports' | Process-Item -Activity "Item templates" -PercentComplete 15 -Recurse
+    
+    # Module Root
+    Get-Item 'master:\system\Modules\PowerShell' | Process-Item -Activity "Module Root" -PercentComplete 35
+    
+    # Colors
+    Get-Item 'master:\system\Modules\PowerShell\Console Colors' | Process-Item -Activity "Console Colors" -PercentComplete 40 -Recurse
+    
+    # Fonts
+    Get-Item 'master:\system\Modules\PowerShell\Fonts' | Process-Item -Recurse -Activity "Console Fonts" -PercentComplete 43
+    
+    # Rules Engine Rules
+    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 45
+    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 46
+    Get-Item "master:\system\Settings\Rules\Definitions\Tags\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 47
+    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 48
+    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell Experience Buttons" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 49
+    Get-Item "master:\system\Settings\Rules\Definitions\Elements\PowerShell ISE" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 50
+    Get-Item "master:\system\Settings\Rules\PowerShell" | Process-Item -Recurse -Activity "Rules Engine Rules" -PercentComplete 51
+    
+    # Script Library
+    Get-Item 'master:\system\Modules\PowerShell\Script Library' | Process-Item -Activity "Script Library" -PercentComplete 55
+    $libraries = Get-ChildItem 'master:\system\Modules\PowerShell\Script Library' | ? { -not $_.Name.StartsWith("__") } 
+    $i = 0;
+    $libraries | % { $i++; Process-Item -Item $_ -Recurse -Activity "Script Library: $($_.Name)" -PercentComplete (55 + 25 / $libraries.Count * $i) }
+    
+    # Settings
+    Get-Item master:\system\Modules\PowerShell\Settings | Process-Item -Activity "Settings" -PercentComplete 80
+    Get-ChildItem master:\system\Modules\PowerShell\Settings | Process-Item
+    Get-Item "master:\system\Modules\PowerShell\Settings\*\All Users" | Process-Item
+    
+    # PowerShell Applications
+    Get-Item core:\content\Applications\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 82
+    
+    # PowerShell Dictionary - translation strings
+    Get-Item core:\system\Dictionary\PowerShell | Process-Item -Recurse -Activity "PowerShell Applications" -PercentComplete 85
+    
+    # PowerShell Application Layouts
+    Get-Item 'core:\layout\Layouts\Applications\PowerShell' | Process-Item -Recurse -Activity "PowerShell Application Layouts" -PercentComplete 87
+    
+    # Start Menu icons
+    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Development Tools\PowerShell ISE' | Process-Item -Activity "Start Menu icons" -PercentComplete 90
+    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Console' | Process-Item
+    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\PowerShell Toolbox' | Process-Item
+    Get-Item 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
+    Get-ChildItem 'core:\content\Documents and settings\All users\Start menu\Right\Reporting Tools\PowerShell Reports' | Process-Item
+    
+    # Content Editor Context Menu integration
+    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Edit Script' | Process-Item -Activity "Content Editor Context Menu integration" -PercentComplete 92
+    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\PowerShell Console' | Process-Item
+    Get-Item 'core:\content\Applications\Content Editor\Context Menues\Default\Context PowerShell Scripts' | Process-Item
+    
+    # LaunchPad
+    Get-Item 'core:\client\Applications\Launchpad\PageSettings\Buttons\ContentEditing\PowerShell ISE' | Process-Item -Activity "Launchpad Integration" -PercentComplete 95
+    
+    # Tasks integration
+    Get-Item 'master:\system\Tasks\Commands\PowerShellScriptCommand' | Process-Item -Activity "Content Tasks integration" -PercentComplete 97
+    
+    $null = Get-Role -Identity 'sitecore\PowerShell Extensions Remoting' | Export-Role
+    
+    if ($showIcons) {
+    	if ($officeIcons.Keys.Count -gt 0) {
+    		Write-Host "`$icons = @{"
+    		foreach ($path in ($officeIcons.Keys | sort)) {
+    			Write-Host "'$path' = '$($officeIcons[$path])';"
+    		}
+    		Write-Host "}"
+    	}
+    }
+    
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20130819T132011

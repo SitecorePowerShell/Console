@@ -1,0 +1,28 @@
+﻿---
+ID: "a03a6723-c613-4ada-83e1-967d2c3d97f8"
+Parent: "570f8988-4ce2-44d4-b4ba-11c4427428b5"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: "/sitecore/system/Modules/PowerShell/Snippets/Search/Find-Item with Criteria"
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    $criteria = @(
+        @{Filter = "Equals"; Field = "_templatename"; Value = "Sample Item"}, 
+        @{Filter = "Contains"; Field = "Title"; Value = "Sitecore"}
+    )
+    $props = @{
+        Index = "sitecore_master_index"
+        Criteria = $criteria
+    }
+    
+    Find-Item @props
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180723T014416Z

@@ -1,0 +1,18 @@
+﻿---
+ID: "7785d84e-d395-4152-9988-90bda5cbe473"
+Parent: "1bbd1a29-8a08-413d-8f6e-01d3ec017f4d"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Reporting/Authorable Reports/Content Editor
+DB: master
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180721T020357Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin

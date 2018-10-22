@@ -57,7 +57,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
                 return new[] { scriptItem ?? item };
             }
 
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, false))
             {
                 if (item != null)
                 {

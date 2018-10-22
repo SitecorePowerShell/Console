@@ -71,6 +71,8 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 {
                     GetLibraryMenuItems(contextItem, menuItems, root);
                 }
+
+                SortMenuItems(menuItems);
             }
 
             foreach (var item in menuItems)
@@ -82,6 +84,7 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     menuItem.Click,
                     menuItem.Checked, menuItem.Radiogroup, menuItem.Type);
                 subItem.Disabled = menuItem.Disabled;
+                subItem.ToolTip = menuItem.ToolTip;
             }
             SheerResponse.EnableOutput();
             subMenu.Visible = true;
@@ -102,7 +105,32 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                 GetLibraryMenuItems(context.Items[0], menuItems, root);
             }
 
+            SortMenuItems(menuItems);
+
             return menuItems.ToArray();
+        }
+
+        protected virtual void SortMenuItems(List<Control> menuItems)
+        {
+            string GetRawSortOrderValue(MenuItem menuItem)
+            {
+                var rawSortOrder = menuItem.Attributes[FieldIDs.Sortorder.ToString()];
+                return String.IsNullOrWhiteSpace(rawSortOrder) ? "0" : rawSortOrder;
+            }
+
+            int GetSortOrder(MenuItem x, MenuItem y)
+            {
+                var rawSortOrderX = GetRawSortOrderValue(x);
+                var rawSortOrderY = GetRawSortOrderValue(y);
+                if (rawSortOrderX.Is(rawSortOrderY))
+                {
+                    return string.Compare(x.Header, y.Header, StringComparison.OrdinalIgnoreCase);
+                }
+
+                return MainUtil.GetInt(rawSortOrderX, 0).CompareTo(MainUtil.GetInt(rawSortOrderY, 0));
+            };
+
+            menuItems.Sort((x, y) => GetSortOrder((MenuItem)x, (MenuItem)y));
         }
 
         internal static void GetLibraryMenuItems(Item contextItem, List<Control> menuItems, Item parent)
@@ -125,13 +153,20 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
                     continue;
                 }
 
+                if (contextItem == null && !RulesUtils.EvaluateRules(scriptItem[FieldNames.ShowRule], scriptItem))
+                {
+                    continue;
+                }
+
                 var menuItem = new MenuItem
                 {
                     Header = scriptItem.DisplayName,
                     Icon = scriptItem.Appearance.Icon,
                     ID = scriptItem.ID.ToShortID().ToString(),
-                    Disabled = !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], contextItem)
+                    Disabled = !RulesUtils.EvaluateRules(scriptItem[Templates.Script.Fields.EnableRule], contextItem),
+                    ToolTip = scriptItem.Appearance.ShortDescription
                 };
+                menuItem.Attributes.Add(FieldIDs.Sortorder.ToString(), scriptItem[FieldIDs.Sortorder]);
 
                 if (scriptItem.IsPowerShellScript())
                 {

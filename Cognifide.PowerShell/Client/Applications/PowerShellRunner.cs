@@ -248,7 +248,7 @@ namespace Cognifide.PowerShell.Client.Applications
                     PreviousProgressValue.Text != CurrentProgressValue.Text)
                 {
                     var percentComplete = Int32.Parse(CurrentProgressValue.Text);
-                    SheerResponse.Eval($@"updateProgress('#progressbar',{percentComplete});");
+                    SheerResponse.Eval($@"cognifide.powershell.updateProgress('#progressbar',{percentComplete});");
                     PreviousProgressValue.Text = CurrentProgressValue.Text;
                 }
             }
@@ -311,7 +311,7 @@ namespace Cognifide.PowerShell.Client.Applications
                 .OrNewer(() => PsProgressStatus.Text = "<span class='status'> </span><br/>")
                 .Else(() => Subtitle.Text = "<span class='status'> </span><br/>");
 
-            SheerResponse.Eval(string.Format("scriptFinished('#progressbar',{0},{1});",
+            SheerResponse.Eval(string.Format("cognifide.powershell.scriptFinished('#progressbar',{0},{1});",
                 (!string.IsNullOrEmpty(result.Output)).ToString().ToLowerInvariant(),
                 result.HasErrors.ToString().ToLowerInvariant()));
 
@@ -411,9 +411,12 @@ namespace Cognifide.PowerShell.Client.Applications
             if (args.Parameters["RecordType"] == ProgressRecordType.Completed.ToString())
             {
                 PsProgress.Text = string.Empty;
+
                 if (!string.IsNullOrEmpty(CurrentProgressValue.Text))
                 {
-                    SheerResponse.Eval(@"undeterminateProgress('#progressbar');");
+                    var percentComplete = Int32.Parse(CurrentProgressValue.Text);
+                    percentComplete = Math.Max(percentComplete, 100);
+                    SheerResponse.Eval($@"cognifide.powershell.updateProgress('#progressbar',{percentComplete});");
                 }
                 CurrentProgressValue.Text = "";
                 PreviousProgressValue.Text = "";

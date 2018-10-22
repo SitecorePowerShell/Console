@@ -217,8 +217,15 @@ namespace Cognifide.PowerShell.Client.Applications
 
             if (!missingDataIcon.IsNullOrEmpty())
             {
-                Image image = new Image(missingDataIcon);
-                Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
+                if (EmptyIcon == null)
+                {
+                    Image image = new Image(missingDataIcon);
+                    Context.ClientPage.ClientResponse.SetOuterHtml("EmptyIcon", image);
+                }
+                else
+                {
+                    EmptyIcon.Src = missingDataIcon;
+                }
             }
 
             if (ListViewer.Data?.Data == null || ListViewer.Data.Data.Count == 0)
@@ -258,6 +265,15 @@ namespace Cognifide.PowerShell.Client.Applications
             if (firstDataItem != null)
             {
                 var originalData = firstDataItem.Original;
+                if (originalData is PSObject customItem)
+                {
+                    var id = customItem.Properties["ID"]?.Value?.ToString();
+                    if (!string.IsNullOrEmpty(id) && ID.IsID(id))
+                    {
+                        originalData = Sitecore.Client.ContentDatabase.GetItem(id);
+                    }
+                }
+
                 if (originalData is Item item)
                 {
                     var urlParams = new UrlString();

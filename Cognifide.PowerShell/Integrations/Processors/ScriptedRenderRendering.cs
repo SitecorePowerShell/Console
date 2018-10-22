@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.Integrations.Processors
             Assert.IsNotNull(args, "args");
 
             if (args.Rendering.DataSource.IsNullOrEmpty()) return;
-            if (!args.Rendering.DataSource.StartsWith("script:")) return;
+            if (!IsScripted(args.Rendering.DataSource)) return;
 
             var renderingDatasourceArgs = new ResolveRenderingDatasourceArgs(args.Rendering.DataSource);
             CorePipeline.Run("resolveRenderingDatasource", renderingDatasourceArgs);

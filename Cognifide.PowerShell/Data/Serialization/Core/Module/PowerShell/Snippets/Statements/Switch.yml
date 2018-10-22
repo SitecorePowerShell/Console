@@ -1,0 +1,24 @@
+﻿---
+ID: "b583838b-ba02-4c25-a54b-a1093804f11d"
+Parent: "a1f83fbf-c1ce-4365-890e-77ac8f475263"
+Template: "b8bc40a8-1560-42c6-aa05-911c9c140afe"
+Path: /sitecore/system/Modules/PowerShell/Snippets/Statements/Switch
+DB: master
+SharedFields:
+- ID: "c03734c0-ebe6-4bd0-9f5f-1eee1f862439"
+  Hint: Script
+  Value: |
+    switch ($x) {
+        'value1' {}
+        {$_ -in 'A','B','C'} {}
+        'value3' {}
+        default {}
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20180107T022511Z

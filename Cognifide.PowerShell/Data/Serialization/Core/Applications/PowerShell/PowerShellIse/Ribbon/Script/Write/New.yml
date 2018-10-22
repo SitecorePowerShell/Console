@@ -34,7 +34,7 @@ Languages:
     Value: New
   - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
     Hint: Tooltip
-    Value: Clear Editor and start creating a new script
+    Value: Clear the editor and start creating a new script.
   Versions:
   - Version: 1
     Fields:

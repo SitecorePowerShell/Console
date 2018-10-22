@@ -34,7 +34,7 @@ Languages:
     Value: Rebuild All...
   - ID: "db8c4e34-586c-4ded-bc95-b993fc3a01a8"
     Hint: Tooltip
-    Value: Rebuild all integration points
+    Value: Rebuild all integration points.
   Versions:
   - Version: 1
     Fields:
