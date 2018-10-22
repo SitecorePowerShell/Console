@@ -16,10 +16,11 @@ SharedFields:
             https://vandsh.github.io/powershell/2018/09/12/powershell-send-email.html
     #>
     
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $dialogProps = @{
         Parameters = @(
             @{ Name = "toEmail"; Title="Send email to"; Placeholder="to@email.com"; Columns=6},
-            @{ Name = "subject"; Value="$title"; Title="Email subject"; Placeholder="Subject"; Columns=6},
+            @{ Name = "subject"; Value="$title - $datetime"; Title="Email subject"; Placeholder="Subject"; Columns=6},
             @{ Name = "optionalBody"; Title="Email body"; Placeholder="Email Body"; lines=4}
         )
         Description = "Shares the Report via Email (as HTML)."
@@ -45,7 +46,6 @@ SharedFields:
     $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort");
     $tempFolder = [Sitecore.Configuration.Settings]::GetSetting("TempFolder");
     
-    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $head = '<style>'+
         'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
         'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
