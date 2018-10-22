@@ -24,7 +24,7 @@ SharedFields:
             @{ Name = "optionalBody"; Title="Email body"; Placeholder="Email Body"; lines=4}
         )
         Description = "Shares the Report via Email (as HTML)."
-        Title = "Share Export via Email"
+        Title = "Share Report via Email"
         Width = 500
         Height = 300
         OkButtonName = "Proceed"
