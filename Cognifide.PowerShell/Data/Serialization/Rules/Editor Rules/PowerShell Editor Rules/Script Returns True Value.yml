@@ -1,8 +1,8 @@
 ﻿---
 ID: "7477d094-b434-4ceb-bccc-45c02ceb6a5d"
-Parent: "c84f4255-cf8a-455d-9c11-94a774773aba"
+Parent: "d555657d-f954-497c-a293-65d5e695ab61"
 Template: "f0d16eee-3a05-4e43-a082-795a32b873c0"
-Path: "/sitecore/system/Settings/Rules/Definitions/Elements/PowerShell/Script Returns Non-Null Value"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Editor Rules/Script Returns True Value
 DB: master
 SharedFields:
 - ID: "ab51c8b2-f0e1-4471-9aae-cc080d774923"
@@ -22,4 +22,5 @@ Languages:
         sitecore\admin
     - ID: "af321234-4eb9-4ef5-9197-65903351939c"
       Hint: Text
-      Value: "where [ScriptId,TreeList,root=/sitecore/system/Modules/PowerShell/Script Library,specific script] returns a non-null value"
+      Value: |
+        where [ScriptId,TreeList,root=/sitecore/system/Modules/PowerShell/Script Library,specific script] returns a "true" value

@@ -1,0 +1,19 @@
+﻿---
+ID: "bc88bbf4-ea57-41ff-bf37-bfd353dd5c3e"
+Parent: "d555657d-f954-497c-a293-65d5e695ab61"
+Template: "aa91a868-02f2-41d3-8b78-1cad91b4dcae"
+Path: /sitecore/system/Settings/Rules/Definitions/Elements/PowerShell Editor Rules/Visibility
+DB: master
+BranchID: "9a72c539-dbf8-4dad-96d3-a298fc04add6"
+SharedFields:
+- ID: "f6d8a61c-2f84-4401-bd24-52d2068172bc"
+  Hint: __Originator
+  Value: "{283F6CD6-EFB8-47AC-946A-ABB17FA45ECB}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181020T161858Z
