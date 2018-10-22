@@ -83,7 +83,7 @@ SharedFields:
     $destinationNode = @{$true=(Get-Item -Path "master:\content\home");$false=(Get-Item -Path "master:\content")}[(Test-Path -Path "master:\content\home")]
     
     # Create a list of field names on the Standard Template. This will help us filter out extraneous fields.
-    $standardTemplate = Get-Item -Path "master:" -ID "{1930BBEB-7805-471A-A3BE-4858AC7CF696}"
+    $standardTemplate = Get-Item -Path "master:" -ID "$([Sitecore.TemplateIDs]::StandardTemplate)"
     $standardTemplateTemplateItem = [Sitecore.Data.Items.TemplateItem]$standardTemplate
     $standardFields = $standardTemplateTemplateItem.OwnFields + $standardTemplateTemplateItem.Fields | Select-Object -ExpandProperty key -Unique
     

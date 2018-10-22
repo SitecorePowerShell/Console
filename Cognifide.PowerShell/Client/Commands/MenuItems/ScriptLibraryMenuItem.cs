@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cognifide.PowerShell.Client.Controls;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Modules;
 using Cognifide.PowerShell.Core.Settings;
@@ -113,11 +112,17 @@ namespace Cognifide.PowerShell.Client.Commands.MenuItems
 
         protected virtual void SortMenuItems(List<Control> menuItems)
         {
+            string GetRawSortOrderValue(MenuItem menuItem)
+            {
+                var rawSortOrder = menuItem.Attributes[FieldIDs.Sortorder.ToString()];
+                return String.IsNullOrWhiteSpace(rawSortOrder) ? "0" : rawSortOrder;
+            }
+
             int GetSortOrder(MenuItem x, MenuItem y)
             {
-                var rawSortOrderX = x.Attributes[FieldIDs.Sortorder.ToString()];
-                var rawSortOrderY = y.Attributes[FieldIDs.Sortorder.ToString()];
-                if (string.IsNullOrEmpty(rawSortOrderX) || string.IsNullOrEmpty(rawSortOrderY) || rawSortOrderX.Is(rawSortOrderY))
+                var rawSortOrderX = GetRawSortOrderValue(x);
+                var rawSortOrderY = GetRawSortOrderValue(y);
+                if (rawSortOrderX.Is(rawSortOrderY))
                 {
                     return string.Compare(x.Header, y.Header, StringComparison.OrdinalIgnoreCase);
                 }
