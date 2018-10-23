@@ -1,0 +1,99 @@
+﻿---
+ID: "8e1dbc83-6763-4e1b-9c08-1d377c98df88"
+Parent: "64668dde-2255-4d6b-bf9c-fbbdeb0f129a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Send via Email
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: /~/icon/applicationsv2/32x32/folder3_mail.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .LINK
+            https://vandsh.github.io/powershell/2018/09/12/powershell-send-email.html
+    #>
+    
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    $dialogProps = @{
+        Parameters = @(
+            @{ Name = "toEmail"; Title="Send email to"; Placeholder="to@email.com"; Columns=5},
+            @{ Name = "subject"; Value="$title - $datetime"; Title="Email subject"; Placeholder="Subject"; Columns=7},
+            @{ Name = "optionalBody"; Title="Email body"; Placeholder="Email Body"; lines=4}
+        )
+        Description = "Shares the Report via Email (as HTML)."
+        Title = "Share Report via Email"
+        Width = 500
+        Height = 300
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        ShowHint = $true
+        Icon = "/~/icon/applicationsv2/32x32/folder3_mail.png"
+    }
+    
+    $result = Read-Variable @dialogProps
+    if($result -ne "ok")
+    {
+        Exit
+    }
+    
+    $currentUser = Get-User -Current
+    $smtpServer = [Sitecore.Configuration.Settings]::GetSetting("MailServer");
+    $smtpUsername = [Sitecore.Configuration.Settings]::GetSetting("MailServerUserName");
+    $smtpPassword = [Sitecore.Configuration.Settings]::GetSetting("MailServerPassword");
+    $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort");
+    $tempFolder = [Sitecore.Configuration.Settings]::GetSetting("TempFolder");
+    
+    $head = '<style>'+
+        'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
+        'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
+        'p {width:100%;font-family: "Proxima Nova Regular", "Helvetica Neue", Calibri, "Droid Sans", Helvetica, Arial, sans-serif; font-size: 18px}'+
+        'table {font-size:12px; border-collapse:collapse; border:1px solid #69c; margin:20px;}'+
+        'th{font-weight:normal; font-size:14px; color:#039; border-bottom:1px dashed #69c; padding:12px 17px;}'+
+        'td{color:#668;padding:7px 17px;border-bottom: 1px dashed #d8e8ff;}'+
+        'tbody tr:hover td{color:#339;background:#f0f0ff;}'+
+        '</style>'
+        
+    if(!$title){
+        $title = "Undefined"
+    }
+    try { 
+        $body = "<h1>$infoTitle</h1><p>$optionalBody</p><p>$infoDescription</p>"
+        $format = & ([scriptblock]::Create($exportProperty))
+        $reportResult = [psCustomObject]$exportData | 
+            Select-Object -Property $format | 
+            ConvertTo-Html -head $head -body $body -Title $title | 
+            % { [System.Web.HttpUtility]::HtmlDecode($_) } | 
+            Out-String
+        
+        $message = new-object Net.Mail.MailMessage;
+        $currentMembership = [System.Web.Security.Membership]::GetUser($currentUser.Name);
+        $message.From = $currentMembership.Email;
+        $message.IsBodyHtml = $true
+        $message.To.Add($toEmail);
+        $message.Subject = $subject;
+        $message.Body = $reportResult;
+        $smtp = new-object Net.Mail.SmtpClient($smtpServer, $smtpPort); 
+        $smtp.EnableSSL = $false;
+        $smtp.Credentials = New-Object System.Net.NetworkCredential($smtpUsername, $smtpPassword);
+        $smtp.send($message);
+    } 
+    catch { 
+        Show-Alert "Email failed to send, please see logs for detail."
+    }
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+- ID: "d85db4ec-ff89-4f9c-9e7c-a9e0654797fc"
+  Hint: __Editor
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181022T151222Z
