@@ -1,0 +1,143 @@
+﻿---
+ID: "8e1dbc83-6763-4e1b-9c08-1d377c98df88"
+Parent: "64668dde-2255-4d6b-bf9c-fbbdeb0f129a"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Core/Platform/Internal/List View/Export/Email
+DB: master
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/mail_attachment.png
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    <#
+        .LINK
+            https://vandsh.github.io/powershell/2018/09/12/powershell-send-email.html
+    #>
+    
+    $currentUser = Get-User -Current
+    $fromEmail = $currentUser.Profile.Email
+    
+    if([string]::IsNullOrEmpty($fromEmail)) {
+        Show-Alert -Title "Your user account needs to be updated with a valid email address before using this feature."
+        exit
+    }
+    
+    $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
+    $dialogProps = @{
+        Parameters = @(
+            @{ Name = "toEmail"; Title="Recipient"; Placeholder="to@email.com"; Columns=6; Validator={ 
+                if([string]::IsNullOrEmpty($variable.Value)){
+                    $variable.Error = "Please specify an email address."
+                }}},
+            @{ Name = "subject"; Value="$title - $datetime"; Title="Subject"; Placeholder="Subject"; Columns=6; },
+            @{ Name = "optionalBody"; Title="Email body"; Placeholder="Here is the report you requested."; lines=4}
+        )
+        Description = "Share the report via email as an attachment."
+        Title = "Email Report"
+        Width = 600
+        Height = 300
+        OkButtonName = "Proceed"
+        CancelButtonName = "Abort"
+        ShowHint = $true
+        Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
+    }
+    
+    $smtpServer = [Sitecore.Configuration.Settings]::GetSetting("MailServer")
+    $smtpUsername = [Sitecore.Configuration.Settings]::GetSetting("MailServerUserName")
+    $smtpPassword = [Sitecore.Configuration.Settings]::GetSetting("MailServerPassword")
+    $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort")
+    
+    $dialogProps["Parameters"] += @{ Name = "asAttachment"; Value=$false; Title="Document as Attachment"; Tooltip="Optionally the document can be attached rather than embedded in the body."; Columns=6; }
+    
+    if($currentUser.IsAdministrator) {
+        $dialogProps["Height"] = 550
+        $dialogProps["Parameters"] += @{ Name = "overrideSettings"; Value=$false; Title="Override Mail Settings"; Tooltip="Change the default settings for sending emails."; Columns=6; GroupId=1; }
+        $dialogProps["Parameters"] += @{ Name = "smtpServer"; Title="Server"; Placeholder="mail.company.com"; Columns=6; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Parameters"] += @{ Name = "smtpPort"; Title="Port"; Placeholder="25"; Columns=6; Editor="number"; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Parameters"] += @{ Name = "smtpUsername"; Title="Username"; Placeholder="admin"; Columns=6; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Parameters"] += @{ Name = "smtpPassword"; Title="Password"; Placeholder="b"; Columns=6; Editor="password"; ParentGroupId=1; HideOnValue="0" }
+    }
+    
+    $result = Read-Variable @dialogProps
+    if($result -ne "ok") {
+        Exit
+    }
+    
+    $head = '<style>'+
+        'body{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif; text-align:left;}'+
+        'h1 {width:100%;font-family: "Skolar Bold", Palatino, Cambria, "Droid Serif", Georgia, "Times New Roman", Times, serif; font-size: 28px;}'+
+        'p {width:100%;font-family: "Proxima Nova Regular", "Helvetica Neue", Calibri, "Droid Sans", Helvetica, Arial, sans-serif; font-size: 18px}'+
+        'table {font-size:12px; border-collapse:collapse; border:1px solid #69c; margin:20px;}'+
+        'th{font-weight:normal; font-size:14px; color:#039; border-bottom:1px dashed #69c; padding:12px 17px;}'+
+        'td{color:#668;padding:7px 17px;border-bottom: 1px dashed #d8e8ff;}'+
+        'tbody tr:hover td{color:#339;background:#f0f0ff;}'+
+        '</style>'
+        
+    if(!$title){
+        $title = "Report"
+    }
+    try { 
+        $message = New-Object Net.Mail.MailMessage
+        $message.From = $fromEmail
+        $message.IsBodyHtml = $true
+        $message.To.Add($toEmail)
+        $message.Subject = $subject
+        
+        $formattedBody = "<h1>$infoTitle</h1><p>$optionalBody</p><p>$infoDescription</p>"
+        $format = & ([scriptblock]::Create($exportProperty))
+        $reportResult = [PSCustomObject]$exportData | 
+            Select-Object -Property $format | 
+            ConvertTo-Html -Head $head -Body $formattedBody -Title $title | 
+            ForEach-Object { [System.Web.HttpUtility]::HtmlDecode($_) } | 
+            Out-String
+    
+        if($asAttachment) {
+            $message.Body = $optionalBody
+            
+            $attachmentBytes = [System.Text.Encoding]::UTF8.GetBytes($reportResult)
+            $memoryStream = New-Object System.IO.MemoryStream
+            $memoryStream.Write($attachmentBytes, 0, $attachmentBytes.Length)
+            $memoryStream.Seek(0, [System.IO.SeekOrigin]::Begin) > $null
+            
+            $contentType = New-Object "System.Net.Mime.ContentType"
+            $contentType.MediaType = [System.Net.Mime.MediaTypeNames+Text]::Html
+            $contentType.Name = "$title-$datetime.html"
+            $attachment = New-Object System.Net.Mail.Attachment ($memoryStream, $contentType)
+            
+            $message.Attachments.Add($attachment)
+        } else {
+            $message.Body = $reportResult
+        }
+    
+        $smtp = New-Object Net.Mail.SmtpClient($smtpServer, $smtpPort)
+        $smtp.EnableSSL = $false
+        $smtp.Credentials = New-Object System.Net.NetworkCredential($smtpUsername, $smtpPassword)
+        $smtp.Send($message)
+    } catch {
+        if($currentUser.IsAdministrator) {
+            Write-Host $error
+            Show-Result -Text
+        } else {
+            Show-Alert "Email failed to send, please see logs for detail."
+        }
+    }
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+- ID: "d85db4ec-ff89-4f9c-9e7c-a9e0654797fc"
+  Hint: __Editor
+  Value: 
+Languages:
+- Language: en
+  Fields:
+  - ID: "9541e67d-ce8c-4225-803d-33f7f29f09ef"
+    Hint: __Short description
+    Value: Email the report results as an attachment.
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20181022T151222Z
