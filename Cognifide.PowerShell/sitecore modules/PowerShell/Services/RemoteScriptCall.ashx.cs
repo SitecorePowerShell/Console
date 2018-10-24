@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
@@ -40,6 +40,8 @@ namespace Cognifide.PowerShell.Console.Services
         private SortedDictionary<string, SortedDictionary<string, ApiScript>> apiScripts;
         private static Dictionary<string,string> apiVersionToServiceMapping = new Dictionary<string, string>()
         {
+            { "POST/script" , WebServiceSettings.ServiceRemoting },
+            { "GET/script" , WebServiceSettings.ServiceRemoting },
             { "POST/file" , WebServiceSettings.ServiceFileUpload },
             { "POST/media" , WebServiceSettings.ServiceMediaUpload },
             { "GET/1" , WebServiceSettings.ServiceRestfulv1 },
@@ -203,6 +205,19 @@ namespace Cognifide.PowerShell.Console.Services
                     scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
                     apiScripts = null;
                     break;
+                case "script":
+                    if(request.InputStream != null)
+                    {
+                        string script = null;
+                        using (var ms = new MemoryStream())
+                        {
+                            request.InputStream.CopyTo(ms);
+                            var bytes = ms.ToArray();
+                            script = Encoding.UTF8.GetString(bytes);
+                        }
+                        ProcessScript(context, script, null);
+                    }
+                    return;
                 default:
                     PowerShellLog.Error($"Requested API/Version ({serviceMappingKey}) is not supported.");
                     return;
@@ -277,6 +292,14 @@ namespace Cognifide.PowerShell.Console.Services
                     break;
                 case "handle":
                     if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceHandleDownload))
+                    {
+                        HttpContext.Current.Response.StatusCode = 403;
+                        HttpContext.Current.Response.StatusDescription = disabledMessage;
+                        isEnabled = false;
+                    }
+                    break;
+                case "script":
+                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
                     {
                         HttpContext.Current.Response.StatusCode = 403;
                         HttpContext.Current.Response.StatusDescription = disabledMessage;
@@ -537,17 +560,27 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
+            var script = scriptItem[Templates.Script.Fields.ScriptBody];
+
+            ProcessScript(context, script, streams);
+        }
+
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams)
+        {
+            if(string.IsNullOrEmpty(script))
+            {
+                HttpContext.Current.Response.StatusCode = 404;
+                return;
+            }
+
             using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
             {
-                var script = scriptItem[Templates.Script.Fields.ScriptBody];
-
                 if (Context.Database != null)
                 {
                     var item = Context.Database.GetRootItem();
                     if (item != null)
                         session.SetItemLocationContext(item);
                 }
-                session.SetExecutedScript(scriptItem);
 
                 context.Response.ContentType = "text/plain";
 

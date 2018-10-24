@@ -66,6 +66,7 @@
         '.\ConvertFrom-CliXml.ps1'
         '.\ConvertTo-CliXml.ps1',
         '.\Invoke-RemoteScript.ps1',
+        '.\Invoke-RemoteScript2.ps1',
         '.\MediaSyncWatcher.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
@@ -83,6 +84,7 @@
         'ConvertFrom-CliXml'
         'ConvertTo-CliXml',
         'Invoke-RemoteScript',
+        'Invoke-RemoteScript2',
         'New-ScriptSession',
         'Receive-RemoteItem',
         'Receive-MediaItem',

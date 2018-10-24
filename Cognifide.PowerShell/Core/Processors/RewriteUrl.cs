@@ -57,7 +57,8 @@ namespace Cognifide.PowerShell.Core.Processors
                 if (localPath.StartsWith("/-/script/v2", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/media", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase) ||
-                    localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase)
+                    localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase) ||
+                    localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase)
                     )
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split('/');
