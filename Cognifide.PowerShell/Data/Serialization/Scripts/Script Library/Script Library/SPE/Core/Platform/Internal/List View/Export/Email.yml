@@ -24,15 +24,22 @@ SharedFields:
         exit
     }
     
+    if(!$title){
+        $title = "Report"
+    }
+    
     $datetime = Get-Date -format "yyyy-MM-d_hhmmss"
     $dialogProps = @{
         Parameters = @(
             @{ Name = "toEmail"; Title="Recipient"; Placeholder="to@email.com"; Columns=6; Validator={ 
-                if([string]::IsNullOrEmpty($variable.Value)){
+                if([string]::IsNullOrEmpty($variable.Value)) {
                     $variable.Error = "Please specify an email address."
                 }}},
-            @{ Name = "subject"; Value="$title - $datetime"; Title="Subject"; Placeholder="Subject"; Columns=6; },
-            @{ Name = "optionalBody"; Title="Email body"; Placeholder="Here is the report you requested."; lines=4}
+            @{ Name = "subject"; Value="$title - $datetime"; Title="Subject"; Placeholder="Subject"; Columns=6; Validator={ 
+                if([string]::IsNullOrEmpty($variable.Value)) {
+                    $variable.Error = "Please specify an email subject."
+                }} },
+            @{ Name = "optionalBody"; Title="Email body"; Placeholder="Here is the report you requested."; Lines=4; }
         )
         Description = "Share the report via email as an attachment."
         Title = "Email Report"
@@ -49,7 +56,7 @@ SharedFields:
     $smtpPassword = [Sitecore.Configuration.Settings]::GetSetting("MailServerPassword")
     $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort")
     
-    $dialogProps["Parameters"] += @{ Name = "asAttachment"; Value=$false; Title="Document as Attachment"; Tooltip="Optionally the document can be attached rather than embedded in the body."; Columns=6; }
+    $dialogProps["Parameters"] += @{ Name = "asAttachment"; Value=$false; Title="Send as attachment"; Tooltip="Uncheck to send as an attachment."; Columns=6; }
     
     if($currentUser.IsAdministrator) {
         $dialogProps["Height"] = 550
@@ -75,9 +82,6 @@ SharedFields:
         'tbody tr:hover td{color:#339;background:#f0f0ff;}'+
         '</style>'
         
-    if(!$title){
-        $title = "Report"
-    }
     try { 
         $message = New-Object Net.Mail.MailMessage
         $message.From = $fromEmail
@@ -85,7 +89,16 @@ SharedFields:
         $message.To.Add($toEmail)
         $message.Subject = $subject
         
-        $formattedBody = "<h1>$infoTitle</h1><p>$optionalBody</p><p>$infoDescription</p>"
+        $formattedBody = ""
+        if($infoTitle) {
+            $formattedBody += "<h1>$infoTitle</h1>"
+        }
+        if($optionalBody) {
+            $formattedBody += "<p>$optionalBody</p>"
+        }
+        if($infoDescription) {
+            $formattedBody += "<p>$infoDescription</p>"
+        }
         $format = & ([scriptblock]::Create($exportProperty))
         $reportResult = [PSCustomObject]$exportData | 
             Select-Object -Property $format | 
