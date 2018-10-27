@@ -123,6 +123,7 @@ function New-ScriptSession {
                         $serviceProxy.Url = $serviceProxy.Url -replace "^https?", $uri.Scheme
                     }
 
+                    $serviceProxy.EnableDecompression = $true
                     $serviceProxy
                 }
 

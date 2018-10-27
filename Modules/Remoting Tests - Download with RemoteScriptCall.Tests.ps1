@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter()]
-    [string]$protocolHost = "http://spe.dev.local"
+    [string]$protocolHost = "https://spe.dev.local"
 )
 
 Import-Module -Name SPE -Force
@@ -69,7 +69,7 @@ Describe "Download with RemoteScriptCall" {
             Test-Path -Path $destination | Should Be $true
         }
         It "download from the Serialization root path" {
-            $filename = "master\sitecore\templates\Modules.item"
+            $filename = "readme.txt"
             $destination = Join-Path -Path $destinationMediaPath -ChildPath $filename
             Receive-RemoteItem -Session $session -Destination $destination -Path $filename -RootPath Serialization
             Test-Path -Path $destination | Should Be $true
@@ -143,6 +143,8 @@ Describe "Download with RemoteScriptCall" {
                 Get-ChildItem -Path "$($SitecoreLogFolder)" -File | Where-Object { $_.Name -match "spe.log." } | 
                     Compress-Archive -DestinationPath "$($SitecoreTempFolder)\archived.SPE.logs.zip" | Select-Object -Expand FullName
             } 
+
+            $archiveFileName | Should Not Be $null
 
             $destination = Join-Path -Path $destinationMediaPath -ChildPath (Split-Path -Path $archiveFileName -Leaf)
             Receive-RemoteItem -Session $session -Destination $destination -Path $archiveFileName 

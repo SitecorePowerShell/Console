@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.SessionState;
@@ -22,10 +23,10 @@ using Sitecore.Data.Items;
 using Sitecore.Diagnostics;
 using Sitecore.IO;
 using Sitecore.Resources.Media;
-using Sitecore.Security.Authentication;
 using Sitecore.SecurityModel;
 using Sitecore.Web;
 using Sitecore.StringExtensions;
+using AuthenticationManager = Sitecore.Security.Authentication.AuthenticationManager;
 
 namespace Cognifide.PowerShell.Console.Services
 {
@@ -460,6 +461,8 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessMediaDownload(Database db, string itemParam)
         {
+            var guidPattern = @"(?<id>{[a-z0-9]{8}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{4}[-][a-z0-9]{12}})";
+
             var indexOfDot = itemParam.IndexOf(".");
             itemParam = indexOfDot == -1 ? itemParam : itemParam.Substring(0, indexOfDot);
             itemParam = itemParam.Replace('\\', '/').TrimEnd('/');
@@ -469,8 +472,17 @@ namespace Cognifide.PowerShell.Console.Services
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
-                HttpContext.Current.Response.StatusCode = 404;
-                return;
+                if (Regex.IsMatch(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
+                {
+                    var id = Regex.Match(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
+                    mediaItem = db.GetItem(id);
+                }
+
+                if (mediaItem == null)
+                {
+                    HttpContext.Current.Response.StatusCode = 404;
+                    return;
+                }
             }
 
             var mediaStream = mediaItem.GetMediaStream();
@@ -506,7 +518,14 @@ namespace Cognifide.PowerShell.Console.Services
 
                 var fileInfo = new FileInfo(file);
                 WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
-                HttpContext.Current.Response.TransmitFile(file);
+                try
+                {
+                    HttpContext.Current.Response.TransmitFile(file);
+                }
+                catch (IOException)
+                {
+                    HttpContext.Current.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                }
             }
         }
 
