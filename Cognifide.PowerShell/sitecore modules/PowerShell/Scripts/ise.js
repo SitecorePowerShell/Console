@@ -23,6 +23,7 @@
 
         var TokenTooltip = ace.require("tooltip").TokenTooltip;
         var guid = "ISE_Editing_Session";
+        const speVariablesCacheKey = "spe::variables";
         var debugLine = 0;
         var debugSessionId = "";
         var debugMarkers = [];
@@ -43,12 +44,15 @@
         });
         codeeditor.tokenTooltip = new TokenTooltip(codeeditor);
 
-        var proxied = codeeditor.onPaste;
-        codeeditor.onPaste = function () {
-            var result = proxied.apply(this, arguments);
+        addProxy(codeeditor, "onPaste", function () {
             cognifide.powershell.updateRibbon();
-            return result;
-        };
+        });
+
+        addProxy(scForm, "invoke", function (args) {
+            if (args[0] === "ise:immediatewindow") {
+                clearVariablesCache();
+            }
+        });
 		
         function registerEventListenersForRibbonButtons() {
             console.log('initialize');
@@ -70,6 +74,15 @@
 		
         window.parent.focus();
         window.focus();
+
+        function addProxy(obj, functionName, proxyFn) {
+            var proxied = obj[functionName];
+            obj[functionName] = function () {
+                var result = proxied.apply(this, arguments);
+                proxyFn(arguments);
+                return result;
+            };
+        }
 
         function setFocusOnConsole() {
             $("body").focus();
@@ -334,6 +347,7 @@
             var decoded = $("<div/>").html(outputToAppend).text();
             $("#ScriptResultCode").append(decoded);
             $("#Result").scrollTop($("#Result")[0].scrollHeight);
+            clearVariablesCache();
         };
 
         cognifide.powershell.changeFontFamily = function(setting) {
@@ -443,6 +457,7 @@
             if (cognifide.powershell.preventCloseWhenRunning) {
                 cognifide.powershell.preventCloseWhenRunning(false);
             }
+            clearVariablesCache();
         };
 
         cognifide.powershell.clearBreakpoints = function() {
@@ -516,16 +531,60 @@
             });
         };
 
+        function getCachedVariableValue(storageKey, variableName) {
+            var storageRawValue = localStorage[storageKey];
+            if (storageRawValue) {
+                var variables = JSON.parse(storageRawValue);
+                var variable = variables[variableName];
+                if (variable) {
+                    return variable;
+                }
+            }
+            return null;
+        }
+
+        function setCachedVariableValue(storageKey, variableName, data) {
+            var storageRawValue = localStorage[storageKey];
+            var variables = null;
+            if (storageRawValue) {
+                variables = JSON.parse(storageRawValue);
+            }
+
+            if (variables === null) {
+                variables = {};
+            }
+
+            variables[variableName] = data;
+            localStorage[storageKey] = JSON.stringify(variables);
+        }
+
+        function clearVariablesCache() {
+            for (var key in localStorage) {
+                if (key.startsWith(speVariablesCacheKey)) {
+                    localStorage.removeItem(key);
+                }
+            }
+        };
+
         cognifide.powershell.variableValue = function (variableName) {
             var data;
             var sessionId = debugSessionId;
             if (!debugSessionId || 0 === debugSessionId.length) {
                 sessionId = guid;
             }
+
+            var storageKey = speVariablesCacheKey + sessionId;
+            var cachedValue = getCachedVariableValue(storageKey, variableName)
+            if (cachedValue) {
+                return cachedValue;
+            }
+
             getPowerShellResponse({ "guid": sessionId, "variableName": variableName }, "GetVariableValue",
                 function (json) {
                     data = json.d;
                 });
+
+            setCachedVariableValue(storageKey, variableName, data);
             return data;
         };
 
