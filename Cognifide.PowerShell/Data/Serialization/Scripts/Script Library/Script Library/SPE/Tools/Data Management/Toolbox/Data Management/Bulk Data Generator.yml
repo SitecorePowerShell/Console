@@ -111,11 +111,25 @@ SharedFields:
     }
     
     if($dataTypeName -eq "Item") {
-        $rootItemPath = $selectedrootItem.ProviderPath
         $childCount = $selectedrootItem.Children.Count + 1
-        for($index = $childCount; $index -lt $childCount + $inputCount; $index++) {
-            New-Item -Path $rootItemPath -Name "$($itemNamePrefix)$($index)" -Type $selectedItemTemplate.Paths.Path
+        $createdItems = [System.Collections.ArrayList]@()
+        $totalItemCount = $childCount + $inputCount
+        for($index = $childCount; $index -lt $totalItemCount; $index++) {
+            $createdItem = $null
+            if($index -lt 10 -or $index % 50 -eq 0) {
+                $createdItem = New-Item -Path $selectedrootItem.ProviderPath -Name "$($itemNamePrefix)$($index)" -Type $selectedItemTemplate.Paths.Path
+                $createdItems.Add($createdItem) > $null
+            } else {
+                $randomIndex = Get-Random -Minimum 0 -Maximum ($createdItems.Count - 1)
+                $rootItemPath = $createdItems[$randomIndex].ProviderPath
+                $createdItem = New-Item -Path $rootItemPath -Name "$($itemNamePrefix)$($index)" -Type $selectedItemTemplate.Paths.Path
+                $createdItems.Add($createdItem) > $null
+            }
+            $createdItem
+            Write-Progress -Status "Creating new items" -Activity "Created $($createdItem.ProviderPath)" -PercentComplete ($index/$totalItemCount*100)
         }
+        
+        Write-Progress -Completed -Activity "Finished creating items."
     } elseif($dataTypeName -eq "User") {
         $firstNames = "Michael Rebecca Adam Jason Martha Alan David Khris Robert Chris Steven Peter Matthew Mark Luke John Thomas Sarah Lisa Martha" -split " "
         $lastNames = "West Smith Johnson Williams Brown Jones Martinez Thompson White Wilson Harrison Lee Beckham" -split " "
