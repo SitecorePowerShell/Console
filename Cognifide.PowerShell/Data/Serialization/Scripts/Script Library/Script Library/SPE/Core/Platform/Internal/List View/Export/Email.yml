@@ -24,6 +24,20 @@ SharedFields:
         exit
     }
     
+    $smtpServer = [Sitecore.Configuration.Settings]::GetSetting("MailServer")
+    $smtpUsername = [Sitecore.Configuration.Settings]::GetSetting("MailServerUserName")
+    $smtpPassword = [Sitecore.Configuration.Settings]::GetSetting("MailServerPassword")
+    $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort")
+    
+    $overrideSettings = $false
+    if([string]::IsNullOrEmpty($smtpServer)) {
+        if(!$currentUser.IsAdministrator) {
+            Show-Alert -Title "Your mail server settings are not configured properly. `n`nPlease check with your Administrator to enable this feature."
+            exit  
+        }
+        $overrideSettings = $true
+    }
+    
     if(!$title){
         $title = "Report"
     }
@@ -51,20 +65,18 @@ SharedFields:
         Icon = ([regex]::Replace($PSScript.Appearance.Icon, "Office", "OfficeWhite", [System.Text.RegularExpressions.RegexOptions]::IgnoreCase))
     }
     
-    $smtpServer = [Sitecore.Configuration.Settings]::GetSetting("MailServer")
-    $smtpUsername = [Sitecore.Configuration.Settings]::GetSetting("MailServerUserName")
-    $smtpPassword = [Sitecore.Configuration.Settings]::GetSetting("MailServerPassword")
-    $smtpPort = [Sitecore.Configuration.Settings]::GetSetting("MailServerPort")
-    
     $dialogProps["Parameters"] += @{ Name = "asAttachment"; Value=$false; Title="Send as attachment"; Tooltip="Uncheck to send as an attachment."; Columns=6; }
     
     if($currentUser.IsAdministrator) {
-        $dialogProps["Height"] = 550
-        $dialogProps["Parameters"] += @{ Name = "overrideSettings"; Value=$false; Title="Override Mail Settings"; Tooltip="Change the default settings for sending emails."; Columns=6; GroupId=1; }
-        $dialogProps["Parameters"] += @{ Name = "smtpServer"; Title="Server"; Placeholder="mail.company.com"; Columns=6; ParentGroupId=1; HideOnValue="0" }
-        $dialogProps["Parameters"] += @{ Name = "smtpPort"; Title="Port"; Placeholder="25"; Columns=6; Editor="number"; ParentGroupId=1; HideOnValue="0" }
-        $dialogProps["Parameters"] += @{ Name = "smtpUsername"; Title="Username"; Placeholder="admin"; Columns=6; ParentGroupId=1; HideOnValue="0" }
-        $dialogProps["Parameters"] += @{ Name = "smtpPassword"; Title="Password"; Placeholder="b"; Columns=6; Editor="password"; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Height"] = 575
+        $dialogProps["Parameters"] += @{ Name = "overrideSettings"; Title="Override Mail Settings"; Tooltip="Change the default settings for sending emails."; Columns=6; GroupId=1; }
+        $dialogProps["Parameters"] += @{ Name = "smtpServer"; Title="Server"; Placeholder="mail.company.com"; Columns=7; ParentGroupId=1; HideOnValue="0"; Validator={ 
+                if([string]::IsNullOrEmpty($variable.Value)) {
+                    $variable.Error = "Please specify an mail server."
+                }} }
+        $dialogProps["Parameters"] += @{ Name = "smtpPort"; Title="Port"; Placeholder="25"; Columns=5; Editor="number"; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Parameters"] += @{ Name = "smtpUsername"; Title="Username"; Placeholder="admin"; Columns=7; ParentGroupId=1; HideOnValue="0" }
+        $dialogProps["Parameters"] += @{ Name = "smtpPassword"; Title="Password"; Placeholder="b"; Columns=5; Editor="password"; ParentGroupId=1; HideOnValue="0" }
     }
     
     $result = Read-Variable @dialogProps
