@@ -596,17 +596,6 @@ namespace Cognifide.PowerShell.Console.Services
 
                 context.Response.ContentType = "text/plain";
 
-                var requestUri = WebUtil.GetRequestUri();
-                var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath, requestUri.Port);
-                Context.SetActiveSite(site.Name);
-
-                if (!string.IsNullOrEmpty(cliXmlArgs))
-                {
-                    session.SetVariable("cliXmlArgs", cliXmlArgs);
-                    session.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
-                    script = script.TrimEnd(' ', '\t', '\n');
-                }
-
                 if (streams != null)
                 {
                     var scriptArguments = new Hashtable();
@@ -638,12 +627,27 @@ namespace Cognifide.PowerShell.Console.Services
                 }
                 else
                 {
+                    // Duplicate the behaviors of the original RemoteAutomation service.
+                    var requestUri = WebUtil.GetRequestUri();
+                    var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath, requestUri.Port);
+                    Context.SetActiveSite(site.Name);
+
+                    if (!string.IsNullOrEmpty(cliXmlArgs))
+                    {
+                        session.SetVariable("cliXmlArgs", cliXmlArgs);
+                        session.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
+                        script = script.TrimEnd(' ', '\t', '\n');
+                    }
+
                     if (rawOutput)
                     {
                         // In this output we want to give raw output data. No type information is needed. Error streams are lost.
                         var outObjects = session.ExecuteScriptPart(script, false, false, false);
-                        var result = outObjects.Select(o => o.ToString()).Aggregate((current, next) => current + next);
-                        context.Response.Write(result);
+                        var response = context.Response;
+                        foreach (var outObject in outObjects)
+                        {
+                            response.Write(outObject.ToString());
+                        }
                     }
                     else
                     {
@@ -657,8 +661,11 @@ namespace Cognifide.PowerShell.Console.Services
                         session.SetVariable("results", outObjects);
                         session.Output.Clear();
                         session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-                        var result = session.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
-                        context.Response.Write(result);
+                        var response = context.Response;
+                        foreach (var outputBuffer in session.Output)
+                        {
+                            response.Write(outputBuffer.Text);
+                        }
                     }
                 }
                
