@@ -1,107 +1,45 @@
-function Invoke-RemoteScript {
-    <#
-        .SYNOPSIS
-            Run scripts in Sitecore PowerShell Extensions via web service calls.
+if (-not ([System.Management.Automation.PSTypeName]'WebClientWithResponse').Type)
+{
+    Add-Type @"
+using System.Net;
+using System.IO;
 
-        .DESCRIPTION
-            When using commands such as Write-Verbose, be sure the preference settings are configured properly.
+public class WebClientWithResponse : WebClient
+{
+    // we will store the response here. We could store it elsewhere if needed.
+    // This presumes the response is not a huge array...
+    public byte[] Response { get; private set; }
 
-            Change each of these to "Continue" in order to see the message appear in the console.
-
-            Example values:
-
-            ConfirmPreference              High
-            DebugPreference                SilentlyContinue
-            ErrorActionPreference          Continue
-            InformationPreference          SilentlyContinue
-            ProgressPreference             Continue
-            VerbosePreference              SilentlyContinue
-            WarningPreference              Continue
-            WhatIfPreference               False
-    
-        .EXAMPLE
-            The following example remotely executes a script in Sitecore using a reusable session.
-    
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
-            Stop-ScriptSession -Session $session
-    
-            Name                     Domain       IsAdministrator IsAuthenticated
-            ----                     ------       --------------- ---------------
-            sitecore\admin           sitecore     True            False
-    
-        .EXAMPLE
-            The following remotely executes a script in Sitecore with the $Using variable.
-
-            $date = [datetime]::Now
-            $script = {
-                $Using:date
-            }
-    
-            Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script
-            Stop-ScriptSession -Session $session
-    
-            6/25/2015 11:09:17 AM
-                    
-        .EXAMPLE
-            The following example runs a script as a ScriptSession job on the server (using Start-ScriptSession internally).
-            The arguments are passed to the server with the help of the $Using convention.
-            The results are finally returned and the job is removed.
-            
-            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
-            $identity = "admin"
-            $date = [datetime]::Now
-            $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
-                [Sitecore.Security.Accounts.User]$user = Get-User -Identity $using:identity
-                $user.Name
-                $using:date
-            } -AsJob
-            Start-Sleep -Seconds 2
-
-            Invoke-RemoteScript -Session $session -ScriptBlock {
-                $ss = Get-ScriptSession -Id $using:JobId
-                $ss | Receive-ScriptSession
-
-                if($ss.LastErrors) {
-                    $ss.LastErrors
+    protected override WebResponse GetWebResponse(WebRequest request)
+    {
+        var response = base.GetWebResponse(request);
+        var httpResponse = response as HttpWebResponse;
+        if (httpResponse != null)
+        {
+            using (var stream = httpResponse.GetResponseStream())
+            {
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+                    Response = ms.ToArray();
                 }
             }
-            Stop-ScriptSession -Session $session
-        
-        .EXAMPLE
-            The following remotely executes a script in Sitecore with arguments.
-            
-            $script = {
-                [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin
-                $user
-                $params.date.ToString()
-            }
+        }
+        return response;
+    }
     
-            $args = @{
-                "date" = [datetime]::Now
-            }
-    
-            Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
-            Stop-ScriptSession -Session $session
-    
-            Name                     Domain       IsAdministrator IsAuthenticated
-            ----                     ------       --------------- ---------------
-            sitecore\admin           sitecore     True            False          
-            6/25/2015 11:09:17 AM
-    
-    	.LINK
-    		Wait-RemoteScriptSession
+    protected override WebRequest GetWebRequest(System.Uri address)
+    {
+        HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
+        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+        return request;
+    }
+}
+"@
+}
 
-    	.LINK
-    		New-ScriptSession
-
-    	.LINK
-    	        Stop-ScriptSession -Session $session
-
-
-    #>
-    
-    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
+function Invoke-RemoteScript {
+   [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
         
         [Parameter(ParameterSetName='InProcess')]
@@ -134,7 +72,10 @@ function Invoke-RemoteScript {
         [hashtable]$Arguments,
 
         [Parameter(ParameterSetName='Session')]
-        [switch]$AsJob
+        [switch]$AsJob,
+        
+        [Parameter()]
+        [switch]$Raw
     )
 
     if($PSCmdlet.MyInvocation.BoundParameters["WhatIf"].IsPresent) {
@@ -196,7 +137,7 @@ function Invoke-RemoteScript {
         $usingVariableValues = Get-UsingVariableValues -UsingVar $usingVar
         $invokeWithArguments = $true
     }
-  
+
     if ($invokeWithArguments) {
         if(!$Arguments) { $Arguments = @{} }
 
@@ -215,7 +156,9 @@ function Invoke-RemoteScript {
         $newScriptBlock = $scriptBlock.ToString()
     }
 
+
     if($Arguments) {
+        #This is still needed in order to pass types
         $parameters = ConvertTo-CliXml -InputObject $Arguments
     }
 
@@ -228,52 +171,101 @@ function Invoke-RemoteScript {
             $Password = $Session.Password
             $SessionId = $Session.SessionId
             $Credential = $Session.Credential
-            $Connection = $Session.Connection
-        } else {
-            $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
+            $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
         }
         
-        foreach($singleConnection in $Connection) {
-            if($singleConnection.Uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
-                $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
+        $serviceUrl = "/-/script/script/?"
+        $splitOnGuid = [guid]::NewGuid()
+        $serviceUrl += "user=" + $Username + "&password=" + $Password + "&splitOnGuid=" + $splitOnGuid + "&rawOutput=" + $Raw.IsPresent
+        foreach($uri in $ConnectionUri) {
+            $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
+            $localParams = $parameters | Out-String
+            
+            #creating a psuedo file split on a special comment rather than trying to pass a potentially enormous set of data to the handler
+            #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
+            $Body = "$newScriptBlock <#$splitOnGuid#> $localParams"
+            
+            Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
+            $webclient = New-Object WebClientWithResponse
+            
+            if ($Credential) {
+                $webclient.Credentials = $Credential
             }
-    
-            if(!$singleConnection.Proxy) {
-                $proxyProps = @{
-                    Uri = $singleConnection.Uri
-                }
-    
-                if($Credential) {
-                    $proxyProps["Credential"] = $Credential
-                }
-    
-                $singleConnection.Proxy = New-WebServiceProxy @proxyProps
-                if($Credential) {
-                    $singleConnection.Proxy.Credentials = $Credential
-                }
-            }
-            if(-not $singleConnection.Proxy) { return $null }
-
-            $response = $singleConnection.Proxy.ExecuteScriptBlock2($Username, $Password, $newScriptBlock, $parameters, $SessionId)
-            if($response) {
-                if($hasRedirectedMessages) {
-                    foreach($record in ConvertFrom-CliXml -InputObject $response) {
-                        if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
-                            Write-Verbose $record.ToString()
-                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
-                            Write-Information $record.ToString()
-                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
-                            Write-Debug $record.ToString()
-                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
-                            Write-Warning $record.ToString()
-                        } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
-                            Write-Error $record.ToString()
-                        } else {
-                            $record
+            $response = & {
+                try {
+                    Write-Verbose -Message "Transferring script to server"
+                    [System.Net.HttpWebResponse]$script:errorResponse = $null;
+                    New-UsingBlock($memorystream = [IO.MemoryStream]::new([Text.Encoding]::UTF8.GetBytes($body))) {
+                        $bytes = New-Object byte[] 1024
+                        $totalBytesToRead = $memorystream.Length
+                        $bytesRead = 0
+                        $bytesToRead = $bytes.Length
+                        if ($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
+                            $bytesToRead = $totalBytesToRead - $bytesRead
                         }
+                        $bytes = New-Object byte[] $bytesToRead
+
+                        New-UsingBlock($webStream = $webclient.OpenWrite($url)) {
+                            while (($bytesToRead = $memorystream.Read($bytes, 0, $bytes.Length)) -gt 0) {
+                                $webStream.Write($bytes, 0, $bytes.Length)
+                                $bytesRead += $bytes.Length
+                                if ($totalBytesToRead - $bytesRead -lt $bytes.Length) {
+                                    $bytesToRead = $totalBytesToRead - $bytesRead
+                                }
+                                $bytes = New-Object byte[] $bytesToRead
+                            }
+                                             
+                            #$webStream.Close()
+                        }
+                        $webclient.Response
+                        #$memorystream.Close()
+                        Write-Verbose -Message "Script transfer complete."
                     }
-                } else {
-                    ConvertFrom-CliXml -InputObject $response
+                }
+                catch [System.Net.WebException] {
+                    [System.Net.WebException]$script:ex = $_.Exception
+                    [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
+                    Write-Verbose -Message "Response exception message: $($ex.Message)"
+                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
+                    if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                    }
+                    elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                        Write-Verbose -Message "Check that the service files exist and are properly configured."
+                    }
+                }
+            }
+            
+            if ($errorResponse) {
+                Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                    -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
+            }
+            
+            if($response) {
+                $responseString = [Text.Encoding]::UTF8.GetString($response)
+                if(!$Raw) {
+                    if($hasRedirectedMessages) {
+                        foreach($record in ConvertFrom-CliXml -InputObject $responseString) {
+                            if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
+                                Write-Verbose $record.ToString()
+                            } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
+                                Write-Information $record.ToString()
+                            } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.DebugRecord") {
+                                Write-Debug $record.ToString()
+                            } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.WarningRecord") {
+                                Write-Warning $record.ToString()
+                            } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.ErrorRecord") {
+                                Write-Error $record.ToString()
+                            } else {
+                                $record
+                            }
+                        }
+                    } else {                        
+                        ConvertFrom-CliXml -InputObject $responseString
+                    }
+                }
+                else{
+                   $responseString
                 }
             } elseif ($response -eq "login failed") {
                 Write-Verbose "Login with the specified account failed."

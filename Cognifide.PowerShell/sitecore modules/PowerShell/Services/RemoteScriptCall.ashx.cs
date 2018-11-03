@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Script.Serialization;
 using System.Web.SessionState;
 using Cognifide.PowerShell.Commandlets.Interactive.Messages;
 using Cognifide.PowerShell.Commandlets.Security;
@@ -24,6 +26,7 @@ using Sitecore.Diagnostics;
 using Sitecore.IO;
 using Sitecore.Resources.Media;
 using Sitecore.SecurityModel;
+using Sitecore.Sites;
 using Sitecore.Web;
 using Sitecore.StringExtensions;
 using AuthenticationManager = Sitecore.Security.Authentication.AuthenticationManager;
@@ -61,6 +64,8 @@ namespace Cognifide.PowerShell.Console.Services
             var itemParam = request.Params.Get("script");
             var pathParam = request.Params.Get("path");
             var originParam = request.Params.Get("scriptDb");
+            var splitOnGuid = request.Params.Get("splitOnGuid");
+            var rawOutput = request.Params.Get("rawOutput");
             var apiVersion = request.Params.Get("apiVersion");
             var serviceMappingKey = request.HttpMethod + "/" + apiVersion;
             var isUpload = request.HttpMethod.Is("POST") && request.InputStream.Length > 0;
@@ -209,13 +214,20 @@ namespace Cognifide.PowerShell.Console.Services
                     if(request.InputStream != null)
                     {
                         string script = null;
+                        string cliXmlArgs = null;
                         using (var ms = new MemoryStream())
                         {
                             request.InputStream.CopyTo(ms);
                             var bytes = ms.ToArray();
-                            script = Encoding.UTF8.GetString(bytes);
+                            var requestBody = Encoding.UTF8.GetString(bytes);
+                            var splitBody = requestBody.Split(new[] {$"<#{splitOnGuid}#>"}, StringSplitOptions.None);
+                            script = splitBody[0];
+                            if (splitBody.Length > 1)
+                            {
+                                cliXmlArgs = splitBody[1];
+                            }
                         }
-                        ProcessScript(context, script, null);
+                        ProcessScript(context, script, null, cliXmlArgs, MainUtil.GetBool(rawOutput, false));
                     }
                     return;
                 default:
@@ -565,7 +577,7 @@ namespace Cognifide.PowerShell.Console.Services
             ProcessScript(context, script, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams)
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, bool rawOutput = false)
         {
             if(string.IsNullOrEmpty(script))
             {
@@ -584,37 +596,72 @@ namespace Cognifide.PowerShell.Console.Services
 
                 context.Response.ContentType = "text/plain";
 
-                var scriptArguments = new Hashtable();
+                var requestUri = WebUtil.GetRequestUri();
+                var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath, requestUri.Port);
+                Context.SetActiveSite(site.Name);
 
-                foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
+                if (!string.IsNullOrEmpty(cliXmlArgs))
                 {
-                    var paramValue = HttpContext.Current.Request.QueryString[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
-
-                    scriptArguments[param] = paramValue;
+                    session.SetVariable("cliXmlArgs", cliXmlArgs);
+                    session.ExecuteScriptPart("$params = ConvertFrom-CliXml -InputObject $cliXmlArgs", false, true);
+                    script = script.TrimEnd(' ', '\t', '\n');
                 }
 
-                foreach (var param in HttpContext.Current.Request.Params.AllKeys)
+                if (streams != null)
                 {
-                    var paramValue = HttpContext.Current.Request.Params[param];
-                    if (string.IsNullOrEmpty(param)) continue;
-                    if (string.IsNullOrEmpty(paramValue)) continue;
-
-                    if (session.GetVariable(param) == null)
+                    var scriptArguments = new Hashtable();
+                    foreach (var param in HttpContext.Current.Request.QueryString.AllKeys)
                     {
-                        session.SetVariable(param, paramValue);
+                        var paramValue = HttpContext.Current.Request.QueryString[param];
+                        if (string.IsNullOrEmpty(param)) continue;
+                        if (string.IsNullOrEmpty(paramValue)) continue;
+
+                        scriptArguments[param] = paramValue;
+                    }
+
+                    foreach (var param in HttpContext.Current.Request.Params.AllKeys)
+                    {
+                        var paramValue = HttpContext.Current.Request.Params[param];
+                        if (string.IsNullOrEmpty(param)) continue;
+                        if (string.IsNullOrEmpty(paramValue)) continue;
+
+                        if (session.GetVariable(param) == null)
+                        {
+                            session.SetVariable(param, paramValue);
+                        }
+                    }
+
+                    session.SetVariable("requestStreams", streams);
+                    session.SetVariable("scriptArguments", scriptArguments);
+                    session.ExecuteScriptPart(script, true);
+                    context.Response.Write(session.Output.ToString());
+                }
+                else
+                {
+                    if (rawOutput)
+                    {
+                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.
+                        var outObjects = session.ExecuteScriptPart(script, false, false, false);
+                        var result = outObjects.Select(o => o.ToString()).Aggregate((current, next) => current + next);
+                        context.Response.Write(result);
+                    }
+                    else
+                    {
+                        // In this output we want to preserve type information. Ideal for objects with a small output content.
+                        var outObjects = session.ExecuteScriptPart(script, false, false, false);
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            outObjects.AddRange(session.LastErrors);
+                        }
+
+                        session.SetVariable("results", outObjects);
+                        session.Output.Clear();
+                        session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+                        var result = session.Output.Select(p => p.Text).Aggregate((current, next) => current + next);
+                        context.Response.Write(result);
                     }
                 }
-
-                session.SetVariable("requestStreams", streams);
-
-                session.SetVariable("scriptArguments", scriptArguments);
-
-                session.ExecuteScriptPart(script, true);
-
-                context.Response.Write(session.Output.ToString());
-
+               
                 if (session.Output.HasErrors)
                 {
                     context.Response.StatusCode = 424;
