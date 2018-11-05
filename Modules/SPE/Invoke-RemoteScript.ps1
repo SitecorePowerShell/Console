@@ -183,7 +183,7 @@ function Invoke-RemoteScript {
             
             #creating a psuedo file split on a special comment rather than trying to pass a potentially enormous set of data to the handler
             #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
-            $Body = "$newScriptBlock <#$splitOnGuid#> $localParams"
+            $Body = "$($newScriptBlock)<#$($splitOnGuid)#>$($localParams)"
             
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
             $webclient = New-Object WebClientWithResponse
