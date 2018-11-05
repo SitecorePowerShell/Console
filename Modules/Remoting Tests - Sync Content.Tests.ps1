@@ -1,6 +1,7 @@
 ﻿Import-Module -Name "SPE" -Force
 
 function Copy-RainbowContent {
+    [CmdletBinding()]
     param(
         [string]$LocalUrl,
         [string]$RemoteUrl,
@@ -27,11 +28,10 @@ function Copy-RainbowContent {
     $watch.ElapsedMilliseconds / 1000
 
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
-    $result2 = Invoke-RemoteScript -ScriptBlock {
-        [regex]::Split($using:rainbowYaml, "(?=---)") | Where-Object { ![string]::IsNullOrEmpty($_) } | Import-RainbowItem
-
-        Import-Function -Name Resolve-Error
-        Resolve-Error $Error[0]
+    Invoke-RemoteScript -ScriptBlock {
+        [regex]::Split($using:rainbowYaml, "(?=---)") | 
+            Where-Object { ![string]::IsNullOrEmpty($_) } | 
+            Import-RainbowItem
     } -Session $remoteSession -Raw
     $watch.Stop()
     $watch.ElapsedMilliseconds / 1000
@@ -44,8 +44,14 @@ $copyProps = @{
     Password = "b"    
 }
 
+# Copy single item
+# Copy item with children, recursively
+# Copy while checking for revision
+# Copy items with updates to specific fields
+# Copy items, transform rainbow before import
+
 # Home\Delete Me
-Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}"
+Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Recurse
 
 # Images
 Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"

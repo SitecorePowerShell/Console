@@ -213,17 +213,14 @@ function Invoke-RemoteScript {
                                     $bytesToRead = $totalBytesToRead - $bytesRead
                                 }
                                 $bytes = New-Object byte[] $bytesToRead
-                            }
-                                             
-                            #$webStream.Close()
+                            }                                             
                         }
                         $webclient.Response
-                        #$memorystream.Close()
                         Write-Verbose -Message "Script transfer complete."
                     }
                 }
                 catch [System.Net.WebException] {
-                    [System.Net.WebException]$script:ex = $_.Exception
+                    $script:ex = $_.Exception
                     [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
                     Write-Verbose -Message "Response exception message: $($ex.Message)"
                     Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
