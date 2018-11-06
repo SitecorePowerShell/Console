@@ -8,7 +8,8 @@ function Copy-RainbowContent {
         [string]$Username,
         [string]$Password,
         [string]$RootId,
-        [switch]$Recurse
+        [switch]$Recurse,
+        [switch]$Overwrite
     )
 
     $localSession = New-ScriptSession -user $Username -pass $Password -conn $LocalUrl
@@ -16,6 +17,7 @@ function Copy-RainbowContent {
 
     $parentId = $RootId
     $shouldRecurse = $Recurse.IsPresent
+    $shouldOverwrite =$Overwrite.IsPresent
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $rainbowYaml = Invoke-RemoteScript -ScriptBlock {
         if($using:shouldRecurse) {
@@ -29,9 +31,24 @@ function Copy-RainbowContent {
 
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
     Invoke-RemoteScript -ScriptBlock {
-        [regex]::Split($using:rainbowYaml, "(?=---)") | 
-            Where-Object { ![string]::IsNullOrEmpty($_) } | 
-            Import-RainbowItem
+        $checkExistingItem = !$using:shouldOverwrite
+        $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
+            Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        foreach($rainbowItem in $rainbowItems) {
+            
+            if($checkExistingItem) {
+                if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) {
+                    continue
+                }
+            }
+
+            Import-RainbowItem -Item $rainbowItem
+        }
+
+        $oldCacheSize = [regex]::CacheSize
+        [regex]::CacheSize = 0
+        [GC]::Collect()
+        [regex]::CacheSize = $oldCacheSize
     } -Session $remoteSession -Raw
     $watch.Stop()
     $watch.ElapsedMilliseconds / 1000
@@ -51,10 +68,17 @@ $copyProps = @{
 # Copy items, transform rainbow before import
 
 # Home\Delete Me
+# Migrate all items only if they are missing
 Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Recurse
 
+# Migrate a single item and overwrite if it exists
+#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite
+
+# Migrate all items overwriting if they exist
+#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite -Recurse
+
 # Images
-Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"
+#Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"
 
 <#
 Import-Module -Name SitecoreSidekick -Force -Verbose
