@@ -36,27 +36,34 @@ function Copy-RainbowContent {
     Write-Host "- Sending items to destination" -ForegroundColor Green
     Write-Host " - Overwrite items: $($shouldOverwrite)"
     $watch.Restart()
-    Invoke-RemoteScript -ScriptBlock {
+    $feedback = Invoke-RemoteScript -ScriptBlock {
         $checkExistingItem = !$using:shouldOverwrite
         $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
             Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
+        $totalItems = $rainbowItems.Count
+        $importedItems = 0
         foreach($rainbowItem in $rainbowItems) {
             
             if($checkExistingItem) {
                 if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
             }
-
+            $importedItems += 1
             Import-RainbowItem -Item $rainbowItem
+        }
+
+        [PSCustomObject]@{
+            TotalItems = $totalItems
+            ImportedItems = $importedItems
         }
 
         $oldCacheSize = [regex]::CacheSize
         [regex]::CacheSize = 0
         [GC]::Collect()
         [regex]::CacheSize = $oldCacheSize
-    } -Session $remoteSession -Raw
+    } -Session $remoteSession
     $watch.Stop()
-    Write-Host " - Imported items to destination: [$($watch.ElapsedMilliseconds / 1000) seconds]"
+    Write-Host " - Imported $($feedback.ImportedItems) items out of $($feedback.TotalItems) to destination: [$($watch.ElapsedMilliseconds / 1000) seconds]"
     Write-Host "Completed transferring items between source and destination instances" -ForegroundColor Gray
     Write-Host "---"
 }
