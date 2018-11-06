@@ -12,12 +12,16 @@ function Copy-RainbowContent {
         [switch]$Overwrite
     )
 
+    Write-Host "Preparing to transfer items between $($LocalUrl) and $($RemoteUrl)" -ForegroundColor Yellow
     $localSession = New-ScriptSession -user $Username -pass $Password -conn $LocalUrl
     $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $RemoteUrl
 
     $parentId = $RootId
     $shouldRecurse = $Recurse.IsPresent
     $shouldOverwrite =$Overwrite.IsPresent
+
+    Write-Host "- Fetching items from source" -ForegroundColor Green
+    Write-Host " - Recurse items: $($shouldRecurse)"
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
     $rainbowYaml = Invoke-RemoteScript -ScriptBlock {
         if($using:shouldRecurse) {
@@ -27,19 +31,20 @@ function Copy-RainbowContent {
         }        
     } -Session $localSession -Raw
     $watch.Stop()
-    $watch.ElapsedMilliseconds / 1000
+    Write-Host " - Exported items from source: [$($watch.ElapsedMilliseconds / 1000) seconds]"
 
-    $watch = [System.Diagnostics.Stopwatch]::StartNew()
+    Write-Host "- Sending items to destination" -ForegroundColor Green
+    Write-Host " - Overwrite items: $($shouldOverwrite)"
+    $watch.Restart()
     Invoke-RemoteScript -ScriptBlock {
         $checkExistingItem = !$using:shouldOverwrite
         $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
             Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        
         foreach($rainbowItem in $rainbowItems) {
             
             if($checkExistingItem) {
-                if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) {
-                    continue
-                }
+                if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
             }
 
             Import-RainbowItem -Item $rainbowItem
@@ -51,7 +56,9 @@ function Copy-RainbowContent {
         [regex]::CacheSize = $oldCacheSize
     } -Session $remoteSession -Raw
     $watch.Stop()
-    $watch.ElapsedMilliseconds / 1000
+    Write-Host " - Imported items to destination: [$($watch.ElapsedMilliseconds / 1000) seconds]"
+    Write-Host "Completed transferring items between source and destination instances" -ForegroundColor Gray
+    Write-Host "---"
 }
 
 $copyProps = @{
@@ -68,14 +75,18 @@ $copyProps = @{
 # Copy items, transform rainbow before import
 
 # Home\Delete Me
+
+# Migrate a single item only if it's missing
+Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}"
+
 # Migrate all items only if they are missing
 Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Recurse
 
 # Migrate a single item and overwrite if it exists
-#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite
+Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite -Recurse
+Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite -Recurse
 
 # Images
 #Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"
