@@ -215,19 +215,21 @@ namespace Cognifide.PowerShell.Console.Services
                     {
                         string script = null;
                         string cliXmlArgs = null;
+                        string sessionId = null;
                         using (var ms = new MemoryStream())
                         {
                             request.InputStream.CopyTo(ms);
                             var bytes = ms.ToArray();
                             var requestBody = Encoding.UTF8.GetString(bytes);
                             var splitBody = requestBody.Split(new[] {$"<#{splitOnGuid}#>"}, StringSplitOptions.None);
-                            script = splitBody[0];
+                            sessionId = splitBody[0];
+                            script = splitBody[1];
                             if (splitBody.Length > 1)
                             {
-                                cliXmlArgs = splitBody[1];
+                                cliXmlArgs = splitBody[2];
                             }
                         }
-                        ProcessScript(context, script, null, cliXmlArgs, MainUtil.GetBool(rawOutput, false));
+                        ProcessScript(context, script, null, sessionId, cliXmlArgs, MainUtil.GetBool(rawOutput, false));
                     }
                     return;
                 default:
@@ -577,7 +579,7 @@ namespace Cognifide.PowerShell.Console.Services
             ProcessScript(context, script, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, bool rawOutput = false)
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string persistentId = null, string cliXmlArgs = null, bool rawOutput = false)
         {
             if(string.IsNullOrEmpty(script))
             {
@@ -585,7 +587,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            using (var session = ScriptSessionManager.NewSession(ApplicationNames.Default, true))
+            using (var session = ScriptSessionManager.GetSession(persistentId, ApplicationNames.Default, false))
             {
                 if (Context.Database != null)
                 {
