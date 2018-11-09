@@ -3,8 +3,8 @@
 function Copy-RainbowContent {
     [CmdletBinding()]
     param(
-        [string]$LocalUrl,
-        [string]$RemoteUrl,
+        [string]$Source,
+        [string]$Destination,
         [string]$Username,
         [string]$Password,
         [string]$RootId,
@@ -12,9 +12,9 @@ function Copy-RainbowContent {
         [switch]$Overwrite
     )
 
-    Write-Host "Preparing to transfer items between $($LocalUrl) and $($RemoteUrl)" -ForegroundColor Yellow
-    $localSession = New-ScriptSession -user $Username -pass $Password -conn $LocalUrl
-    $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $RemoteUrl
+    Write-Host "Preparing to transfer items between $($Source) and $($Destination)" -ForegroundColor Yellow
+    $localSession = New-ScriptSession -user $Username -pass $Password -conn $Source
+    $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $Destination
 
     $parentId = $RootId
     $shouldRecurse = $Recurse.IsPresent
@@ -69,8 +69,8 @@ function Copy-RainbowContent {
 }
 
 $copyProps = @{
-    LocalUrl = "https://spe.dev.local"
-    RemoteUrl = "http://sc827"
+    Source = "https://spe.dev.local"
+    Destination = "http://sc827"
     Username = "admin"
     Password = "b"    
 }
@@ -87,33 +87,13 @@ $copyProps = @{
 Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}"
 
 # Migrate all items only if they are missing
-Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Recurse
+#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Recurse
 
 # Migrate a single item and overwrite if it exists
-Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite
+#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite
 
 # Migrate all items overwriting if they exist
-Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite -Recurse
+#Copy-RainbowContent @copyProps -RootId "{A6649F02-B4B6-4985-8FD5-7D40CA9E829F}" -Overwrite -Recurse
 
 # Images
 #Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"
-
-<#
-Import-Module -Name SitecoreSidekick -Force -Verbose
-$params = @{
-    LocalUrl = "http://demo2"
-    RemoteUrl = "http://demo"
-    SharedSecret = "3a4e9aad-5d61-42ae-b262-de0e13f3b576"
-    EventDisabler = $true
-    BulkUpdate = $true
-    PullParent = $true
-}
-#MAKE THE CONTENT FROM ONE SERVER MATCH THE OTHER EXACTLY
-Copy-SKContent @params -RootId '{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}' -Children -Overwrite -RemoveLocalNotInRemote
-#MOVE ALL CONTENT FROM ONE SERVER TO THE OTHER AND ALLOWING UNIQUE ITEMS AT THE CONSUMER
-Copy-SKContent @params -RootId '{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}' -Children -Overwrite
-#MOVE ONLY NEW CONTENT FROM ONE SERVER TO THE OTHER WITHOUT UPDATING MODIFIED
-Copy-SKContent @params -RootId '{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}' -Children
-#ONLY MOVE THE INDIVIDUAL ITEMS AND NOT CHILDREN
-Copy-SKContent @params -RootId '{0DE95AE4-41AB-4D01-9EB0-67441B7C2450}' -Overwrite
-#>
