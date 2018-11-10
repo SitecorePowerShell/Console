@@ -6,6 +6,18 @@ $Destination = "http://sc827"
 $localSession = New-ScriptSession -user $Username -pass $Password -conn $Source
 $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $Destination
 
+$emptyScript = {
+    param(
+        $Session,
+        $RootId
+    )
+
+    $parentId = $RootId
+    Invoke-RemoteScript -ScriptBlock {
+        "a<#split#>{541A4139-9118-4D27-8E0A-913F351CA7A2}"           
+    } -Session $Session -Raw
+}
+
 $sourceScript = {
     param(
         $Session,
@@ -19,17 +31,58 @@ $sourceScript = {
 
         $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
-        $children = $parentItem.GetChildren() | Select-Object -ExpandProperty ID
-        $childIds = $children -join "|"
+        $children = $parentItem.GetChildren()
+        $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
 
         $builder = New-Object System.Text.StringBuilder
-        $builder.Append($parentYaml) > $null
+        $builder.AppendLine($parentYaml) > $null
+        foreach($child in $children) {
+            $childYaml = $child | ConvertTo-RainbowYaml
+            $builder.AppendLine($childYaml) > $null
+        }
         $builder.Append("<#split#>") > $null
         $builder.Append($childIds) > $null
 
         $builder.ToString()
             
     } -Session $Session -Raw
+}
+
+$destinationScript = {
+    param(
+        $Session,
+        $Yaml
+    )
+
+    $rainbowYaml = $Yaml
+    $shouldOverwrite = $false
+
+    $feedback = Invoke-RemoteScript -ScriptBlock {
+        $checkExistingItem = !$using:shouldOverwrite
+        $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
+            Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        
+        $totalItems = $rainbowItems.Count
+        $importedItems = 0
+        foreach($rainbowItem in $rainbowItems) {
+            
+            if($checkExistingItem) {
+                if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
+            }
+            $importedItems += 1
+            Import-RainbowItem -Item $rainbowItem
+        }
+
+        [PSCustomObject]@{
+            TotalItems = $totalItems
+            ImportedItems = $importedItems
+        }
+
+        $oldCacheSize = [regex]::CacheSize
+        [regex]::CacheSize = 0
+        [GC]::Collect()
+        [regex]::CacheSize = $oldCacheSize
+    } -Session $Session
 }
 
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -46,6 +99,7 @@ $pool.ApartmentState = "MTA"
 $pool.Open()
 $runspaces = [System.Collections.ArrayList]@()
 
+$count = 0
 while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 
     if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
@@ -82,14 +136,28 @@ while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
             $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
             
             if(![string]::IsNullOrEmpty($response)) {
+                $count++
                 $split = $response -split "<#split#>"
              
-                $parentYaml = $split[0]              
-                $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                $yaml = $split[0]
+                if(![string]::IsNullOrEmpty($yaml)) {
+                    Write-Host "Adding runspace to send to destination" -ForegroundColor Green
+                    $runspace = [PowerShell]::Create()
+                    $runspace.AddScript($destinationScript) > $null
+                    $runspace.AddArgument($remoteSession) > $null
+                    $runspace.AddArgument($yaml) > $null
+                    $runspace.RunspacePool = $pool
 
-                foreach($childId in $childIds) {
-                    Write-Host "- Enqueue id $($childId)"
-                    $Queue.Enqueue($childId)
+                    $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke() }) > $null
+                }
+
+                if(![string]::IsNullOrEmpty($split[1])) {           
+                    $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+
+                    foreach($childId in $childIds) {
+                        Write-Host "- Enqueue id $($childId)"
+                        $Queue.Enqueue($childId)
+                    }
                 }
             }
 
@@ -103,6 +171,7 @@ while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 $pool.Close() 
 $pool.Dispose()
 
+Stop-ScriptSession -Session $localSession
 Write-Host "All jobs completed!"
 $watch.Stop()
 $watch.ElapsedMilliseconds / 1000
