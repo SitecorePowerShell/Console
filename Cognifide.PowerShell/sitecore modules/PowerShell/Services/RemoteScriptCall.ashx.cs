@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,7 +41,7 @@ namespace Cognifide.PowerShell.Console.Services
     {
         private static object loginLock = new object();
         private SortedDictionary<string, SortedDictionary<string, ApiScript>> apiScripts;
-        private static Dictionary<string,string> apiVersionToServiceMapping = new Dictionary<string, string>()
+        private static Dictionary<string, string> apiVersionToServiceMapping = new Dictionary<string, string>()
         {
             { "POST/script" , WebServiceSettings.ServiceRemoting },
             { "GET/script" , WebServiceSettings.ServiceRemoting },
@@ -151,7 +151,7 @@ namespace Cognifide.PowerShell.Console.Services
                             PowerShellLog.Debug("The uploaded asset will be extracted to Media Library.");
                             using (var packageReader = new Sitecore.Zip.ZipReader(request.InputStream))
                             {
-                                itemParam = Path.GetDirectoryName(itemParam.TrimEnd('\\','/'));
+                                itemParam = Path.GetDirectoryName(itemParam.TrimEnd('\\', '/'));
                                 foreach (var zipEntry in packageReader.Entries)
                                 {
                                     if (!zipEntry.IsDirectory && zipEntry.Size > 0)
@@ -211,7 +211,7 @@ namespace Cognifide.PowerShell.Console.Services
                     apiScripts = null;
                     break;
                 case "script":
-                    if(request.InputStream != null)
+                    if (request.InputStream != null)
                     {
                         string script = null;
                         string cliXmlArgs = null;
@@ -221,7 +221,7 @@ namespace Cognifide.PowerShell.Console.Services
                             request.InputStream.CopyTo(ms);
                             var bytes = ms.ToArray();
                             var requestBody = Encoding.UTF8.GetString(bytes);
-                            var splitBody = requestBody.Split(new[] {$"<#{splitOnGuid}#>"}, StringSplitOptions.None);
+                            var splitBody = requestBody.Split(new[] { $"<#{splitOnGuid}#>" }, StringSplitOptions.None);
                             sessionId = splitBody[0];
                             script = splitBody[1];
                             if (splitBody.Length > 1)
@@ -246,7 +246,7 @@ namespace Cognifide.PowerShell.Console.Services
                     streams.Add(fileName, request.Files[fileName].InputStream);
                 }
             }
-            else if(request.InputStream != null)
+            else if (request.InputStream != null)
             {
                 streams.Add("stream", request.InputStream);
             }
@@ -412,10 +412,10 @@ namespace Cognifide.PowerShell.Console.Services
             path = path.Replace('\\', '/').TrimEnd('/');
             path = (path.StartsWith("/") ? path : "/" + path);
             var originalPath = path;
-            var dotIndex = path.IndexOf(".",StringComparison.OrdinalIgnoreCase);
+            var dotIndex = path.IndexOf(".", StringComparison.OrdinalIgnoreCase);
             if (dotIndex > -1)
             {
-                path = path.Substring(0,dotIndex);
+                path = path.Substring(0, dotIndex);
             }
 
             if (!path.StartsWith(Constants.MediaLibraryPath))
@@ -435,7 +435,7 @@ namespace Cognifide.PowerShell.Console.Services
             {
                 var fileName = Path.GetFileName(originalPath);
                 var itemName = Path.GetFileNameWithoutExtension(path);
-                var dirName = (Path.GetDirectoryName(path) ?? string.Empty).Replace('\\','/');
+                var dirName = (Path.GetDirectoryName(path) ?? string.Empty).Replace('\\', '/');
 
                 if (String.IsNullOrEmpty(fileName))
                 {
@@ -504,7 +504,7 @@ namespace Cognifide.PowerShell.Console.Services
             itemParam = indexOfDot == -1 ? itemParam : itemParam.Substring(0, indexOfDot);
             itemParam = itemParam.Replace('\\', '/').TrimEnd('/');
             itemParam = itemParam.StartsWith("/") ? itemParam : $"/{itemParam}";
-            itemParam = itemParam.StartsWith(ApplicationSettings.MediaLibraryPath,StringComparison.OrdinalIgnoreCase) ? itemParam : $"{ApplicationSettings.MediaLibraryPath}{itemParam}";
+            itemParam = itemParam.StartsWith(ApplicationSettings.MediaLibraryPath, StringComparison.OrdinalIgnoreCase) ? itemParam : $"{ApplicationSettings.MediaLibraryPath}{itemParam}";
 
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
@@ -568,7 +568,7 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessScript(HttpContext context, Item scriptItem, Dictionary<string, Stream> streams)
         {
-            if(!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
+            if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
                 return;
@@ -581,17 +581,17 @@ namespace Cognifide.PowerShell.Console.Services
 
         private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string persistentId = null, string cliXmlArgs = null, bool rawOutput = false)
         {
-            if(string.IsNullOrEmpty(script))
+            if (string.IsNullOrEmpty(script))
             {
                 HttpContext.Current.Response.StatusCode = 404;
                 return;
             }
 
-            using (var session = ScriptSessionManager.GetSession(persistentId, ApplicationNames.Default, false))
+            var session = ScriptSessionManager.GetSession(persistentId, ApplicationNames.RemoteAutomation, false);
+
+            if (Context.Database != null)
             {
-                if (Context.Database != null)
-                {
-                    var item = Context.Database.GetRootItem();
+                var item = Context.Database.GetRootItem();
                     if (item != null)
                         session.SetItemLocationContext(item);
                 }
@@ -673,9 +673,13 @@ namespace Cognifide.PowerShell.Console.Services
                
                 if (session.Output.HasErrors)
                 {
-                    context.Response.StatusCode = 424;
-                    context.Response.StatusDescription = "Method Failure";
-                }
+                context.Response.StatusCode = 424;
+                context.Response.StatusDescription = "Method Failure";
+            }
+
+            if (string.IsNullOrEmpty(persistentId))
+            {
+                ScriptSessionManager.RemoveSession(persistentId);
             }
         }
 

@@ -33,9 +33,9 @@ namespace Cognifide.PowerShell.Core.Host
             return GetSession(persistentId, ApplicationNames.Default, false);
         }
 
-        public static bool SessionExists(string persistentId)
+        public static bool SessionExists(string persistentId, string applianceType = null)
         {
-            var sessionKey = GetSessionKey(persistentId);
+            var sessionKey = GetSessionKey(persistentId, applianceType);
             lock (sessions)
             {
                 return sessions.Contains(sessionKey) && HttpRuntime.Cache[sessionKey] != null;
@@ -104,10 +104,10 @@ namespace Cognifide.PowerShell.Core.Host
                 persistentId = Guid.NewGuid().ToString();
             }
 
-            var sessionKey = GetSessionKey(persistentId);
+            var sessionKey = GetSessionKey(persistentId, applianceType);
             lock (sessions)
             {
-                if (SessionExists(persistentId))
+                if (SessionExists(persistentId, applianceType))
                 {
                     return HttpRuntime.Cache[sessionKey] as ScriptSession;
                 }
@@ -167,7 +167,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private static string GetSessionKey(string persistentId)
+        private static string GetSessionKey(string persistentId, string applianceType = null)
         {
             if (persistentId != null && persistentId.StartsWith(sessionIdPrefix))
             {
@@ -176,7 +176,9 @@ namespace Cognifide.PowerShell.Core.Host
             var key = new StringBuilder();
             key.Append(sessionIdPrefix);
             key.Append("|");
-            if (HttpContext.Current != null && HttpContext.Current.Session != null)
+
+            if ((string.IsNullOrEmpty(applianceType) || ApplicationNames.RemoteAutomation != applianceType) 
+                && HttpContext.Current != null && HttpContext.Current.Session != null)
             {
                 key.Append(HttpContext.Current.Session.SessionID);
                 key.Append("|");
