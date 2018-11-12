@@ -657,12 +657,15 @@ namespace Cognifide.PowerShell.Console.Services
                         var outObjects = session.ExecuteScriptPart(script, false, false, false);
                         if (session.LastErrors != null && session.LastErrors.Any())
                         {
-                            outObjects.AddRange(session.LastErrors);
-                        }
+                        outObjects.AddRange(session.LastErrors);
+                    }
 
+                    if (outObjects != null && outObjects.Any())
+                    {
                         session.SetVariable("results", outObjects);
                         session.Output.Clear();
                         session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+
                         var response = context.Response;
                         foreach (var outputBuffer in session.Output)
                         {
@@ -670,9 +673,10 @@ namespace Cognifide.PowerShell.Console.Services
                         }
                     }
                 }
-               
-                if (session.Output.HasErrors)
-                {
+            }
+
+            if (session.Output.HasErrors)
+            {
                 context.Response.StatusCode = 424;
                 context.Response.StatusDescription = "Method Failure";
             }
