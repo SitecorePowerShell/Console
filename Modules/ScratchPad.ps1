@@ -34,21 +34,22 @@ function Copy-RainbowContent {
         $serializeParent = $IncludeParent
         $serializeChildren = $IncludeChildren
         $recurseChildren = $RecurseChildren
-        Invoke-RemoteScript -ScriptBlock {
+
+        $script = {
             
-            $parentItem = Get-Item -Path "master:" -ID $using:parentId
+            $parentItem = Get-Item -Path "master:" -ID $parentId
             $isMediaItem = $parentItem.Paths.IsMediaItem
 
             $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
             $builder = New-Object System.Text.StringBuilder
-            if($using:serializeParent -or $isMediaItem) {
+            if($serializeParent -or $isMediaItem) {
                 $builder.AppendLine($parentYaml) > $null
             }
 
             $children = $parentItem.GetChildren()
 
-            if($using:serializeChildren) {                
+            if($serializeChildren) {                
 
                 if(!$isMediaItem) {
                     foreach($child in $children) {
@@ -58,7 +59,7 @@ function Copy-RainbowContent {
                 }
             }
 
-            if($using:recurseChildren) {
+            if($recurseChildren) {
                 $builder.Append("<#split#>") > $null
 
                 $childIds = ($children | Where-Object { $_.HasChildren -or $isMediaItem } | Select-Object -ExpandProperty ID) -join "|"
@@ -67,7 +68,14 @@ function Copy-RainbowContent {
 
             $builder.ToString()
             
-        } -Session $Session -Raw
+        }
+
+        $scriptString = $script.ToString()
+        $trueFalseHash = @{$true="`$true";$false="`$false"}
+        $scriptString = "`$parentId = '$($RootId)';`$serializeParent = $($trueFalseHash[$serializeParent]);`$serializeChildren = $($trueFalseHash[$serializeChildren]);`$recurseChildren = $($trueFalseHash[$recurseChildren]);" + $scriptString
+        $script = [scriptblock]::Create($scriptString)
+
+        Invoke-RemoteScript -ScriptBlock $script  -Session $Session -Raw
     }
 
     $destinationScript = {
@@ -80,9 +88,9 @@ function Copy-RainbowContent {
         $rainbowYaml = $Yaml
         $shouldOverwrite = $Overwrite
 
-        Invoke-RemoteScript -ScriptBlock {
-            $checkExistingItem = !$using:shouldOverwrite
-            $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
+        $script = {
+
+            $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
             $totalItems = $rainbowItems.Count
@@ -105,7 +113,14 @@ function Copy-RainbowContent {
             [regex]::CacheSize = 0
             [GC]::Collect()
             [regex]::CacheSize = $oldCacheSize
-        } -Session $Session -Raw
+        }
+
+        $scriptString = $script.ToString()
+        $trueFalseHash = @{$true="`$true";$false="`$false"}
+        $scriptString = "`$rainbowYaml = '$($rainbowYaml)';`$checkExistingItem = $($trueFalseHash[!$shouldOverwrite]);" + $scriptString
+        $script = [scriptblock]::Create($scriptString)
+
+        Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
     }
 
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -309,14 +324,14 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 # Migrate a single item only if it's missing
 #Copy-RainbowContent @copyProps -RootId $rootId
 
+# Migrate a single item and overwrite if it exists
+#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite
+
 # Migrate all items only if they are missing
 #Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
-# Migrate a single item and overwrite if it exists
-Copy-RainbowContent @copyProps -RootId $rootId -Overwrite
-
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
