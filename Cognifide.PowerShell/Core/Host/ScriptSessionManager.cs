@@ -33,9 +33,9 @@ namespace Cognifide.PowerShell.Core.Host
             return GetSession(persistentId, ApplicationNames.Default, false);
         }
 
-        public static bool SessionExists(string persistentId, string applianceType = null)
+        public static bool SessionExists(string persistentId)
         {
-            var sessionKey = GetSessionKey(persistentId, applianceType);
+            var sessionKey = GetSessionKey(persistentId);
             lock (sessions)
             {
                 return sessions.Contains(sessionKey) && HttpRuntime.Cache[sessionKey] != null;
@@ -104,10 +104,10 @@ namespace Cognifide.PowerShell.Core.Host
                 persistentId = Guid.NewGuid().ToString();
             }
 
-            var sessionKey = GetSessionKey(persistentId, applianceType);
+            var sessionKey = GetSessionKey(persistentId);
             lock (sessions)
             {
-                if (SessionExists(persistentId, applianceType))
+                if (SessionExists(persistentId))
                 {
                     return HttpRuntime.Cache[sessionKey] as ScriptSession;
                 }
@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private static void CacheItemRemoved(string sessionKey, Object value, CacheItemRemovedReason reason)
+        private static void CacheItemRemoved(string sessionKey, object value, CacheItemRemovedReason reason)
         {
             RemoveSession(sessionKey);
         }
@@ -148,10 +148,7 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     var sessionKey = GetSessionKey(key);
                     var session = HttpRuntime.Cache.Remove(sessionKey) as ScriptSession;
-                    if (session != null)
-                    {
-                        session.Dispose();
-                    }
+                    session?.Dispose();
                 }
                 sessions.Clear();
             }
@@ -167,7 +164,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private static string GetSessionKey(string persistentId, string applianceType = null)
+        private static string GetSessionKey(string persistentId)
         {
             if (persistentId != null && persistentId.StartsWith(sessionIdPrefix))
             {
@@ -177,8 +174,7 @@ namespace Cognifide.PowerShell.Core.Host
             key.Append(sessionIdPrefix);
             key.Append("|");
 
-            if ((string.IsNullOrEmpty(applianceType) || ApplicationNames.RemoteAutomation != applianceType) 
-                && HttpContext.Current != null && HttpContext.Current.Session != null)
+            if (HttpContext.Current != null && HttpContext.Current.Session != null)
             {
                 key.Append(HttpContext.Current.Session.SessionID);
                 key.Append("|");

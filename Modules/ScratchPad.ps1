@@ -1,3 +1,5 @@
+Import-Module -Name SPE -Force
+
 $Username = "admin"
 $Password = "b"
 $Source = "https://spe.dev.local"
@@ -21,18 +23,20 @@ $sourceScript = {
 
         $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
-        $children = $parentItem.GetChildren([Sitecore.Collections.ChildListOptions]::IgnoreSecurity -bor [Sitecore.Collections.ChildListOptions]::SkipSorting)
-        $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
+        $children = $parentItem.GetChildren()
 
         $builder = New-Object System.Text.StringBuilder
         if($using:serializeParent) {
             $builder.AppendLine($parentYaml) > $null
         }
+
         foreach($child in $children) {
             $childYaml = $child | ConvertTo-RainbowYaml
             $builder.AppendLine($childYaml) > $null
         }
         $builder.Append("<#split#>") > $null
+
+        $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
         $builder.Append($childIds) > $null
 
         $builder.ToString()
@@ -47,7 +51,7 @@ $destinationScript = {
     )
 
     $rainbowYaml = $Yaml
-    $shouldOverwrite = $false
+    $shouldOverwrite = $true
 
     $feedback = Invoke-RemoteScript -ScriptBlock {
         $checkExistingItem = !$using:shouldOverwrite
@@ -81,14 +85,17 @@ $watch = [System.Diagnostics.Stopwatch]::StartNew()
 $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 
 $queue = New-Object System.Collections.Concurrent.ConcurrentQueue[object]
+$pushedLookup = New-Object System.Collections.Generic.HashSet[string]
+$pushParentChildrenLookup = [ordered]@{}
+$pushChildParentLookup = [ordered]@{}
+$pushChildRunspaceLookup = [ordered]@{}
 
 $queue.Enqueue($rootId)
 Clear-Host
 
-$threads = 10
+$threads = $env:NUMBER_OF_PROCESSORS
 
-$pool = [RunspaceFactory]::CreateRunspacePool(1, $env:NUMBER_OF_PROCESSORS)
-#$pool.ApartmentState = "MTA"
+$pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
 $pool.Open()
 $runspaces = [System.Collections.ArrayList]@()
 
@@ -96,17 +103,17 @@ $count = 0
 while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 
     if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
-        $parentId = ""
-        if($queue.TryDequeue([ref]$parentId) -and ![string]::IsNullOrEmpty($parentId)) {
-            Write-Host "Adding runspace for $($parentId)" -ForegroundColor Green
+        $itemId = ""
+        if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
+            Write-Host "Adding runspace for $($itemId)" -ForegroundColor Green
             $runspace = [PowerShell]::Create()
             $runspace.AddScript($sourceScript) > $null
             $runspace.AddArgument($LocalSession) > $null
-            $runspace.AddArgument($parentId) > $null
+            $runspace.AddArgument($itemId) > $null
             $runspace.AddArgument($true) > $null
             $runspace.RunspacePool = $pool
 
-            $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $parentId; Time = [datetime]::Now; Operation = "Pull" }) > $null
+            $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull" }) > $null
         }
     }
 
@@ -114,35 +121,62 @@ while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
     foreach($currentRunspace in $currentRunspaces) { 
         if($currentRunspace.Status.IsCompleted) {
             if($queue.Count -gt 0) {
-                $parentId = ""
+                $itemId = ""
 
-                if($queue.TryDequeue([ref]$parentId) -and ![string]::IsNullOrEmpty($parentId)) {
-                    Write-Host "Adding runspace for $($parentId)" -ForegroundColor Green
+                if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
+                    
+                    Write-Host "Adding runspace for $($itemId)" -ForegroundColor Green
                     $runspace = [PowerShell]::Create()
                     $runspace.AddScript($sourceScript) > $null
                     $runspace.AddArgument($LocalSession) > $null
-                    $runspace.AddArgument($parentId) > $null
+                    $runspace.AddArgument($itemId) > $null
                     $runspace.AddArgument($false) > $null
                     $runspace.RunspacePool = $pool
                     
-                    $runspaces.Add([PSCustomObject]@{ 
-                        Pipe = $runspace; 
-                        Status = $runspace.BeginInvoke(); 
-                        Id = $parentId; 
-                        Time = [datetime]::Now;
-                        Operation = "Pull"
-                    }) > $null
+                    $runspaceItem = [PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull"} 
+                    $addToRunspaces = $true
+                    if($pushChildParentLookup.Contains($itemId)) {
+                        $parentId = $pushChildParentLookup[$itemId]
+                        if($pushedLookup.Contains($parentId)) {
+                            $pushChildRunspaceLookup[$itemId] = $runspaceItem
+                            $addToRunspaces = $false
+                        } else {
+                            $pushChildParentLookup.Remove($itemId)
+                        }
+                    }
+
+                    if($addToRunspaces) {
+                        $runspaces.Add($runspaceItem) > $null
+                    }
                 }
             }
             $response = $currentRunspace.Pipe.EndInvoke($currentRunspace.Status)
             Write-Host "Processed $($currentRunspace.Operation) $($currentRunspace.Id) in $(([datetime]::Now - $currentRunspace.Time))"
-            if(![string]::IsNullOrEmpty($response)) {
+            if($currentRunspace.Operation -eq "Push") {
+                $pushedLookup.Remove($currentRunspace.Id) > $null
+
+                if($pushParentChildrenLookup.Contains($currentRunspace.Id)) {
+                    $childIds = $pushParentChildrenLookup[$currentRunspace.Id]
+                    foreach($childId in $childIds) {
+                        $pushChildParentLookup.Remove($childId)                          
+                        if($pushChildRunspaceLookup.Contains($childId)) {                                
+                            $runspace = $pushChildRunspaceLookup[$childId]
+                            $runspaces.Add($runspace) > $null
+                            $pushChildRunspaceLookup.Remove($childId)
+                        }
+                    }
+
+                    $pushParentChildrenLookup.Remove($currentRunspace.Id)
+                }
+            }
+            if($currentRunspace.Operation -eq "Pull" -and ![string]::IsNullOrEmpty($response)) {
                 $count++
                 $split = $response -split "<#split#>"
              
                 $yaml = $split[0]
+                [bool]$queueChildren = $false
                 if(![string]::IsNullOrEmpty($yaml)) {
-                    Write-Host "Adding runspace to send to destination" -ForegroundColor Green
+                    Write-Host "Adding runspace $($currentRunspace.Id) to send to destination" -ForegroundColor Green
                     
                     $runspace = [PowerShell]::Create()
                     
@@ -152,6 +186,8 @@ while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
                     $runspace.RunspacePool = $pool
 
                     $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
+                    $pushedLookup.Add($currentRunspace.Id) > $null
+                    $queueChildren = $true
                 }
 
                 if(![string]::IsNullOrEmpty($split[1])) {
@@ -162,6 +198,13 @@ while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
                         Write-Host "- Enqueue id $($childId)"
                         if(!$Queue.TryAdd($childId)) {
                             Write-Host "Failed to add $($childId)" -ForegroundColor White -BackgroundColor Red
+                        }
+                    }
+
+                    if($queueChildren) {
+                        $pushParentChildrenLookup[$currentRunspace.Id] = $childIds
+                        foreach($childId in $childIds) {
+                            $pushChildParentLookup[$childId] = $currentRunspace.Id
                         }
                     }
                 }

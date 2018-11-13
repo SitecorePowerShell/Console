@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -171,7 +171,7 @@ namespace Cognifide.PowerShell.Console.Services
                                     skipExisting);
                             }
                         }
-                        else 
+                        else
                         {
                             ProcessMediaUpload(request.InputStream, scriptDb, itemParam, skipExisting);
                         }
@@ -215,21 +215,19 @@ namespace Cognifide.PowerShell.Console.Services
                     {
                         string script = null;
                         string cliXmlArgs = null;
-                        string sessionId = null;
                         using (var ms = new MemoryStream())
                         {
                             request.InputStream.CopyTo(ms);
                             var bytes = ms.ToArray();
                             var requestBody = Encoding.UTF8.GetString(bytes);
                             var splitBody = requestBody.Split(new[] { $"<#{splitOnGuid}#>" }, StringSplitOptions.None);
-                            sessionId = splitBody[0];
-                            script = splitBody[1];
+                            script = splitBody[0];
                             if (splitBody.Length > 1)
                             {
-                                cliXmlArgs = splitBody[2];
+                                cliXmlArgs = splitBody[1];
                             }
                         }
-                        ProcessScript(context, script, null, sessionId, cliXmlArgs, MainUtil.GetBool(rawOutput, false));
+                        ProcessScript(context, script, null, cliXmlArgs, MainUtil.GetBool(rawOutput, false));
                     }
                     return;
                 default:
@@ -579,7 +577,7 @@ namespace Cognifide.PowerShell.Console.Services
             ProcessScript(context, script, streams);
         }
 
-        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string persistentId = null, string cliXmlArgs = null, bool rawOutput = false)
+        private static void ProcessScript(HttpContext context, string script, Dictionary<string, Stream> streams, string cliXmlArgs = null, bool rawOutput = false)
         {
             if (string.IsNullOrEmpty(script))
             {
@@ -587,11 +585,12 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            var session = ScriptSessionManager.GetSession(persistentId, ApplicationNames.RemoteAutomation, false);
-
-            if (Context.Database != null)
+            using (var session = ScriptSessionManager.NewSession(ApplicationNames.RemoteAutomation, false))
             {
-                var item = Context.Database.GetRootItem();
+
+                if (Context.Database != null)
+                {
+                    var item = Context.Database.GetRootItem();
                     if (item != null)
                         session.SetItemLocationContext(item);
                 }
@@ -631,7 +630,8 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     // Duplicate the behaviors of the original RemoteAutomation service.
                     var requestUri = WebUtil.GetRequestUri();
-                    var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath, requestUri.Port);
+                    var site = SiteContextFactory.GetSiteContext(requestUri.Host, Context.Request.FilePath,
+                        requestUri.Port);
                     Context.SetActiveSite(site.Name);
 
                     if (!string.IsNullOrEmpty(cliXmlArgs))
@@ -641,49 +641,48 @@ namespace Cognifide.PowerShell.Console.Services
                         script = script.TrimEnd(' ', '\t', '\n');
                     }
 
+                    var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
+
                     if (rawOutput)
                     {
                         // In this output we want to give raw output data. No type information is needed. Error streams are lost.
-                        var outObjects = session.ExecuteScriptPart(script, false, false, false);
-                        var response = context.Response;
-                        foreach (var outObject in outObjects)
+                        if (outObjects.Any())
                         {
-                            response.Write(outObject.ToString());
+                            var response = context.Response;
+                            foreach (var outObject in outObjects)
+                            {
+                                response.Write(outObject.ToString());
+                            }
                         }
                     }
                     else
                     {
                         // In this output we want to preserve type information. Ideal for objects with a small output content.
-                        var outObjects = session.ExecuteScriptPart(script, false, false, false);
                         if (session.LastErrors != null && session.LastErrors.Any())
                         {
-                        outObjects.AddRange(session.LastErrors);
-                    }
+                            outObjects.AddRange(session.LastErrors);
+                        }
 
-                    if (outObjects != null && outObjects.Any())
-                    {
-                        session.SetVariable("results", outObjects);
-                        session.Output.Clear();
-                        session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
-
-                        var response = context.Response;
-                        foreach (var outputBuffer in session.Output)
+                        if (outObjects.Any())
                         {
-                            response.Write(outputBuffer.Text);
+                            session.SetVariable("results", outObjects);
+                            session.Output.Clear();
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+
+                            var response = context.Response;
+                            foreach (var outputBuffer in session.Output)
+                            {
+                                response.Write(outputBuffer.Text);
+                            }
                         }
                     }
                 }
-            }
 
-            if (session.Output.HasErrors)
-            {
-                context.Response.StatusCode = 424;
-                context.Response.StatusDescription = "Method Failure";
-            }
-
-            if (string.IsNullOrEmpty(persistentId))
-            {
-                ScriptSessionManager.RemoveSession(persistentId);
+                if (session.Output.HasErrors)
+                {
+                    context.Response.StatusCode = 424;
+                    context.Response.StatusDescription = "Method Failure";
+                }
             }
         }
 
