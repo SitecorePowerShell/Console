@@ -33,24 +33,27 @@ function Copy-RainbowContent {
         Invoke-RemoteScript -ScriptBlock {
             
             $parentItem = Get-Item -Path "master:" -ID $using:parentId
+            $isMediaItem = $parentItem.Paths.IsMediaItem
 
             $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
             $builder = New-Object System.Text.StringBuilder
-            if($using:serializeParent) {
+            if($using:serializeParent -or $isMediaItem) {
                 $builder.AppendLine($parentYaml) > $null
             }
 
-            if($using:serializeChildren) {
+            if($using:serializeChildren -or $isMediaItem) {
                 $children = $parentItem.GetChildren()
 
-                foreach($child in $children) {
-                    $childYaml = $child | ConvertTo-RainbowYaml
-                    $builder.AppendLine($childYaml) > $null
+                if(!$isMediaItem) {
+                    foreach($child in $children) {
+                        $childYaml = $child | ConvertTo-RainbowYaml
+                        $builder.AppendLine($childYaml) > $null
+                    }
                 }
                 $builder.Append("<#split#>") > $null
 
-                $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
+                $childIds = ($children | Where-Object { $_.HasChildren -or $isMediaItem } | Select-Object -ExpandProperty ID) -join "|"
                 $builder.Append($childIds) > $null
             }
 
