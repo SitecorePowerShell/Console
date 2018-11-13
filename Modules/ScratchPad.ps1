@@ -81,7 +81,7 @@ function Copy-RainbowContent {
         $shouldOverwrite = $Overwrite
 
         Invoke-RemoteScript -ScriptBlock {
-            $checkExistingItem = $false #!$using:shouldOverwrite
+            $checkExistingItem = !$using:shouldOverwrite
             $rainbowItems = [regex]::Split($using:rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
@@ -117,7 +117,7 @@ function Copy-RainbowContent {
     $pushChildRunspaceLookup = [ordered]@{}
 
     $serializeParent = $false
-    $serializeChildren = $true
+    $serializeChildren = $Recurse.IsPresent
     $recurseChildren = $Recurse.IsPresent
 
     if(!$Overwrite.IsPresent -and $Recurse.IsPresent) {
