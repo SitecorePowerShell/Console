@@ -103,16 +103,11 @@ function Copy-RainbowContent {
                 $importedItems += 1
                 Import-RainbowItem -Item $rainbowItem
             }
-
+            
             [PSCustomObject]@{
                 TotalItems = $totalItems
                 ImportedItems = $importedItems
             } | ConvertTo-Json
-
-            $oldCacheSize = [regex]::CacheSize
-            [regex]::CacheSize = 0
-            [GC]::Collect()
-            [regex]::CacheSize = $oldCacheSize
         }
 
         $scriptString = $script.ToString()
