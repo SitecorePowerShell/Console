@@ -118,6 +118,25 @@ function Copy-RainbowContent {
         Invoke-RemoteScript -ScriptBlock $script -Session $Session -Raw
     }
 
+    function New-PowerShellRunspace {
+        param(
+            [System.Management.Automation.Runspaces.RunspacePool]$Pool,
+            [scriptblock]$ScriptBlock,
+            [PSCustomObject]$Session,
+            [object[]]$Arguments
+        )
+        
+        $runspace = [PowerShell]::Create()
+        $runspace.AddScript($ScriptBlock) > $null
+        $runspace.AddArgument($Session) > $null
+        foreach($argument in $Arguments) {
+            $runspace.AddArgument($argument) > $null
+        }
+        $runspace.RunspacePool = $pool
+
+        $runspace
+    }
+
     $watch = [System.Diagnostics.Stopwatch]::StartNew()
 
     $queue = New-Object System.Collections.Concurrent.ConcurrentQueue[object]
@@ -169,22 +188,20 @@ function Copy-RainbowContent {
     $pool.Open()
     $runspaces = [System.Collections.ArrayList]@()
 
-    $count = 0
+    $totalCounter = 0
     while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 
         if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
             $itemId = ""
             if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
                 Write-Host "[Pull] $($itemId)" -ForegroundColor Green
-                $runspace = [PowerShell]::Create()
-                $runspace.AddScript($sourceScript) > $null
-                $runspace.AddArgument($LocalSession) > $null
-                $runspace.AddArgument($itemId) > $null
-                $runspace.AddArgument($true) > $null
-                $runspace.AddArgument($serializeChildren) > $null
-                $runspace.AddArgument($recurseChildren) > $null
-                $runspace.RunspacePool = $pool
-
+                $runspaceProps = @{
+                    ScriptBlock = $sourceScript
+                    Pool = $pool
+                    Session = $localSession
+                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren)
+                }
+                $runspace = New-PowerShellRunspace @runspaceProps
                 $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull" }) > $null
             }
         }
@@ -198,15 +215,13 @@ function Copy-RainbowContent {
                     if($queue.TryDequeue([ref]$itemId) -and ![string]::IsNullOrEmpty($itemId)) {
                     
                         Write-Host "[Pull] $($itemId)" -ForegroundColor Green
-                        $runspace = [PowerShell]::Create()
-                        $runspace.AddScript($sourceScript) > $null
-                        $runspace.AddArgument($LocalSession) > $null
-                        $runspace.AddArgument($itemId) > $null
-                        $runspace.AddArgument($serializeParent) > $null
-                        $runspace.AddArgument($serializeChildren) > $null
-                        $runspace.AddArgument($recurseChildren) > $null
-                        $runspace.RunspacePool = $pool
-                    
+                        $runspaceProps = @{
+                            ScriptBlock = $sourceScript
+                            Pool = $pool
+                            Session = $localSession
+                            Arguments = @($itemId,$serializeParent,$serializeChildren,$recurseChildren)
+                        }
+                        $runspace = New-PowerShellRunspace @runspaceProps                   
                         $runspaceItem = [PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull"} 
                         $addToRunspaces = $true
                         if($pushChildParentLookup.Contains($itemId)) {
@@ -230,6 +245,7 @@ function Copy-RainbowContent {
                 if($currentRunspace.Operation -eq "Push") {
                     if(![string]::IsNullOrEmpty($response)) {
                         $feedback = $response | ConvertFrom-Json
+                        1..$feedback.TotalItems | % { [System.Threading.Interlocked]::Increment([ref] $totalCounter) } > $null
                         Write-Host "- Imported $($feedback.ImportedItems)/$($feedback.TotalItems) items in destination" -ForegroundColor Gray
                     }
                     $pushedLookup.Remove($currentRunspace.Id) > $null
@@ -249,29 +265,26 @@ function Copy-RainbowContent {
                     }
                 }
                 if($currentRunspace.Operation -eq "Pull" -and ![string]::IsNullOrEmpty($response)) {
-                    $count++
                     $split = $response -split "<#split#>"
              
                     $yaml = $split[0]
                     [bool]$queueChildren = $false
                     if(![string]::IsNullOrEmpty($yaml)) {
                         Write-Host "[Push] $($currentRunspace.Id)" -ForegroundColor Green
-                    
-                        $runspace = [PowerShell]::Create()
-                    
-                        $runspace.AddScript($destinationScript) > $null
-                        $runspace.AddArgument($remoteSession) > $null
-                        $runspace.AddArgument($yaml) > $null
-                        $runspace.AddArgument($Overwrite.IsPresent) > $null
+                        $runspaceProps = @{
+                            ScriptBlock = $destinationScript
+                            Pool = $pool
+                            Session = $remoteSession
+                            Arguments = @($yaml,$Overwrite.IsPresent)
+                        }
+                        $runspace = New-PowerShellRunspace @runspaceProps  
                         $runspace.RunspacePool = $pool
-
                         $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
                         $pushedLookup.Add($currentRunspace.Id) > $null
                         $queueChildren = $true
                     }
 
-                    if(![string]::IsNullOrEmpty($split[1])) {
-                              
+                    if(![string]::IsNullOrEmpty($split[1])) {                              
                         $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
 
                         foreach($childId in $childIds) {
@@ -296,14 +309,13 @@ function Copy-RainbowContent {
         }
     }
 
-
     $pool.Close() 
     $pool.Dispose()
 
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
 
-    Write-Host "[Done] Completed transfer in $($totalSeconds) seconds" -ForegroundColor Yellow
+    Write-Host "[Done] Completed transferring $($totalCounter) items in $($totalSeconds) seconds" -ForegroundColor Yellow
 }
 
 $copyProps = @{
