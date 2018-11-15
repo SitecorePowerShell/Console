@@ -93,20 +93,22 @@ function Copy-RainbowContent {
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
             $totalItems = $rainbowItems.Count
-            $importedItems = 0
+            $itemsToImport = [System.Collections.ArrayList]@()
             foreach($rainbowItem in $rainbowItems) {
             
                 if($checkExistingItem) {
                     if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
                 }
-                $importedItems += 1
-                New-UsingBlock (New-Object Sitecore.Data.Events.EventDisabler) {
-                New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
-                    Import-RainbowItem -Item $rainbowItem
-                }} > $null
+                $itemsToImport.Add($rainbowItem) > $null
             }
             
-            "{ TotalItems: $($totalItems), ImportedItems: $($importedItems) }"
+            New-UsingBlock (New-Object Sitecore.SecurityModel.SecurityDisabler) {
+            New-UsingBlock (New-Object Sitecore.Data.Events.EventDisabler) {
+            New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
+                $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
+            }}} > $null
+            
+            "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
         }
 
         $scriptString = $script.ToString()
@@ -300,7 +302,6 @@ function Copy-RainbowContent {
                                 Arguments = @($yaml,$Overwrite.IsPresent)
                             }
                             $runspace = New-PowerShellRunspace @runspaceProps  
-                            $runspace.RunspacePool = $pool
                             $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
                             $pushedLookup.Add($currentRunspace.Id) > $null
                             $queueChildren = $true
