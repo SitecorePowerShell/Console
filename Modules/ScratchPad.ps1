@@ -66,8 +66,7 @@ function Copy-RainbowContent {
                 $builder.Append($childIds) > $null
             }
 
-            $builder.ToString()
-            
+            $builder.ToString()            
         }
 
         $scriptString = $script.ToString()
@@ -107,10 +106,7 @@ function Copy-RainbowContent {
                 }} > $null
             }
             
-            [PSCustomObject]@{
-                TotalItems = $totalItems
-                ImportedItems = $importedItems
-            } | ConvertTo-Json
+            "{ TotalItems: $($totalItems), ImportedItems: $($importedItems) }"
         }
 
         $scriptString = $script.ToString()
@@ -365,10 +361,10 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Overwrite
 
 # Migrate all items only if they are missing
-Copy-RainbowContent @copyProps -RootId $rootId -Recurse
+#Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
