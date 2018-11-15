@@ -69,7 +69,6 @@ function Copy-RainbowContent {
         $script = {
             
             $parentItem = Get-Item -Path "master:" -ID $parentId
-            $isMediaItem = $parentItem.Paths.IsMediaItem
 
             $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
@@ -82,18 +81,16 @@ function Copy-RainbowContent {
 
             if($serializeChildren) {                
 
-                if(!$isMediaItem) {
-                    foreach($child in $children) {
-                        $childYaml = $child | ConvertTo-RainbowYaml
-                        $builder.AppendLine($childYaml) > $null
-                    }
+                foreach($child in $children) {
+                    $childYaml = $child | ConvertTo-RainbowYaml
+                    $builder.AppendLine($childYaml) > $null
                 }
             }
 
             if($recurseChildren) {
                 $builder.Append("<#split#>") > $null
 
-                $childIds = ($children | Where-Object { $_.HasChildren -or $isMediaItem } | Select-Object -ExpandProperty ID) -join "|"
+                $childIds = ($children | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID) -join "|"
                 $builder.Append($childIds) > $null
             }
 
@@ -142,7 +139,7 @@ function Copy-RainbowContent {
             New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
                 $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
             }}} > $null
-            
+
             "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
         }
 
@@ -404,12 +401,14 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Migrate all items skipping if they exist
-Copy-RainbowContent @copyProps -RootId $rootId -Everything
+#Copy-RainbowContent @copyProps -RootId $rootId -Everything
 
 # Migrate all items overwriting if they exist
-Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Everything
+#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Everything
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
 
 #Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}"
+
+#Copy-RainbowContent @copyProps -RootId "{15451229-7534-44EF-815D-D93D6170BFCB}" -Overwrite -Recurse
