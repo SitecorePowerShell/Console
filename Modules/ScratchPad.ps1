@@ -186,7 +186,7 @@ function Copy-RainbowContent {
 
                     $threads = 1
                 } else {
-                    Write-Host "- No items need to be transfered because they already exist."
+                    Write-Host "- No items need to be transfered because they already exist"
                 }
             } else {
                 $queue.Enqueue($rootId)
@@ -203,6 +203,8 @@ function Copy-RainbowContent {
     $runspaces = [System.Collections.ArrayList]@()
 
     $totalCounter = 0
+    $pullCounter = 0
+    $pushCounter = 0
     while ($runspaces.Count -gt 0 -or $queue.Count -gt 0) {
 
         if($runspaces.Count -eq 0 -and $queue.Count -gt 0) {
@@ -257,6 +259,7 @@ function Copy-RainbowContent {
                 Write-Host "[$($currentRunspace.Operation)] $($currentRunspace.Id) completed" -ForegroundColor Gray
                 Write-Host "- Processed in $(([datetime]::Now - $currentRunspace.Time))" -ForegroundColor Gray
                 if($currentRunspace.Operation -eq "Push") {
+                    [System.Threading.Interlocked]::Increment([ref] $pushCounter) > $null
                     if(![string]::IsNullOrEmpty($response)) {
                         $feedback = $response | ConvertFrom-Json
                         1..$feedback.TotalItems | % { [System.Threading.Interlocked]::Increment([ref] $totalCounter) } > $null
@@ -278,40 +281,43 @@ function Copy-RainbowContent {
                         $pushParentChildrenLookup.Remove($currentRunspace.Id)
                     }
                 }
-                if($currentRunspace.Operation -eq "Pull" -and ![string]::IsNullOrEmpty($response)) {
-                    $split = $response -split "<#split#>"
+                if($currentRunspace.Operation -eq "Pull") {
+                    [System.Threading.Interlocked]::Increment([ref] $pullCounter) > $null
+                    if(![string]::IsNullOrEmpty($response)) {
+                        $split = $response -split "<#split#>"
              
-                    $yaml = $split[0]
-                    [bool]$queueChildren = $false
-                    if(![string]::IsNullOrEmpty($yaml)) {
-                        Write-Host "[Push] $($currentRunspace.Id)" -ForegroundColor Green
-                        $runspaceProps = @{
-                            ScriptBlock = $destinationScript
-                            Pool = $pool
-                            Session = $remoteSession
-                            Arguments = @($yaml,$Overwrite.IsPresent)
-                        }
-                        $runspace = New-PowerShellRunspace @runspaceProps  
-                        $runspace.RunspacePool = $pool
-                        $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
-                        $pushedLookup.Add($currentRunspace.Id) > $null
-                        $queueChildren = $true
-                    }
-
-                    if(![string]::IsNullOrEmpty($split[1])) {                              
-                        $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-
-                        foreach($childId in $childIds) {
-                            Write-Host "- [Pull] Adding $($childId) to queue" -ForegroundColor Gray
-                            if(!$Queue.TryAdd($childId)) {
-                                Write-Host "Failed to add $($childId)" -ForegroundColor White -BackgroundColor Red
+                        $yaml = $split[0]
+                        [bool]$queueChildren = $false
+                        if(![string]::IsNullOrEmpty($yaml)) {
+                            Write-Host "[Push] $($currentRunspace.Id)" -ForegroundColor Green
+                            $runspaceProps = @{
+                                ScriptBlock = $destinationScript
+                                Pool = $pool
+                                Session = $remoteSession
+                                Arguments = @($yaml,$Overwrite.IsPresent)
                             }
+                            $runspace = New-PowerShellRunspace @runspaceProps  
+                            $runspace.RunspacePool = $pool
+                            $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $currentRunspace.Id; Time = [datetime]::Now; Operation = "Push" }) > $null
+                            $pushedLookup.Add($currentRunspace.Id) > $null
+                            $queueChildren = $true
                         }
 
-                        if($queueChildren) {
-                            $pushParentChildrenLookup[$currentRunspace.Id] = $childIds
+                        if(![string]::IsNullOrEmpty($split[1])) {                              
+                            $childIds = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+
                             foreach($childId in $childIds) {
-                                $pushChildParentLookup[$childId] = $currentRunspace.Id
+                                Write-Host "- [Pull] Adding $($childId) to queue" -ForegroundColor Gray
+                                if(!$Queue.TryAdd($childId)) {
+                                    Write-Host "Failed to add $($childId)" -ForegroundColor White -BackgroundColor Red
+                                }
+                            }
+
+                            if($queueChildren) {
+                                $pushParentChildrenLookup[$currentRunspace.Id] = $childIds
+                                foreach($childId in $childIds) {
+                                    $pushChildParentLookup[$childId] = $currentRunspace.Id
+                                }
                             }
                         }
                     }
@@ -329,7 +335,10 @@ function Copy-RainbowContent {
     $watch.Stop()
     $totalSeconds = $watch.ElapsedMilliseconds / 1000
 
-    Write-Host "[Done] Completed transferring $($totalCounter) items in $($totalSeconds) seconds" -ForegroundColor Yellow
+    Write-Host "[Done] Completed in $($totalSeconds) seconds" -ForegroundColor Yellow
+    Write-Host "- Copied $($totalCounter) items"
+    Write-Host "- Pull count: $($pullCounter)"
+    Write-Host "- Push count: $($pushCounter)"
 }
 
 $copyProps = @{

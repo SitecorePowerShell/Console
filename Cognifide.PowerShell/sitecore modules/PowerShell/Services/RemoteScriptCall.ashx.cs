@@ -642,16 +642,31 @@ namespace Cognifide.PowerShell.Console.Services
                     }
 
                     var outObjects = session.ExecuteScriptPart(script, false, false, false) ?? new List<object>();
-
+                    var response = context.Response;
                     if (rawOutput)
                     {
-                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.
+                        // In this output we want to give raw output data. No type information is needed. Error streams are lost.                       
                         if (outObjects.Any())
                         {
-                            var response = context.Response;
                             foreach (var outObject in outObjects)
                             {
                                 response.Write(outObject.ToString());
+                            }
+                        }
+
+                        if (session.LastErrors != null && session.LastErrors.Any())
+                        {
+                            var convertedObjects = new List<object>();
+                            convertedObjects.AddRange(session.LastErrors);
+
+                            session.SetVariable("results", convertedObjects);
+                            session.Output.Clear();
+                            session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
+
+                            response.Write("<#messages#>");
+                            foreach (var outputBuffer in session.Output)
+                            {
+                                response.Write(outputBuffer.Text);
                             }
                         }
                     }
@@ -669,7 +684,6 @@ namespace Cognifide.PowerShell.Console.Services
                             session.Output.Clear();
                             session.ExecuteScriptPart("ConvertTo-CliXml -InputObject $results");
 
-                            var response = context.Response;
                             foreach (var outputBuffer in session.Output)
                             {
                                 response.Write(outputBuffer.Text);

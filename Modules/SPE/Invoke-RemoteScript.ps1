@@ -239,10 +239,28 @@ function Invoke-RemoteScript {
             }
             
             if($response) {
-                $responseString = [Text.Encoding]::UTF8.GetString($response)
-                if(!$Raw) {
+                $parsedResponse = [Text.Encoding]::UTF8.GetString($response)
+                $responseMessages = ""
+                if($Raw) {
+                    if($parsedResponse.Contains("<#split#>")) {
+                        $parsedResponse = $parsedResponse -split "<#messages#>"
+                    }
+                    if($parsedResponse -is [string[]]) {
+                        $parsedResponse[0]
+                        if($parsedResponse.Length -gt 1) {
+                            $responseMessages = $parsedResponse[1]
+                            $hasRedirectedMessages = $true
+                        }
+                    } elseif(![string]::IsNullOrEmpty($parsedResponse)) {
+                        $parsedResponse
+                    }
+                } elseif($parsedResponse) {
+                    $responseMessages = $parsedResponse
+                }
+
+                if(![string]::IsNullOrEmpty($responseMessages)) {
                     if($hasRedirectedMessages) {
-                        foreach($record in ConvertFrom-CliXml -InputObject $responseString) {
+                        foreach($record in ConvertFrom-CliXml -InputObject $responseMessages) {
                             if($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.VerboseRecord") {
                                 Write-Verbose $record.ToString()
                             } elseif($record -is [PSObject] -and $record.PSObject.TypeNames -contains "Deserialized.System.Management.Automation.InformationRecord") {
@@ -258,11 +276,8 @@ function Invoke-RemoteScript {
                             }
                         }
                     } else {                        
-                        ConvertFrom-CliXml -InputObject $responseString
+                        ConvertFrom-CliXml -InputObject $responseMessages
                     }
-                }
-                else{
-                   $responseString
                 }
             } elseif ($response -eq "login failed") {
                 Write-Verbose "Login with the specified account failed."
