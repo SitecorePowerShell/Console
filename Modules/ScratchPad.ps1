@@ -149,37 +149,51 @@ function Copy-RainbowContent {
     $serializeChildren = $Recurse.IsPresent
     $recurseChildren = $Recurse.IsPresent
 
-    if(!$Overwrite.IsPresent -and $Recurse.IsPresent) {
-        $sourceItemIds = Invoke-RemoteScript -Session $localSession -ScriptBlock { 
+    if(!$Overwrite.IsPresent) {
+        $compareScript = { 
             $rootItem = Get-Item -Path "master:" -ID $using:rootId
-
-            $itemIds = (@($rootItem) + @($rootItem.Axes.GetDescendants()) | Select-Object -ExpandProperty ID) -join "|"
+            $items = [System.Collections.ArrayList]@()
+            $items.Add($rootItem) > $null
+            if($using:recurseChildren) {
+                $children = $rootItem.Axes.GetDescendants()
+                if($children.Count -gt 0) {
+                    $items.AddRange($children) > $null
+                }
+            }
+            $itemIds = ($items | Select-Object -ExpandProperty ID) -join "|"
             $itemIds
-        } -Raw
-
-        $destinationItemIds = Invoke-RemoteScript -Session $remoteSession -ScriptBlock {
-            $rootItem = Get-Item -Path "master:" -ID $using:rootId
-
-            $itemIds = (@($rootItem) + @($rootItem.Axes.GetDescendants()) | Select-Object -ExpandProperty ID) -join "|"
-            $itemIds
-        } -Raw
-
-        $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-        $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-
-        $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
-            Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
-
-        foreach($queueId in $queueIds) {
-            $queue.Enqueue($queueId)
         }
 
-        $serializeParent = $true
-        $serializeChildren = $false
-        $recurseChildren = $false
+        $sourceItemIds = Invoke-RemoteScript -Session $localSession -ScriptBlock $compareScript -Raw
+        $destinationItemIds = Invoke-RemoteScript -Session $remoteSession -ScriptBlock $compareScript -Raw
 
-        $threads = 1
+        $queueIds = @()
+        if($sourceItemIds) {
+            if($destinationItemIds) {
+                $referenceIds = $sourceItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                $differenceIds = $destinationItemIds.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                $queueIds = Compare-Object -ReferenceObject $referenceIds -DifferenceObject $differenceIds | 
+                    Where-Object { $_.SideIndicator -eq "<=" } | Select-Object -ExpandProperty InputObject
 
+                foreach($queueId in $queueIds) {
+                    $queue.Enqueue($queueId)
+                }
+
+                if($queue.Count -ge 1) {
+                    $serializeParent = $true
+                    $serializeChildren = $false
+                    $recurseChildren = $false
+
+                    $threads = 1
+                } else {
+                    Write-Host "- No items need to be transfered because they already exist."
+                }
+            } else {
+                $queue.Enqueue($rootId)
+            }
+        } else {
+            $queue.Enqueue($rootId)
+        }
     } else {
         $queue.Enqueue($rootId)
     }
