@@ -89,7 +89,7 @@ function Copy-RainbowContent {
         $shouldOverwrite = $Overwrite
 
         $script = {
-
+            
             $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
@@ -101,7 +101,10 @@ function Copy-RainbowContent {
                     if((Test-Path -Path "$($rainbowItem.DatabaseName):{$($rainbowItem.Id)}")) { continue }
                 }
                 $importedItems += 1
-                Import-RainbowItem -Item $rainbowItem
+                New-UsingBlock (New-Object Sitecore.Data.Events.EventDisabler) {
+                New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
+                    Import-RainbowItem -Item $rainbowItem
+                }} > $null
             }
             
             [PSCustomObject]@{
@@ -150,6 +153,7 @@ function Copy-RainbowContent {
     $recurseChildren = $Recurse.IsPresent
 
     if(!$Overwrite.IsPresent) {
+        Write-Host "- Preparing to compare source and destination instances"
         $compareScript = { 
             $rootItem = Get-Item -Path "master:" -ID $using:rootId
             $items = [System.Collections.ArrayList]@()
@@ -164,7 +168,10 @@ function Copy-RainbowContent {
             $itemIds
         }
 
+        Write-Host "- Getting list of IDs from source"
         $sourceItemIds = Invoke-RemoteScript -Session $localSession -ScriptBlock $compareScript -Raw
+
+        Write-Host "- Getting list of IDs from destination"
         $destinationItemIds = Invoke-RemoteScript -Session $remoteSession -ScriptBlock $compareScript -Raw
 
         $queueIds = @()
@@ -358,10 +365,10 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Overwrite
 
 # Migrate all items only if they are missing
-#Copy-RainbowContent @copyProps -RootId $rootId -Recurse
+Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
 # Migrate all items overwriting if they exist
-Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
