@@ -22,8 +22,8 @@ function Copy-RainbowContent {
 
         [switch]$Overwrite,
 
-        [Parameter(ParameterSetName='Everything')]
-        [switch]$Everything
+        [Parameter(ParameterSetName='SingleRequest')]
+        [switch]$SingleRequest
     )
     
     $threads = $env:NUMBER_OF_PROCESSORS
@@ -37,7 +37,7 @@ function Copy-RainbowContent {
             [bool]$IncludeParent = $true,
             [bool]$IncludeChildren = $false,
             [bool]$RecurseChildren = $false,
-            [bool]$IncludeEverything = $false
+            [bool]$SingleRequest = $false
         )
 
         $parentId = $RootId
@@ -45,7 +45,7 @@ function Copy-RainbowContent {
         $serializeChildren = $IncludeChildren
         $recurseChildren = $RecurseChildren
 
-        $scriptEverything = {
+        $scriptSingleRequest = {
             $parentItem = Get-Item -Path "master:" -ID $using:parentId
             $childItems = $parentItem.Axes.GetDescendants()
 
@@ -93,8 +93,8 @@ function Copy-RainbowContent {
             $sd.Dispose() > $null          
         }
 
-        if($IncludeEverything) {
-            Invoke-RemoteScript -ScriptBlock $scriptEverything  -Session $Session -Raw
+        if($SingleRequest) {
+            Invoke-RemoteScript -ScriptBlock $scriptSingleRequest  -Session $Session -Raw
         } else {
             $scriptString = $script.ToString()
             $trueFalseHash = @{$true="`$true";$false="`$false"}
@@ -179,9 +179,8 @@ function Copy-RainbowContent {
     $serializeParent = $false
     $serializeChildren = $Recurse.IsPresent
     $recurseChildren = $Recurse.IsPresent
-    $includeEverything = $Everything.IsPresent
 
-    if(!$Everything.IsPresent -and !$Overwrite.IsPresent) {
+    if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
         Write-Host "- Preparing to compare source and destination instances"
         $compareScript = { 
             $rootItem = Get-Item -Path "master:" -ID $using:rootId
@@ -251,7 +250,7 @@ function Copy-RainbowContent {
                     ScriptBlock = $sourceScript
                     Pool = $pool
                     Session = $SourceSession
-                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$includeEverything)
+                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$SingleRequest)
                 }
                 $runspace = New-PowerShellRunspace @runspaceProps
                 $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull" }) > $null
@@ -397,13 +396,13 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
 # Migrate all items overwriting if they exist
-Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Migrate all items skipping if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Everything
+#Copy-RainbowContent @copyProps -RootId $rootId -SingleRequest
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Everything
+Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -SingleRequest
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
