@@ -569,7 +569,6 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
                 }
-
             }
         }
 

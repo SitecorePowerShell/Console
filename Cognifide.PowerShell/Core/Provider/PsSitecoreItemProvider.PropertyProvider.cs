@@ -72,34 +72,30 @@ namespace Cognifide.PowerShell.Core.Provider
 
                 if (propertyToSet == null)
                 {
-                    throw new ArgumentNullException("Property not defined");
+                    throw new ArgumentNullException(nameof(propertyToSet), "Property not defined");
                 }
 
                 LogInfo("Executing SetProperty(string path='{0}', PSObject propertyToSet='{1}')", path, propertyToSet);
-                if (item != null)
+                item?.Edit(args =>
                 {
-                    item.Edit(args =>
-                    {
-                        item.Fields.ReadAll();
+                    item.Fields.ReadAll();
 
-                        var asDict = propertyToSet.BaseObject() as IDictionary;
-                        if (asDict != null)
+                    if (propertyToSet.BaseObject() is IDictionary asDict)
+                    {
+                        foreach (var key in asDict.Keys)
                         {
-                            foreach (var key in asDict.Keys)
-                            {
-                                SetItemPropertyValue(path, item, key.ToString(), asDict[key]);
-                            }
+                            SetItemPropertyValue(path, item, key.ToString(), asDict[key]);
                         }
-                        else
+                    }
+                    else
+                    {
+                        foreach (var property in propertyToSet.Properties)
                         {
-                            foreach (PSPropertyInfo property in propertyToSet.Properties)
-                            {
-                                SetItemPropertyValue(path, item, property.Name, property.Value);
-                            }
+                            SetItemPropertyValue(path, item, property.Name, property.Value);
                         }
-                        WriteItem(item);
-                    });
-                }
+                    }
+                    WriteItem(item);
+                });
             }
             catch (Exception ex)
             {
@@ -110,8 +106,7 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private Item GetDynamicItem(string path)
         {
-            Item item;
-            if (!TryGetDynamicParam(ItemParam, out item))
+            if (!TryGetDynamicParam(ItemParam, out Item item))
             {
                 item = GetItemInternal(path, true).FirstOrDefault();
             }
@@ -128,7 +123,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 }
                 else
                 {
-                    WriteWarning($"Property name ’{propertyName}’ doesn’t exist for item at path ’{path}’");
+                    WriteWarning($"Property name ’{propertyName}’ does not exist for item at path ’{path}’");
                 }
             }
         }
@@ -139,7 +134,7 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 LogInfo("Executing ClearProperty(string path='{0}', string propertyToClear='{1}')",
                     path,
-                    propertyToClear.Aggregate((seed, curr) => seed + ',' + curr));
+                    propertyToClear.Aggregate((seed, current) => seed + ',' + current));
                 var item = GetDynamicItem(path);
                 item.Edit(args =>
                 {

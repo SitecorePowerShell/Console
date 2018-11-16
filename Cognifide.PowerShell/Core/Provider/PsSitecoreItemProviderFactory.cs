@@ -35,6 +35,5 @@ namespace Cognifide.PowerShell.Core.Provider
                 typeof(PsSitecoreItemProvider5),
                 string.Empty));
         }
-
     }
 }

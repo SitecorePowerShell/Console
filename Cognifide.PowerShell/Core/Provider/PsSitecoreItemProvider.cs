@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Web;
 using Cognifide.PowerShell.Commandlets;
 using Cognifide.PowerShell.Core.Diagnostics;
 using Cognifide.PowerShell.Core.Extensions;
@@ -12,11 +11,9 @@ using Cognifide.PowerShell.Core.Utility;
 using Cognifide.PowerShell.Core.VersionDecoupling;
 using Sitecore;
 using Sitecore.Configuration;
-using Sitecore.ContentSearch.Utilities;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Data.Managers;
-using Sitecore.Data.Proxies;
 using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Exceptions;
@@ -402,12 +399,11 @@ namespace Cognifide.PowerShell.Core.Provider
         private void WriteItem(Item item)
         {
             // add the properties defined by the page type
-            if (item != null)
-            {
-                var psobj = ItemShellExtensions.GetPsObject(SessionState, item);
-                var path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
-                WriteItemObject(psobj, path, item.HasChildren);
-            }
+            if (item == null) return;
+
+            var psObject = ItemShellExtensions.GetPsObject(SessionState, item);
+            var path = item.Database.Name + ":" + item.Paths.Path.Substring(9).Replace('/', '\\');
+            WriteItemObject(psObject, path, item.HasChildren);
         }
 
         protected override void CopyItem(string path, string destination, bool recurse)
@@ -497,12 +493,12 @@ namespace Cognifide.PowerShell.Core.Provider
                 outerXml = sourceItem.GetOuterXml(recurse);
             });
 
-            var transferedItem = destinationItem.PasteItem(outerXml,
+            var transferredItem = destinationItem.PasteItem(outerXml,
                 transferOptions.HasFlag(TransferOptions.ChangeId),
                 Force ? PasteMode.Overwrite : PasteMode.Undefined);
             if (sourceItem.Paths.IsMediaItem)
             {
-                if (sourceItem.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
+                if (sourceItem.TemplateID != TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(sourceItem))
                 {
                     TransferVersionedMediaItemBlob(sourceItem, destinationItem, recurse);
                 }
@@ -514,12 +510,12 @@ namespace Cognifide.PowerShell.Core.Provider
             Event.RaiseEvent("item:transferred", sourceItem, destinationItem);
             PowerShellLog.Audit("Transfer from database: {0}, to:{1}", AuditFormatter.FormatItem(sourceItem),
                 AuditFormatter.FormatItem(destinationItem));
-            if (transferedItem.Name != leafName)
+            if (transferredItem.Name != leafName)
             {
-                transferedItem.Edit(args => transferedItem.Name = leafName);
+                transferredItem.Edit(args => transferredItem.Name = leafName);
             }
 
-            return transferedItem;
+            return transferredItem;
         }
 
         private void TransferVersionedMediaItemBlob(Item source, Item destination, bool processChildren)
@@ -577,13 +573,13 @@ namespace Cognifide.PowerShell.Core.Provider
             {
                 if (child != null)
                 {
-                    if (child.TemplateID != Sitecore.TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(child))
+                    if (child.TemplateID != TemplateIDs.MediaFolder && WebDAVItemUtil.IsVersioned(child))
                     {
-                        TransferVersionedMediaItemBlob(child, destination, processChildren);
+                        TransferVersionedMediaItemBlob(child, destination, true);
                     }
                     else
                     {
-                        TransferMediaItemBlob(child, destination, processChildren);
+                        TransferMediaItemBlob(child, destination, true);
                     }
                 }
             }
@@ -631,15 +627,15 @@ namespace Cognifide.PowerShell.Core.Provider
                     }
                 }
 
-                if (ShouldProcess(sourceItem.Paths.Path, "Move to '" + destinationItem.Paths.Path + "/" + leafName))
-                {
-                    sourceItem.MoveTo(destinationItem);
+                if (!ShouldProcess(sourceItem.Paths.Path,
+                    "Move to '" + destinationItem.Paths.Path + "/" + leafName)) return;
 
-                    if (sourceItem.Name != leafName)
-                    {
-                        sourceItem.Edit(
-                            args => { sourceItem.Name = leafName; });
-                    }
+                sourceItem.MoveTo(destinationItem);
+
+                if (sourceItem.Name != leafName)
+                {
+                    sourceItem.Edit(
+                        args => { sourceItem.Name = leafName; });
                 }
             }
             catch (Exception ex)
@@ -707,6 +703,14 @@ namespace Cognifide.PowerShell.Core.Provider
                 if (dic != null && dic[ParentParam].IsSet)
                 {
                     parentItem = dic[ParentParam].Value as Item;
+
+                    if (parentItem == null)
+                    {
+                        WriteError(
+                            new ErrorRecord(new InvalidOperationException($"Could not continue because the Parent parameter is null"),
+                                ErrorIds.NewItemIOError.ToString(), ErrorCategory.WriteError, path));
+                        return;
+                    }
                 }
 
                 if (!ShouldProcess(PathUtilities.GetParentFromPath(path),
@@ -757,7 +761,7 @@ namespace Cognifide.PowerShell.Core.Provider
                 if (dic != null && dic[StartWorkflowParam].IsSet && Context.Workflow.HasDefaultWorkflow(createdItem))
                 {
                     var defaultWorkflow =
-                        createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[Sitecore.FieldIDs.DefaultWorkflow]);
+                        createdItem.Database.WorkflowProvider.GetWorkflow(createdItem[FieldIDs.DefaultWorkflow]);
                     defaultWorkflow?.Start(createdItem);
                 }
 

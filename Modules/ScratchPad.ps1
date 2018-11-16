@@ -398,7 +398,7 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Migrate all items skipping if they exist
 #Copy-RainbowContent @copyProps -RootId $rootId -Everything

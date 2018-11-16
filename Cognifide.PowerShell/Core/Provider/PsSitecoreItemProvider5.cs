@@ -21,6 +21,5 @@ namespace Cognifide.PowerShell.Core.Provider
         {
             return paramAdded;
         }
-
     }
 }

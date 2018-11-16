@@ -7,7 +7,6 @@ using System.Management.Automation.Runspaces;
 using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
 using Cognifide.PowerShell.Core.Utility;
-using Sitecore.ContentSearch.Utilities;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
