@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using Cognifide.PowerShell.Core.Settings;
 using Sitecore.Data;
+using Sitecore.Data.Events;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
+using Sitecore.Events;
 using Sitecore.Resources.Media;
 
 namespace Cognifide.PowerShell.Core.Extensions
@@ -209,6 +213,26 @@ namespace Cognifide.PowerShell.Core.Extensions
                 provider.InvokeCommand.NewScriptBlock(
                     $"\"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}\"")));
             return psObject;
+        }
+
+        internal void TemplateFieldsInvalidateCheck(object sender, EventArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            if (Event.ExtractParameter(args, 0) is Item item && item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
+            {
+                AllPropertySets.Clear();
+            }
+        }
+
+        internal void TemplateFieldsInvalidateCheckRemote(object sender, EventArgs args)
+        {
+            Assert.ArgumentNotNull(args, "args");
+            var isreErgs = args as ItemSavedRemoteEventArgs;
+            if (isreErgs?.Item != null &&
+                isreErgs.Item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
+            {
+                AllPropertySets.Clear();
+            }
         }
     }
 }
