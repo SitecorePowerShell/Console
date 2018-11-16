@@ -7,14 +7,11 @@ function Copy-RainbowContent {
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Source,
+        [pscustomobject]$SourceSession,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [string]$Username,
-        [string]$Password,
+        [pscustomobject]$DestinationSession,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -32,9 +29,6 @@ function Copy-RainbowContent {
     $threads = $env:NUMBER_OF_PROCESSORS
 
     Write-Host "Transfering items from $($Source) to $($Destination)" -ForegroundColor Yellow
-
-    $localSession = New-ScriptSession -user $Username -pass $Password -conn $Source
-    $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $Destination
 
     $sourceScript = {
         param(
@@ -204,10 +198,10 @@ function Copy-RainbowContent {
         }
 
         Write-Host "- Getting list of IDs from source"
-        $sourceItemIds = Invoke-RemoteScript -Session $localSession -ScriptBlock $compareScript -Raw
+        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
 
         Write-Host "- Getting list of IDs from destination"
-        $destinationItemIds = Invoke-RemoteScript -Session $remoteSession -ScriptBlock $compareScript -Raw
+        $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
 
         $queueIds = @()
         if($sourceItemIds) {
@@ -256,7 +250,7 @@ function Copy-RainbowContent {
                 $runspaceProps = @{
                     ScriptBlock = $sourceScript
                     Pool = $pool
-                    Session = $localSession
+                    Session = $SourceSession
                     Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$includeEverything)
                 }
                 $runspace = New-PowerShellRunspace @runspaceProps
@@ -276,7 +270,7 @@ function Copy-RainbowContent {
                         $runspaceProps = @{
                             ScriptBlock = $sourceScript
                             Pool = $pool
-                            Session = $localSession
+                            Session = $SourceSession
                             Arguments = @($itemId,$serializeParent,$serializeChildren,$recurseChildren)
                         }
                         $runspace = New-PowerShellRunspace @runspaceProps                   
@@ -335,7 +329,7 @@ function Copy-RainbowContent {
                             $runspaceProps = @{
                                 ScriptBlock = $destinationScript
                                 Pool = $pool
-                                Session = $remoteSession
+                                Session = $DestinationSession
                                 Arguments = @($yaml,$Overwrite.IsPresent)
                             }
                             $runspace = New-PowerShellRunspace @runspaceProps  
@@ -383,11 +377,12 @@ function Copy-RainbowContent {
 }
 
 $copyProps = @{
-    Source = "https://spe.dev.local"
-    Destination = "http://sc827"
-    Username = "admin"
-    Password = "b"    
+    SourceSession = $sourceSession
+    DestinationSession = $destinationSession 
 }
+
+$sourceSession = New-ScriptSession -user "admin" -pass "b" -conn "https://spe.dev.local"
+$destinationSession = New-ScriptSession -user "admin" -pass "b" -conn "http://sc827"
 
 # Content
 $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
