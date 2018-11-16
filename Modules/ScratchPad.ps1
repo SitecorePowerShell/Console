@@ -134,11 +134,7 @@ function Copy-RainbowContent {
                 $itemsToImport.Add($rainbowItem) > $null
             }
             
-            New-UsingBlock (New-Object Sitecore.SecurityModel.SecurityDisabler) {
-            New-UsingBlock (New-Object Sitecore.Data.Events.EventDisabler) {
-            New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
-                $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
-            }}} > $null
+            $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
 
             "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
         }
