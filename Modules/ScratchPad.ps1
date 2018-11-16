@@ -67,8 +67,9 @@ function Copy-RainbowContent {
         }
 
         $script = {
-            
-            $parentItem = Get-Item -Path "master:" -ID $parentId
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $db = Get-Database -Name "master"
+            $parentItem = $db.GetItem([ID]$parentId)
 
             $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
@@ -94,7 +95,8 @@ function Copy-RainbowContent {
                 $builder.Append($childIds) > $null
             }
 
-            $builder.ToString()            
+            $builder.ToString()
+            $sd.Dispose() > $null          
         }
 
         if($IncludeEverything) {
@@ -120,7 +122,10 @@ function Copy-RainbowContent {
         $shouldOverwrite = $Overwrite
 
         $script = {
-            
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $ed = New-Object Sitecore.Data.Events.EventDisabler
+            $buc = New-Object Sitecore.Data.BulkUpdateContext
+
             $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
@@ -137,6 +142,9 @@ function Copy-RainbowContent {
             $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
 
             "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
+            $buc.Dispose() > $null
+            $ed.Dispose() > $null
+            $sd.Dispose() > $null
         }
 
         $scriptString = $script.ToString()
