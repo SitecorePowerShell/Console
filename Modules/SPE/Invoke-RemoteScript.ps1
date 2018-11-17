@@ -242,7 +242,7 @@ function Invoke-RemoteScript {
                 $parsedResponse = [Text.Encoding]::UTF8.GetString($response)
                 $responseMessages = ""
                 if($Raw) {
-                    if($parsedResponse.Contains("<#split#>")) {
+                    if($parsedResponse.Contains("<#messages#>")) {
                         $parsedResponse = $parsedResponse -split "<#messages#>"
                     }
                     if($parsedResponse -is [string[]]) {
