@@ -29,7 +29,7 @@
     # Description = ''
 
     # Minimum version of the Windows PowerShell engine required by this module
-    # PowerShellVersion = '3.0'
+    PowerShellVersion = '3.0'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
@@ -69,8 +69,6 @@
         '.\MediaSyncWatcher.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
-        '.\Receive-MediaItem.ps1',
-        '.\Send-MediaItem.ps1',
         '.\Send-RemoteItem.ps1',
         '.\Stop-ScriptSession.ps1',
         '.\Test-RemoteConnection.ps1',
@@ -85,8 +83,6 @@
         'Invoke-RemoteScript',
         'New-ScriptSession',
         'Receive-RemoteItem',
-        'Receive-MediaItem',
-        'Send-MediaItem',
         'Send-RemoteItem',
         'Stop-ScriptSession',
         'Test-RemoteConnection',
