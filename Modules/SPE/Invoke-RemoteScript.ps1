@@ -1,5 +1,4 @@
-if (-not ([System.Management.Automation.PSTypeName]'WebClientWithResponse').Type)
-{
+if (-not ([System.Management.Automation.PSTypeName]'WebClientWithResponse').Type) {
     Add-Type @"
 using System.Net;
 using System.IO;
@@ -173,18 +172,21 @@ function Invoke-RemoteScript {
             $Credential = $Session.Credential
             $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
+            $PersistentSession = $Session.PersistentSession
+        } else {
+            $SessionId = [guid]::NewGuid()
+            $PersistentSession = $false
         }
         
         $serviceUrl = "/-/script/script/?"
-        $splitOnGuid = [guid]::NewGuid()
-        $serviceUrl += "user=" + $Username + "&password=" + $Password + "&splitOnGuid=" + $splitOnGuid + "&rawOutput=" + $Raw.IsPresent
+        $serviceUrl += "user=" + $Username + "&password=" + $Password + "&sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
         foreach($uri in $ConnectionUri) {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
             $localParams = $parameters | Out-String
             
             #creating a psuedo file split on a special comment rather than trying to pass a potentially enormous set of data to the handler
             #theoretically this is the equivalent of a binary upload to the endpoint and breaking it into 2 files
-            $Body = "$($newScriptBlock)<#$($splitOnGuid)#>$($localParams)"
+            $Body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
             
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
             $webclient = New-Object WebClientWithResponse

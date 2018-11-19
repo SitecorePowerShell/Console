@@ -75,40 +75,31 @@ function Stop-ScriptSession {
         $Credential
     )
 
-    if($PSCmdlet.ParameterSetName -eq "Session") {
-        $Username = $Session.Username
-        $Password = $Session.Password
-        $SessionId = $Session.SessionId
-        $Credential = $Session.Credential
-        $Connection = $Session.Connection
-    } else {
-        $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
-    }
-    
-    foreach($singleConnection in $Connection) {
-        if($singleConnection.Uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
-            $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
-        }
+    $id = $Session.SessionId
 
-        if(!$singleConnection.Proxy) {
-            $proxyProps = @{
-                Uri = $singleConnection.Uri
+    $newSession = $Session.PSObject.Copy()
+    $newSession.PersistentSession = $false
+    Invoke-RemoteScript -Session $newSession -ScriptBlock {
+        $failureCount = 0
+        while($currentSessions = (Get-ScriptSession -Id $using:id -ErrorAction 0)) {
+            $shouldSleep = $false
+            foreach($currentSession in $currentSessions) {
+                if($currentSession.State -ne "Busy") {
+                    $currentSession | Remove-ScriptSession
+                } else {
+                    $shouldSleep = $true
+                }
             }
 
-            if($Credential) {
-                $proxyProps["Credential"] = $Credential
+            if($shouldSleep) {
+                Start-Sleep -Milliseconds 100
+                $failureCount++
             }
 
-            $singleConnection.Proxy = New-WebServiceProxy @proxyProps
-            if($Credential) {
-                $singleConnection.Proxy.Credentials = $Credential
+            if($failureCount -ge 20) {
+                Write-Warning "Unable to remove some script sessions because they were in a Busy state. Session id: $($id)"
+                break
             }
-        }
-        if(-not $singleConnection.Proxy) { return $null }
-
-        $response = $singleConnection.Proxy.DisposeScriptSession($Username, $Password, $SessionId)
-        if($response) {
-            Write-Verbose "Server $($singleConnection.BaseUri.AbsoluteUri) returned a response of '$($response)'."
         }
     }
 }
