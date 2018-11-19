@@ -137,6 +137,7 @@ function Receive-RemoteItem {
             $Username = $Session.Username
             $Password = $Session.Password
             $Credential = $Session.Credential
+            $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
         }
 
@@ -165,6 +166,10 @@ function Receive-RemoteItem {
             
             if($Credential) {
                 $webclient.Credentials = $Credential
+            }
+
+            if($UseDefaultCredentials) {
+                $webclient.UseDefaultCredentials = $UseDefaultCredentials
             }
 
             [System.Net.HttpWebResponse]$script:errorResponse = $null

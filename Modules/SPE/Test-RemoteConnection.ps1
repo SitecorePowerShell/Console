@@ -47,6 +47,11 @@
             if($Session.Credential) {
                 $webRequest.Credential = $Session.Credential
             }
+
+            if($Session.UseDefaultCredentials) {
+                $webRequest.UseDefaultCredentials = $Session.UseDefaultCredentials
+            }
+
             $webRequest.Timeout = 1000 * $Timeout
 
             try {

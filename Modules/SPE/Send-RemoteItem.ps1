@@ -143,6 +143,7 @@ function Send-RemoteItem {
             $Username = $Session.Username
             $Password = $Session.Password
             $Credential = $Session.Credential
+            $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
         }
 
@@ -174,6 +175,11 @@ function Send-RemoteItem {
             if($Credential) {
                 $webclient.Credentials = $Credential
             }
+
+            if($UseDefaultCredentials) {
+                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+            }
+
             Write-Host $serviceUrl
             [byte[]]$response = & {
                 try {
@@ -219,8 +225,7 @@ function Send-RemoteItem {
             if($errorResponse){
                 Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
-            }
-            
+            }            
         }
     }
 }

@@ -171,6 +171,7 @@ function Invoke-RemoteScript {
             $Password = $Session.Password
             $SessionId = $Session.SessionId
             $Credential = $Session.Credential
+            $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
         }
         
@@ -191,6 +192,11 @@ function Invoke-RemoteScript {
             if ($Credential) {
                 $webclient.Credentials = $Credential
             }
+
+            if($UseDefaultCredentials) {
+                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+            }
+
             $response = & {
                 try {
                     Write-Verbose -Message "Transferring script to server"
