@@ -1,5 +1,5 @@
-﻿#Requires -Modules SPE
-
+#Requires -Modules SPE
+ 
 function Copy-RainbowContent {
     [CmdletBinding(DefaultParameterSetName="Partial")]
     param(
@@ -29,7 +29,40 @@ function Copy-RainbowContent {
     
     $threads = $env:NUMBER_OF_PROCESSORS
 
-    Write-Host "Transfering items from $($Source) to $($Destination)" -ForegroundColor Yellow
+    $dependencyScript = {
+        $dependencies = Get-ChildItem -Path "$($AppPath)\bin" | 
+            Where-Object { $_.Name -like "Rainbow.*" -or $_.Name -like "Unicorn.*" } |
+            Select-Object -ExpandProperty Name
+        
+        $result = $true
+        if($dependencies -contains "Unicorn.dll" -and $dependencies -contains "Rainbow.dll") {
+            $result = $result -band $true
+        } else {
+            $result = $result -band $false
+        }
+
+        if($result) {
+            $result = $result -band (Get-Command -Noun "RainbowYaml") -gt 0
+        }
+
+        $result
+    }
+
+    Write-Host "Verifying both systems have Rainbow and Unicorn"
+    $isReady = Invoke-RemoteScript -ScriptBlock $dependencyScript -Session $SourceSession
+
+    if($isReady) {
+        $isReady = Invoke-RemoteScript -ScriptBlock $dependencyScript -Session $DestinationSession
+    }
+
+    if(!$isReady) {
+        Write-Host "- Missing required installation of Rainbow and Unicorn"
+        exit
+    } else {
+        Write-Host "- Verification complete"
+    }
+
+    Write-Host "Transfering items from $($SourceSession.Connection[0].BaseUri) to $($DestinationSession.Connection[0].BaseUri)" -ForegroundColor Yellow
 
     $sourceScript = {
         param(
@@ -183,16 +216,18 @@ function Copy-RainbowContent {
 
     $compareScript = { 
         $rootItem = Get-Item -Path "master:" -ID $using:rootId
-        $items = [System.Collections.ArrayList]@()
-        $items.Add($rootItem) > $null
-        if($using:recurseChildren) {
-            $children = $rootItem.Axes.GetDescendants()
-            if($children.Count -gt 0) {
-                $items.AddRange($children) > $null
+        if($rootItem) {
+            $items = [System.Collections.ArrayList]@()
+            $items.Add($rootItem) > $null
+            if($using:recurseChildren) {
+                $children = $rootItem.Axes.GetDescendants()
+                if($children.Count -gt 0) {
+                    $items.AddRange($children) > $null
+                }
             }
+            $itemIds = ($items | Select-Object -ExpandProperty ID) -join "|"
+            $itemIds
         }
-        $itemIds = ($items | Select-Object -ExpandProperty ID) -join "|"
-        $itemIds
     }
 
     if($RemoveNotInSource.IsPresent) {
@@ -219,6 +254,8 @@ function Copy-RainbowContent {
                 }
             }
         }
+
+        Write-Host "- Verification complete"
     }
 
     if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
@@ -261,6 +298,7 @@ function Copy-RainbowContent {
         $queue.Enqueue($rootId)
     }
 
+    Write-Host "- Spinning up jobs to transfer content"
     $pool = [RunspaceFactory]::CreateRunspacePool(1, $threads)
     $pool.Open()
     $runspaces = [System.Collections.ArrayList]@()
