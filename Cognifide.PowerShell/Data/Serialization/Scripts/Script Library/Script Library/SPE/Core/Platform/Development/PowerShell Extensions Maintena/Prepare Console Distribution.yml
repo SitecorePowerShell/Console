@@ -26,7 +26,7 @@ SharedFields:
     "@;
     }
     
-    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)"
+    $Version = "$((Get-Host).Version.Major).$((Get-Host).Version.Minor)-beta1"
     $currentYear = [datetime]::Today.ToString("yyyy")
     # Build Standard Package
     
@@ -201,17 +201,20 @@ SharedFields:
     
     $minimalPackageName = "$($SitecorePackageFolder)\SPE Minimal-$($Version).zip"
     
-    Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled" | Out-Null
-    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update | Out-Null
-    Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath $minimalPackageName -Include "web.config", "RemoteAutomation.asmx", "RemoteScriptCall.ashx" -Update | Out-Null
+    Compress-Archive -Path "$($AppPath)App_Config" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.config", "Cognifide.PowerShell.Minimal.config.disabled" > $null
+    Compress-Archive -Path "$($AppPath)bin" -DestinationPath $minimalPackageName -Include "Cognifide.PowerShell.dll", "Cognifide.PowerShell.VersionSpecific.dll" -Update > $null
+    Compress-Archive -Path "$($AppPath)sitecore modules" -DestinationPath $minimalPackageName -Include "web.config", "RemoteAutomation.asmx", "RemoteScriptCall.ashx" -Update > $null
     
     # Build Remoting Package
     
-    $remotingSourcePath = (Get-Item -Path $AppPath).Parent.FullName
-    if(Test-Path -Path $remotingSourcePath) {
+    $config = [Sitecore.Configuration.Factory]::GetConfiguration()
+    $speSourceFolder = $config.sitecore."sc.variable" | Where-Object { $_.Name -eq "speSourceFolder" } | Select-Object -First 1 -Expand value
+    $speSourceFolderItem = Get-Item -Path $speSourceFolder
+    $modulePath = "$($speSourceFolderItem.Parent.FullName)\Modules\SPE"
+    if(Test-Path -Path $modulePath) {
         $remotingPackageName = "$($SitecorePackageFolder)\SPE Remoting-$($Version).zip"
         
-        Compress-Archive -Path "$($remotingSourcePath)\Modules\SPE\" -DestinationPath $remotingPackageName | Out-Null
+        Compress-Archive -Path $modulePath -DestinationPath $remotingPackageName > $null
     }
     
     # Build Standard Package
