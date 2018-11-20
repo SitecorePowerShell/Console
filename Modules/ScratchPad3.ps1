@@ -1,10 +1,6 @@
 ﻿Import-Module -Name SPE -Force
 
-if(!$protocolHost){
-    $protocolHost = "https://spe.dev.local"
-}
-
-$protocolHost = "http://sc827"
+$protocolHost = "https://spe.dev.local"
 
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
 $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri $protocolHost
@@ -22,6 +18,7 @@ $scriptblock = {
         #$itemYaml = Get-ChildItem -Path "master:\content\home" | ConvertTo-RainbowYaml
         #$rainbowItem = [regex]::Split($itemYaml, "(?=---)") | 
         #    Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        Get-Location
     }
 }
 
@@ -44,7 +41,7 @@ while ($runspaces.Count -gt 0) {
     $currentRunspaces | ForEach-Object { 
         $currentRunspace = $_
         if($currentRunspace.Status.IsCompleted) {
-            if($count -lt 100) {
+            if($count -lt 10) {
                 $runspace = New-Runspace
                 $count++
                 $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke() }) > $null

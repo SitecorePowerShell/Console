@@ -7,14 +7,11 @@ function Copy-RainbowContent {
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Source,
+        [pscustomobject]$SourceSession,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [string]$Username,
-        [string]$Password,
+        [pscustomobject]$DestinationSession,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -25,16 +22,13 @@ function Copy-RainbowContent {
 
         [switch]$Overwrite,
 
-        [Parameter(ParameterSetName='Everything')]
-        [switch]$Everything
+        [Parameter(ParameterSetName='SingleRequest')]
+        [switch]$SingleRequest
     )
     
     $threads = $env:NUMBER_OF_PROCESSORS
 
     Write-Host "Transfering items from $($Source) to $($Destination)" -ForegroundColor Yellow
-
-    $localSession = New-ScriptSession -user $Username -pass $Password -conn $Source
-    $remoteSession = New-ScriptSession -user $Username -pass $Password -conn $Destination
 
     $sourceScript = {
         param(
@@ -43,7 +37,7 @@ function Copy-RainbowContent {
             [bool]$IncludeParent = $true,
             [bool]$IncludeChildren = $false,
             [bool]$RecurseChildren = $false,
-            [bool]$IncludeEverything = $false
+            [bool]$SingleRequest = $false
         )
 
         $parentId = $RootId
@@ -51,7 +45,7 @@ function Copy-RainbowContent {
         $serializeChildren = $IncludeChildren
         $recurseChildren = $RecurseChildren
 
-        $scriptEverything = {
+        $scriptSingleRequest = {
             $parentItem = Get-Item -Path "master:" -ID $using:parentId
             $childItems = $parentItem.Axes.GetDescendants()
 
@@ -67,8 +61,9 @@ function Copy-RainbowContent {
         }
 
         $script = {
-            
-            $parentItem = Get-Item -Path "master:" -ID $parentId
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $db = Get-Database -Name "master"
+            $parentItem = $db.GetItem([ID]$parentId)
 
             $parentYaml = $parentItem | ConvertTo-RainbowYaml
 
@@ -94,11 +89,12 @@ function Copy-RainbowContent {
                 $builder.Append($childIds) > $null
             }
 
-            $builder.ToString()            
+            $builder.ToString()
+            $sd.Dispose() > $null          
         }
 
-        if($IncludeEverything) {
-            Invoke-RemoteScript -ScriptBlock $scriptEverything  -Session $Session -Raw
+        if($SingleRequest) {
+            Invoke-RemoteScript -ScriptBlock $scriptSingleRequest  -Session $Session -Raw
         } else {
             $scriptString = $script.ToString()
             $trueFalseHash = @{$true="`$true";$false="`$false"}
@@ -120,7 +116,10 @@ function Copy-RainbowContent {
         $shouldOverwrite = $Overwrite
 
         $script = {
-            
+            $sd = New-Object Sitecore.SecurityModel.SecurityDisabler
+            $ed = New-Object Sitecore.Data.Events.EventDisabler
+            $buc = New-Object Sitecore.Data.BulkUpdateContext
+
             $rainbowItems = [regex]::Split($rainbowYaml, "(?=---)") | 
                 Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
         
@@ -134,13 +133,12 @@ function Copy-RainbowContent {
                 $itemsToImport.Add($rainbowItem) > $null
             }
             
-            New-UsingBlock (New-Object Sitecore.SecurityModel.SecurityDisabler) {
-            New-UsingBlock (New-Object Sitecore.Data.Events.EventDisabler) {
-            New-UsingBlock (New-Object Sitecore.Data.BulkUpdateContext) {
-                $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
-            }}} > $null
+            $itemsToImport | ForEach-Object { Import-RainbowItem -Item $_ } > $null
 
             "{ TotalItems: $($totalItems), ImportedItems: $($itemsToImport.Count) }"
+            $buc.Dispose() > $null
+            $ed.Dispose() > $null
+            $sd.Dispose() > $null
         }
 
         $scriptString = $script.ToString()
@@ -181,9 +179,8 @@ function Copy-RainbowContent {
     $serializeParent = $false
     $serializeChildren = $Recurse.IsPresent
     $recurseChildren = $Recurse.IsPresent
-    $includeEverything = $Everything.IsPresent
 
-    if(!$Everything.IsPresent -and !$Overwrite.IsPresent) {
+    if(!$SingleRequest.IsPresent -and !$Overwrite.IsPresent) {
         Write-Host "- Preparing to compare source and destination instances"
         $compareScript = { 
             $rootItem = Get-Item -Path "master:" -ID $using:rootId
@@ -200,10 +197,10 @@ function Copy-RainbowContent {
         }
 
         Write-Host "- Getting list of IDs from source"
-        $sourceItemIds = Invoke-RemoteScript -Session $localSession -ScriptBlock $compareScript -Raw
+        $sourceItemIds = Invoke-RemoteScript -Session $SourceSession -ScriptBlock $compareScript -Raw
 
         Write-Host "- Getting list of IDs from destination"
-        $destinationItemIds = Invoke-RemoteScript -Session $remoteSession -ScriptBlock $compareScript -Raw
+        $destinationItemIds = Invoke-RemoteScript -Session $DestinationSession -ScriptBlock $compareScript -Raw
 
         $queueIds = @()
         if($sourceItemIds) {
@@ -252,8 +249,8 @@ function Copy-RainbowContent {
                 $runspaceProps = @{
                     ScriptBlock = $sourceScript
                     Pool = $pool
-                    Session = $localSession
-                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$includeEverything)
+                    Session = $SourceSession
+                    Arguments = @($itemId,$true,$serializeChildren,$recurseChildren,$SingleRequest)
                 }
                 $runspace = New-PowerShellRunspace @runspaceProps
                 $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke(); Id = $itemId; Time = [datetime]::Now; Operation = "Pull" }) > $null
@@ -272,7 +269,7 @@ function Copy-RainbowContent {
                         $runspaceProps = @{
                             ScriptBlock = $sourceScript
                             Pool = $pool
-                            Session = $localSession
+                            Session = $SourceSession
                             Arguments = @($itemId,$serializeParent,$serializeChildren,$recurseChildren)
                         }
                         $runspace = New-PowerShellRunspace @runspaceProps                   
@@ -331,7 +328,7 @@ function Copy-RainbowContent {
                             $runspaceProps = @{
                                 ScriptBlock = $destinationScript
                                 Pool = $pool
-                                Session = $remoteSession
+                                Session = $DestinationSession
                                 Arguments = @($yaml,$Overwrite.IsPresent)
                             }
                             $runspace = New-PowerShellRunspace @runspaceProps  
@@ -379,11 +376,12 @@ function Copy-RainbowContent {
 }
 
 $copyProps = @{
-    Source = "https://spe.dev.local"
-    Destination = "http://sc827"
-    Username = "admin"
-    Password = "b"    
+    SourceSession = $sourceSession
+    DestinationSession = $destinationSession 
 }
+
+$sourceSession = New-ScriptSession -user "admin" -pass "b" -conn "https://sc827.dev.local"
+$destinationSession = New-ScriptSession -user "admin" -pass "b" -conn "https://sc826.dev.local"
 
 # Content
 $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
@@ -398,13 +396,13 @@ $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
 #Copy-RainbowContent @copyProps -RootId $rootId -Recurse
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
+Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Recurse
 
 # Migrate all items skipping if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Everything
+#Copy-RainbowContent @copyProps -RootId $rootId -SingleRequest
 
 # Migrate all items overwriting if they exist
-#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -Everything
+#Copy-RainbowContent @copyProps -RootId $rootId -Overwrite -SingleRequest
 
 # Images
 $rootId = "{15451229-7534-44EF-815D-D93D6170BFCB}"
