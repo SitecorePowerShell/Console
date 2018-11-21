@@ -157,12 +157,14 @@ namespace Cognifide.PowerShell.Console.Services
                     if (!_apiScripts.ContainsKey(dbName))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
+                        HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
                         return;
                     }
                     var dbScripts = _apiScripts[dbName];
                     if (!dbScripts.ContainsKey(itemParam))
                     {
                         HttpContext.Current.Response.StatusCode = 404;
+                        HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
                         return;
                     }
                     scriptItem = scriptDb.GetItem(dbScripts[itemParam].Id);
@@ -189,65 +191,40 @@ namespace Cognifide.PowerShell.Console.Services
             switch (apiVersion)
             {
                 case "1":
-                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv1))
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
-                    }
+                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv1);
                     break;
                 case "2":
-                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv2))
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
-                    }
+                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRestfulv2);
                     break;
                 case "file":
-                    if ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileUpload) && httpMethod.Is("POST")) ||
-                        (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileDownload) && httpMethod.Is("GET")))
-                    {
-                        break;
-                    }
-                    HttpContext.Current.Response.StatusCode = 403;
-                    HttpContext.Current.Response.StatusDescription = disabledMessage;
-                    isEnabled = false;
+                    isEnabled = (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileUpload) &&
+                                 httpMethod.Is("POST")) ||
+                                (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceFileDownload) &&
+                                 httpMethod.Is("GET"));
                     break;
                 case "media":
-                    if ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaUpload) && httpMethod.Is("POST")) ||
-                        (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaDownload) && httpMethod.Is("GET")))
-                    {
-                        break;
-                    }
-                    HttpContext.Current.Response.StatusCode = 403;
-                    HttpContext.Current.Response.StatusDescription = disabledMessage;
-                    isEnabled = false;
+                    isEnabled = ((WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaUpload) &&
+                                  httpMethod.Is("POST")) ||
+                                 (WebServiceSettings.IsEnabled(WebServiceSettings.ServiceMediaDownload) &&
+                                  httpMethod.Is("GET")));
                     break;
                 case "handle":
-                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceHandleDownload))
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
-                    }
+                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceHandleDownload);
                     break;
                 case "script":
-                    if (!WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting))
-                    {
-                        HttpContext.Current.Response.StatusCode = 403;
-                        HttpContext.Current.Response.StatusDescription = disabledMessage;
-                        isEnabled = false;
-                    }
+                    isEnabled = WebServiceSettings.IsEnabled(WebServiceSettings.ServiceRemoting);
                     break;
                 default:
-                    HttpContext.Current.Response.StatusCode = 403;
-                    HttpContext.Current.Response.StatusDescription = disabledMessage;
                     isEnabled = false;
                     break;
             }
 
-            return isEnabled;
+            if (isEnabled) return true;
+
+            HttpContext.Current.Response.StatusCode = 403;
+            HttpContext.Current.Response.StatusDescription = disabledMessage;
+
+            return false;
         }
 
         private static bool CheckServiceAuthentication(string apiVersion, bool isAuthenticated)
@@ -362,6 +339,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (string.IsNullOrEmpty(file))
             {
                 HttpContext.Current.Response.StatusCode = 404;
+                HttpContext.Current.Response.StatusDescription = "The specified path is invalid.";
             }
             else
             {
@@ -369,6 +347,7 @@ namespace Cognifide.PowerShell.Console.Services
                 if (!File.Exists(file))
                 {
                     HttpContext.Current.Response.StatusCode = 404;
+                    HttpContext.Current.Response.StatusDescription = "The specified path is invalid.";
                     return;
                 }
 
@@ -502,23 +481,16 @@ namespace Cognifide.PowerShell.Console.Services
             var mediaItem = (MediaItem)db.GetItem(itemParam);
             if (mediaItem == null)
             {
-                if (Regex.IsMatch(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
-                {
-                    var id = Regex.Match(itemParam, guidPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase).Value;
-                    mediaItem = db.GetItem(id);
-                }
-
-                if (mediaItem == null)
-                {
-                    HttpContext.Current.Response.StatusCode = 404;
-                    return;
-                }
+                HttpContext.Current.Response.StatusCode = 404;
+                HttpContext.Current.Response.StatusDescription = "The specified media is invalid.";
+                return;
             }
 
             var mediaStream = mediaItem.GetMediaStream();
             if (mediaStream == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
+                HttpContext.Current.Response.StatusDescription = "The specified media is invalid.";
                 return;
             }
 
@@ -556,6 +528,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (!scriptItem.IsPowerShellScript() || scriptItem?.Fields[Templates.Script.Fields.ScriptBody] == null)
             {
                 HttpContext.Current.Response.StatusCode = 404;
+                HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
                 return;
             }
 
@@ -583,6 +556,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (string.IsNullOrEmpty(script))
             {
                 HttpContext.Current.Response.StatusCode = 404;
+                HttpContext.Current.Response.StatusDescription = "The specified script is invalid.";
                 return;
             }
 

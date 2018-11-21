@@ -228,21 +228,21 @@ function Invoke-RemoteScript {
                     }
                 }
                 catch [System.Net.WebException] {
-                    $script:ex = $_.Exception
-                    [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
-                    Write-Verbose -Message "Response exception message: $($ex.Message)"
-                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                    if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                    }
-                    elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                        Write-Verbose -Message "Check that the service files exist and are properly configured."
+                    $webex = $_.Exception
+                    if($webex.InnerException) {
+                        $script:ex = $webex.InnerException
+                        [System.Net.HttpWebResponse]$script:errorResponse = $webex.InnerException.Response
+                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                        } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                            Write-Verbose -Message "Check that the service files are properly configured."
+                        }
                     }
                 }
             }
             
             if ($errorResponse) {
-                Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
             
