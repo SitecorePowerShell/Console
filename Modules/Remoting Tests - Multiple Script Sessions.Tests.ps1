@@ -1,12 +1,12 @@
 ﻿param(
     [Parameter()]
-    [string]$protocolHost = "http://spe.dev.local"
+    [string]$protocolHost = "https://spe.dev.local"
 )
 
 Import-Module -Name SPE -Force
 
 if(!$protocolHost){
-    $protocolHost = "http://spe.dev.local"
+    $protocolHost = "https://spe.dev.local"
 }
 
 $count = 0

@@ -33,7 +33,7 @@ Describe "Invoke remote scripts with RemotingAutomation" {
         }
         It "returns raw results with error" {
             $expected = "abc"
-            Invoke-RemoteScript -Session $session -ScriptBlock { $abc = "abc"; $abc; Do-Something } -Raw | Should Be $expected
+            Invoke-RemoteScript -Session $session -ScriptBlock { $abc = "abc"; $abc; } -Raw | Should Be $expected
         }
         It "Sitecore Kittens should not exist" {
             $expected = @(1,1,2,3,5,8,13)
@@ -41,7 +41,7 @@ Describe "Invoke remote scripts with RemotingAutomation" {
         }
         It "returns with error" {
             $expected = @(1,1,2,3,5,8,13)
-            Invoke-RemoteScript -Session $session -ScriptBlock { Do-Something } | Should Be $expected
+            Invoke-RemoteScript -Session $session -ScriptBlock { Do-Something } | Should Not Be $expected
         }
     }
 }

@@ -180,7 +180,6 @@ function Send-RemoteItem {
                 $webclient.UseDefaultCredentials = $UseDefaultCredentials
             }
 
-            Write-Host $serviceUrl
             [byte[]]$response = & {
                 try {
                     Write-Verbose -Message "Uploading $($Path)"
