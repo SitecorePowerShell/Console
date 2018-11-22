@@ -38,6 +38,105 @@ public class WebClientWithResponse : WebClient
 }
 
 function Invoke-RemoteScript {
+    <#
+        .SYNOPSIS
+            Run scripts in Sitecore PowerShell Extensions via web service calls.
+
+        .DESCRIPTION
+            When using commands such as Write-Verbose, be sure the preference settings are configured properly.
+
+            Change each of these to "Continue" in order to see the message appear in the console.
+
+            Example values:
+
+            ConfirmPreference              High
+            DebugPreference                SilentlyContinue
+            ErrorActionPreference          Continue
+            InformationPreference          SilentlyContinue
+            ProgressPreference             Continue
+            VerbosePreference              SilentlyContinue
+            WarningPreference              Continue
+            WhatIfPreference               False
+    
+        .EXAMPLE
+            The following example remotely executes a script in Sitecore using a reusable session.
+    
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -id admin }
+            Stop-ScriptSession -Session $session
+    
+            Name                     Domain       IsAdministrator IsAuthenticated
+            ----                     ------       --------------- ---------------
+            sitecore\admin           sitecore     True            False
+    
+        .EXAMPLE
+            The following remotely executes a script in Sitecore with the $Using variable.
+
+            $date = [datetime]::Now
+            $script = {
+                $Using:date
+            }
+    
+            Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script
+            Stop-ScriptSession -Session $session
+    
+            6/25/2015 11:09:17 AM
+                    
+        .EXAMPLE
+            The following example runs a script as a ScriptSession job on the server (using Start-ScriptSession internally).
+            The arguments are passed to the server with the help of the $Using convention.
+            The results are finally returned and the job is removed.
+            
+            $session = New-ScriptSession -Username admin -Password b -ConnectionUri http://remotesitecore
+            $identity = "admin"
+            $date = [datetime]::Now
+            $jobId = Invoke-RemoteScript -Session $session -ScriptBlock {
+                [Sitecore.Security.Accounts.User]$user = Get-User -Identity $using:identity
+                $user.Name
+                $using:date
+            } -AsJob
+            Start-Sleep -Seconds 2
+
+            Invoke-RemoteScript -Session $session -ScriptBlock {
+                $ss = Get-ScriptSession -Id $using:JobId
+                $ss | Receive-ScriptSession
+
+                if($ss.LastErrors) {
+                    $ss.LastErrors
+                }
+            }
+            Stop-ScriptSession -Session $session
+        
+        .EXAMPLE
+            The following remotely executes a script in Sitecore with arguments.
+            
+            $script = {
+                [Sitecore.Security.Accounts.User]$user = Get-User -Identity admin
+                $user
+                $params.date.ToString()
+            }
+    
+            $args = @{
+                "date" = [datetime]::Now
+            }
+    
+            Invoke-RemoteScript -ConnectionUri "http://remotesitecore" -Username "admin" -Password "b" -ScriptBlock $script -ArgumentList $args
+            Stop-ScriptSession -Session $session
+    
+            Name                     Domain       IsAdministrator IsAuthenticated
+            ----                     ------       --------------- ---------------
+            sitecore\admin           sitecore     True            False          
+            6/25/2015 11:09:17 AM
+    
+    	.LINK
+    		Wait-RemoteScriptSession
+
+    	.LINK
+    		New-ScriptSession
+
+    	.LINK
+    	    Stop-ScriptSession
+    #>
    [CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName="InProcess")]
     param(
         
