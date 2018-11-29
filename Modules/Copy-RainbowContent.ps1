@@ -30,8 +30,7 @@ function Copy-RainbowContent {
     $threads = $env:NUMBER_OF_PROCESSORS
 
     $dependencyScript = {
-        $dependencies = Get-ChildItem -Path "$($AppPath)\bin" | 
-            Where-Object { $_.Name -like "Rainbow.*" -or $_.Name -like "Unicorn.*" } |
+        $dependencies = Get-ChildItem -Path "$($AppPath)\bin" -Include "Unicorn.*","Rainbow.*" -Recurse | 
             Select-Object -ExpandProperty Name
         
         $result = $true
@@ -42,7 +41,7 @@ function Copy-RainbowContent {
         }
 
         if($result) {
-            $result = $result -band (Get-Command -Noun "RainbowYaml") -gt 0
+            $result = $result -band (@(Get-Command -Noun "RainbowYaml").Count -gt 0)
         }
 
         $result
@@ -146,7 +145,7 @@ function Copy-RainbowContent {
             [bool]$Overwrite
         )
 
-        $rainbowYaml = $Yaml
+        $rainbowYaml = $Yaml.Replace("'","''")
         $shouldOverwrite = $Overwrite
 
         $script = {
