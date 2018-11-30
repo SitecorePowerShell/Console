@@ -331,10 +331,14 @@ function Invoke-RemoteScript {
                     if($webex.InnerException) {
                         $script:ex = $webex.InnerException
                         [System.Net.HttpWebResponse]$script:errorResponse = $webex.InnerException.Response
-                        if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                            Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                        } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
-                            Write-Verbose -Message "Check that the service files are properly configured."
+                        if($errorResponse) {
+                            if ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                                Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                            } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound) {
+                                Write-Verbose -Message "Check that the service files are properly configured."
+                            }
+                        } else {
+                            Write-Verbose -Message $webex.InnerException.Message
                         }
                     }
                 }

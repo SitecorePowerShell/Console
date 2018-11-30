@@ -15,10 +15,10 @@ $scriptblock = {
         $Session
     )
     Invoke-RemoteScript -Session $session -ScriptBlock { 
-        #$itemYaml = Get-ChildItem -Path "master:\content\home" | ConvertTo-RainbowYaml
-        #$rainbowItem = [regex]::Split($itemYaml, "(?=---)") | 
-        #    Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
-        Get-Location
+        $itemYaml = Get-ChildItem -Path "master:\content\home" | ConvertTo-RainbowYaml
+        $rainbowItem = [regex]::Split($itemYaml, "(?=---)") | 
+            Where-Object { ![string]::IsNullOrEmpty($_) } | ConvertFrom-RainbowYaml
+        #Get-Location
     }
 }
 

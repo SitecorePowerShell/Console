@@ -72,7 +72,10 @@ function Stop-ScriptSession {
 
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
-        $Credential
+        $Credential,
+
+        [Parameter(HelpMessage="Timeout in seconds")]
+        $Timeout = 30
     )
 
     $id = $Session.SessionId
@@ -80,8 +83,11 @@ function Stop-ScriptSession {
     $newSession = $Session.PSObject.Copy()
     $newSession.PersistentSession = $false
     Invoke-RemoteScript -Session $newSession -ScriptBlock {
-        $failureCount = 0
-        while($currentSessions = (Get-ScriptSession -Id $using:id -ErrorAction 0)) {
+        $startTime = [datetime]::Now
+        $sleepInMs = 20
+        $timeoutInSec = [math]::Max(0, ($using:Timeout))
+        while($currentSessions = (Get-ScriptSession -Id $using:id -ErrorAction 0 | Where-Object { $_.ApplianceType -eq "RemoteAutomation" -and $_.Id -ne $scriptSession.Id })) {
+            if(!$currentSessions) { break }
             $shouldSleep = $false
             foreach($currentSession in $currentSessions) {
                 if($currentSession.State -ne "Busy") {
@@ -90,16 +96,14 @@ function Stop-ScriptSession {
                     $shouldSleep = $true
                 }
             }
-
+            
             if($shouldSleep) {
-                Start-Sleep -Milliseconds 100
-                $failureCount++
+                Start-Sleep -Milliseconds 10
             }
-
-            if($failureCount -ge 20) {
-                Write-Warning "Unable to remove some script sessions because they were in a Busy state. Session id: $($id)"
+            if($timeoutInSec -lt ([datetime]::Now - $startTime).TotalSeconds) {
+                Write-Warning "Unable to remove some script sessions because they were in a Busy state and it exceed the specified timeout. Session id: $($using:id)"
                 break
             }
         }
-    }
+    } -Verbose:([bool]$PSBoundParameters['Verbose']) -Debug:([bool]$PSBoundParameters['Debug'])
 }

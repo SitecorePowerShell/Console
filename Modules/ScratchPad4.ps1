@@ -11,7 +11,7 @@ for($i = 0; $i -lt 10; $i++) {
     }
 }
 
-Stop-ScriptSession -Session $session
-
 $watch.Stop()
 $watch.ElapsedMilliseconds / 1000
+
+Stop-ScriptSession -Session $session -Timeout 1 -Verbose
