@@ -20,7 +20,7 @@ namespace Cognifide.PowerShell.Core.Utility
 
         public static string GetDrive(string path, string currentDb)
         {
-            if (String.IsNullOrEmpty(path) || !path.Contains(":")) return currentDb;
+            if (string.IsNullOrEmpty(path) || !path.Contains(":")) return currentDb;
 
             //path with drive
             var drivepath = path.Split(':');
