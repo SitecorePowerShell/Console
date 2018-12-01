@@ -505,7 +505,7 @@ namespace Cognifide.PowerShell.Console.Services
         {
             if (request?.InputStream == null) return;
 
-            string script;
+            string script = null;
             string cliXmlArgs = null;
             using (var ms = new MemoryStream())
             {
@@ -513,10 +513,13 @@ namespace Cognifide.PowerShell.Console.Services
                 var bytes = ms.ToArray();
                 var requestBody = Encoding.UTF8.GetString(bytes);
                 var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
-                script = splitBody[0];
-                if (splitBody.Length > 1)
+                if (splitBody.Length > 0)
                 {
-                    cliXmlArgs = splitBody[1];
+                    script = splitBody[0];
+                    if (splitBody.Length > 1)
+                    {
+                        cliXmlArgs = splitBody[1];
+                    }
                 }
             }
 
