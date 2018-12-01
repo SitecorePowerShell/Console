@@ -3,7 +3,7 @@ Clear-Host
 Import-Module -Name SPE -Force
 
 $scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-& $scriptDir\Copy-RainbowContent.ps1
+. $scriptDir\Copy-RainbowContent.ps1
 
 $sourceSession = New-ScriptSession -user "admin" -pass "b" -conn "https://sc827.dev.local"
 $destinationSession = New-ScriptSession -user "admin" -pass "b" -conn "https://sc826.dev.local"

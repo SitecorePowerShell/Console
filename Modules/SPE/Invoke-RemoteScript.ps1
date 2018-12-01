@@ -1,42 +1,3 @@
-if (-not ([System.Management.Automation.PSTypeName]'WebClientWithResponse').Type) {
-    Add-Type @"
-using System.Net;
-using System.IO;
-
-public class WebClientWithResponse : WebClient
-{
-    // we will store the response here. We could store it elsewhere if needed.
-    // This presumes the response is not a huge array...
-    public byte[] Response { get; private set; }
-
-    protected override WebResponse GetWebResponse(WebRequest request)
-    {
-        var response = base.GetWebResponse(request);
-        var httpResponse = response as HttpWebResponse;
-        if (httpResponse != null)
-        {
-            using (var stream = httpResponse.GetResponseStream())
-            {
-                using (var ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    Response = ms.ToArray();
-                }
-            }
-        }
-        return response;
-    }
-    
-    protected override WebRequest GetWebRequest(System.Uri address)
-    {
-        HttpWebRequest request = base.GetWebRequest(address) as HttpWebRequest;
-        request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-        return request;
-    }
-}
-"@
-}
-
 function Invoke-RemoteScript {
     <#
         .SYNOPSIS
@@ -288,43 +249,29 @@ function Invoke-RemoteScript {
             $Body = "$($newScriptBlock)<#$($SessionId)#>$($localParams)"
             
             Write-Verbose -Message "Preparing to invoke the script against the service at url $($url)"
-            $webclient = New-Object WebClientWithResponse
+            Add-Type -AssemblyName System.Net.Http
+            $handler = New-Object System.Net.Http.HttpClientHandler
+            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
             
             if ($Credential) {
-                $webclient.Credentials = $Credential
+                $handler.Credentials = $Credential
             }
 
             if($UseDefaultCredentials) {
-                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+                $handler.UseDefaultCredentials = $UseDefaultCredentials
             }
 
             $response = & {
                 try {
                     Write-Verbose -Message "Transferring script to server"
-                    [System.Net.HttpWebResponse]$script:errorResponse = $null;
-                    New-UsingBlock($memorystream = [IO.MemoryStream]::new([Text.Encoding]::UTF8.GetBytes($body))) {
-                        $bytes = New-Object byte[] 1024
-                        $totalBytesToRead = $memorystream.Length
-                        $bytesRead = 0
-                        $bytesToRead = $bytes.Length
-                        if ($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
-                            $bytesToRead = $totalBytesToRead - $bytesRead
-                        }
-                        $bytes = New-Object byte[] $bytesToRead
-
-                        New-UsingBlock($webStream = $webclient.OpenWrite($url)) {
-                            while (($bytesToRead = $memorystream.Read($bytes, 0, $bytes.Length)) -gt 0) {
-                                $webStream.Write($bytes, 0, $bytes.Length)
-                                $bytesRead += $bytes.Length
-                                if ($totalBytesToRead - $bytesRead -lt $bytes.Length) {
-                                    $bytesToRead = $totalBytesToRead - $bytesRead
-                                }
-                                $bytes = New-Object byte[] $bytesToRead
-                            }                                             
-                        }
-                        $webclient.Response
-                        Write-Verbose -Message "Script transfer complete."
-                    }
+                    [System.Net.HttpWebResponse]$script:errorResponse = $null                   
+                    $contentBytes = [Text.Encoding]::UTF8.GetBytes($body)
+                   
+                    $byteContent = New-Object System.Net.Http.ByteArrayContent(@(,$contentBytes))
+                    $taskResult = $client.PostAsync($url, $byteContent).Result
+                    $taskResult.Content.ReadAsByteArrayAsync().Result
+                    Write-Verbose -Message "Script transfer complete."
                 }
                 catch [System.Net.WebException] {
                     $webex = $_.Exception
