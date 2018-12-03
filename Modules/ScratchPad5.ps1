@@ -56,7 +56,6 @@ Function New-RunspacedDelegate {
     [PowerShell.RunspacedDelegateFactory]::NewRunspacedDelegate($Delegate, $Runspace);
 }
 
-$postUrl = "https://spe.dev.local/-/script/script/?user=sitecore%5Cadmin&password=b&sessionId=2c7d727c-a6ec-4849-bfff-514eaf47026d&rawOutput=False&persistentSession=False"
 $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
 
@@ -101,35 +100,61 @@ function Invoke-RemoteScriptAsync {
             param($t) 
         
             #Write-Host "StatusCode is $($t.Result.StatusCode)"
-            $result = $t.Result.Content.ReadAsStringAsync().Result | ConvertFrom-CliXml
-            $result
+            $response = $t.Result.Content.ReadAsStringAsync().Result
+            $response
+
         })
-        #$task = $task.ContinueWith($continuation)
         $task = Invoke-GenericMethod -InputObject $task -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation
         $task
     }
 }
 
-$tasks = [System.Threading.Tasks.Task[]]@()
-$script = { Get-Location }
-foreach($i in 1..20) {
-    $task = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script
-    $tasks += $task
+#$tasks = [System.Threading.Tasks.Task[]]@()
+$tasks = New-Object System.Collections.Generic.List[System.Threading.Tasks.Task]
+$script = {
+    #$rootId = "{371EEE15-B6F3-423A-BB25-0B5CED860EEA}"
+    $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
+    $itemIds = Get-ChildItem -Path "master:" -ID $rootId | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID
+    $itemIds -join "|"
 }
 
-#while($tasks.Count -gt 0 -and ($taskCompleted = [System.Threading.Tasks.Task]::WhenAny($tasks))) {
-while($tasks.Count -gt 0) {
-    $currentTasks = $tasks
-    $tasks = @()
+$task = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script -Raw
+$tasks.Add($task) > $null
+
+while($tasks.Count -gt 0 -and ($taskCompleted = [System.Threading.Tasks.Task]::WhenAny($tasks.ToArray()))) {
+    Write-Host "Tasks remaining $($tasks.Count)"
+    $currentTasks = $tasks.ToArray()
+    #$tasks = New-Object System.Collections.Generic.List[System.Threading.Tasks.Task]
     foreach($task in $currentTasks) {
-        if(!$task.IsCompleted) {
-            $tasks += $task
+        if($task.Status -ne [System.Threading.Tasks.TaskStatus]::RanToCompletion) {
+            #$tasks.Add($task) > $null
         } else {
-            $task.Result
+            $tasks.Remove($task) > $null
+            $response = $task.Result
+            Write-Host "Processing response"
+            if($response) {
+                try{
+                $itemIds = $response.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+                Write-Host "$($itemIds.Count) Items returned"
+                foreach($itemId in $itemIds) {
+                    $script = { 
+                        $itemIds = Get-ChildItem -Path "master:" -ID $rootId | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID
+                        $itemIds -join "|"
+                    }
+
+                    $scriptString = "`$rootId = ""$($itemId)""`n" + $script.ToString()
+                    $script = [scriptblock]::Create($scriptString)
+                    $task = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script -Raw
+                    $tasks.Add($task) > $null
+                }
+                } catch {
+                    Write-Host $_
+                    Write-Host "Tasks remaining $($tasks.Count)"
+                }
+            }
+            
         }
     }
-
-    [System.Threading.Tasks.Task]::Delay(50) > $null
 }
 #[System.Threading.Tasks.Task]::WaitAll($tasks)
 
