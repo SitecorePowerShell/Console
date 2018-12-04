@@ -1,60 +1,7 @@
-﻿Import-Module -Name SPE -Force
+﻿Clear-Host
 
-$scriptDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-. $scriptDir\Invoke-GenericMethod.ps1
-
-#https://github.com/tahir-hassan/PSRunspacedDelegate
-$customType = @"
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Management.Automation.Runspaces;
-
-namespace PowerShell
-{
-    public class RunspacedDelegateFactory
-    {
-        public static Delegate NewRunspacedDelegate(Delegate _delegate, Runspace runspace)
-        {
-            Action setRunspace = () => Runspace.DefaultRunspace = runspace;
-
-            return ConcatActionToDelegate(setRunspace, _delegate);
-        }
-
-        private static Expression ExpressionInvoke(Delegate _delegate, params Expression[] arguments)
-        {
-            var invokeMethod = _delegate.GetType().GetMethod("Invoke");
-
-            return Expression.Call(Expression.Constant(_delegate), invokeMethod, arguments);
-        }
-
-        public static Delegate ConcatActionToDelegate(Action a, Delegate d)
-        {
-            var parameters =
-                d.GetType().GetMethod("Invoke").GetParameters()
-                .Select(p => Expression.Parameter(p.ParameterType, p.Name))
-                .ToArray();
-
-            Expression body = Expression.Block(ExpressionInvoke(a), ExpressionInvoke(d, parameters));
-
-            var lambda = Expression.Lambda(d.GetType(), body, parameters);
-
-            var compiled = lambda.Compile();
-            
-            return compiled;
-        }
-    }
-}
-"@
-Add-Type -TypeDefinition $customType
+Import-Module -Name SPE -Force
 Add-Type -AssemblyName System.Net.Http
-
-Function New-RunspacedDelegate {
-    param([Parameter(Mandatory=$true)][System.Delegate]$Delegate, [Runspace]$Runspace=[Runspace]::DefaultRunspace)
-
-    [PowerShell.RunspacedDelegateFactory]::NewRunspacedDelegate($Delegate, $Runspace);
-}
 
 $session = New-ScriptSession -Username "sitecore\admin" -Password "b" -ConnectionUri "https://spe.dev.local"
 $watch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -93,70 +40,107 @@ function Invoke-RemoteScriptAsync {
     $content = New-Object System.Net.Http.StringContent("$($ScriptBlock.ToString())<#$($SessionId)#>$($localParams)", [System.Text.Encoding]::UTF8)
     foreach($uri in $ConnectionUri) {
         $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
-        $localParams = ""
 
-        $task = $client.PostAsync($url, $content)
+        $taskPost = $client.PostAsync($url, $content)
         $continuation = New-RunspacedDelegate ([Func[System.Threading.Tasks.Task[System.Net.Http.HttpResponseMessage], PSObject]] { 
             param($t) 
-        
-            #Write-Host "StatusCode is $($t.Result.StatusCode)"
-            $response = $t.Result.Content.ReadAsStringAsync().Result
-            $response
-
+            $t.Result.Content.ReadAsStringAsync().Result
         })
-        $task = Invoke-GenericMethod -InputObject $task -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation
-        $task
+        Invoke-GenericMethod -InputObject $taskPost -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation
     }
 }
 
-#$tasks = [System.Threading.Tasks.Task[]]@()
 $tasks = New-Object System.Collections.Generic.List[System.Threading.Tasks.Task]
-$script = {
+$initialScript = {
     #$rootId = "{371EEE15-B6F3-423A-BB25-0B5CED860EEA}"
     $rootId = "{37D08F47-7113-4AD6-A5EB-0C0B04EF6D05}"
-    $itemIds = Get-ChildItem -Path "master:" -ID $rootId | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID
-    $itemIds -join "|"
+    $builder = New-Object System.Text.StringBuilder
+                
+    $parentItem = Get-Item -Path "master:" -ID $rootId
+    $parentYaml = $parentItem | ConvertTo-RainbowYaml
+    $builder.AppendLine($parentYaml) > $null
+                
+    $childItems = Get-ChildItem -Path "master:" -ID $rootId
+    foreach($childItem in $childItems) {
+        $childYaml = $childItem | ConvertTo-RainbowYaml
+        $builder.AppendLine($childYaml) > $null
+    }
+                   
+    $itemIds = $childItems | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID
+    if($itemIds) {
+        $builder.Append("<#split#>") > $null
+        $builder.Append($itemIds -join "|") > $null
+    }
+
+    $builder.ToString()
 }
 
-$task = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script -Raw
-$tasks.Add($task) > $null
+$taskRoot = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $initialScript -Raw
+$tasks.Add($taskRoot) > $null
 
-while($tasks.Count -gt 0 -and ($taskCompleted = [System.Threading.Tasks.Task]::WhenAny($tasks.ToArray()))) {
-    Write-Host "Tasks remaining $($tasks.Count)"
-    $currentTasks = $tasks.ToArray()
-    #$tasks = New-Object System.Collections.Generic.List[System.Threading.Tasks.Task]
-    foreach($task in $currentTasks) {
-        if($task.Status -ne [System.Threading.Tasks.TaskStatus]::RanToCompletion) {
-            #$tasks.Add($task) > $null
-        } else {
-            $tasks.Remove($task) > $null
-            $response = $task.Result
-            Write-Host "Processing response"
-            if($response) {
-                try{
-                $itemIds = $response.Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
-                Write-Host "$($itemIds.Count) Items returned"
-                foreach($itemId in $itemIds) {
-                    $script = { 
-                        $itemIds = Get-ChildItem -Path "master:" -ID $rootId | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID
-                        $itemIds -join "|"
-                    }
+function Process-Response {
+    param(
+        [string]$Response
+    )
 
-                    $scriptString = "`$rootId = ""$($itemId)""`n" + $script.ToString()
-                    $script = [scriptblock]::Create($scriptString)
-                    $task = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script -Raw
-                    $tasks.Add($task) > $null
-                }
-                } catch {
-                    Write-Host $_
-                    Write-Host "Tasks remaining $($tasks.Count)"
-                }
+    if([string]::IsNullOrEmpty($response)) { return }
+    $split = $response -split "<#split#>"
+    $yaml = $split[0]
+
+    if($split.Length -eq 1 -or [string]::IsNullOrEmpty($split[1])) { return }
+
+    $itemIdsToProcess = $split[1].Split("|", [System.StringSplitOptions]::RemoveEmptyEntries)
+    if($itemIdsToProcess -and $itemIdsToProcess.Count -gt 0) {
+        $tasksToAdd = New-Object System.Collections.Generic.List[System.Threading.Tasks.Task]            
+        Write-Host "[Pull] Processing $($itemIdsToProcess.Count) items" -ForegroundColor Green
+        foreach($itemIdToProcess in $itemIdsToProcess) {
+            Write-Host "- $($itemIdToProcess)"
+            $parsedGuid = [guid]::Empty
+            if(![guid]::TryParse($itemIdToProcess,[ref]$parsedGuid)) {
+                Write-Error $itemIdToProcess
             }
-            
+
+            $script = {
+
+                $builder = New-Object System.Text.StringBuilder
+                               
+                $childItems = Get-ChildItem -Path "master:" -ID $rootId
+                foreach($childItem in $childItems) {
+                    $childYaml = $childItem | ConvertTo-RainbowYaml
+                    $builder.AppendLine($childYaml) > $null
+                }
+                   
+                $itemIds = @($childItems | Where-Object { $_.HasChildren } | Select-Object -ExpandProperty ID)
+                if($itemIds -and $itemIds.Count -gt 0) {
+                    $builder.Append("<#split#>") > $null
+                    $builder.Append($itemIds -join "|") > $null
+                }
+
+                $builder.ToString()
+            }
+
+            $scriptString = "`$rootId = ""$($itemIdToProcess)""`n" + $script.ToString()
+            $script = [scriptblock]::Create($scriptString)
+            $taskToAdd = Invoke-RemoteScriptAsync -Session $session -ScriptBlock $script -Raw
+            $tasksToAdd.Add($taskToAdd) > $null
+        }
+        
+        ,$tasksToAdd         
+    }
+}
+
+while($tasks.Count -gt 0) {
+    $taskCompleted = [System.Threading.Tasks.Task]::WhenAny($tasks.ToArray())
+    foreach($task in $tasks.ToArray()) {
+        if($task.Status -ne [System.Threading.Tasks.TaskStatus]::RanToCompletion) { continue }
+
+        $tasks.Remove($task) > $null
+        $newTasks = Process-Response -Response $task.Result
+        if($newTasks) {
+            $tasks.AddRange($newTasks) > $null
         }
     }
 }
-#[System.Threading.Tasks.Task]::WaitAll($tasks)
 
 $watch.Stop()
 $watch.ElapsedMilliseconds / 1000
