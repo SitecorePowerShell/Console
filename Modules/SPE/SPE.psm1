@@ -8,6 +8,7 @@ foreach($assembly in $assemblies) {
 
 function Get-UsingVariables {
     param ([scriptblock]$ScriptBlock)
+    if($ScriptBlock.ToString().IndexOf("`$using:", [System.StringComparison]::OrdinalIgnoreCase) -eq -1) { return }
     $ScriptBlock.Ast.FindAll({$args[0] -is [System.Management.Automation.Language.UsingExpressionAst]},$true)
 }
 

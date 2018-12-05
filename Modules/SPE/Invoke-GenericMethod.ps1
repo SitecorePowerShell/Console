@@ -1,5 +1,7 @@
 ﻿#requires -Version 2.0
 
+$methodLookup = @{}
+
 function Invoke-GenericMethod
 {
     <#
@@ -96,9 +98,13 @@ function Invoke-GenericMethod
             GenericType  = $GenericType
             ArgumentList = [ref]$argList
         }
-
-        $method = Get-GenericMethod @params
-
+        $hash = ([pscustomobject]$params).GetHashCode()
+        if($methodLookup.Contains($hash)) {
+            $method = $methodLookup[$hash]
+        } else {
+            $method = Get-GenericMethod @params
+            $methodLookup.Add($hash,$method)
+        }
         if ($null -eq $method)
         {
             Write-Error "No matching method was found"

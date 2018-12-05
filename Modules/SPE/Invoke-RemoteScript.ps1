@@ -435,6 +435,7 @@ function Invoke-RemoteScriptAsync {
         $parameters = ConvertTo-CliXml -InputObject $Arguments
     }
 
+    $newScriptBlock = $scriptBlock.ToString()
     $Username = $Session.Username
     $Password = $Session.Password
     $SessionId = $Session.SessionId
@@ -462,6 +463,7 @@ function Invoke-RemoteScriptAsync {
     $localParams = $parameters | Out-String
 
     $messageBytes = [System.Text.Encoding]::UTF8.GetBytes("$($newScriptBlock.ToString())<#$($SessionId)#>$($localParams)")
+
     $ms = New-Object System.IO.MemoryStream
     $gzip = New-Object System.IO.Compression.GZipStream($ms, [System.IO.Compression.CompressionMode]::Compress, $true)
     $gzip.Write($messageBytes, 0, $messageBytes.Length)
@@ -471,7 +473,7 @@ function Invoke-RemoteScriptAsync {
     $ms.Close()
     $content.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue("text/plain")
     $content.Headers.ContentEncoding.Add("gzip")
-    
+
     foreach($uri in $ConnectionUri) {
         $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
@@ -485,7 +487,8 @@ function Invoke-RemoteScriptAsync {
 
             $contentTask = $t.Result.Content.ReadAsStringAsync()
             $response = $contentTask.GetAwaiter().GetResult()
-            Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
+            $response
+            #Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
         })
         Invoke-GenericMethod -InputObject $taskPost -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation,$localProps
     }    
