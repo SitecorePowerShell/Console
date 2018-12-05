@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -501,6 +502,29 @@ namespace Cognifide.PowerShell.Console.Services
             WebUtil.TransmitStream(mediaStream, HttpContext.Current.Response, Settings.Media.StreamBufferSize);
         }
 
+        private static byte[] Decompress(byte[] gzip)
+        {
+            using (var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            {
+                const int size = 4096;
+                var buffer = new byte[size];
+                using (var memory = new MemoryStream())
+                {
+                    var count = 0;
+                    do
+                    {
+                        count = stream.Read(buffer, 0, size);
+                        if (count > 0)
+                        {
+                            memory.Write(buffer, 0, count);
+                        }
+                    }
+                    while (count > 0);
+                    return memory.ToArray();
+                }
+            }
+        }
+
         private static void ProcessScript(HttpContext context, HttpRequest request, bool rawOutput, string sessionId, bool persistentSession)
         {
             if (request?.InputStream == null) return;
@@ -510,7 +534,8 @@ namespace Cognifide.PowerShell.Console.Services
             using (var ms = new MemoryStream())
             {
                 request.InputStream.CopyTo(ms);
-                var bytes = ms.ToArray();
+                var shouldDecompress = request.Headers["Content-Encoding"]?.Contains("gzip") ?? false ;
+                var bytes = shouldDecompress ? Decompress(ms.ToArray()) : ms.ToArray();
                 var requestBody = Encoding.UTF8.GetString(bytes);
                 var splitBody = requestBody.Split(new[] { $"<#{sessionId}#>" }, StringSplitOptions.RemoveEmptyEntries);
                 if (splitBody.Length > 0)
