@@ -40,6 +40,7 @@ function Process-Response {
 
     if([string]::IsNullOrEmpty($response)) { return }
     if(([regex]::Matches($response, "<#split#>" )).count -gt 1) {
+        Write-Host "Skipping because I can't parse this" -ForegroundColor Red
         Write-Host $Response
         return
     }
@@ -89,7 +90,6 @@ while($tasks.Count -gt 0) {
     $taskCompleted = [System.Threading.Tasks.Task]::WhenAny($tasks.ToArray())
     foreach($task in $tasks.ToArray()) {
         if($task.Status -ne [System.Threading.Tasks.TaskStatus]::RanToCompletion) { continue }
-
         $tasks.Remove($task) > $null
         $newTasks = Process-Response -Response $task.Result
         if($newTasks) {

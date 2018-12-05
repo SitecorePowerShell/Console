@@ -487,8 +487,7 @@ function Invoke-RemoteScriptAsync {
 
             $contentTask = $t.Result.Content.ReadAsStringAsync()
             $response = $contentTask.GetAwaiter().GetResult()
-            $response
-            #Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
+            Parse-Response -Response $response -HasRedirectedMessages $false -Raw $props.Raw
         })
         Invoke-GenericMethod -InputObject $taskPost -MethodName ContinueWith -GenericType PSObject -ArgumentList $continuation,$localProps
     }    
