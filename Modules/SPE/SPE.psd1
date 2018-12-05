@@ -84,6 +84,7 @@
         'ConvertTo-CliXml',
         'Invoke-GenericMethod',
         'Invoke-RemoteScript',
+        'Invoke-RemoteScriptAsync',
         'New-RunspacedDelegate',
         'New-ScriptSession',
         'Receive-RemoteItem',
