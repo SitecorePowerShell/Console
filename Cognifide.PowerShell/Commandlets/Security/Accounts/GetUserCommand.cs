@@ -47,31 +47,23 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
                     if (filter.Is("*") || filter.Is("%"))
                     {
-                        int total;
-                        var users =
-                            new PagingIterator<MembershipUser>(
-                                pageIndex => Membership.GetAllUsers(pageIndex, ResultPageSize, out total));
+                        var users = new PagingIterator<MembershipUser>(pageIndex => 
+                            Membership.GetAllUsers(pageIndex, ResultPageSize, out _));
                         WriteUsers(users);
                     }
-                    else if (filter.Contains("?") || filter.Contains("*"))
+                    else
                     {
                         var pattern = filter.Replace("*", "%").Replace("?", "%");
-                        int total;
-
                         if (filter.Contains("@"))
                         {
-                            var users =
-                                new PagingIterator<MembershipUser>(
-                                    pageIndex =>
-                                        Membership.FindUsersByEmail(pattern, pageIndex, ResultPageSize, out total));
+                            var users = new PagingIterator<MembershipUser>(pageIndex =>
+                                        Membership.FindUsersByEmail(pattern, pageIndex, ResultPageSize, out _));
                             WriteUsers(users);
                         }
                         else
                         {
-                            var users =
-                                new PagingIterator<MembershipUser>(
-                                    pageIndex =>
-                                        Membership.FindUsersByName(pattern, pageIndex, ResultPageSize, out total));
+                            var users = new PagingIterator<MembershipUser>(pageIndex =>
+                                        Membership.FindUsersByName(pattern, pageIndex, ResultPageSize, out _));
                             WriteUsers(users);
                         }
                     }

@@ -38,11 +38,17 @@ SharedFields:
                 $expected = 2
                 $actual | Should Be $expected
             }
+            It "returns two users using email using wildcard *" {
+                $actual = Get-User -Filter "*@sitecorepowershell.com" | Select-Object -First 2 | 
+                    Measure-Object | Select-Object -ExpandProperty Count
+                $expected = 2
+                $actual | Should Be $expected
+            }
             It "returns the MemberOf for a given User" {
                 $actual = Get-User -Identity "sitecore\michael" | Select-Object -ExpandProperty MemberOf |
                     Measure-Object | Select-Object -ExpandProperty Count
-                $expected = 2
-                $actual | Should Be $expected            
+                $expected = 0
+                $actual | Should BeGreaterThan $expected            
             }
         }
     }
