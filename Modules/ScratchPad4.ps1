@@ -8,8 +8,8 @@ $session.PersistentSession = $false
 
 foreach($i in 1..20) {
     Invoke-RemoteScript -Session $session -ScriptBlock { 
-        #Get-Location
-        Start-Sleep -Seconds (Get-Random -Min 1 -Max 2)
+        Get-Location
+        #Start-Sleep -Seconds (Get-Random -Min 1 -Max 2)
     } > $null
 }
 

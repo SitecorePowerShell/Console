@@ -1,4 +1,6 @@
-﻿$pool = [RunspaceFactory]::CreateRunspacePool(1, [int]$env:NUMBER_OF_PROCESSORS+1)
+﻿$watch = [System.Diagnostics.Stopwatch]::StartNew()
+
+$pool = [RunspaceFactory]::CreateRunspacePool(1, [int]$env:NUMBER_OF_PROCESSORS+1)
 $pool.ApartmentState = "MTA"
 $pool.Open()
 $runspaces = [System.Collections.ArrayList]@()
@@ -25,11 +27,9 @@ $runspaces.Add([PSCustomObject]@{ Pipe = $initialRunspace; Status = $initialRuns
 
 $count = 0
 while ($runspaces.Count -gt 0) {
-    $currentRunspaces = $runspaces.ToArray()
-    $currentRunspaces | ForEach-Object { 
-        $currentRunspace = $_
+    foreach($currentRunspace in $runspaces.ToArray()) {
         if($currentRunspace.Status.IsCompleted) {
-            if($count -lt 10) {
+            if($count -lt 1001) {
                 $runspace = New-Runspace
                 $count++
                 $runspaces.Add([PSCustomObject]@{ Pipe = $runspace; Status = $runspace.BeginInvoke() }) > $null
@@ -44,3 +44,6 @@ while ($runspaces.Count -gt 0) {
     
 $pool.Close() 
 $pool.Dispose()
+
+$watch.Stop()
+$watch.ElapsedMilliseconds / 1000
