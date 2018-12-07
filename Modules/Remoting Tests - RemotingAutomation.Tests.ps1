@@ -1,12 +1,12 @@
 ﻿param(
     [Parameter()]
-    [string]$protocolHost = "http://spe.dev.local"
+    [string]$protocolHost = "https://spe.dev.local"
 )
 
 Import-Module -Name SPE -Force
 
 if(!$protocolHost){
-    $protocolHost = "http://spe.dev.local"
+    $protocolHost = "https://spe.dev.local"
 }
 
 Describe "Invoke remote scripts with RemotingAutomation" {
@@ -16,6 +16,7 @@ Describe "Invoke remote scripts with RemotingAutomation" {
     AfterEach {
         Stop-ScriptSession -Session $session
     }
+    <#
     Context "Remote Script" {
         It "returns when no parameters passed" {
             $expected = $env:COMPUTERNAME
@@ -27,8 +28,53 @@ Describe "Invoke remote scripts with RemotingAutomation" {
             $actual = Invoke-RemoteScript -Session $session -ScriptBlock { Get-User -Id $using:expected | Select-Object -ExpandProperty Name }
             $actual | Should Be $expected
         }
-        It "Sitecore Kittens should not exist" { 
-            Invoke-RemoteScript -Session $session -ScriptBlock { $myints = @(1,1,2,3,5,8,13); $myints } | Should Throw
+        It "returns raw results" {
+            $expected = "abc"
+            Invoke-RemoteScript -Session $session -ScriptBlock { $abc = "abc"; $abc } -Raw | Should Be $expected
+        }
+        It "returns raw results with error" {
+            $expected = "abc"
+            Invoke-RemoteScript -Session $session -ScriptBlock { $abc = "abc"; $abc; } -Raw | Should Be $expected
+        }
+        It "Sitecore Kittens should not exist" {
+            $expected = @(1,1,2,3,5,8,13)
+            Invoke-RemoteScript -Session $session -ScriptBlock { $myints = @(1,1,2,3,5,8,13); $myints } | Should Be $expected
+        }
+        It "returns with error" {
+            $expected = @(1,1,2,3,5,8,13)
+            Invoke-RemoteScript -Session $session -ScriptBlock { Do-Something } | Should Not Be $expected
+        }
+    }#>
+    Context "Remote Script Async" {
+        It "returns when no parameters passed" {
+            $expected = $env:COMPUTERNAME
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { $env:computername }
+            $actual.Result | Should Be $expected
+        }
+        It "returns when the '`$Using' variable passed" {
+            $expected = "sitecore\admin"
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { Get-User -Id $using:expected | Select-Object -ExpandProperty Name }
+            $actual.Result | Should Be $expected
+        }
+        It "returns raw results" {
+            $expected = "abc"
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { $abc = "abc"; $abc } -Raw
+            $actual.Result | Should Be $expected
+        }
+        It "returns raw results with error" {
+            $expected = "abc"
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { $abc = "abc"; $abc; } -Raw
+            $actual.Result | Should Be $expected
+        }
+        It "Sitecore Kittens should not exist" {
+            $expected = @(1,1,2,3,5,8,13)
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { $myints = @(1,1,2,3,5,8,13); $myints }
+            $actual.Result | Should Be $expected
+        }
+        It "returns with error" {
+            $expected = @(1,1,2,3,5,8,13)
+            $actual = Invoke-RemoteScriptAsync -Session $session -ScriptBlock { Do-Something }
+            $actual.Result | Should Not Be $expected
         }
     }
 }

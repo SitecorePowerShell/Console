@@ -137,6 +137,7 @@ function Receive-RemoteItem {
             $Username = $Session.Username
             $Password = $Session.Password
             $Credential = $Session.Credential
+            $UseDefaultCredentials = $Session.UseDefaultCredentials
             $ConnectionUri = $Session | ForEach-Object { $_.Connection.BaseUri }
         }
 
@@ -167,6 +168,10 @@ function Receive-RemoteItem {
                 $webclient.Credentials = $Credential
             }
 
+            if($UseDefaultCredentials) {
+                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+            }
+
             [System.Net.HttpWebResponse]$script:errorResponse = $null
             [byte[]]$response = & {
                 try {
@@ -187,7 +192,7 @@ function Receive-RemoteItem {
             }
 
             if($errorResponse){
-                Write-Error -Message "Server responded with error: $($errorResponse.StatusDescription)" -Category ConnectionError `
+                Write-Error -Message "Server response: $($errorResponse.StatusDescription)" -Category ConnectionError `
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
 

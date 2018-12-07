@@ -1,12 +1,12 @@
 ﻿param(
     [Parameter()]
-    [string]$protocolHost = "http://spe.dev.local"
+    [string]$protocolHost = "https://spe.dev.local"
 )
 
 Import-Module -Name SPE -Force
 
 if(!$protocolHost){
-    $protocolHost = "http://spe.dev.local"
+    $protocolHost = "https://spe.dev.local"
 }
 
 Describe "Upload with RemoteScriptCall" {
@@ -21,31 +21,36 @@ Describe "Upload with RemoteScriptCall" {
     Context "Upload files with RemoteScriptCall" {
         It "upload to the App root path" {
             $filename = "data.xml"
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath App
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath App
             Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($AppPath)\$($using:filename)" } | Should Be $true
         }
         It "upload to the Package root path" {
             $filename = "data.xml"
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Package -Destination "\"
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath Package -Destination "\"
             Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "$($SitecorePackageFolder)\$($using:filename)" } | Should Be $true
         }
         It "upload to the Media Library" {
             $filename = "kitten.jpg"
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
             Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" } | Should Be $true
         }
         It "upload to the Media Library with different name" {
             $filename = "kitten.jpg"
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/kitten1.jpg"
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/kitten1.jpg"
             Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)1" } | Should Be $true
         }
         It "upload to the Media Library and replace using a guid" {
             $filename = "kitten.jpg"
             $filenameReplacement = "kitten-replacement.jpg"
             $filenameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($filename)
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/"
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test/"
             # Verify the file was uploaded
             Invoke-RemoteScript -Session $session -ScriptBlock { Test-Path -Path "master:\media library\images\spe-test\$($using:filenameWithoutExtension)" } | Should Be $true
             # Keep track of the current Id and Size
@@ -72,7 +77,8 @@ Describe "Upload with RemoteScriptCall" {
         }
         It "upload to the Media Library a compressed archive" {
             $filename = "kittens.zip"
-            Get-Item -Path "$($localFilePath)\$($filename)" | Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
+            Get-Item -Path "$($localFilePath)\$($filename)" | 
+                Send-RemoteItem -Session $session -RootPath Media -Destination "Images/spe-test"
             Invoke-RemoteScript -Session $session -ScriptBlock { 
                 Get-ChildItem -Path "master:\media library\images\spe-test\" -Recurse | Measure-Object | Select-Object -ExpandProperty Count
             } | Should Be 5

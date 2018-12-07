@@ -15,12 +15,12 @@ namespace Cognifide.PowerShell.Core.Extensions
 {
     public class ItemShellExtensions
     {
-        private static readonly Dictionary<ID, Dictionary<ID, string>> allPropertySets =
+        private static readonly Dictionary<ID, Dictionary<ID, string>> AllPropertySets =
             new Dictionary<ID, Dictionary<ID, string>>();
 
-        private static readonly string helperClassName = typeof(ItemShellExtensions).FullName;
+        private static readonly string HelperClassName = typeof(ItemShellExtensions).FullName;
 
-        private static readonly Dictionary<string, string> customGetters = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> CustomGetters = new Dictionary<string, string>
         {
             {"ItemPath", "$this.Paths.Path"},
             {"FullPath", "$this.Paths.FullPath"},
@@ -30,15 +30,14 @@ namespace Cognifide.PowerShell.Core.Extensions
             {"BaseTemplate", "[Sitecore.Data.Managers.TemplateManager]::GetTemplate($this).GetBaseTemplates()"}
         };
 
-        //internal static PSObject GetPSObject(CmdletProvider provider, Item item)
         internal static PSObject GetPsObject(SessionState provider, Item item)
         {
-            var psobj = PSObject.AsPSObject(item);
+            var psObject = PSObject.AsPSObject(item);
 
             Dictionary<ID, string> propertySet;
-            if (allPropertySets.ContainsKey(item.TemplateID))
+            if (AllPropertySets.ContainsKey(item.TemplateID))
             {
-                propertySet = allPropertySets[item.TemplateID];
+                propertySet = AllPropertySets[item.TemplateID];
             }
             else
             {
@@ -51,57 +50,56 @@ namespace Cognifide.PowerShell.Core.Extensions
                         propertySet.Add(field.ID, field.Name);
                     }
                 }
-                allPropertySets.Add(item.TemplateID, propertySet);
+                AllPropertySets.Add(item.TemplateID, propertySet);
             }
 
             var typedFieldGetter = new CustomFieldAccessor(item);
-            psobj.Properties.Add(new PSNoteProperty("_", typedFieldGetter));
-            psobj.Properties.Add(new PSNoteProperty("PSFields", typedFieldGetter));
+            psObject.Properties.Add(new PSNoteProperty("_", typedFieldGetter));
+            psObject.Properties.Add(new PSNoteProperty("PSFields", typedFieldGetter));
 
             foreach (var fieldKey in propertySet.Keys)
             {
-                string fieldName = propertySet[fieldKey];
-                ID fieldId = fieldKey;
+                var fieldName = propertySet[fieldKey];
+                var fieldId = fieldKey;
 
-                if (!string.IsNullOrEmpty(fieldName))
+                if (string.IsNullOrEmpty(fieldName)) continue;
+
+                while (psObject.Properties[fieldName] != null)
                 {
-                    while (psobj.Properties[fieldName] != null)
-                    {
-                        fieldName = "_" + fieldName;
-                    }
-
-                    var getter = $"$this[\"{fieldId}\"]";
-                    if (item.Fields[fieldId] != null)
-                    {
-                        switch (item.Fields[fieldId].TypeKey)
-                        {
-                            case ("datetime"):
-                                getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
-                                break;
-                        }
-                    }
-                    var setter =
-                        $"[{helperClassName}]::Modify($this, \"{fieldId}\", $Args );";
-
-                    psobj.Properties.Add(new PSScriptProperty(
-                        fieldName,
-                        provider.InvokeCommand.NewScriptBlock(getter),
-                        provider.InvokeCommand.NewScriptBlock(setter)));
+                    fieldName = "_" + fieldName;
                 }
+
+                var getter = $"$this[\"{fieldId}\"]";
+                if (item.Fields[fieldId] != null)
+                {
+                    switch (item.Fields[fieldId].TypeKey)
+                    {
+                        case ("datetime"):
+                            getter = $"[Sitecore.DateUtil]::IsoDateToDateTime($this[\"{fieldId}\"])";
+                            break;
+                    }
+                }
+                var setter =
+                    $"[{HelperClassName}]::Modify($this, \"{fieldId}\", $Args );";
+
+                psObject.Properties.Add(new PSScriptProperty(
+                    fieldName,
+                    provider.InvokeCommand.NewScriptBlock(getter),
+                    provider.InvokeCommand.NewScriptBlock(setter)));
             }
 
-            foreach (var customGetter in customGetters.Keys)
+            foreach (var customGetter in CustomGetters.Keys)
             {
-                if (psobj.Properties[customGetter] == null)
+                if (psObject.Properties[customGetter] == null)
                 {
-                    psobj.Properties.Add(new PSScriptProperty(
+                    psObject.Properties.Add(new PSScriptProperty(
                         customGetter,
-                        provider.InvokeCommand.NewScriptBlock(customGetters[customGetter])));
+                        provider.InvokeCommand.NewScriptBlock(CustomGetters[customGetter])));
                 }
             }
 
 
-            return psobj;
+            return psObject;
         }
 
         public static void Modify(Item item, string propertyName, object[] value)
@@ -130,103 +128,99 @@ namespace Cognifide.PowerShell.Core.Extensions
                         newValue = new List<Item> {newValue as Item};
                     }
 
-                    if (newValue is List<Item>)
+                    switch (newValue)
                     {
-                        var items = newValue as List<Item>;
-                        var lastItem = items.Last();
-                        if (field is ImageField)
+                        case List<Item> items:
                         {
-                            var media = new MediaItem(lastItem);
-                            var imageField = field as ImageField;
+                            var lastItem = items.Last();
+                            switch (field)
+                            {
+                                case ImageField imageField:
+                                {
+                                    var media = new MediaItem(lastItem);
 
-                            if (imageField.MediaID != media.ID)
-                            {
-                                imageField.Clear();
-                                imageField.MediaID = media.ID;
-                                imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
-                            }
-                        }
-                        else if (field is LinkField)
-                        {
-                            var linkField = field as LinkField;
-                            linkField.Clear();
+                                    if (imageField.MediaID == media.ID) return;
 
-                            if (MediaManager.HasMediaContent(lastItem))
-                            {
-                                linkField.LinkType = "media";
-                                linkField.Url = lastItem.Paths.MediaPath;
-                            }
-                            else
-                            {
-                                linkField.LinkType = "internal";
-                                linkField.Url = lastItem.Paths.ContentPath;
-                            }
-                            linkField.TargetID = lastItem.ID;
-                        }
-                        else if (field is MultilistField)
-                        {
-                            var linkField = field as MultilistField;
-                            linkField.Value = string.Empty;
-                            foreach (var linkedItem in items)
-                                linkField.Add(linkedItem.ID.ToString());
-                        }
-                        else if (field is FileField)
-                        {
-                            var linkField = field as FileField;
+                                    imageField.Clear();
+                                    imageField.MediaID = media.ID;
+                                    imageField.Alt = !string.IsNullOrEmpty(media.Alt) ? media.Alt : media.DisplayName;
+                                    break;
+                                }
+                                case LinkField linkField:
+                                {
+                                    linkField.Clear();
 
-                            if (MediaManager.HasMediaContent(lastItem))
-                            {
-                                linkField.Clear();
-                                linkField.MediaID = lastItem.ID;
-                                linkField.Src = MediaManager.GetMediaUrl(lastItem);
+                                    if (MediaManager.HasMediaContent(lastItem))
+                                    {
+                                        linkField.LinkType = "media";
+                                        linkField.Url = lastItem.Paths.MediaPath;
+                                    }
+                                    else
+                                    {
+                                        linkField.LinkType = "internal";
+                                        linkField.Url = lastItem.Paths.ContentPath;
+                                    }
+                                    linkField.TargetID = lastItem.ID;
+                                    break;
+                                }
+                                case MultilistField multilistField:
+                                {
+                                    multilistField.Value = string.Empty;
+                                    foreach (var linkedItem in items)
+                                        multilistField.Add(linkedItem.ID.ToString());
+                                    break;
+                                }
+                                case FileField _ when !MediaManager.HasMediaContent(lastItem):
+                                    return;
+                                case FileField fileField:
+                                    fileField.Clear();
+                                    fileField.MediaID = lastItem.ID;
+                                    fileField.Src = MediaManager.GetMediaUrl(lastItem);
+                                    break;
+                                case ValueLookupField _:
+                                    field.Value = lastItem.Name;
+                                    break;
+                                // LookupField, GroupedDroplinkField, ReferenceField, Other
+                                default:
+                                    field.Value = lastItem.ID.ToString();
+                                    break;
                             }
+
+                            break;
                         }
-                        else if (field is ValueLookupField)
-                        {
-                            field.Value = lastItem.Name;
-                        }
-                        else // LookupField, GroupedDroplinkField, ReferenceField, Other
-                        {
-                            field.Value = lastItem.ID.ToString();
-                        }
-                    }
-                    else if (newValue is DateTime)
-                    {
-                        item[propertyName] = ((DateTime) newValue).ToString("yyyyMMddTHHmmss");
-                    }
-                    else if (newValue is bool)
-                    {
-                        item[propertyName] = ((bool) newValue) ? "1" : "";
-                    }
-                    else
-                    {
-                        item[propertyName] = newValue.ToString();
+                        case DateTime time:
+                            item[propertyName] = time.ToString("yyyyMMddTHHmmss");
+                            break;
+                        case bool b:
+                            item[propertyName] = b ? "1" : "";
+                            break;
+                        default:
+                            item[propertyName] = newValue.ToString();
+                            break;
                     }
                 });
         }
 
         public static PSObject WrapInItemOwner(SessionState provider, Item item, object o)
         {
-            var psobj = PSObject.AsPSObject(o);
-            if (item != null && provider != null && o != null)
-            {
-                psobj.Properties.Add(new PSScriptProperty(
-                    "OwnerItemId", provider.InvokeCommand.NewScriptBlock($"'{{{item.ID}}}'")));
-                psobj.Properties.Add(new PSScriptProperty(
-                    "OwnerItemPath",
-                    provider.InvokeCommand.NewScriptBlock(
-                        $"\"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}\"")));
-            }
-            return psobj;
+            var psObject = PSObject.AsPSObject(o);
+            if (item == null || provider == null || o == null) return psObject;
+
+            psObject.Properties.Add(new PSScriptProperty(
+                "OwnerItemId", provider.InvokeCommand.NewScriptBlock($"'{{{item.ID}}}'")));
+            psObject.Properties.Add(new PSScriptProperty(
+                "OwnerItemPath",
+                provider.InvokeCommand.NewScriptBlock(
+                    $"\"{item.Database.Name}:{item.Paths.Path.Substring(9).Replace('/', '\\')}\"")));
+            return psObject;
         }
 
         internal void TemplateFieldsInvalidateCheck(object sender, EventArgs args)
         {
             Assert.ArgumentNotNull(args, "args");
-            var item = Event.ExtractParameter(args, 0) as Item;
-            if (item != null && item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
+            if (Event.ExtractParameter(args, 0) is Item item && item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
             {
-                allPropertySets.Clear();
+                AllPropertySets.Clear();
             }
         }
 
@@ -237,7 +231,7 @@ namespace Cognifide.PowerShell.Core.Extensions
             if (isreErgs?.Item != null &&
                 isreErgs.Item.Paths.Path.StartsWith(ApplicationSettings.TemplatesPath, StringComparison.OrdinalIgnoreCase))
             {
-                allPropertySets.Clear();
+                AllPropertySets.Clear();
             }
         }
     }

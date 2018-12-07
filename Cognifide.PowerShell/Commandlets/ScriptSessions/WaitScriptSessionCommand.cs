@@ -4,8 +4,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading;
+using Cognifide.PowerShell.Core.Extensions;
 using Cognifide.PowerShell.Core.Host;
-using Sitecore.ContentSearch.Utilities;
+using Sitecore.Tasks;
 
 namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 {
@@ -19,25 +20,25 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
         [Parameter]
         public SwitchParameter Any { get; set; }
 
-        private readonly List<ScriptSession> sessions = new List<ScriptSession>();
+        private readonly List<ScriptSession> _sessions = new List<ScriptSession>();
 
         protected override void ProcessSession(ScriptSession session)
         {
-            sessions.Add(session);
+            _sessions.Add(session);
         }
 
         protected override void EndProcessing()
         {
 
             if (!ShouldProcess(
-                sessions.Select(session => session.ID).Aggregate((seed, cur) => seed + ", " + cur),
+                _sessions.Select(session => session.ID).Aggregate((seed, cur) => seed + ", " + cur),
                 "Wait for running script session")) return;
 
-            DateTime stopDateTime = Timeout > -1 ? DateTime.Now.AddSeconds(Timeout) : DateTime.MaxValue;
+            var stopDateTime = Timeout > -1 ? DateTime.Now.AddSeconds(Timeout) : DateTime.MaxValue;
             while (DateTime.Now < stopDateTime)
             {
                 var hasBusySessions = false;
-                foreach (var session in sessions)
+                foreach (var session in _sessions.ToArray())
                 {
                     if (session.State == RunspaceAvailability.Busy)
                     {
@@ -47,6 +48,11 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
                     {
                         CollectFinishedSessions();
                         return;
+                    }
+                    else
+                    {
+                        WriteObject(session);
+                        _sessions.Remove(session);
                     }
                 }
                 if (!hasBusySessions)
@@ -60,7 +66,7 @@ namespace Cognifide.PowerShell.Commandlets.ScriptSessions
 
         private void CollectFinishedSessions()
         {
-            sessions.Where(session => session.State != RunspaceAvailability.Busy).ForEach(WriteObject);
+            _sessions.Where(session => session.State != RunspaceAvailability.Busy).ForEach(WriteObject);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -569,20 +569,12 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     psVersionTable["SPEVersion"] = CurrentVersion.SpeVersion;
                 }
-
             }
         }
 
         public ScriptBlock GetScriptBlock(string scriptBlock)
         {
             return host.Runspace.SessionStateProxy.InvokeCommand.NewScriptBlock(scriptBlock);
-        }
-
-        public static string GetDataContextSwitch(Item item)
-        {
-            return item != null
-                ? $"Set-Location -Path \"{item.Database.Name}:{item.Paths.Path.Replace("/", "\\").Substring(9)}\"\n"
-                : string.Empty;
         }
 
         public List<object> ExecuteScriptPart(string script)
@@ -826,12 +818,11 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void SetItemLocationContext(Item item)
         {
-            if (item != null)
-            {
-                SetVariable("SitecoreContextItem", item);
-                var contextScript = GetDataContextSwitch(item);
-                ExecuteScriptPart(contextScript, false, true, false);
-            }
+            if (item == null) return;
+
+            SetVariable("SitecoreContextItem", item);
+            var path = $"{item.Database.Name}:{item.Paths.Path.Replace("/", "\\").Substring(9)}";
+            host.Runspace.SessionStateProxy.Path.SetLocation(path);
         }
 
         public void SetExecutedScript(Item scriptItem)

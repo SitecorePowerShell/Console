@@ -130,14 +130,13 @@ namespace Cognifide.PowerShell.Core.Provider
 
         private string NormalizePath(string path)
         {
-            string normalizedPath = path;
-            if (!path.IsNullOrEmpty())
+            var normalizedPath = path;
+            if (path.IsNullOrEmpty()) return normalizedPath;
+
+            normalizedPath = path.Replace('/', '\\');
+            if (PathUtilities.HasRelativePathTokens(path))
             {
-                normalizedPath = path.Replace('/', '\\');
-                if (PathUtilities.HasRelativePathTokens(path))
-                {
-                    normalizedPath = NormalizeRelativePath(normalizedPath, null);
-                }
+                normalizedPath = NormalizeRelativePath(normalizedPath, null);
             }
             return normalizedPath;
         }

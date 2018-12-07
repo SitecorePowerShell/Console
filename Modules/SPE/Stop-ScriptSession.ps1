@@ -72,43 +72,38 @@ function Stop-ScriptSession {
 
         [Parameter(ParameterSetName='Uri')]
         [System.Management.Automation.PSCredential]
-        $Credential
+        $Credential,
+
+        [Parameter(HelpMessage="Timeout in seconds")]
+        $Timeout = 30
     )
 
-    if($PSCmdlet.ParameterSetName -eq "Session") {
-        $Username = $Session.Username
-        $Password = $Session.Password
-        $SessionId = $Session.SessionId
-        $Credential = $Session.Credential
-        $Connection = $Session.Connection
-    } else {
-        $Connection = $ConnectionUri | ForEach-Object { [PSCustomObject]@{ Uri = [Uri]$_; Proxy = $null } }
-    }
-    
-    foreach($singleConnection in $Connection) {
-        if($singleConnection.Uri.AbsoluteUri -notmatch ".*\.asmx(\?wsdl)?") {
-            $singleConnection.Uri = [Uri]"$($singleConnection.Uri.AbsoluteUri.TrimEnd('/'))/sitecore%20modules/PowerShell/Services/RemoteAutomation.asmx?wsdl"
-        }
+    $id = $Session.SessionId
 
-        if(!$singleConnection.Proxy) {
-            $proxyProps = @{
-                Uri = $singleConnection.Uri
+    $newSession = $Session.PSObject.Copy()
+    $newSession.PersistentSession = $false
+    Invoke-RemoteScript -Session $newSession -ScriptBlock {
+        $startTime = [datetime]::Now
+        $sleepInMs = 20
+        $timeoutInSec = [math]::Max(0, ($using:Timeout))
+        while($currentSessions = (Get-ScriptSession -Id $using:id -ErrorAction 0 | Where-Object { $_.ApplianceType -eq "RemoteAutomation" -and $_.Id -ne $scriptSession.Id })) {
+            if(!$currentSessions) { break }
+            $shouldSleep = $false
+            foreach($currentSession in $currentSessions) {
+                if($currentSession.State -ne "Busy") {
+                    $currentSession | Remove-ScriptSession
+                } else {
+                    $shouldSleep = $true
+                }
             }
-
-            if($Credential) {
-                $proxyProps["Credential"] = $Credential
+            
+            if($shouldSleep) {
+                Start-Sleep -Milliseconds 10
             }
-
-            $singleConnection.Proxy = New-WebServiceProxy @proxyProps
-            if($Credential) {
-                $singleConnection.Proxy.Credentials = $Credential
+            if($timeoutInSec -lt ([datetime]::Now - $startTime).TotalSeconds) {
+                Write-Warning "Unable to remove some script sessions because they were in a Busy state and it exceed the specified timeout. Session id: $($using:id)"
+                break
             }
         }
-        if(-not $singleConnection.Proxy) { return $null }
-
-        $response = $singleConnection.Proxy.DisposeScriptSession($Username, $Password, $SessionId)
-        if($response) {
-            Write-Verbose "Server $($singleConnection.BaseUri.AbsoluteUri) returned a response of '$($response)'."
-        }
-    }
+    } -Verbose:([bool]$PSBoundParameters['Verbose']) -Debug:([bool]$PSBoundParameters['Debug'])
 }

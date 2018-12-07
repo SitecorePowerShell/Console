@@ -57,7 +57,8 @@ namespace Cognifide.PowerShell.Core.Processors
                 if (localPath.StartsWith("/-/script/v2", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/media", StringComparison.OrdinalIgnoreCase) ||
                     localPath.StartsWith("/-/script/file", StringComparison.OrdinalIgnoreCase) ||
-                    localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase)
+                    localPath.StartsWith("/-/script/handle", StringComparison.OrdinalIgnoreCase) ||
+                    localPath.StartsWith("/-/script/script", StringComparison.OrdinalIgnoreCase)
                     )
                 {
                     var sourceArray = url.LocalPath.TrimStart('/').Split('/');
@@ -65,16 +66,15 @@ namespace Cognifide.PowerShell.Core.Processors
                     {
                         return;
                     }
-                    string apiVersion = sourceArray[2].Is("v2") ? "2": sourceArray[2];
+                    var apiVersion = sourceArray[2].Is("v2") ? "2": sourceArray[2];
                     var length = sourceArray.Length - 4;
                     var destinationArray = new string[length];
                     var origin = sourceArray[3].ToLowerInvariant();
-                    string database = apiVersion.Is("file") || apiVersion.Is("handle") ? string.Empty : origin;
+                    var database = apiVersion.Is("file") || apiVersion.Is("handle") ? string.Empty : origin;
                     Array.Copy(sourceArray, 4, destinationArray, 0, length);
-                    var scriptPath = string.Format("/{0}", string.Join("/", destinationArray));
+                    var scriptPath = $"/{string.Join("/", destinationArray)}";
                     var query = url.Query.TrimStart('?');
-                    query += string.Format("{0}script={1}&sc_database={2}&scriptDb={3}&apiVersion={4}",
-                        string.IsNullOrEmpty(query) ? "" : "&", scriptPath, database, origin, apiVersion);
+                    query += $"{(string.IsNullOrEmpty(query) ? "" : "&")}script={scriptPath}&sc_database={database}&scriptDb={origin}&apiVersion={apiVersion}";
                     WebUtil.RewriteUrl(
                         new UrlString
                         {

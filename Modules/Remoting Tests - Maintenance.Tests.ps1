@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter()]
-    [string]$protocolHost = "http://spe.dev.local"
+    [string]$protocolHost = "https://spe.dev.local"
 )
 
 Import-Module -Name SPE -Force

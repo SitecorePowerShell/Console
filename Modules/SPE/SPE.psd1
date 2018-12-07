@@ -11,7 +11,7 @@
     RootModule = '.\SPE.psm1'
 
     # Version number of this module.
-    ModuleVersion = '5.0'
+    ModuleVersion = '5.1'
 
     # ID used to uniquely identify this module
     GUID = 'cf8d3b69-b293-4d8b-9974-e1ab80509724'
@@ -23,13 +23,13 @@
     CompanyName = 'Sitecore PowerShell Extensions'
 
     # Copyright statement for this module
-    Copyright = '(c) 2010-2018 Adam Najmanowicz, Michael West. All rights Reserved.'
+    Copyright = '(c) 2010-2019 Adam Najmanowicz, Michael West. All rights Reserved.'
 
     # Description of the functionality provided by this module
     # Description = ''
 
     # Minimum version of the Windows PowerShell engine required by this module
-    # PowerShellVersion = '3.0'
+    PowerShellVersion = '3.0'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
@@ -65,12 +65,12 @@
     NestedModules = @(
         '.\ConvertFrom-CliXml.ps1'
         '.\ConvertTo-CliXml.ps1',
+        '.\Invoke-GenericMethod.ps1',
         '.\Invoke-RemoteScript.ps1',
         '.\MediaSyncWatcher.ps1',
+        '.\New-RunspacedDelegate.ps1',
         '.\New-ScriptSession.ps1',
         '.\Receive-RemoteItem.ps1',
-        '.\Receive-MediaItem.ps1',
-        '.\Send-MediaItem.ps1',
         '.\Send-RemoteItem.ps1',
         '.\Stop-ScriptSession.ps1',
         '.\Test-RemoteConnection.ps1',
@@ -82,11 +82,12 @@
     FunctionsToExport = @(
         'ConvertFrom-CliXml'
         'ConvertTo-CliXml',
+        'Invoke-GenericMethod',
         'Invoke-RemoteScript',
+        'Invoke-RemoteScriptAsync',
+        'New-RunspacedDelegate',
         'New-ScriptSession',
         'Receive-RemoteItem',
-        'Receive-MediaItem',
-        'Send-MediaItem',
         'Send-RemoteItem',
         'Stop-ScriptSession',
         'Test-RemoteConnection',

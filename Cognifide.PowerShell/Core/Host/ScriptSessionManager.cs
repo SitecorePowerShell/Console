@@ -135,7 +135,7 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
-        private static void CacheItemRemoved(string sessionKey, Object value, CacheItemRemovedReason reason)
+        private static void CacheItemRemoved(string sessionKey, object value, CacheItemRemovedReason reason)
         {
             RemoveSession(sessionKey);
         }
@@ -148,10 +148,7 @@ namespace Cognifide.PowerShell.Core.Host
                 {
                     var sessionKey = GetSessionKey(key);
                     var session = HttpRuntime.Cache.Remove(sessionKey) as ScriptSession;
-                    if (session != null)
-                    {
-                        session.Dispose();
-                    }
+                    session?.Dispose();
                 }
                 sessions.Clear();
             }
@@ -176,6 +173,7 @@ namespace Cognifide.PowerShell.Core.Host
             var key = new StringBuilder();
             key.Append(sessionIdPrefix);
             key.Append("|");
+
             if (HttpContext.Current != null && HttpContext.Current.Session != null)
             {
                 key.Append(HttpContext.Current.Session.SessionID);
