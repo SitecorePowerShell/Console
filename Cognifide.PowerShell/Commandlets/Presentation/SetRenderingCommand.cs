@@ -46,17 +46,21 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             var layout = LayoutDefinition.Parse(layoutField.Value);
 
             DeviceDefinition selectedDevice;
-            RenderingDefinition rendering;
+            RenderingDefinition selectedRendering;
 
-            var availableDevices = Device != null ? new [] { Device } : layout.Devices.ToArray();
-
-            foreach (DeviceDefinition availableDevice in availableDevices)
+            var availableDevices = layout.Devices.Cast<DeviceDefinition>();
+            if (Device != null)
             {
-                foreach (var aRendering in availableDevice.Renderings.Cast<RenderingDefinition>()
+                availableDevices = availableDevices.Where(d => d.ID == Device.ID.ToString());
+            }
+            
+            foreach (var availableDevice in availableDevices)
+            {
+                foreach (var availableRendering in availableDevice.Renderings.Cast<RenderingDefinition>()
                         .Where(aRendering => aRendering.UniqueId == Instance.UniqueId))
                 {
                     selectedDevice = availableDevice;
-                    rendering = aRendering;
+                    selectedRendering = availableRendering;
                     goto RenderingFound;
                 }
             }
@@ -64,29 +68,29 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
             return;
 
             RenderingFound: //goto label
-            rendering.ItemID = Instance.ItemID;
-            rendering.Placeholder = MyInvocation.BoundParameters.ContainsKey("PlaceHolder")
+            selectedRendering.ItemID = Instance.ItemID;
+            selectedRendering.Placeholder = MyInvocation.BoundParameters.ContainsKey("PlaceHolder")
                 ? PlaceHolder
-                : Instance.Placeholder ?? rendering.Placeholder;
-            rendering.Datasource =
+                : Instance.Placeholder ?? selectedRendering.Placeholder;
+            selectedRendering.Datasource =
                 !string.IsNullOrEmpty(DataSource)
                     ? DataSource
                     : Instance.Datasource;
-            rendering.Cachable = Instance.Cachable;
-            rendering.VaryByData = Instance.VaryByData;
-            rendering.VaryByDevice = Instance.VaryByDevice;
-            rendering.VaryByLogin = Instance.VaryByLogin;
-            rendering.VaryByParameters = Instance.VaryByParameters;
-            rendering.VaryByQueryString = Instance.VaryByQueryString;
-            rendering.VaryByUser = Instance.VaryByUser;
-            rendering.Parameters = Instance.Parameters;
-            rendering.MultiVariateTest = Instance.MultiVariateTest;
-            rendering.Rules = Instance.Rules;
-            rendering.Conditions = Instance.Conditions;
+            selectedRendering.Cachable = Instance.Cachable;
+            selectedRendering.VaryByData = Instance.VaryByData;
+            selectedRendering.VaryByDevice = Instance.VaryByDevice;
+            selectedRendering.VaryByLogin = Instance.VaryByLogin;
+            selectedRendering.VaryByParameters = Instance.VaryByParameters;
+            selectedRendering.VaryByQueryString = Instance.VaryByQueryString;
+            selectedRendering.VaryByUser = Instance.VaryByUser;
+            selectedRendering.Parameters = Instance.Parameters;
+            selectedRendering.MultiVariateTest = Instance.MultiVariateTest;
+            selectedRendering.Rules = Instance.Rules;
+            selectedRendering.Conditions = Instance.Conditions;
 
             if (Parameter != null)
             {
-                var parameters = new UrlString(rendering.Parameters ?? string.Empty);
+                var parameters = new UrlString(selectedRendering.Parameters ?? string.Empty);
                 foreach (string name in Parameter.Keys)
                 {
                     if (parameters.Parameters.AllKeys.Contains(name))
@@ -99,13 +103,13 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                     }
                 }
 
-                rendering.Parameters = parameters.ToString();
+                selectedRendering.Parameters = parameters.ToString();
             }
 
             if (Index > -1)
             {
-                selectedDevice.Renderings.Remove(rendering);
-                selectedDevice.Insert(Index, rendering);
+                selectedDevice.Renderings.Remove(selectedRendering);
+                selectedDevice.Insert(Index, selectedRendering);
             }
 
             item.Edit(p =>
