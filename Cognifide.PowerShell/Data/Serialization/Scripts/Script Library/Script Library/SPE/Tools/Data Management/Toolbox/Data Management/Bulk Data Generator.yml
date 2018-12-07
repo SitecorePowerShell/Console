@@ -97,6 +97,11 @@ SharedFields:
                     }
                 }
         }
+        $props.Parameters += @{
+                Name="shouldRandomizeTree"; Value=$false; 
+                Title = "Random tree structure";
+                Tooltip = "Enable to create a random tree structure of items. Default behavior is a flat tree.";
+        }    
     } elseif($dataTypeName -eq "User") {
         $props.Parameters += @{Name="defaultPassword"; Value=""; Title = "Default Password"; Columns=6; Placeholder="Password (optional)"; }
         $props.Parameters += @{Name="selectedDomain"; Value=$defaultDomain; Options=$domainList; Title = "Which domain should be used when generating Users?"; Columns=9; }
@@ -116,7 +121,7 @@ SharedFields:
         $totalItemCount = $childCount + $inputCount
         for($index = $childCount; $index -lt $totalItemCount; $index++) {
             $createdItem = $null
-            if($index -lt 10 -or $index % 50 -eq 0) {
+            if(!$shouldRandomizeTree -or $index -lt 10 -or $index % 50 -eq 0) {
                 $createdItem = New-Item -Path $selectedrootItem.ProviderPath -Name "$($itemNamePrefix)$($index)" -Type $selectedItemTemplate.Paths.Path
                 $createdItems.Add($createdItem) > $null
             } else {
