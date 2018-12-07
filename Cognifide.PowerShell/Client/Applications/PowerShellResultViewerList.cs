@@ -44,6 +44,7 @@ namespace Cognifide.PowerShell.Client.Applications
         protected Border RibbonPanel;
         protected Border StatusBar;
         protected Literal StatusTip;
+        protected Border PageCountContainer;
         public SpeJobMonitor Monitor { get; private set; }
         protected bool ScriptRunning { get; set; }
 
@@ -425,6 +426,7 @@ namespace Cognifide.PowerShell.Client.Applications
             ItemCount.Text = ListViewer.FilteredItems.Count.ToString(CultureInfo.InvariantCulture);
             CurrentPage.Text = ListViewer.CurrentPage.ToString(CultureInfo.InvariantCulture);
             PageCount.Text = (ListViewer.PageCount).ToString(CultureInfo.InvariantCulture);
+            PageCountContainer.Visible = ListViewer.PageCount > 1;
             SheerResponse.Eval($"cognifide.powershell.updateStatusBarCounters({ItemCount.Text},{CurrentPage.Text},{PageCount.Text});");
             ListViewer.Refresh();
         }
