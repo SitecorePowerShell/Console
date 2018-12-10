@@ -59,8 +59,12 @@ namespace Cognifide.PowerShell.Client.Applications
         {
             if (Membership.ValidateUser(Sitecore.Context.User?.Name ?? string.Empty, PasswordBox.Value))
             {
-                SessionElevationManager.ElevateSessionToken(AppName);
-                SheerResponse.CloseWindow();
+	            SessionElevationManager.ElevateSessionToken(AppName);
+	            SheerResponse.CloseWindow();
+            }
+            else
+            {
+	            SheerResponse.Alert(Texts.PowerShellSessionElevation_Could_not_validate);
             }
         }
     }

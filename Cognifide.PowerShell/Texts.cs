@@ -63,5 +63,7 @@ namespace Cognifide.PowerShell
                 "DropList control cannot render items from the database '{0}' because it its not the same as '{1}' which is the current content database .";
 
         public const string PowerShellMultiValuePrompt_GetVariableEditor_Edit_rule = "Edit rule";
+
+        public const string PowerShellSessionElevation_Could_not_validate = "Could not validate access using the provided credentials.";
     }
 }
