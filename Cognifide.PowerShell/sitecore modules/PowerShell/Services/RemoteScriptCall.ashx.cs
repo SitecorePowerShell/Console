@@ -92,6 +92,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, identity.Name))
             {
                 HttpContext.Current.Response.StatusCode = 401;
+                HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
                 PowerShellLog.Error(
                     $"Attempt to call the '{serviceMappingKey}' service failed as user '{authUserName}' was not authorized.");
                 return;
@@ -121,8 +122,10 @@ namespace Cognifide.PowerShell.Console.Services
 
             if (!CheckServiceAuthentication(apiVersion, isAuthenticated))
             {
+                HttpContext.Current.Response.StatusCode = 401;
+                HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
                 PowerShellLog.Error(
-                    $"Attempt to call the {serviceMappingKey} service failed as - user not logged in, authentication failed or no credentials provided.");
+                    $"Attempt to call the {serviceMappingKey} service failed as - user not logged in, authentication failed, or no credentials provided.");
                 return;
             }
 
