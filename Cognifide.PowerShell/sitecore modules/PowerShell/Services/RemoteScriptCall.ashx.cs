@@ -376,9 +376,10 @@ namespace Cognifide.PowerShell.Console.Services
                 {
                     HttpContext.Current.Response.TransmitFile(file);
                 }
-                catch (IOException ioex)
+                catch (IOException _)
                 {
-                    HttpContext.Current.Response.StatusDescription = ioex.Message;
+                    HttpContext.Current.Response.StatusCode = 500;
+                    HttpContext.Current.Response.StatusDescription = _.Message;
                 }
             }
         }
