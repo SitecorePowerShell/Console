@@ -257,6 +257,14 @@ namespace Cognifide.PowerShell.Core.Host
             }
         }
 
+        public void RemoveVariable(string varName)
+        {
+            lock (this)
+            {
+                Engine.SessionState.PSVariable.Remove(varName);
+            }
+        }
+
         public void SetVariable(string varName, object varValue)
         {
             lock (this)
@@ -821,8 +829,33 @@ namespace Cognifide.PowerShell.Core.Host
             if (item == null) return;
 
             SetVariable("SitecoreContextItem", item);
-            var path = $"{item.Database.Name}:{item.Paths.Path.Replace("/", "\\").Substring(9)}";
-            host.Runspace.SessionStateProxy.Path.SetLocation(path);
+            host.Runspace.SessionStateProxy.Path.SetLocation(item.GetProviderPath());
+        }
+
+        public void SetItemContextFromLocation()
+        {
+            var provider = host.Runspace.SessionStateProxy.Path.CurrentLocation.Provider;
+
+            if (provider.ImplementingType == typeof(PsSitecoreItemProvider) ||
+                provider.ImplementingType.IsSubclassOf(typeof(PsSitecoreItemProvider)))
+            {
+                var path = host.Runspace.SessionStateProxy.Path.CurrentLocation.ProviderPath;
+
+                var colonIndex = path.IndexOf(':');
+                var relativePath = path.Substring(colonIndex + 1).Replace('\\', '/');
+                var databaseName = path.Substring(0, colonIndex);
+
+                var item = PathUtilities.GetItem(databaseName, relativePath);
+
+                if (item != null)
+                {
+                    SetVariable("SitecoreContextItem", item);
+                    return;
+                }
+            }
+
+            // This is either not a Sitecore drive, or no item could be determined from the path, so remove it.
+            RemoveVariable("SitecoreContextItem");
         }
 
         public void SetExecutedScript(Item scriptItem)

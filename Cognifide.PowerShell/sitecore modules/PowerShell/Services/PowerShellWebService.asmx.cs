@@ -103,6 +103,7 @@ namespace Cognifide.PowerShell.Console.Services
 
             var session = GetScriptSession(guid);
             session.Interactive = true;
+            session.SetItemContextFromLocation();
             try
             {
                 var handle = ID.NewID.ToString();
