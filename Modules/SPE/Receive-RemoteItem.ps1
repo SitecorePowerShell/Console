@@ -153,8 +153,6 @@ function Receive-RemoteItem {
             $itemType = "file"
         }
 
-        $serviceUrl += "user=" + $Username + "&password=" + $Password
-
         foreach($uri in $ConnectionUri) {
             
             # http://hostname/-/script/type/origin/location
@@ -162,32 +160,39 @@ function Receive-RemoteItem {
 
             Write-Verbose -Message "Preparing to download remote item from the url $($url)"
             Write-Verbose -Message "Downloading the $($itemType) item $($Path)"
-            $webclient = New-Object System.Net.WebClient
-            
+            Add-Type -AssemblyName System.Net.Http
+            $handler = New-Object System.Net.Http.HttpClientHandler
+            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
+            $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+            $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+          
             if($Credential) {
-                $webclient.Credentials = $Credential
+                $handler.Credentials = $Credential
             }
 
             if($UseDefaultCredentials) {
-                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+                $handler.UseDefaultCredentials = $UseDefaultCredentials
             }
 
             [System.Net.HttpWebResponse]$script:errorResponse = $null
-            [byte[]]$response = & {
-                try {
-                    $script:errorResponse = $null
-                    $script:ex = $null
-                    $webclient.DownloadData($url)
-                } catch [System.Net.WebException] {
-                    [System.Net.WebException]$script:ex = $_.Exception
-                    [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response
-                    Write-Verbose -Message "Response exception message: $($ex.Message)"
-                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                    if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                    } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                        Write-Verbose -Message "Check that the service files exist and are properly configured."
-                    }
+            [System.Net.Http.HttpResponseMessage]$responseMessage = $null
+           
+            try {
+                $script:errorResponse = $null
+                $script:ex = $null
+
+                $responseMessage = $client.GetAsync($url).Result
+                [byte[]]$response = $responseMessage.Content.ReadAsByteArrayAsync().Result                   
+            } catch [System.Net.WebException] {
+                [System.Net.WebException]$script:ex = $_.Exception
+                [System.Net.HttpWebResponse]$script:errorResponse = $script:ex.Response
+                Write-Verbose -Message "Response exception message: $($ex.Message)"
+                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
+                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
+                    Write-Verbose -Message "Check that the service files exist and are properly configured."
                 }
             }
 
@@ -196,9 +201,13 @@ function Receive-RemoteItem {
                     -CategoryActivity "Download" -CategoryTargetName $uri -Exception ($script:ex) -CategoryReason "$($errorResponse.StatusCode)" -CategoryTargetType $RootPath 
             }
 
-            if($response -and $response.Length -gt 0 -or $webclient.ResponseHeaders.Count -gt 0) {
-                $contentType = $webclient.ResponseHeaders["Content-Type"]
-                $contentDisposition = $webclient.ResponseHeaders["Content-Disposition"]
+            if($response -and $response.Length -gt 0 -or $responseMessage.Content.Headers.Count -gt 0) {
+                if(!$responseMessage.IsSuccessStatusCode) {
+                    Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
+                    return    
+                }
+                $contentType = $responseMessage.Content.Headers.GetValues("Content-Type")[0]
+                $contentDisposition = $responseMessage.Content.Headers.GetValues("Content-Disposition")[0]
                 $filename = ""
                 Write-Verbose -Message "Response content length: $($response.Length) bytes"
                 Write-Verbose -Message "Response content type: $($contentType)"

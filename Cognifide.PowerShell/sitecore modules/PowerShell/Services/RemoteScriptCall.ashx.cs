@@ -59,8 +59,23 @@ namespace Cognifide.PowerShell.Console.Services
         public void ProcessRequest(HttpContext context)
         {
             var request = HttpContext.Current.Request;
-            var userName = request.Params.Get("user");
+            var username = request.Params.Get("user");
             var password = request.Params.Get("password");
+            var authHeader = request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(username) && string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(authHeader))
+            {
+                if (authHeader.StartsWith("Basic")) {
+                    var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
+                    var encoding = Encoding.GetEncoding("iso-8859-1");
+                    var usernamePassword = encoding.GetString(System.Convert.FromBase64String(encodedUsernamePassword));
+
+                    var separatorIndex = usernamePassword.IndexOf(':');
+
+                    username = usernamePassword.Substring(0, separatorIndex);
+                    password = usernamePassword.Substring(separatorIndex + 1);
+                }
+            }
+
             var itemParam = request.Params.Get("script");
             var pathParam = request.Params.Get("path");
             var originParam = request.Params.Get("scriptDb");
@@ -86,7 +101,7 @@ namespace Cognifide.PowerShell.Console.Services
             }
 
             // verify that the user is authorized to access the end point
-            var authUserName = string.IsNullOrEmpty(userName) ? Context.User.Name : userName;
+            var authUserName = string.IsNullOrEmpty(username) ? Context.User.Name : username;
             var identity = new AccountIdentity(authUserName);
 
             if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, identity.Name))
@@ -101,7 +116,7 @@ namespace Cognifide.PowerShell.Console.Services
             lock (LoginLock)
             {
                 // login user if specified explicitly
-                if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
+                if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                 {
                     AuthenticationManager.Login(identity.Name, password, false);
                 }
@@ -136,7 +151,7 @@ namespace Cognifide.PowerShell.Console.Services
                 return;
             }
 
-            PowerShellLog.Info($"'{serviceMappingKey}' called by user: '{userName}'");
+            PowerShellLog.Info($"'{serviceMappingKey}' called by user: '{username}'");
             PowerShellLog.Debug($"'{request.Url}'");
 
             Item scriptItem;
@@ -357,7 +372,14 @@ namespace Cognifide.PowerShell.Console.Services
 
                 var fileInfo = new FileInfo(file);
                 WriteCacheHeaders(fileInfo.Name, fileInfo.Length);
-                HttpContext.Current.Response.TransmitFile(file);
+                try
+                {
+                    HttpContext.Current.Response.TransmitFile(file);
+                }
+                catch (IOException ioex)
+                {
+                    HttpContext.Current.Response.StatusDescription = ioex.Message;
+                }
             }
         }
 
