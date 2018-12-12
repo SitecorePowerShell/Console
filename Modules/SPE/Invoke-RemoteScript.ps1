@@ -447,11 +447,14 @@ function Invoke-RemoteScriptAsync {
     $PersistentSession = $Session.PersistentSession
 
     $serviceUrl = "/-/script/script/?"
-    $serviceUrl += "user=" + $Username + "&password=" + $Password + "&sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
+    $serviceUrl += "sessionId=" + $SessionId + "&rawOutput=" + $Raw.IsPresent + "&persistentSession=" + $PersistentSession
 
     $handler = New-Object System.Net.Http.HttpClientHandler
     $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
-           
+    $client = New-Object -TypeName System.Net.Http.Httpclient $handler
+    $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+    $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+       
     if ($Credential) {
         $handler.Credentials = $Credential
     }
@@ -459,9 +462,7 @@ function Invoke-RemoteScriptAsync {
     if($UseDefaultCredentials) {
         $handler.UseDefaultCredentials = $UseDefaultCredentials
     }
-
-    $client = New-Object -TypeName System.Net.Http.Httpclient $handler
-    
+   
     $localParams = $parameters | Out-String
 
     $messageBytes = [System.Text.Encoding]::UTF8.GetBytes("$($newScriptBlock.ToString())<#$($SessionId)#>$($localParams)")
