@@ -4,6 +4,7 @@ using System.Web.Security;
 using Cognifide.PowerShell.Core.Validation;
 using Sitecore.Data;
 using Sitecore.Security.Accounts;
+using Sitecore.SecurityModel;
 
 namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 {
@@ -35,7 +36,7 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Enabled { get; set; }
-
+        
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public ID ProfileItemId { get; set; }
 
@@ -43,6 +44,14 @@ namespace Cognifide.PowerShell.Commandlets.Security.Accounts
         {
             var name = Identity.Name;
             if (!ShouldProcess(Identity.Domain, "Create User '" + Identity.Account + "' in the domain")) return;
+
+            var domain = Identity.Domain;
+            if (!DomainManager.DomainExists(domain))
+            {
+                WriteError(typeof(ObjectNotFoundException), $"Cannot find a domain with name '{domain}'.", 
+                    ErrorIds.DomainNotFound, ErrorCategory.ObjectNotFound, domain);
+                return;
+            }
 
             if (User.Exists(name))
             {
