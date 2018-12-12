@@ -157,24 +157,23 @@ namespace Cognifide.PowerShell.Core.Host
         {
             get
             {
-                if (state == null)
-                {
-                    state = InitialSessionState.CreateDefault();
-                    state.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
+                if (state != null) return state;
 
-                    state.Commands.Add(CognifideSitecorePowerShellSnapIn.SessionStateCommandlets);
-                    state.Types.Add(types);
-                    state.Formats.Add(formats);
-                    state.ThreadOptions = PSThreadOptions.UseCurrentThread;
-                    state.ApartmentState = Thread.CurrentThread.GetApartmentState();
-                    foreach (var key in PredefinedVariables.Variables.Keys)
-                    {
-                        state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key],
-                            "Sitecore PowerShell Extensions Predefined Variable"));
-                    }
-                    state.UseFullLanguageModeInDebugger = true;
-                    PsSitecoreItemProviderFactory.AppendToSessionState(state);
+                state = InitialSessionState.CreateDefault();
+                state.AuthorizationManager = new AuthorizationManager("Sitecore.PowerShell");
+
+                state.Commands.Add(CognifideSitecorePowerShellSnapIn.SessionStateCommandlets);
+                state.Types.Add(types);
+                state.Formats.Add(formats);
+                state.ThreadOptions = PSThreadOptions.UseCurrentThread;
+                state.ApartmentState = Thread.CurrentThread.GetApartmentState();
+                foreach (var key in PredefinedVariables.Variables.Keys)
+                {
+                    state.Variables.Add(new SessionStateVariableEntry(key, PredefinedVariables.Variables[key],
+                        "Sitecore PowerShell Extensions Predefined Variable"));
                 }
+                state.UseFullLanguageModeInDebugger = true;
+                PsSitecoreItemProviderFactory.AppendToSessionState(state);
                 return state;
             }
         }
@@ -339,12 +338,11 @@ namespace Cognifide.PowerShell.Core.Host
 
         private void SendUiMessage(Message message)
         {
-            if (JobContext.IsJob)
-            {
-                var sheerMessage = new SendMessageMessage(message, false);
-                message.Arguments.Add("JobId", Key);
-                JobContext.MessageQueue.PutMessage(sheerMessage);
-            }
+            if (!JobContext.IsJob) return;
+
+            var sheerMessage = new SendMessageMessage(message, false);
+            message.Arguments.Add("JobId", Key);
+            JobContext.MessageQueue.PutMessage(sheerMessage);
         }
 
         private void DebuggerOnDebuggerStop(object sender, DebuggerStopEventArgs args)
@@ -559,6 +557,7 @@ namespace Cognifide.PowerShell.Core.Host
                 if (initialized && !reinitialize) return;
 
                 initialized = true;
+                
                 UserName = User.Current.Name;
                 var proxy = host.Runspace.SessionStateProxy;
                 proxy.SetVariable("me", UserName);
@@ -860,14 +859,13 @@ namespace Cognifide.PowerShell.Core.Host
 
         public void SetExecutedScript(Item scriptItem)
         {
-            if (scriptItem != null)
-            {
-                var scriptPath = scriptItem.GetProviderPath();
-                PowerShellLog.Info($"Script item set to {scriptPath} in ScriptSession {Key}.");
-                SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
-                SetVariable("SitecoreCommandPath", scriptPath);
-                SetVariable("PSScript", scriptItem);
-            }
+            if (scriptItem == null) return;
+
+            var scriptPath = scriptItem.GetProviderPath();
+            PowerShellLog.Info($"Script item set to {scriptPath} in ScriptSession {Key}.");
+            SetVariable("SitecoreScriptRoot", scriptItem.Parent.GetProviderPath());
+            SetVariable("SitecoreCommandPath", scriptPath);
+            SetVariable("PSScript", scriptItem);
         }
 
         #region IDisposable logic
