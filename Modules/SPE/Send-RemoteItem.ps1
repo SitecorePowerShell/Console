@@ -155,8 +155,6 @@ function Send-RemoteItem {
             $serviceUrl += "/file/" + $RootPath + "/?path=" + $output + "&"
         }
 
-        $serviceUrl += "user=" + $Username + "&password=" + $Password
-
         if($PSBoundParameters.SkipUnpack.IsPresent) {
             $serviceUrl += "&skipunpack=true"
         }
@@ -170,54 +168,46 @@ function Send-RemoteItem {
             $url = $uri.AbsoluteUri.TrimEnd("/") + $serviceUrl
 
             Write-Verbose -Message "Preparing to upload local item to the remote url $($url)"
-            $webclient = New-Object System.Net.WebClient
-            
+            Add-Type -AssemblyName System.Net.Http
+            $handler = New-Object System.Net.Http.HttpClientHandler
+            $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
+            $client = New-Object -TypeName System.Net.Http.Httpclient $handler
+            $authBytes = [System.Text.Encoding]::GetEncoding("iso-8859-1").GetBytes("$($Username):$($Password)")
+            $client.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue("Basic", [System.Convert]::ToBase64String($authBytes))
+
             if($Credential) {
-                $webclient.Credentials = $Credential
+                $client.Credentials = $Credential
             }
 
             if($UseDefaultCredentials) {
-                $webclient.UseDefaultCredentials = $UseDefaultCredentials
+                $client.UseDefaultCredentials = $UseDefaultCredentials
             }
 
-            [byte[]]$response = & {
-                try {
-                    Write-Verbose -Message "Uploading $($Path)"
-                    [System.Net.HttpWebResponse]$script:errorResponse = $null;
-                    New-UsingBlock($fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()) {
-                        $bytes = New-Object byte[] 1024
-                        $totalBytesToRead = $fileStream.Length
-                        $bytesRead = 0
-                        $bytesToRead = $bytes.Length
-                        if($totalBytesToRead - $bytesToRead -lt $bytes.Length) {
-                            $bytesToRead = $totalBytesToRead - $bytesRead
-                        }
-                        $bytes = New-Object byte[] $bytesToRead
+            try {
+                Write-Verbose -Message "Uploading $($Path)"
+                [System.Net.HttpWebResponse]$errorResponse = $null;
+                
+                $fileStream = ([System.IO.FileInfo] (Get-Item -Path $Path)).OpenRead()
+                $content = New-Object System.Net.Http.StreamContent($fileStream)
+                $responseMessage = $client.PostAsync($url, $content).Result
+                $fileStream.Close()
+                $fileStream.Dispose()
 
-                        New-UsingBlock($webStream = $webclient.OpenWrite($url)) {
-                            while(($bytesToRead = $fileStream.Read($bytes, 0, $bytes.Length)) -gt 0) {
-                                $webStream.Write($bytes, 0, $bytes.Length)
-                                $bytesRead += $bytes.Length
-                                if($totalBytesToRead - $bytesRead -lt $bytes.Length) {
-                                    $bytesToRead = $totalBytesToRead - $bytesRead
-                                }
-                                $bytes = New-Object byte[] $bytesToRead
-                            }                   
-                            $webStream.Close()
-                            $fileStream.Close()
-                            Write-Verbose -Message "Upload complete."
-                        }
-                    }
-                } catch [System.Net.WebException] {
-                    [System.Net.WebException]$script:ex = $_.Exception
-                    [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
-                    Write-Verbose -Message "Response exception message: $($ex.Message)"
-                    Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
-                    if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
-                        Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
-                    } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
-                        Write-Verbose -Message "Check that the service files exist and are properly configured."
-                    }
+                if(!$responseMessage.IsSuccessStatusCode) {
+                    Write-Error "Download failed. $($responseMessage.ReasonPhrase)"
+                    return    
+                }
+
+                Write-Verbose -Message "Upload complete."
+            } catch [System.Net.WebException] {
+                [System.Net.WebException]$script:ex = $_.Exception
+                [System.Net.HttpWebResponse]$script:errorResponse = $ex.Response
+                Write-Verbose -Message "Response exception message: $($ex.Message)"
+                Write-Verbose -Message "Response status description: $($errorResponse.StatusDescription)"
+                if($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::Forbidden) {
+                    Write-Verbose -Message "Check that the proper credentials are provided and that the service configurations are enabled."
+                } elseif ($errorResponse.StatusCode -eq [System.Net.HttpStatusCode]::NotFound){
+                    Write-Verbose -Message "Check that the service files exist and are properly configured."
                 }
             }
 

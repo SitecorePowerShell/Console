@@ -107,6 +107,7 @@ namespace Cognifide.PowerShell.Console.Services
             if (!ServiceAuthorizationManager.IsUserAuthorized(serviceName, identity.Name))
             {
                 HttpContext.Current.Response.StatusCode = 401;
+                HttpContext.Current.Response.StatusDescription = $"The specified user {authUserName} is not authorized for the service {serviceName}.";
                 HttpContext.Current.Response.SuppressFormsAuthenticationRedirect = true;
                 PowerShellLog.Error(
                     $"Attempt to call the '{serviceMappingKey}' service failed as user '{authUserName}' was not authorized.");
