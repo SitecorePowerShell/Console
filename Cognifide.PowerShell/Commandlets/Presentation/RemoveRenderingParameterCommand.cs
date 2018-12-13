@@ -1,13 +1,12 @@
 ﻿using System.Management.Automation;
-using Cognifide.PowerShell.Commandlets.Interactive;
 using Sitecore.Layouts;
 using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Remove, "RenderingParameters")]
+    [Cmdlet(VerbsCommon.Remove, "RenderingParameter")]
     [OutputType(typeof(RenderingDefinition))]
-    public class RemoveRenderingParametersCommand : BaseRenderingParametersCommand
+    public class RemoveRenderingParameterCommand : BaseRenderingParameterCommand
     {
         [Parameter(Mandatory = true, Position = 0)]
         public RenderingDefinition Rendering { get; set; }

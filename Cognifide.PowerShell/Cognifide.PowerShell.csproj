@@ -196,11 +196,11 @@
     <Compile Include="Commandlets\Interactive\Messages\ShowSuspendDialogMessage.cs" />
     <Compile Include="Commandlets\Jobs\GetSitecoreJobCommand.cs" />
     <Compile Include="Commandlets\Packages\GetPackageItemCommand.cs" />
-    <Compile Include="Commandlets\Presentation\BaseRenderingParametersCommand.cs" />
-    <Compile Include="Commandlets\Presentation\RemoveRenderingParametersCommand.cs" />
-    <Compile Include="Commandlets\Presentation\GetRenderingParametersCommand.cs" />
+    <Compile Include="Commandlets\Presentation\BaseRenderingParameterCommand.cs" />
+    <Compile Include="Commandlets\Presentation\RemoveRenderingParameterCommand.cs" />
+    <Compile Include="Commandlets\Presentation\GetRenderingParameterCommand.cs" />
     <Compile Include="Commandlets\Presentation\MergeLayoutCommand.cs" />
-    <Compile Include="Commandlets\Presentation\SetRenderingParametersCommand.cs" />
+    <Compile Include="Commandlets\Presentation\SetRenderingParameterCommand.cs" />
     <Compile Include="Commandlets\Security\Accounts\BaseSecurityCommand.cs" />
     <Compile Include="Core\Extensions\CustomFieldAccessor.cs" />
     <Compile Include="Core\Extensions\ExpressionExtensions.cs" />

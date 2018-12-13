@@ -6,9 +6,9 @@ using Sitecore.Text;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Set, "RenderingParameters")]
+    [Cmdlet(VerbsCommon.Set, "RenderingParameter")]
     [OutputType(typeof(RenderingDefinition))]
-    public class SetRenderingParametersCommand : BaseRenderingParametersCommand
+    public class SetRenderingParameterCommand : BaseRenderingParameterCommand
     {
         [Parameter(Mandatory = true, Position = 0)]
         public RenderingDefinition Rendering { get; set; }

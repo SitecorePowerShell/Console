@@ -5,9 +5,9 @@ using Sitecore.Layouts;
 
 namespace Cognifide.PowerShell.Commandlets.Presentation
 {
-    [Cmdlet(VerbsCommon.Get, "RenderingParameters")]
+    [Cmdlet(VerbsCommon.Get, "RenderingParameter")]
     [OutputType(typeof(Hashtable))]
-    public class GetRenderingParametersCommand : BaseRenderingParametersCommand
+    public class GetRenderingParameterCommand : BaseRenderingParameterCommand
     {
         [Parameter(Mandatory = true, Position = 0)]
         public RenderingDefinition Rendering { get; set; }
