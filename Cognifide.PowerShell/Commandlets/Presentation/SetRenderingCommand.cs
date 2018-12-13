@@ -13,7 +13,7 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
     [Cmdlet(VerbsCommon.Set, "Rendering", SupportsShouldProcess = true)]
     public class SetRenderingCommand : BaseLayoutCommand
     {
-        [Parameter(Mandatory = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
         [Alias("Rendering")]
         public RenderingDefinition Instance { get; set; }
 
