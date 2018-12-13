@@ -18,9 +18,10 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
         {
             var parameters = this.GetParameters(Rendering);
 
-            foreach (var name in Parameter)
+            foreach (var key in Parameter)
             {
-                parameters.Remove(name);
+                WriteVerbose($"Removing the rendering parameter with key {key}.");
+                parameters.Remove(key);
             }
 
             Rendering.Parameters = new UrlString(parameters).ToString();

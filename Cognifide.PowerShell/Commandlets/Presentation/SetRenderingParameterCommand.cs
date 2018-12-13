@@ -28,10 +28,12 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
                 var value = System.Convert.ToString(Parameter[key]);
                 if (parameters[key] == null)
                 {
+                    WriteVerbose($"Adding new key {key} to rendering parameters.");
                     parameters.Add(key, value);
                 }
                 else
                 {
+                    WriteVerbose($"Updating key {key} with a new value to the rendering parameters.");
                     parameters[key] = value;
                 }
             }
