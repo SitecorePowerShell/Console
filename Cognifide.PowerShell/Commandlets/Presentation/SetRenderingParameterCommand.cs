@@ -25,7 +25,15 @@ namespace Cognifide.PowerShell.Commandlets.Presentation
 
             foreach (string key in Parameter.Keys)
             {
-                parameters.Add(key, System.Convert.ToString(Parameter[key]));
+                var value = System.Convert.ToString(Parameter[key]);
+                if (parameters[key] == null)
+                {
+                    parameters.Add(key, value);
+                }
+                else
+                {
+                    parameters[key] = value;
+                }
             }
 
             Rendering.Parameters = new UrlString(parameters).ToString();
